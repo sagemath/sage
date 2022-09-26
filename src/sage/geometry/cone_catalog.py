@@ -177,7 +177,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` living in ``lattice``
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living in ``lattice``
     and having ``ambient_dim`` standard basis vectors as its
     generators. Each generating ray has the integer ring as its
     base ring.
@@ -287,7 +287,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
     rearrangement cone of order ``p`` living in ``lattice``, with
     ambient dimension ``ambient_dim``. Each generating ray has the
     integer ring as its base ring.
@@ -506,7 +506,7 @@ def schur(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the Schur
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the Schur
     cone living in ``lattice``, with ambient dimension ``ambient_dim``.
     Each generating ray has the integer ring as its base ring.
 
@@ -635,7 +635,7 @@ def trivial(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` representing the
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
     trivial cone with no nonzero generators living in ``lattice``,
     with ambient dimension ``ambient_dim``.
 

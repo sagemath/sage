@@ -76,11 +76,7 @@ import sage.all
 from sage.misc.cachefunc import cached_method
 # Do not import SAGE_DOC globally as it interferes with doctesting with a random replacement
 from sage.env import SAGE_DOC_SRC, SAGE_SRC, DOT_SAGE
-
-from .build_options import (LANGUAGES, OMIT,
-                            ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
-                            ABORT_ON_ERROR)
-
+from . import build_options
 from .utils import build_many as _build_many
 
 logger = logging.getLogger(__name__)
@@ -138,11 +134,11 @@ def builder_helper(type):
     def f(self, *args, **kwds):
         output_dir = self._output_dir(type)
 
-        options = ALLSPHINXOPTS
+        options = build_options.ALLSPHINXOPTS
 
         if self.name == 'website':
             # WEBSITESPHINXOPTS is either empty or " -A hide_pdf_links=1 "
-            options += WEBSITESPHINXOPTS
+            options += build_options.WEBSITESPHINXOPTS
 
         if kwds.get('use_multidoc_inventory', True) and type != 'inventory':
             options += ' -D multidoc_first_pass=0'
@@ -166,13 +162,13 @@ def builder_helper(type):
         try:
             runsphinx()
         except Exception:
-            if ABORT_ON_ERROR:
+            if build_options.ABORT_ON_ERROR:
                 raise
         except BaseException as e:
             # We need to wrap a BaseException that is not an Exception in a
             # regular Exception. Otherwise multiprocessing.Pool.get hangs, see
             # #25161
-            if ABORT_ON_ERROR:
+            if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
         if "/latex" in output_dir:
@@ -186,7 +182,7 @@ def builder_helper(type):
     return f
 
 
-class DocBuilder(object):
+class DocBuilder():
     def __init__(self, name, lang='en'):
         """
         INPUT:
@@ -198,7 +194,7 @@ class DocBuilder(object):
         """
         doc = name.split(os.path.sep)
 
-        if doc[0] in LANGUAGES:
+        if doc[0] in build_options.LANGUAGES:
             lang = doc[0]
             doc.pop(0)
 
@@ -328,11 +324,11 @@ def build_many(target, args, processes=None):
     docbuild settings ``NUM_THREADS`` and ``ABORT_ON_ERROR``.
     """
     if processes is None:
-        processes = NUM_THREADS
+        processes = build_options.NUM_THREADS
     try:
         _build_many(target, args, processes=processes)
     except BaseException:
-        if ABORT_ON_ERROR:
+        if build_options.ABORT_ON_ERROR:
             raise
 
 
@@ -349,7 +345,7 @@ def build_other_doc(args):
     getattr(get_builder(document), name)(*args, **kwds)
 
 
-class AllBuilder(object):
+class AllBuilder():
     """
     A class used to build all of the documentation.
     """
@@ -417,9 +413,9 @@ class AllBuilder(object):
             True
         """
         documents = []
-        for lang in LANGUAGES:
+        for lang in build_options.LANGUAGES:
             for document in os.listdir(os.path.join(SAGE_DOC_SRC, lang)):
-                if (document not in OMIT
+                if (document not in build_options.OMIT
                         and os.path.isdir(os.path.join(SAGE_DOC_SRC, lang, document))):
                     documents.append(os.path.join(lang, document))
 
@@ -495,7 +491,7 @@ class ReferenceBuilder(AllBuilder):
         AllBuilder.__init__(self)
         doc = name.split(os.path.sep)
 
-        if doc[0] in LANGUAGES:
+        if doc[0] in build_options.LANGUAGES:
             lang = doc[0]
             doc.pop(0)
 
@@ -867,10 +863,10 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Return the Sphinx environment for this project.
         """
-        class FakeConfig(object):
+        class FakeConfig():
             values = tuple()
 
-        class FakeApp(object):
+        class FakeApp():
             def __init__(self, dir):
                 self.srcdir = dir
                 self.config = FakeConfig()

@@ -233,7 +233,7 @@ Sage example in ./graphtheory.tex, line 1646::
 Sage example in ./graphtheory.tex, line 1656::
 
   sage: n_tests = 30
-  sage: vertices = g.vertices()
+  sage: vertices = g.vertices(sort=False)
   sage: P = Permutations(range(n))
   sage: best_coloring = {}
   sage: best_chromatic_number = +oo
@@ -264,7 +264,7 @@ Sage example in ./graphtheory.tex, line 1718::
   sage: def greedy_coloring(g, permutation):
   ....:     n = g.order()
   ....:     available_colors = Set(range(n))
-  ....:     vertices = g.vertices()
+  ....:     vertices = g.vertices(sort=False)
   ....:     color = {}
   ....:     for i in range(n):
   ....:         u = vertices[permutation[i]]
@@ -322,9 +322,9 @@ Sage example in ./graphtheory.tex, line 1989::
   ....:  # the function from V(H) to V(G) we aim to define:
   ....:  f = {}
   ....:  # set of vertices of G not yet used by f:
-  ....:  G_remain = G.vertices()
+  ....:  G_remain = G.vertices(sort=False)
   ....:  # set of vertices having no representative yet:
-  ....:  H_remain = H.vertices()
+  ....:  H_remain = H.vertices(sort=False)
   ....:  # while the function is not complete:
   ....:  while H_remain:
   ....:      v = H_remain.pop(0) # look for the next vertex of H

@@ -814,6 +814,19 @@ class Multizetas(CombinatorialFreeModule):
         """
         return self([]), self([2]), self([3]), self([4]), self((1, 2))
 
+    def an_element(self):
+        r"""
+        Return an element of the algebra.
+
+        EXAMPLES::
+
+            sage: M = Multizetas(QQ)
+            sage: M.an_element()
+            ζ() + ζ(1,2) + 1/2*ζ(5)
+        """
+        cf = self.base_ring().an_element()
+        return self([]) + self([1, 2]) + cf * self([5])
+
     def product_on_basis(self, w1, w2):
         r"""
         Compute the product of two monomials.
@@ -1789,6 +1802,29 @@ class Multizetas_iterated(CombinatorialFreeModule):
             if left and right:
                 coprod += left.regularise().tensor(right.regularise())
         return coprod
+
+    def D(self, k):
+        """
+        Return the operator `D_k`.
+
+        INPUT:
+
+        - ``k`` -- an odd integer, at least 3
+
+        EXAMPLES::
+
+            sage: from sage.modular.multiple_zeta import Multizetas_iterated
+            sage: M = Multizetas_iterated(QQ)
+            sage: D3 = M.D(3)
+            sage: elt = M((1,0,1,0,0)) + 2 * M((1,1,0,0,1,0))
+            sage: D3(elt)
+            -6*I(100) # I(110) + 3*I(100) # I(10)
+        """
+        def map_on_basis(elt):
+            return self.D_on_basis(k, elt)
+        cod = Multizetas_iterated(self.base_ring()).tensor_square()
+        return self.module_morphism(map_on_basis, position=0,
+                                    codomain=cod)
 
     @cached_method
     def phi_extended(self, w):

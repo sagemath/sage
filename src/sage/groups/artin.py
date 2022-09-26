@@ -392,7 +392,7 @@ class ArtinGroup(FinitelyPresentedGroup):
             True
 
             sage: G = graphs.PathGraph(3)
-            sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices())
+            sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices(sort=True))
             sage: A = groups.misc.Artin(CM)
             sage: Ap = groups.misc.RightAngledArtin(G, 's')
             sage: A is Ap

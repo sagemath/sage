@@ -31,7 +31,7 @@ cdef class Group(sage.structure.parent.Parent):
     """
     Generic group class
     """
-    def __init__(self, category = None):
+    def __init__(self, category=None):
         """
 
         TESTS::

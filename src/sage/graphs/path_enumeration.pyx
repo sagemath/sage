@@ -434,10 +434,10 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
         sage: G = digraphs.DeBruijn(2, 3)
-        sage: for u,v in G.edges(labels=False):
+        sage: for u,v in G.edges(sort=True, labels=False):
         ....:     G.set_edge_label(u, v, 1)
         sage: G.allow_multiple_edges(True)
-        sage: for u,v in G.edges(labels=False):
+        sage: for u,v in G.edges(sort=True, labels=False):
         ....:     G.add_edge(u, v, 2)
         sage: list(G.shortest_simple_paths('000', '111'))
         [['000', '001', '011', '111'], ['000', '001', '010', '101', '011', '111']]
@@ -518,7 +518,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         ....:     G = digraphs.RandomDirectedGNP(30, .1)
         sage: for u, v in list(G.edges(labels=False, sort=False)):
         ....:     G.set_edge_label(u, v, randint(1, 10))
-        sage: V = G.vertices()
+        sage: V = G.vertices(sort=False)
         sage: shuffle(V)
         sage: u, v = V[:2]
         sage: it_Y = G.shortest_simple_paths(u, v, by_weight=True, report_weight=True, algorithm='Yen')

@@ -356,7 +356,7 @@ up to a relabeling of the arrows::
     sage: G = K.digraph()
     sage: Gdual = Kdual.digraph()
     sage: f = { 1:1, 0:2, 2:0 }
-    sage: for u,v,label in Gdual.edges():
+    sage: for u,v,label in Gdual.edges(sort=False):
     ....:     Gdual.set_edge_label(u,v,f[label])
     sage: G.is_isomorphic(Gdual, edge_labels = True)
     True

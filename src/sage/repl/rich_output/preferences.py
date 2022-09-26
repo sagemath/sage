@@ -106,8 +106,8 @@ class Property(property):
         self.underscore_name = '_{0}'.format(name)
         self.allowed_values = tuple(allowed_values)
         self.__doc__ = doc = self._make_doc(doc)
-        super(Property, self).__init__(
-            fget=self.getter, fset=self.setter, fdel=self.deleter, doc=doc)
+        super().__init__(fget=self.getter, fset=self.setter,
+                         fdel=self.deleter, doc=doc)
 
     def _make_doc(self, doc):
         """

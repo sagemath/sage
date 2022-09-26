@@ -330,7 +330,7 @@ class IndexedSequence(SageObject):
         N = len(J)
         S = self.list()
         F = self.base_ring()   # elements must be coercible into QQ(zeta_N)
-        if not(J[0] in ZZ):
+        if J[0] not in ZZ:
             G = J[0].parent()  # if J is not a range it is a group G
         if J[0] in ZZ and F.base_ring().fraction_field() == QQ:
             # assumes J is range(N)

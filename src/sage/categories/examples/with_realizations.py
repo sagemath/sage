@@ -169,7 +169,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         assert(R in Rings())
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         self._S = S
-        Parent.__init__(self, category = Algebras(R).Commutative().WithRealizations())
+        Parent.__init__(self, category=Algebras(R).Commutative().WithRealizations())
 
         # Initializes the bases and change of bases of ``self``
 

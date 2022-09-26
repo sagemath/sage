@@ -180,9 +180,9 @@ class HighestWeightCrystals(Category_singleton):
             """
             return tuple(g for g in self if g.is_lowest_weight())
 
-        def __iter__(self, index_set=None, max_depth = float("inf")):
+        def __iter__(self, index_set=None, max_depth=float("inf")):
             """
-            Returns the iterator of ``self``.
+            Return the iterator of ``self``.
 
             INPUT:
 

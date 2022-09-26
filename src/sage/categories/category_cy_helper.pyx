@@ -318,6 +318,5 @@ cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
         ('Finite', 'Connected', 'WithBasis', 'Commutative')
     """
     cdef list L = list(set(axioms))
-    L.sort(key = (all_axioms).__getitem__)
+    L.sort(key=(all_axioms).__getitem__)
     return tuple(L)
-

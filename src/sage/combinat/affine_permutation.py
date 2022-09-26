@@ -161,20 +161,18 @@ class AffinePermutation(ClonableArray):
         return self.__rmul__(q)
 
     @cached_method
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse affine permutation.
 
         EXAMPLES::
 
             sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
-            sage: p.inverse()
+            sage: p.inverse()  # indirect doctest
             Type A affine permutation with window [0, -1, 1, 6, 5, 4, 10, 11]
         """
-        inv = [self.position(i) for i in range(1,len(self)+1)]
+        inv = [self.position(i) for i in range(1, len(self) + 1)]
         return type(self)(self.parent(), inv, check=False)
-
-    __invert__=inverse
 
     def apply_simple_reflection(self, i, side='right'):
         r"""
@@ -855,8 +853,8 @@ class AffinePermutationTypeA(AffinePermutation):
                 a=self(i)
                 for j in range(i-self.k, i):
                     b=self(j)
-                    #A small rotation is necessary for the reduced word from
-                    #the lehmer code to match the element.
+                    # A small rotation is necessary for the reduced word from
+                    # the Lehmer code to match the element.
                     if a < b:
                         code[i-1]+=((b-a)//(self.k+1)+1)
         elif typ[0] == 'i' and side[0] == 'l':
@@ -2329,6 +2327,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
         return x
 
     Element = AffinePermutationTypeA
+
 
 class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
     #------------------------

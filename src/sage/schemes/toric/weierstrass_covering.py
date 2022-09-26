@@ -106,7 +106,7 @@ REFERENCES:
 
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
-from sage.rings.all import invariant_theory
+from sage.rings.invariants.invariant_theory import invariant_theory
 from sage.schemes.toric.weierstrass import (
     _partial_discriminant,
     _check_polynomial_P2,

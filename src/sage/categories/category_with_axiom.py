@@ -2177,8 +2177,8 @@ class CategoryWithAxiom(Category):
                                    for category in base_category._super_categories
                                    for cat in category._with_axiom_as_tuple(axiom)) +
                              tuple(self.extra_super_categories()),
-                             ignore_axioms = ((base_category, axiom),),
-                             as_list = True)
+                             ignore_axioms=((base_category, axiom),),
+                             as_list=True)
 
     def additional_structure(self):
         r"""

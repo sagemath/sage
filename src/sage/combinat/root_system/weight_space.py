@@ -463,7 +463,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
         The canonical scalar product between the weight lattice and
         the coroot lattice.
 
-        .. todo::
+        .. TODO::
 
             - merge with_apply_multi_module_morphism
             - allow for any root space / lattice

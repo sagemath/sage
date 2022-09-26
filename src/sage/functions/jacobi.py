@@ -196,8 +196,7 @@ class Jacobi(BuiltinFunction):
                              "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
         self.kind = kind
         BuiltinFunction.__init__(self,
-            name='jacobi_{}'.format(kind),
-            nargs=2, evalf_params_first=False,
+            name=f'jacobi_{kind}', nargs=2, evalf_params_first=False,
             conversions=dict(maple=('Jacobi{}'.format(kind.upper())),
                              mathematica=('Jacobi{}'.format(kind.upper())),
                              fricas=('jacobi{}'.format(kind.capitalize())),
@@ -550,17 +549,10 @@ class InverseJacobi(BuiltinFunction):
                              "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
         self.kind = kind
         BuiltinFunction.__init__(self,
-                                 name='inverse_jacobi_{}'.format(kind),
-                                 nargs=2, evalf_params_first=False,
-                                 conversions=dict(maple=
-                                                  ('InverseJacobi{}'
-                                                   .format(kind.upper())),
-                                                  mathematica=
-                                                  ('InverseJacobi{}'
-                                                   .format(kind.upper())),
-                                                  maxima=
-                                                  ('inverse_jacobi_{}'
-                                                   .format(kind))))
+            name=f'inverse_jacobi_{kind}', nargs=2, evalf_params_first=False,
+            conversions=dict(maple=('InverseJacobi{}'.format(kind.upper())),
+                             mathematica=f'InverseJacobi{kind.upper()}',
+                             maxima=(f'inverse_jacobi_{kind}')))
 
     def _eval_(self, x, m):
         r"""
@@ -1073,10 +1065,9 @@ class JacobiAmplitude(BuiltinFunction):
             jacobi_am
         """
         BuiltinFunction.__init__(self, name='jacobi_am', nargs=2,
-                                 conversions=dict(maple='JacobiAM',
-                                                  mathematica=
-                                                  'JacobiAmplitude'),
-                                 evalf_params_first=False)
+            conversions=dict(maple='JacobiAM',
+                             mathematica='JacobiAmplitude'),
+            evalf_params_first=False)
 
     def _eval_(self, x, m):
         r"""

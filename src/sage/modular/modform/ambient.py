@@ -68,17 +68,16 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
-import sage.modular.hecke.all as hecke
-import sage.modular.modsym.all as modsym
-import sage.modules.free_module as free_module
-import sage.rings.all as rings
-from sage.arith.all import is_prime, sigma
+from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
-
-from sage.structure.sequence import Sequence
 from sage.misc.cachefunc import cached_method
+from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1
+from sage.modular.dirichlet import TrivialCharacter
+from sage.modular.hecke.ambient_module import AmbientHeckeModule
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.modules.free_module import VectorSpace
+from sage.rings.integer import Integer
+from sage.structure.sequence import Sequence
 
 from . import defaults
 from . import eisenstein_submodule
@@ -88,7 +87,7 @@ from . import submodule
 
 
 class ModularFormsAmbient(space.ModularFormsSpace,
-                          hecke.AmbientHeckeModule):
+                          AmbientHeckeModule):
     """
     An ambient space of modular forms.
     """
@@ -103,12 +102,12 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m.is_ambient()
             True
         """
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not is_CongruenceSubgroup(group):
             raise TypeError('group (=%s) must be a congruence subgroup' % group)
-        weight = rings.Integer(weight)
+        weight = Integer(weight)
 
-        if character is None and arithgroup.is_Gamma0(group):
-            character = dirichlet.TrivialCharacter(group.level(), base_ring)
+        if character is None and is_Gamma0(group):
+            character = TrivialCharacter(group.level(), base_ring)
 
         self._eis_only = eis_only
         space.ModularFormsSpace.__init__(self, group, weight, character, base_ring)
@@ -116,7 +115,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             d = self._dim_eisenstein()
         else:
             d = self.dimension()
-        hecke.AmbientHeckeModule.__init__(self, base_ring, d, group.level(), weight)
+        AmbientHeckeModule.__init__(self, base_ring, d, group.level(), weight)
 
     def _repr_(self):
         """
@@ -302,7 +301,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         return True
 
-    @cached_method(key=lambda self, sign: rings.Integer(sign))  # convert sign to an Integer before looking this up in the cache
+    @cached_method(key=lambda self, sign: Integer(sign))  # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self, sign=0):
         """
         Return the corresponding space of modular symbols with the given
@@ -323,8 +322,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: ModularForms(1,12).modular_symbols()
             Modular Symbols space of dimension 3 for Gamma_0(1) of weight 12 with sign 0 over Rational Field
         """
-        sign = rings.Integer(sign)
-        return modsym.ModularSymbols(group=self.group(),
+        sign = Integer(sign)
+        return ModularSymbols(group=self.group(),
                                      weight=self.weight(),
                                      sign=sign,
                                      base_ring=self.base_ring())
@@ -344,7 +343,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             Vector space of dimension 27 over Finite Field in b of size 7^2
         """
         d = self.dimension()
-        return free_module.VectorSpace(self.base_ring(), d)
+        return VectorSpace(self.base_ring(), d)
 
     # free_module -- stupid thing: there are functions in classes
     # ModularFormsSpace and HeckeModule that both do much the same
@@ -428,7 +427,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if n < 0:
             raise ValueError("n (=%s) must be >= 0" % n)
-        self.__prec = rings.Integer(n)
+        self.__prec = Integer(n)
 
     ####################################################################
     # Computation of Special Submodules
@@ -461,7 +460,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         return eisenstein_submodule.EisensteinSubmodule(self)
 
-    @cached_method(key=lambda self, p: (rings.Integer(p) if p is not None else p))  # convert p to an Integer before looking this up in the cache
+    @cached_method(key=lambda self, p: (Integer(p) if p is not None else p))  # convert p to an Integer before looking this up in the cache
     def new_submodule(self, p=None):
         """
         Return the new or `p`-new submodule of this ambient
@@ -512,7 +511,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             NotImplementedError
         """
         if p is not None:
-            p = rings.Integer(p)
+            p = Integer(p)
             if not p.is_prime():
                 raise ValueError("p (=%s) must be a prime or None." % p)
         return self.cuspidal_submodule().new_submodule(p) + self.eisenstein_submodule().new_submodule(p)
@@ -584,7 +583,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if self._eis_only:
             return 0
-        if arithgroup.is_Gamma1(self.group()) and self.character() is not None:
+        if is_Gamma1(self.group()) and self.character() is not None:
             return self.group().dimension_cusp_forms(self.weight(),
                                                      self.character())
         else:
@@ -615,7 +614,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: ModularForms(GammaH(40, [21]), 1).dimension() # indirect doctest
             16
         """
-        if arithgroup.is_Gamma1(self.group()) and self.character() is not None:
+        if is_Gamma1(self.group()) and self.character() is not None:
             return self.group().dimension_eis(self.weight(), self.character())
         else:
             return self.group().dimension_eis(self.weight())
@@ -637,7 +636,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_cuspidal()
             22
         """
-        if arithgroup.is_Gamma1(self.group()) and self.character() is not None:
+        if is_Gamma1(self.group()) and self.character() is not None:
             return self.group().dimension_new_cusp_forms(self.weight(), self.character())
         else:
             return self.group().dimension_new_cusp_forms(self.weight())
@@ -663,7 +662,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_eisenstein()
             8
         """
-        if arithgroup.is_Gamma0(self.group()) and self.weight() == 2:
+        if is_Gamma0(self.group()) and self.weight() == 2:
             if is_prime(self.level()):
                 d = 1
             else:
@@ -694,7 +693,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         eps = self.character()
         if eps is None:
-            if arithgroup.is_Gamma1(self.group()):
+            if is_Gamma1(self.group()):
                 eps = self.level()
             else:
                 raise NotImplementedError

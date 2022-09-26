@@ -2,7 +2,7 @@
 r"""
 KnotInfo Database
 
-This module contains the class :class:`KnotInfoDataBase`  and auxilary classes
+This module contains the class :class:`KnotInfoDataBase`  and auxiliary classes
 for it which serves as an interface to the lists of named knots and links provided
 at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
 `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.

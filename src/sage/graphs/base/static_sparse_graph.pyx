@@ -84,7 +84,7 @@ Technical details
 -----------------
 
 * When creating a ``short_digraph`` from a ``Graph`` or ``DiGraph`` named ``G``,
-  the `i^{\text{th}}` vertex corresponds *by default* to ``G.vertices()[i]``.
+  the `i^{\text{th}}` vertex corresponds *by default* to ``G.vertices(sort=True)[i]``.
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
@@ -216,11 +216,12 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     vertices of the graph ``G`` in some order.
     **Beware that no checks are made that this input is correct**.
 
-    If ``vertex_list`` is given, it will be used to map vertices of the graph to
-    consecutive integers. Otherwise, the result of ``G.vertices()`` will be used
-    instead. Because ``G.vertices()`` only works if the vertices can be sorted,
-    using ``vertex_list`` is useful when working with possibly non-sortable
-    objects in Python 3.
+    If ``vertex_list`` is given, it will be used to map vertices of
+    the graph to consecutive integers. Otherwise, the result of
+    ``G.vertices(sort=True)`` will be used instead. Because this only
+    works if the vertices can be sorted, using ``vertex_list`` is
+    useful when working with possibly non-sortable objects in Python
+    3.
     """
     g.edge_labels = NULL
 
@@ -242,7 +243,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
         raise ValueError("The source graph must be either a DiGraph or a Graph object !")
 
     cdef int i, j, v_id
-    cdef list vertices = vertex_list if vertex_list is not None else G.vertices()
+    cdef list vertices = vertex_list if vertex_list is not None else G.vertices(sort=True)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
     cdef list neighbor_label
     cdef list edge_labels
@@ -860,7 +861,7 @@ def strongly_connected_components_digraph(G):
         ....:     g = digraphs.RandomDirectedGNM(n,m)
         ....:     scc_digraph,sccs = strongly_connected_components_digraph(g)
         ....:     assert(scc_digraph.is_directed_acyclic())
-        ....:     for e in g.edges():
+        ....:     for e in g.edges(sort=False):
         ....:         assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
         ....:         assert(sccs[e[0]] >= sccs[e[1]])
     """

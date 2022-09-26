@@ -214,11 +214,9 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-
-            from sage.rings.all import (ComplexField,
-                                        RLF, CLF,
-                                        InfinityRing,
-                                        UnsignedInfinityRing)
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
+            from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import is_FiniteField
 
             from sage.interfaces.maxima import Maxima
@@ -1225,7 +1223,7 @@ cdef class NumpyToSRMorphism(Morphism):
             from sage.rings.real_double import RDF
             self._intermediate_ring = RDF
         elif issubclass(numpy_type, numpy.complexfloating):
-            from sage.rings.all import CDF
+            from sage.rings.complex_double import CDF
             self._intermediate_ring = CDF
         else:
             raise TypeError("{} is not a numpy number type".format(numpy_type))

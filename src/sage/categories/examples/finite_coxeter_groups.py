@@ -70,7 +70,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         sage: TestSuite(G).run()
 
         sage: c = FiniteCoxeterGroups().example(3).cayley_graph()
-        sage: sorted(c.edges())
+        sage: c.edges(sort=True)
         [((), (1,), 1),
          ((), (2,), 2),
          ((1,), (), 1),
@@ -85,7 +85,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
          ((2, 1), (2,), 1)]
     """
 
-    def __init__(self, n = 5):
+    def __init__(self, n=5):
         r"""
         INPUT:
          - ``n`` - an integer with `n>=2`
@@ -97,10 +97,9 @@ class DihedralGroup(UniqueRepresentation, Parent):
             sage: from sage.categories.examples.finite_coxeter_groups import DihedralGroup
             sage: DihedralGroup(3)
             The 3-th dihedral group of order 6
-
         """
         assert n >= 2
-        Parent.__init__(self, category = FiniteCoxeterGroups())
+        Parent.__init__(self, category=FiniteCoxeterGroups())
         self.n = n
 
     def _repr_(self):
@@ -112,7 +111,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
             sage: FiniteCoxeterGroups().example(6)
             The 6-th dihedral group of order 12
         """
-        return "The %s-th dihedral group of order %s"%(self.n, 2*self.n)
+        return "The %s-th dihedral group of order %s" % (self.n, 2 * self.n)
 
     def __contains__(self, x):
         r"""
@@ -184,7 +183,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         wrapped_class = tuple
         __lt__ = ElementWrapper._lt_by_value
 
-        def has_right_descent(self, i, positive = False, side = "right"):
+        def has_right_descent(self, i, positive=False, side="right"):
             r"""
             Implements :meth:`SemiGroups.ElementMethods.has_right_descent`.
 

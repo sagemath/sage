@@ -93,7 +93,7 @@ class SatLP(SatSolver):
 
             sage: S=SAT(solver="LP"); S
             an ILP-based SAT Solver
-            sage: for u,v in graphs.CycleGraph(6).edges(labels=False):
+            sage: for u,v in graphs.CycleGraph(6).edges(sort=False, labels=False):
             ....:     u,v = u+1,v+1
             ....:     S.add_clause((u,v))
             ....:     S.add_clause((-u,-v))
@@ -120,7 +120,7 @@ class SatLP(SatSolver):
 
             sage: def is_bipartite_SAT(G):
             ....:     S=SAT(solver="LP"); S
-            ....:     for u,v in G.edges(labels=False):
+            ....:     for u,v in G.edges(sort=False, labels=False):
             ....:         u,v = u+1,v+1
             ....:         S.add_clause((u,v))
             ....:         S.add_clause((-u,-v))

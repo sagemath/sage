@@ -62,7 +62,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             sage: S1 is S2
             True
         """
-        return super(CrystalOfOddNegativeRoots, cls).__classcall__(cls, CartanType(cartan_type))
+        return super().__classcall__(cls, CartanType(cartan_type))
 
     def __init__(self, cartan_type):
         """
@@ -430,6 +430,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             e = WLR.basis()
             return WLR.sum(-e[i]+e[j] for (i,j) in self.value)
 
+
 class CrystalOfKacModule(UniqueRepresentation, Parent):
     r"""
     Crystal of a Kac module.
@@ -530,7 +531,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         la = _Partitions(la)
         mu = _Partitions(mu)
-        return super(CrystalOfKacModule, cls).__classcall__(cls, cartan_type, la, mu)
+        return super().__classcall__(cls, cartan_type, la, mu)
 
     def __init__(self, cartan_type, la, mu):
         """

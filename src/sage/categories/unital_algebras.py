@@ -263,7 +263,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
 
-            @abstract_method(optional = True)
+            @abstract_method(optional=True)
             def one_basis(self):
                 """
                 When the one of an algebra with basis is an element of

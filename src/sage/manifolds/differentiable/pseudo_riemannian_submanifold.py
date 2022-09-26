@@ -1173,7 +1173,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                         g.restrict(chart.domain()).contract(pf[j]) *
                         self.scalar_field({chart: k.comp(chart.frame())[:][i, j]})
                         for i in range(self._dim) for j in range(self._dim))
-                    gam_rst._sym = [(0, 1)]
+                    gam_rst._sym = ((0, 1),)
                     self._ambient_second_fundamental_form.set_restriction(gam_rst)
 
                 charts = iter(self.top_charts())

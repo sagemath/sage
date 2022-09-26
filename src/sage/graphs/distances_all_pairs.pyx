@@ -73,7 +73,7 @@ Breadth First Search per vertex of the (di)graph.
 **Technical details**
 
 - The vertices are encoded as `1, ..., n` as they appear in the ordering of
-  ``G.vertices()``, unless another ordering is specified by the user.
+  ``G.vertices(sort=True)``, unless another ordering is specified by the user.
 
 - Because this function works on matrices whose size is quadratic compared to
   the number of vertices when computing all distances or predecessors, it uses
@@ -112,15 +112,15 @@ Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.binary_matrix cimport *
 from libc.string cimport memset
@@ -140,6 +140,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    out_degree,
                                                    has_edge,
                                                    simple_BFS)
+
 
 cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
                                           unsigned short* predecessors,
@@ -265,6 +266,7 @@ cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
 
     bitset_free(seen)
 
+
 cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short* predecessors,
                                         unsigned short* distances,
@@ -273,17 +275,18 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     r"""
     See the module's documentation.
 
-    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
-    mapping from `(0, \ldots, n-1)` to vertex labels in ``gg``. When
-    ``vertex_list`` is ``None`` (default), the mapping is given by the ordering
-    of ``gg.vertices()``. When set, ``distances[i * n + j]`` is the shortest BFS
-    distance between vertices ``vertex_list[i]`` and ``vertex_list[j]``.
+    Optional parameter ``vertex_list`` is a list of `n` vertices
+    specifying a mapping from `(0, \ldots, n-1)` to vertex labels in
+    ``gg``. When ``vertex_list`` is ``None`` (default), the mapping is
+    given by the ordering of ``gg.vertices(sort=True)``. When set,
+    ``distances[i * n + j]`` is the shortest BFS distance between
+    vertices ``vertex_list[i]`` and ``vertex_list[j]``.
     """
     from sage.rings.infinity import Infinity
 
     cdef list int_to_vertex
     if vertex_list is None:
-        int_to_vertex = gg.vertices()
+        int_to_vertex = gg.vertices(sort=True)
     elif set(gg.vertex_iterator()) == set(vertex_list):
         int_to_vertex = vertex_list
     else:
@@ -309,6 +312,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
 
     free_short_digraph(sd)
 
+
 ################
 # Predecessors #
 ################
@@ -326,7 +330,7 @@ cdef unsigned short* c_shortest_path_all_pairs(G, vertex_list=None) except NULL:
     Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
     mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
     ``vertex_list`` is ``None`` (default), the mapping is given by the ordering
-    of ``G.vertices()``. When set, ``predecessors[i * n + j]`` is the
+    of ``G.vertices(sort=True)``. When set, ``predecessors[i * n + j]`` is the
     predecessor of ``vertex_list[j]`` on the shortest path from
     ``vertex_list[i]`` to ``vertex_list[j]``.
     """
@@ -344,6 +348,7 @@ cdef unsigned short* c_shortest_path_all_pairs(G, vertex_list=None) except NULL:
     sig_free(distances)
 
     return predecessors
+
 
 def shortest_path_all_pairs(G):
     r"""
@@ -371,7 +376,6 @@ def shortest_path_all_pairs(G):
          8: {0: 5, 1: 6, 2: 3, 3: 8, 4: 3, 5: 8, 6: 8, 7: 5, 8: None, 9: 6},
          9: {0: 4, 1: 6, 2: 7, 3: 4, 4: 9, 5: 7, 6: 9, 7: 9, 8: 6, 9: None}}
     """
-
     cdef int n = G.order()
 
     if not n:
@@ -403,6 +407,7 @@ def shortest_path_all_pairs(G):
     sig_free(predecessors)
     return d
 
+
 #############
 # Distances #
 #############
@@ -413,15 +418,14 @@ cdef unsigned short * c_distances_all_pairs(G, vertex_list=None):
 
     The matrix `M` returned is of length `n^2`, and the distance between
     vertices `u` and `v` is `M[u,v]`. The integer corresponding to a vertex is
-    its index in the list ``G.vertices()`` unless parameter ``vertex_list`` is
-    set.
+    its index in the list ``G.vertices(sort=True)`` unless parameter
+    ``vertex_list`` is set.
 
     Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
     mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When set,
     ``distances[i * n + j]`` is the shortest BFS distance between vertices
     ``vertex_list[i]`` and ``vertex_list[j]``.
     """
-
     cdef unsigned int n = G.order()
     cdef unsigned short* distances = <unsigned short*> sig_malloc(n * n * sizeof(unsigned short))
     if not distances:
@@ -429,6 +433,7 @@ cdef unsigned short * c_distances_all_pairs(G, vertex_list=None):
     all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=vertex_list)
 
     return distances
+
 
 def distances_all_pairs(G):
     r"""
@@ -453,7 +458,6 @@ def distances_all_pairs(G):
         8: {0: 2, 1: 2, 2: 2, 3: 1, 4: 2, 5: 1, 6: 1, 7: 2, 8: 0, 9: 2},
         9: {0: 2, 1: 2, 2: 2, 3: 2, 4: 1, 5: 2, 6: 1, 7: 1, 8: 2, 9: 0}}
     """
-
     from sage.rings.infinity import Infinity
 
     cdef int n = G.order()
@@ -485,6 +489,7 @@ def distances_all_pairs(G):
 
     sig_free(distances)
     return d
+
 
 def is_distance_regular(G, parameters=False):
     r"""
@@ -544,7 +549,7 @@ def is_distance_regular(G, parameters=False):
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
 
     """
-    cdef int i,l,u,v,d,b,c,k
+    cdef int i, l, u, v, d, b, c, k
     cdef int n = G.order()
     cdef int infinity = <unsigned short> -1
 
@@ -625,7 +630,8 @@ def is_distance_regular(G, parameters=False):
         ci[0] = None
         return bi, ci
     else:
-        return  True
+        return True
+
 
 ###################################
 # Both distances and predecessors #
@@ -637,7 +643,7 @@ def distances_and_predecessors_all_pairs(G):
 
     Distances : the matrix `M` returned is of length `n^2`, and the distance
     between vertices `u` and `v` is `M[u,v]`. The integer corresponding to a
-    vertex is its index in the list ``G.vertices()``.
+    vertex is its index in the list ``G.vertices(sort=True)``.
 
     Predecessors : the matrix `P` returned has size `n^2`, and is such that
     vertex `P[u,v]` is a predecessor of `v` on a shortest `uv`-path. Hence, this
@@ -714,6 +720,7 @@ def distances_and_predecessors_all_pairs(G):
 
     return d_distance, d_predecessor
 
+
 ################
 # Eccentricity #
 ################
@@ -723,7 +730,7 @@ cdef uint32_t * c_eccentricity(G, vertex_list=None) except NULL:
     Return the vector of eccentricities in G.
 
     The array returned is of length `n`, and by default its `i`-th component is
-    the eccentricity of the `i`-th vertex in ``G.vertices()``.
+    the eccentricity of the `i`-th vertex in ``G.vertices(sort=True)``.
 
     Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
     mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When set,
@@ -737,6 +744,7 @@ cdef uint32_t * c_eccentricity(G, vertex_list=None) except NULL:
     all_pairs_shortest_path_BFS(G, NULL, NULL, ecc, vertex_list=vertex_list)
 
     return ecc
+
 
 cdef uint32_t * c_eccentricity_bounding(short_digraph sd) except NULL:
     r"""
@@ -758,13 +766,13 @@ cdef uint32_t * c_eccentricity_bounding(short_digraph sd) except NULL:
     # allocated some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef uint32_t * distances = <uint32_t *> mem.malloc(3 * n * sizeof(uint32_t))
-    cdef uint32_t * LB        = <uint32_t *> sig_calloc(n, sizeof(uint32_t))
+    cdef uint32_t * LB = <uint32_t *> sig_calloc(n, sizeof(uint32_t))
     if not distances or not LB:
         sig_free(LB)
         free_short_digraph(sd)
         raise MemoryError()
     cdef uint32_t * waiting_list = distances + n
-    cdef uint32_t * UB           = distances + 2 * n
+    cdef uint32_t * UB = distances + 2 * n
     memset(UB, -1, n * sizeof(uint32_t))
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -807,6 +815,7 @@ cdef uint32_t * c_eccentricity_bounding(short_digraph sd) except NULL:
     bitset_free(seen)
 
     return LB
+
 
 cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
     r"""
@@ -862,7 +871,7 @@ cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
     cdef uint32_t v, tmp
     cdef size_t i, idx
     cdef bitset_t seen
-    bitset_init(seen,n)
+    bitset_init(seen, n)
 
     cdef list active = list(range(n))
 
@@ -931,12 +940,13 @@ cdef uint32_t * c_eccentricity_DHV(short_digraph sd) except NULL:
 
     return ecc_upper_bound
 
+
 def eccentricity(G, algorithm="standard", vertex_list=None):
     r"""
     Return the vector of eccentricities in G.
 
     The array returned is of length `n`, and its `i`-th component is the
-    eccentricity of the ith vertex in ``G.vertices()``.
+    eccentricity of the ith vertex in ``G.vertices(sort=True)``.
 
     INPUT:
 
@@ -958,7 +968,7 @@ def eccentricity(G, algorithm="standard", vertex_list=None):
       specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
       set, ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``. When
       ``vertex_list`` is ``None``, ``ecc[i]`` is the eccentricity of vertex
-      ``G.vertices()[i]``.
+      ``G.vertices(sort=True)[i]``.
 
     EXAMPLES::
 
@@ -1038,7 +1048,7 @@ def eccentricity(G, algorithm="standard", vertex_list=None):
 
     cdef list int_to_vertex
     if vertex_list is None:
-        int_to_vertex = G.vertices()
+        int_to_vertex = G.vertices(sort=True)
     elif len(vertex_list) == n and set(vertex_list) == set(G):
         int_to_vertex = vertex_list
     else:
@@ -1247,6 +1257,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
     return (LB, s, m, d)
 
+
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
                                             uint32_t source):
     """
@@ -1288,7 +1299,6 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
         raise MemoryError()
     cdef uint32_t * predecessors = distances + n
     cdef uint32_t * waiting_list = distances + 2 * n
-
 
     # We perform a first 2sweep call from source. If the returned value is a
     # very large number, the graph is not connected and so the diameter is
@@ -1356,7 +1366,6 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     if LB == UINT32_MAX:
         return LB
 
-
     # We allocate some arrays and a bitset
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -1365,9 +1374,8 @@ cdef uint32_t diameter_iFUB(short_digraph g,
         bitset_free(seen)
         raise MemoryError()
     cdef uint32_t* waiting_list = distances + n
-    cdef uint32_t* layer        = distances + 2 * n
-    cdef uint32_t* order        = distances + 3 * n
-
+    cdef uint32_t* layer = distances + 2 * n
+    cdef uint32_t* order = distances + 3 * n
 
     # We order the vertices by decreasing layers. This is the inverse order of a
     # BFS from m, and so the inverse order of array waiting_list. Distances are
@@ -1405,12 +1413,12 @@ cdef uint32_t diameter_iFUB(short_digraph g,
         if tmp > LB:
             LB = tmp
 
-
     sig_free(distances)
     bitset_free(seen)
 
     # We finally return the computed diameter
     return LB
+
 
 cdef uint32_t diameter_DiFUB(short_digraph sd,
                              uint32_t source):
@@ -1472,10 +1480,10 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
         raise MemoryError()
 
     cdef uint32_t * waiting_list = distances + n
-    cdef uint32_t * order_1      = distances + 2 * n
-    cdef uint32_t * order_2      = distances + 3 * n
-    cdef uint32_t * layer_1      = distances + 4 * n
-    cdef uint32_t * layer_2      = distances + 5 * n
+    cdef uint32_t * order_1 = distances + 2 * n
+    cdef uint32_t * order_2 = distances + 3 * n
+    cdef uint32_t * layer_1 = distances + 4 * n
+    cdef uint32_t * layer_2 = distances + 5 * n
 
     # We order the vertices by decreasing forward / backward layers. This is the
     # inverse order of a forward / backward BFS from m, and so the inverse order
@@ -1536,6 +1544,7 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
 
     # Finally return the computed diameter
     return LB
+
 
 cdef uint32_t diameter_DHV(short_digraph g):
     r"""
@@ -1826,7 +1835,7 @@ def diameter(G, algorithm=None, source=None):
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
     init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
-    cdef short_digraph rev_sd # to store copy of sd with edges reversed
+    cdef short_digraph rev_sd  # to store copy of sd with edges reversed
 
     # and we map the source to an int in [0,n-1]
     cdef uint32_t isource = 0 if source is None else int_to_vertex.index(source)
@@ -1863,9 +1872,8 @@ def diameter(G, algorithm=None, source=None):
     elif algorithm == 'DHV':
         LB = diameter_DHV(sd)
 
-    else: # algorithm == 'iFUB'
+    else:  # algorithm == 'iFUB'
         LB = diameter_iFUB(sd, isource)
-
 
     free_short_digraph(sd)
 
@@ -1988,6 +1996,7 @@ def radius_DHV(G):
 
     return UB
 
+
 ################
 # Wiener index #
 ################
@@ -2074,12 +2083,13 @@ def wiener_index(G):
         return +Infinity
     return s
 
+
 ################
 # Szeged index #
 ################
 
 cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
-    """
+    r"""
     Return the Szeged index of the graph.
 
     Let `G = (V, E)` be a connected simple graph, and for any `uv\in E`, let
@@ -2185,8 +2195,9 @@ cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
 
     return s
 
+
 cdef uint64_t c_szeged_index_high_memory(short_digraph sd):
-    """
+    r"""
     Return the Szeged index of the graph.
 
     Let `G = (V, E)` be a connected graph, and for any `uv\in E`, let `N_u(uv) =
@@ -2232,6 +2243,7 @@ cdef uint64_t c_szeged_index_high_memory(short_digraph sd):
             p_uv += 1
 
     return s
+
 
 def szeged_index(G, algorithm=None):
     r"""
@@ -2364,6 +2376,7 @@ def szeged_index(G, algorithm=None):
     free_short_digraph(sd)
     return s
 
+
 ##########################
 # Distances distribution #
 ##########################
@@ -2473,6 +2486,7 @@ def distances_distribution(G):
 
     return distr
 
+
 ###################
 # Antipodal graph #
 ###################
@@ -2538,7 +2552,7 @@ def antipodal_graph(G):
         ValueError: this method is defined for undirected graphs only
         sage: antipodal_graph(Graph(1))
         Antipodal graph of Graph on 1 vertex: Looped graph on 1 vertex
-        sage: antipodal_graph(Graph(2)).edges(labels=False)
+        sage: antipodal_graph(Graph(2)).edges(sort=True, labels=False)
         [(0, 1)]
     """
     if not G:
@@ -2598,6 +2612,7 @@ def antipodal_graph(G):
 
     A.add_vertices(G)
     return A
+
 
 ##################
 # Floyd-Warshall #
@@ -2731,14 +2746,14 @@ def floyd_warshall(gg, paths=True, distances=False):
 
     # Copying the adjacency matrix (vertices at distance 1)
     for v_int in gverts:
-        dist[v_int][v_int] =  0
+        dist[v_int][v_int] = 0
         for u_int in g.out_neighbors(v_int):
             dist[v_int][u_int] = 1
 
     if paths:
         # init prec
-        t_prec = <unsigned short*>  mem.allocarray(n * n, sizeof(unsigned short))
-        prec   = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
+        t_prec = <unsigned short*> mem.allocarray(n * n, sizeof(unsigned short))
+        prec = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
         prec[0] = t_prec
         for i in range(1, n):
             prec[i] = prec[i - 1] + n
@@ -2778,20 +2793,24 @@ def floyd_warshall(gg, paths=True, distances=False):
 
     for v_int in gverts:
         v = cgb.vertex_label(v_int)
-        if paths: tmp_prec = {v: None}
-        if distances: tmp_dist = {v: 0}
+        if paths:
+            tmp_prec = {v: None}
+        if distances:
+            tmp_dist = {v: 0}
         dv = dist[v_int]
         for u_int in gverts:
             u = cgb.vertex_label(u_int)
-            if v != u and dv[u_int] !=  <unsigned short> -1:
+            if v != u and dv[u_int] != <unsigned short> -1:
                 if paths:
                     tmp_prec[u] = cgb.vertex_label(prec[v_int][u_int])
 
                 if distances:
                     tmp_dist[u] = dv[u_int]
 
-        if paths: d_prec[v] = tmp_prec
-        if distances: d_dist[v] = tmp_dist
+        if paths:
+            d_prec[v] = tmp_prec
+        if distances:
+            d_dist[v] = tmp_dist
 
     if distances and paths:
         return d_dist, d_prec

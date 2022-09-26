@@ -15,18 +15,22 @@ component of the newform at `p`.
 """
 
 import operator
-from sage.modular.arithgroup.all import GammaH
-from sage.modular.modform.element import Newform
-from sage.modular.modform.constructor import ModularForms
-from sage.modular.modsym.modsym import ModularSymbols
-from sage.rings.all import ZZ, Zmod, QQ
-from sage.rings.fast_arith import prime_range
-from sage.arith.all import crt
-from sage.structure.sage_object import SageObject
+
+from sage.arith.misc import crt
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
+from sage.modular.arithgroup.all import GammaH
+from sage.modular.modform.constructor import ModularForms
+from sage.modular.modform.element import Newform
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.rings.fast_arith import prime_range
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.sage_object import SageObject
 
 from .liftings import lift_gen_to_gamma1, lift_ramified
+
 
 @cached_function
 def example_type_space(example_no = 0):

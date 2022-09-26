@@ -104,7 +104,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
         #  - Port features from MuPAD-Combinat, lib/DOMAINS/CATEGORIES/PermutationGroup.mu
         #  - Move here generic code from sage/groups/perm_gps/permgroup.py
 
-        def cycle_index(self, parent = None):
+        def cycle_index(self, parent=None):
             r"""
             Return the *cycle index* of ``self``.
 
@@ -274,14 +274,13 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: u = var('u')                                              # optional - sage.symbolic
                 sage: D8.profile_series(u).parent()                             # optional - sage.symbolic
                 Symbolic Ring
-
             """
             from sage.rings.integer_ring import ZZ
 
             if isinstance(variable, str):
                 variable = ZZ[variable].gen()
             cycle_poly = self.cycle_index()
-            return cycle_poly.expand(2).subs(x0 = 1, x1 = variable)
+            return cycle_poly.expand(2).subs(x0=1, x1=variable)
 
         profile_polynomial = profile_series
 

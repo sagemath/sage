@@ -1022,14 +1022,14 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # the elements of the Witt basis with respect to the powersum basis
             self._p_inverse_transition_matrices = {}
 
-            self   .register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain = self))
+            self.register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain=self))
             from sage.rings.rational_field import RationalField
             if self.base_ring().has_coerce_map_from(RationalField):
-                self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain = self._p))
+                self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
                 self._friendly = self._p
             else:
                 # self._w_to_p_on_basis is a partial map at best
-                self._p.register_conversion(self._module_morphism(self._w_to_p_on_basis, codomain = self._p))
+                self._p.register_conversion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
                 if (not self._coerce_e) and (not self._coerce_h):
                     # ensure that self has coercion at least to one other basis,
                     # or else coercion-based computations will fail
@@ -1054,8 +1054,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # cache for transition matrices which contain the coordinates of
             # the elements of the Witt basis with respect to the homogeneous basis
             self._h_inverse_transition_matrices = {}
-            self   .register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain = self))
-            self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain = self._h))
+            self.register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain=self))
+            self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain=self._h))
             if self._friendly is None:
                 self._friendly = self._h
 
@@ -1076,8 +1076,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # cache for transition matrices which contain the coordinates of
             # the elements of the Witt basis with respect to the elementary basis
             self._e_inverse_transition_matrices = {}
-            self   .register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain = self))
-            self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain = self._e))
+            self.register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain=self))
+            self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain=self._e))
             if self._friendly is None:
                 self._friendly = self._e
 
@@ -1337,7 +1337,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         w_coords_of_self = self.monomial_coefficients().items()
         from sage.combinat.partition import Partition
         dct = {Partition([i // n for i in lam]): coeff
-               for (lam, coeff) in w_coords_of_self
-               if all( i % n == 0 for i in lam )}
+               for lam, coeff in w_coords_of_self
+               if all(i % n == 0 for i in lam)}
         result_in_w_basis = parent._from_dict(dct)
-        return parent(result_in_w_basis)
+        return result_in_w_basis

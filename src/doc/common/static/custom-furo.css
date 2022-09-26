@@ -1,0 +1,13 @@
+span.sidebar-brand-text {
+  font-size: small;
+  text-align: center;
+}
+
+div.highlight {
+  background: #F4F4F4;
+}
+
+body[data-theme="dark"] div.highlight {
+  background: #383838;
+}
+

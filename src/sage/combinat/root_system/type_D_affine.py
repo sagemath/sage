@@ -60,7 +60,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O
             1   2   3   4   5
             D6~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 3, 1),
             (3, 2, 1), (3, 4, 1), (4, 3, 1), (4, 5, 1), (4, 6, 1), (5, 4, 1), (6, 4, 1)]
 
@@ -74,7 +74,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
                |
                O 0
            D4~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1),
             (1, 2, 1),
             (2, 0, 1),
@@ -93,7 +93,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
            O---O---O
            3   1   2
            D3~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1), (0, 3, 1), (1, 2, 1), (1, 3, 1), (2, 0, 1), (2, 1, 1), (3, 0, 1), (3, 1, 1)]
 
         """

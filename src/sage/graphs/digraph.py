@@ -350,7 +350,7 @@ class DiGraph(GenericGraph):
        directed edge from `i` to `j` if and only if `i` divides `j`::
 
             sage: g = DiGraph([[1..12], lambda i,j: i != j and i.divides(j)])
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
             sage: g.adjacency_matrix()
             [0 1 1 1 1 1 1 1 1 1 1 1]
@@ -447,26 +447,26 @@ class DiGraph(GenericGraph):
        the vertex attribute ``'name'``, if available::
 
            sage: g = igraph.Graph([(0,1),(0,2)], directed=True, vertex_attrs={'name':['a','b','c']})  # optional - python_igraph
-           sage: DiGraph(g).vertices()                                                                # optional - python_igraph
+           sage: DiGraph(g).vertices(sort=True)            # optional - python_igraph
            ['a', 'b', 'c']
            sage: g = igraph.Graph([(0,1),(0,2)], directed=True, vertex_attrs={'label':['a','b','c']}) # optional - python_igraph
-           sage: DiGraph(g).vertices()                                                                # optional - python_igraph
+           sage: DiGraph(g).vertices(sort=True)            # optional - python_igraph
            [0, 1, 2]
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
            sage: g = igraph.Graph([(0,1),(0,2)], directed=True, edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: DiGraph(g).edges()                                                                            # optional - python_igraph
+           sage: DiGraph(g).edges(sort=True)               # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
     TESTS::
 
-        sage: DiGraph({0:[1,2,3], 2:[4]}).edges()
+        sage: DiGraph({0:[1,2,3], 2:[4]}).edges(sort=True)
         [(0, 1, None), (0, 2, None), (0, 3, None), (2, 4, None)]
-        sage: DiGraph({0:(1,2,3), 2:(4,)}).edges()
+        sage: DiGraph({0:(1,2,3), 2:(4,)}).edges(sort=True)
         [(0, 1, None), (0, 2, None), (0, 3, None), (2, 4, None)]
-        sage: DiGraph({0:Set([1,2,3]), 2:Set([4])}).edges()
+        sage: DiGraph({0:Set([1,2,3]), 2:Set([4])}).edges(sort=True)
         [(0, 1, None), (0, 2, None), (0, 3, None), (2, 4, None)]
 
     Demonstrate that digraphs using the static backend are equal to mutable
@@ -503,7 +503,7 @@ class DiGraph(GenericGraph):
 
         sage: G = DiGraph([[1,2,3],[(1,2)]]); G
         Digraph on 3 vertices
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(1, 2, None)]
 
     Check that :trac:`27505` is fixed::
@@ -580,7 +580,7 @@ class DiGraph(GenericGraph):
         Building a DiGraph with ``immutable=False`` returns a mutable graph::
 
             sage: g = graphs.PetersenGraph()
-            sage: g = DiGraph(g.edges(), immutable=False)
+            sage: g = DiGraph(g.edges(sort=True), immutable=False)
             sage: g.add_edge("Hey", "Heyyyyyyy")
             sage: {g:1}[g]
             Traceback (most recent call last):
@@ -1025,9 +1025,9 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph({0: [1, 2], 1: [0]})
             sage: G = D.to_undirected()
-            sage: D.edges(labels=False)
+            sage: D.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (1, 0)]
-            sage: G.edges(labels=False)
+            sage: G.edges(sort=True, labels=False)
             [(0, 1), (0, 2)]
 
         TESTS:
@@ -1598,7 +1598,7 @@ class DiGraph(GenericGraph):
             sage: dcycle.feedback_edge_set(value_only=True)
             5
             sage: dcycle.allow_multiple_edges(True)
-            sage: dcycle.add_edges(dcycle.edges())
+            sage: dcycle.add_edges(dcycle.edges(sort=True))
             sage: dcycle.feedback_edge_set(value_only=True)
             10
             sage: dcycle.feedback_edge_set(value_only=True, constraint_generation=False)
@@ -1788,7 +1788,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(0, 1 ,2)])
             sage: D.reverse_edge(0, 1)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 0, 2)]
 
         If ``inplace`` is ``False``, ``self`` is not modified and a new digraph
@@ -1796,9 +1796,9 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(0, 1, 2)])
             sage: re = D.reverse_edge(0, 1, inplace=False)
-            sage: re.edges()
+            sage: re.edges(sort=True)
             [(1, 0, 2)]
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(0, 1, 2)]
 
         If ``multiedges`` is ``True``, ``self`` will be forced to allow parallel
@@ -1806,7 +1806,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)])
             sage: D.reverse_edge(1, 2, multiedges=True)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(2, 1, 'A'), (2, 1, 'A'), (2, 3, None)]
             sage: D.allows_multiple_edges()
             True
@@ -1816,7 +1816,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph( [(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)] )
             sage: D.reverse_edge(2, 3, multiedges=True)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'A'), (2, 1, 'A'), (3, 2, None)]
             sage: D.allows_multiple_edges()
             False
@@ -1825,20 +1825,20 @@ class DiGraph(GenericGraph):
         allow parallel edges and a parallel edge will get deleted::
 
             sage: D = DiGraph( [(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)] )
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)]
             sage: D.reverse_edge(1, 2, multiedges=False)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(2, 1, 'A'), (2, 3, None)]
 
         Note that in the following graph, specifying ``multiedges = False`` will
         result in overwriting the label of `(1, 2)` with the label of `(2, 1)`::
 
             sage: D = DiGraph( [(1, 2, 'B'), (2, 1, 'A'), (2, 3, None)] )
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'B'), (2, 1, 'A'), (2, 3, None)]
             sage: D.reverse_edge(2, 1, multiedges=False)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'A'), (2, 3, None)]
 
         If input edge in digraph has weight/label, then the weight/label should
@@ -1847,10 +1847,10 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([[0, 1, 2], [1, 2, 1]], weighted=True)
             sage: D.reverse_edge(0, 1)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 0, 2), (1, 2, 1)]
             sage: re = D.reverse_edge([1, 2], inplace=False)
-            sage: re.edges()
+            sage: re.edges(sort=True)
             [(1, 0, 2), (2, 1, 1)]
 
         If ``self`` has multiple copies (parallel edges) of the input edge, only
@@ -1858,7 +1858,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(0, 1, '01'), (0, 1, '01'), (0, 1, 'cat'), (1, 2, '12')], weighted=True, multiedges=True)
             sage: re = D.reverse_edge([0, 1, '01'], inplace=False)
-            sage: re.edges()
+            sage: re.edges(sort=True)
             [(0, 1, '01'), (0, 1, 'cat'), (1, 0, '01'), (1, 2, '12')]
 
         If ``self`` has multiple copies (parallel edges) of the input edge but
@@ -1870,7 +1870,7 @@ class DiGraph(GenericGraph):
             sage: D.edge_label(0, 1)
             ['cat', 'mouse', 'B', 'A']
             sage: D.reverse_edge(0, 1)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(0, 1, 'A'), (0, 1, 'B'), (0, 1, 'mouse'), (1, 0, 'cat')]
 
         Finally, an exception is raised when Sage does not know how to choose
@@ -1889,10 +1889,10 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph()
             sage: D.add_edge((1, 2), label='label')
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'label')]
             sage: D.reverse_edge((1, 2), label='label')
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(2, 1, 'label')]
             sage: D.add_edge((1, 2), 'label')
             sage: D.edges(sort=False)
@@ -1992,7 +1992,7 @@ class DiGraph(GenericGraph):
             sage: D = DiGraph({ 0: [1, 1, 3], 2: [3, 3], 4: [1, 5]}, multiedges=true)
             sage: D.reverse_edges([[0, 1], [0, 3]])
             sage: D.reverse_edges([(2, 3), (4, 5)])
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(0, 1, None), (1, 0, None), (2, 3, None), (3, 0, None),
              (3, 2, None), (4, 1, None), (5, 4, None)]
 
@@ -2003,9 +2003,9 @@ class DiGraph(GenericGraph):
             sage: re = D.reverse_edges([(0, 1), (1, 2)],
             ....:                       inplace=False,
             ....:                       multiedges=True)
-            sage: re.edges()
+            sage: re.edges(sort=True)
             [(1, 0, 'A'), (1, 0, 'B'), (2, 1, 'C')]
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(0, 1, 'A'), (1, 0, 'B'), (1, 2, 'C')]
             sage: D.allows_multiple_edges()
             False
@@ -2017,7 +2017,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)])
             sage: D.reverse_edges([(1, 2), (2, 3)], multiedges=True)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(2, 1, 'A'), (2, 1, 'A'), (3, 2, None)]
             sage: D.allows_multiple_edges()
             True
@@ -2027,7 +2027,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(1, 2, 'A'), (2, 1, 'A'), (2, 3, None)])
             sage: D.reverse_edges([(2, 3)], multiedges=True)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 'A'), (2, 1, 'A'), (3, 2, None)]
             sage: D.allows_multiple_edges()
             False
@@ -2036,10 +2036,10 @@ class DiGraph(GenericGraph):
         parallel edges and an edge will get deleted::
 
             sage: D = DiGraph([(1, 2), (2, 1)])
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, None), (2, 1, None)]
             sage: D.reverse_edges([(1, 2)], multiedges=False)
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(2, 1, None)]
 
         If input edge in digraph has weight/label, then the weight/label should
@@ -2048,19 +2048,19 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph([(0, 1, '01'), (1, 2, 1), (2, 3, '23')], weighted=True)
             sage: D.reverse_edges([(0, 1, '01'), (1, 2), (2, 3)])
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 0, '01'), (2, 1, 1), (3, 2, '23')]
 
         TESTS::
 
             sage: D = digraphs.Circuit(6)
-            sage: D.reverse_edges(D.edges(), inplace=False).edges()
+            sage: D.reverse_edges(D.edges(sort=True), inplace=False).edges(sort=True)
             [(0, 5, None), (1, 0, None), (2, 1, None),
              (3, 2, None), (4, 3, None), (5, 4, None)]
 
             sage: D = digraphs.Kautz(2, 3)
-            sage: Dr = D.reverse_edges(D.edges(), inplace=False, multiedges=True)
-            sage: Dr.edges() == D.reverse().edges()
+            sage: Dr = D.reverse_edges(D.edges(sort=True), inplace=False, multiedges=True)
+            sage: Dr.edges(sort=True) == D.reverse().edges(sort=True)
             True
         """
         tempG = self if inplace else copy(self)
@@ -2148,7 +2148,7 @@ class DiGraph(GenericGraph):
             sage: G = graphs.KrackhardtKiteGraph().to_directed()
             sage: G.eccentricity()
             [4, 4, 4, 4, 4, 3, 3, 2, 3, 4]
-            sage: G.vertices()
+            sage: G.vertices(sort=True)
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             sage: G.eccentricity(7)
             2
@@ -3129,7 +3129,7 @@ class DiGraph(GenericGraph):
 
             sage: s = list(D.topological_sort(implementation="NetworkX")); s # random
             [0, 4, 1, 3, 2, 5, 6, 9, 7, 8, 10]
-            sage: all(s.index(u) < s.index(v) for u, v in D.edges(labels=False))
+            sage: all(s.index(u) < s.index(v) for u, v in D.edges(sort=False, labels=False))
             True
 
         ::
@@ -3530,7 +3530,7 @@ class DiGraph(GenericGraph):
         number of edges of the digraph ``self``. The `k`-th coordinate of a
         point in the polytope is the real assigned to the `k`-th edge of
         ``self``. The order of the edges is the one returned by
-        ``self.edges()``. If a different order is desired, it can be specified
+        ``self.edges(sort=True)``. If a different order is desired, it can be specified
         using the optional ``edges`` parameter.
 
         The faces and volume of these polytopes are of interest. Examples of
@@ -3541,7 +3541,7 @@ class DiGraph(GenericGraph):
 
         - ``edges`` -- list (default: ``None``); a list of edges of ``self``. If
           not specified, the list of all edges of ``self`` is used with the
-          default ordering of ``self.edges()``. This determines which coordinate
+          default ordering of ``self.edges(sort=True)``. This determines which coordinate
           of a point in the polytope will correspond to which edge of
           ``self``. It is also possible to specify a list which contains not all
           edges of ``self``; this results in a polytope corresponding to the

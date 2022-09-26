@@ -126,9 +126,9 @@ class HyperplaneArrangementLibrary():
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(4)
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
-            sage: G.edges(labels=False)
+            sage: G.edges(sort=True, labels=False)
             [(0, 1), (0, 3), (1, 2), (2, 3)]
             sage: A = {0:{1:1, 3:2}, 1:{0:3, 2:0}, 2:{1:2, 3:1}, 3:{2:0, 0:2}}
             sage: HA = hyperplane_arrangements.bigraphical(G, A)
@@ -152,9 +152,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G)}
+        for u, v in G.edge_iterator(labels=False, sort_vertices=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append( x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
@@ -264,9 +265,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j] - 1)
             hyperplanes.append(x[i] - x[j] + 1)
         return H(*hyperplanes)
@@ -303,9 +305,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
             hyperplanes.append(x[i] - x[j] - 1)
         return H(*hyperplanes)
@@ -351,9 +354,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
         A = H(*hyperplanes)
         charpoly = G.chromatic_polynomial()

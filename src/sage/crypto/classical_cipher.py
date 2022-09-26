@@ -1,18 +1,17 @@
 """
 Classical Ciphers
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 from sage.modules.free_module import FreeModule
+
 
 class AffineCipher(SymmetricKeyCipher):
     r"""
@@ -574,7 +573,3 @@ class VigenereCipher(SymmetricKeyCipher):
         E = self.parent()
         K = E.inverse_key(self.key())
         return E(K)
-
-
-
-

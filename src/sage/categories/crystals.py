@@ -19,6 +19,7 @@ Catch warnings produced by :func:`check_tkz_graph`::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
+import collections.abc
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
@@ -779,10 +780,10 @@ class Crystals(Category_singleton):
             if codomain is None:
                 if hasattr(on_gens, 'codomain'):
                     codomain = on_gens.codomain()
-                elif isinstance(on_gens, (list, tuple)):
+                elif isinstance(on_gens, collections.abc.Sequence):
                     if on_gens:
                         codomain = on_gens[0].parent()
-                elif isinstance(on_gens, dict):
+                elif isinstance(on_gens, collections.abc.Mapping):
                     if on_gens:
                         codomain = next(iter(on_gens.values())).parent()
                 else:
@@ -847,7 +848,7 @@ class Crystals(Category_singleton):
                 sage: S = T.subcrystal(max_depth=3)
                 sage: G = T.digraph(subset=S); G
                 Digraph on 5 vertices
-                sage: sorted(G.vertices(), key=str)
+                sage: G.vertices(sort=True, key=str)
                 [(-Lambda[0] + 2*Lambda[1] - delta,),
                  (1/2*Lambda[0] + Lambda[1] - Lambda[2] - 1/2*delta, -1/2*Lambda[0] + Lambda[1] - 1/2*delta),
                  (1/2*Lambda[0] - Lambda[1] + Lambda[2] - 1/2*delta, -1/2*Lambda[0] + Lambda[1] - 1/2*delta),
@@ -870,7 +871,7 @@ class Crystals(Category_singleton):
 
                 sage: C = crystals.KirillovReshetikhin(['D',4,1], 2, 1)
                 sage: G = C.digraph(index_set=[1,3])
-                sage: len(G.edges())
+                sage: len(G.edges(sort=False))
                 20
                 sage: view(G)  # optional - dot2tex graphviz, not tested (opens external window)
 
@@ -1515,9 +1516,10 @@ class Crystals(Category_singleton):
                     b = b.e(i)
             return b
 
-        def is_highest_weight(self, index_set = None):
+        def is_highest_weight(self, index_set=None):
             r"""
-            Returns ``True`` if ``self`` is a highest weight.
+            Return ``True`` if ``self`` is a highest weight.
+
             Specifying the option ``index_set`` to be a subset `I` of the
             index set of the underlying crystal, finds all highest
             weight vectors for arrows in `I`.
@@ -1536,7 +1538,7 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.e(i) is None for i in index_set)
 
-        def is_lowest_weight(self, index_set = None):
+        def is_lowest_weight(self, index_set=None):
             r"""
             Returns ``True`` if ``self`` is a lowest weight.
             Specifying the option ``index_set`` to be a subset `I` of the
@@ -1557,7 +1559,7 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.f(i) is None for i in index_set)
 
-        def to_highest_weight(self, index_set = None):
+        def to_highest_weight(self, index_set=None):
             r"""
             Return the highest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
@@ -1582,21 +1584,21 @@ class Crystals(Category_singleton):
                 sage: t.to_highest_weight()
                 Traceback (most recent call last):
                 ...
-                ValueError: This is not a highest weight crystals!
+                ValueError: this is not a highest weight crystal
             """
             from sage.categories.highest_weight_crystals import HighestWeightCrystals
             if index_set is None:
                 if HighestWeightCrystals() not in self.parent().categories():
-                    raise ValueError("This is not a highest weight crystals!")
+                    raise ValueError("this is not a highest weight crystal")
                 index_set = self.index_set()
             for i in index_set:
                 next = self.e(i)
                 if next is not None:
-                    hw = next.to_highest_weight(index_set = index_set)
+                    hw = next.to_highest_weight(index_set=index_set)
                     return [hw[0], [i] + hw[1]]
             return [self, []]
 
-        def to_lowest_weight(self, index_set = None):
+        def to_lowest_weight(self, index_set=None):
             r"""
             Return the lowest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
@@ -1623,17 +1625,17 @@ class Crystals(Category_singleton):
                 sage: t.to_lowest_weight()
                 Traceback (most recent call last):
                 ...
-                ValueError: This is not a highest weight crystals!
+                ValueError: this is not a highest weight crystal
             """
             from sage.categories.highest_weight_crystals import HighestWeightCrystals
             if index_set is None:
                 if HighestWeightCrystals() not in self.parent().categories():
-                    raise ValueError("This is not a highest weight crystals!")
+                    raise ValueError("this is not a highest weight crystal")
                 index_set = self.index_set()
             for i in index_set:
                 next = self.f(i)
                 if next is not None:
-                    lw = next.to_lowest_weight(index_set = index_set)
+                    lw = next.to_lowest_weight(index_set=index_set)
                     return [lw[0], [i] + lw[1]]
             return [self, []]
 
@@ -1844,7 +1846,7 @@ class CrystalMorphism(Morphism):
             scaling_factors = {i: 1 for i in index_set}
         if virtualization is None:
             virtualization = {i: (i,) for i in index_set}
-        elif not isinstance(virtualization, dict):
+        elif not isinstance(virtualization, collections.abc.Mapping):
             try:
                 virtualization = dict(virtualization)
             except (TypeError, ValueError):
@@ -2056,16 +2058,16 @@ class CrystalMorphismByGenerators(CrystalMorphism):
                                  virtualization, scaling_factors)
 
         if gens is None:
-            if isinstance(on_gens, dict):
+            if isinstance(on_gens, collections.abc.Mapping):
                 gens = on_gens.keys()
             else:
                 gens = parent.domain().module_generators
         self._gens = tuple(gens)
 
         # Make sure on_gens is a function
-        if isinstance(on_gens, dict):
+        if isinstance(on_gens, collections.abc.Mapping):
             f = lambda x: on_gens[x]
-        elif isinstance(on_gens, (list, tuple)):
+        elif isinstance(on_gens, collections.abc.Sequence):
             if len(self._gens) != len(on_gens):
                 raise ValueError("invalid generator images")
             d = {x: y for x, y in zip(self._gens, on_gens)}
@@ -2578,7 +2580,7 @@ class CrystalHomset(Homset):
         if automorphism is not None:
             if virtualization is not None:
                 raise ValueError("the automorphism and virtualization cannot both be specified")
-            if not isinstance(automorphism, dict):
+            if not isinstance(automorphism, collections.abc.Mapping):
                 try:
                     automorphism = dict(automorphism)
                     virtualization = {i: (automorphism[i],) for i in automorphism}

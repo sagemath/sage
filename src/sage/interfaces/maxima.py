@@ -566,14 +566,14 @@ class Maxima(MaximaAbstract, Expect):
 
         MaximaAbstract.__init__(self,"maxima")
         Expect.__init__(self,
-                        name = 'maxima',
-                        prompt = r'\(\%i[0-9]+\) ',
-                        command = '{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        init_code = init_code,
-                        logfile = logfile,
+                        name='maxima',
+                        prompt=r'\(\%i[0-9]+\) ',
+                        command='{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        init_code=init_code,
+                        logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
         # Must match what is in the file sage-maxima.lisp
         self._display_prompt = '<sage-display>'
@@ -1253,8 +1253,8 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
 
 
 # An instance
-maxima = Maxima(init_code = ['display2d : false',
-                'domain : complex', 'keepfloat : true'],
+maxima = Maxima(init_code=['display2d : false',
+                           'domain : complex', 'keepfloat : true'],
                 script_subdirectory=None)
 
 

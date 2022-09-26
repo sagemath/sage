@@ -8684,7 +8684,7 @@ class FiniteStateMachine(SageObject):
         DG = self.digraph()
         condensation = DG.strongly_connected_components_digraph()
         return [self.induced_sub_finite_state_machine([self.state(_) for _ in component])
-                for component in condensation.vertices()
+                for component in condensation.vertices(sort=True)
                 if condensation.out_degree(component) == 0]
 
 

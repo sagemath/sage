@@ -576,7 +576,7 @@ http://fricas.sourceforge.net.
         from sage.functions.hyperbolic import tanh, sinh, cosh, coth, sech, csch
         from sage.functions.other import abs
         from sage.functions.gamma import gamma
-        from sage.functions.special import elliptic_e
+        from sage.functions.special import elliptic_e, elliptic_f
         from sage.misc.functional import symbolic_sum, symbolic_prod
         from sage.rings.infinity import infinity
         register_symbol(pi, {'fricas': 'pi'}, 0)  # %pi::INFORM is %pi, but (pi) also exists
@@ -598,6 +598,7 @@ http://fricas.sourceforge.net.
         register_symbol(gamma, {'fricas': 'Gamma'}, 1)
         register_symbol(gamma, {'fricas': 'Gamma'}, 2)
         register_symbol(lambda x, y: elliptic_e(asin(x), y), {'fricas': 'ellipticE'}, 2)
+        register_symbol(lambda x, y: elliptic_f(asin(x), y), {'fricas': 'ellipticF'}, 2)
         register_symbol(lambda x, y: x + y, {'fricas': '+'}, 2)
         register_symbol(lambda x, y: x - y, {'fricas': '-'}, 2)
         register_symbol(lambda x, y: x * y, {'fricas': '*'}, 2)
@@ -1092,7 +1093,7 @@ class FriCASElement(ExpectElement):
                 raise
             else:
                 n += l
-                if not(0 <= n < l):
+                if not (0 <= n < l):
                     raise IndexError("index out of range")
         # use "elt" instead of "." here because then the error
         # message is clearer

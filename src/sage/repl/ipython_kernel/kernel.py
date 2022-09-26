@@ -48,7 +48,7 @@ class SageKernel(IPythonKernel):
             sage: SageKernel.__new__(SageKernel)
             <sage.repl.ipython_kernel.kernel.SageKernel object at 0x...>
         """
-        super(SageKernel, self).__init__(**kwds)
+        super().__init__(**kwds)
         SageJupyterCustomizations(self.shell)
 
     @property

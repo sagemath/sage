@@ -135,16 +135,15 @@ def normalize_args_e(degree, ring, e):
     return ZZ(e)
 
 
-
-
 ###############################################################################
 # Orthogonal Group: common Code for both GO and SO
 ###############################################################################
 
 def _OG(n, R, special, e=0, var='a', invariant_form=None):
     r"""
-    This function is commonly used by the functions GO and SO to avoid uneccessarily
-    duplicated code. For documentation and examples see the individual functions.
+    This function is commonly used by the functions GO and SO to avoid
+    unnecessarily duplicated code. For documentation and examples see
+    the individual functions.
 
     TESTS:
 

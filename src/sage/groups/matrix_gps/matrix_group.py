@@ -541,7 +541,7 @@ class MatrixGroup_generic(MatrixGroup_base):
         except (AttributeError, NotImplementedError):
             return richcmp(id(self), id(other), op)
 
-        assert(n_self == n_other)
+        assert n_self == n_other
         for g, h in zip(self_gens, other_gens):
             lx = g.matrix()
             rx = h.matrix()

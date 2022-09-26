@@ -429,8 +429,8 @@ given above, we would get an error message similar to the following::
 
     mod(m^e, n)
     Traceback (most recent call last)
-    /home/mvngu/<ipython console> in <module>()
-    /home/mvngu/usr/bin/sage-3.1.4/local/lib/python2.5/site-packages/sage/rings/integer.so
+    ...<ipython console> in <module>()
+    .../sage/rings/integer.so
     in sage.rings.integer.Integer.__pow__ (sage/rings/integer.c:9650)()
     RuntimeError: exponent must be at most 2147483647
 

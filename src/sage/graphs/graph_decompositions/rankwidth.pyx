@@ -66,7 +66,7 @@ from the smaller of the two and its complement.
     sage: tree.has_edge(u,v)
     True
     sage: m = min(u,v)
-    sage: bipartition = (m, Set(g.vertices()) - m)
+    sage: bipartition = (m, Set(g.vertices(sort=False)) - m)
     sage: bipartition
     ({8, 9}, {0, 1, 2, 3, 4, 5, 6, 7})
 

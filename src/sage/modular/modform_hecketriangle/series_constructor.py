@@ -20,16 +20,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
-from sage.rings.all import PowerSeriesRing
+from sage.arith.misc import bernoulli, sigma, rising_factorial
+from sage.misc.cachefunc import cached_method
 from sage.rings.big_oh import O
-from sage.arith.all import bernoulli, sigma, rising_factorial
-
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
 
 from .hecke_triangle_groups import HeckeTriangleGroup
 

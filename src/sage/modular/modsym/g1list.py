@@ -18,7 +18,8 @@ List of coset representatives for `\Gamma_1(N)` in `\SL_2(\ZZ)`
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.arith.all import GCD
+
+from sage.arith.misc import GCD
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 from sage.misc.persist import register_unpickle_override

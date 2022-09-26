@@ -105,11 +105,11 @@ similarity classes of `k`-tuples of `n\times n` matrices with entries in
     sage: simultaneous_similarity_classes(3, 2)
     q^10 + q^8 + 2*q^7 + 2*q^6 + 2*q^5 + q^4
 
-Similarity class types can be used to calculate the coefficients of generating
+Similarity class types can be used to compute the coefficients of generating
 functions coming from the cycle index type techniques of Kung and Stong (see
 Morrison [Morrison06]_).
 
-They can also be used to caclulate the number of invariant subspaces for a matrix
+They can also be used to compute the number of invariant subspaces for a matrix
 over a finite field of any given dimension. For this we use the elegant recursive
 formula of Ramaré [R17]_ (see also [PR22]_).
 
@@ -353,9 +353,10 @@ def centralizer_group_cardinality(la, q=None):
         q = ZZ['q'].gen()
     return q**centralizer_algebra_dim(la)*prod([fq(m, q=q) for m in la.to_exp()])
 
+
 def invariant_subspace_generating_function(la, q=None, t=None):
     """
-    Return the invariant subpace generating function of a nilpotent matrix with
+    Return the invariant subspace generating function of a nilpotent matrix with
     Jordan block sizes given by ``la``.
 
     INPUT:

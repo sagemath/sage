@@ -349,7 +349,7 @@ class Test:
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_spanning_trees() #random
         """
-        from sage.all import prod
+        from sage.misc.misc_c import prod
         from .all import SL2Z
         from .arithgroup_perm import S2m, S3m, Lm
 

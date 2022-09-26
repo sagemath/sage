@@ -371,8 +371,9 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         d = self.dependence_graph()
         h = d.copy()
 
-        for e1 in d.edges():
-            for e2 in d.edges():
+        d_edges = d.edges(sort=False)
+        for e1 in d_edges:
+            for e2 in d_edges:
                 if e1[1] == e2[0]:
                     h.delete_edge((e1[0], e2[1]))
 

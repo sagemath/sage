@@ -1,7 +1,7 @@
 r"""
 Tutorial: Using free modules and vector spaces
 
-.. MODULEAUTHOR:: Jason Bandlow
+AUTHOR: Jason Bandlow
 
 In this tutorial, we show how to construct and manipulate free modules
 and vector spaces and their elements.
@@ -162,7 +162,7 @@ Let us investigate those definitions on our example::
     (2, 3)
 
     sage: f.support()
-    [0, 1, 2]
+    SupportView({0: 2, 1: 2, 2: 3})
     sage: f.monomials()
     [a[0], a[1], a[2]]
     sage: f.coefficients()

@@ -5,7 +5,7 @@ Description
 -----------
 
 A software package for algebraic, geometric and combinatorial problems
-on linear spaces. Available at www.4ti2.de.
+on linear spaces. Available at https://4ti2.github.io/.
 
 License
 -------

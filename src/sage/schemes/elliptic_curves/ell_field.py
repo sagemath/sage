@@ -1090,6 +1090,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           Kohel's algorithm is currently only implemented for cyclic
           isogenies, with the exception of `[2]`.
 
+        - √élu Algorithm (see
+          :mod:`~sage.schemes.elliptic_curves.hom_velusqrt`):
+          A variant of Vélu's formulas with essentially square-root
+          instead of linear complexity (in the degree). Currently only
+          available over finite fields. The input must be a single
+          kernel point of odd order `\geq 5`.
+          This algorithm is selected using ``algorithm="velusqrt"``.
+
         - Factored Isogenies (*experimental* --- see
           :mod:`~sage.schemes.elliptic_curves.hom_composite`):
           Given a list of points which generate a composite-order
@@ -1131,20 +1139,35 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             over a number field, then the codomain is a global minimal
             model where this exists.
 
+          - ``"short_weierstrass"``: The codomain is a short Weierstrass curve,
+            assuming one exists.
+
           - ``"montgomery"``: The codomain is an (untwisted) Montgomery
             curve, assuming one exists over this field.
 
         - ``check`` (default: ``True``) -- check whether the input is valid.
           Setting this to ``False`` can lead to significant speedups.
 
-        - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
-          passed, decompose the isogeny into prime-degree steps.
-          The ``degree`` parameter is not supported by
-          ``algorithm="factored"``.
+        - ``algorithm`` -- string (optional). By default (when ``algorithm``
+          is omitted), the "traditional" implementation
+          :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
+          is used. The other choices are:
+
+          - ``"velusqrt"``: Use
+            :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`.
+
+          - ``"factored"``: Use
+            :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
+            to decompose the isogeny into prime-degree steps.
+
+          The ``degree`` parameter is not supported when an ``algorithm``
+          is specified.
 
         OUTPUT:
 
         An isogeny between elliptic curves. This is a morphism of curves.
+        (In all cases, the returned object will be an instance of
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`.)
 
         EXAMPLES::
 
@@ -1221,9 +1244,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: phi.codomain()._order
             170141183460469231746191640949390434666
         """
+        if algorithm is not None and degree is not None:
+            raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
+        if algorithm == "velusqrt":
+            from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
         if algorithm == "factored":
-            if degree is not None:
-                raise TypeError('algorithm="factored" does not support the "degree" parameter')
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model)
         try:
@@ -1661,12 +1687,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True)
             sage: G
             Graph on 20 vertices
-            sage: G.vertices()
+            sage: G.vertices(sort=True)
             ['1',
              '12',
              ...
              'i + 55']
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [('1', '28*i + 11', None),
              ('1', '31*i + 11', None),
              ...
@@ -1678,12 +1704,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True)
             sage: G3
             Graph on 27 vertices
-            sage: G3.vertices()
+            sage: G3.vertices(sort=True)
             ['0',
              '0*',
              ...
              '98*']
-            sage: G3.edges()
+            sage: G3.edges(sort=True)
             [('0', '0*', None),
              ('0', '13', None),
              ...
@@ -1691,9 +1717,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True)
              sage: G5
              Graph on 9 vertices
-             sage: G5.vertices()
+             sage: G5.vertices(sort=True)
              ['13', '13*', '407', '407*', '52', '62', '62*', '98', '98*']
-             sage: G5.edges()
+             sage: G5.edges(sort=True)
              [('13', '52', None),
               ('13', '98', None),
               ...
@@ -1708,12 +1734,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True)
             sage: G
             Looped multi-digraph on 37 vertices
-            sage: G.vertices()
+            sage: G.vertices(sort=True)
             ['0',
              '102',
              ...
              '87*i + 190']
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [('0', '125', None),
              ('0', '125', None),
              ...
@@ -1721,12 +1747,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True)
             sage: H
             Looped multi-graph on 37 vertices
-            sage: H.vertices()
+            sage: H.vertices(sort=True)
             ['0',
              '102',
              ...
              '87*i + 190']
-            sage: H.edges()
+            sage: H.edges(sort=True)
             [('0', '125', None),
              ('102', '125', None),
              ...
@@ -1737,12 +1763,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<e> = NumberField(x^2 - 2)
             sage: E = EllipticCurve(K, [1,0,1,4, -6])
             sage: G2 = E.isogeny_ell_graph(2, directed=False)
-            sage: G2.vertices()
+            sage: G2.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
              'y^2 + x*y + y = x^3 + (-36)*x + (-70)',
              'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G2.edges()
+            sage: G2.edges(sort=True)
             [('y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
              'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
@@ -1750,11 +1776,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
             sage: G3 = E.isogeny_ell_graph(3, directed=False)
-            sage: G3.vertices()
+            sage: G3.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-1)*x',
              'y^2 + x*y + y = x^3 + (-171)*x + (-874)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G3.edges()
+            sage: G3.edges(sort=True)
             [('y^2 + x*y + y = x^3 + (-1)*x',
              'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
              ('y^2 + x*y + y = x^3 + (-171)*x + (-874)',
@@ -1770,19 +1796,19 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G1.is_directed()
             True
             sage: G2 = E.isogeny_ell_graph(2, label_by_j=False)
-            sage: G2.vertices()
+            sage: G2.vertices(sort=True)
             ['y^2 = x^3 + 1',
              'y^2 = x^3 + 2',
              'y^2 = x^3 + 5*x',
              'y^2 = x^3 + 7*x']
             sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)
-            sage: G3.vertices()
+            sage: G3.vertices(sort=True)
             ['0', '0*', '1', '1*']
         """
 
         from warnings import warn
         from sage.graphs.graph import DiGraph, Graph
-        from sage.matrix.all import Matrix
+        from sage.matrix.constructor import Matrix
 
         # warn users if things are getting big
         if l == 2:
@@ -1859,6 +1885,10 @@ def compute_model(E, name):
         For this choice, ``E`` must be defined over a number field.
         See :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.global_minimal_model`.
 
+      - ``"short_weierstrass"``: Return a short Weierstrass model of ``E``
+        assuming one exists.
+        See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.short_weierstrass_model`.
+
       - ``"montgomery"``: Return an (untwisted) Montgomery model of ``E``
         assuming one exists over this field.
         See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.montgomery_model`.
@@ -1873,6 +1903,8 @@ def compute_model(E, name):
         sage: E = EllipticCurve([12/7, 405/49, 0, -81/8, 135/64])
         sage: compute_model(E, 'minimal')
         Elliptic Curve defined by y^2 = x^3 - x^2 - 7*x + 10 over Rational Field
+        sage: compute_model(E, 'short_weierstrass')
+        Elliptic Curve defined by y^2 = x^3 - 48114*x + 4035015 over Rational Field
         sage: compute_model(E, 'montgomery')
         Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Rational Field
     """
@@ -1884,6 +1916,9 @@ def compute_model(E, name):
         if not is_NumberField(E.base_field()):
             raise ValueError('can only compute minimal model for curves over number fields')
         return E.global_minimal_model(semi_global=True)
+
+    if name == 'short_weierstrass':
+        return E.short_weierstrass_model()
 
     if name == 'montgomery':
         return E.montgomery_model()

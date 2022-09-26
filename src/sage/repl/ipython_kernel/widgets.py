@@ -118,7 +118,7 @@ class TransformWidget():
             <... 'dict'>
         """
         self.__transform = kwds.pop("transform", None)
-        return super(TransformWidget, self).__init__(*args, **kwds)
+        return super().__init__(*args, **kwds)
 
     def get_value(self):
         """
@@ -412,7 +412,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
         """
         if nrows < 1 or ncols < 1:
             raise ValueError("Grid requires a positive number of rows and columns")
-        super(Grid, self).__init__(transform=transform)
+        super().__init__(transform=transform)
 
         label = Label(description)
         link((label, "value"), (self, "description"))

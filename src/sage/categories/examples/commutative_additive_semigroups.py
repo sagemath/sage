@@ -81,10 +81,9 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(M).run()
-
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = CommutativeAdditiveSemigroups())
+        Parent.__init__(self, category=CommutativeAdditiveSemigroups())
 
     def _repr_(self):
         r"""

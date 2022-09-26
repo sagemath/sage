@@ -1,5 +1,4 @@
 # Packages needed for ./bootstrap
-gettext-tools
 autoconf
 automake
 libtool

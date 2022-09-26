@@ -76,19 +76,19 @@ jobs:
         # For doctesting, we use a lower parallelization to avoid timeouts.
         run: |
           case "${{ matrix.stage }}" in
-            1)               export TARGETS_PRE="all-sage-local" TARGETS="all-sage-local" TARGETS_OPTIONAL=""
+            1)               export TARGETS_PRE="all-sage-local" TARGETS="all-sage-local" TARGETS_OPTIONAL="build/make/Makefile"
                              ;;
             2)               export TARGETS_PRE="all-sage-local" TARGETS="build doc-html" TARGETS_OPTIONAL="ptest"
                              ;;
             2-optional*)     export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
                              targets_pattern="${{ matrix.stage }}"
                              targets_pattern="${targets_pattern#2-optional-}"
-                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && (for a in spkg-install.in spkg-install requirements.txt; do sage-package list :optional: --has-file $a --no-file huge --no-file has_nonfree_dependencies; done) | grep -v ^_ | grep -v sagemath_doc | grep "^[$targets_pattern]" ) )
+                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file 'spkg-install.in|spkg-install|requirements.txt' --no-file huge|has_nonfree_dependencies |  grep -v sagemath_doc | grep "^[$targets_pattern]" ) )
                              ;;
             2-experimental*) export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
                              targets_pattern="${{ matrix.stage }}"
                              targets_pattern="${targets_pattern#2-experimental-}"
-                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && (for a in spkg-install.in spkg-install requirements.txt; do sage-package list :experimental: --has-file $a --no-file huge --no-file has_nonfree_dependencies; done) | grep -v ^_ | grep -v sagemath_doc | grep "^[$targets_pattern]" ) )
+                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file 'spkg-install.in|spkg-install|requirements.txt' --no-file huge|has_nonfree_dependencies |  grep -v sagemath_doc | grep "^[$targets_pattern]" ) )
                              ;;
           esac
           MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS

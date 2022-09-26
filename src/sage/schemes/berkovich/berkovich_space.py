@@ -647,11 +647,11 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             ideal = None
             self._base_type = 'padic field'
         if base.dimension_relative() != 1:
-            raise ValueError("base of projective Berkovich space must be " + \
+            raise ValueError("base of projective Berkovich space must be "
                 "projective space of dimension 1 over Qp or a number field")
         self._p = prime
         self._ideal = ideal
-        Parent.__init__(self, base = base, category=TopologicalSpaces())
+        Parent.__init__(self, base=base, category=TopologicalSpaces())
 
     def base_ring(self):
         r"""

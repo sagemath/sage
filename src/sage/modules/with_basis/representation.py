@@ -276,7 +276,7 @@ class Representation(Representation_abstract):
             sage: G = CyclicPermutationGroup(3)
             sage: M = algebras.Exterior(QQ, 'x', 3)
             sage: from sage.modules.with_basis.representation import Representation
-            sage: on_basis = lambda g,m: M.prod([M.monomial((g(j+1)-1,)) for j in m]) #cyclically permute generators
+            sage: on_basis = lambda g,m: M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m]) #cyclically permute generators
             sage: from sage.categories.algebras import Algebras
             sage: R = Representation(G, M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
             sage: r = R.an_element(); r
@@ -451,9 +451,9 @@ class Representation(Representation_abstract):
             ...
             TypeError: unsupported operand parent(s) for *:
              'Representation of The Klein 4 group of order 4, as a permutation
-             group indexed by Subsets of {0, 1, 2, 3} over Rational Field' and
+             group indexed by Subsets of {0,1,...,3} over Rational Field' and
              'Representation of The Klein 4 group of order 4, as a permutation
-             group indexed by Subsets of {0, 1, 2, 3} over Rational Field'
+             group indexed by Subsets of {0,1,...,3} over Rational Field'
 
             sage: from sage.categories.algebras import Algebras
             sage: category = Algebras(QQ).FiniteDimensional().WithBasis()

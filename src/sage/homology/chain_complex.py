@@ -1154,7 +1154,7 @@ class ChainComplex_class(Parent):
             # one has to complete the answer of chomp
             result = H
             for idx in self.nonzero_degrees():
-                if not(idx in H):
+                if idx not in H:
                     result[idx] = HomologyGroup(0, base_ring)
             return result
         if deg in H:
@@ -2238,4 +2238,3 @@ class ChainComplex_class(Parent):
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.homology.chain_complex', 'ChainComplex', ChainComplex_class)
-

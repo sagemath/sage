@@ -421,7 +421,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: polymake(RDF)    #optional - polymake # indirect doctest
+            sage: polymake(RDF)    #optional - jupymake # indirect doctest
             Float
         """
         return '"Float"'

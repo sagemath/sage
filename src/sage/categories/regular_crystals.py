@@ -93,7 +93,7 @@ class RegularCrystals(Category_singleton):
         """
         return [Crystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Returns an example of highest weight crystals, as per
         :meth:`Category.example`.
@@ -249,10 +249,10 @@ class RegularCrystals(Category_singleton):
                 sage: K = crystals.KirillovReshetikhin(['A',1,1], 1, 2)
                 sage: mg = K.module_generator()
                 sage: S = K.demazure_subcrystal(mg, [1])
-                sage: S.digraph().edges()
+                sage: S.digraph().edges(sort=True)
                 [([[1, 1]], [[1, 2]], 1), ([[1, 2]], [[2, 2]], 1)]
                 sage: S = K.demazure_subcrystal(mg, [1], only_support=False)
-                sage: S.digraph().edges()
+                sage: S.digraph().edges(sort=True)
                 [([[1, 1]], [[1, 2]], 1),
                  ([[1, 2]], [[1, 1]], 0),
                  ([[1, 2]], [[2, 2]], 1),
@@ -382,12 +382,12 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',3], shape=[2,2])
                 sage: G = T.dual_equivalence_graph()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3], [2, 4]], [[1, 2], [3, 4]], 2),
                  ([[1, 2], [3, 4]], [[1, 3], [2, 4]], 3)]
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T.dual_equivalence_graph()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
                  ([[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], 2),
@@ -397,9 +397,9 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',4], shape=[3,1])
                 sage: G = T.dual_equivalence_graph(index_set=[1,2,3])
-                sage: G.vertices()
+                sage: G.vertices(sort=True)
                 [[[1, 3, 4], [2]], [[1, 2, 4], [3]], [[1, 2, 3], [4]]]
-                sage: G.edges()
+                sage: G.edges(sort=True)
                 [([[1, 3, 4], [2]], [[1, 2, 4], [3]], 2),
                  ([[1, 2, 4], [3]], [[1, 2, 3], [4]], 3)]
 
@@ -407,10 +407,10 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',4], shape=[3,1])
                 sage: G = T.dual_equivalence_graph(index_set=[2,3])
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 2, 4], [3]], [[1, 2, 3], [4]], 3),
                  ([[2, 4, 5], [3]], [[2, 3, 5], [4]], 3)]
-                sage: sorted(G.vertices())
+                sage: G.vertices(sort=True)
                 [[[1, 3, 4], [2]],
                  [[1, 2, 4], [3]],
                  [[2, 4, 5], [3]],
@@ -493,7 +493,7 @@ class RegularCrystals(Category_singleton):
             phi = 0
             while x is not None:
                 x = x.f(i)
-                phi = phi + 1
+                phi += 1
             return phi
 
         def weight(self):
@@ -508,7 +508,7 @@ class RegularCrystals(Category_singleton):
             """
             return self.Phi() - self.Epsilon()
 
-        def demazure_operator_simple(self, i, ring = None):
+        def demazure_operator_simple(self, i, ring=None):
             r"""
             Return the Demazure operator `D_i` applied to ``self``.
 
@@ -831,12 +831,12 @@ class RegularCrystals(Category_singleton):
 
                 sage: T = crystals.Tableaux(['A',3], shape=[2,2])
                 sage: G = T(2,1,4,3).dual_equivalence_class()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3], [2, 4]], [[1, 2], [3, 4]], 2),
                  ([[1, 3], [2, 4]], [[1, 2], [3, 4]], 3)]
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T(2,1,4,3,5).dual_equivalence_class()
-                sage: sorted(G.edges())
+                sage: G.edges(sort=True)
                 [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
                  ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 3),

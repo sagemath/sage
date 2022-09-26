@@ -1506,7 +1506,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: polymake(ZZ)    # optional - polymake # indirect doctest
+            sage: polymake(ZZ)    # optional - jupymake # indirect doctest
             Integer
 
         """

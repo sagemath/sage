@@ -50,7 +50,7 @@ Sage has a class ``BranchingRule`` for branching rules. The function
 the natural embedding of `Sp(4)` into `SL(4)` corresponds to
 the branching rule that we may create as follows::
 
-    sage: b=branching_rule("A3","C2",rule="symmetric"); b
+    sage: b = branching_rule("A3","C2",rule="symmetric"); b
     symmetric branching rule A3 => C2
 
 The name "symmetric" of this branching rule will be
@@ -62,10 +62,10 @@ Here ``A3`` and ``C2`` are the Cartan types of the groups
 Now we may see how representations of `SL(4)` decompose
 into irreducibles when they are restricted to `Sp(4)`::
 
-    sage: A3=WeylCharacterRing("A3",style="coroots")
-    sage: chi=A3(1,0,1); chi.degree()
+    sage: A3 = WeylCharacterRing("A3",style="coroots")
+    sage: chi = A3(1,0,1); chi.degree()
     15
-    sage: C2=WeylCharacterRing("C2",style="coroots")
+    sage: C2 = WeylCharacterRing("C2",style="coroots")
     sage: chi.branch(C2,rule=b)
     C2(0,1) + C2(2,0)
 
@@ -95,13 +95,13 @@ Observe that we do not have to build the intermediate
 
 ::
 
-    sage: C4=WeylCharacterRing("C4",style="coroots")
-    sage: b1=branching_rule("C4","A3","levi")*branching_rule("A3","C2","symmetric"); b1
+    sage: C4 = WeylCharacterRing("C4",style="coroots")
+    sage: b1 = branching_rule("C4","A3","levi")*branching_rule("A3","C2","symmetric"); b1
     composite branching rule C4 => (levi) A3 => (symmetric) C2
-    sage: b2=branching_rule("C4","C2xC2","orthogonal_sum")*branching_rule("C2xC2","C2","proj1"); b2
+    sage: b2 = branching_rule("C4","C2xC2","orthogonal_sum")*branching_rule("C2xC2","C2","proj1"); b2
     composite branching rule C4 => (orthogonal_sum) C2xC2 => (proj1) C2
-    sage: C2=WeylCharacterRing("C2",style="coroots")
-    sage: C4=WeylCharacterRing("C4",style="coroots")
+    sage: C2 = WeylCharacterRing("C2",style="coroots")
+    sage: C4 = WeylCharacterRing("C4",style="coroots")
     sage: [C4(2,0,0,1).branch(C2, rule=br) for br in [b1,b2]]
     [4*C2(0,0) + 7*C2(0,1) + 15*C2(2,0) + 7*C2(0,2) + 11*C2(2,1) + C2(0,3) + 6*C2(4,0) + 3*C2(2,2),
      10*C2(0,0) + 40*C2(1,0) + 50*C2(0,1) + 16*C2(2,0) + 20*C2(1,1) + 4*C2(3,0) + 5*C2(2,1)]
@@ -187,7 +187,7 @@ Sage has a database of maximal subgroups for every simple Cartan
 type of rank `\le 8`. You may access this with the
 ``maximal_subgroups`` method of the Weyl character ring::
 
-    sage: E7=WeylCharacterRing("E7",style="coroots")
+    sage: E7 = WeylCharacterRing("E7",style="coroots")
     sage: E7.maximal_subgroups()
     A7:branching_rule("E7","A7","extended")
     E6:branching_rule("E7","E6","levi")
@@ -212,7 +212,7 @@ as follows::
 
     sage: b = E7.maximal_subgroup("A2"); b
     miscellaneous branching rule E7 => A2
-    sage: [E7,A2]=[WeylCharacterRing(x,style="coroots") for x in ["E7","A2"]]
+    sage: E7, A2 = [WeylCharacterRing(x,style="coroots") for x in ["E7","A2"]]
     sage: E7(1,0,0,0,0,0,0).branch(A2,rule=b)
     A2(1,1) + A2(4,4)
 
@@ -236,8 +236,8 @@ complete up to inner automorphisms.  For example, `E_6` has a
 nontrivial Dynkin diagram automorphism so it has an outer
 automorphism that is not inner::
 
-    sage: [E6,A2xG2]=[WeylCharacterRing(x,style="coroots") for x in ["E6","A2xG2"]]
-    sage: b=E6.maximal_subgroup("A2xG2"); b
+    sage: E6, A2xG2 = [WeylCharacterRing(x,style="coroots") for x in ["E6","A2xG2"]]
+    sage: b = E6.maximal_subgroup("A2xG2"); b
     miscellaneous branching rule E6 => A2xG2
     sage: E6(1,0,0,0,0,0).branch(A2xG2,rule=b)
     A2xG2(0,1,1,0) + A2xG2(2,0,0,0)
@@ -250,7 +250,7 @@ the `A_2\times G_2` subgroup is changed to a different one
 by the outer automorphism. To obtain the second branching
 rule, we compose the given one with this automorphism::
 
-    sage: b1=branching_rule("E6","E6","automorphic")*b; b1
+    sage: b1 = branching_rule("E6","E6","automorphic")*b; b1
     composite branching rule E6 => (automorphic) E6 => (miscellaneous) A2xG2
 
 .. _levi_branch_rules:
@@ -533,8 +533,8 @@ construct the branching rule to `A_5` we may proceed as follows::
 
     sage: b = branching_rule("E6","A5xA1","extended")*branching_rule("A5xA1","A5","proj1"); b
     composite branching rule E6 => (extended) A5xA1 => (proj1) A5
-    sage: E6=WeylCharacterRing("E6",style="coroots")
-    sage: A5=WeylCharacterRing("A5",style="coroots")
+    sage: E6 = WeylCharacterRing("E6",style="coroots")
+    sage: A5 = WeylCharacterRing("A5",style="coroots")
     sage: E6(0,1,0,0,0,0).branch(A5,rule=b)
     3*A5(0,0,0,0,0) + 2*A5(0,0,1,0,0) + A5(1,0,0,0,1)
     sage: b.describe()
@@ -1006,7 +1006,7 @@ representation of `SO(8)` and the two
 eight-dimensional spin representations. These are
 permuted by triality::
 
-    sage: D4=WeylCharacterRing("D4",style="coroots")
+    sage: D4 = WeylCharacterRing("D4",style="coroots")
     sage: D4(0,0,0,1).branch(D4,rule="triality")
     D4(1,0,0,0)
     sage: D4(0,0,0,1).branch(D4,rule="triality").branch(D4,rule="triality")
@@ -1021,4 +1021,3 @@ spin representations, as it always does in type `D`::
     D4(0,0,1,0)
     sage: D4(0,0,1,0).branch(D4,rule="automorphic")
     D4(0,0,0,1)
-

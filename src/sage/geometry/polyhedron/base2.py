@@ -1,7 +1,5 @@
 r"""
-Base class for polyhedra, part 2
-
-Define methods related to lattice points.
+Base class for polyhedra: Methods related to lattice points
 """
 
 # ****************************************************************************
@@ -345,7 +343,7 @@ class Polyhedron_base2(Polyhedron_base1):
         r"""
         Return the number of integral points in the polyhedron.
 
-        This generic version of this method simply calls ``integral_points``.
+        This generic version of this method simply calls :meth:`integral_points`.
 
         EXAMPLES::
 
@@ -529,7 +527,7 @@ class Polyhedron_base2(Polyhedron_base1):
         Return the ``index``-th integral point in this polyhedron.
 
         This is equivalent to ``sorted(self.integral_points())[index]``.
-        However, so long as self.integral_points_count() does not need to
+        However, so long as :meth:`integral_points_count` does not need to
         enumerate all integral points, neither does this method. Hence it can
         be significantly faster. If the polyhedron is not compact, a
         ``ValueError`` is raised.
@@ -541,7 +539,7 @@ class Polyhedron_base2(Polyhedron_base1):
           is raised.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`self.integral_points_count`.
+          :meth:`integral_points_count`.
 
         ALGORITHM:
 
@@ -627,14 +625,14 @@ class Polyhedron_base2(Polyhedron_base1):
         INPUT:
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`self.get_integral_point`.
+          :meth:`get_integral_point`.
 
         OUTPUT:
 
         The integral point in the polyhedron chosen uniformly at random. If the
         polyhedron is not compact, a ``ValueError`` is raised. If the
-        polyhedron does not contain any integral points, an ``EmptySetError`` is
-        raised.
+        polyhedron does not contain any integral points, an
+        :class:`~sage.categories.sets_cat.EmptySetError` is raised.
 
         .. SEEALSO::
 

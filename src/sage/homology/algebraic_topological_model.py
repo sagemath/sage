@@ -12,7 +12,6 @@ AUTHORS:
 
 - John H. Palmieri (2015-09)
 """
-
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
 #
@@ -20,7 +19,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 # TODO: cythonize this.
@@ -590,4 +589,3 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
     iota = ChainComplexMorphism(iota_data, M, C)
     phi = ChainContraction(phi_data, pi, iota)
     return phi, M
-

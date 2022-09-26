@@ -1,7 +1,5 @@
 r"""
-Base class for polyhedra, part 7
-
-Define methods related to triangulation and volume.
+Base class for polyhedra: Methods for triangulation and volume computation
 """
 
 # ****************************************************************************
@@ -37,7 +35,6 @@ from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.qqbar import AA
 from .base6 import Polyhedron_base6
 
 class Polyhedron_base7(Polyhedron_base6):
@@ -218,9 +215,9 @@ class Polyhedron_base7(Polyhedron_base6):
         OUTPUT:
 
         A triangulation of the convex hull of the vertices as a
-        :class:`~sage.geometry.triangulation.point_configuration.Triangulation`. The
+        :class:`~sage.geometry.triangulation.element.Triangulation`. The
         indices in the triangulation correspond to the
-        :meth:`Vrepresentation` objects.
+        :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.Vrepresentation` objects.
 
         EXAMPLES::
 
@@ -517,7 +514,7 @@ class Polyhedron_base7(Polyhedron_base6):
         When considering lower-dimensional polytopes, we can ask for the
         ambient (full-dimensional), the induced measure (of the affine
         hull) or, in the case of lattice polytopes, for the induced rational measure.
-        This is controlled by the parameter `measure`. Different engines
+        This is controlled by the parameter ``measure``. Different engines
         may have different ideas on the definition of volume of a
         lower-dimensional object::
 
@@ -714,6 +711,7 @@ class Polyhedron_base7(Polyhedron_base6):
             if Adet.is_square():
                 sqrt_Adet = Adet.sqrt()
             else:
+                from sage.rings.qqbar import AA
                 sqrt_Adet = AA(Adet).sqrt()
                 scaled_volume = AA(scaled_volume)
             return scaled_volume / sqrt_Adet
@@ -910,6 +908,7 @@ class Polyhedron_base7(Polyhedron_base6):
                 A = affine_hull_data.projection_linear_map.matrix()
                 Adet = (A.transpose() * A).det()
                 try:
+                    from sage.rings.qqbar import AA
                     Adet = AA.coerce(Adet)
                 except TypeError:
                     pass

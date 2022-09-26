@@ -323,7 +323,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
          sage: p = MixedIntegerLinearProgram(maximization=True,solver='GLPK')
          sage: b = p.new_variable(binary=True)
          sage: p.set_objective(sum([b[v] for v in g]))
-         sage: for (u,v) in g.edges(labels=None):
+         sage: for (u,v) in g.edges(sort=False, labels=None):
          ....:     p.add_constraint(b[u] + b[v], max=1)
          sage: p.solve(objective_only=True)
          4.0
@@ -2538,7 +2538,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
             sage: b = p.new_variable(nonnegative=True)
             sage: p.set_objective(sum([b[v] for v in g]))
-            sage: for (u,v) in g.edges(labels=None):
+            sage: for (u,v) in g.edges(sort=False, labels=None):
             ....:     p.add_constraint(b[u] + b[v], max=1)
             sage: p.set_binary(b)
             sage: p.solve(objective_only=True)

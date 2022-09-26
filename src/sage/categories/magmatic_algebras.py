@@ -144,7 +144,7 @@ class MagmaticAlgebras(Category_over_base_ring):
                 """
                 return self.basis()
 
-            @abstract_method(optional = True)
+            @abstract_method(optional=True)
             def product_on_basis(self, i, j):
                 """
                 The product of the algebra on the basis (optional).

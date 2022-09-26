@@ -57,26 +57,29 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-from sage.structure.all import Sequence
-from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
-                                    richcmp_not_equal)
+from sage.arith.misc import gcd
+from sage.matrix.constructor import zero_matrix
 from sage.misc.cachefunc import cached_method
 
 import sage.modular.hecke.all as hecke
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 
-import sage.rings.all as rings
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.power_series_ring_element import is_PowerSeries
+from sage.rings.rational_field import QQ
+from sage.rings.ring import Ring
+
+from sage.structure.all import Sequence
+from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
+                                    richcmp_not_equal)
 
 from .element import ModularFormElement, Newform
 from . import defaults
 from . import hecke_operator_on_qexp
-
-from sage.matrix.constructor import zero_matrix
-from sage.arith.all import gcd
-from sage.rings.infinity import PlusInfinity
-from sage.rings.integer import Integer
 
 WARN=False
 
@@ -140,7 +143,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
             raise TypeError("character must be a Dirichlet character")
-        if not isinstance(base_ring, rings.Ring):
+        if not isinstance(base_ring, Ring):
             raise TypeError("base_ring must be a ring")
         self.__sturm_bound = None
         self.__weight, self.__group, self.__character = weight, group, character
@@ -399,7 +402,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if prec is None:
             prec = self.prec()
         else:
-            prec = rings.Integer(prec)
+            prec = Integer(prec)
         if prec < 0:
             raise ValueError("prec (=%s) must be at least 0"%prec)
         return prec
@@ -689,7 +692,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                 pass
             prec = -1  # big enough to determine forms
         else:
-            prec = rings.Integer(self.__normalize_prec(prec))
+            prec = Integer(self.__normalize_prec(prec))
 
         if prec == 0:
             z = self._q_expansion_ring()(0,prec)
@@ -807,10 +810,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             q - 2*q^2 - q^3 + 2*q^4 + O(q^5)
             ]
         """
-        if not self.base_ring() == rings.QQ:
+        if not self.base_ring() == QQ:
             raise TypeError("the base ring must be Q")
         prec = self.__normalize_prec(prec)
-        R = rings.PowerSeriesRing(rings.ZZ, name=defaults.DEFAULT_VARIABLE)
+        R = PowerSeriesRing(ZZ, name=defaults.DEFAULT_VARIABLE)
         if prec == 0:
             z = R(0,prec)
             return Sequence([z]*int(self.dimension()), cr=True)
@@ -827,7 +830,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         B = self.q_expansion_basis(prec)
 
         # It's over Q; we just need to intersect it with ZZ^n.
-        A = rings.ZZ**prec
+        A = ZZ**prec
         gens = [f.padded_list(prec) for f in B]
         C = A.span(gens)
         D = C.saturation()
@@ -849,7 +852,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: M._q_expansion_ring()
             Power Series Ring in q over Rational Field
         """
-        return rings.PowerSeriesRing(self.base_ring(), name=defaults.DEFAULT_VARIABLE)
+        return PowerSeriesRing(self.base_ring(), name=defaults.DEFAULT_VARIABLE)
 
     @cached_method
     def _q_expansion_zero(self):

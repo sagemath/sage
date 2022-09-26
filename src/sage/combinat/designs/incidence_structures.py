@@ -515,8 +515,8 @@ class IncidenceStructure():
 
             sage: P = graphs.PetersenGraph()
             sage: C = graphs.CycleGraph(5)
-            sage: IP = IncidenceStructure(P.edges(labels=False))
-            sage: IC = IncidenceStructure(C.edges(labels=False))
+            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))
+            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))
             sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))
             120
 
@@ -525,7 +525,7 @@ class IncidenceStructure():
         correspond to an actual `C_5` subgraph::
 
             sage: for f in IP.isomorphic_substructures_iterator(IC):
-            ....:     assert all(P.has_edge(f[x],f[y]) for x,y in C.edges(labels=False))
+            ....:     assert all(P.has_edge(f[x],f[y]) for x,y in C.edges(sort=True, labels=False))
 
         The number of induced copies, in this case, is the same::
 
@@ -535,8 +535,8 @@ class IncidenceStructure():
         They begin to differ if we make one vertex universal::
 
             sage: P.add_edges([(0,x) for x in P], loops=False)
-            sage: IP = IncidenceStructure(P.edges(labels=False))
-            sage: IC = IncidenceStructure(C.edges(labels=False))
+            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))
+            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))
             sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))
             420
             sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC,induced=True))
@@ -1266,7 +1266,7 @@ class IncidenceStructure():
         The "uniform" complement of a graph is a graph::
 
             sage: g = graphs.PetersenGraph()
-            sage: G = IncidenceStructure(g.edges(labels=False))
+            sage: G = IncidenceStructure(g.edges(sort=True, labels=False))
             sage: H = G.complement(uniform=True)
             sage: h = Graph(H.blocks())
             sage: g == h
@@ -1383,7 +1383,7 @@ class IncidenceStructure():
             raise ValueError("perm argument must be None, a list or a dictionary")
 
         if len(set(perm.values())) != len(perm):
-            raise ValueError("Two points are getting relabelled with the same name !")
+            raise ValueError("two points are getting relabelled with the same name")
 
         self._points = [perm[x] for x in self._points]
         if self._points == list(range(self.num_points())):
@@ -1703,7 +1703,7 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: H = IncidenceStructure((2*graphs.CompleteGraph(3)).edges(labels=False))
+            sage: H = IncidenceStructure((2*graphs.CompleteGraph(3)).edges(sort=True, labels=False))
             sage: H.is_generalized_quadrangle(verbose=True)
             Some point is at distance >3 from some block.
             False
@@ -2050,7 +2050,7 @@ class IncidenceStructure():
         2-uniform corresponding hypergraph::
 
             sage: g = graphs.PetersenGraph()
-            sage: H = IncidenceStructure(g.edges(labels=False))
+            sage: H = IncidenceStructure(g.edges(sort=True, labels=False))
             sage: len(g.coloring())
             3
             sage: len(H.coloring())

@@ -575,7 +575,7 @@ def uniq(x):
 def _stable_uniq(L):
     """
     Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurance of any item.
+    once: keep only the first occurrence of any item.
 
     The items must be hashable.
 

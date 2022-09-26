@@ -3413,7 +3413,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         m = self.conductor()
         d = self.degree()
         A = _splitting_classes_gens_(self,m,d)
-        # d could be improve to be the exponenent of the Galois group rather than the degree, but I do not see how to how about it already.
+        # d could be improved to be the exponent of the Galois group rather than the degree, but I do not see how to go about that yet.
         G = DirichletGroup(m, CyclotomicField(d))
         H = [G(1)]
         for chi in G:
@@ -6002,12 +6002,21 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             2
             sage: M.decomposition_type(Q1)
             [(2, 5, 1)]
+
+        Check that :trac:`34514` is fixed::
+
+            sage: K.<a> = NumberField(x^4 + 18*x^2 - 1)
+            sage: R.<y> = K[]
+            sage: L.<b> = K.extension(y^2 + 9*a^3 - 2*a^2 + 162*a - 38)
+            sage: [L.decomposition_type(i) for i in K.primes_above(3)]
+            [[(1, 1, 2)], [(1, 1, 2)], [(1, 2, 1)]]
         """
         v0 = self.base_ring().valuation(p)
         e0 = v0.value_group().gen().denominator()
-        f0 = v0.residue_field().degree()
+        # Ideally we would compute f using the degree, but residue fields of relative extensions are currently implemented using polynomial quotient rings (this will hopefully be improved after #28485).
+        C0 = v0.residue_field().cardinality()
         valuations = v0.extensions(self)
-        ef = [(v.value_group().gen().denominator() // e0, v.residue_field().degree() // f0) for v in valuations]
+        ef = [(v.value_group().gen().denominator() // e0, v.residue_field().cardinality().exact_log(C0)) for v in valuations]
         return sorted([(e, f, g) for ((e, f), g) in Counter(ef).items()])
 
     def gen(self, n=0):
@@ -11957,7 +11966,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         EXAMPLES::
 
             sage: Z = QuadraticField(7)
-            sage: polymake(Z)    # optional - polymake # indirect doctest
+            sage: polymake(Z)    # optional - jupymake # indirect doctest
             QuadraticExtension
 
         """

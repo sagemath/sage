@@ -133,7 +133,7 @@ cdef class HiddenMarkovModel:
             sage: m = hmm.DiscreteHiddenMarkovModel([[.3,0,.7],[0,0,1],[.5,.5,0]], [[.5,.5,.2]]*3, [1/3]*3)
             sage: G = m.graph(); G
             Looped digraph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
             sage: G.plot()
             Graphics object consisting of 11 graphics primitives

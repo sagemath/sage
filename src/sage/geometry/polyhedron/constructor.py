@@ -29,16 +29,16 @@ complementary representations of the same data:
 
     where
 
-    * **vertices** `v_1`, `\dots`, `v_k` are a finite number of
+    * **vertices** `v_1,\dots,v_k` are a finite number of
       points. Each vertex is specified by an arbitrary vector, and two
       points are equal if and only if the vector is the same.
 
-    * **rays** `r_1`, `\dots`, `r_m` are a finite number of directions
+    * **rays** `r_1,\dots,r_m` are a finite number of directions
       (directions of infinity). Each ray is specified by a non-zero
       vector, and two rays are equal if and only if the vectors are
       the same up to rescaling with a positive constant.
 
-    * **lines** `\ell_1`, `\dots`, `\ell_n` are a finite number of
+    * **lines** `\ell_1,\dots,\ell_n` are a finite number of
       unoriented directions. In other words, a line is equivalent to
       the set `\{r, -r\}` for a ray `r`. Each line is specified by a
       non-zero vector, and two lines are equivalent if and only if the
@@ -159,11 +159,10 @@ Base Rings
 
 The base ring of the polyhedron can be specified by the ``base_ring``
 optional keyword argument. If not specified, a suitable common base
-ring for all coordinates/coefficients will be chosen
+ring for all coordinates and coefficients will be chosen
 automatically. Important cases are:
 
-* ``base_ring=QQ`` uses a fast implementation for exact rational
-  numbers.
+* ``base_ring=QQ`` uses a fast implementation for exact rational numbers.
 
 * ``base_ring=ZZ`` is similar to ``QQ``, but the resulting polyhedron
   object will have extra methods for lattice polyhedra.
@@ -174,8 +173,8 @@ automatically. Important cases are:
 Polyhedra with symmetries often are defined over some algebraic field
 extension of the rationals. As a simple example, consider the
 equilateral triangle whose vertex coordinates involve `\sqrt{3}`. An
-exact way to work with roots in Sage is the :mod:`Algebraic Real Field
-<sage.rings.qqbar>` ::
+exact way to work with roots in Sage is the
+:mod:`Algebraic Real Field <sage.rings.qqbar>` ::
 
     sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA) # optional - sage.rings.number_field  # optional - sage.symbolic
     sage: triangle.Hrepresentation()                                            # optional - sage.rings.number_field  # optional - sage.symbolic

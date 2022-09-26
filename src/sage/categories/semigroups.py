@@ -171,7 +171,8 @@ class Semigroups(CategoryWithAxiom):
             assert len(args) > 0, "Cannot compute an empty product in a semigroup"
             return prod(args[1:], args[0])
 
-        def cayley_graph(self, side="right", simple=False, elements = None, generators = None, connecting_set = None):
+        def cayley_graph(self, side="right", simple=False, elements=None,
+                         generators=None, connecting_set=None):
             r"""
             Return the Cayley graph for this finite semigroup.
 
@@ -203,7 +204,7 @@ class Semigroups(CategoryWithAxiom):
                 Alternating group of order 5!/2 as a permutation group
                 sage: G = A5.cayley_graph()
                 sage: G.show3d(color_by_label=True, edge_size=0.01, edge_size2=0.02, vertex_size=0.03)
-                sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02, vertex_colors={(1,1,1):G.vertices()}, bgcolor=(0,0,0), color_by_label=True, xres=700, yres=700, iterations=200) # long time (less than a minute)
+                sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02, vertex_colors={(1,1,1):G.vertices(sort=True)}, bgcolor=(0,0,0), color_by_label=True, xres=700, yres=700, iterations=200) # long time (less than a minute)
                 sage: G.num_edges()
                 120
 
@@ -239,40 +240,40 @@ class Semigroups(CategoryWithAxiom):
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b'))
                 sage: g = S.cayley_graph(simple=True)
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [('a', 'ab', None), ('b', 'ba', None)]
 
             ::
 
                 sage: g = S.cayley_graph(side="left", simple=True)
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [('a', 'ba', None), ('ab', 'ba', None), ('b', 'ab', None),
                 ('ba', 'ab', None)]
 
             ::
 
                 sage: g = S.cayley_graph(side="twosided", simple=True)
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [('a', 'ab', None), ('a', 'ba', None), ('ab', 'ba', None),
                 ('b', 'ab', None), ('b', 'ba', None), ('ba', 'ab', None)]
 
             ::
 
                 sage: g = S.cayley_graph(side="twosided")
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [('a', 'a', (0, 'left')), ('a', 'a', (0, 'right')), ('a', 'ab', (1, 'right')), ('a', 'ba', (1, 'left')), ('ab', 'ab', (0, 'left')), ('ab', 'ab', (0, 'right')), ('ab', 'ab', (1, 'right')), ('ab', 'ba', (1, 'left')), ('b', 'ab', (0, 'left')), ('b', 'b', (1, 'left')), ('b', 'b', (1, 'right')), ('b', 'ba', (0, 'right')), ('ba', 'ab', (0, 'left')), ('ba', 'ba', (0, 'right')), ('ba', 'ba', (1, 'left')), ('ba', 'ba', (1, 'right'))]
 
             ::
 
-                sage: s1 = SymmetricGroup(1); s = s1.cayley_graph(); s.vertices()
+                sage: s1 = SymmetricGroup(1); s = s1.cayley_graph(); s.vertices(sort=False)
                 [()]
 
             TESTS::
@@ -791,7 +792,7 @@ class Semigroups(CategoryWithAxiom):
                 An example of a (sub)quotient semigroup: a quotient of the left zero semigroup
             """
             from sage.categories.examples.semigroups import QuotientOfLeftZeroSemigroup
-            return QuotientOfLeftZeroSemigroup(category = self.Subquotients())
+            return QuotientOfLeftZeroSemigroup(category=self.Subquotients())
 
     class Quotients(QuotientsCategory):
 

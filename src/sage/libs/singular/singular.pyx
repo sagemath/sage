@@ -30,6 +30,7 @@ from libc.stdint cimport int64_t
 from sage.libs.singular.decl cimport *
 
 from sage.rings.polynomial.polydict import ETuple
+from sage.libs.singular.function cimport new_sage_polynomial, access_singular_ring
 
 from sage.rings.rational_field import RationalField
 from sage.rings.integer_ring cimport IntegerRing_class
@@ -421,7 +422,6 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
 
     return snumer/sdenom
 
-
 cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
     """
     Create a sage element of a transcendental extension of a prime field from a
@@ -504,7 +504,6 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
             denom = <poly*>pNext(<poly*>denom)
 
     return snumer/sdenom
-
 
 cdef object si2sa_NF(number *n, ring *_ring, object base):
     """
@@ -632,16 +631,282 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
 
     return base(_ring.cf.cfInt(n,_ring.cf))
 
+
+cdef list singular_monomial_exponents(poly *p, ring *r):
+    r"""
+    Return the list of exponents of monomial ``p``.
+    """
+    cdef int v
+    cdef list ml = [None] * r.N
+
+    for v in range(1, r.N + 1):
+        ml[v-1] = p_GetExp(p, v, r)
+    return ml
+
+cpdef list si2sa_resolution(Resolution res):
+    r"""
+    Pull the data from Singular resolution ``res`` to construct a Sage
+    resolution.
+
+    INPUT:
+
+    - ``res`` -- Singular resolution
+
+    The procedure is destructive and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: si2sa_resolution(r)
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
+    """
+    cdef ring *singular_ring
+    cdef syStrategy singular_res
+    cdef poly *p
+    cdef poly *p_iter
+    cdef poly *first
+    cdef poly *previous
+    cdef poly *acc
+    cdef resolvente mods
+    cdef ideal *mod
+    cdef int i, j, k, idx, rank, nrows, ncols
+    cdef bint zero_mat
+    cdef list degs, matdegs
+
+    from sage.modules.free_module import FreeModule
+    from sage.matrix.constructor import matrix as _matrix
+
+    singular_res = res._resolution[0]
+    sage_ring = res.base_ring
+    singular_ring = access_singular_ring(res.base_ring)
+
+    if singular_res.minres != NULL:
+        mods = singular_res.minres
+    elif singular_res.fullres != NULL:
+        mods = singular_res.fullres
+    else:
+        raise ValueError('Singular resolution is not usable')
+
+    cdef list res_mats = []
+
+    # length is the length of fullres. The length of minres
+    # can be shorter. Hence we avoid SEGFAULT by stopping
+    # at NULL pointer.
+    for idx in range(singular_res.length):
+        mod = <ideal *> mods[idx]
+        if mod == NULL:
+            break
+        rank = mod.rank
+        free_module = FreeModule(sage_ring, rank)
+
+        nrows = rank
+        ncols = mod.ncols # IDELEMS(mod)
+
+        mat = _matrix(sage_ring, nrows, ncols)
+        matdegs = []
+        zero_mat = True
+        for j in range(ncols):
+            p = <poly *> mod.m[j]
+            degs = []
+            # code below copied and modified from to_sage_vector_destructive
+            # in sage.libs.singular.function.Converter
+            for i in range(1, rank + 1):
+                previous = NULL
+                acc = NULL
+                first = NULL
+                p_iter = p
+                while p_iter != NULL:
+                    if p_GetComp(p_iter, singular_ring) == i:
+                        p_SetComp(p_iter, 0, singular_ring)
+                        p_Setm(p_iter, singular_ring)
+                        if acc == NULL:
+                            first = p_iter
+                        else:
+                            acc.next = p_iter
+                        acc = p_iter
+                        if p_iter == p:
+                            p = pNext(p_iter)
+                        if previous != NULL:
+                            previous.next = pNext(p_iter)
+                        p_iter = pNext(p_iter)
+                        acc.next = NULL
+                    else:
+                        previous = p_iter
+                        p_iter = pNext(p_iter)
+
+                if zero_mat:
+                    zero_mat = first == NULL
+
+                mat[i - 1, j] = new_sage_polynomial(sage_ring, first)
+
+        # Singular sometimes leaves zero matrix in the resolution. We can stop
+        # when one is seen.
+        if zero_mat:
+            break
+
+        res_mats.append(mat)
+
+    return res_mats
+
+cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
+    """
+    Pull the data from Singular resolution ``res`` to construct a Sage
+    resolution.
+
+    INPUT:
+
+    - ``res`` -- Singular resolution
+
+    - ``degrees`` -- list of integers or integer vectors
+
+    The procedure is destructive, and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution_graded
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: res_mats, res_degs = si2sa_resolution_graded(r, (1, 1, 1, 1))
+        sage: res_mats
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
+        sage: res_degs
+        [[[2], [2], [2]], [[1, 1, 1], [1, 1, 1]]]
+    """
+    cdef ring *singular_ring
+    cdef syStrategy singular_res
+    cdef poly *p
+    cdef poly *p_iter
+    cdef poly *first
+    cdef poly *previous
+    cdef poly *acc
+    cdef resolvente mods
+    cdef ideal *mod
+    cdef int i, j, k, idx, rank, nrows, ncols
+    cdef int ngens = len(degrees)
+    cdef bint zero_mat
+    cdef list matdegs, exps
+
+    from sage.matrix.constructor import matrix as _matrix
+
+    singular_res = res._resolution[0]
+    sage_ring = res.base_ring
+    singular_ring = access_singular_ring(res.base_ring)
+
+    if singular_res.minres != NULL:
+        mods = singular_res.minres
+    elif singular_res.fullres != NULL:
+        mods = singular_res.fullres
+    else:
+        raise ValueError('Singular resolution is not usable')
+
+    cdef list res_mats = []
+    cdef list res_degs = []
+
+    # length is the length of fullres. The length of minres
+    # can be shorter. Hence we avoid SEGFAULT by stopping
+    # at NULL pointer.
+    for idx in range(singular_res.length):
+        mod = <ideal *> mods[idx]
+        if mod == NULL:
+            break
+        rank = mod.rank
+        free_module = sage_ring ** rank
+
+        nrows = rank
+        ncols = mod.ncols # IDELEMS(mod)
+
+        mat = _matrix(sage_ring, nrows, ncols)
+        matdegs = []
+        zero_mat = True
+        for j in range(ncols):
+            p = <poly *> mod.m[j]
+            degs = []
+            # code below copied and modified from to_sage_vector_destructive
+            # in sage.libs.singular.function.Converter
+            for i in range(1, rank + 1):
+                previous = NULL
+                acc = NULL
+                first = NULL
+                p_iter = p
+                while p_iter != NULL:
+                    if p_GetComp(p_iter, singular_ring) == i:
+                        p_SetComp(p_iter, 0, singular_ring)
+                        p_Setm(p_iter, singular_ring)
+                        if acc == NULL:
+                            first = p_iter
+                        else:
+                            acc.next = p_iter
+                        acc = p_iter
+                        if p_iter == p:
+                            p = pNext(p_iter)
+                        if previous != NULL:
+                            previous.next = pNext(p_iter)
+                        p_iter = pNext(p_iter)
+                        acc.next = NULL
+                    else:
+                        previous = p_iter
+                        p_iter = pNext(p_iter)
+
+                if zero_mat:
+                    zero_mat = first == NULL
+
+                mat[i - 1, j] = new_sage_polynomial(sage_ring, first)
+
+                # degree of a homogeneous polynomial can be computed from the
+                # first monomial
+                if first != NULL:
+                    exps = singular_monomial_exponents(first, singular_ring)
+                    deg = 0
+                    for k in range(ngens):
+                        deg += exps[k] * degrees[k]
+                    degs.append(deg)
+                else:
+                    degs.append(None)
+
+            matdegs.append(degs)  # store degrees of the column
+
+        # Singular sometimes leaves zero matrix in the resolution. We can stop
+        # when one is seen.
+        if zero_mat:
+            break
+
+        res_mats.append(mat)
+        res_degs.append(matdegs)
+
+    return (res_mats, res_degs)
+
+
 cdef number *sa2si_QQ(Rational r, ring *_ring):
     """
     Create a singular number from a sage rational.
 
     INPUT:
 
-    - ``r`` - a sage rational number
+    - ``r`` -- a sage rational number
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -669,10 +934,9 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
 
     INPUT:
 
-    - ``quo`` - a sage integer
+    - ``quo`` -- a sage integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -681,7 +945,6 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
     Number field elements are represented as polynomials in the number field
     generator. In this case, ``quo`` is the integer resulting from evaluating
     that polynomial in the characteristic of the field.
-
 
     TESTS::
 
@@ -739,10 +1002,9 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a ntl_gf2e finite field
+    - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -805,10 +1067,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a generic finite field
+    - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -872,15 +1133,13 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -924,7 +1183,6 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
         sage: R(f)
         x + y + 1
     """
-
     cdef int j
     cdef number *n1
     cdef number *a
@@ -1018,8 +1276,6 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     return n1
 
-
-
 cdef number *sa2si_transext_FF(object elem, ring *_ring):
     """
     Create a singular number from a sage element of a transcendental extension
@@ -1027,15 +1283,13 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1123,17 +1377,15 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     return n1
 
-
 cdef number *sa2si_NF(object elem, ring *_ring):
     """
     Create a singular number from a sage element of a number field.
 
     INPUT:
 
-    - ``elem`` - a sage element of a NumberField
+    - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1222,15 +1474,13 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage Integer
+    - ``elem`` -- a sage Integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
-
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1430,14 +1680,13 @@ cdef number *sa2si(Element elem, ring * _ring):
 
     raise ValueError("cannot convert to SINGULAR number")
 
-
 cdef object si2sa_intvec(intvec *v):
     r"""
     create a sage tuple from a singular vector of integers
 
     INPUT:
 
-    - ``v`` - a (pointer to) a singular intvec
+    - ``v`` -- a (pointer to) singular intvec
 
     OUTPUT:
 
@@ -1494,7 +1743,6 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)"%(e))
-
 
 cdef init_libsingular():
     """

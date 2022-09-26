@@ -426,7 +426,7 @@ class Arrow(GraphicPrimitive):
                     path effect that is only applied when the condition_func
                     returns True.
                     """
-                    super(ConditionalStroke, self).__init__()
+                    super().__init__()
                     self._pe_list = pe_list
                     self._condition_func = condition_func
 

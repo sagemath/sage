@@ -227,7 +227,7 @@ Now we get the desired Cartan matrix::
 
 Note that backward edges have been automatically added::
 
-    sage: g.edges()
+    sage: g.edges(sort=True)
     [(1, 2, 2), (1, 3, 1), (2, 1, 1), (2, 3, 1), (3, 1, 1), (3, 2, 1)]
 
 .. rubric:: Reducible Cartan types
@@ -1150,13 +1150,13 @@ class CartanType_abstract():
 
             sage: CartanType(['B',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges()
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges()
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges()
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges()
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
         """
 
@@ -1643,15 +1643,15 @@ class CartanType_crystallographic(CartanType_abstract):
 
             sage: CartanType(['A',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges()
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges()
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges()
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges()
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
-            sage: CartanType(['A',2,2]).coxeter_diagram().edges()
+            sage: CartanType(['A',2,2]).coxeter_diagram().edges(sort=True)
             [(0, 1, +Infinity)]
         """
         return self.dynkin_diagram().coxeter_diagram()
@@ -2031,8 +2031,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             ....:     g1 = ct.classical().dynkin_diagram()
             ....:     g2 = ct.dynkin_diagram()
             ....:     g2.delete_vertex(ct.special_node())
-            ....:     assert sorted(g1.vertices()) == sorted(g2.vertices())
-            ....:     assert sorted(g1.edges()) == sorted(g2.edges())
+            ....:     assert g1.vertices(sort=True) == g2.vertices(sort=True)
+            ....:     assert g1.edges(sort=True) == g2.edges(sort=True)
 
         """
 

@@ -187,7 +187,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: R.<t> = QQ[]
             sage: f = 1/3 * t
-            sage: del f        # untested
+            sage: del f
         """
         fmpq_poly_clear(self.__poly)
 

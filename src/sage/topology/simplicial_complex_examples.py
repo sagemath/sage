@@ -27,13 +27,14 @@ All of these examples are accessible by typing
 - :func:`ComplexProjectivePlane`
 - :func:`DunceHat`
 - :func:`FareyMap`
+- :func:`GenusSix`
 - :func:`K3Surface`
 - :func:`KleinBottle`
 - :func:`MatchingComplex`
 - :func:`MooreSpace`
 - :func:`NotIConnectedGraphs`
 - :func:`PoincareHomologyThreeSphere`
-- :func:`PseudoQuaternionicProjectivePlane`
+- :func:`QuaternionicProjectivePlane`
 - :func:`RandomComplex`
 - :func:`RandomTwoSphere`
 - :func:`RealProjectivePlane`
@@ -62,6 +63,14 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()
     {0: 0, 1: Z^16, 2: 0}
+
+TESTS::
+
+    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
+    sage: H = PseudoQuaternionicProjectivePlane()
+    doctest:warning...:
+    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
+    See https://trac.sagemath.org/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -74,6 +83,7 @@ from sage.sets.set import Set
 from sage.misc.functional import is_even
 from sage.combinat.subset import Subsets
 import sage.misc.prandom as random
+from sage.misc.superseded import deprecated_function_alias
 
 # Miscellaneous utility functions.
 
@@ -242,9 +252,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
                 maximal_faces = C.facets()
             # Now convert maximal_faces to a tuple of tuples, so that it is hashable.
             maximal_faces = tuple(tuple(mf) for mf in maximal_faces)
-        return super(UniqueSimplicialComplex, self).__classcall__(self, maximal_faces,
-                                                                  name=name,
-                                                                  **kwds)
+        return super().__classcall__(self, maximal_faces, name=name, **kwds)
 
     def __init__(self, maximal_faces=None, name=None, **kwds):
         """
@@ -545,15 +553,14 @@ def ComplexProjectivePlane():
         name='Minimal triangulation of the complex projective plane')
 
 
-def PseudoQuaternionicProjectivePlane():
+def QuaternionicProjectivePlane():
     r"""
     Return a pure simplicial complex of dimension 8 with 490 facets.
 
     .. WARNING::
 
-        This is expected to be a triangulation of the projective plane
-        `HP^2` over the ring of quaternions, but this has not been
-        proved yet.
+        This was proven to be a triangulation of the projective plane
+        `HP^2` over the ring of quaternions by Gorodkov in 2016 [Gor2016]_.
 
     This simplicial complex has the same homology as `HP^2`. Its
     automorphism group is isomorphic to the alternating group `A_5`
@@ -561,12 +568,11 @@ def PseudoQuaternionicProjectivePlane():
 
     This is defined here using the description in [BK1992]_. This
     article deals with three different triangulations. This procedure
-    returns the only one which has a transitive group of
-    automorphisms.
+    returns the only one which has a transitive group of automorphisms.
 
     EXAMPLES::
 
-        sage: HP2 = simplicial_complexes.PseudoQuaternionicProjectivePlane() ; HP2
+        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane() ; HP2
         Simplicial complex with 15 vertices and 490 facets
         sage: HP2.f_vector()
         [1, 15, 105, 455, 1365, 3003, 4515, 4230, 2205, 490]
@@ -598,6 +604,10 @@ def PseudoQuaternionicProjectivePlane():
     return UniqueSimplicialComplex([[g(index) for index in tuple]
                                     for tuple in start_list
                                     for g in PermutationGroup([P, S])])
+
+
+PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
+
 
 def PoincareHomologyThreeSphere():
     """
@@ -1615,3 +1625,43 @@ def FareyMap(p):
     triangle = libgap.Set(triangle)
     triangles = libgap.Orbit(group, triangle, libgap.OnSets).sage()
     return SimplicialComplex(triangles)
+
+
+def GenusSix():
+    """
+    Return a triangulated surface of genus 6.
+
+    This is triangulated with 12 vertices, 66 edges and 44 faces. Each
+    vertex is neighbour to all other vertices.
+
+    It appears as number `58` in the classification of Altshuler,
+    Bokowski and Schuchert in [ABS96]_, where it is the unique surface
+    with the largest symmetry group, of order 12. This article refers
+    for this surface to Ringel.
+
+    EXAMPLES::
+
+        sage: S = simplicial_complexes.GenusSix()
+        sage: S.automorphism_group().cardinality()
+        12
+        sage: S.betti()
+        {0: 1, 1: 12, 2: 1}
+        sage: S.f_vector()
+        [1, 12, 66, 44]
+
+    REFERENCES:
+
+    .. [ABS96] Amos Altshule, Jürgen Bokowski and Peter Schuchert,
+               *Neighborly 2-Manifolds with 12 Vertices*,
+               Journal of Combinatorial Theory, Series A, 75, 148-162 (1996),
+               :doi:`10.1006/jcta.1996.0069`
+    """
+    L = ["014", "018", "023", "027", "036", "049",
+         "056", "05b", "07a", "08a", "09b",
+         "125", "126", "137", "139", "147", "15a",
+         "16b", "18b", "19a", "23b", "248",
+         "24a", "258", "269", "279", "2ab", "345",
+         "34b", "35a", "367", "389", "38a",
+         "459", "46a", "46b", "478", "568", "579",
+         "57b", "67a", "689", "78b", "9ab"]
+    return SimplicialComplex([list(w) for w in L])

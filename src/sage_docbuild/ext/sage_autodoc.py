@@ -130,7 +130,7 @@ def formatargspec(function, args, varargs=None, varkw=None, defaults=None,
                               annotations=annotations)
 
 
-class AutodocReporter(object):
+class AutodocReporter():
     """
     A reporter replacement that assigns the correct source name
     and line number to a system message, as recorded in a ViewList.
@@ -246,9 +246,7 @@ def between(marker, what=None, keepempty=False, exclude=False):
     return process
 
 
-
-
-class Documenter(object):
+class Documenter():
     """
     A Documenter knows how to autodocument a single object type.  When
     registered with the AutoDirective, it will be used to document objects
@@ -988,7 +986,7 @@ class ClassLevelDocumenter(Documenter):
         return modname, parents + [base]
 
 
-class DocstringSignatureMixin(object):
+class DocstringSignatureMixin():
     """
     Mixin for FunctionDocumenter and MethodDocumenter to provide the
     feature of reading the signature from the docstring.
@@ -1175,7 +1173,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         # __name__ of the nested class. For example, in
         #
         #     class A(metaclass=NestedMetaclass):
-        #        class B(object):
+        #        class B():
         #            pass
         #
         # the class B get its name changed to 'A.B'. Such dots '.' in names

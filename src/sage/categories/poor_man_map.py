@@ -57,7 +57,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         True
 
     """
-    def __init__(self, function, domain = None, codomain = None, name = None):
+    def __init__(self, function, domain=None, codomain=None, name=None):
         """
         TESTS::
 

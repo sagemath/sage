@@ -1795,9 +1795,9 @@ def to_graph(sp):
         sage: g = pa.to_graph( pa.to_set_partition([[1,-2],[2,-1]])); g
         Graph on 4 vertices
 
-        sage: g.vertices() #random
+        sage: g.vertices(sort=False) #random
         [1, 2, -2, -1]
-        sage: g.edges() #random
+        sage: g.edges(sort=False) #random
         [(1, -2, None), (2, -1, None)]
     """
     g = Graph()
@@ -1832,9 +1832,9 @@ def pair_to_graph(sp1, sp2):
 
     ::
 
-        sage: g.vertices() #random
+        sage: g.vertices(sort=False) #random
         [(1, 2), (-1, 1), (-2, 2), (-1, 2), (-2, 1), (2, 1), (2, 2), (1, 1)]
-        sage: g.edges() #random
+        sage: g.edges(sort=False) #random
         [((1, 2), (-1, 1), None),
          ((1, 2), (-2, 2), None),
          ((-1, 1), (2, 1), None),
@@ -1849,9 +1849,9 @@ def pair_to_graph(sp1, sp2):
         sage: g = pa.pair_to_graph( sp3, sp4 ); g
         Graph on 8 vertices
 
-        sage: g.vertices()
+        sage: g.vertices(sort=True)
         [(-2, 1), (-2, 2), (-1, 1), (-1, 2), (1, 1), (1, 2), (2, 1), (2, 2)]
-        sage: g.edges()
+        sage: g.edges(sort=True)
         [((-2, 1), (2, 2), None), ((-1, 1), (1, 1), None),
          ((-1, 1), (1, 2), None)]
     """

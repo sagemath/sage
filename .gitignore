@@ -217,6 +217,9 @@ src/ENV/
 src/env.bak/
 src/venv.bak/
 
+# devcontainer
+/.devcontainer/devcontainer.json
+
 # mypy
 **/.mypy_cache/
 

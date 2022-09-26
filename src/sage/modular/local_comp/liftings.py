@@ -7,7 +7,7 @@ problems.
 """
 
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import crt, inverse_mod
+from sage.arith.misc import crt, inverse_mod
 from sage.modular.modsym.p1list import lift_to_sl2z
 
 

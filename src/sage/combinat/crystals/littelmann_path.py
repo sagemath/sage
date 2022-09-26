@@ -702,7 +702,8 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             raise ValueError("The weight should be in the non-extended weight lattice!")
         La = weight.parent().basis()
         weight = weight - weight.level() * La[0] / La[0].level()
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, weight, starting_weight_parent = weight.parent())
+        return super().__classcall__(cls, weight,
+                                     starting_weight_parent=weight.parent())
 
     @cached_method
     def maximal_vector(self):
@@ -1208,7 +1209,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfLSPaths, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """

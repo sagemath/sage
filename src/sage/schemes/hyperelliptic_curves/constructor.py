@@ -260,14 +260,15 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     if g in genus_classes:
         superclass.append(genus_classes[g])
-        cls_name.append("g%s"%g)
+        cls_name.append("g%s" % g)
 
-    for name,test,cls in fields:
+    for name, test, cls in fields:
         if test(R):
             superclass.append(cls)
             cls_name.append(name)
             break
 
     class_name = "_".join(cls_name)
-    cls = dynamic_class(class_name, tuple(superclass), HyperellipticCurve_generic, doccls = HyperellipticCurve)
+    cls = dynamic_class(class_name, tuple(superclass),
+                        HyperellipticCurve_generic, doccls=HyperellipticCurve)
     return cls(PP, f, h, names=names, genus=g)

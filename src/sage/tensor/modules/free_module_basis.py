@@ -31,12 +31,44 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import AbstractFamily
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.sage_object import SageObject
 
-class Basis_abstract(UniqueRepresentation, SageObject):
+class Basis_abstract(UniqueRepresentation, AbstractFamily):
     """
     Abstract base class for (dual) bases of free modules.
+
+    A basis is an :class:`~sage.sets.family.AbstractFamily`, hence like
+    :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is
+    an associative :class:`Container`, providing methods :meth:`keys`,
+    :meth:`values`, and :meth:`items`. Thus, ``e[i]`` returns the element
+    of the basis ``e`` indexed by the key ``i``. However, in contrast to
+    :class:`Mapping` subclasses, not the :meth:`keys` but the
+    :meth:`values` are considered the elements.
+
+    EXAMPLES:
+
+        sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
+        sage: e = M.basis('e'); e
+        Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring
+        sage: list(e)
+        [Element e_1 of the Rank-3 free module M over the Integer Ring,
+        Element e_2 of the Rank-3 free module M over the Integer Ring,
+        Element e_3 of the Rank-3 free module M over the Integer Ring]
+        sage: e.category()
+        Category of facade finite enumerated sets
+        sage: list(e.keys())
+        [1, 2, 3]
+        sage: list(e.values())
+        [Element e_1 of the Rank-3 free module M over the Integer Ring,
+        Element e_2 of the Rank-3 free module M over the Integer Ring,
+        Element e_3 of the Rank-3 free module M over the Integer Ring]
+        sage: list(e.items())
+        [(1, Element e_1 of the Rank-3 free module M over the Integer Ring),
+        (2, Element e_2 of the Rank-3 free module M over the Integer Ring),
+        (3, Element e_3 of the Rank-3 free module M over the Integer Ring)]
     """
     def __init__(self, fmodule, symbol, latex_symbol, indices, latex_indices):
         """
@@ -54,10 +86,59 @@ class Basis_abstract(UniqueRepresentation, SageObject):
         self._latex_symbol = latex_symbol
         self._indices = indices
         self._latex_indices = latex_indices
+        super().__init__(category=FiniteEnumeratedSets(), facade=fmodule)
+
+    def keys(self):
+        """
+        Return the keys (indices) of the family.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: list(e.keys())
+            [0, 1, 2]
+        """
+        return self._fmodule.irange()
+
+    def values(self):
+        """
+        Return the basis elements of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: list(e.values())
+            [Element e_0 of the Rank-3 free module M over the Integer Ring,
+            Element e_1 of the Rank-3 free module M over the Integer Ring,
+            Element e_2 of the Rank-3 free module M over the Integer Ring]
+        """
+        return self._vec
+
+    def _element_constructor_(self, x):
+        """
+        Test whether ``x`` is an element of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e(e[1])
+            Element e_1 of the Rank-3 free module M over the Integer Ring
+            sage: f = M.basis('f')
+            sage: e(f[1])
+            Traceback (most recent call last):
+            ...
+            ValueError: no common basis for the comparison
+        """
+        if x in self.values():
+            return x
+        raise ValueError(f'{x} is not in {self}')
 
     def __iter__(self):
         r"""
-        Return the list of basis elements of ``self``.
+        Return an iterator for the basis elements of ``self``.
 
         EXAMPLES::
 
@@ -83,8 +164,7 @@ class Basis_abstract(UniqueRepresentation, SageObject):
              Element e_2 of the Rank-3 free module M1 over the Integer Ring,
              Element e_3 of the Rank-3 free module M1 over the Integer Ring]
         """
-        for i in self._fmodule.irange():
-            yield self[i]
+        yield from self.values()
 
     def _test_iter_len(self, **options):
         r"""
@@ -124,6 +204,19 @@ class Basis_abstract(UniqueRepresentation, SageObject):
             3
         """
         return self._fmodule._rank
+
+    def cardinality(self):
+        r"""
+        Return the basis length, i.e. the rank of the free module.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e.cardinality()
+            3
+        """
+        return ZZ(self._fmodule._rank)
 
     def __getitem__(self, index):
         r"""

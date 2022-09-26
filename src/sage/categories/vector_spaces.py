@@ -134,7 +134,7 @@ class VectorSpaces(Category_module):
             [Category of modules over Rational Field]
         """
         R = self.base_field()
-        return [Modules(R, dispatch = False)]
+        return [Modules(R, dispatch=False)]
 
     def additional_structure(self):
         r"""

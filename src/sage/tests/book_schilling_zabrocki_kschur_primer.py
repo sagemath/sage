@@ -542,7 +542,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 3536::
 
     sage: la = Partition([3,2,1,1])
     sage: la.k_atom(4)
-    [[[1, 1, 1], [2, 2], [3], [4]], [[1, 1, 1, 4], [2, 2], [3]]]
+    [[[1, 1, 1, 4], [2, 2], [3]], [[1, 1, 1], [2, 2], [3], [4]]]
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 3639::
 

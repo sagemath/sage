@@ -1,8 +1,9 @@
 r"""
-Elements, parents, and categories in Sage: a (draft of) primer
+Elements, parents, and categories in Sage: a primer
 
 .. contents::
-    :depth: 2
+   :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Abstract
 ========

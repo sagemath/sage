@@ -267,7 +267,7 @@ Sage example in ./polynomes.tex, line 1600::
   sage: A = Integers(101); R.<x> = A[]
   sage: f6 = sum( (i+1)^2 * x^i for i in (0..5) ); f6
   36*x^5 + 25*x^4 + 16*x^3 + 9*x^2 + 4*x + 1
-  sage: num, den = f6.rational_reconstruct(x^6, 1, 3); num/den
+  sage: num, den = f6.rational_reconstruction(x^6, 1, 3); num/den
   (100*x + 100)/(x^3 + 98*x^2 + 3*x + 100)
 
 Sage example in ./polynomes.tex, line 1611::
@@ -283,7 +283,7 @@ Sage example in ./polynomes.tex, line 1672::
 
 Sage example in ./polynomes.tex, line 1677::
 
-  sage: num, den = ZpZx(s).rational_reconstruct(ZpZx(x)^10,4,5)
+  sage: num, den = ZpZx(s).rational_reconstruction(ZpZx(x)^10,4,5)
   sage: num/den
   (1073741779*x^3 + 105*x)/(x^4 + 1073741744*x^2 + 105)
 
@@ -304,7 +304,7 @@ Sage example in ./polynomes.tex, line 1713::
 
   sage: def mypade(pol, n, k):
   ....:     x = ZpZx.gen();
-  ....:     n,d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
+  ....:     n,d = ZpZx(pol).rational_reconstruction(x^n, k-1, n-k)
   ....:     return Qx(list(map(lift_sym, n)))/Qx(list(map(lift_sym, d)))
 
 Sage example in ./polynomes.tex, line 1813::

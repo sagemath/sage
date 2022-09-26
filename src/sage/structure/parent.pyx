@@ -2863,7 +2863,7 @@ cdef class Set_generic(Parent):
     TESTS::
 
         sage: Set(QQ).category()
-        Category of sets
+        Category of infinite sets
 
     """
     def object(self):

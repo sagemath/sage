@@ -1,11 +1,11 @@
 Cvxopt
 ======
 
-Cvxopt provides many routines for solving convex optimization
+``Cvxopt`` provides many routines for solving convex optimization
 problems such as linear and quadratic programming packages. It also
 has a very nice sparse matrix library that provides an interface to
-umfpack (the same sparse matrix solver that matlab uses), it also
-has a nice interface to lapack. For more details on cvxopt please
+``umfpack`` (the same sparse matrix solver that ``matlab`` uses), it also
+has a nice interface to ``lapack``. For more details on ``cvxopt`` please
 refer to its documentation at `<http://cvxopt.org/userguide/index.html>`_
 
 Sparse matrices are represented in triplet notation that is as a
@@ -32,7 +32,7 @@ by
     sage: from cvxopt.base import spmatrix       # optional - cvxopt
     sage: from cvxopt.base import matrix as m    # optional - cvxopt
     sage: from cvxopt import umfpack             # optional - cvxopt
-    sage: Integer=int                            # optional - cvxopt
+    sage: Integer = int                          # optional - cvxopt
     sage: V = [2,3, 3,-1,4, 4,-3,1,2, 2, 6,1]    # optional - cvxopt
     sage: I = [0,1, 0, 2,4, 1, 2,3,4, 2, 1,4]    # optional - cvxopt
     sage: J = [0,0, 1, 1,1, 2, 2,2,2, 3, 4,4]    # optional - cvxopt
@@ -61,7 +61,7 @@ we could do the following.
     [    0     -1.00e+00 -3.00e+00  2.00e+00     0    ]
     [    0         0      1.00e+00     0         0    ]
     [    0      4.00e+00  2.00e+00     0      1.00e+00]
-    sage: C=m(B)                                 # optional - cvxopt
+    sage: C = m(B)                               # optional - cvxopt
     sage: umfpack.linsolve(A,C)                  # optional - cvxopt
     sage: print(C)                               # optional - cvxopt
     [ 5.79e-01]
@@ -71,7 +71,7 @@ we could do the following.
     [-7.89e-01]
 
 Note the solution is stored in :math:`B` afterward. also note the
-m(B), this turns our numpy array into a format cvxopt understands.
+m(B), this turns our numpy array into a format ``cvxopt`` understands.
 You can directly create a cvxopt matrix using cvxopt's own matrix
 command, but I personally find numpy arrays nicer. Also note we
 explicitly set the shape of the numpy array to make it clear it was
@@ -81,12 +81,12 @@ We could compute the approximate minimum degree ordering by doing
 
 ::
 
-    sage: RealNumber=float                       # optional - cvxopt
-    sage: Integer=int                            # optional - cvxopt
+    sage: RealNumber = float                     # optional - cvxopt
+    sage: Integer = int                          # optional - cvxopt
     sage: from cvxopt.base import spmatrix       # optional - cvxopt
     sage: from cvxopt import amd                 # optional - cvxopt
-    sage: A=spmatrix([10,3,5,-2,5,2],[0,2,1,2,2,3],[0,0,1,1,2,3])  # optional - cvxopt
-    sage: P=amd.order(A)                         # optional - cvxopt
+    sage: A = spmatrix([10,3,5,-2,5,2],[0,2,1,2,2,3],[0,0,1,1,2,3])  # optional - cvxopt
+    sage: P = amd.order(A)                       # optional - cvxopt
     sage: print(P)                               # optional - cvxopt
     [ 1]
     [ 0]
@@ -108,8 +108,8 @@ For a simple linear programming example, if we want to solve
 
 ::
 
-    sage: RealNumber=float                       # optional - cvxopt
-    sage: Integer=int                            # optional - cvxopt
+    sage: RealNumber = float                     # optional - cvxopt
+    sage: Integer = int                          # optional - cvxopt
     sage: from cvxopt.base import matrix as m    # optional - cvxopt
     sage: from cvxopt import solvers             # optional - cvxopt
     sage: c = m([-4., -5.])                      # optional - cvxopt
@@ -130,4 +130,3 @@ For a simple linear programming example, if we want to solve
     sage: print(sol['x'])    # optional - cvxopt  # ... below since can get -00 or +00 depending on architecture
     [ 1.00e...00]
     [ 1.00e+00]
-

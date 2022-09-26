@@ -119,7 +119,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         sage: G = M.cayley_graph(side = "twosided"); G
         Looped multi-digraph on 4 vertices
-        sage: sorted(G.edges(), key=str)
+        sage: G.edges(sort=True, key=str)
         [([1, 1], [1, 1], (2, 'left')),
          ([1, 1], [1, 1], (2, 'right')),
          ([1, 1], [1], (1, 'left')),

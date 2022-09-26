@@ -148,14 +148,13 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             prefix = 'd_'+dual_basis.prefix()
 
         classical.SymmetricFunctionAlgebra_classical.__init__(self, self._sym,
-                                                              basis_name = basis_name,
-                                                              prefix = prefix)
+                                                              basis_name=basis_name,
+                                                              prefix=prefix)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
-        self            .register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
+        self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
-
 
     def _dual_to_self(self, x):
         """
@@ -193,7 +192,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h(m([2,1]) + 3*m[1,1,1])
             d_m[1, 1, 1] - d_m[2, 1]
         """
-        return self._element_class(self, dual = x)
+        return self._element_class(self, dual=x)
 
     def _self_to_dual(self, x):
         """

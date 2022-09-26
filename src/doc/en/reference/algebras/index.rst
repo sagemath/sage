@@ -79,6 +79,7 @@ Hecke algebras
    sage/algebras/iwahori_hecke_algebra
    sage/algebras/nil_coxeter_algebra
    sage/algebras/yokonuma_hecke_algebra
+   cubic_hecke_algebra
 
 Graded algebras
 ---------------
@@ -98,6 +99,7 @@ Various associative algebras
    sage/algebras/associated_graded
    sage/algebras/cellular_basis
    sage/algebras/q_system
+   sage/algebras/q_commuting_polynomials
    sage/algebras/splitting_algebra
 
 Non-associative algebras

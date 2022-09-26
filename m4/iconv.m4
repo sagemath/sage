@@ -1,4 +1,4 @@
-# iconv.m4 serial 24
+# iconv.m4 serial 26
 dnl Copyright (C) 2000-2002, 2007-2014, 2016-2022 Free Software Foundation,
 dnl Inc.
 dnl This file is free software; the Free Software Foundation
@@ -234,12 +234,6 @@ AC_DEFUN([AM_ICONV_LINK],
 
 dnl Define AM_ICONV using AC_DEFUN_ONCE, in order to avoid warnings like
 dnl "warning: AC_REQUIRE: `AM_ICONV' was expanded before it was required".
-dnl This is tricky because of the way 'aclocal' is implemented:
-dnl - It requires defining an auxiliary macro whose name ends in AC_DEFUN.
-dnl   Otherwise aclocal's initial scan pass would miss the macro definition.
-dnl - It requires a line break inside the AC_DEFUN_ONCE and AC_DEFUN expansions.
-dnl   Otherwise aclocal would emit many "Use of uninitialized value $1"
-dnl   warnings.
 AC_DEFUN_ONCE([AM_ICONV],
 [
   AM_ICONV_LINK
@@ -280,4 +274,20 @@ size_t iconv (iconv_t cd, char * *inbuf, size_t *inbytesleft, char * *outbuf, si
        ICONV_CONST="const"
      fi
     ])
+
+  dnl A summary result, for those packages which want to print a summary at the
+  dnl end of the configuration.
+  if test "$am_func_iconv" = yes; then
+    if test -n "$LIBICONV"; then
+      am_cv_func_iconv_summary='yes, in libiconv'
+    else
+      am_cv_func_iconv_summary='yes, in libc'
+    fi
+  else
+    if test "$am_cv_func_iconv" = yes; then
+      am_cv_func_iconv_summary='not working, consider installing GNU libiconv'
+    else
+      am_cv_func_iconv_summary='no, consider installing GNU libiconv'
+    fi
+  fi
 ])

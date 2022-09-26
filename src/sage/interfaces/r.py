@@ -343,7 +343,7 @@ def _setup_r_to_sage_converter():
         sage: r.options(width="60").sage()  # optional - rpy2
         {'DATA': {'width': 60}, '_Names': 'width'}
 
-    The conversion can handle "not a number", infintiy, imaginary values and
+    The conversion can handle "not a number", infinity, imaginary values and
     missing values::
 
         sage: r(-17).sqrt().sage()  # optional - rpy2
@@ -476,13 +476,12 @@ class R(ExtraTabCompletion, Interface):
             sage: r == loads(dumps(r))  # optional - rpy2
             True
         """
-
         Interface.__init__(
                 self,
-                name = 'r', # The capitalized version of this is used for printing.
+                name='r', # The capitalized version of this is used for printing.
         )
         self._seed = seed
-        self._initialized = False # done lazily
+        self._initialized = False  # done lazily
 
     def _lazy_init(self):
         """

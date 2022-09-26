@@ -3,20 +3,17 @@
 Linux package managers
 ======================
 
-On Debian GNU/Linux version >= 11, Ubuntu version >= 21.04, and
-Arch Linux there are three packages to install
+SageMath is available from various distributions and can be installed
+by package managers.
 
-- ``sagemath`` (for the binaries)
+See `the _sagemath dummy package <../reference/spkg/_sagemath.html>`_
+for the names of packages that provide a standard installation of
+SageMath, including documentation and Jupyter.
 
-- ``sagemath-jupyter`` (for the browser interface)
-
-- and the documentation which is called ``sagemath-doc-en``
-  on Debian/Ubuntu and ``sagemath-doc`` on Arch Linux.
-
-See `repology.org: sagemath
+See also `repology.org: sagemath
 <https://repology.org/project/sagemath/versions>`_ for information
-about SageMath packages in other distributions, and their available
-versions. Do not install a version of Sage older than 9.2.
+about versions of SageMath packages in various distributions.
+**Do not install a version of Sage older than 9.2.**
 If you are on an older version of your distribution and a recent
 version of SageMath is only available on a newer version of the
 distribution, consider upgrading your distribution.

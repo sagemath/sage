@@ -18,14 +18,16 @@ Image Sets
 
 from typing import Iterator
 
-from sage.structure.parent import Parent, is_Parent
 from sage.categories.map import is_Map
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
+from sage.structure.parent import Parent, is_Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
 
@@ -39,8 +41,33 @@ class ImageSubobject(Parent):
     .. MATH::
 
         \{ f(x) | x \in X \} \subseteq Y.
+
+    INPUT:
+
+    - ``map`` -- a function
+
+    - ``domain_subset`` -- the set `X`; optional if `f` has a domain
+
+    - ``is_injective`` -- whether the ``map`` is injective:
+      - ``None`` (default): infer from ``map`` or default to ``False``
+      - ``False``: do not assume that ``map`` is injective
+      - ``True``: ``map`` is known to be injective
+      - ``"check"``: raise an error when ``map`` is not injective
+
+    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
+
+    EXAMPLES::
+
+        sage: import itertools
+        sage: from sage.sets.image_set import ImageSubobject
+        sage: D = ZZ
+        sage: I = ImageSubobject(abs, ZZ, is_injective='check')
+        sage: list(itertools.islice(I, 10))
+        Traceback (most recent call last):
+        ...
+        ValueError: The map <built-in function abs> from Integer Ring is not injective: 1
     """
-    def __init__(self, map, domain_subset, *, category=None, is_injective=None):
+    def __init__(self, map, domain_subset, *, category=None, is_injective=None, inverse=None):
         """
         Initialize ``self``.
 
@@ -99,8 +126,45 @@ class ImageSubobject(Parent):
         Parent.__init__(self, category=category)
 
         self._map = map
+        self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective
+
+    def _element_constructor_(self, x):
+        """
+        EXAMPLES::
+
+            sage: import itertools
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: D = ZZ
+            sage: I = ImageSubobject(lambda x: 2 * x, ZZ, inverse=lambda x: x/2)
+            sage: I(8/2)
+            4
+            sage: _.parent()
+            Integer Ring
+            sage: I(10/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: 5 is not in Image of Integer Ring by The map <function <lambda> at ...> from Integer Ring
+            sage: 6 in I
+            True
+            sage: 7 in I
+            False
+        """
+        # Same as ImageManifoldSubset.__contains__
+        codomain = self._map.codomain()
+        if codomain is not None and x not in codomain:
+            raise ValueError(f"{x} is not in {self}")
+        if self._inverse is not None:
+            preimage = self._inverse(x)
+            if preimage not in self._domain_subset:
+                raise ValueError(f"{x} is not in {self}")
+            preimage = self._map.domain()(preimage)
+            y = self._map(preimage)
+            if y == x:
+                return y
+            raise ValueError(f"{x} is not in {self}")
+        raise NotImplementedError
 
     def ambient(self):
         """
@@ -176,19 +240,53 @@ class ImageSubobject(Parent):
         """
         return f"Image of {self._domain_subset} by {self._map}"
 
+    @cached_method
     def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Injective case (note that
+        :meth:`~sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.map`
+        defaults to ``is_injective=True``):
 
             sage: R = Permutations(10).map(attrcall('reduced_word'))
             sage: R.cardinality()
             3628800
+
+            sage: Evens = ZZ.map(lambda x: 2 * x)
+            sage: Evens.cardinality()
+            +Infinity
+
+        Non-injective case::
+
+            sage: Z7 = Set(range(7))
+            sage: from sage.sets.image_set import ImageSet
+            sage: Z4711 = ImageSet(lambda x: x**4 % 11, Z7, is_injective=False)
+            sage: Z4711.cardinality()
+            6
+
+            sage: Squares = ImageSet(lambda x: x^2, ZZ, is_injective=False,
+            ....:                    category=Sets().Infinite())
+            sage: Squares.cardinality()
+            +Infinity
+
+            sage: Mod2 = ZZ.map(lambda x: x % 2, is_injective=False)
+            sage: Mod2.cardinality()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot determine cardinality of a non-injective image of an infinite set
         """
-        if self._is_injective:
-            return self._domain_subset.cardinality()
-        return super().cardinality()
+        domain_cardinality = self._domain_subset.cardinality()
+        if self._is_injective and self._is_injective != 'check':
+            return domain_cardinality
+        if self in Sets().Infinite():
+            return Infinity
+        if domain_cardinality == Infinity:
+            raise NotImplementedError('cannot determine cardinality of a non-injective image of an infinite set')
+        # Fallback like EnumeratedSets.ParentMethods.__len__
+        return Integer(len(list(iter(self))))
 
     def __iter__(self) -> Iterator:
         r"""
@@ -204,7 +302,7 @@ class ImageSubobject(Parent):
             sage: [next(it) for _ in range(5)]
             [0, 1, 2, 3, 4]
         """
-        if self._is_injective:
+        if self._is_injective and self._is_injective != 'check':
             for x in self._domain_subset:
                 yield self._map(x)
         else:
@@ -212,6 +310,8 @@ class ImageSubobject(Parent):
             for x in self._domain_subset:
                 y = self._map(x)
                 if y in visited:
+                    if self._is_injective == 'check':
+                        raise ValueError(f'{self._map} is not injective: {y}')
                     continue
                 visited.add(y)
                 yield y

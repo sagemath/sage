@@ -622,6 +622,24 @@ class ConvexSet_base(SageObject, Set_base):
             return self
         raise NotImplementedError
 
+    @cached_method
+    def representative_point(self):
+        """
+        Return a "generic" point of ``self``.
+
+        OUTPUT:
+
+        A point in the relative interior of ``self`` as a coordinate vector.
+
+        EXAMPLES::
+
+            sage: C = Cone([[1, 2, 0], [2, 1, 0]])
+            sage: C.representative_point()
+            (1, 1, 0)
+        """
+        affine_basis = self.an_affine_basis()
+        return sum(affine_basis) / len(affine_basis)
+
     def _test_convex_set(self, tester=None, **options):
         """
         Run some tests on the methods of :class:`ConvexSet_base`.
@@ -746,7 +764,6 @@ class ConvexSet_base(SageObject, Set_base):
             raise NotImplementedError
         return list(self._some_elements_())
 
-    @abstract_method(optional=True)
     def _some_elements_(self):
         r"""
         Generate some points of ``self``.
@@ -757,11 +774,12 @@ class ConvexSet_base(SageObject, Set_base):
 
             sage: from sage.geometry.convex_set import ConvexSet_base
             sage: C = ConvexSet_base()
-            sage: C._some_elements_(C)
+            sage: list(C._some_elements_())
             Traceback (most recent call last):
             ...
             TypeError: 'NotImplementedType' object is not callable
         """
+        yield self.representative_point()
 
     @abstract_method(optional=True)
     def cartesian_product(self, other):
@@ -855,10 +873,14 @@ class ConvexSet_base(SageObject, Set_base):
                 tester.assertEqual(contains_space_point, self.contains(ambient_point))
             tester.assertEqual(contains_space_point, self.contains(space_coords))
             if space.base_ring().is_exact():
-                from sage.rings.qqbar import AA
-                ext_space = self.ambient_vector_space(AA)
-                ext_space_point = ext_space(space_point)
-                tester.assertEqual(contains_space_point, self.contains(ext_space_point))
+                try:
+                    from sage.rings.qqbar import AA
+                except ImportError:
+                    pass
+                else:
+                    ext_space = self.ambient_vector_space(AA)
+                    ext_space_point = ext_space(space_point)
+                    tester.assertEqual(contains_space_point, self.contains(ext_space_point))
             try:
                 from sage.symbolic.ring import SR
                 symbolic_space = self.ambient_vector_space(SR)

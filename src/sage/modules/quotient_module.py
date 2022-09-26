@@ -19,11 +19,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.richcmp import rich_to_bool, richcmp
-
 from .free_module import (Module_free_ambient,
                           FreeModule_ambient,
                           FreeModule_ambient_field)
+
 
 ###############################################################################
 #
@@ -80,7 +79,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
             v = [C(self._free_cover, x.list(), coerce=False, copy=False) for x in sub.gens()]
             w = [C(self._free_cover, x.list(), coerce=False, copy=False) for x in module.free_relations().gens()]
             self._relations = self._free_cover.submodule(v + w, check=False)
-        else: # Otherwise module should be a free module
+        else:  # Otherwise module should be a free module
             self._free_cover = module
             self._relations = sub
 
@@ -448,7 +447,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             sage: Q._repr_()
             'Vector space quotient V/W of dimension 1 over Finite Field in a of size 3^2 where\nV: Vector space of degree 3 and dimension 2 over Finite Field in a of size 3^2\nUser basis matrix:\n[1 0 a]\n[a a 1]\nW: Vector space of degree 3 and dimension 1 over Finite Field in a of size 3^2\nBasis matrix:\n[    1     1 a + 2]'
         """
-        return "%s space quotient V/W of dimension %s over %s where\nV: %s\nW: %s"%(
+        return "%s space quotient V/W of dimension %s over %s where\nV: %s\nW: %s" % (
             "Sparse vector" if self.is_sparse() else "Vector",
             self.dimension(), self.base_ring(),
             self.V(), self.W())
@@ -675,4 +674,3 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         return self._sub
 
     W = relations
-

@@ -329,7 +329,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
             sage: f != g
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def domain(self):
         """
@@ -863,7 +863,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                 g = DynamicalSystem_Berkovich(f)
                 return g(self.domain()(QQ(0), QQ(1))).involution_map()
             # if the reduction is not constant, the image is the Gauss point
-            if not(num.is_constant() and dem.is_constant()):
+            if not (num.is_constant() and dem.is_constant()):
                 return self.domain()(QQ(0), QQ(1))
             if self.domain().is_padic_base():
                 reduced_value = field(num * dem.inverse_of_unit()).lift_to_precision(field.precision_cap())

@@ -192,6 +192,7 @@ from sage.combinat.skew_partition import SkewPartition
 from sage.rings.integer import Integer
 import lrcalc
 
+
 def _lrcalc_dict_to_sage(result):
     r"""
     Translate from lrcalc output format to Sage expected format.
@@ -517,4 +518,3 @@ def lrskew(outer, inner, weight=None, maxrows=-1):
                 w[j] += 1
             if w == wt:
                 yield ST.from_shape_and_word(shape, [i+1 for i in data])
-

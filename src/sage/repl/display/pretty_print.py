@@ -105,8 +105,8 @@ class SagePrettyPrinter(PrettyPrinter):
             sage: foo
             <function foo at 0x...>
         """
-        super(SagePrettyPrinter, self).__init__(
-            output, max_width, newline, max_seq_length=max_seq_length)
+        super().__init__(output, max_width, newline,
+                         max_seq_length=max_seq_length)
         self.stack = []
 
     def pretty(self, obj):

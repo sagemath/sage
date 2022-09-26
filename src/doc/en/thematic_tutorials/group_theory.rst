@@ -27,6 +27,7 @@ http://abstract.ups.edu/sage-aata.html.
 
 .. contents:: Table of contents
    :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Changelog:
 

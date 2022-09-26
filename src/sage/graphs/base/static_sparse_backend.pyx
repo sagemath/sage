@@ -72,11 +72,12 @@ cdef class StaticSparseCGraph(CGraph):
         vertices of the graph ``G`` in some order.
         **Beware that no serious checks are made that this input is correct**.
 
-        If ``vertex_list`` is given, it will be used to map vertices of the
-        graph to consecutive integers. Otherwise, the result of ``G.vertices()``
-        will be used instead. Because ``G.vertices()`` only works if the
-        vertices can be sorted, using ``vertex_list`` is useful when working
-        with possibly non-sortable objects in Python 3.
+        If ``vertex_list`` is given, it will be used to map vertices
+        of the graph to consecutive integers. Otherwise, the result of
+        ``G.vertices(sort=True)`` will be used instead. Because this
+        only works if the vertices can be sorted, using
+        ``vertex_list`` is useful when working with possibly
+        non-sortable objects in Python 3.
 
         TESTS::
 
@@ -447,7 +448,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")
             sage: gi = DiGraph(g, data_structure="static_sparse")
-            sage: gi.edges()[0]
+            sage: gi.edges(sort=True)[0]
             ('000', '000', '0')
             sage: sorted(gi.edges_incident('111'))
             [('111', '110', '0'),
@@ -455,7 +456,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ('111', '112', '2'),
             ('111', '113', '3')]
 
-            sage: set(g.edges()) == set(gi.edges())
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))
             True
 
         ::
@@ -464,13 +465,13 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: gi = Graph(g, data_structure="static_sparse")
             sage: g == gi
             True
-            sage: set(g.edges()) == set(gi.edges())
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))
             True
 
         ::
 
             sage: gi = Graph({ 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, data_structure="static_sparse")
-            sage: (0, 4, 2) in gi.edges()
+            sage: (0, 4, 2) in gi.edges(sort=False)
             True
             sage: gi.has_edge(0, 4)
             True
@@ -488,7 +489,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: d = G.diameter()
             sage: H = G.distance_graph(list(range(d + 1)))
             sage: HI = Graph(H, data_structure="static_sparse")
-            sage: HI.size() == len(HI.edges())
+            sage: HI.size() == len(HI.edges(sort=False))
             True
 
         ::
@@ -498,9 +499,9 @@ cdef class StaticSparseBackend(CGraphBackend):
             3
             sage: g.order()
             1
-            sage: g.vertices()
+            sage: g.vertices(sort=False)
             [1]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(1, 1, 1), (1, 1, 2), (1, 1, 3)]
 
         :trac:`15810` is fixed::
@@ -983,7 +984,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: g = digraphs.RandomDirectedGNP(10, .3)
             sage: gi = DiGraph(g, data_structure="static_sparse")
-            sage: gi.size() == len(gi.edges())
+            sage: gi.size() == len(gi.edges(sort=False))
             True
         """
         cdef StaticSparseCGraph cg = <StaticSparseCGraph> self._cg
@@ -1028,7 +1029,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         :trac:`15665`::
 
-            sage: Graph(immutable=True).edges()
+            sage: Graph(immutable=True).edges(sort=False)
             []
         """
         cdef FrozenBitset b_vertices

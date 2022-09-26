@@ -144,7 +144,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
             CallableSymbolicExpressionFunctor(x, y)
         """
         self._arguments = arguments
-        from sage.categories.all import Rings
+        from sage.categories.rings import Rings
         self.rank = 3
         ConstructionFunctor.__init__(self, Rings(), Rings())
 

@@ -409,7 +409,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     ans = bytes_to_str(ans)
     ans = ans.splitlines()
     ans = ans[-5].split()
-    assert(ans[0]=='Answer:')
+    assert ans[0] == 'Answer:'
     ans = ans[1]
 
     tempd.cleanup()

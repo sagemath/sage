@@ -202,21 +202,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# imports
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose
-from sage.rings.all import Integer, ZZ, QQ, PolynomialRing, GF, CommutativeRing
-
 from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra, basis_for_quaternion_lattice
 from sage.algebras.quatalg.quaternion_algebra_cython import rational_matrix_from_rational_quaternions
-
-from sage.arith.all import gcd, factor, prime_divisors, kronecker, next_prime
-from sage.modular.hecke.all import (AmbientHeckeModule, HeckeSubmodule,
-                                    HeckeModuleElement)
-from sage.modular.dirichlet import TrivialCharacter
-from sage.matrix.all import MatrixSpace, matrix
-from sage.structure.richcmp import richcmp, richcmp_method
+from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.dirichlet import TrivialCharacter
+from sage.modular.hecke.ambient_module import AmbientHeckeModule
+from sage.modular.hecke.element import HeckeModuleElement
+from sage.modular.hecke.submodule import HeckeSubmodule
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 cache = {}

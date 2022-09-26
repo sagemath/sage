@@ -376,6 +376,8 @@ More sanity tests::
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
+from copy import copy
+
 import operator
 import sage.rings.integer
 import sage.rings.rational
@@ -2548,8 +2550,9 @@ cdef class Expression(Expression_abc):
             sage: SR(1.2).is_algebraic()
             False
         """
+        from sage.rings.qqbar import QQbar
         try:
-            ex = sage.rings.all.QQbar(self)
+            ex = QQbar(self)
         except (TypeError, ValueError, NotImplementedError):
             return False
         return True
@@ -3456,6 +3459,11 @@ cdef class Expression(Expression_abc):
             sage: val = pi - 2286635172367940241408/1029347477390786609545*sqrt(2)
             sage: bool(val>0)
             False
+
+        Check that :trac:`34341` is fixed::
+
+            sage: bool(x^2 + 2*x + 1 != (x + 1)^2)
+            False
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
@@ -3499,8 +3507,8 @@ cdef class Expression(Expression_abc):
 
             # Use interval fields to try and falsify the relation
             if not need_assumptions:
-                if pynac_result == relational_notimplemented and self.operator()==operator.ne:
-                    return not (self.lhs()-self.rhs()).is_trivial_zero()
+                if pynac_result == relational_notimplemented and self.operator() == operator.ne:
+                    return not (self.lhs()-self.rhs()).is_zero()
                 res = self.test_relation()
                 if res in (True, False):
                     return res
@@ -7793,7 +7801,7 @@ cdef class Expression(Expression_abc):
         if len(v) != 1:
             raise ValueError("self must be a polynomial in one variable but it is in the variables %s" % tuple([v]))
         f = self.polynomial(base_ring)
-        from sage.rings.all import PowerSeriesRing
+        from sage.rings.power_series_ring import PowerSeriesRing
         R = PowerSeriesRing(base_ring, names=f.parent().variable_names())
         return R(f, f.degree()+1)
 
@@ -11787,13 +11795,14 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.operators import add_vararg as opadd, \
             mul_vararg as opmul
         from sage.misc.misc_c import prod
+        from sage.symbolic.ring import SR
 
         def treat_term(op, term, args):
-            l = sage.all.copy(args)
+            l = copy(args)
             l.insert(0, term)
             return op(*l)
 
-        if self.parent() is not sage.all.SR:
+        if self.parent() is not SR:
             return self
 
         op = self.operator()
@@ -11889,6 +11898,11 @@ cdef class Expression(Expression_abc):
             x + sqrt(x)
             sage: factor((x + sqrt(x))/(x - sqrt(x)))
             (x + sqrt(x))/(x - sqrt(x))
+
+        Check that :trac:`33640` is fixed::
+
+            sage: ((x + 1)^2 - 2*x - 1).factor() 
+            x^2
         """
         from sage.calculus.calculus import symbolic_expression_from_maxima_string
         cdef GEx x
@@ -13726,7 +13740,10 @@ cpdef new_Expression(parent, x):
         from sage.misc.misc_c import prod
         return prod([SR(p)**e for p,e in x], SR(x.unit()))
     elif x in Sets():
-        from sage.rings.all import NN, ZZ, QQ, AA
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.qqbar import AA
+        from sage.rings.rational_field import QQ
+        from sage.rings.semirings.non_negative_integer_semiring import NN
         from sage.sets.real_set import RealSet
         if (x.is_finite() or x in (NN, ZZ, QQ, AA)
                 or isinstance(x, RealSet)):

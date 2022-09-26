@@ -81,38 +81,38 @@ class AbelianGroupMorphism(Morphism):
 #Traceback (most recent call last):
 #  File "<ipython console>", line 1, in ?
 #  File ".abeliangp_hom.sage.py", line 737, in __init__
-#    raise TypeError, "Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss)
-#TypeError: Sorry, the orders of the corresponding elements in [a*b, a*c], [x, y] must be equal.
+#    raise TypeError("the orders of the corresponding elements in %s, %s must be equal" % (genss,imgss))
+#TypeError: the orders of the corresponding elements in [a*b, a*c], [x, y] must be equal
 #
 #        sage: phi = AbelianGroupMorphism_im_gens(G,H,[a*b,(a*c)^2],[x*y,y])
 #------------------------------------------------------------
 #Traceback (most recent call last):
 #  File "<ipython console>", line 1, in ?
 #  File ".abeliangp_hom.sage.py", line 730, in __init__
-#    raise TypeError, "Sorry, the list %s must generate G."%genss
-#TypeError: Sorry, the list [a*b, c^2] must generate G.
+#    raise TypeError("the list %s must generate G" % genss)
+#TypeError: the list [a*b, c^2] must generate G
 
     def __init__(self, G, H, genss, imgss):
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(G, H))
         if len(genss) != len(imgss):
-            raise TypeError("Sorry, the lengths of %s, %s must be equal." % (genss, imgss))
+            raise TypeError("the lengths of %s, %s must be equal" % (genss, imgss))
         self._domain = G
         self._codomain = H
-        if not(G.is_abelian()):
-            raise TypeError("Sorry, the groups must be abelian groups.")
-        if not(H.is_abelian()):
-            raise TypeError("Sorry, the groups must be abelian groups.")
+        if not G.is_abelian():
+            raise TypeError("the groups must be abelian groups")
+        if not H.is_abelian():
+            raise TypeError("the groups must be abelian groups")
         G_domain = G.subgroup(genss)
         if G_domain.order() != G.order():
-            raise TypeError("Sorry, the list %s must generate G." % genss)
+            raise TypeError("the list %s must generate G" % genss)
         # self.domain_invs = G.gens_orders()
         # self.codomaininvs = H.gens_orders()
         self.domaingens = genss
         self.codomaingens = imgss
         for i in range(len(self.domaingens)):
             if (self.domaingens[i]).order() != (self.codomaingens[i]).order():
-                raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal." % (genss, imgss))
+                raise TypeError("the orders of the corresponding elements in %s, %s must be equal" % (genss, imgss))
 
     def _libgap_(self):
         """

@@ -1070,7 +1070,7 @@ appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
     [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
-    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional sagemath_doc_html,sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage-9.7/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats_path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>

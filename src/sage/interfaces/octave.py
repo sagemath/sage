@@ -146,6 +146,7 @@ from .expect import Expect, ExpectElement
 import pexpect
 from sage.misc.verbose import verbose
 from sage.misc.instancedoc import instancedoc
+from sage.misc.temporary_file import tmp_filename
 from sage.cpython.string import bytes_to_str
 
 
@@ -156,13 +157,13 @@ class Octave(Expect):
     EXAMPLES::
 
         sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]")    # optional - octave
-        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33\n\n'
+        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33\n'
         sage: octave.eval("b = [ 1; 3; 13]")                         # optional - octave
-        'b =\n\n 1\n 3\n 13\n\n'
-        sage: octave.eval("c=a \\ b") # solves linear equation: a*c = b  # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
+        'b =\n\n 1\n 3\n 13\n'
+        sage: octave.eval(r"c=a \ b") # solves linear equation: a*c = b  # optional - octave; random output
+        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
         sage: octave.eval("c")                                 # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
+        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
 
     TESTS:
 
@@ -186,19 +187,21 @@ class Octave(Expect):
             command = os.getenv('SAGE_OCTAVE_COMMAND') or 'octave-cli'
         if server is None:
             server = os.getenv('SAGE_OCTAVE_SERVER') or None
+        # Use a temporary workspace file.
+        workspace_file = tmp_filename()
         Expect.__init__(self,
-                        name = 'octave',
+                        name='octave',
                         # We want the prompt sequence to be unique to avoid confusion with syntax error messages containing >>>
-                        prompt = r'octave\:\d+> ',
+                        prompt=r'octave\:\d+> ',
                         # We don't want any pagination of output
-                        command = command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
-                        maxread = maxread,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = logfile,
+                        command=command + f" --no-line-editing --silent --eval 'PS2(PS1());more off; octave_core_file_name (\"{workspace_file}\")' --persist",
+                        maxread=maxread,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100)
         self._seed = seed
 
@@ -510,9 +513,9 @@ class Octave(Expect):
         sb = self.sage2octave_matrix_string(b)
         self.eval("a = " + sA )
         self.eval("b = " + sb )
-        soln = octave.eval("c = a \\ b")
+        soln = octave.eval(r"c = a \ b")
         soln = soln.replace("\n\n ","[")
-        soln = soln.replace("\n\n","]")
+        soln = soln.rstrip() + "]"
         soln = soln.replace("\n",",")
         sol  = soln[3:]
         return eval(sol)

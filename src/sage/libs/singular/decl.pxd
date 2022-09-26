@@ -1134,8 +1134,16 @@ cdef extern from "singular/kernel/GBEngine/kstd1.h":
     cdef extern int Kstd1_deg   # degBound, default 0
     cdef extern int Kstd1_mu    # multBound, default 0
 
+cdef extern from "singular/kernel/ideals.h":
+    ctypedef ideal * resolvente
+
 cdef extern from "singular/kernel/GBEngine/syz.h":
     ctypedef struct syStrategy "ssyStrategy":
+        resolvente fullres;
+        resolvente minres;
+        int length;
+        int regularity;
+        short list_length;
         short references
 
 cdef extern from "singular/polys/ext_fields/transext.h":

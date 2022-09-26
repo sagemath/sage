@@ -80,7 +80,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         """
         F = Family(self._generators,
                       lambda i: self.monomial((i,Integer(0))),
-                      name = "generator map")
+                      name="generator map")
         from sage.categories.sets_cat import Sets
         if F in Sets().Finite():
             return tuple(F)
@@ -100,5 +100,5 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             (B['K'],)
         """
         return Family(self._central_elements,
-                      lambda i: self.monomial((i,Integer(0))),
-                      name = "central_element map")
+                      lambda i: self.monomial((i, Integer(0))),
+                      name="central_element map")

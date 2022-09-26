@@ -41,6 +41,6 @@ latex_documents = [
 # Hence some template context variables such as 'title' are not provided to
 # this "additional" index.html.
 html_additional_pages = {
-    'index': 'index.html',
+    'index': 'index_furo.html' if html_theme == 'furo' else 'index.html',
 }
 

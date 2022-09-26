@@ -86,6 +86,17 @@ class DecoratedPermutation(ClonableArray,
         if self not in self.parent():
             raise ValueError("{} is not a decorated permutation".format(self))
 
+    def __hash__(self):
+        r"""
+        Return a hash of ``self``.
+
+        TESTS::
+
+            sage: len(set(hash(pi) for pi in DecoratedPermutations(3)))
+            16
+        """
+        return hash(tuple(self))
+
     def __eq__(self, other):
         """
         Check whether ``self`` is equal to ``other``.

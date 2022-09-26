@@ -822,7 +822,7 @@ def contour_plot(f, xrange, yrange, **options):
         g = contour_plot(f, (-pi,pi), (-pi,pi), fill=False, axes=True)
         sphinx_plot(g)
 
-    If you are plotting a sole countour and if all of your data lie on
+    If you are plotting a sole contour and if all of your data lie on
     one side of it, then (as part of :trac:`21042`) a heuristic may be
     used to improve the result; in that case, a warning is emitted::
 

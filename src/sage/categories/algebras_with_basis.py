@@ -104,7 +104,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: TestSuite(AlgebrasWithBasis(QQ)).run()
     """
 
-    def example(self, alphabet = ('a','b','c')):
+    def example(self, alphabet=('a','b','c')):
         """
         Return an example of algebra with basis.
 

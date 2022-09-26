@@ -118,19 +118,16 @@ class Mupad(ExtraTabCompletion, Expect):
             True
         """
         Expect.__init__(self,
-                        name = 'MuPAD',
-                        prompt = PROMPT,
+                        name='MuPAD',
+                        prompt=PROMPT,
                         # the -U SAGE=TRUE allows for MuPAD programs to test whether they are run from Sage
-                        command = "mupkern -P e -U SAGE=TRUE",
-                        script_subdirectory = script_subdirectory,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = None)
-
-
-
+                        command="mupkern -P e -U SAGE=TRUE",
+                        script_subdirectory=script_subdirectory,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=None)
 
     def _function_class(self):
         """
@@ -693,4 +690,3 @@ def __doctest_cleanup():
     """
     import sage.interfaces.quit
     sage.interfaces.quit.expect_quitall()
-

@@ -111,7 +111,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
 
     Variants of the previous example. ::
 
-        sage: H = Graph(G.edges(labels=False))
+        sage: H = Graph(G.edges(sort=True, labels=False))
         sage: kruskal(H, check=True)
         [(1, 2, None), (1, 6, None), (2, 3, None), (2, 7, None), (3, 4, None), (4, 5, None)]
         sage: G.allow_loops(True)
@@ -408,7 +408,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
         sage: from sage.graphs.spanning_tree import kruskal_iterator_from_edges
         sage: G = Graph([(0, 1)])
         sage: union_set = DisjointSet(G)
-        sage: next(kruskal_iterator_from_edges(G.edges(), union_set, weighted=False))
+        sage: next(kruskal_iterator_from_edges(G.edges(sort=True), union_set, weighted=False))
         doctest:...: DeprecationWarning: use the option 'by_weight' instead of 'weighted'
         See https://trac.sagemath.org/32805 for details.
         (0, 1, None)
@@ -787,7 +787,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
 
     Check if the weight of MST returned by Prim's and Boruvka's is the same::
 
-        sage: G = Graph([(u,v,randint(1,5)) for u,v in graphs.CompleteGraph(4).edges(labels=0)], weighted=True)
+        sage: G = Graph([(u,v,randint(1,5)) for u,v in graphs.CompleteGraph(4).edges(sort=True, labels=0)], weighted=True)
         sage: G.weighted()
         True
         sage: E1 = G.min_spanning_tree(algorithm='Boruvka')
@@ -988,12 +988,12 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
         ....:         S.add(Graph(E).graph6_string())
         ....:     return S
         sage: K3 = graphs.CompleteGraph(3)
-        sage: for u, v in K3.edges(labels=False):
+        sage: for u, v in K3.edges(sort=True, labels=False):
         ....:     K3.set_edge_label(u, v, randint(1, 2))
         sage: foo(K3, 100) == {'BW', 'Bg', 'Bo'}  # random
         True
         sage: K4 = graphs.CompleteGraph(4)
-        sage: for u, v in K4.edges(labels=False):
+        sage: for u, v in K4.edges(sort=True, labels=False):
         ....:     K4.set_edge_label(u, v, randint(1, 2))
         sage: print(len(foo(K4, 100)))  # random
         16
@@ -1121,11 +1121,11 @@ def spanning_trees(g, labels=False):
 
         sage: g = Graph([(1,2,2),(1,2,1),(1,2,4),(1,4,5)],multiedges=True)
         sage: l = list(g.spanning_trees(labels=True))
-        sage: l[0].edges()
+        sage: l[0].edges(sort=True)
         [(1, 2, 4), (1, 4, 5)]
-        sage: l[1].edges()
+        sage: l[1].edges(sort=True)
         [(1, 2, 1), (1, 4, 5)]
-        sage: l[2].edges()
+        sage: l[2].edges(sort=True)
         [(1, 2, 2), (1, 4, 5)]
 
     Small cases::
@@ -1258,7 +1258,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
     The sum of the weights of the returned spanning trees is minimum::
 
         sage: g = graphs.CompleteGraph(5)
-        sage: for u, v in g.edges(labels=False):
+        sage: for u, v in g.edges(sort=True, labels=False):
         ....:     g.set_edge_label(u, v, 1)
         sage: g.set_edge_label(0, 1, 33)
         sage: g.set_edge_label(1, 3, 33)
@@ -1425,6 +1425,6 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         raise EmptySetError(msg_no_solution)
 
     for f in res:
-        for u, v in f.edges(labels=False):
+        for u, v in f.edges(sort=False, labels=False):
             f.set_edge_label(u, v, G.edge_label(u, v))
     return res

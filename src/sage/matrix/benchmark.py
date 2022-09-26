@@ -30,7 +30,8 @@ verbose = False
 
 timeout = 60
 
-def report(F, title, systems = ['sage', 'magma'], **kwds):
+
+def report(F, title, systems=['sage', 'magma'], **kwds):
     """
     Run benchmarks with default arguments for each function in the list F.
 
