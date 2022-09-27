@@ -166,7 +166,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
 
         Note that the *Frobenius trace* is defined as `A(X)` and the
-        *Frobenius norm` is defined as `B(X)`.
+        *Frobenius norm* is defined as `B(X)`.
 
         INPUT:
 
