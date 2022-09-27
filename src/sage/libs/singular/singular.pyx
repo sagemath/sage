@@ -653,6 +653,24 @@ cpdef list si2sa_resolution(Resolution res):
     - ``res`` -- Singular resolution
 
     The procedure is destructive and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: si2sa_resolution(r)
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
     """
     cdef ring *singular_ring
     cdef syStrategy singular_res
@@ -754,6 +772,27 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
     - ``degrees`` -- list of integers or integer vectors
 
     The procedure is destructive, and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution_graded
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: res_mats, res_degs = si2sa_resolution_graded(r, (1, 1, 1, 1))
+        sage: res_mats
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
+        sage: res_degs
+        [[[2], [2], [2]], [[1, 1, 1], [1, 1, 1]]]
     """
     cdef ring *singular_ring
     cdef syStrategy singular_res
@@ -865,9 +904,9 @@ cdef number *sa2si_QQ(Rational r, ring *_ring):
 
     INPUT:
 
-    - ``r`` - a sage rational number
+    - ``r`` -- a sage rational number
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -895,9 +934,9 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
 
     INPUT:
 
-    - ``quo`` - a sage integer
+    - ``quo`` -- a sage integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -963,9 +1002,9 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a ntl_gf2e finite field
+    - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1028,9 +1067,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a generic finite field
+    - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1094,14 +1133,13 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1245,14 +1283,13 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1346,9 +1383,9 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a NumberField
+    - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1437,14 +1474,13 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage Integer
+    - ``elem`` -- a sage Integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1650,7 +1686,7 @@ cdef object si2sa_intvec(intvec *v):
 
     INPUT:
 
-    - ``v`` -- a (pointer to) a singular intvec
+    - ``v`` -- a (pointer to) singular intvec
 
     OUTPUT:
 

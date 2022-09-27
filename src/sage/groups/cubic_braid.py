@@ -218,10 +218,8 @@ def AssionGroupU(n=None, names='u'):
         Assion group on 3 strands of type U
         sage: U3 == U3x
         True
-
     """
     return CubicBraidGroup(n=n, names=names, cbg_type=CubicBraidGroup.type.AssionU)
-
 
 
 ##############################################################################
@@ -354,9 +352,9 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         braid_group = self.parent().braid_group()
         return braid_group(self)
 
-
     @cached_method
-    def burau_matrix(self, root_bur = None, domain = None, characteristic = None, var='t', reduced=False):
+    def burau_matrix(self, root_bur=None, domain=None, characteristic=None,
+                     var='t', reduced=False):
         r"""
         Return the Burau matrix of the cubic braid coset.
 
@@ -963,6 +961,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         - Construction of matrix group was faithful.
         - Coercion maps to and from matrix group exist and are
           inverse to each other.
+
         EXAMPLES::
 
             sage: CBG2 = CubicBraidGroup(2)
@@ -1993,9 +1992,9 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         return not (self._cbg_type == CubicBraidGroup.type.Coxeter and self.strands() > 5)
 
-    # ----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # creating a CubicBraidGroup as subgroup of self on less strands
-    # ----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------
     def cubic_braid_subgroup(self, nstrands=None):
         r"""
         Return a cubic braid group as subgroup of ``self`` on the first

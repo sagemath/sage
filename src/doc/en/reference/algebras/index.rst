@@ -99,6 +99,7 @@ Various associative algebras
    sage/algebras/associated_graded
    sage/algebras/cellular_basis
    sage/algebras/q_system
+   sage/algebras/q_commuting_polynomials
    sage/algebras/splitting_algebra
 
 Non-associative algebras

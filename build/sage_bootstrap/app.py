@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Controller for the commandline actions
+
+AUTHORS:
+
+    - Volker Braun (2016): initial version
+    - Thierry Monteil (2022): clean option to remove outdated source tarballs
 """
 
 
@@ -26,6 +31,7 @@ from sage_bootstrap.creator import PackageCreator
 from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
 from sage_bootstrap.fileserver import FileServer
 from sage_bootstrap.expand_class import PackageClass
+from sage_bootstrap.env import SAGE_DISTFILES
 
 
 class Application(object):
@@ -303,3 +309,23 @@ class Application(object):
             else:
                 update = ChecksumUpdater(package_name)
             update.fix_checksum()
+
+    def clean(self):
+        """
+        Remove outdated source tarballs from the upstream/ directory
+
+        $ sage --package clean
+        42 files were removed from the .../upstream directory
+        """
+        log.debug('Cleaning upstream/ directory')
+        package_names = PackageClass(':all:').names
+        keep = [Package(package_name).tarball.filename for package_name in package_names]
+        count = 0
+        for filename in os.listdir(SAGE_DISTFILES):
+            if filename not in keep:
+                filepath = os.path.join(SAGE_DISTFILES, filename)
+                if os.path.isfile(filepath):
+                    log.debug('Removing file {}'.format(filepath))
+                    os.remove(filepath)
+                    count += 1
+        print('{} files were removed from the {} directory'.format(count, SAGE_DISTFILES))

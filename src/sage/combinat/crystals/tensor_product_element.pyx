@@ -478,6 +478,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
                 return self._set_index(-k, crystal)
         return None
 
+
 cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement):
     """
     Element class for a tensor product of regular crystals.
@@ -1651,6 +1652,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             x = x.f(i)
         return string_length
 
+
 cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrystalsElement):
     def __init__(self, parent, list, row_lengths=[]):
         """
@@ -1673,7 +1675,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
                 row_lengths.append(len(row))
             list = ret
         self._row_lengths = row_lengths
-        super(InfinityQueerCrystalOfTableauxElement, self).__init__(parent, list)
+        super().__init__(parent, list)
 
     def _repr_(self):
         r"""
@@ -1768,7 +1770,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
             [[4, 4, 4, 4, 4, 3, 2, 1], [3, 3, 3, 3], [2, 2, 1], [1]]
             sage: t.e(-1)
         """
-        ret = super(InfinityQueerCrystalOfTableauxElement, self).e(i)
+        ret = super().e(i)
         if ret is None:
             return None
         (<InfinityQueerCrystalOfTableauxElement> ret)._row_lengths = self._row_lengths

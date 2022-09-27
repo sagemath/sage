@@ -1045,10 +1045,10 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
     return 0
 
 def two_descent_by_two_isogeny(E,
-                int global_limit_small = 10,
-                int global_limit_large = 10000,
-                int verbosity = 0,
-                bint selmer_only = 0, bint proof = 1):
+                int global_limit_small=10,
+                int global_limit_large=10000,
+                int verbosity=0,
+                bint selmer_only=0, bint proof=1):
     """
     Given an elliptic curve E with a two-isogeny phi : E --> E' and dual isogeny
     phi', runs a two-isogeny descent on E, returning n1, n2, n1' and n2'. Here
@@ -1148,9 +1148,10 @@ def two_descent_by_two_isogeny(E,
     return two_descent_by_two_isogeny_work(c, d,
         global_limit_small, global_limit_large, verbosity, selmer_only, proof)
 
+
 def two_descent_by_two_isogeny_work(Integer c, Integer d,
-                int global_limit_small = 10, int global_limit_large = 10000,
-                int verbosity = 0, bint selmer_only = 0, bint proof = 1):
+                int global_limit_small=10, int global_limit_large=10000,
+                int verbosity=0, bint selmer_only=0, bint proof=1):
     """
     Do all the work in doing a two-isogeny descent.
 

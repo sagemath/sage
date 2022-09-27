@@ -282,7 +282,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         """
         raise NotImplementedError("Not Implemented")
 
-    def affine_patch(self, I, return_embedding = False):
+    def affine_patch(self, I, return_embedding=False):
         r"""
         Return the `I^{th}` affine patch of this projective scheme
         where 'I' is a multi-index.

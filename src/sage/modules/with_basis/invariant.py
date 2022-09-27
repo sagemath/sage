@@ -4,7 +4,8 @@ Invariant modules
 
 # ****************************************************************************
 #       Copyright (C) 2021 Trevor K. Karn <karnx018 at umn.edu>
-#                          Travis Scrimshaw
+#                     2021 Travis Scrimshaw
+#                     2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -262,9 +263,29 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                          category=category,
                          *args, **kwargs)
 
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        EXAMPLES::
+
+            sage: G = CyclicPermutationGroup(3)
+            sage: R = G.regular_representation(); R
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring
+            sage: I = R.invariant_module()
+            sage: I.construction()
+            (EquivariantSubobjectConstructionFunctor,
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring)
+        """
+        from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
+        return (EquivariantSubobjectConstructionFunctor(self._semigroup,
+                                                        self._action,
+                                                        self._side),
+                self.ambient())
+
     def _repr_(self):
         r"""
-        Return a string representaion of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

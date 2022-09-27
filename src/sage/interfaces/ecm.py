@@ -46,11 +46,11 @@ Check that the issues from :trac:`27199` are fixed::
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 3 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 ###############################################################################
 
 import re
-import subprocess
+from subprocess import Popen, PIPE, call
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
@@ -216,8 +216,6 @@ class ECM(SageObject):
             sage: ecm._run_ecm(['cat'], 1234)
             '1234'
         """
-        from subprocess import Popen, PIPE
-
         # Under normal usage this program only returns ASCII; anything
         # else mixed is garbage and an error
         # So just accept latin-1 without encoding errors, and let the
@@ -261,7 +259,7 @@ class ECM(SageObject):
         """
         print("Enter numbers to run ECM on them.")
         print("Press control-D to exit.")
-        subprocess.call(self._cmd)
+        call(self._cmd)
 
     # Recommended settings from
     # http://www.mersennewiki.org/index.php/Elliptic_Curve_Method
@@ -661,7 +659,7 @@ class ECM(SageObject):
             # Step 3: Call find_factor until a factorization is found
             n_factorization = [n]
             while len(n_factorization) == 1:
-                n_factorization = self.find_factor(n,B1=B1)
+                n_factorization = self.find_factor(n, B1=B1)
             factors.extend(n_factorization)
 
         return sorted(probable_prime_factors)

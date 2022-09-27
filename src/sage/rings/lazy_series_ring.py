@@ -47,7 +47,6 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.rings import Rings
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.integral_domains import IntegralDomains
-from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.fields import Fields
 from sage.categories.complete_discrete_valuation import (CompleteDiscreteValuationFields,
                                                          CompleteDiscreteValuationRings)
@@ -892,15 +891,55 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         elements = tester.some_elements()
         for x in elements:
-            # because of laziness, we cannot try to invert x, because
-            # this will always succeed, except if the series is 'exact'
+            # because of laziness, creating the inverse of x should
+            # always succeed except if the series is 'exact'
             if not x.is_unit():
                 continue
             y = ~x
             e = y * x
-            tester.assertFalse(x.is_zero())
-            tester.assertTrue(e.is_one())
-            tester.assertEqual(y.valuation(), -x.valuation())
+            tester.assertFalse(x.is_zero(), "zero should not be invertible")
+            tester.assertTrue(e.is_one(), "an element (%s) times its inverse should be 1" % x)
+            tester.assertEqual(y.valuation(), -x.valuation(), "the valuation of the inverse should be the negative of the valuation of the element (%s)" % x)
+
+    def _test_div(self, **options):
+        r"""
+        Test division of elements of this ring.
+
+        INPUT:
+
+        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+        EXAMPLES::
+
+            sage: LazyLaurentSeriesRing.options.halting_precision(5)
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L._test_div()
+            sage: LazyLaurentSeriesRing.options._reset()  # reset the options
+
+        .. SEEALSO::
+
+            :class:`TestSuite`
+        """
+        from sage.misc.misc import some_tuples
+        tester = self._tester(**options)
+
+        elements = list(tester.some_elements())
+        for x, y in some_tuples(elements, 2, tester._max_runs):
+            # because of laziness, creating the inverse of x should
+            # always succeed except if the series is 'exact'
+            if not y.is_unit():
+                continue
+            z = x / y
+            xx = z * y
+            try:
+                v_z = z.valuation()
+            except Exception as error:
+                raise ValueError("could not compute the valuation of the quotient (%s)/(%s): %s" % (x, y, error))
+            else:
+                v_x = x.valuation()
+                v_y = y.valuation()
+                tester.assertEqual(v_z, v_x - v_y, "the valuation of the quotient should be the difference of the valuations of the elements (%s and %s)" % (x, y))
+                tester.assertEqual(xx, x, "the element (%s) should be the quotient times the divisor (%s)" % (x, y))
 
     def _test_revert(self, **options):
         """
@@ -928,11 +967,28 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         elements = tester.some_elements()
         count = 0
         for x in elements:
+            # because of laziness, creating the compositional inverse
+            # of x should always succeed, except if the series is
+            # 'exact' or if it has negative valuation
             vx = x.valuation()
+            if (vx != 1
+                and not (isinstance(x._coeff_stream, Stream_exact)
+                         and ((vx == 0
+                               and x._coeff_stream._degree == 2
+                               and not x._coeff_stream._constant)
+                              or (vx == -1
+                                  and x._coeff_stream._degree == 0
+                                  and not x._coeff_stream._constant)))):
+                continue
             try:
                 y = x.revert()
+            except Exception as error:
+                raise AssertionError("compositional inverse of %s should exist: %s" % (x, error))
+            try:
                 vy = y.valuation()
-                m = y[vy]
+                _ = y[vy]
+            except NotImplementedError:
+                pass
             except (ValueError, TypeError):
                 tester.assertFalse(vx == 1 and x[vx].is_unit(),
                                    ("the series %s should be reversible "
@@ -1478,7 +1534,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()
 
             sage: L = LazyPowerSeriesRing(GF(5), 's, t')
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run(skip=['_test_fraction_field'])
 
             sage: L = LazyPowerSeriesRing(Zmod(6), 't')
             sage: TestSuite(L).run(skip=['_test_revert'])
@@ -2052,15 +2108,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
     Element = LazyCompletionGradedAlgebraElement
 
     def __init__(self, basis, sparse=True, category=None):
-        """Initialize ``self``.
+        """
+        Initialize ``self``.
 
         TESTS::
 
             sage: LazySymmetricFunctions.options.halting_precision(6)
-
-            sage: s = SymmetricFunctions(ZZ).s()
-            sage: L = LazySymmetricFunctions(s)
-            sage: TestSuite(L).run()
 
             sage: s = SymmetricFunctions(QQ).s()
             sage: L = LazySymmetricFunctions(s)
@@ -2072,9 +2125,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         Reversion will only work when the base ring is a field::
 
-            sage: TestSuite(L).run(skip=['_test_revert'])
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(s)
+            sage: TestSuite(L).run(skip=['_test_revert'])
 
             sage: s = SymmetricFunctions(QQ["q"]).s()
             sage: L = LazySymmetricFunctions(s)

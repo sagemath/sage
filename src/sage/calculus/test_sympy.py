@@ -193,7 +193,7 @@ This was fixed in Sympy, see :trac:`14437`::
     sage: u = Function('u')
     sage: n = Symbol('n', integer=True)
     sage: f = u(n+2) - u(n+1) + u(n)/4
-    sage: 2**n * rsolve(f,u(n))
-    C1*n + C0
+    sage: expand(2**n * rsolve(f,u(n)))
+    2*C1*n + C0
 
 """

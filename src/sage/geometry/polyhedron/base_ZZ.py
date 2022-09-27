@@ -17,7 +17,7 @@ from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from .base_QQ import Polyhedron_QQ
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 
 
 #########################################################################

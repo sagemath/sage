@@ -1628,7 +1628,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     def _create_matrix_list_for_one(self, representation_type):
         r"""
         Return the matrix list for the given representation type
-        for ``self.one()`.
+        for ``self.one()``.
 
         EXAMPLES::
 
@@ -2366,8 +2366,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     @cached_method
     def _reduce_gen_power(self, k):
         r"""
-        Return the ``k``-th power on an arbitrary generator,
-        for example ``c0^k` .
+        Return the `k`-th power on an arbitrary generator,
+        for example `c_0^k`.
 
         INPUT:
 

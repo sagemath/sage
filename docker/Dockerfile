@@ -41,12 +41,40 @@
 # local branch for this to work.                                               #
 ################################################################################
 
+################################################################################
+# HOWTO use this file to manually create new images for Docker Hub             #
+################################################################################
+# Make sure you have the tag checked out that you are trying to build. Then    #
+# from the root directory of the sage repository run:                          #
+#                                                                              #
+# bash  # open a subshell so 'set -e' does not close your shell on error       #
+# export ARTIFACT_BASE=source-clean                                            #
+# export DOCKER_TAG=9.6  # replace with the version you are building for       #
+# export CI_COMMIT_SHA=`git rev-parse --short HEAD`                            #
+# export CPUTHREADS=8                                                          #
+# export RAMTHREADS=8                                                          #
+# export RAMTHREADS_DOCBUILD=8                                                 #
+# . .ci/update-env.sh                                                          #
+# . .ci/setup-make-parallelity.sh                                              #
+# .ci/build-docker.sh                                                          #
+#                                                                              #
+# Now you can push the relevant images to the Docker Hub:                      #
+#                                                                              #
+# docker push sagemath/sagemath:$DOCKER_TAG                                    #
+# docker tag sagemath/sagemath:$DOCKER_TAG sagemath/sagemath:latest            #
+# docker push sagemath/sagemath:latest                                         #
+# docker push sagemath/sagemath-dev:$DOCKER_TAG                                #
+# docker tag sagemath/sagemath-dev:$DOCKER_TAG sagemath/sagemath-dev:latest    #
+# docker push sagemath/sagemath-dev:latest                                     #
+################################################################################
+
+
 ARG ARTIFACT_BASE=source-clean
 
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:impish as run-time-dependencies
+FROM ubuntu:jammy as run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
@@ -82,7 +110,7 @@ WORKDIR $HOME
 FROM run-time-dependencies as build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python libssl-dev git rdfind \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 

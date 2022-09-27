@@ -576,7 +576,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     .. NOTE::
 
         The algebra structure only exists when the action on the
-        groundset yeilds an equivariant matroid, in the sense that
+        groundset yields an equivariant matroid, in the sense that
         `g \cdot I \in \mathcal{I}` for every `g \in G` and for
         every `I \in \mathcal{I}`.
     """
@@ -638,8 +638,24 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
                                     *args, **kwargs)
 
         # To subclass FiniteDimensionalInvariant module, we also need a
-        # self._semigroup method.
+        # self._semigroup attribute.
         self._semigroup = G
+
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        This implementation of the method only returns ``None``.
+
+        TESTS::
+
+            sage: M = matroids.Wheel(3)
+            sage: from sage.algebras.orlik_solomon import OrlikSolomonAlgebra
+            sage: OS1 = OrlikSolomonAlgebra(QQ, M)
+            sage: OS1.construction() is None
+            True
+        """
+        return None
 
     def _basis_action(self, g, f):
         r"""

@@ -113,11 +113,22 @@ This method returns a tikz picture of the polytope (must be 2 or
 ::
 
     sage: c = polytopes.cube()
-    sage: c.tikz().splitlines()[:5]
-    ['\\begin{tikzpicture}%',
-     '\t[x={(1.000000cm, 0.000000cm)},',
-     '\ty={(-0.000000cm, 1.000000cm)},',
-     '\tz={(0.000000cm, -0.000000cm)},',
-     '\tscale=1.000000,']
+    sage: c.tikz(output_type='TikzPicture')
+    \documentclass[tikz]{standalone}
+    \begin{document}
+    \begin{tikzpicture}%
+            [x={(1.000000cm, 0.000000cm)},
+            y={(-0.000000cm, 1.000000cm)},
+            z={(0.000000cm, -0.000000cm)},
+            scale=1.000000,
+    ...
+    Use print to see the full content.
+    ...
+    \node[vertex] at (-1.00000, -1.00000, 1.00000)     {};
+    \node[vertex] at (-1.00000, 1.00000, 1.00000)     {};
+    %%
+    %%
+    \end{tikzpicture}
+    \end{document}
 
 .. end of output

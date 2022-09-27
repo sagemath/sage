@@ -15,7 +15,7 @@ SAGE_ROOT=.
 export PATH="$SAGE_ROOT"/build/bin:$PATH
 SYSTEM_PACKAGES=$EXTRA_SYSTEM_PACKAGES
 CONFIGURE_ARGS="--enable-option-checking "
-for PKG_BASE in $($SAGE_ROOT/sage -package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
+for PKG_BASE in $(sage-package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     PKG_SCRIPTS="$SAGE_ROOT"/build/pkgs/$PKG_BASE
     if [ -d $PKG_SCRIPTS ]; then
        SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
@@ -33,18 +33,12 @@ echo "# the :comments: separate the generated file into sections"
 echo "# to simplify writing scripts that customize this file"
 ADD="ADD $__CHOWN"
 RUN=RUN
+cat <<EOF
+ARG BASE_IMAGE
+FROM \${BASE_IMAGE} as with-system-packages
+EOF
 case $SYSTEM in
     debian*|ubuntu*)
-        cat <<EOF
-ARG BASE_IMAGE=ubuntu:latest
-FROM \${BASE_IMAGE} as with-system-packages
-RUN (yes | unminimize) || echo "(ignored)"
-EOF
-        if [ -n "$DIST_UPGRADE" ]; then
-            cat <<EOF
-RUN sed -i.bak $DIST_UPGRADE /etc/apt/sources.list && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
-EOF
-        fi
         if [ -n "$__SUDO" ]; then
             SUDO="sudo"
         else
@@ -54,46 +48,52 @@ EOF
         UPDATE="$SUDO apt-get update &&"
         INSTALL="$SUDO DEBIAN_FRONTEND=noninteractive apt-get install -qqq --no-install-recommends --yes"
         CLEAN="&& $SUDO apt-get clean"
-        if [ -n "$EXTRA_REPOSITORY" ]; then
-            cat <<EOF
-RUN $UPDATE $INSTALL software-properties-common && ($INSTALL gpg gpg-agent || echo "(ignored)")
-RUN $SUDO add-apt-repository $EXTRA_REPOSITORY
-EOF
-        fi
         if [ -n "$EXTRA_PATH" ]; then
             RUN="RUN export PATH=$EXTRA_PATH:\$PATH && "
         fi
+        case "$SKIP_SYSTEM_PKG_INSTALL" in
+            1|y*|Y*)
+                ;;
+            *)
+                cat <<EOF
+RUN (yes | unminimize) || echo "(ignored)"
+EOF
+                if [ -n "$DIST_UPGRADE" ]; then
+                    cat <<EOF
+RUN sed -i.bak $DIST_UPGRADE /etc/apt/sources.list && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
+EOF
+                fi
+                if [ -n "$EXTRA_REPOSITORY" ]; then
+                    cat <<EOF
+RUN $UPDATE $INSTALL software-properties-common && ($INSTALL gpg gpg-agent || echo "(ignored)")
+RUN $SUDO add-apt-repository $EXTRA_REPOSITORY
+EOF
+                fi
+        esac
         ;;
     fedora*|redhat*|centos*)
-        cat <<EOF
-ARG BASE_IMAGE=fedora:latest
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         EXISTS="2>/dev/null >/dev/null yum install -y --downloadonly"
         INSTALL="yum install -y"
         if [ -n "$DEVTOOLSET" ]; then
-            cat <<EOF
+            case "$SKIP_SYSTEM_PKG_INSTALL" in
+                1|y*|Y*)
+                    ;;
+                *)
+                    cat <<EOF
 RUN $INSTALL centos-release-scl
 RUN $INSTALL devtoolset-$DEVTOOLSET
 EOF
+            esac
             RUN="RUN . /opt/rh/devtoolset-$DEVTOOLSET/enable && "
         fi
         ;;
     gentoo*)
-        cat <<EOF
-ARG BASE_IMAGE=sheerluck/sage-on-gentoo-stage4:latest
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         EXISTS="2>/dev/null >/dev/null emerge -f"
         UPDATE="" # not needed. "FROM gentoo/portage" used instead
         INSTALL="emerge -DNut --with-bdeps=y --complete-graph=y"
         ;;
     slackware*)
         # https://docs.slackware.com/slackbook:package_management
-        cat <<EOF
-ARG BASE_IMAGE=vbatts/slackware:latest
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         # slackpkg install ignores packages that it does not know, so we do not have to filter
         EXISTS="true"
         UPDATE="(yes|slackpkg update) &&"
@@ -101,54 +101,50 @@ EOF
         ;;
     arch*)
         # https://hub.docker.com/_/archlinux/
-        cat <<EOF
-ARG BASE_IMAGE=archlinux:latest
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         UPDATE="pacman -Sy &&"
         EXISTS="pacman -Si"
         INSTALL="pacman -Su --noconfirm"
         ;;
     nix*)
         # https://hub.docker.com/r/nixos/nix
-        cat <<EOF
-ARG BASE_IMAGE=nixos/nix:latest
-FROM \${BASE_IMAGE} as with-system-packages
+        case "$SKIP_SYSTEM_PKG_INSTALL" in
+            1|y*|Y*)
+                ;;
+            *)
+                cat <<EOF
 RUN nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 RUN nix-channel --update
+ENV PACKAGES="$SYSTEM_PACKAGES"
 EOF
+        esac
         INSTALL="nix-env --install"
         RUN="RUN nix-shell --packages \$PACKAGES --run "\'
         ENDRUN=\'
         ;;
     void*)
 	# https://hub.docker.com/r/voidlinux/masterdir-x86_64-musl
-	cat <<EOF
-ARG BASE_IMAGE=voidlinux:masterdir-x86_64-musl
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         UPDATE="xbps-install -Su &&"
         EXISTS="xbps-query"
         INSTALL="xbps-install --yes"
         ;;
     opensuse*)
-	cat <<EOF
-ARG BASE_IMAGE=opensuse/leap:latest
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         UPDATE="zypper refresh &&"
+        EXISTS="zypper --quiet install --no-confirm --auto-agree-with-licenses --no-recommends --download-only > /dev/null"
         INSTALL="zypper --ignore-unknown install --no-confirm --auto-agree-with-licenses --no-recommends --details"
         ;;
     conda*)
-        cat <<EOF
-ARG BASE_IMAGE=continuumio/miniconda3:latest
-FROM \${BASE_IMAGE} as with-system-packages
+        case "$SKIP_SYSTEM_PKG_INSTALL" in
+            1|y*|Y*)
+                ;;
+            *)
+                cat <<EOF
 ARG USE_CONDARC=condarc.yml
 ADD *condarc*.yml /tmp/
 RUN echo \${CONDARC}; cd /tmp && conda config --stdin < \${USE_CONDARC}
 RUN conda update -n base conda
 RUN ln -sf /bin/bash /bin/sh
 EOF
+        esac
         # On this image, /bin/sh -> /bin/dash;
         # but some of the scripts in /opt/conda/etc/conda/activate.d
         # from conda-forge (as of 2020-01-27) contain bash-isms:
@@ -166,11 +162,16 @@ EOF
         exit 1
         ;;
 esac
-cat <<EOF
+
+case "$SKIP_SYSTEM_PKG_INSTALL" in
+ 1|y*|Y*)
+  ;;
+
+ *)
+  cat <<EOF
 #:packages:
-ENV PACKAGES="$SYSTEM_PACKAGES"
 EOF
-case "$IGNORE_MISSING_SYSTEM_PACKAGES" in
+  case "$IGNORE_MISSING_SYSTEM_PACKAGES" in
     no)
         cat <<EOF
 RUN $UPDATE $INSTALL $SYSTEM_PACKAGES $CLEAN
@@ -180,13 +181,13 @@ EOF
         if [ -n "$EXISTS" ]; then
             # Filter by existing packages, try to install these in one shot; fall back to one by one.
             cat <<EOF
-RUN $UPDATE EXISTING_PACKAGES=""; for pkg in \$PACKAGES; do echo -n .; if $EXISTS \$pkg; then EXISTING_PACKAGES="\$EXISTING_PACKAGES \$pkg"; echo -n "\$pkg"; fi; done; $INSTALL \$EXISTING_PACKAGES || (echo "Trying again one by one:"; for pkg in \$EXISTING_PACKAGES; do echo "Trying to install \$pkg"; $INSTALL \$pkg || echo "(ignoring error)"; done); : $CLEAN
+RUN $UPDATE EXISTING_PACKAGES=""; for pkg in $SYSTEM_PACKAGES; do echo -n .; if $EXISTS \$pkg; then EXISTING_PACKAGES="\$EXISTING_PACKAGES \$pkg"; echo -n "\$pkg"; fi; done; $INSTALL \$EXISTING_PACKAGES || (echo "Trying again one by one:"; for pkg in \$EXISTING_PACKAGES; do echo "Trying to install \$pkg"; $INSTALL \$pkg || echo "(ignoring error)"; done); : $CLEAN
 EOF
         else
             # Try in one shot, fall back to one by one.  Separate "RUN" commands
             # for caching by docker.
             cat <<EOF
-RUN $UPDATE $INSTALL \${PACKAGES} || echo "(ignoring error)"
+RUN $UPDATE $INSTALL $SYSTEM_PACKAGES || echo "(ignoring error)"
 EOF
             for pkg in $SYSTEM_PACKAGES; do
                 cat <<EOF
@@ -203,13 +204,14 @@ EOF
     *)
         echo "Argument IGNORE_MISSING_SYSTEM_PACKAGES must be yes or no"
         ;;
+  esac
 esac
 cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
-RUN mkdir -p sage
-WORKDIR sage
+RUN if [ -d /sage ]; then echo "### Incremental build from \$(cat /sage/VERSION.txt)" && mv /sage /sage-old && mkdir /sage && for a in local logs; do if [ -d /sage-old/\$a ]; then mv /sage-old/\$a /sage; fi; done; rm -rf /sage-old; else mkdir -p /sage; fi
+WORKDIR /sage
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
 $ADD config/config.rpath config/config.rpath
 $ADD src/doc/bootstrap src/doc/bootstrap
@@ -223,7 +225,7 @@ $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
 FROM bootstrapped as configured
 #:configuring:
-RUN mkdir -p logs/pkgs; ln -s logs/pkgs/config.log config.log
+RUN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
 ARG EXTRA_CONFIGURE_ARGS=""
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then

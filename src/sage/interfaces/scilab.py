@@ -561,4 +561,3 @@ def scilab_version():
         'scilab-...'
     """
     return str(scilab('getversion()')).strip()
-

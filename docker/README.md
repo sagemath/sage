@@ -4,8 +4,8 @@
 
 * `latest` — the stable `master` branch [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/sagemath/sage/master.svg)](https://github.com/sagemath/sage/commits/master) [![GitLab CI](https://gitlab.com/sagemath/sage/badges/master/pipeline.svg)](https://gitlab.com/sagemath/sage/commits/master)
 * `x.x` — all stable releases of Sage are tagged with their version number.
-* `x.x.{beta,rc}x` - betas and release candidates of Sage as [tagged in our git repository](https://github.com/sagemath/sage/tags).
-* `develop` — the current development version of Sage which gets merged into the `master` branch when a new version of Sage is released [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/sagemath/sage/develop.svg)](https://github.com/sagemath/sage/commits/develop) [![GitLab CI](https://gitlab.com/sagemath/sage/badges/develop/pipeline.svg)](https://gitlab.com/sagemath/sage/commits/develop)
+* `x.x.{beta,rc}x` - betas and release candidates of Sage as [tagged in our git repository](https://github.com/sagemath/sage/tags); since docker images are built and uploaded manually at the moment, there are often no recent betas here anymore.
+* `develop` — the current development version of Sage which gets merged into the `master` branch when a new version of Sage is released [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/sagemath/sage/develop.svg)](https://github.com/sagemath/sage/commits/develop) [![GitLab CI](https://gitlab.com/sagemath/sage/badges/develop/pipeline.svg)](https://gitlab.com/sagemath/sage/commits/develop); again, there is often no recent develop build here anymore.
 * `-py3` - until Sage 9.1, we provided Python 2 builds (with no suffix) and Python 3 builds (with the `-py3` suffix). From Sage 9.2.beta0 on, all images we provide are based on Python 3 and the `-py3` suffix survives only for historical reasons: with or without it, you get Python 3.
 
 # What is SageMath
@@ -26,7 +26,7 @@ There are several flavours of this image.
     ```
     docker run -p8888:8888 sagemath/sagemath:latest sage-jupyter
     ```
-* [`sagemath/sagemath-dev`![image size](https://img.shields.io/microbadger/image-size/sagemath/sagemath-dev.svg)](https://hub.docker.com/r/sagemath/sagemath-dev) contains all the build artifacts to rebuild Sage quickly. This version is probably only relevant for Sage developers. Run this image with:
+* [`sagemath/sagemath-dev`![image size](https://img.shields.io/microbadger/image-size/sagemath/sagemath-dev.svg)](https://hub.docker.com/r/sagemath/sagemath-dev) contains all the build artifacts to rebuild Sage quickly (currently, this is broken, see [#34241](https://trac.sagemath.org/ticket/34241).) This version is probably only relevant for Sage developers. Run this image with:
     ```
     docker run -it sagemath/sagemath-dev:develop
     ```
@@ -41,11 +41,11 @@ Run `docker build -f docker/Dockerfile --build-arg ARTIFACT_BASE=sagemath/sagema
 
 # How these images get updated
 
-Every push to our [github repository](https://github.com/sagemath/sage) triggers a "build" on our [Docker Hub](https://hub.docker.com) repositories. This build is mostly disabled by the `hooks/` and only updates the `README.md`.
+Currently, these images are updated manually after every release. Instructions for this are at the top of `docker/Dockerfile`.
 
-Every push to our [GitLab repository](https://gitlab.com/sagemath/sage) triggers a pipeline in GitLab CI which pushes the actual images to Docker Hub.
+Every push to our [GitLab repository](https://gitlab.com/sagemath/sage) used to trigger a pipeline in GitLab CI which pushed the actual images to Docker Hub. These pipelines are not running anymore since nobody is maintaining them or providing the CI resources for it. (Please reach out to [sage-devel](https://groups.google.com/forum/#!forum/sage-devel) if you want to help!)
 
-Have a look at `.circleci/` and `.gitlab-ci.yml` if you want to setup CircleCI or GitLab CI for your own fork of the SageMath repository.
+Have a look at `.gitlab-ci.yml` if you want to setup GitLab CI for your own fork of the SageMath repository.
 
 # Report bugs and issues
 

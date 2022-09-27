@@ -1125,7 +1125,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             return self._from_dict({m: ~self._q, self.one_basis(): c})
 
         class Element(CombinatorialFreeModule.Element):
-            def inverse(self):
+            def __invert__(self):
                 r"""
                 Return the inverse if ``self`` is a basis element.
 
@@ -1134,7 +1134,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     sage: LT = algebras.ArikiKoike(3, 4).LT()
                     sage: t = LT.T(1) * LT.T(2) * LT.T(3); t
                     T[1,2,3]
-                    sage: t.inverse()
+                    sage: t.inverse()   # indirect doctest
                     (q^-3-3*q^-2+3*q^-1-1) + (q^-3-2*q^-2+q^-1)*T[3]
                      + (q^-3-2*q^-2+q^-1)*T[2] + (q^-3-q^-2)*T[3,2]
                      + (q^-3-2*q^-2+q^-1)*T[1] + (q^-3-q^-2)*T[1,3]
@@ -1147,8 +1147,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     raise NotImplementedError("inverse only implemented for monomials in T variables")
                 H = self.parent()
                 return ~self[l,w] * H.prod(H.inverse_T(i) for i in reversed(w.reduced_word()))
-
-            __invert__ = inverse
 
     class T(_Basis):
         r"""

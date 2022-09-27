@@ -212,15 +212,16 @@ components are in the correct ring::
 from sage.structure.element import Element, parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.functions.other import factorial
+from sage.misc.misc_c import prod
 from sage.arith.power import generic_power
 from sage.arith.functions import lcm
 from sage.arith.misc import divisors, moebius
 from sage.combinat.partition import Partition, Partitions
-from sage.misc.misc_c import prod
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.tensor import tensor
@@ -668,6 +669,11 @@ class LazyModuleElement(Element):
             sage: f.shift(5).shift(-5) - f
             0
 
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: f = x.shift(-3); f
+            x^-2
+            sage: f.parent()
+            Lazy Laurent Series Ring in x over Rational Field
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return self
@@ -687,6 +693,12 @@ class LazyModuleElement(Element):
         else:
             coeff_stream = Stream_shift(self._coeff_stream, n)
         P = self.parent()
+        # If we shift it too much, then it needs to go into the fraction field
+        # FIXME? This is different than the polynomial rings, which truncates the terms
+        if (coeff_stream._true_order
+            and P._minimal_valuation is not None
+            and coeff_stream._approximate_order < P._minimal_valuation):
+            P = P.fraction_field()
         return P.element_class(P, coeff_stream)
 
     __lshift__ = shift
@@ -951,7 +963,8 @@ class LazyModuleElement(Element):
         return any(self[i] for i in range(v, v + prec))
 
     def define(self, s):
-        r"""Define an equation by ``self = s``.
+        r"""
+        Define an equation by ``self = s``.
 
         INPUT:
 
@@ -1134,6 +1147,63 @@ class LazyModuleElement(Element):
 
             sage: oeis(f[:30])                                                  # optional, internet
             0: A122698: a(1)=a(2)=1 then a(n) = Sum_{d|n, 1<d<n} a(d)*a(n/d).
+
+        Note that we cannot use division in the examples above.
+        Since we allow division by series with positive valuation,
+        the valuation of `x / f` might be zero::
+
+            sage: f = P.undefined()
+            sage: f.define(1 - x / f)
+            sage: f[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: inverse does not exist
+
+        Check that reversion is lazy enough::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined()
+            sage: f.define(1+(t*f).revert())
+            sage: f
+            1 + t - t^2 + 3*t^3 - 13*t^4 + 69*t^5 - 419*t^6 + O(t^7)
+
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: f = L.undefined(valuation=0)
+            sage: f.define(1+(t*f).revert())
+            sage: f
+            1 + t - t^2 + 3*t^3 - 13*t^4 + 69*t^5 - 419*t^6 + O(t^7)
+
+            sage: f = L.undefined(valuation=0)
+            sage: f.define(1+(t*~f).revert())
+            sage: f
+            1 + t + t^2 + 2*t^3 + 6*t^4 + 23*t^5 + 104*t^6 + O(t^7)
+            sage: oeis(f[1:20])                                                 # optional, internet
+            0: A030266: Shifts left under COMPOSE transform with itself.
+            1: A110447: Permutations containing 3241 patterns only as part of 35241 patterns.
+
+        The following can only work for power series, where we have a
+        minimal valuation of `0`::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(valuation=0)
+            sage: f.define(1 - t*~(-f) - (-t*f).revert())
+            sage: f
+            1 + 2*t + 12*t^3 + 32*t^4 + 368*t^5 + 2192*t^6 + O(t^7)
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: f = L.undefined()
+            sage: f.define(1+(s[1]*f).revert())
+            sage: f
+            s[] + s[1] + (-s[1,1]-s[2])
+                + (3*s[1,1,1]+6*s[2,1]+3*s[3])
+                + (-13*s[1,1,1,1]-39*s[2,1,1]-26*s[2,2]-39*s[3,1]-13*s[4])
+                + (69*s[1,1,1,1,1]+276*s[2,1,1,1]+345*s[2,2,1]+414*s[3,1,1]+345*s[3,2]+276*s[4,1]+69*s[5])
+                + (-419*s[1,1,1,1,1,1]-2095*s[2,1,1,1,1]-3771*s[2,2,1,1]-2095*s[2,2,2]-4190*s[3,1,1,1]-6704*s[3,2,1]-2095*s[3,3]-4190*s[4,1,1]-3771*s[4,2]-2095*s[5,1]-419*s[6])
+                + O^7
+
+            sage: (f*s[1]).revert() + 1 - f
+            O^7
 
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
@@ -2385,7 +2455,8 @@ class LazyModuleElement(Element):
 
         INPUT:
 
-        - ``n`` -- integer; the power to which to raise the series
+        - ``n`` -- the power to which to raise the series; this may be a
+          rational number, an element of the base ring, or an other series
 
         EXAMPLES::
 
@@ -2400,13 +2471,36 @@ class LazyModuleElement(Element):
             1 + 2/3/2^s + 2/3/3^s + 5/9/4^s + 2/3/5^s + 4/9/6^s + 2/3/7^s + O(1/(8^s))
             sage: f^3 - Z
             O(1/(8^s))
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: f = 1 + z
+            sage: f^(1 / 2)
+            1 + 1/2*z - 1/8*z^2 + 1/16*z^3 - 5/128*z^4 + 7/256*z^5 - 21/1024*z^6 + O(z^7)
+
+            sage: f^f
+            1 + z + z^2 + 1/2*z^3 + 1/3*z^4 + 1/12*z^5 + 3/40*z^6 + O(z^7)
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: L.<z> = LazyLaurentSeriesRing(q.parent())
+            sage: f = (1 - z)^q
+            sage: f
+            1 - q*z + ((q^2 - q)/2)*z^2 + ((-q^3 + 3*q^2 - 2*q)/6)*z^3
+             + ((q^4 - 6*q^3 + 11*q^2 - 6*q)/24)*z^4
+             + ((-q^5 + 10*q^4 - 35*q^3 + 50*q^2 - 24*q)/120)*z^5
+             + ((q^6 - 15*q^5 + 85*q^4 - 225*q^3 + 274*q^2 - 120*q)/720)*z^6
+             + O(z^7)
         """
         if n in ZZ:
             return generic_power(self, n)
 
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
-        exp = P(coefficients=lambda k: 1/factorial(ZZ(k)), valuation=0)
+
+        if n in QQ or n in self.base_ring():
+            f = P(coefficients=lambda k: prod(n - i for i in range(k)) / ZZ(k).factorial(), valuation=0)
+            return f(self - 1)
+
+        exp = P(coefficients=lambda k: 1 / ZZ(k).factorial(), valuation=0)
         return exp(self.log() * n)
 
     def sqrt(self):
@@ -2437,7 +2531,7 @@ class LazyModuleElement(Element):
             sage: f*f - Z
             O(1/(8^s))
         """
-        return self ** (1/ZZ(2))
+        return self ** QQ((1, 2))  # == 1/2
 
 
 class LazyCauchyProductSeries(LazyModuleElement):
@@ -2810,8 +2904,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         if isinstance(coeff_stream, Stream_cauchy_invert):
             return P.element_class(P, coeff_stream._series)
 
-        return P.element_class(P, Stream_cauchy_invert(coeff_stream,
-                                                       approximate_order=P._minimal_valuation))
+        coeff_stream_inverse = Stream_cauchy_invert(coeff_stream,
+                                                    approximate_order=P._minimal_valuation)
+        return P.element_class(P, coeff_stream_inverse)
 
     def _div_(self, other):
         r"""
@@ -2891,15 +2986,41 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
             sage: L(lambda n: n) / (t + t^2)
             1 + t + 2*t^2 + 2*t^3 + 3*t^4 + 3*t^5 + O(t^6)
+
+        Check that division by one does nothing, and division by
+        itself gives one::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: S = LazySymmetricFunctions(s)
+            sage: f = S(lambda n: s(Partitions(n).random_element()))
+            sage: f / S.one() is f
+            True
+
+            sage: f / f
+            s[]
+
         """
         if isinstance(other._coeff_stream, Stream_zero):
             raise ZeroDivisionError("cannot divide by 0")
 
         P = self.parent()
         left = self._coeff_stream
+        # self == 0
         if isinstance(left, Stream_zero):
             return P.zero()
         right = other._coeff_stream
+
+        # right == 1
+        if (isinstance(right, Stream_exact)
+            and right._initial_coefficients == (P._internal_poly_ring.base_ring().one(),)
+            and right.order() == 0
+            and not right._constant):
+            return self
+
+        # self is right
+        if left is right:
+            return P.one()
+
         if (P._minimal_valuation is not None
             and left._true_order
             and left._approximate_order < right._approximate_order):
@@ -2970,6 +3091,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                                        degree=v,
                                                        constant=constant))
 
+        # we cannot pass the approximate order here, even when
+        # P._minimal_valuation is zero, because we allow division by
+        # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
         return P.element_class(P, Stream_cauchy_mul(left, right_inverse))
 
@@ -3523,6 +3647,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
             def coefficient(n):
                 return sum(self[i] * (g**i)[n] for i in range(n+1))
+
             R = P._internal_poly_ring.base_ring()
             coeff_stream = Stream_function(coefficient, P._sparse, 1)
             return P.element_class(P, coeff_stream)
@@ -3579,17 +3704,19 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
             sage: s = L(lambda n: 2 if n == 0 else 3 if n == 1 else 0, valuation=0); s
             2 + 3*z + O(z^7)
-            sage: s.revert()
+            sage: f = s.revert()
+            sage: f[1]
             Traceback (most recent call last):
             ...
-            ValueError: cannot determine whether the compositional inverse exists
+            ValueError: inverse does not exist
 
             sage: s = L(lambda n: 1, valuation=-2); s
             z^-2 + z^-1 + 1 + z + z^2 + z^3 + z^4 + O(z^5)
-            sage: s.revert()
+            sage: f = s.revert()
+            sage: f[1]
             Traceback (most recent call last):
             ...
-            ValueError: compositional inverse does not exist
+            ValueError: inverse does not exist
 
             sage: R.<q,t> = QQ[]
             sage: L.<z> = LazyLaurentSeriesRing(R.fraction_field())
@@ -3645,11 +3772,11 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
             sage: f = L([-1, 0, -1], valuation=1, constant=-1)
             sage: f.revert()
-            -z + z^3 - z^4 - 2*z^5 + 6*z^6 + z^7 + O(z^8)
+            (1/(-1))*z + z^3 - z^4 - 2*z^5 + 6*z^6 + z^7 + O(z^8)
 
             sage: f = L([-1], valuation=1, degree=3, constant=-1)
             sage: f.revert()
-            -z + z^3 - z^4 - 2*z^5 + 6*z^6 + z^7 + O(z^8)
+            (1/(-1))*z + z^3 - z^4 - 2*z^5 + 6*z^6 + z^7 + O(z^8)
         """
         P = self.parent()
         coeff_stream = self._coeff_stream
@@ -3687,26 +3814,11 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                 if coeff_stream.order() != 1:
                     raise ValueError("compositional inverse does not exist")
 
-        # TODO: coefficients should not be checked here, it prevents
-        # us from using self.define in some cases!
-        if any(coeff_stream[i] for i in range(coeff_stream._approximate_order, -1)):
-            raise ValueError("compositional inverse does not exist")
-
-        if coeff_stream[-1]:
-            if coeff_stream[0] or coeff_stream[1]:
-                raise ValueError("compositional inverse does not exist")
-            raise ValueError("cannot determine whether the compositional inverse exists")
-
-        if not coeff_stream[1]:
-            raise ValueError("compositional inverse does not exist")
-
-        if coeff_stream[0]:
-            raise ValueError("cannot determine whether the compositional inverse exists")
-
-        z = P.gen()
         g = P.undefined(valuation=1)
-        # TODO: shift instead of (self / z) should be more efficient
-        g.define(z / ((self / z)(g)))
+        # the following is mathematically equivalent to
+        # z / ((self / z)(g))
+        # but more efficient and more lazy
+        g.define((~self.shift(-1)(g)).shift(1))
         return g
 
     compositional_inverse = revert
@@ -4346,6 +4458,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 # we assume that the valuation of self[i](g) is at least i
                 def coefficient(n):
                     return sum(self[i] * (g0**i)[n] for i in range(n+1))
+
                 coeff_stream = Stream_function(coefficient, P._sparse, 1)
                 return P.element_class(P, coeff_stream)
 
@@ -4357,7 +4470,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         def coefficient(n):
             r = R.zero()
-            for i in range(n//gv+1):
+            for i in range(n // gv + 1):
                 # Make sure the element returned from the composition is in P
                 r += P(self[i](g))[n]
             return r
@@ -4378,7 +4491,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         - `val(f) = 1`, or
 
-        - `f = a + b z` with `a, b \neq 0`, or
+        - `f = a + b z` with `a, b \neq 0`
 
         EXAMPLES::
 
@@ -4502,16 +4615,14 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if not coeff_stream[1]:
-            raise ValueError("compositional inverse does not exist")
-
         if coeff_stream[0]:
             raise ValueError("cannot determine whether the compositional inverse exists")
 
-        z = P.gen()
         g = P.undefined(valuation=1)
-        # TODO: shift instead of (self / z) should be more efficient
-        g.define(z / ((self / z)(g)))
+        # the following is mathematically equivalent to
+        # z / ((self / z)(g))
+        # but more efficient and more lazy
+        g.define((~self.shift(-1)(g)).shift(1))
         return g
 
     compositional_inverse = revert
@@ -4897,9 +5008,7 @@ class LazyPowerSeries_gcd_mixin:
             return (P.zero(), P.one(), P.zero())
         # get the valuations
         sv = self.valuation()
-        sc = self[sv]
         fv = f.valuation()
-        fc = f[fv]
         val = min(sv, fv)
         assert val is not infinity
         # This assumes the base ring is a field
@@ -5262,7 +5371,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         TESTS::
 
             sage: f = L(lambda n: h[n]) - 1 - h[1]
-            sage: f.compositional_inverse()
+            sage: g = f.revert()
+            sage: g[1]
             Traceback (most recent call last):
             ...
             ValueError: compositional inverse does not exist
@@ -5334,15 +5444,21 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if not coeff_stream[1]:
-            raise ValueError("compositional inverse does not exist")
-
         if coeff_stream[0]:
             raise ValueError("cannot determine whether the compositional inverse exists")
 
-        X = R(Partition([1]))
-        b = coeff_stream[1][Partition([1])]
-        b_inv = R.base_ring()(~b)
+        la = Partition([1])
+        X = R(la)
+        def coefficient(n):
+            if n:
+                return 0
+            c = coeff_stream[1][la]
+            if c.is_unit():
+                return ~c
+            raise ValueError("compositional inverse does not exist")
+
+        b = P(lambda n: 0 if n else coeff_stream[1][la])  # TODO: we want a lazy version of Stream_exact
+        b_inv = P(coefficient)  # TODO: we want a lazy version of Stream_exact
         g = P.undefined(valuation=1)
         g.define(b_inv * (X - (self - b * X)(g)))
         return g
@@ -6045,13 +6161,11 @@ class LazyDirichletSeries(LazyModuleElement):
         Trying to invert a non-invertible 'exact' series raises a
         ``ZeroDivisionError``::
 
-            sage: _ = ~L([0,1], constant=1)
+            sage: f = ~L([0,1], constant=1)
+            sage: f[1]
             Traceback (most recent call last):
             ...
             ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
-
-        If the series is not 'exact', we cannot do this without
-        actually computing a term::
 
             sage: f = ~L(lambda n: n-1)
             sage: f[1]

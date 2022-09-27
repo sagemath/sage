@@ -127,9 +127,9 @@ class Scheme(Parent):
             category = default_category
         else:
             assert category.is_subcategory(default_category), \
-                "%s is not a subcategory of %s"%(category, default_category)
+                "%s is not a subcategory of %s" % (category, default_category)
 
-        Parent.__init__(self, self.base_ring(), category = category)
+        Parent.__init__(self, self.base_ring(), category=category)
 
     def union(self, X):
         """

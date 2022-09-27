@@ -2619,7 +2619,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         for d in degrees:
             for mu in Partitions_n(d):
                 mu_k = mu.power(k)
-                if mu_k in g:
+                if mu_k in g.support():
                     res += g.coefficient(mu_k)*mu_k.centralizer_size()/mu.centralizer_size()*p(mu)
 
         cache[(k,g)] = res
@@ -3155,7 +3155,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: T = tensor([X,Y])
             sage: s = SymmetricFunctions(T).s()
             sage: s(2*T.one())
-            (2*B[word:]#B[word:])*s[]
+            (2*B[]#B[])*s[]
 
         .. TODO::
 

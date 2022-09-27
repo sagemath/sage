@@ -2,10 +2,11 @@
 Abstract base class for generators of polynomial systems
 
 AUTHOR:
-    Martin Albrecht <malb@informatik.uni-bremen.de>
-"""
 
+Martin Albrecht <malb@informatik.uni-bremen.de>
+"""
 from sage.structure.sage_object import SageObject
+
 
 class MPolynomialSystemGenerator(SageObject):
     """
@@ -26,8 +27,7 @@ class MPolynomialSystemGenerator(SageObject):
         if attr == "R":
             self.R = self.ring()
             return self.R
-        else:
-            raise AttributeError("'%s' object has no attribute '%s'"%(self.__class__,attr))
+        raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__,attr))
 
     def varformatstr(self, name):
         """
@@ -196,4 +196,3 @@ class MPolynomialSystemGenerator(SageObject):
             NotImplementedError
         """
         raise NotImplementedError
-
