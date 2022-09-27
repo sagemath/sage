@@ -75,9 +75,14 @@ else
     (cd "$SITEPACKAGESDIR" && rm -f sagemath-standard.egg-link)
 
     if [ "$SAGE_WHEELS" = yes ]; then
+        # First build the sdist, then build the wheel from the sdist.
+        # https://pypa-build.readthedocs.io/en/latest/#python--m-build
+        # (Important because sagemath-objects uses MANIFEST.in for filtering.)
+        DIST_DIR="$(mktemp -d)"
         # Use --no-build-isolation to avoid rebuilds because of dependencies:
         # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
-        time sdh_pip_install --no-build-isolation .
+        python3 -m build --no-isolation --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . && echo $wheel)
     else
         time python3 -u setup.py --no-user-cfg build install || exit 1
     fi
