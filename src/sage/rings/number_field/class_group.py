@@ -184,7 +184,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             sage: ~G(2, a)
             Fractional ideal class (2, a^2 + 2*a - 1)
         """
-        m = AbelianGroupElement.inverse(self)
+        m = AbelianGroupElement.__invert__(self)
         m._value = (~self.ideal()).reduce_equiv()
         return m
 

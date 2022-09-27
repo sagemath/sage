@@ -324,7 +324,7 @@ class HyperbolicIsometry(Morphism):
         """
         return self._matrix
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse of the isometry ``self``.
 
@@ -332,13 +332,11 @@ class HyperbolicIsometry(Morphism):
 
             sage: UHP = HyperbolicPlane().UHP()
             sage: A = UHP.get_isometry(matrix(2,[4,1,3,2]))
-            sage: B = A.inverse()
+            sage: B = A.inverse()   # indirect doctest
             sage: A*B == UHP.get_isometry(identity_matrix(2))
             True
         """
-        return self.__class__(self.domain(), self.matrix().inverse())
-
-    __invert__ = inverse
+        return self.__class__(self.domain(), self.matrix().__invert__())
 
     def is_identity(self):
         """

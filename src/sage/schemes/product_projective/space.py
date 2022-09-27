@@ -194,7 +194,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         sage: f(Q)
         (4 : 1 , 1 : 2 : 1)
     """
-    def __init__(self, N, R = QQ, names = None):
+    def __init__(self, N, R=QQ, names=None):
         r"""
         The Python constructor.
 
@@ -291,9 +291,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
             P}_{\Bold{Z}}^3
         """
-        return '%s' % " \\times ".join(PS._latex_() for PS in self)
+        return " \\times ".join(PS._latex_() for PS in self)
 
-    def _latex_generic_point(self, v = None):
+    def _latex_generic_point(self, v=None):
         """
         Return a LaTeX representation of the generic point
         on this product space.
@@ -890,7 +890,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         new_components = [P.change_ring(R) for P in self._components]
         return ProductProjectiveSpaces(new_components)
 
-    def affine_patch(self, I, return_embedding = False):
+    def affine_patch(self, I, return_embedding=False):
         r"""
         Return the `I^{th}` affine patch of this projective space product
         where ``I`` is a multi-index.

@@ -1,0 +1,24 @@
+#!/usr/bin/env sage-bootstrap-python
+
+# usage: sage-spkg-installcheck [-h] PKG [SAGE_LOCAL]
+#
+# Check shared libraries that are part of an installed package.
+#
+# positional arguments:
+#   PKG         the name of the package to uninstall
+#   SAGE_LOCAL  the path to SAGE_LOCAL (default: value of the $SAGE_LOCAL
+#               environment variable if set; exits otherwise)
+#
+# optional arguments:
+#   -h, --help  show this help message and exit
+
+
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.installcheck import run
+run()

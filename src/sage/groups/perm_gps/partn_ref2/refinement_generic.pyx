@@ -639,7 +639,7 @@ cdef class PartitionRefinement_generic:
         self._backtrack(True)
         self._finish_latex()
 
-    cdef void _backtrack(self, bint first_step = False):
+    cdef void _backtrack(self, bint first_step=False):
         r"""
         Backtracking with pruning.
 

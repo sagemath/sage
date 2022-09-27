@@ -35,7 +35,6 @@ from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.qqbar import AA
 from .base6 import Polyhedron_base6
 
 class Polyhedron_base7(Polyhedron_base6):
@@ -712,6 +711,7 @@ class Polyhedron_base7(Polyhedron_base6):
             if Adet.is_square():
                 sqrt_Adet = Adet.sqrt()
             else:
+                from sage.rings.qqbar import AA
                 sqrt_Adet = AA(Adet).sqrt()
                 scaled_volume = AA(scaled_volume)
             return scaled_volume / sqrt_Adet
@@ -908,6 +908,7 @@ class Polyhedron_base7(Polyhedron_base6):
                 A = affine_hull_data.projection_linear_map.matrix()
                 Adet = (A.transpose() * A).det()
                 try:
+                    from sage.rings.qqbar import AA
                     Adet = AA.coerce(Adet)
                 except TypeError:
                     pass

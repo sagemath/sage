@@ -401,7 +401,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
         cartan_type = CartanType(cartan_type)
         if not cartan_type.is_finite():
             raise NotImplementedError("only implemented for finite types")
-        return super(PBWCrystal, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """

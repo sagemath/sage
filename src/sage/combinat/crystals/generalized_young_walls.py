@@ -834,7 +834,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
             sage: Yinf is Yinf2
             True
         """
-        return super(InfinityCrystalOfGeneralizedYoungWalls,cls).__classcall__(cls,n,category)
+        return super().__classcall__(cls,n,category)
 
     def __init__(self, n, category):
         r"""
@@ -1028,7 +1028,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
             True
         """
         La = RootSystem(['A',n,1]).weight_lattice(extended=True)(La)
-        return super(CrystalOfGeneralizedYoungWalls, cls).__classcall__(cls, n, La)
+        return super().__classcall__(cls, n, La)
 
     def __init__(self, n, La):
         r"""
@@ -1067,6 +1067,6 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
             sage: next(x)
             [0]
         """
-        for c in super(CrystalOfGeneralizedYoungWalls, self).__iter__():
+        for c in super().__iter__():
             if c.in_highest_weight_crystal(self.hw):
                 yield c

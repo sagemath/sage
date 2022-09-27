@@ -1216,7 +1216,7 @@ class EllipticCurveCanonicalHeight:
             ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
         """
         L = self.E.period_lattice(v)
-        w1, w2 = L.basis(prec = v.codomain().prec())
+        w1, w2 = L.basis(prec=v.codomain().prec())
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])

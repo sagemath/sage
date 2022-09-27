@@ -1866,7 +1866,6 @@ def macaulay2_console():
     os.system('M2')
 
 
-
 def reduce_load_macaulay2():
     """
     Used for reconstructing a copy of the Macaulay2 interpreter from a pickle.
@@ -1878,4 +1877,3 @@ def reduce_load_macaulay2():
         Macaulay2
     """
     return macaulay2
-

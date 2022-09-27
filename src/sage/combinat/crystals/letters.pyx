@@ -168,7 +168,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
                 C = CrystalOfNakajimaMonomials(cartan_type, la)
                 hw = C.highest_weight_vector()
                 self.module_generators = (self._element_constructor_(hw),)
-            self._list = [x for x in super(ClassicalCrystalOfLetters, self).__iter__()]
+            self._list = list(super(ClassicalCrystalOfLetters, self).__iter__())
         elif cartan_type.type() == 'F':
             from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
             from sage.combinat.root_system.root_system import RootSystem
@@ -176,7 +176,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
             C = CrystalOfNakajimaMonomials(cartan_type, la)
             hw = C.highest_weight_vector()
             self.module_generators = (self._element_constructor_(hw),)
-            self._list = [x for x in super(ClassicalCrystalOfLetters, self).__iter__()]
+            self._list = list(super(ClassicalCrystalOfLetters, self).__iter__())
         else:
             self.module_generators = (self._element_constructor_(1),)
             if cartan_type.type() == 'G':
@@ -2522,7 +2522,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
         if dual is None:
             dual = False
         ct = CartanType(ct)
-        return super(CrystalOfBKKLetters, cls).__classcall__(cls, ct, dual)
+        return super().__classcall__(cls, ct, dual)
 
     def __init__(self, ct, dual):
         """
@@ -2615,7 +2615,7 @@ class CrystalOfQueerLetters(ClassicalCrystalOfLetters):
             The queer crystal of letters for q(3)
         """
         ct = CartanType(ct)
-        return super(CrystalOfQueerLetters, cls).__classcall__(cls, ct)
+        return super().__classcall__(cls, ct)
 
     def __init__(self, ct):
         """

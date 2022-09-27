@@ -2752,6 +2752,4 @@ class QepcadCell:
         """
         points = self.sample_point()
         vars = self._parent._varlist
-
         return dict([(vars[i], points[i]) for i in range(len(points))])
-

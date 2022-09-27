@@ -1486,7 +1486,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             res.append(fhom)
         return res
 
-    def alexander_matrix(self, im_gens = None):
+    def alexander_matrix(self, im_gens=None):
         """
         Return the Alexander matrix of the group.
 

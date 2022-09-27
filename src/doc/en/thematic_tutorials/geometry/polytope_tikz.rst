@@ -15,8 +15,9 @@ paper. TikZ is a very versatile tool to draw in scientific documents
 and Sage can deal easily with 3-dimensional polytopes. Finally sagetex
 makes everything work together nicely between Sage, TikZ and
 LaTeX. Since version 6.3 of Sage, there is a function for (projection
-of) polytopes to output a TikZ picture of the polytope.  This short
-tutorial shows how it all works.
+of) polytopes to output a TikZ picture of the polytope. Since version 9.7 of
+SageMath, the tikz output can be a ``TikzPicture`` object from the sage module
+``sage.misc.latex_standalone``. This short tutorial shows how it all works.
 
 Instructions
 """"""""""""
@@ -30,21 +31,23 @@ To put an image of a 3D-polytope in LaTeX using TikZ and Sage, simply follow the
 - Visualize the polytope P using the command ``P.show(aspect_ratio=1)``
 - This will open an interactive view in your default browser, where you can rotate the polytope.
 - Once the desired view angle is found, click on the information icon in the lower right-hand corner and select *Get Viewpoint*. This will copy a string of the form '[x,y,z],angle' to your local clipboard.
-- Go back to Sage and type ``Img = P.tikz([x,y,z],angle)``. You can paste the string here to save some typing.
-- *Img* now contains a Sage object of type ``LatexExpr`` containing the raw TikZ picture of your polytope
+- Go back to Sage and type ``Img = P.tikz([x,y,z],angle,output_type='LatexExpr')``. You can paste the string here to save some typing.
+- *Img* now contains a Sage object of type ``LatexExpr`` containing the raw TikZ picture of your polytope.
 
-Then, you can either copy-paste it to your article by typing ``Img`` in Sage or save it to a file, by doing
+Alternatively, you can save the tikz image to a file, by doing
 
 .. CODE-BLOCK:: python
 
-  f = open('Img_poly.tex','w')
-  f.write(Img)
-  f.close()
+  Img = P.tikz([x,y,z], angle, output_type='TikzPicture')
+  Img.tex('Img_poly.tex')
+  Img.tex('Img_poly.tex', content_only=True)
+  Img.pdf('Img_poly.pdf')
 
 .. end of output
 
 Then in the pwd (present working directory of sage, the one of your article)
-you will have a file named ``Img_poly.tex`` containing the tikzpicture of your polytope.
+you will have two files named ``Img_poly.tex`` and ``Img_poly.pdf`` containing the
+tikzpicture of the polytope ``P``.
 
 Customization
 """""""""""""
@@ -57,6 +60,9 @@ You can customize the polytope using the following options in the command ``P.ti
 - ``vertex_color`` : string (default: ``green``) representing colors which tikz recognize,
 - ``opacity`` : real number (default: ``0.8``) between 0 and 1 giving the opacity of the front facets,
 - ``axis`` : Boolean (default: ``False``) draw the axes at the origin or not.
+- ``output_type`` : string (default: ``None``) ``None``, ``'LatexExpr'`` or
+  ``'TikzPicture'``, the type of the output. Since SageMath 9.7, the value ``None`` is deprecated
+  as the default value will soon be changed from ``'LatexExpr'`` to ``'TikzPicture'``.
 
 Examples
 """"""""
@@ -80,15 +86,20 @@ When you found a good angle, follow the above procedure to obtain the values
 
 ::
 
-    Img = P.tikz([674,108,-731],112)
+    Img = P.tikz([674,108,-731], 112, output_type='TikzPicture')
 
 .. end of output
+
+Note: the ``output_type='TikzPicture'`` is necessary since SagMath 9.7 to avoid
+a deprecation warning message since the default output type will soon change
+from a ``LatexExpr`` (Python str) to a ``TikzPicture`` object (allowing more
+versatility, like being able to view it directly in the Jupyter notebook).
 
 Or you may want to customize using the command
 
 ::
 
-    Img = P.tikz([674,108,-731],112,scale=2, edge_color='orange',facet_color='red',vertex_color='blue',opacity=0.4)
+    Img = P.tikz([674,108,-731],112,scale=2, edge_color='orange',facet_color='red',vertex_color='blue',opacity=0.4, output_type='TikzPicture')
 
 .. end of output
 
@@ -134,7 +145,7 @@ some possibilities.
 
 .. CODE-BLOCK:: latex
 
-  \sagestr{(polytopes.permutahedron(4)).tikz([4,5,6],45,scale=0.75, facet_color='red',vertex_color='yellow',opacity=0.3)}
+  \sagestr{(polytopes.permutahedron(4)).tikz([4,5,6],45,scale=0.75, facet_color='red',vertex_color='yellow',opacity=0.3, output_type='LatexExpr')}
 
 .. end of output
 
@@ -142,8 +153,8 @@ some possibilities.
 
 .. CODE-BLOCK:: latex
 
-  \newcommand{\polytopeimg}[4]{\sagestr{(#1).tikz(#2,#3,#4)}}
-  \newcommand{\polytopeimgopt}[9]{\sagestr{(#1).tikz(#2,#3,#4,#5,#6,#7,#8,#9)}}
+  \newcommand{\polytopeimg}[4]{\sagestr{(#1).tikz(#2,#3,#4,output_type='LatexExpr')}}
+  \newcommand{\polytopeimgopt}[9]{\sagestr{(#1).tikz(#2,#3,#4,#5,#6,#7,#8,#9,output_type='LatexExpr')}}
 
 .. end of output
 

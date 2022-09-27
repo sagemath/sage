@@ -165,7 +165,7 @@ def InfinitePolynomial(A, p):
 
     """
     from sage.structure.element import parent
-    if hasattr(A,'_P'):
+    if hasattr(A, '_P'):
         if parent(p) is A._P or (A._P.base_ring().has_coerce_map_from(parent(p))):
             return InfinitePolynomial_dense(A, p)
         # MPolynomialRing_polydict is crab. So, in that case, use sage_eval
@@ -173,14 +173,14 @@ def InfinitePolynomial(A, p):
         if isinstance(A._P, MPolynomialRing_polydict):
             from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
             from sage.misc.sage_eval import sage_eval
-            p = sage_eval(repr(p), GenDictWithBasering(A._P,A._P.gens_dict()))
+            p = sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict()))
             return InfinitePolynomial_dense(A, p)
         else:
             # Now there remains to fight the oddities and bugs of libsingular.
             PP = p.parent()
             if A._P.has_coerce_map_from(PP):
-                if A._P.ngens() == PP.ngens(): # coercion is sometimes by position!
-                    f = PP.hom(PP.variable_names(),A._P)
+                if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
+                    f = PP.hom(PP.variable_names(), A._P)
                     try:
                         return InfinitePolynomial_dense(A, f(p))
                     except (ValueError, TypeError):
@@ -204,6 +204,7 @@ def InfinitePolynomial(A, p):
                 # we need GenDictWithBasering
                 return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
     return InfinitePolynomial_sparse(A, p)
+
 
 class InfinitePolynomial_sparse(RingElement):
     """
@@ -317,8 +318,8 @@ class InfinitePolynomial_sparse(RingElement):
             x_100 + x_0
 
         """
-        #Replace any InfinitePolynomials by their underlying polynomials
-        if hasattr(self._p,'variables'):
+        # Replace any InfinitePolynomials by their underlying polynomials
+        if hasattr(self._p, 'variables'):
             V = [str(x) for x in self._p.variables()]
         else:
             V = []
@@ -327,19 +328,19 @@ class InfinitePolynomial_sparse(RingElement):
             if isinstance(value, InfinitePolynomial_sparse):
                 kwargs[kw] = value._p
                 V.append(kw)
-                if hasattr(value._p,'variables'):
+                if hasattr(value._p, 'variables'):
                     V.extend([str(x) for x in value._p.variables()])
         args = list(args)
         for i, arg in enumerate(args):
             if isinstance(arg, InfinitePolynomial_sparse):
                 args[i] = arg._p
-                if hasattr(arg._p,'variables'):
+                if hasattr(arg._p, 'variables'):
                     V.extend([str(x) for x in arg._p.variables()])
-        V=list(set(V))
+        V = list(set(V))
         V.sort(key=self.parent().varname_key, reverse=True)
         if V:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(),V,order=self.parent()._order)
+            R = PolynomialRing(self._p.base_ring(), V, order=self.parent()._order)
         else:
             return self
         res = R(self._p)(*args, **kwargs)
@@ -422,14 +423,15 @@ class InfinitePolynomial_sparse(RingElement):
             True
 
         """
-        if s=='__members__':
+        if s == '__members__':
             return dir(self._p)
-        if s=='__methods__':
-            return [X for X in dir(self._p) if hasattr(self._p,X) and ('method' in str(type(getattr(self._p,X))))]
+        if s == '__methods__':
+            return [X for X in dir(self._p) if hasattr(self._p, X)
+                    and ('method' in str(type(getattr(self._p, X))))]
         try:
-            return getattr(self._p,s)
+            return getattr(self._p, s)
         except AttributeError:
-            raise AttributeError('%s has no attribute %s'%(self.__class__, s))
+            raise AttributeError('%s has no attribute %s' % (self.__class__, s))
 
     def ring(self):
         """
@@ -558,22 +560,27 @@ class InfinitePolynomial_sparse(RingElement):
             sage: x[1] + x[2] # indirect doctest
             x_2 + x_1
 
+        Check adding from a different parent::
+
+            sage: Y.<x_0> = PolynomialRing(QQ)
+            sage: x[0] - x_0
+            0
         """
         # One may need a new parent for  self._p and x._p
         try:
-            return InfinitePolynomial_sparse(self.parent(),self._p+x._p)
+            return InfinitePolynomial_sparse(self.parent(), self._p + x._p)
         except Exception:
             pass
-        ## We can now assume that self._p and x._p actually are polynomials,
-        ## hence, their parent is not simply the underlying ring.
+        # We can now assume that self._p and x._p actually are polynomials,
+        # hence, their parent is not simply the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(set(x._p.parent().variable_names())))
         VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
         else:
             R = self._p.base_ring()
-        return InfinitePolynomial_sparse(self.parent(),R(self._p) + R(x._p))
+        return InfinitePolynomial_sparse(self.parent(), R(self._p) + R(x._p))
 
     def _mul_(self, x):
         """
@@ -585,19 +592,19 @@ class InfinitePolynomial_sparse(RingElement):
 
         """
         try:
-            return InfinitePolynomial_sparse(self.parent(),self._p*x._p)
+            return InfinitePolynomial_sparse(self.parent(), self._p * x._p)
         except Exception:
             pass
-        ## We can now assume that self._p and x._p actually are polynomials,
-        ## hence, their parent is not just the underlying ring.
+        # We can now assume that self._p and x._p actually are polynomials,
+        # hence, their parent is not just the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(set(x._p.parent().variable_names())))
-        VarList.sort(key=self.parent().varname_key,reverse=True)
+        VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
         else:
             R = self._p.base_ring()
-        return InfinitePolynomial_sparse(self.parent(),R(self._p) * R(x._p))
+        return InfinitePolynomial_sparse(self.parent(), R(self._p) * R(x._p))
 
     def gcd(self, x):
         """
@@ -615,7 +622,7 @@ class InfinitePolynomial_sparse(RingElement):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_sparse(self.parent(),self._p.gcd(x._p))
+        return InfinitePolynomial_sparse(self.parent(), self._p.gcd(x._p))
 
     def _rmul_(self, left):
         """
@@ -626,7 +633,7 @@ class InfinitePolynomial_sparse(RingElement):
             4
 
         """
-        return InfinitePolynomial_sparse(self.parent(),left*self._p)
+        return InfinitePolynomial_sparse(self.parent(), left * self._p)
 
     def _lmul_(self, right):
         """
@@ -637,7 +644,7 @@ class InfinitePolynomial_sparse(RingElement):
             4*alpha_3
 
         """
-        return InfinitePolynomial_sparse(self.parent(),self._p*right)
+        return InfinitePolynomial_sparse(self.parent(), self._p * right)
 
     def _div_(self, x):
         r"""
@@ -681,14 +688,37 @@ class InfinitePolynomial_sparse(RingElement):
         """
         if not x.variables():
             p = self.base_ring()(x._p)
-            divisor = self.base_ring().one()/p  # use induction
+            divisor = self.base_ring().one() / p  # use induction
             OUTP = self.parent().tensor_with_ring(divisor.base_ring())
-            return OUTP(self)*OUTP(divisor)
+            return OUTP(self) * OUTP(divisor)
         else:
             from sage.rings.fraction_field_element import FractionFieldElement
             field = self.parent().fraction_field()
             # there remains a problem in reduction
             return FractionFieldElement(field, self, x, reduce=False)
+
+    def _floordiv_(self, x):
+        """
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(ZZ)
+            sage: x[2]//x[2] # indirect doctest
+            1
+        """
+        try:
+            return InfinitePolynomial_sparse(self.parent(), self._p // x._p)
+        except Exception:
+            pass
+        # We can now assume that self._p and x._p actually are polynomials,
+        # hence, their parent is not just the underlying ring.
+        VarList = list(set(self._p.parent().variable_names()).union(set(x._p.parent().variable_names())))
+        VarList.sort(key=self.parent().varname_key, reverse=True)
+        if VarList:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
+        else:
+            R = self._p.base_ring()
+        return InfinitePolynomial_sparse(self.parent(), R(self._p) // R(x._p))
 
     def _sub_(self, x):
         """
@@ -700,19 +730,19 @@ class InfinitePolynomial_sparse(RingElement):
 
         """
         try:
-            return InfinitePolynomial_sparse(self.parent(),self._p-x._p)
+            return InfinitePolynomial_sparse(self.parent(), self._p - x._p)
         except Exception:
             pass
-        ## We can now assume that self._p and x._p actually are polynomials,
-        ## hence, their parent is not just the underlying ring.
+        # We can now assume that self._p and x._p actually are polynomials,
+        # hence, their parent is not just the underlying ring.
         VarList = list(set(self._p.parent().variable_names()).union(x._p.parent().variable_names()))
-        VarList.sort(key=self.parent().varname_key,reverse=True)
+        VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(),VarList, order=self.parent()._order)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
         else:
             R = self._p.base_ring()
-        return InfinitePolynomial_sparse(self.parent(),R(self._p) - R(x._p))
+        return InfinitePolynomial_sparse(self.parent(), R(self._p) - R(x._p))
 
     def __pow__(self, n):
         """
@@ -738,15 +768,18 @@ class InfinitePolynomial_sparse(RingElement):
         if callable(n):
             if (self._p.parent() == self._p.base_ring()):
                 return self
-            if not (hasattr(self._p,'variables') and self._p.variables()):
+            if not (hasattr(self._p, 'variables') and self._p.variables()):
                 return self
-            if hasattr(n,'to_cycles') and hasattr(n,'__len__'): # duck typing Permutation
+            if hasattr(n, 'to_cycles') and hasattr(n, '__len__'):  # duck typing Permutation
                 # auxiliary function, necessary since n(m) raises an error if m>len(n)
                 l = len(n)
-                p = lambda m: n(m) if 0<m<=l else m
-            else: # Permutation group element
+
+                def p(m):
+                    return n(m) if 0 < m <= l else m
+            else:  # Permutation group element
                 p = n
-            q = lambda s: s[0]+'_'+str(p(ZZ(s[1])))
+
+            def q(s): return s[0]+'_'+str(p(ZZ(s[1])))
             newVars = [q(X.split('_')) for X in self._p.parent().variable_names()]
             if not newVars:
                 return self
@@ -757,8 +790,8 @@ class InfinitePolynomial_sparse(RingElement):
                 newR = self._p.parent()
             else:
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                newR = PolynomialRing(self._p.base_ring(), newVars,order=P._order)
-            mapR = self._p.parent().hom(copyVars,newR)
+                newR = PolynomialRing(self._p.base_ring(), newVars, order=P._order)
+            mapR = self._p.parent().hom(copyVars, newR)
             return InfinitePolynomial_sparse(self.parent(), mapR(self._p))
         return InfinitePolynomial_sparse(self.parent(), self._p**n)
 
@@ -829,23 +862,23 @@ class InfinitePolynomial_sparse(RingElement):
         from sage.structure.element import parent
         R1 = parent(self._p)
         R2 = parent(x._p)
-        if (hasattr(R1,'has_coerce_map_from') and R1.has_coerce_map_from(R2)) or (hasattr(R2,'has_coerce_map_from') and R2.has_coerce_map_from(R1)):
+        if (hasattr(R1, 'has_coerce_map_from') and R1.has_coerce_map_from(R2)) or (hasattr(R2, 'has_coerce_map_from') and R2.has_coerce_map_from(R1)):
             return richcmp(self._p, x._p, op)
         VarList = list(set(self._p.parent().variable_names()).union(x._p.parent().variable_names()))
         VarList.sort(key=self.parent().varname_key, reverse=True)
         if VarList:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
         else:
             R = self._p.base_ring()
         if (self._p.parent() is self._p.base_ring()) or not self._p.parent().gens():
-                fself = self._p.base_ring()
+            fself = self._p.base_ring()
         else:
-            fself = self._p.parent().hom(self._p.parent().variable_names(),R)
+            fself = self._p.parent().hom(self._p.parent().variable_names(), R)
         if (x._p.parent() is x._p.base_ring()) or not x._p.parent().gens():
-                fx = x._p.base_ring()
+            fx = x._p.base_ring()
         else:
-            fx = x._p.parent().hom(x._p.parent().variable_names(),R)
+            fx = x._p.parent().hom(x._p.parent().variable_names(), R)
         return richcmp(fself(self._p), fx(x._p), op)
 
     @cached_method
@@ -861,13 +894,14 @@ class InfinitePolynomial_sparse(RingElement):
             x_10*x_1^2*y_1^3
 
         """
-        if hasattr(self._p,'lm'):
+        if hasattr(self._p, 'lm'):
             return InfinitePolynomial(self.parent(), self._p.lm())
-        if self._p==0:
+        if self._p == 0:
             return self
-        if hasattr(self._p,'variable_name'): # if it is univariate
-            return InfinitePolynomial(self.parent(),self._p.parent().gen()**max(self._p.exponents()))
-        return self # if it is scalar
+        if hasattr(self._p, 'variable_name'):  # if it is univariate
+            return InfinitePolynomial(self.parent(),
+                                      self._p.parent().gen() ** max(self._p.exponents()))
+        return self  # if it is scalar
 
     @cached_method
     def lc(self):
@@ -882,9 +916,9 @@ class InfinitePolynomial_sparse(RingElement):
             3
 
         """
-        if hasattr(self._p,'lc'):
+        if hasattr(self._p, 'lc'):
             return self._p.lc()
-        if hasattr(self._p,'variable_name'): # univariate case
+        if hasattr(self._p, 'variable_name'):  # univariate case
             return self._p.leading_coefficient()
         # scalar case
         return self._p
@@ -902,13 +936,13 @@ class InfinitePolynomial_sparse(RingElement):
             3*x_10*x_1^2*y_1^3
 
         """
-        if hasattr(self._p,'lt'):
+        if hasattr(self._p, 'lt'):
             return InfinitePolynomial(self.parent(), self._p.lt())
-        if self._p==0:
+        if self._p == 0:
             return self
-        if hasattr(self._p,'variable_name'): # if it is univariate
+        if hasattr(self._p, 'variable_name'):  # if it is univariate
             return InfinitePolynomial(self.parent(), self._p.leading_coefficient()*self._p.parent().gen()**max(self._p.exponents()))
-        return self # if it is scalar
+        return self  # if it is scalar
 
     def tail(self):
         """
@@ -944,7 +978,7 @@ class InfinitePolynomial_sparse(RingElement):
         """
         Indices = set([0]+[Integer(str(Y).split('_')[1]) for Y in self.variables()])
         Indices = sorted(Indices)
-        P = lambda n: Indices.index(n) if n in Indices else n
+        def P(n): return Indices.index(n) if n in Indices else n
         return self**P
 
     def footprint(self):
@@ -990,15 +1024,15 @@ class InfinitePolynomial_sparse(RingElement):
             Vars = self._p.parent().variable_names()
             from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomial_libsingular
             if isinstance(self._p, MPolynomial_libsingular):
-                L = [(Vars[i].split('_'),e) for i,e in enumerate(self._p.lm().exponents(as_ETuples=False)[0]) if e]
-            elif hasattr(self._p,'lm'):
+                L = [(Vars[i].split('_'), e) for i, e in enumerate(self._p.lm().exponents(as_ETuples=False)[0]) if e]
+            elif hasattr(self._p, 'lm'):
                 # self._p  is multivariate, but not libsingular, hence,
                 # exponents is slow and does not accept the optional argument as_ETuples.
                 # Thus, fall back to regular expressions
                 L = PARENT._find_varpowers.findall(repr(self.lm()._p))
-                L = [((x[0:2]),int(x[2]) if x[2] else 1) for x in L]
-            else: # it is a univariate polynomial -- this should never happen, but just in case...
-                L = [(Vars[0].split('_'),self._p.degree())]
+                L = [((x[0:2]), int(x[2]) if x[2] else 1) for x in L]
+            else:  # it is a univariate polynomial -- this should never happen, but just in case...
+                L = [(Vars[0].split('_'), self._p.degree())]
             for t in L:
                 n = t[0][0]       # the variable *n*ame
                 s = int(t[0][1])  # the variable *s*hift
@@ -1008,7 +1042,7 @@ class InfinitePolynomial_sparse(RingElement):
             self._has_footprint = True
         return self._footprint
 
-    def symmetric_cancellation_order(self,other):
+    def symmetric_cancellation_order(self, other):
         """
         Comparison of leading terms by Symmetric Cancellation Order, `<_{sc}`.
 
@@ -1082,7 +1116,7 @@ class InfinitePolynomial_sparse(RingElement):
         # "not Fbig" is now impossible, because we only consider *global* monomial orderings.
         # These are the occurring shifts:
         Lsmall = sorted(Fsmall.keys())
-        Lbig   = sorted(Fbig.keys())
+        Lbig = sorted(Fbig.keys())
         P = list(range(Lbig[-1] + 1))
         gens = list(range(PARENT.ngens()))
         if Lsmall[0] == 0:
@@ -1093,39 +1127,40 @@ class InfinitePolynomial_sparse(RingElement):
             ExpoSmall = Fsmall[0]
             ExpoBig = Fbig[0]
             for k in gens:
-                if ExpoBig[k]<ExpoSmall[k]:
-                    return (None,1,1)
-                ExpoBig[k]-=ExpoSmall[k]
+                if ExpoBig[k] < ExpoSmall[k]:
+                    return (None, 1, 1)
+                ExpoBig[k] -= ExpoSmall[k]
         lenBig = len(Lbig)
-        j = -1              # will have Lbig[j] -- a shift of the bigger polynomial
-        for i in Lsmall:   # i is a shift of the smaller polynomial
+        j = -1  # will have Lbig[j] -- a shift of the bigger polynomial
+        for i in Lsmall:  # i is a shift of the smaller polynomial
             j += 1
             ExpoSmall = Fsmall[i]
-            while (j<lenBig):
+            while (j < lenBig):
                 found = False
-                if Lbig[j]>=i:
+                if Lbig[j] >= i:
                     ExpoBigSave = [e for e in Fbig[Lbig[j]]]
                     ExpoBig = Fbig[Lbig[j]]
                     found = True
                     for k in gens:
-                        if ExpoBig[k]<ExpoSmall[k]:
+                        if ExpoBig[k] < ExpoSmall[k]:
                             found = False
                             Fbig[Lbig[j]] = ExpoBigSave
                             break
-                        ExpoBig[k]-=ExpoSmall[k]
+                        ExpoBig[k] -= ExpoSmall[k]
                 if found:
                     break
-                j+=1
-            if j==lenBig:
-                return (None,1,1)  ## no "increasing" permutation transforms
-                                    ## the smaller monomial into a factor of
-                                    ## the bigger monomial
+                j += 1
+            if j == lenBig:
+                # no "increasing" permutation transforms
+                # the smaller monomial into a factor of
+                # the bigger monomial
+                return (None, 1, 1)
             tmp = P[i]
             P[i] = Lbig[j]
-            P[Lbig[j]]=tmp
+            P[Lbig[j]] = tmp
         # now, P defines an 'up-shift' permutation, slt^P divides olt, and
         # Fbig contains the exponents for olt/slt^P.
-        OUT = PARENT(PARENT._base(ltbig.lc()/ltsmall.lc()))
+        OUT = PARENT(PARENT._base(ltbig.lc() / ltsmall.lc()))
         for shift, Expo in Fbig.items():
             for g in gens:
                 if Expo[g]:
@@ -1165,29 +1200,30 @@ class InfinitePolynomial_sparse(RingElement):
             2
 
         """
-        if self._p==0:
+        if self._p == 0:
             res = 0
         elif isinstance(monomial, self.__class__):
             if not (self.parent().has_coerce_map_from(monomial.parent())):
                 res = 0
             else:
-                if hasattr(self._p,'variables'):
+                if hasattr(self._p, 'variables'):
                     VarList = [str(X) for X in self._p.variables()]
                 else:
                     VarList = []
-                if hasattr(monomial._p,'variables'):
+                if hasattr(monomial._p, 'variables'):
                     VarList.extend([str(X) for X in monomial._p.variables()])
                 VarList = list(set(VarList))
                 VarList.sort(key=self.parent().varname_key, reverse=True)
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                if len(VarList)==1:
-                    R = PolynomialRing(self._p.base_ring(),VarList+['xx'],order=self.parent()._order)
-                                                                 ## 'xx' is guaranteed to be no variable
-                                                                 ## name of monomial, since coercions
-                                                                 ## were tested before
-                    res = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)(R(self._p).coefficient(R(monomial._p)))
+                if len(VarList) == 1:
+                    # 'xx' is guaranteed to be no variable
+                    # name of monomial, since coercions
+                    # were tested before
+                    R = PolynomialRing(self._p.base_ring(), VarList + ['xx'], order=self.parent()._order)
+
+                    res = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)(R(self._p).coefficient(R(monomial._p)))
                 else:
-                    R = PolynomialRing(self._p.base_ring(),VarList,order=self.parent()._order)
+                    R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
                     res = R(self._p).coefficient(R(monomial._p))
         elif isinstance(monomial, dict):
             if monomial:
@@ -1198,10 +1234,10 @@ class InfinitePolynomial_sparse(RingElement):
             else:
                 return self
         else:
-            raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials"%(type(monomial)))
+            raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials" % (type(monomial)))
         return self.parent()(res)
 
-    ## Essentials for Buchberger
+    # Essentials for Buchberger
     def reduce(self, I, tailreduce=False, report=None):
         r"""
         Symmetrical reduction of ``self`` with respect to a symmetric ideal (or list of Infinite Polynomials).
@@ -1275,15 +1311,15 @@ class InfinitePolynomial_sparse(RingElement):
 
         """
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
-        if hasattr(I,'gens'):
+        if hasattr(I, 'gens'):
             I = I.gens()
         if (not I):
             return self
         I = list(I)
-        S = SymmetricReductionStrategy(self.parent(),I, tailreduce)
+        S = SymmetricReductionStrategy(self.parent(), I, tailreduce)
         return S.reduce(self, report=report)
 
-    ## Further methods
+    # Further methods
     def stretch(self, k):
         r"""
         Stretch ``self`` by a given factor.
@@ -1322,7 +1358,8 @@ class InfinitePolynomial_sparse(RingElement):
             x_6000 + x_4000
 
         """
-        P = lambda n: k*n
+        def P(n):
+            return k*n
         return self ** P
 
     def __iter__(self):
@@ -1380,7 +1417,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             x_100 + x_0
 
         """
-        #Replace any InfinitePolynomials by their underlying polynomials
+        # Replace any InfinitePolynomials by their underlying polynomials
         for kw in kwargs:
             value = kwargs[kw]
             if isinstance(value, InfinitePolynomial_sparse):
@@ -1451,7 +1488,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(),self._p + x._p)
+        return InfinitePolynomial_dense(self.parent(), self._p + x._p)
 
     def _mul_(self, x):
         """
@@ -1465,7 +1502,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(),self._p * x._p)
+        return InfinitePolynomial_dense(self.parent(), self._p * x._p)
 
     def _rmul_(self, left):
         """
@@ -1476,7 +1513,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             4
 
         """
-        return InfinitePolynomial_dense(self.parent(),left*self._p)
+        return InfinitePolynomial_dense(self.parent(), left*self._p)
 
     def _lmul_(self, right):
         """
@@ -1487,7 +1524,7 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             4*alpha_3
 
         """
-        return InfinitePolynomial_dense(self.parent(),self._p*right)
+        return InfinitePolynomial_dense(self.parent(), self._p*right)
 
     def _sub_(self, x):
         """
@@ -1502,8 +1539,6 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         self._p = P._P(self._p)
         x._p = P._P(x._p)
         return InfinitePolynomial_dense(self.parent(), self._p - x._p)
-
-
 
     def __pow__(self, n):
         """
@@ -1531,13 +1566,13 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
         if callable(n):
             if (self._p.parent() == self._p.base_ring()):
                 return self
-            if not (hasattr(self._p,'variables') and self._p.variables()):
+            if not (hasattr(self._p, 'variables') and self._p.variables()):
                 return self
-            if hasattr(n,'to_cycles') and hasattr(n,'__len__'): # duck typing Permutation
+            if hasattr(n, 'to_cycles') and hasattr(n, '__len__'):  # duck typing Permutation
                 # auxiliary function, necessary since n(m) raises an error if m>len(n)
                 l = len(n)
-                p = lambda m: n(m) if 0<m<=l else m
-            else: # Permutation group element
+                def p(m): return n(m) if 0 < m <= l else m
+            else:  # Permutation group element
                 p = n
 
             # determine whether the maximal index must be raised
@@ -1551,11 +1586,11 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             PPgens = PP.gens()
 
             newVars = []
-            sh = PP.ngens()//P.ngens() - 1
+            sh = PP.ngens() // P.ngens() - 1
             blocklength = sh
-            nM = sh+1
+            nM = sh + 1
             for i in range(P.ngens()):
-                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength,-1,-1)])
+                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
                 sh += nM
             mapR = PP.hom(newVars, PP)
             return InfinitePolynomial_dense(self.parent(), mapR(self._p))

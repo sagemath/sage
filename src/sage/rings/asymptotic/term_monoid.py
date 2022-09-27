@@ -1864,7 +1864,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
                 f'takes one positional argument, '
                 f'another positional argument is deprecated, '
                 f'but {len(args)+1} were given')
-        elif len(args) == 1:
+        if len(args) == 1:
             from sage.misc.superseded import deprecation
             deprecation(32215,
                 "Passing 'coefficient' as a positional argument is deprecated; "
@@ -4877,7 +4877,7 @@ class BTerm(TermWithCoefficient):
         if not (self.growth >= other.growth):
             raise ArithmeticError(f'{self} cannot absorb {other}')
 
-        valid_from_new = dict()
+        valid_from_new = {}
         for variable_name in set().union(self.valid_from.keys(), other.valid_from.keys()):
             if variable_name in self.valid_from and other.valid_from:
                 valid_from_new[variable_name] = (max(self.valid_from[variable_name], other.valid_from[variable_name]))
@@ -5339,7 +5339,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
             sage: type(MyTermMonoid('B', G, QQ))
             <class '__main__.MyBTermMonoid_with_category'>
         """
-        super(TermMonoidFactory, self).__init__(name)
+        super().__init__(name)
 
         if exact_term_monoid_class is None:
             exact_term_monoid_class = ExactTermMonoid

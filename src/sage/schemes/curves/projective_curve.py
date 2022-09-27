@@ -703,7 +703,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         y0 = F(pt[1])
         astr = ["a"+str(i) for i in range(1,2*n)]
         x,y = R.gens()
-        R0 = PolynomialRing(F,2*n+2,names = [str(x),str(y),"t"]+astr)
+        R0 = PolynomialRing(F, 2 * n + 2, names=[str(x), str(y), "t"] + astr)
         vars0 = R0.gens()
         t = vars0[2]
         yt = y0*t**0 + add([vars0[i]*t**(i-2) for i in range(3,2*n+2)])
@@ -2147,8 +2147,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         if algorithm == "bn":
             return self._points_via_singular(sort=sort)
         elif algorithm == "all":
-            S_enum = self.rational_points(algorithm = "enum")
-            S_bn = self.rational_points(algorithm = "bn")
+            S_enum = self.rational_points(algorithm="enum")
+            S_bn = self.rational_points(algorithm="bn")
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different\
                                      algorithms give different answers for\

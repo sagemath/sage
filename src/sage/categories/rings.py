@@ -781,16 +781,16 @@ class Rings(CategoryWithAxiom):
 
         ##
         # Quotient rings
-        # Again, this is defined in sage.rings.ring.pyx
         def quotient(self, I, names=None, **kwds):
             """
             Quotient of a ring by a two-sided ideal.
 
             INPUT:
 
-            - ``I``: A twosided ideal of this ring.
-            - ``names``: a list of strings to be used as names
-              for the variables in the quotient ring.
+            - ``I`` -- A twosided ideal of this ring.
+            - ``names`` -- (optional) names of the generators of the quotient (if
+              there are multiple generators, you can specify a single character
+              string and the generators are named in sequence starting with 0).
             - further named arguments that may be passed to the
               quotient ring constructor.
 
@@ -823,6 +823,23 @@ class Rings(CategoryWithAxiom):
                 xbar*ybar
                 sage: Q.0*Q.1*Q.0
                 0
+
+            An example with polynomial rings::
+
+                sage: R.<x> = PolynomialRing(ZZ)
+                sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
+                sage: S = R.quotient(I, 'a')
+                sage: S.gens()
+                (a,)
+
+                sage: R.<x,y> = PolynomialRing(QQ,2)
+                sage: S.<a,b> = R.quotient((x^2, y))
+                sage: S
+                Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2, y)
+                sage: S.gens()
+                (a, 0)
+                sage: a == b
+                False
             """
             from sage.rings.quotient_ring import QuotientRing
             return QuotientRing(self, I, names=names, **kwds)
@@ -866,6 +883,16 @@ class Rings(CategoryWithAxiom):
                   [0 1]
                 )
 
+            A test with a subclass of :class:`~sage.rings.ring.Ring`::
+
+                sage: R.<x,y> = PolynomialRing(QQ,2)
+                sage: S.<a,b> = R.quo((x^2, y))
+                sage: S
+                Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2, y)
+                sage: S.gens()
+                (a, 0)
+                sage: a == b
+                False
             """
             return self.quotient(I,names=names,**kwds)
 
@@ -875,7 +902,22 @@ class Rings(CategoryWithAxiom):
 
             NOTE:
 
-            This is a synonyme for :meth:`quotient`.
+            This is a synonym for :meth:`quotient`.
+
+            INPUT:
+
+            - ``I`` -- an ideal of `R`
+
+            - ``names`` -- (optional) names of the generators of the quotient. (If
+              there are multiple generators, you can specify a single character
+              string and the generators are named in sequence starting with 0.)
+
+            - further named arguments that may be passed to the quotient ring
+              constructor.
+
+            OUTPUT:
+
+            - ``R/I`` -- the quotient ring of `R` by the ideal `I`
 
             EXAMPLES::
 
@@ -906,8 +948,24 @@ class Rings(CategoryWithAxiom):
                   [0 1]
                 )
 
+            A test with a subclass of :class:`~sage.rings.ring.Ring`::
+
+                sage: R.<x> = PolynomialRing(ZZ)
+                sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
+                sage: S = R.quotient_ring(I, 'a')
+                sage: S.gens()
+                (a,)
+
+                sage: R.<x,y> = PolynomialRing(QQ,2)
+                sage: S.<a,b> = R.quotient_ring((x^2, y))
+                sage: S
+                Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2, y)
+                sage: S.gens()
+                (a, 0)
+                sage: a == b
+                False
             """
-            return self.quotient(I,names=names, **kwds)
+            return self.quotient(I, names=names, **kwds)
 
         def __truediv__(self, I):
             """
@@ -920,6 +978,11 @@ class Rings(CategoryWithAxiom):
                 sage: MS = MatrixSpace(QQ,2)
                 sage: I = MS*MS.gens()*MS
                 sage: MS/I
+                Traceback (most recent call last):
+                ...
+                TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.
+
+                sage: QQ['x'] / ZZ
                 Traceback (most recent call last):
                 ...
                 TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.

@@ -3520,7 +3520,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             M = K.extension(gg, names='b')
             y = M.gen()/dd
             x = M(x)
-            L = M.absolute_field(names = var)
+            L = M.absolute_field(names=var)
             phi = L.structure()[1]
             x = phi(x)
             y = phi(y)
@@ -4364,13 +4364,9 @@ class KolyvaginPoint(HeegnerPoint):
 
         # do actual calculation
         if self.conductor() == 1:
-
-            P = self._trace_exact_conductor_1(prec = prec)
+            P = self._trace_exact_conductor_1(prec=prec)
             return E.change_ring(GF(p))(P)
-
-        else:
-
-            raise NotImplementedError
+        raise NotImplementedError
 
 ##     def congruent_rational_point(self, n, prec=53):
 ##         r"""
