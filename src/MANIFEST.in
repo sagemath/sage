@@ -35,6 +35,13 @@ include sage/symbolic/ginac/*.cpp
 # Exclude what is already shipped in sagemath-objects, sagemath-categories, sagemath-environment, sagemath-repl
 global-exclude all__*.py
 prune sage/misc
+include sage/misc/all.py
+include sage/misc/allocator.pxd
+include sage/misc/allocator.pyx
+include sage/misc/binary_tree.pxd
+include sage/misc/binary_tree.pyx
+include sage/misc/search.pxd
+include sage/misc/search.pyx
 # Exclude what is shipped in sagemath-objects
 prune sage/cpython
 prune sage/structure
