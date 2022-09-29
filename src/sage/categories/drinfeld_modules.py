@@ -10,13 +10,13 @@ AUTHORS:
 - Xavier Caruso (2022-06)
 """
 
-#*****************************************************************************
-#  Copyright (C) 2022      Xavier Caruso <xavier.caruso@normalesup.org>
-#                          Antoine Leudière <antoine.leudiere@inria.fr>
+# *****************************************************************************
+#   Copyright (C) 2022      Xavier Caruso <xavier.caruso@normalesup.org>
+#                           Antoine Leudière <antoine.leudiere@inria.fr>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#   Distributed under the terms of the GNU General Public License (GPL)
+#                   http://www.gnu.org/licenses/
+# ******************************************************************************
 
 from sage.categories.category_types import Category_over_base
 from sage.categories.homsets import Homsets

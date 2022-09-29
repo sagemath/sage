@@ -14,15 +14,15 @@ AUTHORS:
 - Xavier Caruso (2022-06)
 """
 
-#*****************************************************************************
-#       Copyright (C) 2022 Antoine Leudière <antoine.leudiere@inria.fr>
+# *****************************************************************************
+#        Copyright (C) 2022 Antoine Leudière <antoine.leudiere@inria.fr>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.matrix.constructor import Matrix
