@@ -1,5 +1,5 @@
 r"""
-2D Plotting
+2D plotting
 
 Sage provides extensive 2D plotting functionality. The underlying
 rendering is done using the matplotlib Python library.

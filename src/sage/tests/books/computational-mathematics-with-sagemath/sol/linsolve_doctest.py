@@ -24,4 +24,3 @@ Sage example in ./sol/linsolve.tex, line 84::
   True
 
 """
-

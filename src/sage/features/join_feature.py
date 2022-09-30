@@ -9,6 +9,17 @@ class JoinFeature(Feature):
     r"""
     Join of several :class:`~sage.features.Feature` instances.
 
+    This creates a new feature as the union of the given features. Typically
+    these are executables of an SPKG. For an example, see
+    :class:`~sage.features.rubiks.Rubiks`.
+
+    Furthermore, this can be the union of a single feature. This is used to map
+    the given feature to a more convenient name to be used in ``optional`` tags
+    of doctests. Thus you can equip a feature such as a
+    :class:`~sage.features.PythonModule` with a tag name that differs from the
+    systematic tag name. As an example for this use case, see
+    :class:`~sage.features.meataxe.Meataxe`.
+
     EXAMPLES::
 
         sage: from sage.features import Executable

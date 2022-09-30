@@ -328,8 +328,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         sage: S.<x,y> = BooleanPolynomialRing(2, order='deglex')
         sage: P == S
         False
-
-
     """
     def __init__(self, n=None, names=None, order='lex'):
         """
@@ -348,7 +346,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         cdef Py_ssize_t i, j, bstart, bsize
 
         if names is None:
-            raise TypeError("You must specify the names of the variables.")
+            raise TypeError("you must specify the names of the variables")
 
         if n is None:
             if isinstance(names, (tuple, list)):
@@ -357,10 +355,10 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         try:
             n = int(n)
         except TypeError as msg:
-            raise TypeError("Number of variables must be an integer")
+            raise TypeError("number of variables must be an integer")
 
         if n < 1:
-            raise ValueError("Number of variables must be greater than 1.")
+            raise ValueError("number of variables must be greater than 1")
 
         self.pbind = <Py_ssize_t*>sig_malloc(n*sizeof(Py_ssize_t))
 
@@ -369,13 +367,13 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         try:
             pb_order_code = order_mapping[order[0].name()]
         except KeyError:
-            raise ValueError("Only order keys " +
+            raise ValueError("only order keys " +
                              ', '.join(order_mapping.keys()) +
-                             " are supported.")
+                             " are supported")
 
         if order.is_block_order():
             if pb_order_code is pblp:
-                raise ValueError("Only deglex and degneglex are supported for block orders.")
+                raise ValueError("only deglex and degneglex are supported for block orders")
             elif pb_order_code is pbdlex:
                 pb_order_code = pbblock_dlex
             elif pb_order_code is pbdp_asc:
@@ -384,8 +382,8 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
                 pb_order_code = pbblock_dp
             for i in range(1, len(order.blocks())):
                 if order[0].name() != order[i].name():
-                    raise ValueError("Each block must have the same order type "
-                                     "(deglex and degneglex) for block orders.")
+                    raise ValueError("each block must have the same order type "
+                                     "(deglex and degneglex) for block orders")
 
         if pb_order_code is pbdp:
             for i in range(n):
@@ -506,8 +504,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-        -  ``i`` - an integer or a boolean monomial in one
-           variable
+        - ``i`` -- an integer or a boolean monomial in one variable
 
         EXAMPLES::
 
@@ -530,10 +527,10 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             if len(i) == 1:
                 i = i.index()
             else:
-                raise TypeError("Boolean monomials must be in one variable only.")
+                raise TypeError("boolean monomials must be in one variable only")
         cdef idx = int(i)
         if idx < 0 or idx >= self._pbring.nVariables():
-            raise ValueError("Generator not defined.")
+            raise ValueError("generator not defined")
         return new_BP_from_PBVar(self, self._pbring.variable(self.pbind[idx]))
 
     def gens(self):
@@ -551,7 +548,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: P = BooleanPolynomialRing(10,'x')
             sage: P.gens()
             (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)
-
         """
         return tuple(new_BP_from_PBVar(self,
                                        self._pbring.variable(self.pbind[i]))
@@ -559,14 +555,12 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
     def change_ring(self, base_ring=None, names=None, order=None):
         """
-        Return a new multivariate polynomial ring with base ring
-        ``base_ring``, variable names set to ``names``, and term
-        ordering given by ``order``.
+        Return a new multivariate polynomial ring with base ring ``base_ring``,
+        variable names set to ``names``, and term ordering given by ``order``.
 
         When ``base_ring`` is not specified, this function returns
         a ``BooleanPolynomialRing`` isomorphic to ``self``. Otherwise,
-        this returns a ``MPolynomialRing``. Each argument above is
-        optional.
+        this returns a ``MPolynomialRing``. Each argument above is optional.
 
         INPUT:
 
@@ -590,7 +584,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: T.term_order()
             Lexicographic term order
         """
-
         if names is None:
             names = self.variable_names()
         if order is None:
@@ -1082,10 +1075,9 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: R.remove_var(x,y,z)
             Traceback (most recent call last):
             ...
-            ValueError: impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring
+            ValueError: impossible to use the original term order (most likely because it was a block order); please specify the term order for the subring
             sage: R.remove_var(x,y,z, order='deglex')
             Boolean PolynomialRing in u, v
-
         """
         vars = list(self.variable_names())
         for v in var:
@@ -1096,7 +1088,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             try:
                 return BooleanPolynomialRing(names=vars, order=self.term_order())
             except ValueError:
-                raise ValueError("impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring")
+                raise ValueError("impossible to use the original term order (most likely because it was a block order); please specify the term order for the subring")
         else:
             return BooleanPolynomialRing(names=vars, order=order)
 
@@ -1205,7 +1197,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: P.random_element(degree=4)
             Traceback (most recent call last):
             ...
-            ValueError: Given degree should be less than or equal to number of variables (3)
+            ValueError: given degree should be less than or equal to number of variables (3)
 
             sage: f = P.random_element(degree=1, terms=5)
             sage: f.degree() <= 1
@@ -1251,7 +1243,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             degree = Integer(degree)
 
         if degree > nvars:
-            raise ValueError("Given degree should be less than or equal to number of variables (%s)" % nvars)
+            raise ValueError("given degree should be less than or equal to number of variables (%s)" % nvars)
 
         tot_terms = 0
         monom_counts = []
@@ -1638,10 +1630,10 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             if len(i) == 1:
                 i = i.index()
             else:
-                raise TypeError("Boolean monomials must be in one variable only.")
+                raise TypeError("boolean monomials must be in one variable only")
         i = int(i)
         if i < 0 or i >= self._pbring.nVariables():
-            raise ValueError("Generator not defined.")
+            raise ValueError("generator not defined")
 
         return new_BM_from_PBVar(self._monom_monoid, self, self._pbring.variable(self.pbind[i]))
 
@@ -1998,7 +1990,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
             x50
         """
         if i < 0 or i >= self.ngens():
-            raise ValueError("Generator not defined.")
+            raise ValueError("generator not defined")
 
         cdef PBVar newvar
         newvar = PBBooleVariable(i, (<BooleanPolynomialRing>self._ring)._pbring)
@@ -2382,11 +2374,11 @@ cdef class BooleanMonomial(MonoidElement):
         """
         P = self.parent()
         if args and kwds:
-            raise ValueError("Using keywords and regular arguments not supported.")
+            raise ValueError("using keywords and regular arguments not supported")
         if args:
-            d = {}
             if len(args) > self._parent.ngens():
-                raise ValueError("Number of arguments is greater than the number of variables of parent ring.")
+                raise ValueError("number of arguments is greater than the number of variables of parent ring")
+            d = {}
             for i in range(len(args)):
                 d[i] = args[i]
         elif kwds:
@@ -2522,7 +2514,7 @@ cdef class BooleanMonomial(MonoidElement):
             return self._pbmonom.deg()
 
         if x not in self._parent.gens():
-            raise ValueError("x must be one of the generators of the parent.")
+            raise ValueError("x must be one of the generators of the parent")
 
         if self.reducible_by(x.lm()):
             return 1
@@ -3004,7 +2996,7 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: a._repr_with_changed_varnames([1,'y','z'])
             Traceback (most recent call last):
             ...
-            TypeError: varnames has entries with wrong type.
+            TypeError: varnames has entries with wrong type
 
         ::
 
@@ -3016,7 +3008,7 @@ cdef class BooleanPolynomial(MPolynomial):
         cdef int N = P._pbring.nVariables()
 
         if len(varnames) != N:
-            raise TypeError("len(varnames) doesn't equal self.parent().ngens()")
+            raise TypeError("len(varnames) is not equal to self.parent().ngens()")
 
         orig_varnames = P.variable_names()
         try:
@@ -3025,7 +3017,7 @@ cdef class BooleanPolynomial(MPolynomial):
         except TypeError:
             for i in range(N):
                 P._pbring.setVariableName(i, str_to_bytes(orig_varnames[i]))
-            raise TypeError("varnames has entries with wrong type.")
+            raise TypeError("varnames has entries with wrong type")
         s = ccrepr(self._pbpoly)
         for i in range(N):
             P._pbring.setVariableName(i, str_to_bytes(orig_varnames[i]))
@@ -3256,7 +3248,7 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: p^-1
             Traceback (most recent call last):
             ...
-            NotImplementedError: Negative exponents for non constant boolean polynomials not implemented.
+            NotImplementedError: negative exponents for non constant boolean polynomials not implemented
 
         ::
 
@@ -3278,7 +3270,7 @@ cdef class BooleanPolynomial(MPolynomial):
         elif self._pbpoly.isZero():
             raise ZeroDivisionError
         else:
-            raise NotImplementedError("Negative exponents for non constant boolean polynomials not implemented.")
+            raise NotImplementedError("negative exponents for non constant boolean polynomials not implemented")
 
     def __neg__(BooleanPolynomial self):
         r"""
@@ -3953,11 +3945,11 @@ cdef class BooleanPolynomial(MPolynomial):
         P = self._parent
         cdef int N = P.ngens()
         if args and kwds:
-            raise ValueError("Using keywords and regular arguments not supported.")
+            raise ValueError("using keywords and regular arguments not supported")
         if args:
             d = {}
             if len(args) != N:
-                raise ValueError("Number of arguments is different from the number of variables of parent ring.")
+                raise ValueError("number of arguments is different from the number of variables of parent ring")
             for i in range(N):
                 arg = args[i]
                 try:
@@ -4565,7 +4557,7 @@ cdef class BooleanPolynomial(MPolynomial):
                 L.append(tuple(l))
             return tuple(L)
         else:
-            raise TypeError("Type '%s' of s not supported." % type(s))
+            raise TypeError("type '%s' of s not supported" % type(s))
 
     def spoly(self, BooleanPolynomial rhs):
         r"""
@@ -4665,7 +4657,7 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: a.reduce([None,None])
             Traceback (most recent call last):
             ...
-            TypeError: argument must be a BooleanPolynomial.
+            TypeError: argument must be a BooleanPolynomial
         """
         from sage.rings.polynomial.pbori.pbori import red_tail
         if not I:
@@ -4674,7 +4666,7 @@ cdef class BooleanPolynomial(MPolynomial):
             I = I.gens()
         first = I[0]
         if first is None:
-            raise TypeError("argument must be a BooleanPolynomial.")
+            raise TypeError("argument must be a BooleanPolynomial")
         g = ReductionStrategy(first.ring())
         g.opt_red_tail = True
         for p in I:
@@ -4729,7 +4721,7 @@ cdef class PolynomialConstruct:
             # So, it is just a conversion. [Simon King]
             return (<BooleanPolynomialRing>ring)._element_constructor_(x)
 
-        raise TypeError("Cannot generate Boolean polynomial from %s , %s" %
+        raise TypeError("cannot generate Boolean polynomial from %s , %s" %
                         (type(x), type(ring)))
 
 
@@ -4768,7 +4760,7 @@ cdef class MonomialConstruct:
                     return result.lm()
                 return result
             except Exception:
-                raise TypeError("Cannot convert to Boolean Monomial %s" %
+                raise TypeError("cannot convert to Boolean Monomial %s" %
                                 type(x))
 
 cdef class VariableConstruct:
@@ -4790,11 +4782,10 @@ cdef class VariableConstruct:
         """
         if isinstance(arg, BooleanPolynomialRing):
             return arg.variable(0)
-        elif isinstance(ring, BooleanPolynomialRing):
+        if isinstance(ring, BooleanPolynomialRing):
             return (<BooleanPolynomialRing>ring).variable(arg)
-        else:
-            raise TypeError("todo polynomial factory %s%s" %
-                            (str(type(arg)), str(type(ring))))
+        raise TypeError("todo polynomial factory %s%s" %
+                        (str(type(arg)), str(type(ring))))
 
 
 cdef class BooleanPolynomialIterator:
@@ -4932,7 +4923,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         - ``lazy`` - (default: ``True``)
 
         - ``invert`` - setting ``invert=True`` input and output get a
-          transformation ``x+1`` for each variable ``x``, which shouldn't
+          transformation ``x+1`` for each variable ``x``, which should not
           effect the calculated GB, but the algorithm.
 
         - ``other_ordering_first`` - possible values are ``False`` or
@@ -5526,7 +5517,7 @@ cdef class BooleSet:
         elif isinstance(rhs, BooleanPolynomial):
             s = (<BooleanPolynomial>rhs)._pbpoly.set()
         else:
-            raise TypeError("Argument 'rhs' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(rhs))
+            raise TypeError("argument 'rhs' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(rhs))
         return new_BS_from_PBSet(self._pbset.diff(s), self._ring)
 
     def union(self, rhs):
@@ -5560,7 +5551,7 @@ cdef class BooleSet:
         elif isinstance(rhs, BooleanPolynomial):
             s = (<BooleanPolynomial>rhs)._pbpoly.set()
         else:
-            raise TypeError("Argument 'rhs' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(rhs))
+            raise TypeError("argument 'rhs' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(rhs))
         return new_BS_from_PBSet(self._pbset.unite(s), self._ring)
 
     def change(self, ind):
@@ -6175,7 +6166,7 @@ cdef class BooleanPolynomialVector:
         elif isinstance(el, BooleanMonomial):
             p = PBBoolePolynomial((<BooleanMonomial>el)._pbmonom)
         else:
-            raise TypeError("Argument 'el' has incorrect type (expected BooleanPolynomial or BooleanMonomial, got %s)" % type(el))
+            raise TypeError("argument 'el' has incorrect type (expected BooleanPolynomial or BooleanMonomial, got %s)" % type(el))
         self._vec.push_back(<PBBoolePolynomial>p)
 
 cdef inline BooleanPolynomialVector new_BPV_from_PBPolyVector(
@@ -6255,12 +6246,12 @@ cdef class ReductionStrategy:
             sage: red.add_generator(None)
             Traceback (most recent call last):
             ...
-            TypeError: argument must be a BooleanPolynomial.
+            TypeError: argument must be a BooleanPolynomial
         """
         if p is None:
-            raise TypeError("argument must be a BooleanPolynomial.")
+            raise TypeError("argument must be a BooleanPolynomial")
         if p._pbpoly.isZero():
-            raise ValueError("zero generators not allowed.")
+            raise ValueError("zero generators not allowed")
         deref(self._strat).addGenerator(p._pbpoly)
 
     def nf(self, BooleanPolynomial p):
@@ -6525,7 +6516,6 @@ cdef class FGLMStrategy:
             Traceback (most recent call last):
             ...
             RuntimeError...
-
         """
         cdef BooleanPolynomialRing _from_ring, _to_ring
 
@@ -6598,7 +6588,7 @@ cdef class GroebnerStrategy:
             self._strat = make_shared[PBGBStrategy]((<BooleanPolynomialRing>param)._pbring)
             self._parent = param
         else:
-            raise ValueError("Cannot generate GroebnerStrategy from %s." %
+            raise ValueError("cannot generate GroebnerStrategy from %s" %
                              type(param))
 
         self.reduction_strategy = ReductionStrategy(self._parent)
@@ -6629,7 +6619,7 @@ cdef class GroebnerStrategy:
             [a + b, a + c]
         """
         if p._pbpoly.isZero():
-            raise ValueError("zero generators not allowed.")
+            raise ValueError("zero generators not allowed")
         deref(self._strat).addGeneratorDelayed(p._pbpoly)
 
     def add_generator(self, BooleanPolynomial p):
@@ -6654,7 +6644,7 @@ cdef class GroebnerStrategy:
             ValueError: strategy already contains a polynomial with same lead
         """
         if p._pbpoly.isZero():
-            raise ValueError("zero generators not allowed.")
+            raise ValueError("zero generators not allowed")
         if deref(self._strat).generators.leadingTerms.owns(p._pbpoly.lead()):
             raise ValueError("strategy already contains a polynomial with same lead")
         deref(self._strat).generators.addGenerator(p._pbpoly)
@@ -6689,7 +6679,7 @@ cdef class GroebnerStrategy:
             [a + c, b + c]
         """
         if p._pbpoly.isZero():
-            raise ValueError("zero generators not allowed.")
+            raise ValueError("zero generators not allowed")
         deref(self._strat).addAsYouWish(p._pbpoly)
 
     def implications(self, i):
@@ -7207,7 +7197,7 @@ def zeros(pol, BooleSet s):
     elif isinstance(pol, BooleanMonomial):
         p = PBBoolePolynomial((<BooleanMonomial>pol)._pbmonom)
     else:
-        raise TypeError("Argument 'p' has incorrect type (expected BooleanPolynomial or BooleanMonomial, got %s)" % type(pol))
+        raise TypeError("argument 'p' has incorrect type (expected BooleanPolynomial or BooleanMonomial, got %s)" % type(pol))
     return new_BS_from_PBSet(pb_zeros(p, s._pbset), s._ring)
 
 
@@ -7256,13 +7246,13 @@ def interpolate(zero, one):
         z = (<BooleanPolynomial>zero)._pbpoly.set()
         ring = (<BooleanPolynomial>zero)._parent
     else:
-        raise TypeError("Argument 'zero' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(zero))
+        raise TypeError("argument 'zero' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(zero))
     if isinstance(one, BooleSet):
         o = (<BooleSet>one)._pbset
     elif isinstance(one, BooleanPolynomial):
         o = (<BooleanPolynomial>one)._pbpoly.set()
     else:
-        raise TypeError("Argument 'one' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(one))
+        raise TypeError("argument 'one' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(one))
     return new_BP_from_PBPoly(ring, pb_interpolate(z, o))
 
 
@@ -7333,13 +7323,13 @@ def interpolate_smallest_lex(zero, one):
     elif isinstance(zero, BooleanPolynomial):
         z = (<BooleanPolynomial>zero)._pbpoly.set()
     else:
-        raise TypeError("Argument 'zero' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(zero))
+        raise TypeError("argument 'zero' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(zero))
     if isinstance(one, BooleSet):
         o = (<BooleSet>one)._pbset
     elif isinstance(one, BooleanPolynomial):
         o = (<BooleanPolynomial>one)._pbpoly.set()
     else:
-        raise TypeError("Argument 'one' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(one))
+        raise TypeError("argument 'one' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(one))
 
     return new_BP_from_PBPoly(zero.ring(), pb_interpolate_smallest_lex(z, o))
 
@@ -7400,7 +7390,7 @@ def ll_red_nf_redsb(p, BooleSet reductors):
         t = PBBoolePolynomial((<BooleanMonomial>p)._pbmonom)
         parent = (<BooleanMonomial>p)._ring
     else:
-        raise TypeError("Argument 'p' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(p))
+        raise TypeError("argument 'p' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(p))
 
     res = pb_ll_red_nf(t, reductors._pbset)
 
@@ -7513,7 +7503,7 @@ def if_then_else(root, a, b):
         sage: if_then_else(x5, f0, f1)
         Traceback (most recent call last):
         ...
-        IndexError: index of root must be less than the values of roots of the branches.
+        IndexError: index of root must be less than the values of roots of the branches
     """
     cdef PBSet a_set, b_set
     cdef PBSet res
@@ -7525,14 +7515,14 @@ def if_then_else(root, a, b):
         b_set = (<BooleanPolynomial>b)._pbpoly.set()
         ring = (<BooleanPolynomial>b)._parent
     else:
-        raise TypeError("Argument 'b' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(b))
+        raise TypeError("argument 'b' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(b))
 
     if isinstance(a, BooleSet):
         a_set = (<BooleSet>a)._pbset
     elif isinstance(a, BooleanPolynomial):
         a_set = (<BooleanPolynomial>a)._pbpoly.set()
     else:
-        raise TypeError("Argument 'a' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(a))
+        raise TypeError("argument 'a' has incorrect type (expected BooleSet or BooleanPolynomial, got %s)" % type(a))
 
     try:
         root = int(root)
@@ -7541,22 +7531,22 @@ def if_then_else(root, a, b):
             if len(root) == 1:
                 root = root.lm()
             else:
-                raise TypeError("Only variables are acceptable as root.")
+                raise TypeError("only variables are acceptable as root")
         if isinstance(root, BooleanMonomial):
             if len(root) == 1:
                 root = root.index()
             else:
-                raise TypeError("Only variables are acceptable as root.")
+                raise TypeError("only variables are acceptable as root")
 
         if not isinstance(root, int):
-            raise TypeError("Only variables are acceptable as root.")
+            raise TypeError("only variables are acceptable as root")
 
     cdef Py_ssize_t* pbind = ring.pbind
     root = ring.pbind[root]
 
     if (root >= a_set.navigation().value()) or (root >= b_set.navigation().value()):
         raise IndexError("index of root must be less than "
-                         "the values of roots of the branches.")
+                         "the values of roots of the branches")
 
     res = PBBooleSet(root, a_set.navigation(),
                      b_set.navigation(), ring._pbring)
@@ -7590,7 +7580,7 @@ def top_index(s):
     elif isinstance(s, BooleanPolynomial):
         idx = (<BooleanPolynomial>s)._pbpoly.navigation().value()
     else:
-        raise TypeError("Argument 's' has incorrect type (expected BooleSet, BooleanMonomial or BooleanPolynomial, got %s)" % type(s))
+        raise TypeError("argument 's' has incorrect type (expected BooleSet, BooleanMonomial or BooleanPolynomial, got %s)" % type(s))
     return (<BooleanPolynomialRing>s.ring()).pbind[idx]
 
 
@@ -8010,19 +8000,16 @@ cdef class VariableFactory:
             a
             sage: VariableFactory(B)(0)
             a
-
         """
         if ring is None and self._ring is not None:
             return new_BM_from_PBVar(self._ring._monom_monoid, self._ring,
                                      self._factory(<long>arg))
-        elif isinstance(arg, BooleanPolynomialRing):
+        if isinstance(arg, BooleanPolynomialRing):
             return arg.variable(0)
-        elif isinstance(ring, BooleanPolynomialRing):
+        if isinstance(ring, BooleanPolynomialRing):
             return (<BooleanPolynomialRing>ring).variable(arg)
-        else:
-            raise TypeError(
-                "Cannot convert (%s, %s) to Boolean Variable" %
-                (type(arg), type(ring)))
+        raise TypeError("cannot convert (%s, %s) to Boolean Variable" %
+                        (type(arg), type(ring)))
 
 
 cdef class MonomialFactory:
@@ -8097,7 +8084,7 @@ cdef class MonomialFactory:
                 return result
             except Exception:
                 raise TypeError(
-                    "Cannot %s convert to Boolean Monomial" % type(arg))
+                    "cannot %s convert to Boolean Monomial" % type(arg))
 
 
 cdef class PolynomialFactory:
@@ -8174,5 +8161,5 @@ cdef class PolynomialFactory:
                 return new_BP_from_PBPoly(self._ring,
                                           self._factory((<BooleanMonomial>arg)._pbmonom))
 
-            raise TypeError("Cannot convert %s to BooleanPolynomial" %
+            raise TypeError("cannot convert %s to BooleanPolynomial" %
                             type(arg))

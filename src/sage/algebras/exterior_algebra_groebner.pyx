@@ -9,7 +9,7 @@ AUTHORS:
 - Trevor K. Karn, Travis Scrimshaw (July 2022): Initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2022 Trevor K. Karn <karnx018 at umn.edu>
 #                 (C) 2022 Travis Scrimshaw <tcscrims at gmail.com>
 #
@@ -17,8 +17,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check
 from sage.libs.gmp.mpz cimport mpz_sizeinbase, mpz_setbit, mpz_tstbit, mpz_cmp_si, mpz_sgn
@@ -137,7 +137,7 @@ cdef class GroebnerStrategy:
         return self.int_to_bitset(max(self.bitset_to_int(k) for k in mc))
 
     cdef inline partial_S_poly_left(self, GBElement f, GBElement g):
-        """
+        r"""
         Compute one half of the `S`-polynomial for ``f`` and ``g``.
 
         This computes:
@@ -154,7 +154,7 @@ cdef class GroebnerStrategy:
         return ret
 
     cdef inline partial_S_poly_right(self, GBElement f, GBElement g):
-        """
+        r"""
         Compute one half of the `S`-polynomial for ``f`` and ``g``.
 
         This computes:

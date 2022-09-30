@@ -271,14 +271,14 @@ that our form actually represents the Euler class appropriately.
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 from sage.algebras.finite_gca import FiniteGCAlgebra
 from sage.combinat.free_module import IndexedFreeModuleElement
@@ -693,10 +693,10 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         Algebra of characteristic cohomology classes of the Tangent bundle TM
          over the 8-dimensional differentiable manifold M
         sage: CR.gens()
-        [Characteristic cohomology class (p_1)(TM) of the Tangent bundle TM over
+        (Characteristic cohomology class (p_1)(TM) of the Tangent bundle TM over
          the 8-dimensional differentiable manifold M,
          Characteristic cohomology class (p_2)(TM) of the Tangent bundle TM
-         over the 8-dimensional differentiable manifold M]
+         over the 8-dimensional differentiable manifold M)
 
     The default base ring is `\QQ`::
 
@@ -712,12 +712,12 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
          complex vector bundle E -> M of rank 2 over the base space
          4-dimensional differentiable manifold M
         sage: CR_E.gens()
-        [Characteristic cohomology class (c_1)(E) of the Differentiable complex
+        (Characteristic cohomology class (c_1)(E) of the Differentiable complex
          vector bundle E -> M of rank 2 over the base space 4-dimensional
          differentiable manifold M,
          Characteristic cohomology class (c_2)(E) of the Differentiable
          complex vector bundle E -> M of rank 2 over the base space
-         4-dimensional differentiable manifold M]
+         4-dimensional differentiable manifold M)
 
     Characteristic cohomology class ring over an oriented manifold::
 
@@ -727,9 +727,9 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         True
         sage: CR = TS2.characteristic_cohomology_class_ring()
         sage: CR.gens()
-        [Characteristic cohomology class (e)(TS^2) of the Tangent bundle TS^2
+        (Characteristic cohomology class (e)(TS^2) of the Tangent bundle TS^2
          over the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean
-         space E^3]
+         space E^3,)
     """
     Element = CharacteristicCohomologyClassRingElement
 
@@ -1043,6 +1043,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         repr = f'Algebra of characteristic cohomology classes of the {vbundle}'
         return repr
 
+
 # *****************************************************************************
 # ALGORITHMS
 # *****************************************************************************
@@ -1102,6 +1103,7 @@ def multiplicative_sequence(q, n=None):
                             for k in range(n + 1)
                             for p in Partitions(k)})
     return Sym.e()(mon_pol)
+
 
 def additive_sequence(q, k, n=None):
     r"""
@@ -1845,4 +1847,4 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             return nab._domain._one_scalar_field  # no computation necessary
         if i == 0:
             return fast_wedge_power(EulerAlgorithm().get(nab)[0], n)
-        return fast_wedge_power(PontryaginAlgorithm().get(nab)[i-1], n)
+        return fast_wedge_power(PontryaginAlgorithm().get(nab)[i - 1], n)

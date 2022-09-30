@@ -1247,4 +1247,3 @@ def _random_example_for_testing():
     K = G(v).element()
     assert K.order() == deg
     return E, K
-

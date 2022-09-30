@@ -166,9 +166,11 @@ cdef class ntl_ZZ_pE():
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
+            sage: loads(dumps(a)) == a
+            True
         """
         return make_ZZ_pE, (self.get_as_ZZ_pX(), self.get_modulus_context())
 

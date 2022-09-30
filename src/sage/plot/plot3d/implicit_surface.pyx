@@ -1,5 +1,5 @@
 r"""
-Graphics 3D Object for Representing and Triangulating Isosurfaces.
+Graphics 3D object for representing and triangulating isosurfaces
 
 AUTHORS:
 

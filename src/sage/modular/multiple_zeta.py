@@ -170,8 +170,6 @@ import numbers
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.element import parent
-from sage.algebras.free_zinbiel_algebra import FreeZinbielAlgebra
-from sage.arith.misc import bernoulli
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.rings import Rings
@@ -189,12 +187,11 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.modules.free_module_element import vector
+from sage.modular.multiple_zeta_F_algebra import F_algebra
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.semirings.non_negative_integer_semiring import NN
+from sage.sets.positive_integers import PositiveIntegers
 
 # multiplicative generators for weight <= 17
 # using the following convention
@@ -439,7 +436,7 @@ class MultizetaValues(UniqueRepresentation):
             sage: MultizetaValues()
             Cached multiple zeta values at precision 1024 up to weight 8
         """
-        return "Cached multiple zeta values at precision %d up to weight %d" % (self.prec, self.max_weight)
+        return f"Cached multiple zeta values at precision {self.prec} up to weight {self.max_weight}"
 
     def reset(self, max_weight=8, prec=1024):
         r"""
@@ -497,8 +494,7 @@ class MultizetaValues(UniqueRepresentation):
         if weight <= self.max_weight:
             index = pari.zetamultconvert(index, 2)
             return self._data[index - 1]
-        else:
-            return pari.zetamult(index, precision=self.prec)
+        return pari.zetamult(index, precision=self.prec)
 
     def __call__(self, index, prec=None, reverse=True):
         r"""
@@ -543,95 +539,10 @@ class MultizetaValues(UniqueRepresentation):
             index = pari.zetamultconvert(index, 2)
             value = self._data[index - 1]
             return value.sage().n(prec=prec)
-        else:
-            return pari.zetamult(index, precision=prec).sage().n(prec=prec)
+        return pari.zetamult(index, precision=prec).sage().n(prec=prec)
 
 
 Values = MultizetaValues()
-
-
-def basis_f_odd_iterator(n):
-    """
-    Return an iterator over compositions of ``n`` with parts in ``(3,5,7,...)``
-
-    INPUT:
-
-    - ``n`` -- an integer
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import basis_f_odd_iterator
-        sage: [list(basis_f_odd_iterator(i)) for i in range(2,9)]
-        [[], [(3,)], [], [(5,)], [(3, 3)], [(7,)], [(5, 3), (3, 5)]]
-        sage: list(basis_f_odd_iterator(14))
-        [(11, 3),
-         (5, 3, 3, 3),
-         (3, 5, 3, 3),
-         (3, 3, 5, 3),
-         (9, 5),
-         (3, 3, 3, 5),
-         (7, 7),
-         (5, 9),
-         (3, 11)]
-    """
-    if n == 0:
-        yield tuple()
-        return
-    if n == 1:
-        return
-    if n % 2:
-        yield (n,)
-    for k in range(3, n, 2):
-        for start in basis_f_odd_iterator(n - k):
-            yield start + (k, )
-
-
-def basis_f_iterator(n):
-    """
-    Return an iterator over decompositions of ``n`` using ``2,3,5,7,9,...``.
-
-    The means that each term is made of a power of 2 and a composition
-    of the remaining integer with parts in ``(3,5,7,...)``
-
-    INPUT:
-
-    - ``n`` -- an integer
-
-    Each term is returned as a pair (integer, word) where
-    the integer is the exponent of 2.
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import basis_f_iterator
-        sage: [list(basis_f_iterator(i)) for i in range(2,9)]
-        [[(1, word: )],
-         [(0, word: f3)],
-         [(2, word: )],
-         [(0, word: f5), (1, word: f3)],
-         [(0, word: f3,f3), (3, word: )],
-         [(0, word: f7), (1, word: f5), (2, word: f3)],
-         [(0, word: f5,f3), (0, word: f3,f5), (1, word: f3,f3), (4, word: )]]
-        sage: list(basis_f_iterator(11))
-        [(0, word: f11),
-         (0, word: f5,f3,f3),
-         (0, word: f3,f5,f3),
-         (0, word: f3,f3,f5),
-         (1, word: f9),
-         (1, word: f3,f3,f3),
-         (2, word: f7),
-         (3, word: f5),
-         (4, word: f3)]
-
-    TESTS::
-
-        sage: list(basis_f_iterator(0))
-        [(0, word: )]
-    """
-    if n and n < 2:
-        return
-    for k in range(n // 2 + 1):
-        for start in basis_f_odd_iterator(n - 2 * k):
-            yield (k, Word(['f{}'.format(d) for d in start]))
 
 
 def extend_multiplicative_basis(B, n):
@@ -749,9 +660,8 @@ class Multizetas(CombinatorialFreeModule):
         cat = GradedAlgebrasWithBasis(R).Commutative()
         if R in Domains():
             cat = cat & Domains()
-        CombinatorialFreeModule.__init__(self, R, Words(NN, infinite=False),
-                                         prefix="Z",
-                                         category=cat)
+        W = Words(PositiveIntegers(), infinite=False)
+        CombinatorialFreeModule.__init__(self, R, W, prefix="Z", category=cat)
 
     def _repr_(self):
         r"""
@@ -959,7 +869,7 @@ class Multizetas(CombinatorialFreeModule):
         r"""
         Return the morphism ``phi``.
 
-        This sends multiple zeta values to the algebra :func:`F_ring`,
+        This sends multiple zeta values to the auxiliary F-algebra,
         which is a shuffle algebra in odd generators `f_3,f_5,f_7,\dots`
         over the polynomial ring in one variable `f_2`.
 
@@ -975,12 +885,12 @@ class Multizetas(CombinatorialFreeModule):
             sage: m = Multizeta(2,2) + 2*Multizeta(1,3); m
             2*ζ(1,3) + ζ(2,2)
             sage: M.phi(m)
-            1/2*f2^2*Z[]
+            1/2*f2^2
 
             sage: Z = Multizeta
             sage: B5 = [3*Z(1,4) + 2*Z(2,3) + Z(3,2), 3*Z(1,4) + Z(2,3)]
             sage: [M.phi(b) for b in B5]
-            [f2*Z[f3] - 1/2*Z[f5], 1/2*Z[f5]]
+            [-1/2*f5 + f2*f3, 1/2*f5]
         """
         M_it = Multizetas_iterated(self.base_ring())
         return M_it.phi * self.iterated
@@ -1024,7 +934,7 @@ class Multizetas(CombinatorialFreeModule):
             if isinstance(x, list):
                 x = tuple(x)
             return self._monomial(W(x, check=False))
-        elif isinstance(parent(x), Multizetas_iterated):
+        if isinstance(parent(x), Multizetas_iterated):
             return x.composition()
         raise TypeError('invalid input for building a multizeta value')
 
@@ -1129,7 +1039,7 @@ class Multizetas(CombinatorialFreeModule):
             raise ValueError('d must be a non-negative integer')
         if d == 0:
             return [self([])]
-        elif d == 1:
+        if d == 1:
             return []
 
         Values.reset(max_weight=d)
@@ -1151,9 +1061,8 @@ class Multizetas(CombinatorialFreeModule):
                 v = self(c).phi_as_vector()
                 if v in U:
                     continue
-                else:
-                    U = V.subspace(U.basis() + [v])
-                    basis.append(c)
+                U = V.subspace(U.basis() + [v])
+                basis.append(c)
             k += 1
         return [self(c) for c in basis]
 
@@ -1201,10 +1110,10 @@ class Multizetas(CombinatorialFreeModule):
             """
             phi_im = self.phi()
             zin = phi_im.parent()
-            BR2 = zin.base_ring()
-            sv = zin.sum_of_terms((w, BR2(cf(0)))
-                                  for (a, b), cf in phi_im.coproduct()
-                                  for w in shuffle(a, b.reversal(), False))
+            phi_no_f2 = phi_im.without_f2()
+            sv = zin.sum_of_terms(((0, w), cf)
+                                  for (a, b), cf in phi_no_f2.coproduct()
+                                  for w in shuffle(a[1], b[1].reversal(), False))
             return rho_inverse(sv)
 
         def simplify(self):
@@ -1331,7 +1240,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: (0*M()) == 0
                 True
             """
-            if op != op_EQ and op != op_NE:
+            if op not in [op_EQ, op_NE]:
                 raise TypeError('invalid comparison for multizetas')
             return self.iterated()._richcmp_(other.iterated(), op)
 
@@ -1351,13 +1260,13 @@ class Multizetas(CombinatorialFreeModule):
             """
             Return the image of ``self`` by the morphism ``phi``.
 
-            This sends multiple zeta values to the algebra :func:`F_ring`.
+            This sends multiple zeta values to the auxiliary F-algebra.
 
             EXAMPLES::
 
                 sage: M = Multizetas(QQ)
                 sage: M((1,2)).phi()
-                Z[f3]
+                f3
 
             TESTS::
 
@@ -1366,7 +1275,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: M = Multizetas(A)
                 sage: tst = u*M((1,2))+M((3,))
                 sage: tst.phi()
-                (u+1)*Z[f3]
+                (u+1)*f3
             """
             return self.parent().phi(self)
 
@@ -1397,7 +1306,7 @@ class Multizetas(CombinatorialFreeModule):
             """
             if not self.is_homogeneous():
                 raise ValueError('only defined for homogeneous elements')
-            return f_to_vector(self.parent().phi(self))
+            return self.parent().phi(self).homogeneous_to_vector()
 
         def _numerical_approx_pari(self):
             r"""
@@ -1463,8 +1372,7 @@ class Multizetas(CombinatorialFreeModule):
             if prec < Values.prec:
                 s = sum(cf * Values(tuple(w)) for w, cf in self.monomial_coefficients().items())
                 return s.n(prec=prec)
-            else:
-                return sum(cf * Values(tuple(w), prec=prec) for w, cf in self.monomial_coefficients().items())
+            return sum(cf * Values(tuple(w), prec=prec) for w, cf in self.monomial_coefficients().items())
 
 
 class Multizetas_iterated(CombinatorialFreeModule):
@@ -1514,9 +1422,10 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
             sage: from sage.modular.multiple_zeta import Multizetas_iterated
             sage: M = Multizetas_iterated(QQ); M
-            Algebra of motivic multiple zeta values as convergent iterated integrals over Rational Field
+            Algebra of motivic multiple zeta values
+             as convergent iterated integrals over Rational Field
         """
-        return "Algebra of motivic multiple zeta values as convergent iterated integrals over {}".format(self.base_ring())
+        return f"Algebra of motivic multiple zeta values as convergent iterated integrals over {self.base_ring()}"
 
     def _repr_term(self, m):
         """
@@ -1645,12 +1554,11 @@ class Multizetas_iterated(CombinatorialFreeModule):
                 w = Word(seq[indices[i]:indices[i + 1] + 1])
                 if len(w) == 2:  # this factor is one
                     continue
-                elif len(w) <= 4 or len(w) == 6 or w[0] == w[-1]:
+                if len(w) <= 4 or len(w) == 6 or w[0] == w[-1]:
                     # vanishing factors
                     return self.zero()
-                else:
-                    value = M_all(w)
-                    L *= value.regularise().simplify()
+                value = M_all(w)
+                L *= value.regularise().simplify()
             return L
 
         resu = self.tensor_square().zero()
@@ -1837,7 +1745,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         OUTPUT:
 
-        an element in the algebra :func:`F_ring`
+        an element in the auxiliary F-algebra
 
         The coefficients are in the base ring.
 
@@ -1846,52 +1754,50 @@ class Multizetas_iterated(CombinatorialFreeModule):
             sage: from sage.modular.multiple_zeta import Multizetas_iterated
             sage: M = Multizetas_iterated(QQ)
             sage: M.phi_extended((1,0))
-            -f2*Z[]
+            -f2
             sage: M.phi_extended((1,0,0))
-            -Z[f3]
+            -f3
             sage: M.phi_extended((1,1,0))
-            Z[f3]
+            f3
             sage: M.phi_extended((1,0,1,0,0))
-            3*f2*Z[f3] - 11/2*Z[f5]
+            -11/2*f5 + 3*f2*f3
 
         More complicated examples::
 
             sage: from sage.modular.multiple_zeta import composition_to_iterated
             sage: M.phi_extended(composition_to_iterated((4,3)))
-            2/5*f2^2*Z[f3] + 10*f2*Z[f5] - 18*Z[f7]
+            -18*f7 + 10*f2*f5 + 2/5*f2^2*f3
 
             sage: M.phi_extended(composition_to_iterated((3,4)))
-            -10*f2*Z[f5] + 17*Z[f7]
+            17*f7 - 10*f2*f5
 
             sage: M.phi_extended(composition_to_iterated((4,2)))
-            10/21*f2^3*Z[] - 2*Z[f3,f3]
+            -2*f3f3 + 10/21*f2^3
             sage: M.phi_extended(composition_to_iterated((3,5)))
-            -5*Z[f5,f3]
+            -5*f5f3
             sage: M.phi_extended(composition_to_iterated((3,7)))
-            -6*Z[f5,f5] - 14*Z[f7,f3]
+            -6*f5f5 - 14*f7f3
 
             sage: M.phi_extended(composition_to_iterated((3,3,2)))
-            -793/875*f2^4*Z[] - 4*f2*Z[f3,f3] + 9*Z[f3,f5] - 9/2*Z[f5,f3]
+            9*f3f5 - 9/2*f5f3 - 4*f2*f3f3 - 793/875*f2^4
 
         TESTS::
 
            sage: M.phi_extended(tuple())
-           Z[]
+           1
         """
         # this is now hardcoded
         # prec = 1024
-        f = F_ring_generator
+        F = F_algebra(self.base_ring())
+        f = F.gen
         if not w:
-            F = F_ring(self.base_ring())
-            empty = F.indices()([])
-            return F.monomial(empty)
+            return F.one()
         N = len(w)
         compo = tuple(iterated_to_composition(w))
-        BRf2 = PolynomialRing(self.base_ring(), 'f2')
         if compo in B_data[N]:
             # do not forget the sign
             result_QQ = (-1)**len(compo) * phi_on_multiplicative_basis(compo)
-            return result_QQ.base_extend(BRf2)
+            return result_QQ
         u = compute_u_on_basis(w)
         rho_inverse_u = rho_inverse(u)
         xi = self.composition_on_basis(w, QQ)
@@ -1899,14 +1805,14 @@ class Multizetas_iterated(CombinatorialFreeModule):
         c_xi /= Multizeta(N)._numerical_approx_pari()
         c_xi = c_xi.bestappr().sage()  # in QQ
         result_QQ = u + c_xi * f(N)
-        return result_QQ.base_extend(BRf2)
+        return result_QQ
 
     @lazy_attribute
     def phi(self):
         """
         Return the morphism ``phi``.
 
-        This sends multiple zeta values to the algebra :func:`F_ring`.
+        This sends multiple zeta values to the auxiliary F-algebra.
 
         EXAMPLES::
 
@@ -1915,19 +1821,19 @@ class Multizetas_iterated(CombinatorialFreeModule):
             sage: m = Multizeta(1,0,1,0) + 2*Multizeta(1,1,0,0); m
             2*I(1100) + I(1010)
             sage: M.phi(m)
-            1/2*f2^2*Z[]
+            1/2*f2^2
 
             sage: Z = Multizeta
             sage: B5 = [3*Z(1,4) + 2*Z(2,3) + Z(3,2), 3*Z(1,4) + Z(2,3)]
             sage: [M.phi(b.iterated()) for b in B5]
-            [f2*Z[f3] - 1/2*Z[f5], 1/2*Z[f5]]
+            [-1/2*f5 + f2*f3, 1/2*f5]
 
             sage: B6 = [6*Z(1,5) + 3*Z(2,4) + Z(3,3),
             ....:  6*Z(1,1,4) + 4*Z(1,2,3) + 2*Z(1,3,2) + 2*Z(2,1,3) + Z(2,2,2)]
             sage: [M.phi(b.iterated()) for b in B6]
-            [Z[f3,f3], 1/6*f2^3*Z[]]
+            [f3f3, 1/6*f2^3]
         """
-        cod = F_ring(self.base_ring())
+        cod = F_algebra(self.base_ring())
         return self.module_morphism(self.phi_extended, codomain=cod)
 
     def _element_constructor_(self, x):
@@ -1974,8 +1880,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         x = R(x)
         if x == 0:
             return self.element_class(self, {})
-        else:
-            return self.from_base_ring_from_one_basis(x)
+        return self.from_base_ring_from_one_basis(x)
 
     class Element(CombinatorialFreeModule.Element):
         def simplify(self):
@@ -2051,14 +1956,14 @@ class Multizetas_iterated(CombinatorialFreeModule):
             """
             Return the image of ``self`` by the morphism ``phi``.
 
-            This sends multiple zeta values to the algebra :func:`F_ring`.
+            This sends multiple zeta values to the auxiliary F-algebra.
 
             EXAMPLES::
 
                 sage: from sage.modular.multiple_zeta import Multizetas_iterated
                 sage: M = Multizetas_iterated(QQ)
                 sage: M((1,1,0)).phi()
-                Z[f3]
+                f3
             """
             return self.parent().phi(self)
 
@@ -2121,7 +2026,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
                 sage: a.iterated() == b.iterated() # not tested, long time 20s
                 True
             """
-            if op != op_EQ and op != op_NE:
+            if op not in [op_EQ, op_NE]:
                 raise TypeError('invalid comparison for multizetas')
             return (self - other).is_zero() == (op == op_EQ)
 
@@ -2452,100 +2357,6 @@ class All_iterated(CombinatorialFreeModule):
 
 # **************** procedures after F. Brown ************
 
-
-def F_ring(basering, N=18):
-    r"""
-    Return the free Zinbiel algebra on many generators `f_3,f_5,\dots`
-    over the polynomial ring with generator `f_2`.
-
-    For the moment, only with a finite number of variables.
-
-    INPUT:
-
-    - ``N`` -- an integer (default 18), upper bound for indices of generators
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import F_ring
-        sage: F_ring(QQ)
-        Free Zinbiel algebra on generators (Z[f3], Z[f5], Z[f7], Z[f9], ...)
-        over Univariate Polynomial Ring in f2 over Rational Field
-    """
-    ring = PolynomialRing(basering, ['f2'])
-    return FreeZinbielAlgebra(ring, ['f{}'.format(k)
-                                     for k in range(3, N, 2)])
-
-
-def F_prod(a, b):
-    """
-    Return the associative and commutative product of ``a`` and ``b``.
-
-    INPUT:
-
-    - ``a``, ``b`` -- two elements of the F ring
-
-    OUTPUT:
-
-    an element of the F ring
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import F_ring_generator, F_prod
-        sage: f2 = F_ring_generator(2)
-        sage: f3 = F_ring_generator(3)
-        sage: F_prod(f2,f2)
-        f2^2*Z[]
-        sage: F_prod(f2,f3)
-        f2*Z[f3]
-        sage: F_prod(f3,f3)
-        2*Z[f3,f3]
-        sage: F_prod(3*f2+5*f3,6*f2+f3)
-        18*f2^2*Z[] + 33*f2*Z[f3] + 10*Z[f3,f3]
-    """
-    F = a.parent()
-    empty = F.indices()([])
-    one = F.monomial(empty)
-    ct_a = a.coefficient(empty)
-    ct_b = b.coefficient(empty)
-    rem_a = a - ct_a * one
-    rem_b = b - ct_b * one
-    resu = ct_a * ct_b * one + ct_a * rem_b + ct_b * rem_a
-    return resu + rem_a * rem_b + rem_b * rem_a
-
-
-def F_ring_generator(i):
-    r"""
-    Return the generator of the F ring over `\QQ`.
-
-    INPUT:
-
-    - ``i`` -- a nonnegative integer
-
-    If ``i`` is odd, this returns a single generator `f_i` of the free
-    shuffle algebra.
-
-    Otherwise, it returns an appropriate multiple of a power of `f_2`.
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import F_ring_generator
-        sage: [F_ring_generator(i) for i in range(2,8)]
-        [f2*Z[], Z[f3], 2/5*f2^2*Z[], Z[f5], 8/35*f2^3*Z[], Z[f7]]
-    """
-    F = F_ring(QQ)
-    one = F.monomial(Word([]))
-    f2 = F.base_ring().gen()
-    if i == 2:
-        return f2 * one
-    # now i odd >= 3
-    if i % 2:
-        return F.monomial(Word(['f{}'.format(i)]))
-    i = i // 2
-    B = bernoulli(2 * i) * (-1)**(i - 1)
-    B *= ZZ(2)**(3 * i - 1) * ZZ(3)**i / ZZ(2 * i).factorial()
-    return B * f2**i * one
-
-
 def coeff_phi(w):
     """
     Return the coefficient of `f_k` in the image by ``phi``.
@@ -2577,8 +2388,8 @@ def coeff_phi(w):
     M = Multizetas_iterated(QQ)
     z = M.phi_extended(w)
     W = z.parent().basis().keys()
-    w = W(['f{}'.format(k)], check=False)
-    return z.coefficient(w).lc()  # in QQ
+    w = W((0, [k]))
+    return z.coefficient(w)  # in QQ
 
 
 def phi_on_multiplicative_basis(compo):
@@ -2597,16 +2408,14 @@ def phi_on_multiplicative_basis(compo):
 
         sage: from sage.modular.multiple_zeta import phi_on_multiplicative_basis
         sage: phi_on_multiplicative_basis((2,))
-        f2*Z[]
+        f2
         sage: phi_on_multiplicative_basis((3,))
-        Z[f3]
+        f3
     """
-    f = F_ring_generator
-    F = F_ring(QQ)
-    one = F.monomial(Word([]))
+    f = F_algebra(QQ).gen
 
     if tuple(compo) == (2,):
-        return f(2) * one
+        return f(2)
 
     if len(compo) == 1:
         n, = compo
@@ -2633,18 +2442,14 @@ def phi_on_basis(L):
 
         sage: from sage.modular.multiple_zeta import phi_on_basis
         sage: phi_on_basis([(3,),(3,)])
-        2*Z[f3,f3]
+        2*f3f3
         sage: phi_on_basis([(2,),(2,)])
-        f2^2*Z[]
+        f2^2
         sage: phi_on_basis([(2,),(3,),(3,)])
-        2*f2*Z[f3,f3]
+        2*f2*f3f3
     """
-    # beware that the default * is the half-shuffle !
-    F = F_ring(QQ)
-    resu = F.monomial(Word([]))
-    for compo in L:
-        resu = F_prod(resu, phi_on_multiplicative_basis(compo))
-    return resu
+    F = F_algebra(QQ)
+    return F.prod(phi_on_multiplicative_basis(compo) for compo in L)
 
 
 def D_on_compo(k, compo):
@@ -2707,11 +2512,11 @@ def compute_u_on_compo(compo):
 
         sage: from sage.modular.multiple_zeta import compute_u_on_compo
         sage: compute_u_on_compo((2,4))
-        2*Z[f3,f3]
+        2*f3f3
         sage: compute_u_on_compo((2,3,2))
-        -11/2*f2*Z[f5]
+        -11/2*f2*f5
         sage: compute_u_on_compo((3,2,3,2))
-        11*f2*Z[f3,f5] - 75/4*Z[f3,f7] - 9*f2*Z[f5,f3] + 81/4*Z[f5,f5] + 75/8*Z[f7,f3]
+        -75/4*f3f7 + 81/4*f5f5 + 75/8*f7f3 + 11*f2*f3f5 - 9*f2*f5f3
     """
     it = composition_to_iterated(compo)
     return (-1)**len(compo) * compute_u_on_basis(it)
@@ -2733,103 +2538,29 @@ def compute_u_on_basis(w):
 
         sage: from sage.modular.multiple_zeta import compute_u_on_basis
         sage: compute_u_on_basis((1,0,0,0,1,0))
-        -2*Z[f3,f3]
+        -2*f3f3
 
         sage: compute_u_on_basis((1,1,1,0,0))
-        f2*Z[f3]
+        f2*f3
 
         sage: compute_u_on_basis((1,0,0,1,0,0,0,0))
-        -5*Z[f5,f3]
+        -5*f5f3
 
         sage: compute_u_on_basis((1,0,1,0,0,1,0))
-        11/2*f2*Z[f5]
+        11/2*f2*f5
 
         sage: compute_u_on_basis((1,0,0,1,0,1,0,0,1,0))
-        11*f2*Z[f3,f5] - 75/4*Z[f3,f7] - 9*f2*Z[f5,f3] + 81/4*Z[f5,f5]
-        + 75/8*Z[f7,f3]
+        -75/4*f3f7 + 81/4*f5f5 + 75/8*f7f3 + 11*f2*f3f5 - 9*f2*f5f3
     """
     M = Multizetas_iterated(QQ)
-    F = F_ring(QQ)
-    f = F_ring_generator
+    F = F_algebra(QQ)
     N = len(w)
     xi_dict = {}
     for k in range(3, N, 2):
         xi_dict[k] = F.sum(cf * coeff_phi(ww[0]) * M.phi_extended(tuple(ww[1]))
                            for ww, cf in M.D_on_basis(k, w))
-    return F.sum(f(k) * xi_dict[k] for k in range(3, N, 2))
-
-
-def f_to_vector(elt):
-    """
-    Convert an element of F ring to a vector.
-
-    INPUT:
-
-    an homogeneous element of :func:`F_ring` over some base ring
-
-    OUTPUT:
-
-    a vector with coefficients in the base ring
-
-    .. SEEALSO:: :func:`vector_to_f`
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import F_ring, vector_to_f, f_to_vector
-        sage: F = F_ring(QQ)
-        sage: f2 = F.base_ring().gen()
-        sage: x = f2**4*F.monomial(Word([]))+f2*F.monomial(Word(['f3','f3']))
-        sage: f_to_vector(x)
-        (0, 0, 1, 1)
-        sage: vector_to_f(_,8)
-        f2^4*Z[] + f2*Z[f3,f3]
-
-        sage: x = F.monomial(Word(['f11'])); x
-        Z[f11]
-        sage: f_to_vector(x)
-        (1, 0, 0, 0, 0, 0, 0, 0, 0)
-    """
-    F = elt.parent()
-    BR = F.base_ring().base_ring()
-    if not elt:
-        return vector(BR, [])
-    a, b = next(iter(elt))
-    N = sum(int(x[1:]) for x in a) + 2 * b.degree()
-    W = F.basis().keys()
-    return vector(BR, [elt.coefficient(W(b, check=False)).lc()
-                       for _, b in basis_f_iterator(N)])
-
-
-def vector_to_f(vec, N):
-    """
-    Convert back a vector to an element of the F ring.
-
-    INPUT:
-
-    a vector with coefficients in some base ring
-
-    OUTPUT:
-
-    an homogeneous element of :func:`F_ring` over this base ring
-
-    .. SEEALSO:: :func:`f_to_vector`
-
-    EXAMPLES::
-
-        sage: from sage.modular.multiple_zeta import vector_to_f, f_to_vector
-        sage: vector_to_f((4,5),6)
-        5*f2^3*Z[] + 4*Z[f3,f3]
-        sage: f_to_vector(_)
-        (4, 5)
-    """
-    if isinstance(vec, (list, tuple)):
-        vec = vector(vec)
-    BR = vec.base_ring()
-    F = F_ring(BR)
-    f2 = F.base_ring().gen()
-    basis_F = (f2**k * F.monomial(b)
-               for k, b in basis_f_iterator(N))
-    return sum(cf * bi for cf, bi in zip(vec, basis_F))
+    return F.sum(F.half_product(F.gen(k), xi_dict[k])
+                 for k in range(3, N, 2))
 
 
 @cached_function
@@ -2859,7 +2590,7 @@ def rho_matrix_inverse(n):
     resu = []
     for b in base:
         phi_b = phi_on_basis(b)
-        resu.append(f_to_vector(phi_b))
+        resu.append(phi_b.homogeneous_to_vector())
     dN = len(resu)
     return ~matrix(QQ, dN, dN, resu)
 
@@ -2878,13 +2609,15 @@ def rho_inverse(elt):
 
     EXAMPLES::
 
-        sage: from sage.modular.multiple_zeta import F_ring_generator, rho_inverse
-        sage: f = F_ring_generator
+        sage: from sage.modular.multiple_zeta import rho_inverse
+        sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
+        sage: A = F_algebra(QQ)
+        sage: f = A.gen
         sage: rho_inverse(f(3))
         ζ(3)
         sage: rho_inverse(f(9))
         ζ(9)
-        sage: rho_inverse(f(5)*f(3))
+        sage: rho_inverse(A("53"))
         -1/5*ζ(3,5)
     """
     pa = elt.parent()
@@ -2893,9 +2626,10 @@ def rho_inverse(elt):
     if elt == pa.zero():
         return M_BR.zero()
 
-    a, b = next(iter(elt))
-    N = sum(int(x[1:]) for x in a) + 2 * b.degree()
+    pw, _ = next(iter(elt))
+    p, w = pw
+    N = 2 * p + sum(int(c) for c in w)
 
-    v = f_to_vector(elt)
+    v = elt.homogeneous_to_vector()
     w = v * rho_matrix_inverse(N)
     return sum(cf * b for cf, b in zip(w, M_BR.basis_data(BR, N)))

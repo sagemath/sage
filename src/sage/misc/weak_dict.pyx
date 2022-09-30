@@ -129,6 +129,8 @@ from cpython.object cimport PyObject_Hash
 from cpython.ref cimport Py_INCREF, Py_XINCREF, Py_XDECREF
 from sage.cpython.dict_del_by_value cimport *
 
+from sage.misc.superseded import deprecation
+
 cdef extern from "Python.h":
     PyObject* Py_None
     # we need this redefinition because we want to be able to call
@@ -369,7 +371,7 @@ cdef class WeakValueDictionary(dict):
             True
 
         """
-        return WeakValueDictionary(self.iteritems())
+        return WeakValueDictionary(self.items())
 
     def __deepcopy__(self, memo):
         """
@@ -403,7 +405,7 @@ cdef class WeakValueDictionary(dict):
 
         """
         out = WeakValueDictionary()
-        for k,v in self.iteritems():
+        for k,v in self.items():
             out[deepcopy(k, memo)] = v
         return out
 
@@ -526,7 +528,7 @@ cdef class WeakValueDictionary(dict):
             sage: _ = gc.collect()
             sage: len(D)
             1
-            sage: D.items()
+            sage: list(D.items())
             [(2, Integer Ring)]
 
         Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
@@ -620,7 +622,7 @@ cdef class WeakValueDictionary(dict):
             KeyError: 'popitem(): weak value dictionary is empty'
 
         """
-        for k,v in self.iteritems():
+        for k,v in self.items():
             del self[k]
             return k, v
         raise KeyError('popitem(): weak value dictionary is empty')
@@ -812,6 +814,24 @@ cdef class WeakValueDictionary(dict):
 
     def itervalues(self):
         """
+        Deprecated.
+
+        EXAMPLES::
+
+            sage: import sage.misc.weak_dict
+            sage: class Vals(): pass
+            sage: L = [Vals() for _ in range(10)]
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
+            sage: T = list(D.itervalues())
+            doctest:warning...:
+            DeprecationWarning: use values instead
+            See https://trac.sagemath.org/34488 for details.
+        """
+        deprecation(34488, "use values instead")
+        return self.values()
+
+    def values(self):
+        """
         Iterate over the values of this dictionary.
 
         .. WARNING::
@@ -842,7 +862,7 @@ cdef class WeakValueDictionary(dict):
 
             sage: del D[2]
             sage: del L[5]
-            sage: for v in sorted(D.itervalues()):
+            sage: for v in sorted(D.values()):
             ....:     print(v)
             <0>
             <1>
@@ -866,7 +886,7 @@ cdef class WeakValueDictionary(dict):
         finally:
             self._exit_iter()
 
-    def values(self):
+    def values_list(self):
         """
         Return the list of values.
 
@@ -893,13 +913,28 @@ cdef class WeakValueDictionary(dict):
 
             sage: del D[2]
             sage: del L[5]
-            sage: sorted(D.values())
+            sage: sorted(D.values_list())
             [<0>, <1>, <3>, <4>, <6>, <7>, <8>, <9>]
-
         """
-        return list(self.itervalues())
+        return list(self.values())
 
     def iteritems(self):
+        """
+        EXAMPLES::
+
+            sage: import sage.misc.weak_dict
+            sage: class Vals(): pass
+            sage: L = [Vals() for _ in range(10)]
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
+            sage: T = list(D.iteritems())
+            doctest:warning...:
+            DeprecationWarning: use items instead
+            See https://trac.sagemath.org/34488 for details.
+        """
+        deprecation(34488, "use items instead")
+        return self.items()
+
+    def items(self):
         """
         Iterate over the items of this dictionary.
 
@@ -946,7 +981,7 @@ cdef class WeakValueDictionary(dict):
 
             sage: del D[Keys(2)]
             sage: del L[5]
-            sage: for k,v in sorted(D.iteritems()):
+            sage: for k,v in sorted(D.items()):
             ....:     print("{} {}".format(k, v))
             [0] <0>
             [1] <1>
@@ -970,7 +1005,7 @@ cdef class WeakValueDictionary(dict):
         finally:
             self._exit_iter()
 
-    def items(self):
+    def items_list(self):
         """
         The key-value pairs of this dictionary.
 
@@ -1022,7 +1057,7 @@ cdef class WeakValueDictionary(dict):
              ([8], <8>),
              ([9], <9>)]
         """
-        return list(self.iteritems())
+        return list(self.items())
 
     cdef int _enter_iter(self) except -1:
         """

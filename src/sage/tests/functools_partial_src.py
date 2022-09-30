@@ -22,4 +22,3 @@ def base(x):
     return x
 
 test_func = partial(base, 6)
-

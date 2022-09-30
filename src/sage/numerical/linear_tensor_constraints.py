@@ -446,7 +446,7 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
         EXAMPLES::
 
@@ -457,4 +457,3 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         LT = self.linear_tensors()
         return LT.an_element() >= 0
-

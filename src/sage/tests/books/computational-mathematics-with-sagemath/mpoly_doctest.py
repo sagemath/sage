@@ -559,4 +559,3 @@ Sage example in ./mpoly.tex, line 3010::
   45
 
 """
-

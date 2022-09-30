@@ -2467,7 +2467,8 @@ class MPolynomialIdeal_singular_repr(
              {y: 0.3611030805286474?, x: 2.769292354238632?},
              {y: 1, x: 1}]
 
-        We can also use the external program msolve to compute the variety.
+        We can also use the `optional package msolve <../spkg/msolve.html>`_
+        to compute the variety.
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
             sage: I.variety(RBF, algorithm='msolve', proof=False) # optional - msolve
@@ -2543,9 +2544,9 @@ class MPolynomialIdeal_singular_repr(
           uses triangular decomposition, via Singular if possible, falling back
           on a toy implementation otherwise.
 
-        - With ``algorithm`` = ``"msolve"``, calls the external program
-          `msolve <https://msolve.lip6.fr/>`_ (if available in the system
-          program search path). Note that msolve uses heuristics and therefore
+        - With ``algorithm`` = ``"msolve"``, uses the
+          `optional package msolve <../spkg/msolve.html>`_.
+          Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
           :mod:`~sage.rings.polynomial.msolve` for more information.
         """
@@ -4089,7 +4090,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         'msolve'
-            `msolve <https://msolve.lip6.fr/>`_ (if available, degrevlex order,
+            `optional package msolve <../spkg/msolve.html>`_ (degrevlex order,
             prime fields)
 
         'magma:GroebnerBasis'
@@ -4215,9 +4216,8 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             sage: I.groebner_basis('macaulay2:mgb') # optional - macaulay2
             [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
 
-        Over prime fields of small characteristic, we can also use
-        `msolve <https://msolve.lip6.fr/>`_ (if available in the system program
-        search path)::
+        Over prime fields of small characteristic, we can also use the
+        `optional package msolve <../spkg/msolve.html>`_::
 
             sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching
@@ -5458,4 +5458,3 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
                 return not (contained and contains)
             else:  # remaining case <
                 return contained and not contains
-

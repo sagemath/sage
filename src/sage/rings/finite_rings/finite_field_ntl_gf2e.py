@@ -1,5 +1,5 @@
 """
-Finite Fields of Characteristic 2
+Finite fields of characteristic 2
 """
 
 #*****************************************************************************

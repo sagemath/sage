@@ -476,8 +476,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition([n * i for i in lam]): coeff
-                   for (lam, coeff) in self.monomial_coefficients().items()}
+            dct = {lam.stretch(n): coeff
+                   for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
         adams_operation = frobenius

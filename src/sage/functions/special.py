@@ -1,20 +1,5 @@
 r"""
-Miscellaneous Special Functions
-
-AUTHORS:
-
-- David Joyner (2006-13-06): initial version
-
-- David Joyner (2006-30-10): bug fixes to pari wrappers of Bessel
-  functions, hypergeometric_U
-
-- William Stein (2008-02): Impose some sanity checks.
-
-- David Joyner (2008-04-23): addition of elliptic integrals
-
-- Eviatar Bach (2013): making elliptic integrals symbolic
-
-- Eric Gourgoulhon (2022): add Condon-Shortley phase to spherical harmonics
+Miscellaneous special functions
 
 This module provides easy access to many of Maxima and PARI's
 special functions.
@@ -104,6 +89,11 @@ implemented here.
 
   and the complete ones are obtained by taking `\phi =\pi/2`.
 
+.. WARNING::
+
+    SciPy's versions are poorly documented and seem less accurate than the
+    Maxima and PARI versions. Typically they are limited by hardware floats
+    precision.
 
 REFERENCES:
 
@@ -118,16 +108,20 @@ REFERENCES:
 
 AUTHORS:
 
-- David Joyner and William Stein
+- David Joyner (2006-13-06): initial version
 
-Added 16-02-2008 (wdj): optional calls to scipy and replace all
-'#random' by '...' (both at the request of William Stein)
+- David Joyner (2006-30-10): bug fixes to pari wrappers of Bessel
+  functions, hypergeometric_U
 
-.. warning::
+- William Stein (2008-02): Impose some sanity checks.
 
-    SciPy's versions are poorly documented and seem less
-    accurate than the Maxima and PARI versions; typically they are limited
-    by hardware floats precision.
+- David Joyner (2008-02-16): optional calls to scipy and replace all ``#random`` by ``...``
+
+- David Joyner (2008-04-23): addition of elliptic integrals
+
+- Eviatar Bach (2013): making elliptic integrals symbolic
+
+- Eric Gourgoulhon (2022): add Condon-Shortley phase to spherical harmonics
 """
 
 # ****************************************************************************
@@ -849,7 +843,7 @@ class EllipticF(BuiltinFunction):
     - :wikipedia:`Elliptic_integral#Incomplete_elliptic_integral_of_the_first_kind`
     """
     def __init__(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: loads(dumps(elliptic_f))

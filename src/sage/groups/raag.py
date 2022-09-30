@@ -857,4 +857,3 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         An element in the cohomology ring of a right-angled Artin group.
         """
-

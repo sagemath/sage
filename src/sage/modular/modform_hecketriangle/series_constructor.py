@@ -33,8 +33,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from .hecke_triangle_groups import HeckeTriangleGroup
 
 
-
-class MFSeriesConstructor(SageObject,UniqueRepresentation):
+class MFSeriesConstructor(SageObject, UniqueRepresentation):
     r"""
     Constructor for the Fourier expansion of some
     (specific, basic) modular forms.
@@ -44,7 +43,7 @@ class MFSeriesConstructor(SageObject,UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), prec=ZZ(10)):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), prec=ZZ(10)):
         r"""
         Return a (cached) instance with canonical parameters.
 

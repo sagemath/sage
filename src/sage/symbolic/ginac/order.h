@@ -35,7 +35,7 @@
 
 namespace GiNaC {
 
-class print_order : public std::binary_function<ex, ex, bool> {
+class print_order {
 private:
 	const tinfo_t& function_id() const;
 	const tinfo_t& fderivative_id() const;
@@ -96,9 +96,7 @@ class print_order_mul : public print_order {
 
 // We have to define the following class to sort held expressions
 // E.g. 3*x+2*x which does not get simplified to 5*x.
-class print_order_pair : 
-	public std::binary_function<expair, expair, bool>
-{
+class print_order_pair {
 public:
 	bool operator() (const expair &lh, const expair &rh) const;
 	bool compare_degrees(const expair &lhex, const expair &rhex) const;
