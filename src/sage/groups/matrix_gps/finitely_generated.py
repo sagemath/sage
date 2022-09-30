@@ -563,9 +563,6 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             21499084800
             sage: P = G.as_permutation_group()
             sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
-            sage: P == Psmaller  # see the note below
-            True
-            sage: Psmaller = G.as_permutation_group(algorithm="smaller")
             sage: P == Psmaller
             False
             sage: P.cardinality()
