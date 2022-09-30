@@ -4370,15 +4370,21 @@ class PermutationGroup_generic(FiniteGroup):
 
         ::
 
-            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)]]) #S_5 on [1..5]
-            sage: G.is_transitive([1,4,5])
+            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)],[(6,7)]])
+            sage: G.is_transitive([1,2,3,4,5])
             True
-            sage: G.is_transitive([2..6])
+            sage: G.is_transitive([1..7])
             False
             sage: G.is_transitive(G.non_fixed_points())
-            True
+            False
             sage: H = PermutationGroup([[(1,2,3)],[(4,5,6)]])
             sage: H.is_transitive(H.non_fixed_points())
+            False
+
+        If `G` does not act on the domain, it always returns ``False``::
+
+            sage: G = PermutationGroup([[(1,2,3,4,5)],[(1,2)]]) #S_5 on [1..5]
+            sage: G.is_transitive([1,4,5])
             False
 
         Note that this differs from the definition in GAP, where
@@ -4436,11 +4442,15 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2,3,4)],[(2,4)]])
             sage: G.is_primitive([1..4])
             False
-            sage: G.is_primitive([1,2,3])
-            True
             sage: G = PermutationGroup([[(3,4,5,6)],[(3,4)]]) #S_4 on [3..6]
             sage: G.is_primitive(G.non_fixed_points())
             True
+
+        If `G` does not act on the domain, it always returns ``False``::
+
+            sage: G = PermutationGroup([[(1,2,3,4)],[(2,4)]])
+            sage: G.is_primitive([1,2,3])
+            False
 
         """
         #If the domain is not a subset of self.domain(), then the
