@@ -1302,7 +1302,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.gens_small() # random
             [('b','c'), ('a','c','b')] ## (on 64-bit Linux)
             [('a','b'), ('a','c','b')] ## (on Solaris)
-            sage: len(G.gens_small()) == 2
+            sage: len(G.gens_small()) == 2 # random
             True
         """
         gens = self._libgap_().SmallGeneratingSet()
