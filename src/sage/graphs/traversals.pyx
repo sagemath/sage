@@ -2,7 +2,7 @@
 # cython: binding=True
 # distutils: language = c++
 r"""
-Graph traversals.
+Graph traversals
 
 **This module implements the following graph traversals**
 

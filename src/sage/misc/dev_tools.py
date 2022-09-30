@@ -525,12 +525,12 @@ def import_statements(*objects, **kwds):
     if kwds:
         raise TypeError("Unexpected '{}' argument".format(next(iter(kwds))))
 
-    def expand_comma_separated_names(object):
-        if isinstance(object, str):
-            for w in object.strip('()').split(','):
+    def expand_comma_separated_names(obj):
+        if isinstance(obj, str):
+            for w in obj.strip('()').split(','):
                 yield w.strip()
         else:
-            yield object
+            yield obj
 
     for obj in itertools.chain.from_iterable(expand_comma_separated_names(object)
                                              for object in objects):

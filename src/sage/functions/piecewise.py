@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Piecewise-defined Functions
+Piecewise functions
 
 This module implement piecewise functions in a single variable. See
 :mod:`sage.sets.real_set` for more information about how to construct

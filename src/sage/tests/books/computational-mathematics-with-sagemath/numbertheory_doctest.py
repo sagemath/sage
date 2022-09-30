@@ -154,4 +154,3 @@ Sage example in ./numbertheory.tex, line 1226::
   17
 
 """
-

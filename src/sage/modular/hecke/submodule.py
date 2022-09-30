@@ -27,7 +27,6 @@ import sage.modules.all
 from . import module
 
 
-
 def is_HeckeSubmodule(x):
     r"""
     Return True if x is of type HeckeSubmodule.
@@ -553,8 +552,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             # then we compute the dual on each eigenspace, then put them
             # together.
             if len(self.star_eigenvalues()) == 2:
-                V = self.plus_submodule(compute_dual = False).dual_free_module() + \
-                    self.minus_submodule(compute_dual = False).dual_free_module()
+                V = self.plus_submodule(compute_dual=False).dual_free_module() + \
+                    self.minus_submodule(compute_dual=False).dual_free_module()
                 return V
 
             # At this point, we know that self is an eigenspace for star.

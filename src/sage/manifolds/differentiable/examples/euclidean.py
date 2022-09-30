@@ -717,7 +717,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                                       start_index=start_index,
                                       unique_tag=unique_tag)
 
-        return super(cls, EuclideanSpace).__classcall__(cls,
+        return super().__classcall__(cls,
                                      n, name=name, latex_name=latex_name,
                                      coordinates=coordinates, symbols=symbols,
                                      metric_name=metric_name,

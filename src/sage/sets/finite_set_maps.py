@@ -585,4 +585,3 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
         self._action = action
 
     Element = FiniteSetEndoMap_Set
-

@@ -180,11 +180,11 @@ def ModularSymbols_clear_cache():
     _cache = {}
 
 
-def ModularSymbols(group  = 1,
-                   weight = 2,
-                   sign   = 0,
-                   base_ring = None,
-                   use_cache = True,
+def ModularSymbols(group=1,
+                   weight=2,
+                   sign=0,
+                   base_ring=None,
+                   use_cache=True,
                    custom_init=None):
     r"""
     Create an ambient space of modular symbols.

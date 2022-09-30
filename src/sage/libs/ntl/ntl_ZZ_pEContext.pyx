@@ -37,13 +37,15 @@ cdef class ntl_ZZ_pEContext_class():
         """
         EXAMPLES:
 
-            # You can construct contexts manually.
+        You can construct contexts manually::
+
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([4,1,6],25))
             sage: n1=c.ZZ_pE([10,17,12])
             sage: n1
             [2 15]
 
-            # or You can construct contexts implicitly.
+        Or you can construct contexts implicitly::
+
             sage: n2=ntl.ZZ_pE(12, ntl.ZZ_pX([1,1,1],7))
             sage: n2
             [5]
@@ -65,9 +67,11 @@ cdef class ntl_ZZ_pEContext_class():
 
     def __reduce__(self):
         """
-        sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+           sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
+           sage: loads(dumps(c)) is c
+           True
         """
         return ntl_ZZ_pEContext, (self.f,)
 

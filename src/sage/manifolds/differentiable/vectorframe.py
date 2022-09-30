@@ -452,10 +452,10 @@ class CoFrame(FreeModuleCoBasis):
             \left(M, \left(e^{\xi},e^{\zeta}\right)\right)
 
         """
-        super(CoFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                      indices=indices,
-                                      latex_indices=latex_indices,
-                                      index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}, {})".format(self._domain._name, self._name)
@@ -672,12 +672,12 @@ class VectorFrame(FreeModuleBasis):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(VectorFrame, cls).__classcall__(cls, vector_field_module,
-                                        symbol, latex_symbol=latex_symbol,
-                                        from_frame=from_frame, indices=indices,
-                                        latex_indices=latex_indices,
-                                        symbol_dual=symbol_dual,
-                                        latex_symbol_dual=latex_symbol_dual)
+        return super().__classcall__(cls, vector_field_module,
+                                     symbol, latex_symbol=latex_symbol,
+                                     from_frame=from_frame, indices=indices,
+                                     latex_indices=latex_indices,
+                                     symbol_dual=symbol_dual,
+                                     latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, vector_field_module, symbol, latex_symbol=None,
                  from_frame=None, indices=None, latex_indices=None,
@@ -1570,10 +1570,10 @@ class VectorFrame(FreeModuleBasis):
             \left(M, \left(E_{\alpha},E_{\beta}\right)\right)
 
         """
-        super(VectorFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                          indices=indices,
-                                          latex_indices=latex_indices,
-                                          index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}, {})".format(self._domain._name, self._name)

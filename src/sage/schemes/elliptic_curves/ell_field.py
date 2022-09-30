@@ -1098,7 +1098,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           kernel point of odd order `\geq 5`.
           This algorithm is selected using ``algorithm="velusqrt"``.
 
-        - Factored Isogenies (*experimental* --- see
+        - Factored Isogenies (see
           :mod:`~sage.schemes.elliptic_curves.hom_composite`):
           Given a list of points which generate a composite-order
           subgroup, decomposes the isogeny into prime-degree steps.
@@ -1200,9 +1200,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: E = EllipticCurve(GF(2^32-5), [170246996, 2036646110])
             sage: P = E.lift_x(2)
-            sage: E.isogeny(P, algorithm="factored")    # experimental
-            doctest:warning
-            ...
+            sage: E.isogeny(P, algorithm="factored")
             Composite morphism of degree 1073721825 = 3^4*5^2*11*19*43*59:
               From: Elliptic Curve defined by y^2 = x^3 + 170246996*x + 2036646110 over Finite Field of size 4294967291
               To:   Elliptic Curve defined by y^2 = x^3 + 272790262*x + 1903695400 over Finite Field of size 4294967291

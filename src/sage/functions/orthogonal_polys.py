@@ -1,5 +1,5 @@
 r"""
-Orthogonal Polynomials
+Orthogonal polynomials
 
 Chebyshev polynomials
 ---------------------

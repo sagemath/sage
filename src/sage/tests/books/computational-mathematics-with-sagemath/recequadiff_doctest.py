@@ -385,4 +385,3 @@ Sage example in ./recequadiff.tex, line 1798::
   2**n*C0 + 2**(n + 1)*n
 
 """
-

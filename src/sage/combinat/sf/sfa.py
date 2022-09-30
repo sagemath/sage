@@ -3072,6 +3072,31 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: sum(s[mu](X)*s[mu.conjugate()](Y) for mu in P5) == sum(m[mu](X)*e[mu](Y) for mu in P5)
             True
 
+        Sage can also do the plethysm with an element in the completion::
+
+            sage: L = LazySymmetricFunctions(s)
+            sage: f = s[2,1]
+            sage: g = L(s[1]) / (1 - L(s[1])); g
+            s[1] + (s[1,1]+s[2]) + (s[1,1,1]+2*s[2,1]+s[3])
+             + (s[1,1,1,1]+3*s[2,1,1]+2*s[2,2]+3*s[3,1]+s[4])
+             + (s[1,1,1,1,1]+4*s[2,1,1,1]+5*s[2,2,1]+6*s[3,1,1]+5*s[3,2]+4*s[4,1]+s[5])
+             + ... + O^8
+            sage: fog = f(g)
+            sage: fog[:8]
+            [s[2, 1],
+             s[1, 1, 1, 1] + 3*s[2, 1, 1] + 2*s[2, 2] + 3*s[3, 1] + s[4],
+             2*s[1, 1, 1, 1, 1] + 8*s[2, 1, 1, 1] + 10*s[2, 2, 1]
+             + 12*s[3, 1, 1] + 10*s[3, 2] + 8*s[4, 1] + 2*s[5],
+             3*s[1, 1, 1, 1, 1, 1] + 17*s[2, 1, 1, 1, 1] + 30*s[2, 2, 1, 1]
+             + 16*s[2, 2, 2] + 33*s[3, 1, 1, 1] + 54*s[3, 2, 1] + 16*s[3, 3]
+             + 33*s[4, 1, 1] + 30*s[4, 2] + 17*s[5, 1] + 3*s[6],
+             5*s[1, 1, 1, 1, 1, 1, 1] + 30*s[2, 1, 1, 1, 1, 1] + 70*s[2, 2, 1, 1, 1]
+             + 70*s[2, 2, 2, 1] + 75*s[3, 1, 1, 1, 1] + 175*s[3, 2, 1, 1]
+             + 105*s[3, 2, 2] + 105*s[3, 3, 1] + 100*s[4, 1, 1, 1] + 175*s[4, 2, 1]
+             + 70*s[4, 3] + 75*s[5, 1, 1] + 70*s[5, 2] + 30*s[6, 1] + 5*s[7]]
+            sage: parent(fog)
+            Lazy completion of Symmetric Functions over Rational Field in the Schur basis
+
         .. SEEALSO::
 
             :meth:`frobenius`
@@ -3080,66 +3105,100 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
+
+        Check that degree one elements are treated in the correct way::
+
+            sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]
+            sage: p = SymmetricFunctions(R).p()
+            sage: f = a1*p[1] + a2*p[2] + a11*p[1,1]
+            sage: g = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]
+            sage: r = f(g); r
+            a1*b1*p[1] + a11*b1^2*p[1, 1] + a1*b111*p[1, 1, 1]
+             + 2*a11*b1*b111*p[1, 1, 1, 1] + a11*b111^2*p[1, 1, 1, 1, 1, 1]
+             + a2*b1^2*p[2] + a1*b21*p[2, 1] + 2*a11*b1*b21*p[2, 1, 1]
+             + 2*a11*b21*b111*p[2, 1, 1, 1, 1] + a11*b21^2*p[2, 2, 1, 1]
+             + a2*b111^2*p[2, 2, 2] + a2*b21^2*p[4, 2]
+            sage: r - f(g, include=[])
+            (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
+
+        Check that we can compute the plethysm with a constant::
+
+            sage: p[2,2,1](2)
+            8*p[]
+
+            sage: p[2,2,1](int(2))
+            8*p[]
+
+            sage: p[2,2,1](a1)
+            a1^5*p[]
+
+            sage: X = algebras.Shuffle(QQ, 'ab')
+            sage: Y = algebras.Shuffle(QQ, 'bc')
+            sage: T = tensor([X,Y])
+            sage: s = SymmetricFunctions(T).s()
+            sage: s(2*T.one())
+            (2*B[]#B[])*s[]
+
+        .. TODO::
+
+            The implementation of plethysm in
+            :class:`sage.data_structures.stream.Stream_plethysm` seems
+            to be faster.  This should be investigated.
         """
         parent = self.parent()
-        R = parent.base_ring()
-        tHA = HopfAlgebrasWithBasis(R).TensorProducts()
-        tensorflag = tHA in x.parent().categories()
-        if not (is_SymmetricFunction(x) or tensorflag):
-            raise TypeError("only know how to compute plethysms "
-                            "between symmetric functions or tensors "
-                            "of symmetric functions")
-        p = parent.realization_of().power()
-        if self == parent.zero():
+        if not self:
             return self
 
-        # Handle degree one elements
-        if include is not None and exclude is not None:
-            raise RuntimeError("include and exclude cannot both be specified")
+        R = parent.base_ring()
+        tHA = HopfAlgebrasWithBasis(R).TensorProducts()
+        from sage.structure.element import parent as get_parent
+        Px = get_parent(x)
+        tensorflag = Px in tHA
+        if not is_SymmetricFunction(x):
+            if Px is R:  # Handle stuff that is directly in the base ring
+                x = parent(x)
+            elif (not tensorflag or any(not isinstance(factor, SymmetricFunctionAlgebra_generic)
+                                        for factor in Px._sets)):
+                from sage.rings.lazy_series import LazySymmetricFunction
+                if isinstance(x, LazySymmetricFunction):
+                    from sage.rings.lazy_series_ring import LazySymmetricFunctions
+                    L = LazySymmetricFunctions(parent)
+                    return L(self)(x)
 
-        try:
-            degree_one = [R(g) for g in R.variable_names_recursive()]
-        except AttributeError:
-            try:
-                degree_one = R.gens()
-            except NotImplementedError:
-                degree_one = []
+                # Try to coerce into a symmetric function
+                phi = parent.coerce_map_from(Px)
+                if phi is not None:
+                    x = phi(x)
+                elif not tensorflag:
+                    raise TypeError("only know how to compute plethysms "
+                                    "between symmetric functions or tensors "
+                                    "of symmetric functions")
 
-        if include:
-            degree_one = [R(g) for g in include]
-        if exclude:
-            degree_one = [g for g in degree_one if g not in exclude]
+        p = parent.realization_of().power()
 
-        degree_one = [g for g in degree_one if g != R.one()]
-
-        def raise_c(n):
-            return lambda c: c.subs(**{str(g): g ** n for g in degree_one})
+        degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
         if tensorflag:
-            tparents = x.parent()._sets
-            return tensor([parent]*len(tparents))(sum(d*prod(sum(raise_c(r)(c)
-                                  * tensor([p[r].plethysm(base(la))
-                                           for (base,la) in zip(tparents,trm)])
-                                  for (trm,c) in x)
-                              for r in mu)
-                       for (mu, d) in p(self)))
+            tparents = Px._sets
+            s = sum(d * prod(sum(_raise_variables(c, r, degree_one)
+                                 * tensor([p[r].plethysm(base(la))
+                                           for base, la in zip(tparents, trm)])
+                                 for trm, c in x)
+                             for r in mu)
+                    for mu, d in p(self))
+            return tensor([parent]*len(tparents))(s)
 
-        # Takes in n, and returns a function which takes in a partition and
-        # scales all of the parts of that partition by n
-        def scale_part(n):
-            return lambda m: m.__class__(m.parent(), [i * n for i in m])
-
-        # Takes n an symmetric function f, and an n and returns the
+        # Takes a symmetric function f, and an n and returns the
         # symmetric function with all of its basis partitions scaled
         # by n
         def pn_pleth(f, n):
-            return f.map_support(scale_part(n))
+            return f.map_support(lambda mu: mu.stretch(n))
 
         # Takes in a partition and applies
         p_x = p(x)
 
         def f(part):
-            return p.prod(pn_pleth(p_x.map_coefficients(raise_c(i)), i)
+            return p.prod(pn_pleth(p_x.map_coefficients(lambda c: _raise_variables(c, i, degree_one)), i)
                           for i in part)
         return parent(p._apply_module_morphism(p(self), f, codomain=p))
 
@@ -4917,9 +4976,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         # then convert back.
         parent = self.parent()
         m = parent.realization_of().monomial()
-        from sage.combinat.partition import Partition
-        dct = {Partition([n * i for i in lam]): coeff
-               for (lam, coeff) in m(self)}
+        dct = {lam.stretch(n): coeff for lam, coeff in m(self)}
         result_in_m_basis = m._from_dict(dct)
         return parent(result_in_m_basis)
 
@@ -6125,3 +6182,82 @@ def _nonnegative_coefficients(x):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0
+
+def _variables_recursive(R, include=None, exclude=None):
+    """
+    Return all variables appearing in the ring ``R``.
+
+    INPUT:
+
+    - ``R`` -- a :class:`Ring`
+    - ``include``, ``exclude`` (optional, default ``None``) --
+      iterables of variables in ``R``
+
+    OUTPUT:
+
+    - If ``include`` is specified, only these variables are returned
+      as elements of ``R``.  Otherwise, all variables in ``R``
+      (recursively) with the exception of those in ``exclude`` are
+      returned.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.sfa import _variables_recursive
+        sage: R.<a, b> = QQ[]
+        sage: S.<t> = R[]
+        sage: _variables_recursive(S)
+        [a, b, t]
+
+        sage: _variables_recursive(S, exclude=[b])
+        [a, t]
+
+        sage: _variables_recursive(S, include=[b])
+        [b]
+
+    TESTS::
+
+        sage: _variables_recursive(R.fraction_field(), exclude=[b])
+        [a]
+
+        sage: _variables_recursive(S.fraction_field(), exclude=[b]) # known bug
+        [a, t]
+    """
+    if include is not None and exclude is not None:
+        raise RuntimeError("include and exclude cannot both be specified")
+
+    if include is not None:
+        degree_one = [R(g) for g in include]
+    else:
+        try:
+            degree_one = [R(g) for g in R.variable_names_recursive()]
+        except AttributeError:
+            try:
+                degree_one = R.gens()
+            except NotImplementedError:
+                degree_one = []
+        if exclude is not None:
+            degree_one = [g for g in degree_one if g not in exclude]
+
+    return [g for g in degree_one if g != R.one()]
+
+def _raise_variables(c, n, variables):
+    """
+    Replace the given variables in the ring element ``c`` with their
+    ``n``-th power.
+
+    INPUT:
+
+    - ``c`` -- an element of a ring
+    - ``n`` -- the power to raise the given variables to
+    - ``variables`` -- the variables to raise
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.sfa import _raise_variables
+        sage: R.<a, b> = QQ[]
+        sage: S.<t> = R[]
+        sage: _raise_variables(2*a + 3*b*t, 2, [a, t])
+        3*b*t^2 + 2*a^2
+
+    """
+    return c.subs(**{str(g): g ** n for g in variables})

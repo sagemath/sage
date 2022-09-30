@@ -1,5 +1,5 @@
 r"""
-Spike Functions
+Spike functions
 
 AUTHORS:
 

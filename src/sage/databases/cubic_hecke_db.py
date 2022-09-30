@@ -1514,4 +1514,3 @@ def read_markov(bas_ele, variables, num_strands=4):
         0, 1]}
 
     return data[num_strands][bas_ele]
-

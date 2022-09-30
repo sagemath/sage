@@ -1057,6 +1057,19 @@ class Partition(CombinatorialElement):
 
         return SkewPartition([self[:], p])
 
+    def stretch(self, k):
+        """
+        Return the partition obtained by multiplying each part with the
+        given number.
+
+        EXAMPLES::
+
+            sage: p = Partition([4,2,2,1,1])
+            sage: p.stretch(3)
+            [12, 6, 6, 3, 3]
+        """
+        return _Partitions([k * p for p in self])
+
     def power(self, k):
         r"""
         Return the cycle type of the `k`-th power of any permutation

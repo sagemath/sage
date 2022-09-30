@@ -260,4 +260,3 @@ Sage example in ./graphique.tex, line 2004::
   Graphics3d Object
 
 """
-

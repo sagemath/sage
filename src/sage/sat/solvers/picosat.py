@@ -220,7 +220,5 @@ class PicoSAT(SatSolver):
         """
         if filename is None:
             return self._clauses
-        else:
-            from sage.sat.solvers.dimacs import DIMACS
-            DIMACS.render_dimacs(self._clauses, filename, self.nvars())
-
+        from sage.sat.solvers.dimacs import DIMACS
+        DIMACS.render_dimacs(self._clauses, filename, self.nvars())

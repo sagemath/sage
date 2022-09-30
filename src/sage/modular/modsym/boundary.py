@@ -274,17 +274,17 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
             sage: -x + x # indirect doctest
             0
         """
-        return self*(-1)
+        return self * (-1)
 
 
 @richcmp_method
 class BoundarySpace(hecke.HeckeModule_generic):
     def __init__(self,
-                 group = arithgroup.Gamma0(1),
-                 weight = 2,
-                 sign = 0,
-                 base_ring = rings.QQ,
-                 character = None):
+                 group=arithgroup.Gamma0(1),
+                 weight=2,
+                 sign=0,
+                 base_ring=rings.QQ,
+                 character=None):
         """
         Space of boundary symbols for a congruence subgroup of SL_2(Z).
 

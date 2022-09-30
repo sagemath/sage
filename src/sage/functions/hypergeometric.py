@@ -1,5 +1,5 @@
 r"""
-Hypergeometric Functions
+Hypergeometric functions
 
 This module implements manipulation of infinite hypergeometric series
 represented in standard parametric form (as `\,_pF_q` functions).

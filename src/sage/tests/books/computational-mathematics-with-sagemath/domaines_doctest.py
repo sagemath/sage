@@ -442,4 +442,3 @@ Sage example in ./domaines.tex, line 1698::
   (4) * (x + 2)^2 * (x^2 + 3)
 
 """
-

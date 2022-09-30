@@ -5,14 +5,15 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-"""
+r"""
 Wrapper for NTL's polynomials over finite ring extensions of `\Z / p\Z.`
 
 AUTHORS:
-  -- David Roe (2007-10-10)
+
+- David Roe (2007-10-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                          David Roe     <roed@math.harvard.edu>
 #
@@ -25,8 +26,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr

@@ -221,7 +221,6 @@ class EllipticCurveHom(Morphism):
         is the product of the degrees of the individual factors::
 
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            doctest:warning ...
             sage: E = EllipticCurve(GF(419), [1,0])
             sage: P, = E.gens()
             sage: phi = EllipticCurveHom_composite(E, P+P)
@@ -713,7 +712,7 @@ def compare_via_evaluation(left, right):
         q = F.cardinality()
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
-        e = next(i for i,n in enumerate(E.count_points(e+1), 1) if n > 4*d)
+        e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
         EE = E.base_extend(F.extension(e))
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
@@ -728,4 +727,3 @@ def compare_via_evaluation(left, right):
 
     else:
         raise NotImplementedError('not implemented for this base field')
-

@@ -1309,7 +1309,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                        self.weight(), eps, already_echelonized=False)
         except ValueError:
             # Double the precision.
-            return self._compute_hecke_matrix_prime(p, prec = 2*prec+1)
+            return self._compute_hecke_matrix_prime(p, prec=2 * prec + 1)
 
     def _compute_hecke_matrix(self, n):
         """

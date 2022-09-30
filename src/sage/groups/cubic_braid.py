@@ -2028,19 +2028,17 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             True
         """
         if nstrands is None:
-            nstrands = self.strands() -1
+            nstrands = self.strands() - 1
 
         n = self.strands()
 
         nstrands = Integer(nstrands)
 
         if nstrands >= n or nstrands <= 0:
-            raise ValueError("nstrands must be positive and less than %s" %(self.strands()))
-
+            raise ValueError("nstrands must be positive and less than %s" % (self.strands()))
 
         names = self.variable_names()
-        names_red = names[:nstrands-1]
+        names_red = names[:nstrands - 1]
         subgrp = CubicBraidGroup(names=names_red, cbg_type=self._cbg_type)
         subgrp._ambient = self
         return subgrp
-

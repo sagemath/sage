@@ -1,5 +1,5 @@
 """
-Base Classes for Finite Fields
+Base class for finite fields
 
 TESTS::
 
