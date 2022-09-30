@@ -882,7 +882,7 @@ class Semigroups(CategoryWithAxiom):
                     sage: M.semigroup_generators()
                     Family ('a', 'b', 'c', 'd')
                     sage: M.algebra(ZZ).algebra_generators()
-                    Finite family {0: B['a'], 1: B['b'], 2: B['c'], 3: B['d']}
+                    Family (B['a'], B['b'], B['c'], B['d'])
                 """
                 return self.basis().keys().semigroup_generators().map(self.monomial)
 

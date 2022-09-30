@@ -1,5 +1,5 @@
 """
-List Plots
+List plots
 """
 
 from sage.structure.element import is_Matrix

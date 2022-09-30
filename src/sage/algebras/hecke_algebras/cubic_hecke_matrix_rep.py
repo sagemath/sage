@@ -1079,4 +1079,3 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             True
         """
         return tuple([self(x) for x in self._cubic_hecke_algebra.some_elements()])
-

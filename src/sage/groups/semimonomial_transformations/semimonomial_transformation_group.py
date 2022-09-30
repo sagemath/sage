@@ -51,6 +51,7 @@ TESTS::
     sage: TestSuite(S).run()
     sage: TestSuite(S.an_element()).run()
 """
+from __future__ import annotations
 from sage.rings.integer import Integer
 
 from sage.groups.group import FiniteGroup
@@ -285,7 +286,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             return False
         return True
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of generators of ``self``.
 
@@ -293,11 +294,11 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
             sage: F.<a> = GF(4)
             sage: SemimonomialTransformationGroup(F, 3).gens()
-            [((a, 1, 1); (), Ring endomorphism of Finite Field in a of size 2^2
+            (((a, 1, 1); (), Ring endomorphism of Finite Field in a of size 2^2
               Defn: a |--> a), ((1, 1, 1); (1,2,3), Ring endomorphism of Finite Field in a of size 2^2
               Defn: a |--> a), ((1, 1, 1); (1,2), Ring endomorphism of Finite Field in a of size 2^2
               Defn: a |--> a), ((1, 1, 1); (), Ring endomorphism of Finite Field in a of size 2^2
-              Defn: a |--> a + 1)]
+              Defn: a |--> a + 1))
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         R = self.base_ring()
@@ -306,7 +307,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             l.append(self(perm=Permutation(g)))
         if R.is_field() and not R.is_prime_field():
             l.append(self(autom=R.hom([R.primitive_element()**R.characteristic()])))
-        return l
+        return tuple(l)
 
     def order(self) -> Integer:
         r"""

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Parametric Plots
+Parametric plots
 """
 
 from .parametric_surface import ParametricSurface

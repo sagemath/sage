@@ -907,4 +907,3 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         the tuple `(u,r,s,t)` defining the isomorphism.
         """
         return self.u
-

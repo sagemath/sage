@@ -805,19 +805,7 @@ def RandomHolmeKim(n, m, p, seed=None):
     may not be all linked to a new node on the first iteration like the BA
     model.
 
-    EXAMPLES:
-
-    We check that a random graph on 8 nodes with 2 random edges per node and a
-    probability `p = 0.5` of forming triangles contains a triangle::
-
-        sage: G = graphs.RandomHolmeKim(8, 2, 0.5)
-        sage: G.order(), G.size()
-        (8, 12)
-        sage: C3 = graphs.CycleGraph(3)
-        sage: G.subgraph_search(C3)
-        Subgraph of (): Graph on 3 vertices
-
-    ::
+    EXAMPLES::
 
         sage: G = graphs.RandomHolmeKim(12, 3, .3)
         sage: G.show()  # long time

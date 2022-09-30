@@ -4209,6 +4209,7 @@ REFERENCES:
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
+
 .. [Mar1980] Jacques Martinet, Petits discriminants des corps de
              nombres, Journ. Arithm. 1980, Cambridge Univ. Press,
              1982, 151--193.
@@ -4394,6 +4395,11 @@ REFERENCES:
 .. [MM1998] Gunter Malle and Andrew Mathas.
             *Symmetric cyclotomic Hecke algebras* J. Algebra.
             **205** (1998) pp. 275-293.
+
+.. [MM2008] Manel Maia and Miguel Méndez.
+            On the arithmetic product of combinatorial species.
+            Discrete Mathematics (2008), Volume 308, Issue 23, pp. 5407-5427,
+            :arxiv:`math/0503436v2`.
 
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.

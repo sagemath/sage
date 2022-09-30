@@ -430,7 +430,7 @@ define SET_SAGE_CHECK
 $(eval SAGE_CHECK_$(1) := $(2))
 endef
 # Set defaults
-$(foreach pkgname, $(NORMAL_PACKAGES),\
+$(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES),\
 	$(eval $(call SET_SAGE_CHECK,$(pkgname),$(SAGE_CHECK))))
 
 # Parsing the SAGE_CHECK_PACKAGES variable:
@@ -460,7 +460,7 @@ $(foreach clause, $(SAGE_CHECK_PACKAGES_sep),					\
 	       $(eval $(call SET_SAGE_CHECK,$(subst ?,,$(clause)),warn)),	\
 	       $(eval $(call SET_SAGE_CHECK,$(clause),yes)))))
 debug-check:
-	@echo $(foreach pkgname, $(NORMAL_PACKAGES), SAGE_CHECK_$(pkgname) = $(SAGE_CHECK_$(pkgname)))
+	@echo $(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES), SAGE_CHECK_$(pkgname) = $(SAGE_CHECK_$(pkgname)))
 
 
 #==============================================================================
@@ -676,7 +676,7 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
 		SAGE_INST_LOCAL=$$($(4)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
+		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
 	    rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-*" && \
 	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
 	else ( \

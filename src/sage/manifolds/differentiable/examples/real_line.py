@@ -320,10 +320,10 @@ class OpenInterval(DifferentiableManifold):
             coordinate = None
             names = None
             start_index = 0
-        return super(cls, OpenInterval).__classcall__(cls, lower, upper,
-                          ambient_interval=ambient_interval, name=name,
-                          latex_name=latex_name, coordinate=coordinate,
-                          names=names, start_index=start_index)
+        return super().__classcall__(cls, lower, upper,
+                                     ambient_interval=ambient_interval, name=name,
+                                     latex_name=latex_name, coordinate=coordinate,
+                                     names=names, start_index=start_index)
 
     def __init__(self, lower, upper, ambient_interval=None,
                  name=None, latex_name=None,
@@ -495,9 +495,9 @@ class OpenInterval(DifferentiableManifold):
         """
         if coords in SR:
             coords = (coords,)
-        return super(OpenInterval, self)._element_constructor_(coords=coords,
-                                 chart=chart, name=name, latex_name=latex_name,
-                                 check_coords=check_coords)
+        return super()._element_constructor_(coords=coords,
+                                             chart=chart, name=name, latex_name=latex_name,
+                                             check_coords=check_coords)
 
     def _Hom_(self, other, category=None):
         r"""
@@ -879,10 +879,10 @@ class RealLine(OpenInterval):
             True
 
         """
-        return super(cls, RealLine).__classcall__(cls, name=name,
-                                           latex_name=latex_name,
-                                           coordinate=coordinate,
-                                           names=names, start_index=start_index)
+        return super().__classcall__(cls, name=name,
+                                     latex_name=latex_name,
+                                     coordinate=coordinate,
+                                     names=names, start_index=start_index)
 
     def __init__(self, name=unicode_mathbbR, latex_name=r'\Bold{R}',
                  coordinate=None, names=None, start_index=0):

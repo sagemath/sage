@@ -135,7 +135,7 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 from functools import wraps
 
 from sage.misc.randstate import current_randstate
@@ -492,7 +492,7 @@ class PermutationGroup_generic(FiniteGroup):
         if isinstance(gap_group, LibGapElement):
             self._libgap = gap_group
 
-        #Handle the case where only the GAP group is specified.
+        # Handle the case where only the GAP group is specified.
         if gens is None:
             gens = [gen for gen in gap_group.GeneratorsOfGroup()]
 
@@ -509,9 +509,9 @@ class PermutationGroup_generic(FiniteGroup):
                 # Fallback (not ideal: find a better solution?)
                 domain = sorted(domain, key=str)
 
-            #Here we need to check if all of the points are integers
-            #to make the domain contain all integers up to the max.
-            #This is needed for backward compatibility
+            # Here we need to check if all of the points are integers
+            # to make the domain contain all integers up to the max.
+            # This is needed for backward compatibility
             if all(isinstance(p, (int, Integer)) for p in domain):
                 domain = list(range(min([1] + domain), max([1] + domain)+1))
 
@@ -1237,9 +1237,11 @@ class PermutationGroup_generic(FiniteGroup):
         else:
             raise ValueError("the input algorithm (='%s') must be 'SGS', 'BFS' or 'DFS'" % algorithm)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return tuple of generators of this group. These need not be
+        Return tuple of generators of this group.
+
+        These need not be
         minimal, as they are the generators used in defining this group.
 
         EXAMPLES::
@@ -1270,14 +1272,14 @@ class PermutationGroup_generic(FiniteGroup):
         We make sure that the trivial group gets handled correctly::
 
             sage: SymmetricGroup(1).gens()
-            [()]
+            ((),)
         """
         return self._gens
-
 
     def gens_small(self):
         """
         For this group, returns a generating set which has few elements.
+
         As neither irredundancy nor minimal length is proven, it is fast.
 
         EXAMPLES::
@@ -3358,8 +3360,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: CT = gap(G).CharacterTable()
 
-        Type ``print(gap.eval("Display(%s)"%CT.name()))`` to display this
-        nicely.
+        Type ``CT.Display()`` to display this nicely.
 
         ::
 
@@ -3374,8 +3375,7 @@ class PermutationGroup_generic(FiniteGroup):
             [ 2  0  0  0 -2]
             sage: CT = gap(G).CharacterTable()
 
-        Again, type ``print(gap.eval("Display(%s)"%CT.name()))`` to display this
-        nicely.
+        Again, type ``CT.Display()`` to display this nicely.
 
         ::
 

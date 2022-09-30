@@ -1,1 +1,1 @@
-../sagemath_objects/dependencies
+$(PYTHON) | $(PYTHON_TOOLCHAIN) python_build

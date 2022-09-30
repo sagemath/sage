@@ -339,13 +339,11 @@ def index_in_saturation(A, proof=True):
     """
     r = A.rank()
     if r == 0:
-        return ZZ(1)
+        return ZZ.one()
     if r < A.nrows():
         A = A.hermite_form(proof=proof, include_zero_rows=False)
     if A.is_square():
         return abs(A.determinant(proof=proof))
     A = A.transpose()
-    A = A.hermite_form(proof=proof,include_zero_rows=False)
+    A = A.hermite_form(proof=proof, include_zero_rows=False)
     return abs(A.determinant(proof=proof))
-
-

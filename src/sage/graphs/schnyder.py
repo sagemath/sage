@@ -1,5 +1,5 @@
 """
-Schnyder's Algorithm for straight-line planar embeddings
+Schnyder's algorithm for straight-line planar embeddings
 
 A module for computing the (x,y) coordinates for a straight-line planar
 embedding of any connected planar graph with at least three vertices.  Uses

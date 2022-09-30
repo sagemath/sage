@@ -166,9 +166,11 @@ cdef class ntl_ZZ_p():
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_p(4,7)
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_p(4,7)
+            sage: loads(dumps(a)) == a
+            True
         """
         return unpickle_class_args, (ntl_ZZ_p, (self.lift(), self.modulus_context()))
 

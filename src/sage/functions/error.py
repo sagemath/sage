@@ -1,5 +1,5 @@
 r"""
-Error Functions
+Error functions
 
 This module provides symbolic error functions. These functions use the
 `mpmath library` for numerical evaluation and Maxima, Pynac for

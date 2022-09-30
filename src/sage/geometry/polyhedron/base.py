@@ -974,11 +974,12 @@ class Polyhedron_base(Polyhedron_base7):
             sage: aut_square = square.restricted_automorphism_group(output = 'permutation')       # optional - pynormaliz
             sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz
             sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz
-            sage: conj_reps[1],gens_dict[conj_reps[1]]                                            # optional - pynormaliz
+            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz
+            sage: rotation_180,gens_dict[rotation_180]                                            # optional - pynormaliz
             (
-                   [0 1 0]
-                   [1 0 0]
-            (1,2), [0 0 1]
+                        [-1  0  0]
+                        [ 0 -1  0]
+            (0,3)(1,2), [ 0  0  1]
             )
 
         This example tests the functionality for additional elements::
@@ -986,8 +987,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: C = polytopes.cross_polytope(2)
             sage: G = C.restricted_automorphism_group(output = 'permutation')
             sage: conj_reps = G.conjugacy_classes_representatives()
-            sage: add_elt = G[6]; add_elt
-            (0,2,3,1)
+            sage: add_elt = G([(0,2,3,1)])
             sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])
             sage: dict[add_elt]
              [ 0  1  0]

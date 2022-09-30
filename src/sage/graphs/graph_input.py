@@ -1,5 +1,5 @@
 r"""
-Functions for reading/building graphs/digraphs.
+Functions for reading/building graphs/digraphs
 
 This module gathers functions needed to build a graph from any other data.
 

@@ -58,6 +58,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.modules import Modules
 from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
@@ -126,7 +127,7 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
     ``T`` is a module (actually a free module) over `\ZZ`::
 
         sage: T.category()
-        Category of finite dimensional modules over Integer Ring
+        Category of tensor products of finite dimensional modules over Integer Ring
         sage: T in Modules(ZZ)
         True
         sage: T.rank()
@@ -336,7 +337,7 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
 
     Element = FreeModuleTensor
 
-    def __init__(self, fmodule, tensor_type, name=None, latex_name=None):
+    def __init__(self, fmodule, tensor_type, name=None, latex_name=None, category=None):
         r"""
         TESTS::
 
@@ -347,33 +348,47 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
         """
         self._fmodule = fmodule
         self._tensor_type = tuple(tensor_type)
+        ring = fmodule._ring
         rank = pow(fmodule._rank, tensor_type[0] + tensor_type[1])
         if self._tensor_type == (0,1):  # case of the dual
+            category = Modules(ring).FiniteDimensional().or_subcategory(category)
             if name is None and fmodule._name is not None:
                 name = fmodule._name + '*'
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = fmodule._latex_name + r'^*'
         else:
+            category = Modules(ring).FiniteDimensional().TensorProducts().or_subcategory(category)
             if name is None and fmodule._name is not None:
                 name = 'T^' + str(self._tensor_type) + '(' + fmodule._name + \
                        ')'
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = r'T^{' + str(self._tensor_type) + r'}\left(' + \
                              fmodule._latex_name + r'\right)'
-        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name)
+        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name, category=category)
         fmodule._all_modules.add(self)
 
-    def construction(self):
+    def tensor_factors(self):
         r"""
-        TESTS::
+        Return the tensor factors of this tensor module.
+
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: T = M.tensor_module(2, 3)
-            sage: T.construction() is None
-            True
+            sage: T.tensor_factors()
+            [Rank-3 free module M over the Integer Ring,
+             Rank-3 free module M over the Integer Ring,
+             Dual of the Rank-3 free module M over the Integer Ring,
+             Dual of the Rank-3 free module M over the Integer Ring,
+             Dual of the Rank-3 free module M over the Integer Ring]
         """
-        # No construction until https://trac.sagemath.org/ticket/31276 provides tensor_product methods
-        return None
+        if self._tensor_type == (0,1):  # case of the dual
+            raise NotImplementedError
+        factors = [self._fmodule] * self._tensor_type[0]
+        dmodule = self._fmodule.dual()
+        if self._tensor_type[1]:
+            factors += [dmodule] * self._tensor_type[1]
+        return factors
 
     #### Parent Methods
 

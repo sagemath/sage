@@ -891,4 +891,3 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
             r = minres(res(std(mod), 0))
 
         return si2sa_resolution(r)
-

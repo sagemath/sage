@@ -652,8 +652,8 @@ class TensorFieldFreeModule(TensorFreeModule):
     `T^{(2,0)}(\RR^3)` is a module over the algebra `C^k(\RR^3)`::
 
         sage: T20.category()
-        Category of finite dimensional modules over Algebra of differentiable
-         scalar fields on the 3-dimensional differentiable manifold R^3
+        Category of tensor products of finite dimensional modules over
+         Algebra of differentiable scalar fields on the 3-dimensional differentiable manifold R^3
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 

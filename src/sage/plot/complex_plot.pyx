@@ -1,5 +1,5 @@
 """
-Complex Plots
+Complex plots
 
 AUTHORS:
 

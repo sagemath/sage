@@ -602,6 +602,4 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         if not self._facade:
             return ElementWrapper
-        else:
-            return NotImplemented
-
+        return NotImplemented

@@ -1,16 +1,15 @@
 """
 Hecke Operators on `q`-expansions
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import divisors, gcd
 from sage.matrix.constructor import matrix
@@ -24,7 +23,7 @@ from sage.rings.power_series_ring_element import is_PowerSeries
 from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
 from .element import is_ModularFormElement
 
-def hecke_operator_on_qexp(f, n, k, eps = None,
+def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
     r"""
     Given the `q`-expansion `f` of a modular form with character
@@ -149,8 +148,8 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
     TB = [V.coordinate_vector(w) for w in TB]
     return matrix(V.base_ring(), len(B), len(B), TB, sparse=False)
 
-def hecke_operator_on_basis(B, n, k, eps=None,
-                            already_echelonized = False):
+
+def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
     r"""
     Given a basis `B` of `q`-expansions for a space of modular forms
     with character `\varepsilon` to precision at least `\#B\cdot n+1`,
@@ -232,8 +231,8 @@ def hecke_operator_on_basis(B, n, k, eps=None,
         raise TypeError("each element of B must be a power series")
     n = Integer(n)
     k = Integer(k)
-    prec = (f.prec()-1)//n
+    prec = (f.prec() - 1) // n
     A = R**prec
     V = A.span_of_basis([g.padded_list(prec) for g in B],
-                        already_echelonized = already_echelonized)
+                        already_echelonized=already_echelonized)
     return _hecke_operator_on_basis(B, V, n, k, eps)

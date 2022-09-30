@@ -248,7 +248,7 @@ cdef class LinearSubclassesIter:
 
 
 cdef class LinearSubclasses:
-    """
+    r"""
     An iterable set of linear subclasses of a matroid.
 
     Enumerate linear subclasses of a given matroid. A *linear subclass* is a
@@ -412,7 +412,7 @@ cdef class LinearSubclasses:
 
 
 cdef class MatroidExtensions(LinearSubclasses):
-    """
+    r"""
     An iterable set of single-element extensions of a given matroid.
 
     INPUT:

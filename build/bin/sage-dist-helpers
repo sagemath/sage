@@ -290,6 +290,8 @@ sdh_pip_install() {
 
 sdh_pip_editable_install() {
     echo "Installing $PKG_NAME (editable mode)"
+    # Until https://trac.sagemath.org/ticket/34209 switches us to PEP 660 editable wheels
+    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }
