@@ -1247,6 +1247,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         to_branch = []
         lines = []
+
         def include(line):
             to_branch.append(line)
             lines.append(line)
