@@ -61,7 +61,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-
+from sage.matrix.all import matrix
 
 roots_interval_cache = {}
 
@@ -699,11 +699,15 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         sage: from sage.schemes.curves import zariski_vankampen as zvk
         sage: g = f.subs({x: x + 2 * y})
         sage: p1 = QQbar(sqrt(- 1 / 3))
+        sage: p1a = CC(p1)
+        sage: p1b=QQ(p1a.real())+I*QQ(p1a.imag())
         sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
+        sage: p2a = CC(p2)
+        sage: p2b=QQ(p2a.real())+I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = zvk.braid_in_segment(glist, p1, p2) # optional - sirocco
+        sage: B = zvk.braid_in_segment(glist, p1b, p2b) # optional - sirocco
         sage: B  # optional - sirocco
-        s3*s0^-1*s1^-1*s0^-1*s5*s3^-1
+        s5*s3^-1
     """
     g = prod(glist)
     F0 = g.base_ring()
@@ -780,7 +784,7 @@ def braid_in_segment(glist, x0, x1, precision = {}):
     return initialbraid * centralbraid * finalbraid
 
 
-def orient_circuit(circuit, convex = True):
+def orient_circuit(circuit, convex = False):
     r"""
     Reverse a circuit if it goes clockwise; otherwise leave it unchanged.
 
@@ -833,10 +837,10 @@ def orient_circuit(circuit, convex = True):
     """
     vectors = [v[1].vector() - v[0].vector() for v in circuit]
     if convex:
-        pr = vectors[0]*vectors[1]
-        if pr>0:
+        pr = matrix([vectors[0], vectors[1]]).determinant()
+        if pr > 0:
             return circuit
-        elif pr<0:
+        elif pr < 0:
             return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
     prec = 53
     while True:
@@ -873,22 +877,23 @@ def geometric_basis(G, E, p, regions):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis
+        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, orient_circuit
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
         sage: G = Graph()
+        sage: Vreg = [_ for _ in V.regions().values() if _.is_compact()]
         sage: regions = []
-        sage: for reg in regions:
+        sage: for reg in Vreg:
         ....:     regv = reg.vertex_graph()
         ....:     G = G.union(regv)
-        ....:     circ = orient_circuit(regv.eulerian_circuit())
-        ....:     regions.append(circ[0])
+        ....:     circ = orient_circuit(regv.eulerian_circuit(), convex = True)
+        ....:     regions.append(circ)
         sage: E = Graph()
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
         sage: p = E.vertices(sort=True)[0]
-        sage: geometric_basis(G, E, p, regions).
+        sage: geometric_basis(G, E, p, regions)
         [[A vertex at (-2, -2),
           A vertex at (2, -2),
           A vertex at (2, 2),
@@ -929,7 +934,7 @@ def geometric_basis(G, E, p, regions):
     for reg in regions:
         g = Graph(reg)
         region_graphs.append(g)
-    EC = [v[0] for v in orient_circuit(E.eulerian_circuit(), convex = True)]
+    EC = [v[0] for v in orient_circuit(E.eulerian_circuit())]
     i = EC.index(p)
     EC = EC[i:] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
     if G.size() == E.size():
@@ -944,9 +949,7 @@ def geometric_basis(G, E, p, regions):
         for v in E:
             if len(E.neighbors(v)) > 2:
                 I.add_vertex(v)
-
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
-
         if EC[i] in I:
             q = EC[i]
             connecting_path = EC[:i]
@@ -965,33 +968,32 @@ def geometric_basis(G, E, p, regions):
     #Gcut.delete_vertices(cutpath)
     # I think this cannot happen, but just in case, we check it to raise
     # an error instead of giving a wrong answer. It happens. Construct the dual graph.
-    Gd=Graph(len(regions))
-    for i,j in Combinations(range(len(regions)),2):
-        Ga=region_graphs[i]
-        La=Ga.edges(sort=True)
-        Gb=region_graphs[j]
-        Lb=Gb.edges(sort=True)
-        Uc=[(a,b,c) for a,b,c in La if (a,b,c) in Lb or (b,a,c) in Lb]
-        if len(Uc)>=1:
-            arista=Uc[0]
+    Gd = Graph(len(regions))
+    for i, j in Combinations(range(len(regions)), 2):
+        Ga = region_graphs[i]
+        La = Ga.edges(sort = True)
+        Gb = region_graphs[j]
+        Lb = Gb.edges(sort = True)
+        Uc = [(a, b, c) for a, b, c in La if (a, b, c) in Lb or (b, a, c) in Lb]
+        if len(Uc) >= 1:
+            arista = Uc[0]
             if arista[0] in cutpath and arista[1] in cutpath:
-                k=cutpath.index(arista[0])
-                l=cutpath.index(arista[1])
-                if abs(k-l)!=1 and Set(k,l)!=Set(0,len(regions)-1):
-                    print("arista fuera del corte")
+                k = cutpath.index(arista[0])
+                l = cutpath.index(arista[1])
+                if abs(k - l) != 1 and Set(k, l)!=Set(0, len(regions) - 1):
                     Gd.add_edge((i,j))
             else:
-                Gd.add_edge((i,j))
+                Gd.add_edge((i, j))
     #if Gcut.connected_components_number() != 2:
         #raise ValueError("unable to compute a correct path")
     Gd1,Gd2 = Gd.connected_components()
-    GL1=list(Set(_ for c in Gd1 for _ in regions[c]))
-    GL1=flatten(GL1)
-    G1=G.subgraph(GL1)
+    GL1 = list(Set(_ for c in Gd1 for _ in regions[c]))
+    GL1 = flatten(GL1)
+    G1 =G.subgraph(GL1)
     regions1 = [regions[i] for i in Gd1]
-    GL2=list(Set(_ for c in Gd2 for _ in regions[c]))
-    GL2=flatten(GL2)
-    G2=G.subgraph(GL2)
+    GL2 = list(Set(_ for c in Gd2 for _ in regions[c]))
+    GL2 = flatten(GL2)
+    G2 = G.subgraph(GL2)
     regions2 = [regions[i] for i in Gd2]
 #    G1, G2 = Gcut.connected_components_subgraphs()
     # for v in cutpath:
@@ -1113,7 +1115,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     for reg in Vreg:
         regv = reg.vertex_graph()
         G = G.union(regv)
-        circ = orient_circuit(regv.eulerian_circuit())
+        circ = orient_circuit(regv.eulerian_circuit(), convex = True)
         regions.append(circ)
     E = Graph()
     for reg in V.regions().values():
@@ -1439,11 +1441,10 @@ def braid_monodromy_arrangement(flist, nodic = False):
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
         sage: braid_monodromy_arrangement(flist)  # optional - sirocco
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-        s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-        s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-        s1*s0*s2*s0^-1*s2*s1^-1],
+         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+         s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+         s1*s0*s2*s0^-1*s2*s1^-1],
         {1: 1, 2: 2, 3: 1, 4: 1})
-
     """
     f = prod(flist)
     if len(flist) == 1:
