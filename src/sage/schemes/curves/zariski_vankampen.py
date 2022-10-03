@@ -1479,7 +1479,7 @@ def strand_components(flist):
         sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: strand_components(flist)
+        sage: strand_components(flist) # optional - sirocco
         {1: 1, 2: 2, 3: 1, 4: 1}
     """
     f = prod(flist)
