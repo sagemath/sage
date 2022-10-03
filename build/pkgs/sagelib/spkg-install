@@ -84,6 +84,8 @@ else
         python3 -m build --no-isolation --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
         wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . && echo $wheel)
     else
+        # TODO: Deprecate this installation mode.
+        # Note this no longer does any cleaning!
         time python3 -u setup.py --no-user-cfg build install || exit 1
     fi
 fi
