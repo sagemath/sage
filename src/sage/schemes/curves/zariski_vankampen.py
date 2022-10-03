@@ -868,7 +868,7 @@ def geometric_basis(G, E, p, regions):
     - ``p`` -- a vertex of ``E``
     
     - ``regions`` -- the bounded regions as a list of positively oriented
-    lists of vertices of ``G``
+      lists of vertices of ``G``
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
     Each path is a list of vertices, that form a closed path in `G`, based at
