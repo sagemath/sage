@@ -60,7 +60,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     morphism `\phi: \Fq[X] \to K\{\tau\}` such that:
 
         1. The image of `\phi` contains non-constant Ore polynomials.
-        2. For every element `a` in the function ring, the constant
+        2. For every element `a` in the `\Fq[X]`, the constant
            coefficient `\phi(a)` is `\gamma(a)`.
 
     For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
@@ -202,7 +202,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           To:   Finite Field in z of size 3^12
           Defn: X |--> z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z
 
-    Drinfeld modules `\phi` and `\rho` have different based. That of
+    Drinfeld modules `\phi` and `\rho` have different bases. That of
     `\phi` is surjective while that of `\rho` is note::
 
         sage: rho.category().base()
@@ -427,7 +427,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. NOTE::
 
-        In this implementation, `L` is `L`.
+        In this implementation, `L` is `K`.
 
         sage: action = phi.action()
         sage: action
@@ -517,9 +517,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         category = DrinfeldModules(base, name=name)
 
         # Check gen as Ore polynomial
-        if ore_polring is not None and \
-                ore_polring != category.ore_polring():
-            raise ValueError(f'generator must lie in {category.ore_polring()}')
         ore_polring = category.ore_polring()  # Sanity cast
         gen = ore_polring(gen)
         if gen.degree() <= 0:
@@ -709,7 +706,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def coefficient(self, n):
         r"""
-        Return the n-th coefficient of the generator.
+        Return the `n`-th coefficient of the generator.
 
         INPUT:
 
@@ -1091,7 +1088,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho.rank()
             4
         """
-        return self.gen().degree()
+        return self._gen.degree()
 
     def velu(self, isog):
         r"""
