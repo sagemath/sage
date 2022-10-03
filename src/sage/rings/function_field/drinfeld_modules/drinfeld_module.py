@@ -43,13 +43,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     Let `\Fq[X]` be a polynomial ring with coefficients in a finite
     field `\Fq` and let `K` be a field. We fix a ring morphism `\gamma:
     \Fq[X] \to K`, which we call the *base* of the Drinfeld module.
-    Please note that the base is not a ring; in particular, it is
-    not the field `K`. We also call `K` an *`\Fq[X]`-field*.
 
     .. NOTE::
 
+        The base is not a ring. Specifically, it is not the field `K`. We say
+        however that `K` is an *`\Fq[X]`-field*.
+
         The base of the Drinfeld module is the base of the category of
-        the Drinfeld module. 
+        the Drinfeld module.
 
     The monic polynomial that generates the kernel of the base is called
     the *`\Fq[X]`-characteristic of the `\Fq[X]`-field `K`*.
@@ -66,14 +67,42 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
 
     The Drinfeld module `\phi` is uniquely determined by the image
-    `\phi_X` of `X`, which is an input of the class.
+    `\phi_X` of `X`. This serves as input of the class.
+
+    Despite an emphasis on the finite case, the base codomain can be any
+    extension of the field `\Fq`::
+
+        sage: Fq = GF(25)
+        sage: FqX.<X> = Fq[]
+        sage: K.<z> = Fq.extension(6)
+        sage: phi = DrinfeldModule(FqX, [z, 4, 1])
+        sage: phi
+        Drinfeld module defined by X |--> t^2 + 4*t + z over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
+          To:   Finite Field in z of size 5^12
+          Defn: X |--> z
+
+        sage: Fq = GF(49)
+        sage: FqX.<X> = Fq[]
+        sage: K.<z> = Frac(FqX)
+        sage: phi = DrinfeldModule(FqX, [z, X+1])
+        sage: phi
+        Drinfeld module defined by X |--> (X + 1)*t + X over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 7^2
+          To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 7^2
+          Defn: X |--> X
+
+    .. NOTE::
+
+        In the first case, the Drinfeld module is said to be *finite*. See
+        :class:`sage.rings.function_field.drinfeld_modules.finite_drinfeld_module`.
 
     We say that `\Fq[X]` is the *function ring of `\phi`*; *K\{\tau\}*
     is the *Ore polynomial ring of `\phi`*. Further, the *generator of
     `\phi`* is `\phi_X` and its *constant coefficient* is the constant
     coefficient of `\phi_X`. The `\Fq[X]`-characteristic of the
     `\Fq[X]`-field `K` can also be referred to as its *function
-    ring-characteristic*. Finally, `K` is just refered to as the
+    ring-characteristic*. Finally, `K` is just referred to as the
     codomain base.
 
     Classical references on Drinfeld modules include [Gos1998]_,
@@ -98,7 +127,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: Construction
 
-    A Drinfeld module object is constructed as follows::
+    A Drinfeld module object is constructed by precising the function
+    ring and the generator::
 
         sage: Fq.<z2> = GF(3^2)
         sage: FqX.<X> = Fq[]
@@ -110,20 +140,34 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           To:   Finite Field in z of size 3^12
           Defn: X |--> z
 
-    In this example, we used a list of coefficients (``[z, 1, 1]``) to
-    represent the generator `\phi_X = z + t + t^2`, `K = \Fq(z)`. One can
-    also use regular Ore polynomials::
+    The above Drinfeld module is finite; it can also be infinite::
+
+        sage: L = Frac(FqX)
+        sage: psi = DrinfeldModule(FqX, [L(X), 1, X^3 + X + 1])
+        sage: psi
+        Drinfeld module defined by X |--> (X^3 + X + 1)*t^2 + t + X over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          Defn: X |--> X
+        sage: phi.is_finite()
+        True
+        sage: psi.is_finite()
+        False
+
+    In those examples, we used a list of coefficients (``[z, 1, 1]``) to
+    represent the generator `\phi_X = z + t + t^2`. One can also use
+    regular Ore polynomials::
 
         sage: ore_polring = phi.ore_polring()
         sage: t = phi.ore_polring().gen()
-        sage: psi_X = z + t^3
-        sage: psi = DrinfeldModule(FqX, psi_X)
-        sage: psi
+        sage: rho_X = z + t^3
+        sage: rho = DrinfeldModule(FqX, rho_X)
+        sage: rho
         Drinfeld module defined by X |--> t^3 + z over base Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           To:   Finite Field in z of size 3^12
           Defn: X |--> z
-        sage: psi(X) == psi_X
+        sage: rho(X) == rho_X
         True
 
     The generator must have positive degree::
@@ -185,51 +229,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         deduced from the generator, and we omit the base in the input
         of the class for conciseness.
 
-    .. RUBRIC:: Possible bases
-
-    The base does not need be surjective like in the above examples. In
-    the following example, the base codomain is still a degree six
-    extension of `\Fq`, but the base is a projection over a degree two
-    extension with modulus `X^3 + (z_2 + 2)X^2 + (6*z_2 + 1)X + 3z_2 +
-    5`::
-
-        sage: p = X^2 + z2 + 2
-        sage: p_root = z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z
-        sage: rho = DrinfeldModule(FqX, [p_root, 1, 1])
-        sage: rho
-        Drinfeld module defined by X |--> t^2 + t + z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z
-
-    Drinfeld modules `\phi` and `\rho` have different bases. That of
-    `\phi` is surjective while that of `\rho` is note::
-
-        sage: rho.category().base()
-        Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z
-        sage: phi.category().base()
-        Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z
-
-    Note that ``phi`` and ``psi`` are *finite* Drinfeld modules, in the
-    sense that `K` is finite. But `K` can be infinite::
-
-        sage: sigma = DrinfeldModule(FqX, [Frac(FqX).gen(), 1, 1])
-        sage: sigma
-        Drinfeld module defined by X |--> t^2 + t + X over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Defn: X |--> X
-        sage: sigma.is_finite()
-        False
-        sage: phi.is_finite()
-        True
-
     .. RUBRIC:: The category of Drinfeld modules
 
     Drinfeld modules have their own category (see class
@@ -241,9 +240,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           To:   Finite Field in z of size 3^12
           Defn: X |--> z
         sage: phi.category() is psi.category()
-        True
-        sage: phi.category() is sigma.category()
         False
+        sage: phi.category() is rho.category()
+        True
 
     This category holds crucial information, like the
     function ring-characteristic of the base::
@@ -334,11 +333,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         True
         sage: t^5 + 2*t^3 + 1 in Hom(phi, phi)
         False
-        sage: 1 in Hom(phi, psi)
+        sage: 1 in Hom(phi, rho)
         False
         sage: 1 in Hom(phi, phi)
         True
-        sage: 0 in Hom(phi, psi)
+        sage: 0 in Hom(phi, rho)
         True
 
     To create a SageMath object representing the morphism, call the
