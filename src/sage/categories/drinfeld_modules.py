@@ -193,7 +193,6 @@ class DrinfeldModules(Category_over_base):
         ...
         TypeError: function ring base must be a finite field
     """
-
     def __init__(self, base, name='t'):
         # Check input is a ring Morphism
         if not isinstance(base, RingHomomorphism):
