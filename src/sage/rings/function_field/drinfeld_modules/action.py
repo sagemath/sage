@@ -75,6 +75,23 @@ class DrinfeldModuleAction(Action):
     """
 
     def __init__(self, drinfeld_module):
+        """
+        Initialize `self`.
+
+        INPUT: the Drinfeld module
+
+        TESTS:
+
+            sage: Fq.<z2> = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: action = phi.action()
+            sage: action._drinfeld_module is phi
+            True
+            sage: action._field is phi.base().codomain()
+            True
+        """
         if not isinstance(drinfeld_module, DrinfeldModule):
             raise TypeError('input must be a DrinfeldModule')
         self._drinfeld_module = drinfeld_module

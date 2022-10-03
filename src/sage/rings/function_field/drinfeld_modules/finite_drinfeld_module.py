@@ -102,6 +102,32 @@ class FiniteDrinfeldModule(DrinfeldModule):
     """
 
     def __init__(self, gen, category):
+        """
+        Initialize `self`.
+
+        Validity of the input is checked in `__classcall_private__`. The
+        `__init__` just saves attributes.
+
+        INPUT:
+
+        - ``function_ring`` -- a univariate polynomial ring whose base
+          is a finite field
+        - ``gen`` -- the generator of the Drinfeld module; as a list of
+          coefficients or an Ore polynomial
+        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+
+        TESTS:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: gen = [p_root, z12^3, z12^5]
+            sage: phi = DrinfeldModule(FqX, gen)
+            sage: ore_polring = phi.ore_polring()
+            sage: phi._gen == ore_polring(gen)
+            True
+        """
 
         # NOTE: There used to be no __init__ here (which was fine). I
         # added one to ensure that FiniteDrinfeldModule would always

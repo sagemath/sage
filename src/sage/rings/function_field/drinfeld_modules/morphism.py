@@ -54,6 +54,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
               To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
               Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
 
+    The input Ore polynomial must indeed define a morphism::
+
+        sage: morphism = Hom(phi, psi)(1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Ore polynomial does not define a morphism
+
     We can get basic data on the morphism::
 
         sage: morphism.domain()
@@ -115,6 +122,36 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     @staticmethod
     def __classcall_private__(cls, parent, x):
+        """
+        Create the morphism.
+
+        INPUT:
+
+        - ``cls`` -- DrinfeldModuleMorphism
+        - ``parent`` -- The Drinfeld module homset
+        - ``x`` -- the Ore polynomial defining the morphism or a
+          DrinfeldModuleMorphism
+
+        OUTPUT: the morphism object
+
+        TESTS::
+
+            sage: Fq = GF(2)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
+            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
+            sage: t = phi.ore_polring().gen()
+            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: morphism is Hom(phi, psi)(morphism)
+            True
+
+            sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
+            sage: morphism = DrinfeldModuleMorphism(Sets(), t + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: parent should be a DrinfeldModuleHomset
+        """
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         if not isinstance(parent, DrinfeldModuleHomset):
             raise TypeError('parent should be a DrinfeldModuleHomset')
@@ -132,6 +169,31 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return cls.__classcall__(cls, parent, ore_pol)
 
     def __init__(self, parent, ore_pol):
+        r"""
+        Initialize `self`.
+
+        INPUT:
+
+        - ``parent`` -- The Drinfeld module homset
+        - ``ore_pol`` -- The Ore polynomial that defines the morphism
+
+        TESTS::
+
+            sage: Fq = GF(2)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
+            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
+            sage: t = phi.ore_polring().gen()
+            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: morphism._domain is phi
+            True
+            sage: morphism._codomain is psi
+            True
+            sage: morphism._ore_polynomial == t + z6^5 + z6^2 + 1
+            True
+        """
+
         super().__init__(parent)
         self._domain = parent.domain()
         self._codomain = parent.codomain()

@@ -475,6 +475,36 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     @staticmethod
     def __classcall_private__(cls, function_ring, gen, name='t'):
+        """
+        Check input validity and return a `DrinfeldModule` or
+        `FiniteDrinfeldModule` object accordingly.
+
+        INPUT:
+
+        - ``function_ring`` -- a univariate polynomial ring whose base
+          is a finite field
+        - ``gen`` -- the generator of the Drinfeld module; as a list of
+          coefficients or an Ore polynomial
+        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+
+        OUTPUT: a DrinfeldModule or FiniteDrinfeldModule
+
+        TESTS:
+
+            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: isinstance(phi, FiniteDrinfeldModule)
+            True
+
+            sage: K = Frac(FqX)
+            sage: phi = DrinfeldModule(FqX, [K(X), 1])
+            sage: isinstance(psi, FiniteDrinfeldModule)
+            False
+        """
 
         # FIXME: function_ring must be checked before calling base_ring
         # on it. But then it is checked twice: firstly here, secondly in
@@ -528,6 +558,40 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
+        """
+        Initialize `self`.
+
+        Validity of the input is checked in `__classcall_private__`. The
+        `__init__` just saves attributes.
+
+        INPUT:
+
+        - ``function_ring`` -- a univariate polynomial ring whose base
+          is a finite field
+        - ``gen`` -- the generator of the Drinfeld module; as a list of
+          coefficients or an Ore polynomial
+        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+
+        TESTS:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: gen = [p_root, z12^3, z12^5]
+            sage: phi = DrinfeldModule(FqX, gen)
+            sage: ore_polring = phi.ore_polring()
+            sage: phi._base == phi.category().base()
+            True
+            sage: phi._function_ring == FqX
+            True
+            sage: phi._gen == ore_polring(gen)
+            True
+            sage: phi._ore_polring == ore_polring
+            True
+            sage: phi._morphism == Hom(FqX, ore_polring)(phi._gen)
+            True
+        """
         self._base = category.base()
         self._function_ring = category.function_ring()
         self._gen = gen
@@ -614,6 +678,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def _check_rank_two(self):
         r"""
         Raise ``NotImplementedError`` if the rank is not two.
+    
+        TESTS:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi._check_rank_two()
+            sage: phi = DrinfeldModule(FqX, [p_root, 1])
+            sage: phi._check_rank_two()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: rank must be 2
         """
         if self.rank() != 2:
             raise NotImplementedError('rank must be 2')

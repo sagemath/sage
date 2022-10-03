@@ -56,7 +56,7 @@ class DrinfeldModules(Category_over_base):
     be referred to as its *function ring-characteristic*. Finally, `K`
     is just refered to as the codomain base.
 
-    INPUT: the base, a ring morphism
+    INPUT: the base ring morphism
 
     .. RUBRIC:: Construction
 
@@ -193,6 +193,36 @@ class DrinfeldModules(Category_over_base):
         TypeError: function ring base must be a finite field
     """
     def __init__(self, base, name='t'):
+        r"""
+        Initialize `self`.
+
+        INPUT:
+
+        - ``base`` -- the base ring morphism
+        - ``name`` (default: `'t'`) -- the name of the Ore polynomial
+          ring generator
+
+        TESTS::
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: ore_polring.<t> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: cat._ore_polring is ore_polring
+            True
+            sage: base = Hom(FqX, K)(p_root)
+            sage: cat._base == base
+            True
+            sage: cat._function_ring is FqX
+            True
+            sage: cat._constant_coefficient == base(X)
+            True
+            sage: cat._characteristic(cat._constant_coefficient)
+            0
+        """
         # Check input is a ring Morphism
         if not isinstance(base, RingHomomorphism):
             raise TypeError('input must be a Ring morphism')
@@ -281,12 +311,44 @@ class DrinfeldModules(Category_over_base):
         """
         return f'Category of Drinfeld modules defined over base {self._base}'
 
-    # Somehow required for the class definition
     def Homsets(self):
+        r"""
+        Return the category of homsets.
+
+        OUTPUT: the category of homsets
+
+        EXAMPLE::
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: from sage.categories.homsets import Homsets
+            sage: cat.Homsets() is Homsets()
+            True
+        """
         return Homsets()
 
-    # Somehow required for the class definition
     def Endsets(self):
+        r"""
+        Return the category of endsets.
+
+        OUTPUT: the category of endsets
+
+        EXAMPLE::
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: from sage.categories.homsets import Endsets
+            sage: cat.Endsets() is Endsets()
+            True
+        """
         return Homsets()
 
     def characteristic(self):
@@ -461,9 +523,19 @@ class DrinfeldModules(Category_over_base):
 
         return self.object(coeffs)
 
-    # Somehow required for the class definition
-    @cached_method
     def super_categories(self):
+        """
+        EXAMPLES::
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: cat.super_categories()
+            []
+        """
         return []
 
     class ParentMethods:

@@ -59,6 +59,21 @@ class DrinfeldModuleHomset(Homset):
         sage: end is Hom(phi, phi)
         True
 
+    The domain and codomain must have the same Drinfeld modules
+    category::
+
+        sage: rho = DrinfeldModule(FqX, [Frac(FqX)(X), 1])
+        sage: Hom(phi, rho)
+        Traceback (most recent call last):
+        ...
+        ValueError: Drinfeld modules must be in the same category
+
+        sage: sigma = DrinfeldModule(FqX, [1, z6, 2])
+        sage: Hom(phi, sigma)
+        Traceback (most recent call last):
+        ...
+        ValueError: Drinfeld modules must be in the same category
+
     One can create morphism objects by calling the homset::
 
         sage: t = phi.ore_polring().gen()
@@ -115,6 +130,30 @@ class DrinfeldModuleHomset(Homset):
     __contains__ = Parent.__contains__
 
     def __init__(self, X, Y, category=None, check=True):
+        """
+        Initialize `self`.
+
+        INPUT:
+
+        - ``X`` -- the domain of the homset
+        - ``Y`` -- the codomain of the homset
+        - ``category`` (default: None) -- the Drinfeld modules category of
+          the domain and codomain
+        - ``check`` (default: True) -- check the validity of the category
+
+        TESTS::
+
+            sage: Fq = GF(27)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
+            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: hom = Hom(phi, psi)
+            sage: hom.domain() is phi
+            True
+            sage: hom.codomain() is psi
+            True
+        """
         if category is None:
             category = X.category()
         if check:
