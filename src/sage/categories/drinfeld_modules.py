@@ -115,7 +115,6 @@ class DrinfeldModules(Category_over_base):
 
         sage: cat.base() is phi.base()
         True
-
         sage: cat.function_ring() is phi.function_ring()
         True
         sage: cat.function_ring()
@@ -370,6 +369,8 @@ class DrinfeldModules(Category_over_base):
             sage: cat.characteristic()
             X^2 + 7*X + 2
 
+        ::
+
             sage: L = Frac(FqX)
             sage: psi = DrinfeldModule(FqX, [L.gen(), 1])
             sage: psi
@@ -591,6 +592,8 @@ class DrinfeldModules(Category_over_base):
 
                 sage: psi.ore_polring().twisting_morphism().is_identity()
                 True
+
+            ::
 
                 sage: psi.base().codomain() is psi.function_ring().base_ring()
                 True

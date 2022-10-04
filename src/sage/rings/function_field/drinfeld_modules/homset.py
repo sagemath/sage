@@ -47,6 +47,8 @@ class DrinfeldModuleHomset(Homset):
         sage: hom
         Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
 
+    ::
+
         sage: from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         sage: isinstance(hom, DrinfeldModuleHomset)
         True
@@ -68,6 +70,8 @@ class DrinfeldModuleHomset(Homset):
         ...
         ValueError: Drinfeld modules must be in the same category
 
+    ::
+
         sage: sigma = DrinfeldModule(FqX, [1, z6, 2])
         sage: Hom(phi, sigma)
         Traceback (most recent call last):
@@ -84,12 +88,16 @@ class DrinfeldModuleHomset(Homset):
           To (gen):   2*t^2 + z6*t + z6
           Defn:       1
 
+    ::
+
         sage: frobenius_endomorphism = end(t^6)
         sage: frobenius_endomorphism
         Drinfeld Module morphism:
           From (gen): 2*t^2 + z6*t + z6
           To (gen):   2*t^2 + z6*t + z6
           Defn:       t^6
+
+    ::
 
         sage: isogeny = hom(t + 1)
         sage: isogeny
@@ -231,7 +239,6 @@ class DrinfeldModuleHomset(Homset):
             sage: hom = Hom(phi, psi)
             sage: end = End(phi)
             sage: t = phi.ore_polring().gen()
-
             sage: 1 in hom
             False
             sage: t^6 in hom
@@ -291,12 +298,16 @@ class DrinfeldModuleHomset(Homset):
               To (gen):   2*t^2 + z6*t + z6
               Defn:       1
 
+        ::
+
             sage: frobenius_endomorphism = end(t^6)
             sage: frobenius_endomorphism
             Drinfeld Module morphism:
               From (gen): 2*t^2 + z6*t + z6
               To (gen):   2*t^2 + z6*t + z6
               Defn:       t^6
+
+        ::
 
             sage: isogeny = hom(t + 1)
             sage: isogeny

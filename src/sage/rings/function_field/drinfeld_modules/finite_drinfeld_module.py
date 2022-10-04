@@ -210,9 +210,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: chi
             T^2 + ((3*z3^2 + z3 + 4)*X + 4*z3^2 + 6*z3 + 3)*T + (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
+        ::
+
             sage: frob_pol = phi.frobenius_endomorphism().ore_polynomial()
             sage: chi(frob_pol, phi(X))
             0
+
+        ::
 
             sage: A = phi.frobenius_trace()
             sage: A
@@ -220,6 +224,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B = phi.frobenius_norm()
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
+
+        ::
 
             sage: n = 2  # Degree over Fq of the base codomain
             sage: A.degree() <= n/2
@@ -270,9 +276,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
+        ::
+
             sage: n = 2  # Degree over Fq of the base codomain
             sage: B.degree() == n
             True
+
+        ::
 
             sage: B == phi.frobenius_charpoly()[0]
             True
@@ -333,9 +343,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: A
             (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
 
+        ::
+
             sage: n = 2  # Degree over Fq of the base codomain
             sage: A.degree() <= n/2
             True
+
+        ::
 
             sage: A == -phi.frobenius_charpoly()[1]
             True

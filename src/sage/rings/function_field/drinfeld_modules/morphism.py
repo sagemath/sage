@@ -61,7 +61,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         ...
         ValueError: Ore polynomial does not define a morphism
 
-    We can get basic data on the morphism::
+    One can get basic data on the morphism::
 
         sage: morphism.domain()
         Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
@@ -71,6 +71,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: morphism.domain() is phi
         True
 
+    ::
+
         sage: morphism.codomain()
         Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
@@ -79,12 +81,17 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: morphism.codomain() is psi
         True
 
+    ::
+
         sage: morphism.ore_polynomial()
         t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
+
+    ::
+
         sage: morphism.ore_polynomial() is ore_pol
         True
 
-    We can check various properties::
+    One can check various properties::
 
         sage: morphism.is_zero()
         False
@@ -145,6 +152,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism is Hom(phi, psi)(morphism)
             True
+
+        ::
 
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: morphism = DrinfeldModuleMorphism(Sets(), t + 1)
@@ -274,6 +283,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: morphism.is_zero()
             False
 
+        ::
+
             sage: zero_morphism = End(phi)(0)
             sage: zero_morphism.is_zero()
             True
@@ -296,13 +307,19 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: morphism.is_isogeny()
             True
 
+        ::
+
             sage: zero_morphism = End(phi)(0)
             sage: zero_morphism.is_isogeny()
             False
 
+        ::
+
             sage: identity_morphism = End(phi)(1)
             sage: identity_morphism.is_isogeny()
             True
+
+        ::
 
             sage: frobenius_endomorphism = phi.frobenius_endomorphism()
             sage: frobenius_endomorphism.is_isogeny()
@@ -326,13 +343,19 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: morphism.is_isomorphism()
             False
 
+        ::
+
             sage: zero_morphism = End(phi)(0)
             sage: zero_morphism.is_isomorphism()
             False
 
+        ::
+
             sage: identity_morphism = End(phi)(1)
             sage: identity_morphism.is_isomorphism()
             True
+
+        ::
 
             sage: frobenius_endomorphism = phi.frobenius_endomorphism()
             sage: frobenius_endomorphism.is_isomorphism()
@@ -356,6 +379,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: ore_pol = morphism.ore_polynomial()
             sage: ore_pol
             t + z6^5 + z6^2 + 1
+
+        ::
 
             sage: ore_pol * phi(X) == psi(X) * ore_pol
             True
