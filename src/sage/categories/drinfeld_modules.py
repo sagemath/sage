@@ -20,7 +20,6 @@ AUTHORS:
 
 from sage.categories.category_types import Category_over_base
 from sage.categories.homsets import Homsets
-from sage.misc.cachefunc import cached_method
 from sage.misc.functional import log
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
