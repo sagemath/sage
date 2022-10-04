@@ -159,7 +159,7 @@ class DrinfeldModules(Category_over_base):
         sage: rho.category() is cat
         True
 
-    TESTS:
+    TESTS::
 
         sage: Fq = GF(11)
         sage: FqX.<X> = Fq[]
@@ -270,7 +270,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: a string
 
-        EXAMPLE:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -295,7 +295,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: a string
 
-        EXAMPLE:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -317,7 +317,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: the category of homsets
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -337,7 +337,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: the category of endsets
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -357,7 +357,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: `0` or a monic prime polynomial in the function ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -390,7 +390,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: an element in the base codomain
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -411,7 +411,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: a univariate polynomial ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -436,7 +436,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: a Drinfeld module in the category
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -470,7 +470,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: an Ore polynomial ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -494,7 +494,7 @@ class DrinfeldModules(Category_over_base):
 
         OUTPUT: a Drinfeld module in the category
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -546,7 +546,7 @@ class DrinfeldModules(Category_over_base):
 
             OUTPUT: a ring morphism
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Fq = GF(25)
                 sage: FqX.<X> = Fq[]
@@ -602,7 +602,7 @@ class DrinfeldModules(Category_over_base):
 
             OUTPUT: a univariate polynomial ring
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Fq = GF(25)
                 sage: FqX.<X> = Fq[]
@@ -627,7 +627,7 @@ class DrinfeldModules(Category_over_base):
 
             OUTPUT: a univariate polynomial ring
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Fq = GF(25)
                 sage: FqX.<X> = Fq[]
@@ -645,7 +645,7 @@ class DrinfeldModules(Category_over_base):
 
             OUTPUT: an element in the base codomain
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Fq = GF(25)
                 sage: FqX.<X> = Fq[]
@@ -692,7 +692,7 @@ class DrinfeldModules(Category_over_base):
 
             OUTPUT: an Ore polynomial ring
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: Fq = GF(25)
                 sage: FqX.<X> = Fq[]

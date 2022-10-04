@@ -205,7 +205,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(6)
@@ -237,7 +238,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(6)
@@ -260,7 +262,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         r"""
         Return ``True`` whether the morphism is the zero morphism.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]
@@ -282,7 +284,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         r"""
         Return ``True`` whether the morphism is an isogeny.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]
@@ -312,7 +314,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         r"""
         Return ``True`` whether the morphism is an isomorphism.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]
@@ -342,7 +344,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         r"""
         Return the Ore polynomial that defines the morphism.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(2)
             sage: FqX.<X> = Fq[]

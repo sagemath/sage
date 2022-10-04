@@ -117,7 +117,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
 
-        TESTS:
+        TESTS::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -149,7 +149,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         OUTPUT: a Drinfeld module morphism
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]
@@ -200,7 +200,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         OUTPUT: an univariate polynomial with coefficients in the
         function ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]
@@ -260,7 +260,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         OUTPUT: an element in the function ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]
@@ -323,7 +323,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             :meth:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule.invert`,
             see its docstring for details.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]
@@ -364,7 +364,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         OUTPUT: a boolean
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]
@@ -400,7 +400,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         OUTPUT: a boolean
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(343)
             sage: FqX.<X> = Fq[]

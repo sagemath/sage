@@ -42,7 +42,7 @@ class DrinfeldModuleAction(Action):
 
     INPUT: the Drinfeld module
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Fq.<z2> = GF(11)
         sage: FqX.<X> = Fq[]
@@ -80,7 +80,7 @@ class DrinfeldModuleAction(Action):
 
         INPUT: the Drinfeld module
 
-        TESTS:
+        TESTS::
 
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]
@@ -109,7 +109,7 @@ class DrinfeldModuleAction(Action):
 
         OUTPUT: an element in the base codomain
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]
@@ -137,7 +137,7 @@ class DrinfeldModuleAction(Action):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]
@@ -162,7 +162,7 @@ class DrinfeldModuleAction(Action):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]
@@ -184,7 +184,7 @@ class DrinfeldModuleAction(Action):
 
         OUTPUT: a Drinfeld module
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]

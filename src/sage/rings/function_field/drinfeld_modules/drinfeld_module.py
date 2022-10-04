@@ -458,7 +458,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.invert(phi(a)) == a
         True
 
-    TESTS:
+    TESTS::
 
         sage: Fq = K = GF(2)
         sage: FqX.<X> = Fq[]
@@ -491,7 +491,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a DrinfeldModule or FiniteDrinfeldModule
 
-        TESTS:
+        TESTS::
 
             sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
             sage: Fq = GF(25)
@@ -574,7 +574,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           coefficients or an Ore polynomial
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial ring gen
 
-        TESTS:
+        TESTS::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -638,7 +638,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an element in the base codomain
 
-        TESTS:
+        TESTS::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -681,7 +681,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an homset
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -704,8 +704,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def _check_rank_two(self):
         r"""
         Raise ``NotImplementedError`` if the rank is not two.
-    
-        TESTS:
+
+        TESTS::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -728,7 +728,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -754,7 +754,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -779,7 +779,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a Drinfeld module action object
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -817,7 +817,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an element in the base codomain
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -856,7 +856,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a list of elements in the base codomain
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -890,7 +890,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an Ore polynomial
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -924,7 +924,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an integer
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -976,7 +976,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a function ring element
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -1061,7 +1061,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: a boolean
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -1090,7 +1090,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an element in the base codomain
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -1127,7 +1127,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         OUTPUT: a ring morphism from the function ring to the Ore
         polynomial ring
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -1175,7 +1175,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT: an integer
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
@@ -1225,7 +1225,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Another possible algorithm is to recursively solve a system,
             see :arxiv:`2203.06970`, eq. 1.1.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]

@@ -36,7 +36,7 @@ class DrinfeldModuleHomset(Homset):
     - ``X`` -- the domain
     - ``Y`` -- the codomain
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: Fq = GF(27)
         sage: FqX.<X> = Fq[]
@@ -172,7 +172,7 @@ class DrinfeldModuleHomset(Homset):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(27)
             sage: FqX.<X> = Fq[]
@@ -194,7 +194,7 @@ class DrinfeldModuleHomset(Homset):
 
         OUTPUT: a string
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(27)
             sage: FqX.<X> = Fq[]
@@ -219,7 +219,7 @@ class DrinfeldModuleHomset(Homset):
 
         OUTPUT: a boolean
 
-        EXAMPLES:
+        EXAMPLES::
 
         In the next examples, the input is an Ore polynomial::
 
@@ -274,7 +274,7 @@ class DrinfeldModuleHomset(Homset):
 
         OUTPUT: a Drinfeld module morphism
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(27)
             sage: FqX.<X> = Fq[]
