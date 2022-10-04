@@ -596,18 +596,6 @@ class DrinfeldModules(Category_over_base):
             """
             return self.category().base()
 
-        def base_ring(self):
-            r"""
-            Raise an exception.
-
-            The base of a Drinfeld module is a ring morphism, not a ring.
-
-            This method is implemented in CategoryObjects, of which
-            Parent inherits. It returns the base of the category. I
-            overloaded it to avoid confusion.
-            """
-            raise TypeError('the base of a Drinfeld module is a morphism')
-
         def characteristic(self):
             r"""
             Return the function ring-characteristic.
@@ -728,3 +716,13 @@ class DrinfeldModules(Category_over_base):
                 True
             """
             return self.category().ore_polring()
+
+        # FIXME
+        # The parent method `base_ring` is defined not here, as it
+        # should be, but in `DrinfeldModule`.
+        #
+        # This is because calling `phi.base_ring()` calls the
+        # `base_ring` method of `CategoryObject` and not the one defined
+        # here.
+        #
+        # This works, but any better solution would be welcome.

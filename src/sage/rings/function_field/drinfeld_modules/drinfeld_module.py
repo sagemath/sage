@@ -602,6 +602,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         self._Fq = self._function_ring.base_ring()  # Must be last
         super().__init__(base=self._base, category=category)
 
+    def base_ring(self):
+        r"""
+        Raise an exception.
+
+        The base of a Drinfeld module is a ring morphism, not a ring.
+
+        This method is implemented in CategoryObjects, of which
+        Parent inherits. It returns the base of the category. I
+        overloaded it to avoid confusion.
+
+        TESTS::
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi.base_ring()
+            Traceback (most recent call last):
+            ...
+            AttributeError: the base of a Drinfeld module is a morphism
+        """
+        raise AttributeError('the base of a Drinfeld module is a morphism')
+
     def __call__(self, a):
         r"""
         Return the image of ``a`` by the morphism that defines the
