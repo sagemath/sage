@@ -40,7 +40,7 @@ class DrinfeldModuleAction(Action):
     The action is instantiated as follows. Note that the user should
     never explicitly instantiate the class `DrinfeldModuleAction`::
 
-    INPUT: a Drinfeld module
+    INPUT: the Drinfeld module
 
     EXAMPLES:
 

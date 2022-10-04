@@ -128,7 +128,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         INPUT:
 
         - ``cls`` -- DrinfeldModuleMorphism
-        - ``parent`` -- The Drinfeld module homset
+        - ``parent`` -- the Drinfeld module homset
         - ``x`` -- the Ore polynomial defining the morphism or a
           DrinfeldModuleMorphism
 
@@ -174,8 +174,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``parent`` -- The Drinfeld module homset
-        - ``ore_pol`` -- The Ore polynomial that defines the morphism
+        - ``parent`` -- the Drinfeld module homset
+        - ``ore_pol`` -- the Ore polynomial that defines the morphism
 
         TESTS::
 

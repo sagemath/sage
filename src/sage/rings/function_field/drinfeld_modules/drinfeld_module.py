@@ -123,7 +123,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
       finite field
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
-    - ``name`` (optional) -- the name of the Ore polynomial ring gen
+    - ``name`` (default: `'t'`) -- the name of the Ore polynomial ring
+      generator
 
     .. RUBRIC:: Construction
 
@@ -485,7 +486,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           is a finite field
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
-        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+        - ``name`` (default: `'t'`) -- the name of the Ore polynomial
+          ring gen
 
         OUTPUT: a DrinfeldModule or FiniteDrinfeldModule
 
@@ -570,7 +572,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           is a finite field
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
-        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+        - ``name`` (default: `'t'`) -- the name of the Ore polynomial ring gen
 
         TESTS:
 

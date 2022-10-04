@@ -114,7 +114,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
           is a finite field
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
-        - ``name`` (optional) -- the name of the Ore polynomial ring gen
+        - ``name`` (default: `'t'`) -- the name of the Ore polynomial
+          ring gen
 
         TESTS:
 
@@ -194,9 +195,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Note that the *Frobenius trace* is defined as `A(X)` and the
         *Frobenius norm* is defined as `B(X)`.
 
-        INPUT:
-
-        - ``var`` -- (optional) the name of the second variable
+        INPUT: (default: `'T'`) the name of the second variable
 
         OUTPUT: an univariate polynomial with coefficients in the
         function ring
