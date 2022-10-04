@@ -159,10 +159,10 @@ class DrinfeldModuleHomset(Homset):
         if check:
             if X.category() != Y.category() \
                     or not isinstance(X.category(), DrinfeldModules):
-                raise NotImplementedError('Drinfeld modules must be in the '
-                                          'same category')
+                raise ValueError('Drinfeld modules must be in the same '
+                                 'category')
             if category != X.category():
-                raise NotImplementedError('category should be DrinfeldModules')
+                raise ValueError('category should be DrinfeldModules')
         base = category.base()
         super().__init__(X, Y, category=category, base=base, check=check)
 
