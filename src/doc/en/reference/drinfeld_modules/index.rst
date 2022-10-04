@@ -1,7 +1,7 @@
 Drinfeld modules
 ====================================
 
-Sage include facilities to manipulate Drinfeld modules and their morphisms. The
+SageMath include facilities to manipulate Drinfeld modules and their morphisms. The
 main entry point is the class
 :class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
