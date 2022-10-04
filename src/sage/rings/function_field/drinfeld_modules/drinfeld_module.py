@@ -38,7 +38,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
-    This class represents a Drinfeld module.
+    This class represents a Drinfeld `\Fq[X]`-module.
 
     Let `\Fq[X]` be a polynomial ring with coefficients in a finite
     field `\Fq` and let `K` be a field. We fix a ring morphism `\gamma:
@@ -66,8 +66,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
 
-    The Drinfeld module `\phi` is uniquely determined by the image
-    `\phi_X` of `X`. This serves as input of the class.
+    The Drinfeld `\Fq[X]`-module `\phi` is uniquely determined by the
+    image `\phi_X` of `X`. This serves as input of the class.
 
     Despite an emphasis on the finite case, the base codomain can be any
     extension of the field `\Fq`::
