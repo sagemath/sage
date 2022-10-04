@@ -610,15 +610,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def base_ring(self):
         r"""
-        Raise an exception.
+        Raise exception ``AttributeError``.
 
         The base of a Drinfeld module is a ring morphism, not a ring.
 
-        This method is implemented in CategoryObjects, of which
-        Parent inherits. It returns the base of the category. I
-        overloaded it to avoid confusion.
+        This method is implemented in ``CategoryObject``, of which Parent
+        inherits. It returns the base of the category. I overloaded it
+        to avoid confusion.
 
-        TESTS::
+        EXAMPLES::
 
             sage: Fq = GF(25)
             sage: FqX.<X> = Fq[]
