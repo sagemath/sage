@@ -29,16 +29,17 @@ class DrinfeldModuleAction(Action):
     This class represents the module action induced by a Drinfeld
     module.
 
-    Let `\phi` be a Drinfeld module with base `\gamma: \Fq[X] \to K`.
-    Let `L/K` be a field extension, let `x \in L`, let `a` be a function
-    ring element; the action is defined as `(a, x) \mapsto \phi_a(x)`.
+    Let `\phi` be a Drinfeld module with base `\gamma: \mathbb{F}_q[X]
+    \to K`. Let `L/K` be a field extension, let `x \in L`, let `a` be a
+    function ring element; the action is defined as `(a, x) \mapsto
+    \phi_a(x)`.
 
     .. NOTE::
 
         In this implementation, `L` is `K`.
 
-    The action is instantiated as follows. Note that the user should
-    never explicitly instantiate the class `DrinfeldModuleAction`::
+    The user should never explicitly instantiate the class
+    `DrinfeldModuleAction`.
 
     INPUT: the Drinfeld module
 
@@ -76,7 +77,7 @@ class DrinfeldModuleAction(Action):
 
     def __init__(self, drinfeld_module):
         """
-        Initialize `self`.
+        Initialize ``self``.
 
         INPUT: the Drinfeld module
 

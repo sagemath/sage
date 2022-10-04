@@ -33,28 +33,30 @@ class DrinfeldModules(Category_over_base):
     This class represents the category of Drinfeld modules on a given
     base.
 
-    Let `\Fq[X]` be a polynomial ring with coefficients in a finite
-    field `\Fq` and let `K` be a field. We fix a ring morphism `\gamma:
-    \Fq[X] \to K`, which we call the *base* of the category (it is the
-    base of the Drinfeld modules in the category).
-    Please note that the base is not a ring; in particular, it is
-    not the field `K`. We also call `K` an *`\Fq[X]`-field*.
+    Let `\mathbb{F}_q[X]` be a polynomial ring with coefficients in a
+    finite field `\mathbb{F}_q` and let `K` be a field. We fix a ring
+    morphism `\gamma: \mathbb{F}_q[X] \to K`, which we call the *base*
+    of the category (it is the base of the Drinfeld modules in the
+    category). Please note that the base is not a ring; in particular,
+    it is not the field `K`. We also call `K` an
+    `\mathbb{F}_q[X]`-field.
 
     The category is uniquely defined by its base.
 
     The monic polynomial that generates the kernel of the base is called
-    the *`\Fq[X]`-characteristic of the `\Fq[X]`-field `K`*.
+    the `\mathbb{F}_q[X]`-characteristic of the `\mathbb{F}_q[X]`-field
+    `K`.
 
     .. NOTE::
 
         These notations will be used throughout this documentation.
 
-    We say that `\Fq[X]` is the *function ring of the category*;
-    *K\{\tau\}* is the *Ore polynomial ring of the category*. The
-    *constant coefficient of the category* is the image of `X` under the
-    base. The `\Fq[X]`-characteristic of the `\Fq[X]`-field `K` can also
-    be referred to as its *function ring-characteristic*. Finally, `K`
-    is just refered to as the codomain base.
+    We say that `\mathbb{F}_q[X]` is the function ring of the category;
+    `K\{\tau\}` is the re polynomial ring of the category. The constant
+    coefficient of the category is the image of `X` under the base. The
+    `\mathbb{F}_q[X]`-characteristic of the `\mathbb{F}_q[X]`-field `K`
+    can also be referred to as its function ring-characteristic.
+    Finally, `K` is just refered to as the codomain base.
 
     INPUT: the base ring morphism
 
@@ -90,7 +92,7 @@ class DrinfeldModules(Category_over_base):
           To:   Finite Field in z of size 11^4
           Defn: X |--> z^3 + 7*z^2 + 6*z + 10
 
-    The so-called *constant coefficient* --- which is the same for all
+    The so-called constant coefficient --- which is the same for all
     Drinfeld modules in the category --- is simply the image of `X` by
     this morphism:
 
@@ -99,9 +101,9 @@ class DrinfeldModules(Category_over_base):
         sage: cat.base()(X) == cat.constant_coefficient()
         True
 
-    Similarly, the *function ring-characteristic* of the category is either
-    `0` or the unique monic polynomial in `\Fq[X]` that generates
-    the kernel of the base::
+    Similarly, the function ring-characteristic of the category is
+    either `0` or the unique monic polynomial in `\mathbb{F}_q[X]` that
+    generates the kernel of the base::
 
         sage: cat.characteristic()
         X^2 + 7*X + 2
@@ -655,9 +657,9 @@ class DrinfeldModules(Category_over_base):
                 sage: phi.constant_coefficient() == p_root
                 True
 
-            Let `\Fq[X]` be the function ring, and let `\gamma` the base of
-            the Drinfeld module. The constant coefficient equals
-            `\gamma(X)`::
+            Let `\mathbb{F}_q[X]` be the function ring, and let `\gamma`
+            the base of the Drinfeld module. The constant coefficient
+            equals `\gamma(X)`::
 
                 sage: cat = phi.category()
                 sage: base = cat.base()

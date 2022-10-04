@@ -29,14 +29,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     r"""
     This class represents a Drinfeld module morphism.
 
-    Let `\phi, \psi` be two Drinfeld modules with base `\gamma: \Fq[X]
+    Let `\phi, \psi` be two Drinfeld modules with base `\gamma: \mathbb{F}_q[X]
     \to K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
-    polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
-    every `a \in \Fq[X]`. In our case, this is equivalent to `f \phi_X =
-    \psi_X f`. An *isogeny* is a non-zero morphism.
+    polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a
+    \in \mathbb{F}_q[X]`. In our case, this is equivalent to `f \phi_X = \psi_X
+    f`. An *isogeny* is a non-zero morphism.
 
     To create a morphism object, the user should never explicitly
-    instantiate `DrinfeldModuleMorphism`, but rather call the parent
+    instantiate :class:`DrinfeldModuleMorphism`, but rather call the parent
     homset with the defining Ore polynomial::
 
         sage: Fq = GF(25)
@@ -170,7 +170,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     def __init__(self, parent, ore_pol):
         r"""
-        Initialize `self`.
+        Initialize ``self``.
 
         INPUT:
 

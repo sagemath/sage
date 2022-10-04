@@ -131,15 +131,15 @@ class DrinfeldModuleHomset(Homset):
 
     def __init__(self, X, Y, category=None, check=True):
         """
-        Initialize `self`.
+        Initialize ``self``.
 
         INPUT:
 
         - ``X`` -- the domain of the homset
         - ``Y`` -- the codomain of the homset
-        - ``category`` (default: None) -- the Drinfeld modules category of
+        - ``category`` (default: ``None``) -- the Drinfeld modules category of
           the domain and codomain
-        - ``check`` (default: True) -- check the validity of the category
+        - ``check`` (default: ``True``) -- check the validity of the category
 
         TESTS::
 

@@ -176,7 +176,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         endomorphism, if the rank is two; raise a NotImplementedError
         otherwise.
 
-        Let `\Fq` be the base ring of the function ring. The
+        Let `\mathbb{F}_q` be the base ring of the function ring. The
         *characteristic polynomial `\chi` of the Frobenius endomorphism*
         is defined in [Gek1991]_. An important feature of this
         polynomial is that it is a monic univariate polynomial with
@@ -188,14 +188,14 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `\chi = T^2 - A(X)T + B(X)` be the characteristic polynomial
         of the Frobenius endomorphism, let `t^n` be the Ore polynomial
         that defines the Frobenius endomorphism of `\phi`; by
-        definition, `n` is the degree over `\Fq` of the base codomain. We
-        have `\chi(t^n)(\phi(X)) = t^{2n} - \phi_A t^n + \phi_B = 0`,
-        with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
+        definition, `n` is the degree over `\mathbb{F}_q` of the base
+        codomain. We have `\chi(t^n)(\phi(X)) = t^{2n} - \phi_A t^n +
+        \phi_B = 0`, with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
 
         Note that the *Frobenius trace* is defined as `A(X)` and the
         *Frobenius norm* is defined as `B(X)`.
 
-        INPUT: (default: `'T'`) the name of the second variable
+        INPUT: (default: ``'T'``) the name of the second variable
 
         OUTPUT: an univariate polynomial with coefficients in the
         function ring
@@ -231,7 +231,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
             We compute the Frobenius norm, and with it the Frobenius
             trace. This gives the Frobenius characteristic polynomial.
-            See [SM2019]_, Section 4.
+            See [MS2019]_, Section 4.
 
             See docstrings of methods :meth:`frobenius_norm` and
             :meth:`frobenius_trace` for furthere details on the
@@ -250,13 +250,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Let `\Fq[X]` be the function ring, write `\chi = T^2 - A(X)T +
-        B(X) \in \Fq[X][T]` for the characteristic polynomial of the
-        Frobenius endomorphism. The *Frobenius norm* is defined as the
-        polynomial `B(X) \in \Fq[X]`.
+        Let `\mathbb{F}_q[X]` be the function ring, write `\chi = T^2 -
+        A(X)T + B(X) \in \mathbb{F}_q[X][T]` for the characteristic
+        polynomial of the Frobenius endomorphism. The *Frobenius norm*
+        is defined as the polynomial `B(X) \in \mathbb{F}_q[X]`.
 
-        Let `n` be the degree over `\Fq` of the base codomain. Then the
-        Frobenius norm has degree `n`.
+        Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
+        Then the Frobenius norm has degree `n`.
 
         OUTPUT: an element in the function ring
 
@@ -280,7 +280,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         ALGORITHM:
 
             The Frobenius norm is computed using the formula, by
-            Gekeler, given in [SM2019]_, Section 4, Proposition 3.
+            Gekeler, given in [MS2019]_, Section 4, Proposition 3.
         """
         self._check_rank_two()
         L = self._base.codomain().over(self._Fq)
@@ -300,13 +300,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Let `\Fq[X]` be the function ring, write `\chi = T^2 - A(X)T +
-        B(X) \in \Fq[X][T]` for the characteristic polynomial of the
-        Frobenius endomorphism. The *Frobenius norm* is defined as the
-        polynomial `B(X) \in \Fq[X]`.
+        Let `\mathbb{F}_q[X]` be the function ring, write `\chi = T^2 -
+        A(X)T + B(X) \in \mathbb{F}_q[X][T]` for the characteristic
+        polynomial of the Frobenius endomorphism. The *Frobenius norm*
+        is defined as the polynomial `B(X) \in \mathbb{F}_q[X]`.
 
-        Let `n` be the degree over `\Fq` of the base codomain. Then the
-        Frobenius trace has degree `\leq \frac{n}{2}`.
+        Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
+        Then the Frobenius trace has degree `\leq \frac{n}{2}`.
 
         OUTPUT: an element in the function ring
 
@@ -378,12 +378,12 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         ALGORITHM:
 
-            Compute the Frobenius trace and test if the `\Fq[X]`
-            characteristic divides it.
+            Compute the Frobenius trace and test if the
+            `\mathbb{F}_q[X]` characteristic divides it.
 
             We could also test if the image of the
-            `\Fq[X]`-characteristic under the Drinfeld module is purely
-            inseparable; see [Gek1991]_, Proposition 4.1.
+            `\mathbb{F}_q[X]`-characteristic under the Drinfeld module
+            is purely inseparable; see [Gek1991]_, Proposition 4.1.
         """
         self._check_rank_two()
         return not self.is_supersingular()
