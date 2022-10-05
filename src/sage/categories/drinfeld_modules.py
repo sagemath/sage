@@ -466,7 +466,6 @@ class DrinfeldModules(Category_over_base):
     def super_categories(self):
         return []
 
-    # Somehow required for the class definition
     class ParentMethods:
 
         def base(self):
