@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-Finite Fields of characteristic 2.
+Finite field of characteristic 2 elements
 
 This implementation uses NTL's GF2E class to perform the arithmetic
 and is the standard implementation for ``GF(2^n)`` for ``n >= 16``.

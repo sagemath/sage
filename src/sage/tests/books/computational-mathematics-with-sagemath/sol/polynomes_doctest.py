@@ -106,4 +106,3 @@ Sage example in ./sol/polynomes.tex, line 454::
   + 21844/6081075*x^13 + O(x^15)
 
 """
-

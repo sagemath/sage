@@ -120,30 +120,6 @@ def layout_split(layout_function, G, **options):
     return pos
 
 
-def spring_layout_fast_split(G, **options):
-    """
-    Graph each component of ``G`` separately, placing them adjacent to each
-    other.
-
-    In ticket :trac:`29522` the function was modified so that it can
-    work with any layout method and renamed ``layout_split``.
-    Please use :func:`layout_split` from now on.
-
-    TESTS::
-
-        sage: from sage.graphs.generic_graph_pyx import spring_layout_fast_split
-        sage: G = Graph(4)
-        sage: _ = spring_layout_fast_split(G)
-        doctest:...: DeprecationWarning: spring_layout_fast_split is deprecated, please use layout_split instead
-        See https://trac.sagemath.org/29522 for details.
-
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(29522, ('spring_layout_fast_split is deprecated, please use '
-                        'layout_split instead'), stacklevel=3)
-    return layout_split(spring_layout_fast, G, **options)
-
-
 def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True,
                        bint height=False, by_component=False, **options):
     """

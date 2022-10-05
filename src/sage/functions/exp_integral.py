@@ -1,5 +1,5 @@
 r"""
-Exponential Integrals
+Exponential integrals
 
 AUTHORS:
 

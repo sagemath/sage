@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 r"""
 Miscellaneous arithmetic functions
+
+AUTHORS:
+
+- Kevin Stueve (2010-01-17): in ``is_prime(n)``, delegated calculation to ``n.is_prime()``
 """
 
 # ****************************************************************************
@@ -471,24 +475,28 @@ def factorial(n, algorithm='gmp'):
 
 def is_prime(n):
     r"""
-    Return ``True`` if `n` is a prime number, and ``False`` otherwise.
-
-    Use a provable primality test or a strong pseudo-primality test depending
-    on the global :mod:`arithmetic proof flag <sage.structure.proof.proof>`.
+    Determine whether `n` is a prime element of its parent ring.
 
     INPUT:
 
-    -  ``n`` - the object for which to determine primality
+    - ``n`` -- the object for which to determine primality
+
+    Exceptional special cases:
+
+    - For integers, determine whether `n` is a *positive* prime.
+    - For number fields except `\QQ`, determine whether `n`
+      is a prime element *of the maximal order*.
+
+    ALGORITHM:
+
+    For integers, this function uses a provable primality test
+    or a strong pseudo-primality test depending on the global
+    :mod:`arithmetic proof flag <sage.structure.proof.proof>`.
 
     .. SEEALSO::
 
         - :meth:`is_pseudoprime`
         - :meth:`sage.rings.integer.Integer.is_prime`
-
-    AUTHORS:
-
-    - Kevin Stueve kstueve@uw.edu (2010-01-17):
-      delegated calculation to ``n.is_prime()``
 
     EXAMPLES::
 
@@ -505,18 +513,59 @@ def is_prime(n):
         sage: is_prime(-2)
         False
 
+    ::
+
         sage: a = 2**2048 + 981
         sage: is_prime(a)    # not tested - takes ~ 1min
         sage: proof.arithmetic(False)
         sage: is_prime(a)    # instantaneous!
         True
         sage: proof.arithmetic(True)
+
+    TESTS:
+
+    Make sure the warning from :trac:`25046` works as intended::
+
+        sage: is_prime(7/1)
+        doctest:warning
+        ...
+        UserWarning: Testing primality in Rational Field, which is a field,
+        hence the result will always be False. To test whether n is a prime
+        integer, use is_prime(ZZ(n)) or ZZ(n).is_prime(). Using n.is_prime()
+        instead will silence this warning.
+        False
+        sage: ZZ(7/1).is_prime()
+        True
+        sage: QQ(7/1).is_prime()
+        False
+
+    However, number fields redefine ``.is_prime()`` in an incompatible fashion
+    (cf. :trac:`32340`) and we should not warn::
+
+        sage: K.<i> = NumberField(x^2+1)
+        sage: is_prime(1+i)
+        True
     """
     try:
-        return n.is_prime()
+        ret = n.is_prime()
     except (AttributeError, NotImplementedError):
         return ZZ(n).is_prime()
 
+    R = n.parent()
+    if R.is_field():
+        # number fields redefine .is_prime(), see #32340
+        from sage.rings.number_field.number_field import NumberField_generic
+        if not isinstance(R, NumberField_generic):
+            import warnings
+            s = f'Testing primality in {R}, which is a field, ' \
+                 'hence the result will always be False. '
+            if R is QQ:
+                s += 'To test whether n is a prime integer, use ' \
+                     'is_prime(ZZ(n)) or ZZ(n).is_prime(). '
+            s += 'Using n.is_prime() instead will silence this warning.'
+            warnings.warn(s)
+
+    return ret
 
 def is_pseudoprime(n):
     r"""
@@ -3224,10 +3273,10 @@ def crt(a, b, m=None, n=None):
 CRT = crt
 
 
-def CRT_list(v, moduli):
-    r""" Given a list ``v`` of elements and a list of corresponding
+def CRT_list(values, moduli):
+    r""" Given a list ``values`` of elements and a list of corresponding
     ``moduli``, find a single element that reduces to each element of
-    ``v`` modulo the corresponding moduli.
+    ``values`` modulo the corresponding moduli.
 
     .. SEEALSO::
 
@@ -3289,22 +3338,37 @@ def CRT_list(v, moduli):
         sage: from gmpy2 import mpz
         sage: CRT_list([mpz(2),mpz(3),mpz(2)], [mpz(3),mpz(5),mpz(7)])
         23
+
+    Make sure we are not mutating the input lists::
+
+        sage: xs = [1,2,3]
+        sage: ms = [5,7,9]
+        sage: CRT_list(xs, ms)
+        156
+        sage: xs
+        [1, 2, 3]
+        sage: ms
+        [5, 7, 9]
     """
-    if not isinstance(v, list) or not isinstance(moduli, list):
+    if not isinstance(values, list) or not isinstance(moduli, list):
         raise ValueError("arguments to CRT_list should be lists")
-    if len(v) != len(moduli):
+    if len(values) != len(moduli):
         raise ValueError("arguments to CRT_list should be lists of the same length")
-    if not v:
+    if not values:
         return ZZ.zero()
-    if len(v) == 1:
-        return moduli[0].parent()(v[0])
-    x = v[0]
-    m = moduli[0]
+    if len(values) == 1:
+        return moduli[0].parent()(values[0])
+
+    # The result is computed using a binary tree. In typical cases,
+    # this scales much better than folding the list from one side.
     from sage.arith.functions import lcm
-    for i in range(1, len(v)):
-        x = CRT(x, v[i], m, moduli[i])
-        m = lcm(m, moduli[i])
-    return x % m
+    while len(values) > 1:
+        vs, ms = values[::2], moduli[::2]
+        for i, (v, m) in enumerate(zip(values[1::2], moduli[1::2])):
+            vs[i] = CRT(vs[i], v, ms[i], m)
+            ms[i] = lcm(ms[i], m)
+        values, moduli = vs, ms
+    return values[0] % moduli[0]
 
 
 def CRT_basis(moduli):

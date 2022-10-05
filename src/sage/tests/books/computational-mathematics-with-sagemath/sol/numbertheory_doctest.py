@@ -166,4 +166,3 @@ Sage example in ./sol/numbertheory.tex, line 390::
   + 4/5*s3^3*x3^15 - 9/32*s3^2*x3^16 + 1/17*s3*x3^17
 
 """
-

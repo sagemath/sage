@@ -473,4 +473,3 @@ class SimpleModule(QuotientModuleWithBasis):
         # For backward compatibility
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
-

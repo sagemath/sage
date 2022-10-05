@@ -851,7 +851,7 @@ def cusps_from_mat(g):
     return ac, bd
 
 
-def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
+def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
     r"""
     Return the overconvergent modular symbol associated to
     an elliptic curve defined over the rationals.

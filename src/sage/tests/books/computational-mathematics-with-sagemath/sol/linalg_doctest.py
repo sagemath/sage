@@ -55,4 +55,3 @@ Sage example in ./sol/linalg.tex, line 168::
   False
 
 """
-

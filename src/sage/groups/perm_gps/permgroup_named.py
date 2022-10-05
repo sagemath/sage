@@ -272,8 +272,8 @@ class SymmetricGroup(PermutationGroup_symalt):
         gens = [tuple(self._domain)]
         if len(self._domain) > 2:
             gens.append(tuple(self._domain[:2]))
-        self._gens = [self.element_class(g, self, check=False)
-                      for g in gens]
+        self._gens = tuple([self.element_class(g, self, check=False)
+                            for g in gens])
 
     def _gap_init_(self, gap=None):
         """

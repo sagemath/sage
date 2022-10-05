@@ -58,4 +58,3 @@ Sage example in ./sol/domaines.tex, line 80::
   <class 'sage.modules.with_basis.morphism.DiagonalModuleMorphism_with_category'>
 
 """
-

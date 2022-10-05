@@ -408,7 +408,6 @@ class FreeMonoidElement(MonoidElement):
             :meth:`to_word`
         """
         if not indices:
-            return sum( ([i[0]] * i[1] for i in list(self)), [])
+            return sum(([i[0]] * i[1] for i in list(self)), [])
         gens = self.parent().gens()
-        return sum( ([gens.index(i[0])] * i[1] for i in list(self)), [])
-
+        return sum(([gens.index(i[0])] * i[1] for i in list(self)), [])

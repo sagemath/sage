@@ -1757,11 +1757,11 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 raise RuntimeError('fatal: base ring embedding %s does not work' % bri)
 
         test_eleBgenEmb = self._tester(**options)
-        test_eleBgenEmb.assertTrue(eleBgenEmb == eleB)
+        test_eleBgenEmb.assertEqual(eleBgenEmb, eleB)
         test_eleEgenEmb = self._tester(**options)
-        test_eleEgenEmb.assertTrue(eleEgenEmb == eleE)
+        test_eleEgenEmb.assertEqual(eleEgenEmb, eleE)
         test_eleBembE = self._tester(**options)
-        test_eleBembE.assertTrue(eleBembE == eleB)
+        test_eleBembE.assertEqual(eleBembE, eleB)
 
     # --------------------------------------------------------------------------
     # _test_matrix_constructions
@@ -1806,7 +1806,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             m12mult = m1*m2
             m12mat = b12.matrix(representation_type=representation_type)
             test_matrix = self._tester(**options)
-            test_matrix.assertTrue(m12mult == m12mat)
+            test_matrix.assertEqual(m12mult, m12mat)
 
         from sage.combinat.root_system.reflection_group_real import is_chevie_available
 
@@ -3535,4 +3535,3 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             return char_function
         irrs = [irr for irr in self.irred_repr if irr.number_gens() == self._nstrands - 1]
         return [self.characters(irrs[i], original=original) for i in range(len(irrs))]
-

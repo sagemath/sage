@@ -52,6 +52,8 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     # and renamed the distribution to "sagemath-standard").  There is no clean way to uninstall
     # them, so we just use rm.
     (cd "$SITEPACKAGESDIR" && rm -rf sage sage_setup sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
+    # Until https://trac.sagemath.org/ticket/34209 switches us to PEP 660 editable wheels
+    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     time python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable . || exit 1
 else
     # Make sure that an installed old version of sagelib in which sage is an ordinary package

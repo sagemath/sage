@@ -572,4 +572,3 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
 
         self._res_shifts = res_shifts
         return res_mats
-

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Graph Plotting
+Graph plotting
 
 *(For LaTeX drawings of graphs, see the* :mod:`~sage.graphs.graph_latex` *module.)*
 

@@ -28,9 +28,14 @@ REFERENCES:
 """
 
 # ******************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
-#       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
+#       Copyright (C) 2015-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#                     2015      Michal Bejger <bejger@camk.edu.pl>
+#                     2016      Travis Scrimshaw <tscrimsh@umn.edu>
+#                     2018      Florentin Jaffredo
+#                     2019      Hans Fotsing Tetsing
+#                     2020      Michael Jung
+#                     2020-2022 Matthias Koeppe
+#                     2021-2022 Tobias Diez
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -501,7 +506,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         return self._dest_map
 
-    def tensor_module(self, k, l):
+    def tensor_module(self, k, l, *, sym=None, antisym=None):
         r"""
         Return the module of type-`(k,l)` tensors on ``self``.
 
@@ -547,11 +552,16 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.tensorfield_module import \
+        if sym or antisym:
+            raise NotImplementedError
+        try:
+            return self._tensor_modules[(k,l)]
+        except KeyError:
+            from sage.manifolds.differentiable.tensorfield_module import \
                                                               TensorFieldModule
-        if (k,l) not in self._tensor_modules:
-            self._tensor_modules[(k,l)] = TensorFieldModule(self, (k,l))
-        return self._tensor_modules[(k,l)]
+            T = TensorFieldModule(self, (k,l))
+            self._tensor_modules[(k,l)] = T
+            return T
 
     def exterior_power(self, p):
         r"""
@@ -600,13 +610,17 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.multivector_module import \
+        try:
+            return self._exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.manifolds.differentiable.multivector_module import \
                                                               MultivectorModule
-        if p == 0:
-            return self._ring
-        if p not in self._exterior_powers:
-            self._exterior_powers[p] = MultivectorModule(self, p)
-        return self._exterior_powers[p]
+                L = MultivectorModule(self, p)
+            self._exterior_powers[p] = L
+            return L
 
     def dual_exterior_power(self, p):
         r"""
@@ -654,13 +668,17 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.diff_form_module import \
+        try:
+            return self._dual_exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.manifolds.differentiable.diff_form_module import \
                                                                  DiffFormModule
-        if p == 0:
-            return self._ring
-        if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = DiffFormModule(self, p)
-        return self._dual_exterior_powers[p]
+                L = DiffFormModule(self, p)
+            self._dual_exterior_powers[p] = L
+        return L
 
     def dual(self):
         r"""
@@ -1715,7 +1733,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._dest_map
 
-    def tensor_module(self, k, l):
+    def tensor_module(self, k, l, *, sym=None, antisym=None):
         r"""
         Return the free module of all tensors of type `(k, l)` defined
         on ``self``.
@@ -1764,11 +1782,15 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
+        if sym or antisym:
+            raise NotImplementedError
         try:
             return self._tensor_modules[(k,l)]
         except KeyError:
             if (k, l) == (1, 0):
                 T = self
+            elif (k, l) == (0, 1):
+                T = self.dual()
             else:
                 from sage.manifolds.differentiable.tensorfield_module import \
                                                           TensorFieldFreeModule
@@ -1868,8 +1890,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Free module Omega^2(M) of 2-forms on the 2-dimensional
              differentiable manifold M
             sage: XM.dual_exterior_power(1)
-            Free module Omega^1(M) of 1-forms on the 2-dimensional
-             differentiable manifold M
+            Free module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M
             sage: XM.dual_exterior_power(1) is XM.dual()
             True
             sage: XM.dual_exterior_power(0)
@@ -1889,6 +1910,10 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         except KeyError:
             if p == 0:
                 L = self._ring
+            elif p == 1:
+                from sage.manifolds.differentiable.diff_form_module import \
+                                                      VectorFieldDualFreeModule
+                L = VectorFieldDualFreeModule(self)
             else:
                 from sage.manifolds.differentiable.diff_form_module import \
                                                       DiffFormFreeModule
@@ -2010,7 +2035,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                            symbol_dual=symbol_dual,
                            latex_symbol_dual=latex_symbol_dual)
 
-    def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
+    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
                antisym=None, specific_type=None):
         r"""
         Construct a tensor on ``self``.

@@ -79,7 +79,7 @@ If your Mac uses the Apple Silicon (M1, arm64) architecture:
   https://brew.sh/ required because it provides a version of ``gfortran`` with
   necessary changes for this platform that are not in a released upstream
   version of GCC. (The ``gfortran`` package that comes with the Sage
-  distribution is not suitable for the M1.)
+  distribution is not suitable for the M1/M2.)
 
 If your Mac uses the Intel (x86_64) architecture:
 
@@ -184,14 +184,20 @@ in the Installation Guide.
 
     - Compilers: `gcc`, `gfortran`, `g++` (GCC 8.x to 12.x and recent
       versions of Clang (LLVM) are supported).
-      See the Installation Manual for a discussion of suitable compilers.
+      See [build/pkgs/gcc/SPKG.rst](build/pkgs/gcc/SPKG.rst) and
+      [build/pkgs/gfortran/SPKG.rst](build/pkgs/gfortran/SPKG.rst)
+      for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
       ``ExtUtils::MakeMaker``), `ranlib`, `git`, `tar`, `bc`.
+      See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
+      more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
       `urllib`; but ideally version 3.8.x, 3.9.x, or 3.10.x, which
       will avoid having to build Sage's own copy of Python 3.
+      See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
+      for more details.
 
     We have collected lists of system packages that provide these build
     prerequisites. See, in the folder

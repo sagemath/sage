@@ -839,8 +839,8 @@ class LazyModuleElement(Element):
                     return False
 
             # undecidable otherwise
-            prec = self.parent().options.halting_precision
-            if prec == None:
+            prec = self.parent().options['halting_precision']
+            if prec is None:
                 raise ValueError("undecidable")
             # at least one of the approximate orders is not infinity
             m = min(self._coeff_stream._approximate_order,
@@ -957,8 +957,8 @@ class LazyModuleElement(Element):
         if self[v]:
             return True
 
-        prec = self.parent().options.halting_precision
-        if prec == None:
+        prec = self.parent().options['halting_precision']
+        if prec is None:
             raise ValueError("undecidable as lazy Laurent series")
         return any(self[i] for i in range(v, v + prec))
 
@@ -5449,6 +5449,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         la = Partition([1])
         X = R(la)
+
         def coefficient(n):
             if n:
                 return 0

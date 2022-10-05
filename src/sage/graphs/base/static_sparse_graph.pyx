@@ -1,7 +1,7 @@
 # cython: binding=True
 # distutils: language = c++
 r"""
-Static Sparse Graphs
+Static sparse graphs
 
 What is the point ?
 -------------------

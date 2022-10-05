@@ -73,7 +73,7 @@ cdef class ntl_mat_ZZ():
     The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
     """
     def __init__(self, nrows=0,  ncols=0, v=None):
-        """
+        r"""
         The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
 
         EXAMPLES::
@@ -319,6 +319,8 @@ cdef class ntl_mat_ZZ():
 
     def __getitem__(self, ij):
         """
+        EXAMPLES::
+
             sage: m = ntl.mat_ZZ(3, 2, range(6))
             sage: m[0,0] ## indirect doctest
             0

@@ -5,16 +5,15 @@ AUTHOR:
 
 - Martin Albrecht (2009-07): refactoring
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -22,7 +21,7 @@ cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
 import re
-plusminus_pattern = re.compile("([^\(^])([\+\-])")
+plusminus_pattern = re.compile(r"([^\(^])([\+\-])")
 parenthvar_pattern = re.compile(r"\(([a-zA-Z][a-zA-Z0-9]*)\)")
 
 from sage.cpython.string cimport bytes_to_str, str_to_bytes

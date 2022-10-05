@@ -216,4 +216,3 @@ Sage example in ./sol/combinat.tex, line 566::
   [0, 1, 1, 2, 5, 14, 42, 132, 429]
 
 """
-

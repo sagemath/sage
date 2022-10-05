@@ -7,12 +7,6 @@ of smaller (prime) degree. This class implements such a decomposition
 while exposing (close to) the same interface as "normal", unfactored
 elliptic-curve isogenies.
 
-.. WARNING::
-
-    This module is currently considered experimental.
-    It may change in a future release without prior warning, or even
-    be removed altogether if things turn out to be unfixably broken.
-
 EXAMPLES:
 
 The following example would take quite literally forever with the
@@ -20,8 +14,6 @@ straightforward :class:`EllipticCurveIsogeny` implementation, but
 decomposing into prime steps is exponentially faster::
 
     sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-    doctest:warning
-    ...
     sage: p = 3 * 2^143 - 1
     sage: GF(p^2).inject_variables()
     Defining z2
@@ -89,9 +81,6 @@ from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
 from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-
-from sage.misc.superseded import experimental_warning
-experimental_warning(32744, 'EllipticCurveHom_composite is experimental code.')
 
 #TODO: implement sparse strategies? (cf. the SIKE cryptosystem)
 
@@ -789,7 +778,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
             This method exists only temporarily to make testing more
             convenient while :class:`EllipticCurveHom_composite` is
-            experimental.
+            not yet the default.
 
         EXAMPLES::
 
