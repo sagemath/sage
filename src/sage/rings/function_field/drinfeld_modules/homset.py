@@ -227,7 +227,7 @@ class DrinfeldModuleHomset(Homset):
 
         OUTPUT: a boolean
 
-        EXAMPLES::
+        EXAMPLES:
 
         In the next examples, the input is an Ore polynomial::
 
