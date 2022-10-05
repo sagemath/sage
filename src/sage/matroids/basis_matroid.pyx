@@ -1280,8 +1280,9 @@ cdef long set_to_index(bitset_t S):
         s = bitset_next(S, s + 1)
     return index
 
+
 cdef  index_to_set(bitset_t S, long index, long k, long n):
-    """
+    r"""
     Compute the k-subset of `\{0, ..., n-1\}` of rank index
     """
     bitset_clear(S)

@@ -289,4 +289,3 @@ Sage example in ./integration.tex, line 1497::
   mpf('2.7135204235459511323824699502438')
 
 """
-

@@ -161,7 +161,7 @@ AUTHORS:
 - Vincent Delecroix (2015-02): documentation formatting
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
 #                     2015 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -169,8 +169,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
@@ -240,7 +240,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
         sage: sage_input((3, lambda x: x))
         Traceback (most recent call last):
         ...
-        ValueError: Can't convert <function <lambda> at 0x...> to sage_input form
+        ValueError: cannot convert <function <lambda> at 0x...> to sage_input form
 
     But we can have :func:`sage_input` continue anyway, and return an input form
     for the rest of the expression, with ``allow_locals=True``.::
@@ -271,6 +271,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
             final_answer = SageInputAnswer(*ans_l)
 
     return final_answer
+
 
 class SageInputBuilder:
     r"""
@@ -427,7 +428,7 @@ class SageInputBuilder:
             sage: sage_input(lambda x: x)
             Traceback (most recent call last):
             ...
-            ValueError: Can't convert <function <lambda> at 0x...> to sage_input form
+            ValueError: cannot convert <function <lambda> at 0x...> to sage_input form
             sage: sage_input(lambda x: x, allow_locals=True, verify=True)
             LOCALS:
               _sil1: <function <lambda> at 0x...>
@@ -519,7 +520,7 @@ class SageInputBuilder:
             self._locals[loc_name] = x
             return SIE_literal_stringrep(self, loc_name)
         else:
-            raise ValueError("Can't convert {} to sage_input form".format(x))
+            raise ValueError("cannot convert {} to sage_input form".format(x))
 
     def preparse(self):
         r"""
@@ -815,7 +816,7 @@ class SageInputBuilder:
         """
         if isinstance(entries, dict):
             entries = list(entries.items())
-        entries = [(self(key),self(val)) for (key,val) in entries]
+        entries = [(self(key), self(val)) for (key, val) in entries]
         return SIE_dict(self, entries)
 
     def getattr(self, sie, attr):
@@ -1077,7 +1078,7 @@ class SageInputBuilder:
                     neg = False
                     break
                 if isinstance(factor, SIE_literal_stringrep) and factor._sie_value == '1':
-                    factors[i:i+1] = []
+                    factors[i:i + 1] = []
                 else:
                     i += 1
             if len(factors) == 0:
@@ -1123,7 +1124,7 @@ class SageInputBuilder:
             while i < len(terms):
                 term = terms[i]
                 if isinstance(term, SIE_literal_stringrep) and term._sie_value == '0':
-                    terms[i:i+1] = []
+                    terms[i:i + 1] = []
                 else:
                     i += 1
             if len(terms) == 0:
@@ -1174,6 +1175,7 @@ class SageInputBuilder:
         else:
             return SageInputAnswer(sif._commands, sif.format(e, 0))
 
+
 # Python's precedence levels.  Hand-transcribed from section 5.14 of
 # the Python 2 reference manual.  In the Python 3 reference manual
 # this is section 6.16.
@@ -1199,6 +1201,7 @@ _prec_subscript = 36
 _prec_slicing = 38
 _prec_funcall = 40
 _prec_atomic = 42
+
 
 class SageInputExpression():
     r"""
@@ -1687,6 +1690,7 @@ class SageInputExpression():
         result, prec = self._sie_format(sif)
         return result
 
+
 class SIE_literal(SageInputExpression):
     r"""
     An abstract base class for ``literals`` (basically, values which
@@ -1729,6 +1733,7 @@ class SIE_literal(SageInputExpression):
         # and sometimes return false?  If some 50-digit integer occurs multiple
         # times in an expression, it might be better to do the replacement.
         return not self._sie_share
+
 
 class SIE_literal_stringrep(SIE_literal):
     r"""
@@ -1812,6 +1817,7 @@ class SIE_literal_stringrep(SIE_literal):
             ('True', 42)
         """
         return self._sie_value, _prec_atomic
+
 
 class SIE_call(SageInputExpression):
     r"""
@@ -2024,6 +2030,7 @@ class SIE_subscript(SageInputExpression):
             key = sif.format(self._sie_key, 0)
         return '%s[%s]' % (coll, key), _prec_subscript
 
+
 class SIE_getattr(SageInputExpression):
     r"""
     This class represents a getattr node in a :func:`sage_input`
@@ -2221,6 +2228,7 @@ class SIE_tuple(SageInputExpression):
                 return '(%s,)' % values[0], _prec_atomic
             else:
                 return '(%s)' % ', '.join(values), _prec_atomic
+
 
 class SIE_dict(SageInputExpression):
     r"""

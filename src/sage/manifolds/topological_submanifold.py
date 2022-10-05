@@ -294,8 +294,7 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         OUTPUT:
 
-        - the open subset, as an instance of
-          :class:`~sage.manifolds.manifold.topological_submanifold.TopologicalSubmanifold`
+        - the open subset, as an instance of :class:`TopologicalSubmanifold`
 
         EXAMPLES::
 

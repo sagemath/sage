@@ -1,5 +1,5 @@
 r"""
-Bessel Functions
+Bessel functions
 
 This module provides symbolic Bessel and Hankel functions, and their
 spherical versions. These functions use the `mpmath library`_ for numerical

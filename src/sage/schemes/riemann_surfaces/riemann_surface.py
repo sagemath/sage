@@ -478,7 +478,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
     return mt
 
 
-class RiemannSurface(object):
+class RiemannSurface():
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
     polynomial with rational coefficients `f(z,w) = 0`.

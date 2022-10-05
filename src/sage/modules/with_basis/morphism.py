@@ -1551,6 +1551,7 @@ def pointwise_inverse_function(f):
         return f.pointwise_inverse()
     return PointwiseInverseFunction(f)
 
+
 from sage.structure.sage_object import SageObject
 class PointwiseInverseFunction(SageObject):
     r"""
@@ -1630,4 +1631,3 @@ class PointwiseInverseFunction(SageObject):
             True
         """
         return self._pointwise_inverse
-

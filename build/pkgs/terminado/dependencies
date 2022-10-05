@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) ptyprocess tornado
+$(PYTHON) ptyprocess tornado | $(PYTHON_TOOLCHAIN) hatchling
 
 ----------
 All lines of this file are ignored except the first.

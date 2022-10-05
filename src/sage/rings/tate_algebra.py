@@ -1295,4 +1295,3 @@ class TateAlgebra_generic(CommutativeAlgebra):
             True
         """
         return True
-

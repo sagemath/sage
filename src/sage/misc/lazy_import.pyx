@@ -68,7 +68,16 @@ from warnings import warn
 import inspect
 from . import sageinspect
 
-from sage.features import FeatureNotPresentError
+
+# LazyImport.__repr__ uses try... except FeatureNotPresentError.
+# This is defined in sage.features, provided by the distribution sagemath-environment.
+try:
+    from sage.features import FeatureNotPresentError
+except ImportError:
+    # If sage.features cannot be imported, then FeatureNotPresentError cannot
+    # be raised. In this case, use the empty tuple as the exception specification.
+    FeatureNotPresentError = ()
+
 
 cdef inline obj(x):
     if type(x) is LazyImport:
@@ -252,6 +261,8 @@ cdef class LazyImport():
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
         except ImportError as e:
             if self._feature:
+                # Avoid warnings from static type checkers by explicitly importing FeatureNotPresentError.
+                from sage.features import FeatureNotPresentError
                 raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
             raise
 

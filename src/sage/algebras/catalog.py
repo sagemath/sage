@@ -133,5 +133,4 @@ lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
 lazy_import('sage.algebras.yangian', 'Yangian')
 
-del lazy_import # We remove the object from here so it doesn't appear under tab completion
-
+del lazy_import  # We remove the object from here so it doesn't appear under tab completion

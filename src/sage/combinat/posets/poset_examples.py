@@ -219,7 +219,7 @@ class Posets(metaclass=ClasscallMetaclass):
                 from sage.sets.set import Set
                 V = [Set(), Set([1])]
                 return LatticePoset((V, [V]), facade=facade)
-            return LatticePoset(([0,1], [[0,1]]), facade=facade)
+            return LatticePoset(([0, 1], [[0, 1]]), facade=facade)
 
         if use_subsets:
             from sage.sets.set import Set
@@ -288,7 +288,7 @@ class Posets(metaclass=ClasscallMetaclass):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n < 0:
             raise ValueError("number of elements must be non-negative, not {0}".format(n))
-        D = DiGraph([range(n), [[x,x+1] for x in range(n-1)]],
+        D = DiGraph([range(n), [[x, x + 1] for x in range(n - 1)]],
                     format='vertices_and_edges')
         return FiniteLatticePoset(hasse_diagram=D,
                                   category=FiniteLatticePosets(),
@@ -377,7 +377,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.DiamondPoset(5).is_distributive()
             False
         """
-        return LatticePoset([[1,2],[4],[3],[4],[]], facade=facade)
+        return LatticePoset([[1, 2], [4], [3], [4], []], facade=facade)
 
     @staticmethod
     def DiamondPoset(n, facade=None):
@@ -404,10 +404,10 @@ class Posets(metaclass=ClasscallMetaclass):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n <= 2:
             raise ValueError("n must be an integer at least 3")
-        c = [[n-1] for x in range(n)]
-        c[0] = [x for x in range(1,n-1)]
-        c[n-1] = []
-        D = DiGraph({v:c[v] for v in range(n)}, format='dict_of_lists')
+        c = [[n - 1] for x in range(n)]
+        c[0] = [x for x in range(1, n - 1)]
+        c[n - 1] = []
+        D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
         return FiniteLatticePoset(hasse_diagram=D,
                                   category=FiniteLatticePosets(),
                                   facade=facade)
@@ -441,8 +441,8 @@ class Posets(metaclass=ClasscallMetaclass):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n < 2:
             raise ValueError("n must be an integer at least 2")
-        D = {i: [i+n, i+n+1] for i in range(n-1)}
-        D[n-1] = [n, n+n-1]
+        D = {i: [i + n, i + n + 1] for i in range(n - 1)}
+        D[n - 1] = [n, n + n - 1]
         return FinitePoset(hasse_diagram=DiGraph(D), category=FinitePosets(),
                            facade=facade)
 
@@ -485,7 +485,7 @@ class Posets(metaclass=ClasscallMetaclass):
         if n <= 0:
             raise ValueError("n must be a positive integer")
         Div_n = divisors(n)
-        hasse = DiGraph([Div_n, lambda a, b: b%a==0 and is_prime(b//a)])
+        hasse = DiGraph([Div_n, lambda a, b: b % a == 0 and is_prime(b // a)])
         return FiniteLatticePoset(hasse, elements=Div_n, facade=facade,
                                   category=FiniteLatticePosets())
 
@@ -509,7 +509,8 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         from sage.combinat.composition import Compositions
         C = Compositions(n)
-        return Poset((C, [[c,d] for c in C for d in C if d.is_finer(c)]), cover_relations=False)
+        return Poset((C, [[c, d] for c in C for d in C if d.is_finer(c)]),
+                     cover_relations=False)
 
     @staticmethod
     def IntegerPartitions(n):
@@ -535,19 +536,19 @@ class Posets(metaclass=ClasscallMetaclass):
             of elements in the poset of integer partitions.
             """
             lc = []
-            for i in range(len(partition)-1):
-                for j in range(i+1,len(partition)):
+            for i in range(len(partition) - 1):
+                for j in range(i + 1, len(partition)):
                     new_partition = partition[:]
                     del new_partition[j]
                     del new_partition[i]
-                    new_partition.append(partition[i]+partition[j])
+                    new_partition.append(partition[i] + partition[j])
                     new_partition.sort(reverse=True)
                     tup = tuple(new_partition)
                     if tup not in lc:
                         lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p),lower_covers(p)] for p in Partitions(n)]))
+        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
         return Poset(H.reverse())
 
     @staticmethod
@@ -574,20 +575,20 @@ class Posets(metaclass=ClasscallMetaclass):
             restricted poset of integer partitions.
             """
             lc = []
-            for i in range(len(partition)-1):
-                for j in range(i+1,len(partition)):
+            for i in range(len(partition) - 1):
+                for j in range(i + 1, len(partition)):
                     if partition[i] != partition[j]:
                         new_partition = partition[:]
                         del new_partition[j]
                         del new_partition[i]
-                        new_partition.append(partition[i]+partition[j])
+                        new_partition.append(partition[i] + partition[j])
                         new_partition.sort(reverse=True)
                         tup = tuple(new_partition)
                         if tup not in lc:
                             lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p),lower_covers(p)] for p in Partitions(n)]))
+        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
         return Poset(H.reverse())
 
     @staticmethod
@@ -677,9 +678,8 @@ class Posets(metaclass=ClasscallMetaclass):
                 all_pos_n.add(P.relabel(list(r)))
 
         return MeetSemilattice((all_pos_n,
-                                lambda A, B: all(B.is_lequal(x, y) for x,y in A.cover_relations_iterator())
-                               ))
-
+                                lambda A, B: all(B.is_lequal(x, y)
+                                                 for x, y in A.cover_relations_iterator())))
 
     @staticmethod
     def ProductOfChains(chain_lengths, facade=None):
@@ -794,7 +794,7 @@ class Posets(metaclass=ClasscallMetaclass):
             p = float(p)
         except Exception:
             raise TypeError("probability must be a real number, not {0}".format(p))
-        if p < 0 or p> 1:
+        if p < 0 or p > 1:
             raise ValueError("probability must be between 0 and 1, not {0}".format(p))
 
         D = DiGraph(loops=False, multiedges=False)
@@ -904,7 +904,7 @@ class Posets(metaclass=ClasscallMetaclass):
             if n <= 3:
                 return posets.ChainPoset(n)
             covers = _random_lattice(n, p)
-            covers_dict = {i:covers[i] for i in range(n)}
+            covers_dict = {i: covers[i] for i in range(n)}
             D = DiGraph(covers_dict)
             D.relabel([i-1 for i in Permutations(n).random_element()])
             return LatticePoset(D, cover_relations=True)
@@ -1173,9 +1173,11 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 24 elements
         """
         if n < 10 and labels == "permutations":
-            element_labels = dict([[s,"".join(map(str,s))] for s in Permutations(n)])
+            element_labels = dict([[s, "".join(map(str, s))]
+                                   for s in Permutations(n)])
         if n < 10 and labels == "reduced_words":
-            element_labels = dict([[s,"".join(map(str,s.reduced_word_lexmin()))] for s in Permutations(n)])
+            element_labels = dict([[s, "".join(map(str, s.reduced_word_lexmin()))]
+                                   for s in Permutations(n)])
         if side == "left":
 
             def weak_covers(s):
@@ -1193,7 +1195,8 @@ class Posets(metaclass=ClasscallMetaclass):
                 """
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
-        return Poset(dict([[s, weak_covers(s)] for s in Permutations(n)]),element_labels)
+        return Poset(dict([[s, weak_covers(s)] for s in Permutations(n)]),
+                     element_labels)
 
     @staticmethod
     def TetrahedralPoset(n, *colors, **labels):
@@ -1253,33 +1256,33 @@ class Posets(metaclass=ClasscallMetaclass):
             if c not in ('green', 'red', 'yellow', 'orange', 'silver', 'blue'):
                 raise ValueError("color input must be from the following: 'green', 'red', 'yellow', 'orange', 'silver', and 'blue'")
         elem = [(i, j, k) for i in range(n)
-                for j in range(n-i) for k in range(n-i-j)]
+                for j in range(n - i) for k in range(n - i - j)]
         rels = []
         elem_labels = {}
         if 'labels' in labels:
             if labels['labels'] == 'integers':
                 labelcount = 0
-                for (i,j,k) in elem:
-                    elem_labels[(i,j,k)] = labelcount
+                for (i, j, k) in elem:
+                    elem_labels[(i, j, k)] = labelcount
                     labelcount += 1
         for c in colors:
-            for (i,j,k) in elem:
-                if i+j+k < n-1:
+            for (i, j, k) in elem:
+                if i + j + k < n - 1:
                     if c == 'green':
-                        rels.append([(i,j,k),(i+1,j,k)])
+                        rels.append([(i, j, k), (i + 1, j, k)])
                     if c == 'red':
-                        rels.append([(i,j,k),(i,j,k+1)])
+                        rels.append([(i, j, k), (i, j, k + 1)])
                     if c == 'yellow':
-                        rels.append([(i,j,k),(i,j+1,k)])
-                if j < n-1 and k > 0:
+                        rels.append([(i, j, k), (i, j + 1, k)])
+                if j < n - 1 and k > 0:
                     if c == 'orange':
-                        rels.append([(i,j,k),(i,j+1,k-1)])
-                if i < n-1 and j > 0:
+                        rels.append([(i, j, k), (i, j + 1, k - 1)])
+                if i < n - 1 and j > 0:
                     if c == 'silver':
-                        rels.append([(i,j,k),(i+1,j-1,k)])
-                if i < n-1 and k > 0:
+                        rels.append([(i, j, k), (i + 1, j - 1, k)])
+                if i < n - 1 and k > 0:
                     if c == 'blue':
-                        rels.append([(i,j,k),(i+1,j,k-1)])
+                        rels.append([(i, j, k), (i + 1, j, k - 1)])
         return Poset([elem, rels], elem_labels)
 
     # shard intersection order
@@ -1684,9 +1687,9 @@ class Posets(metaclass=ClasscallMetaclass):
         if n <= 0:
             raise ValueError("number of elements must be nonnegative, not {}".format(n))
         elem = []
-        for i in range(1, n+1):
+        for i in range(1, n + 1):
             elem += Permutations(i)
-        return Poset((elem, lambda a,b: b.has_pattern(a)))
+        return Poset((elem, lambda a, b: b.has_pattern(a)))
 
     @staticmethod
     def PermutationPatternInterval(bottom, top):
@@ -1737,7 +1740,7 @@ class Posets(metaclass=ClasscallMetaclass):
         level = 0    # Consider the top element to be level 0, and then go down from there.
         rel = []     # List of covering relations to be fed into poset constructor.
         while len(top) - len(bottom) >= level + 1:
-            elem.append([]) # Add a new empty level
+            elem.append([])  # Add a new empty level
             for upper in elem[level]:
                 # Run through all permutations on current level
                 #   and find relations for which it is upper cover
@@ -1746,17 +1749,17 @@ class Posets(metaclass=ClasscallMetaclass):
                     # Try and remove the ith element from the permutation
                     lower = list(upper)
                     j = lower.pop(i)
-                    for k in range(len(top)-level-1): # Standardize result
+                    for k in range(len(top)-level-1):  # Standardize result
                         if lower[k] > j:
                             lower[k] = lower[k] - 1
                     lower_perm = P(lower)
-                    if lower_perm.has_pattern(bottom): # Check to see if result is in interval
+                    if lower_perm.has_pattern(bottom):  # Check to see if result is in interval
                         rel += [[lower_perm, upper_perm]]
-                        if lower not in elem[level+1]:
-                            elem[level+1].append(lower_perm)
+                        if lower not in elem[level + 1]:
+                            elem[level + 1].append(lower_perm)
             level += 1
         elem = [item for sublist in elem for item in sublist]
-        return Poset((elem,rel))
+        return Poset((elem, rel))
 
     @staticmethod
     def PermutationPatternOccurrenceInterval(bottom, top, pos):
@@ -1793,13 +1796,13 @@ class Posets(metaclass=ClasscallMetaclass):
         P = Permutations()
         top = P(top)
         bottom = P(bottom)
-        if not to_standard([top[z] for z in pos]) == list(bottom): # check input
+        if not to_standard([top[z] for z in pos]) == list(bottom):  # check input
             raise ValueError("cannot find 'bottom' in 'top' given by 'pos'")
         elem = [[(top, pos)]]
         level = 0
         rel = []
         while len(top) - len(bottom) >= level + 1:
-            elem.append([]) # Add a new empty level
+            elem.append([])  # Add a new empty level
             for upper in elem[level]:
                 for i in range(len(top)-level):
                     # Try and remove the ith element from the permutation
@@ -1816,11 +1819,11 @@ class Posets(metaclass=ClasscallMetaclass):
                             lower_pos[f] = upper[1][f] - 1
                     rel += [[(P(lower_perm), tuple(lower_pos)),
                              (P(upper[0]), upper[1])]]
-                    if (P(lower_perm), tuple(lower_pos)) not in elem[level+1]:
-                        elem[level+1].append((P(lower_perm), tuple(lower_pos)))
+                    if (P(lower_perm), tuple(lower_pos)) not in elem[level + 1]:
+                        elem[level + 1].append((P(lower_perm), tuple(lower_pos)))
             level += 1
         elem = [item for sublist in elem for item in sublist]
-        return Poset([elem,rel])
+        return Poset([elem, rel])
 
     @staticmethod
     def RibbonPoset(n, descents):
@@ -1838,7 +1841,9 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: sorted(R.cover_relations())
             [[0, 1], [2, 1], [3, 2], [3, 4]]
         """
-        return Mobile(DiGraph([list(range(n)), [(i+1, i) if i in descents else (i, i+1) for i in range(n-1) ]]))
+        return Mobile(DiGraph([list(range(n)),
+                               [(i + 1, i) if i in descents else (i, i + 1)
+                                for i in range(n - 1)]]))
 
     @staticmethod
     def MobilePoset(ribbon, hangers, anchor=None):
@@ -1889,15 +1894,15 @@ class Posets(metaclass=ClasscallMetaclass):
         for r, hangs in hangers.items():
             for i, h in enumerate(hangs):
                 for v in h._elements:
-                    elements.append((r,i,v))
+                    elements.append((r, i, v))
                 for cr in h.cover_relations():
                     cover_relations.append(((r, i, cr[0]), (r, i, cr[1])))
-                cover_relations.append(((r,i,h.top()), r))
+                cover_relations.append(((r, i, h.top()), r))
 
         return Mobile(DiGraph([elements, cover_relations]))
 
 
-## RANDOM LATTICES
+# RANDOM LATTICES
 
 # Following are helper functions for random lattice generation.
 # There is no parameter checking, 0, 1, ..., n may or may not be a
@@ -1939,8 +1944,8 @@ def _random_lattice(n, p):
     from sage.misc.functional import sqrt
     from sage.misc.prandom import random
 
-    n = n-1
-    meets = [[None]*n for _ in range(n)]
+    n = n - 1
+    meets = [[None] * n for _ in range(n)]
     meets[0][0] = 0
     maxs = set([0])
     lc_all = [[]]  # No lower covers for the bottom element.
@@ -2008,11 +2013,11 @@ def _random_dismantlable_lattice(n):
     """
     from sage.misc.prandom import randint
 
-    D = DiGraph({0: [n-1]})
-    for i in range(1, n-1):
-        a = randint(0, i//2)
+    D = DiGraph({0: [n - 1]})
+    for i in range(1, n - 1):
+        a = randint(0, i // 2)
         b_ = list(D.depth_first_search(a))
-        b = b_[randint(1, len(b_)-1)]
+        b = b_[randint(1, len(b_) - 1)]
         D.add_vertex(i)
         D.add_edge(a, i)
         D.add_edge(i, b)
@@ -2053,19 +2058,19 @@ def _random_planar_lattice(n):
     """
     from sage.misc.prandom import randint
 
-    G = DiGraph({0: [n-1]})
+    G = DiGraph({0: [n - 1]})
     while G.order() < n:
-        i = G.order()-1
-        a = randint(0, i//2)
+        i = G.order() - 1
+        a = randint(0, i // 2)
         b_ = list(G.depth_first_search(a))
-        b = b_[randint(1, len(b_)-1)]
+        b = b_[randint(1, len(b_) - 1)]
         G1 = G.copy()
         G.add_vertex(i)
         G.add_edge(a, i)
         G.add_edge(i, b)
         G.delete_edge(a, b)
         G2 = G.copy()
-        G2.add_edge(n-1, 0)
+        G2.add_edge(n - 1, 0)
         if not G2.is_planar():
             G = G1.copy()
     return G
@@ -2102,7 +2107,7 @@ def _random_distributive_lattice(n):
     from sage.graphs.digraph_generators import digraphs
 
     if n < 4:
-        return digraphs.Path(n-1)
+        return digraphs.Path(n - 1)
 
     H = HasseDiagram({0: []})
     while sum(1 for _ in H.antichains_iterator()) < n:
@@ -2123,7 +2128,7 @@ def _random_distributive_lattice(n):
                 for b in D.neighbors_out(to_delete):
                     D.add_edge(a, b)
             D.delete_vertex(to_delete)
-            D.relabel({z:z-1 for z in range(to_delete + 1, D.order() + 1)})
+            D.relabel({z: z - 1 for z in range(to_delete + 1, D.order() + 1)})
             H = HasseDiagram(D)
     return D
 
@@ -2176,5 +2181,6 @@ def _random_stone_lattice(n):
         result.relabel()
 
     return result
+
 
 posets = Posets

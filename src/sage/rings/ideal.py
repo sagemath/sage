@@ -1847,12 +1847,8 @@ def FieldIdeal(R):
         Multivariate Polynomial Ring in x1, x2, x3, x4 over Finite
         Field in alpha of size 2^4
     """
-
     q = R.base_ring().order()
-
     import sage.rings.infinity
     if q is sage.rings.infinity.infinity:
         raise TypeError("Cannot construct field ideal for R.base_ring().order()==infinity")
-
-    return R.ideal([x**q - x for x in R.gens() ])
-
+    return R.ideal([x**q - x for x in R.gens()])

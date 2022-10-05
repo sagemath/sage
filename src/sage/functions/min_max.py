@@ -1,5 +1,5 @@
 r"""
-Symbolic Minimum and Maximum
+Symbolic minimum and maximum
 
 Sage provides a symbolic maximum and minimum due to the fact that the Python
 builtin max and min are not able to deal with variables as users might expect.

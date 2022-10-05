@@ -2115,7 +2115,7 @@ cdef class BasisExchangeMatroid(Matroid):
         return EQ[0]
 
     cpdef _is_isomorphism(self, other, morphism):
-        """
+        r"""
         Version of is_isomorphism() that does no type checking.
 
         INPUT:

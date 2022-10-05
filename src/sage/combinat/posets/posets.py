@@ -286,6 +286,7 @@ Classes and functions
 from __future__ import annotations
 from collections import defaultdict
 from copy import copy, deepcopy
+from typing import List
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -765,7 +766,8 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         # Check for duplicate elements
         elif len(elements) != len(set(elements)):
             raise ValueError("the provided list of elements is not a linear "
-                "extension for the poset as it contains duplicate elements")
+                             "extension for the poset as it contains "
+                             "duplicate elements")
     else:
         elements = None
     return FinitePoset(D, elements=elements, category=category, facade=facade, key=key)
@@ -2652,7 +2654,7 @@ class FinitePoset(UniqueRepresentation, Parent):
     # Maybe this should also be deprecated.
     intervals_number = relations_number
 
-    def linear_intervals_count(self) -> list[int]:
+    def linear_intervals_count(self) -> List[int]:
         """
         Return the enumeration of linear intervals w.r.t. their cardinality.
 
@@ -8106,7 +8108,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for rank_diff in range(2, k + 1, 2):
             for level in range(height - rank_diff):
                 for i in levels[level]:
-                    for j in levels[level+rank_diff]:
+                    for j in levels[level + rank_diff]:
                         if H.is_lequal(i, j) and M[i, j] != 1:
                             if certificate:
                                 return (False, (self._vertex_to_element(i),
@@ -8160,13 +8162,13 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         H = self._hasse_diagram
-        N1 = H.order()-1
+        N1 = H.order() - 1
         it = H.greedy_linear_extensions_iterator()
         A = next(it)
-        A_jumps = sum(1 for i in range(N1) if H.has_edge(A[i], A[i+1]))
+        A_jumps = sum(1 for i in range(N1) if H.has_edge(A[i], A[i + 1]))
 
         for B in it:
-            B_jumps = sum(1 for i in range(N1) if H.has_edge(B[i], B[i+1]))
+            B_jumps = sum(1 for i in range(N1) if H.has_edge(B[i], B[i + 1]))
             if A_jumps != B_jumps:
                 if certificate:
                     if A_jumps > B_jumps:
@@ -8452,13 +8454,15 @@ class FinitePoset(UniqueRepresentation, Parent):
             # The simple case: ``weights == None``.
             F = QR.Fundamental()
             for lin in self.linear_extensions(facade=True):
-                descents = [i + 1 for i in range(n-1) if tupdict[lin[i]] > tupdict[lin[i+1]]]
+                descents = [i + 1 for i in range(n - 1)
+                            if tupdict[lin[i]] > tupdict[lin[i + 1]]]
                 res += F(Composition(from_subset=(descents, n)))
             return res
         for lin in self.linear_extensions(facade=True):
             M = QR.Monomial()
             lin_weights = Composition([weights.get(lin[i], 1) for i in range(n)])
-            descents = [i + 1 for i in range(n-1) if tupdict[lin[i]] > tupdict[lin[i+1]]]
+            descents = [i + 1 for i in range(n - 1)
+                        if tupdict[lin[i]] > tupdict[lin[i + 1]]]
             d_c = Composition(from_subset=(descents, n))
             for comp in d_c.finer():
                 res += M[lin_weights.fatten(comp)]

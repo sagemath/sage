@@ -33,5 +33,6 @@
         "Conda",
         "sagemath",
         "Cython"
-    ]
+    ],
+    "editor.formatOnType": true
 }

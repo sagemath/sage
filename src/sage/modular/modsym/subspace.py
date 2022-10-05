@@ -72,9 +72,10 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         """
         self.__ambient_hecke_module = ambient_hecke_module
         A = ambient_hecke_module
-        sage.modular.modsym.space.ModularSymbolsSpace.__init__(self, A.group(), A.weight(), \
-                                           A.character(), A.sign(), A.base_ring())
-        hecke.HeckeSubmodule.__init__(self, A, submodule, dual_free_module = dual_free_module, check=check)
+        sage.modular.modsym.space.ModularSymbolsSpace.__init__(self, A.group(),
+                                                               A.weight(),
+                                    A.character(), A.sign(), A.base_ring())
+        hecke.HeckeSubmodule.__init__(self, A, submodule, dual_free_module=dual_free_module, check=check)
 
     def _repr_(self):
         """

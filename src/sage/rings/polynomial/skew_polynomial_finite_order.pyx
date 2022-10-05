@@ -266,7 +266,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         By default, the name of the central variable is usually ``z`` (see
         :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this). 
-        However, the user can speciify a different variable name if desired::
+        However, the user can specify a different variable name if desired::
 
             sage: a.reduced_norm(var='u')
             u^3 + 4*u^2 + 4
@@ -367,7 +367,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         The reduced characteristic polynomial has coefficients in the center
         of `S`, which is itself a univariate polynomial ring in the variable
-        `z = u^3` over `\GF{5}`. Hence it appears as a bivariate polynomial.
+        `z = u^3` over `\GF{5}`. Hence it appears as a bivariate polynomial::
 
             sage: chi.parent()
             Univariate Polynomial Ring in x over Univariate Polynomial Ring in z over Finite Field of size 5

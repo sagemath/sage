@@ -9,7 +9,7 @@ AUTHORS:
 - Travis Scrimshaw (2016): Implemented
   :class:`~sage.combinat.crystals.littelmann_path.InfinityCrystalOfLSPaths`
 """
-#****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Mark Shimozono
 #                          Anne Schilling
 #
@@ -22,8 +22,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_in_parent_method, cached_method
 from sage.structure.unique_representation import UniqueRepresentation
@@ -147,10 +147,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
         """
         if cartan_type is not None:
             cartan_type, starting_weight = CartanType(starting_weight), cartan_type
-            if cartan_type.is_affine():
-                extended = True
-            else:
-                extended = False
+            extended = cartan_type.is_affine()
 
             R = RootSystem(cartan_type)
             P = R.weight_space(extended = extended)
@@ -333,7 +330,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.split_step(0,1/3)
                 (1/3*Lambda[1] + 1/3*Lambda[2], 2/3*Lambda[1] + 2/3*Lambda[2])
             """
-            assert 0 <= which_step and which_step <= len(self.value)
+            assert 0 <= which_step <= len(self.value)
             v = self.value[which_step]
             return self.parent()(self.value[:which_step] + (r*v,(1-r)*v) + self.value[which_step+1:])
 
@@ -476,7 +473,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
             ix = len(data)-1
             while ix >= 0 and data[ix][1] < M + p:
-            # get the index of the current step to be processed
+                # get the index of the current step to be processed
                 j = data[ix][0]
                 # find the i-height where the current step might need to be split
                 if ix == 0:
@@ -621,7 +618,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
 
 #####################################################################
-## Projected level-zero
+# Projected level-zero
 
 
 class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
@@ -1144,7 +1141,9 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 Wd = WeylGroup(cartan_dual, prefix='s', implementation="permutation")
                 G = Wd.quantum_bruhat_graph(J)
                 Qd = RootSystem(cartan_dual).root_lattice()
-                dualize = lambda x: Qv.from_vector(x.to_vector())
+
+                def dualize(x):
+                    return Qv.from_vector(x.to_vector())
                 L = [Wd.from_reduced_word(x.reduced_word()) for x in L]
 
                 def stretch_short_root(a):
@@ -1177,7 +1176,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
 
 #####################################################################
-## B(\infty)
+# B(\infty)
 
 
 class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
@@ -1464,7 +1463,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
 
 
 #####################################################################
-## Helper functions
+# Helper functions
 
 
 def positively_parallel_weights(v, w):

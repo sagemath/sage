@@ -266,12 +266,20 @@ class Application(object):
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
                description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
         """
-        Create a normal package
+        Create a package
+
+        $ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+
+        $ sage --package create scikit_spatial --pypi --type optional
+
+        $ sage --package create torch --pypi --source pip --type optional
+
+        $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
         if '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
-            pypi_version = PyPiVersion(package_name)
+            pypi_version = PyPiVersion(package_name, source=source)
             if source == 'normal':
                 if not tarball:
                     # Guess the general format of the tarball name.
@@ -281,6 +289,14 @@ class Application(object):
                 # Use a URL from pypi.io instead of the specific URL received from the PyPI query
                 # because it follows a simple pattern.
                 upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
+            elif source == 'wheel':
+                if not tarball:
+                    tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
+                if not tarball.endswith('-none-any.whl'):
+                    raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
+                if not version:
+                    version = pypi_version.version
+                upstream_url = 'https://pypi.io/packages/py3/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             if not description:
                 description = pypi_version.summary
             if not license:

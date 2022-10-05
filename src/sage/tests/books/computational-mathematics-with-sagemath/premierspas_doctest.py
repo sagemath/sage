@@ -179,4 +179,3 @@ Sage example in ./premierspas.tex, line 1380::
   bla
 
 """
-

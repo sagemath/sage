@@ -1477,7 +1477,7 @@ class CubicHeckeRingOfDefinition(Localization):
         L = LaurentPolynomialRing(ZZ, 't0, t1')
         t0, t1 = L.gens()
         lu = t0 + t1 - 1
-        lv = t0*t1 - t0 - t1
+        lv = t0 * t1 - t0 - t1
         lw = -t0 * t1
         LL = L.localization((lu, lv))
         u = LL(lu)
@@ -1486,4 +1486,3 @@ class CubicHeckeRingOfDefinition(Localization):
         phi = self.hom((u, v, w, LL.one()))
         inc = L.convert_map_from(LL)
         return inc * phi
-

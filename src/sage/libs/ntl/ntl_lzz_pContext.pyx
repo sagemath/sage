@@ -60,9 +60,11 @@ cdef class ntl_zz_pContext_class():
 
     def __reduce__(self):
         """
-        sage: c=ntl.zz_pContext(13)
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+            sage: c=ntl.zz_pContext(13)
+            sage: loads(dumps(c)) is c
+            True
         """
         return ntl_zz_pContext, (self.p,)
 

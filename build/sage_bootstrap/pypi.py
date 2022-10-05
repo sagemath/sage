@@ -34,11 +34,15 @@ class PyPiError(Exception):
 
 class PyPiVersion(object):
 
-    def __init__(self, package_name):
+    def __init__(self, package_name, source='normal'):
         self.name = package_name
         self.json = self._get_json()
         # Replace provided name with the canonical name
         self.name = self.json['info']['name']
+        if source == 'wheel':
+            self.python_version = 'py3'
+        else:
+            self.python_version = 'source'
 
     def _get_json(self):
         response = urllib.urlopen(self.json_url)
@@ -65,9 +69,9 @@ class PyPiVersion(object):
         Return the source url
         """
         for download in self.json['urls']:
-            if download['python_version'] == 'source':
+            if download['python_version'] == self.python_version:
                 return download['url']
-        raise PyPiError('No source url for %s found', self.name)
+        raise PyPiError('No %s url for %s found', self.python_version, self.name)
 
     @property
     def tarball(self):
@@ -75,9 +79,9 @@ class PyPiVersion(object):
         Return the source tarball name
         """
         for download in self.json['urls']:
-            if download['python_version'] == 'source':
+            if download['python_version'] == self.python_version:
                 return download['filename']
-        raise PyPiError('No source url for %s found', self.name)
+        raise PyPiError('No %s url for %s found', self.python_version, self.name)
 
     @property
     def package_url(self):

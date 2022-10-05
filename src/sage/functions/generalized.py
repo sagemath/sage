@@ -1,5 +1,5 @@
 r"""
-Generalized Functions
+Generalized functions
 
 Sage implements several generalized functions (also known as
 distributions) such as Dirac delta, Heaviside step functions. These

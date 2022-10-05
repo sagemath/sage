@@ -1,5 +1,5 @@
 """
-Plotting 3D Fields
+Plotting 3D fields
 """
 #*****************************************************************************
 #       Copyright (C) 2009 Jason Grout <jason-sage@creativetrax.com>

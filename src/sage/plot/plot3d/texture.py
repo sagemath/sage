@@ -1,5 +1,5 @@
 r"""
-Texture Support
+Texture support
 
 This module provides texture/material support for 3D Graphics
 objects and plotting.  This is a very rough common interface for
