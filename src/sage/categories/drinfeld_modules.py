@@ -347,11 +347,11 @@ class DrinfeldModules(Category_over_base):
             sage: p_root = z^3 + 7*z^2 + 6*z + 10
             sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
             sage: cat = phi.category()
-            sage: from sage.categories.homsets import Endsets
-            sage: cat.Endsets() is Endsets()
+            sage: from sage.categories.homsets import Homsets
+            sage: cat.Endsets() is Homsets().Endsets()
             True
         """
-        return Homsets()
+        return Homsets().Endsets()
 
     def characteristic(self):
         r"""
