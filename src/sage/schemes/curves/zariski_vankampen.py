@@ -41,7 +41,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import itertools
-from copy import copy, deepcopy
+from copy import copy
 from sage.combinat.combination import Combinations
 from sage.sets.set import Set
 
@@ -62,6 +62,7 @@ from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.matrix.all import matrix
+from sage.rings.all import PolynomialRing
 
 roots_interval_cache = {}
 
@@ -160,16 +161,16 @@ def braid_from_piecewise(strands):
 
 
 
-def discrim(flist):
+def discrim(pols):
     r"""
-    Return the points in the discriminant of the product of the polynomials of a list ``flist``.
+    Return the points in the discriminant of the product of the polynomials of a list or tuple ``pols``.
 
     The result is the set of values of the first variable for which
     two roots in the second variable coincide.
 
     INPUT:
 
-    - ``flist`` -- a tuple of polynomials in two variables with coefficients in a
+    - ``pols`` -- a list or tuple of polynomials in two variables with coefficients in a
       number field with a fixed embedding in `\QQbar`
 
     OUTPUT:
@@ -189,31 +190,25 @@ def discrim(flist):
         0.2613789792873551? - 0.4527216721561923?*I,
         0.2613789792873551? + 0.4527216721561923?*I]    
     """
+    flist = tuple(pols)
     x, y = flist[0].parent().gens()
     F = flist[0].base_ring()
+    R = PolynomialRing(F,(x,))
 
     @parallel
-    def discrim_pairs(ftuple):
-        if len(ftuple) == 1:
-            f = ftuple[0]
-            return F[x](f.discriminant(y))
-        elif len(ftuple) == 2:
-            f, g = ftuple
-            return F[x](f.resultant(g, y))
+    def discrim_pairs(f, g):
+        if f == g:
+            return R(f.discriminant(y))
+        else:
+            return R(f.resultant(g, y))
 
-    pairs = [((f,),) for f in flist] +  [((f, g),) for f, g in Combinations(flist, 2)]
+    pairs = [(f, f) for f in flist] +  [(f, g) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
     rts = []
     poly = 1
-    #for f in flist:
-        #aux = F[x](f.discriminant(y))
-        #poly = aux * poly
-    #for f, g in Combinations(flist, 2):
-        #aux = F[x](f.resultant(g, y))
-        #poly = aux * poly
     for u in fdiscrim:
         h0 = u[1].radical()
-        h1 = F[x](h0 / h0.gcd(poly))
+        h1 = h0 // h0.gcd(poly)
         rts += h1.roots(QQbar, multiplicities = False)
         poly = poly * h1
     return rts
@@ -470,7 +465,7 @@ def fieldI(F0):
 
     OUTPUT:
 
-    The embedding in `QQbar` of an extension `F` of `F0` containing  `I`.
+    The extension `F` of `F0` containing  `I` with  an embedding in `QQbar`.
 
     EXAMPLES::
 
@@ -503,19 +498,19 @@ def fieldI(F0):
             F1 = NumberField(q, 'b', embedding = b1)
             b = F1.gen()
             if (F0.is_subring(F1)):
-                break
-        return F1
+                return F1
+
 
 @parallel
-def roots_interval(flist, x0):
+def roots_interval(pols, x0):
     """
     Find disjoint intervals that isolate the roots of a polynomial for a fixed
     value of the first variable.
 
     INPUT:
 
-    - ``flist`` -- a tuple of bivariate squarefree polynomials
-    - ``x0`` -- a value where the first coordinate will be fixed
+    - ``pols`` -- a list or a tuple of bivariate squarefree polynomials
+    - ``x0`` -- a Gauss rational number corresponding to the first coordinate
 
     The intervals are taken as big as possible to be able to detect when two
     approximate roots of `f(x_0, y)` correspond to the same exact root, where
@@ -549,6 +544,7 @@ def roots_interval(flist, x0):
           -0.933012701892219 + 1.29903810567666*I,
           -0.0669872981077806 + 0.433012701892219*I)]
     """
+    flist = tuple(pols)
     f = prod(flist)
     F0 = f.base_ring()
     F1 = fieldI(F0)
@@ -557,10 +553,10 @@ def roots_interval(flist, x0):
     f1 = f.change_ring(F1)
     x, y = f1.parent().gens()
     Ux = [F1[y](_.subs({x: F1(x0)})) for _ in U1]
-    fx = prod(Ux)
+    fx = F1[y](f1.subs({x: F1(x0)}))
     roots = []
-    for _ in Ux:
-        roots += _.roots(QQbar, multiplicities=False)
+    for pol in Ux:
+        roots += pol.roots(QQbar, multiplicities=False)
     result = {}
     for i, r in enumerate(roots):
         prec = 53
@@ -642,22 +638,14 @@ def populate_roots_interval_cache(inputs):
     """
     global roots_interval_cache
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
-    problem_par = False
-    while not problem_par:
+    problem_par = True
+    while problem_par:  # hack to deal with random fails in parallelization
         try:
-            #with open("debug.txt","a") as fd:
-                #print("Entra en populate",file=fd)
             result = roots_interval(tocompute)
-            #with open("debug.txt","a") as fd:
-                #print("Sale en populate",file=fd)
             for r in result:
                 roots_interval_cache[r[0][0]] = r[1]
-            problem_par = True
-            #with open("debug.txt","a") as fd:
-                #print("Fin populate",file=fd)
+            problem_par = False
         except TypeError:
-            #with open("debug.txt","a") as fd:
-                #print("Falla en populate",file=fd)
             pass
 
 
@@ -670,8 +658,9 @@ def braid_in_segment(glist, x0, x1, precision = {}):
     INPUT:
 
     - ``glist`` -- a tuple of polynomials in two variables
-    - ``x0`` -- a complex number, usually a Gauss rational
-    - ``x1`` -- a complex number, usually a Gauss rational
+    - ``x0`` -- a Gauss rational
+    - ``x1`` -- a Gauss rational
+    - ``precision`` -- a dictionary (default, an empty one) which will apply to each element of ``glist`` a *precision*
 
     OUTPUT:
 
@@ -716,12 +705,9 @@ def braid_in_segment(glist, x0, x1, precision = {}):
     U1 = tuple(_.change_ring(F1) for _ in glist)
     g1 = g.change_ring(F1)
     x, y = g1.parent().gens()
-    #X0 = QQ(x0.real()) + I1 * QQ(x0.imag())
-    #X1 = QQ(x1.real()) + I1 * QQ(x1.imag())
     X0 = F1(x0)
     X1 = F1(x1)
     intervals = {}
-#    precision = {}
     if precision == {}: # new
         precision ={f: 53 for f in U1} # new
     y0s = []
@@ -732,7 +718,6 @@ def braid_in_segment(glist, x0, x1, precision = {}):
             f0 = F1[y](f.subs({x: X0}))            
         y0sf = f0.roots(QQbar, multiplicities = False)
         y0s += list(y0sf)
-        #precision[f] = 53
         while True:
             CIFp = ComplexIntervalField(precision[f])
             intervals[f] = [r.interval(CIFp) for r in y0sf]
@@ -760,12 +745,9 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-#        if matched == 0:
-#            raise ValueError("unable to match braid endpoint with root")
             precision = {f: precision[f] * 2 for f in U1} # new
             return braid_in_segment(U1, x0, x1, precision = precision) # new
-#        if matched > 1:
-#            raise ValueError("braid endpoint mathes more than one root")
+
         matched = 0
         for center, interval in finalintervals.items():
             if fp in interval:
@@ -774,10 +756,6 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         if matched != 1:
             precision = {f: precision[f] * 2 for f in U1} # new
             return braid_in_segment(U1, x0, x1, precision = precision) # new
-        #if matched == 0:
-            #raise ValueError("unable to match braid endpoint with root")
-        #if matched > 1:
-            #raise ValueError("braid endpoint matches more than one root")
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
@@ -792,6 +770,8 @@ def orient_circuit(circuit, convex = False):
 
     - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
         by a list of edges
+        
+    - ``convex`` -- a boolean function, if set to ``True`` a simpler computation is made
 
     OUTPUT:
 
@@ -853,22 +833,26 @@ def orient_circuit(circuit, convex = False):
             return circuit
         prec *= 2
 
-
-def geometric_basis(G, E, p, regions):
+def geometric_basis(G, E, EC, p, dual_graph):
     r"""
     Return a geometric basis, based on a vertex.
 
     INPUT:
     
-    - ``G`` -- the graph of the bounded regions of a Voronoi Diagram
+    - ``G`` -- a graph which correspond to the bounded edgess of a Voronoi Diagram
 
-    - ``E`` -- the subgraph of ``G`` formed by the edges that touch
-      an unbounded region
+    - ``E`` -- a subgraph of ``G`` which is a cycle; it corresponds to the bounded edges touching
+      an unbounded region of a Voronoi Diagram
+      
+    - ``EC`` -- A counterclockwise orientation of the vertices of ``E``
 
     - ``p`` -- a vertex of ``E``
-    
-    - ``regions`` -- the bounded regions as a list of positively oriented
-    lists of vertices of ``G``
+      
+    - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that 
+      ``E`` is the boundary of the non-bounded component of the complement.
+      The edges are labelled as the dual edges and the vertices are labelled
+      by a tuple whose first element is the ordering and the second one is the
+      list of vertices in the region and ``E``.
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
     Each path is a list of vertices, that form a closed path in `G`, based at
@@ -880,20 +864,39 @@ def geometric_basis(G, E, p, regions):
         sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, orient_circuit
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
+        sage: V0 = [_ for _ in V.regions().values() if _.is_compact()]
         sage: G = Graph()
-        sage: Vreg = [_ for _ in V.regions().values() if _.is_compact()]
-        sage: regions = []
-        sage: for reg in Vreg:
+        sage: for reg in V0:
         ....:     regv = reg.vertex_graph()
         ....:     G = G.union(regv)
-        ....:     circ = orient_circuit(regv.eulerian_circuit(), convex = True)
-        ....:     regions.append(circ)
         sage: E = Graph()
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
         sage: p = E.vertices(sort=True)[0]
-        sage: geometric_basis(G, E, p, regions)
+        sage: Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
+        sage: Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+        sage: DG = Graph(len(Vreg1))
+        sage: DG.relabel(Vreg1)
+        sage: Edges = []
+        sage: crd = {}
+        sage: for i, r in enumerate(Vreg):
+        ....:     for e in r:
+        ....:         a, b = e[ : 2]
+        ....:         e1 = (b, a, None)
+        ....:         if e not in Edges:
+        ....:             Edges += [e, e1]
+        ....:             crd[e]=(Vreg1[i],)
+        ....:             crd[e1]=(Vreg1[i],)
+        ....:         else:
+        ....:             crd[e] += (Vreg1[i],)
+        ....:             crd[e1] += (Vreg1[i],)
+        sage: EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+        sage: for e in EdgesDual:
+        ....:     DG.add_edge(crd[e] + (e,))
+        sage: EC0 = orient_circuit(E.eulerian_circuit())
+        sage: EC = [EC0[0][0]] + [e[1] for e in EC0]
+        sage: geometric_basis(G, E, EC, p, DG)
         [[A vertex at (-2, -2),
           A vertex at (2, -2),
           A vertex at (2, 2),
@@ -930,87 +933,53 @@ def geometric_basis(G, E, p, regions):
           A vertex at (-2, 2),
           A vertex at (-2, -2)]]
     """
-    region_graphs = []
-    for reg in regions:
-        g = Graph(reg)
-        region_graphs.append(g)
-    EC = [v[0] for v in orient_circuit(E.eulerian_circuit())]
     i = EC.index(p)
-    EC = EC[i:] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
+    EC = EC[i:-1] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
-    I = Graph()
-    for e in G.edges(sort=False):
-        if not E.has_edge(e):
-            I.add_edge(e)   # interior graph
-    # treat the case where I is empty
-    if not I:
+    InternalEdges = [_ for _ in G.edges(sort = False) if _ not in E.edges(sort = True)]
+    InternalVertices=[v for e in InternalEdges for v in e[:2]]
+    Internal = G.subgraph(vertices = InternalVertices, edges = InternalEdges)
+    if not Internal:
         for v in E:
             if len(E.neighbors(v)) > 2:
-                I.add_vertex(v)
+                Internal.add_vertex(v)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
-        if EC[i] in I:
+        if EC[i] in Internal:
             q = EC[i]
             connecting_path = EC[:i]
             break
-        if EC[-i] in I:
+        if EC[-i] in Internal:
             q = EC[-i]
             connecting_path = list(reversed(EC[-i:]))
             break
-    distancequotients = [(E.distance(q, v)**2 / I.distance(q, v), v) for v in E
-                         if v in I.connected_component_containing_vertex(q) and not v == q]
+    distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in E
+                         if v in Internal.connected_component_containing_vertex(q) and not v == q]
     r = max(distancequotients)[1]
-    cutpath = I.shortest_path(q, r)
+    qi = EC.index(q)
+    ri = EC.index(r)
+    cutpath = Internal.shortest_path(q, r)
     #Gcut = copy(G)
     Ecut = copy(E)
     Ecut.delete_vertices([q, r])
-    #Gcut.delete_vertices(cutpath)
-    # I think this cannot happen, but just in case, we check it to raise
-    # an error instead of giving a wrong answer. It happens. Construct the dual graph.
-    Gd = Graph(len(regions))
-    for i, j in Combinations(range(len(regions)), 2):
-        Ga = region_graphs[i]
-        La = Ga.edges(sort = True)
-        Gb = region_graphs[j]
-        Lb = Gb.edges(sort = True)
-        Uc = [(a, b, c) for a, b, c in La if (a, b, c) in Lb or (b, a, c) in Lb]
-        if len(Uc) >= 1:
-            arista = Uc[0]
-            if arista[0] in cutpath and arista[1] in cutpath:
-                k = cutpath.index(arista[0])
-                l = cutpath.index(arista[1])
-                if abs(k - l) != 1 and Set(k, l)!=Set(0, len(regions) - 1):
-                    Gd.add_edge((i,j))
-            else:
-                Gd.add_edge((i, j))
-    #if Gcut.connected_components_number() != 2:
-        #raise ValueError("unable to compute a correct path")
-    Gd1,Gd2 = Gd.connected_components()
-    GL1 = list(Set(_ for c in Gd1 for _ in regions[c]))
-    GL1 = flatten(GL1)
-    G1 =G.subgraph(GL1)
-    regions1 = [regions[i] for i in Gd1]
-    GL2 = list(Set(_ for c in Gd2 for _ in regions[c]))
-    GL2 = flatten(GL2)
-    G2 = G.subgraph(GL2)
-    regions2 = [regions[i] for i in Gd2]
-#    G1, G2 = Gcut.connected_components_subgraphs()
-    # for v in cutpath:
-    #     neighs = G.neighbors(v)
-    #     for n in neighs:
-    #         if n in G1 or n in cutpath:
-    #             G1.add_edge(v, n, None)
-    #         if n in G2 or n in cutpath:
-    #             G2.add_edge(v, n, None)
-
-    if EC[EC.index(q) + 1] in G2:
+    Gd = copy(dual_graph)
+    cp1 = [(e, cutpath[i + 1], None) for i, e in enumerate(cutpath[: -1])]
+    cp1 += [(cutpath[i + 1], e, None) for i, e in enumerate(cutpath[: -1])]
+    borra = [_ for _ in Gd.edges(sort = False) if _[2] in cp1]
+    Gd.delete_edges(borra)
+    Gd1, Gd2 = Gd.connected_components_subgraphs()
+    GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]]+[v for e in Gd2.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    G2=G.subgraph(GL2)
+    GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]]+[v for e in Gd1.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    G1=G.subgraph(GL1)
+    if EC[qi + 1] in G2:
         G1, G2 = G2, G1
-        regions1, regions2 = regions2, regions1
-
+        Gd1, Gd2 = Gd2, Gd1
     E1, E2 = Ecut.connected_components_subgraphs()
-    if EC[EC.index(q) + 1] in E2:
+    if EC[qi + 1] in E2:
         E1, E2 = E2, E1
+
 
     for i in range(len(cutpath) - 1):
         E1.add_edge(cutpath[i], cutpath[i + 1], None)
@@ -1022,9 +991,17 @@ def geometric_basis(G, E, p, regions):
                 E1.add_edge(v, n, None)
             if n in E2:
                 E2.add_edge(v, n, None)
+    if qi < ri:
+        EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
+        EC2 = cutpath + EC[ri + 1 : -1] + EC[ : qi + 1]
+    else:
+        EC1 = EC[qi : ] + EC[1 : ri] + [_ for _ in reversed(cutpath)]
+        EC2 = cutpath + EC[ri + 1 : qi + 1]
 
-    gb1 = geometric_basis(G1, E1, q, regions1)
-    gb2 = geometric_basis(G2, E2, q, regions2)
+
+
+    gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
+    gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
 
     reverse_connecting = list(reversed(connecting_path))
     resul = [connecting_path + path + reverse_connecting
@@ -1106,25 +1083,44 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
         glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     disc = discrim(glist)
-    #with open("debug.txt","a") as fd:
-       #print('discriminante: ' + str(len(disc)), file = fd)
     V = corrected_voronoi_diagram(tuple(disc))
-    Vreg=[_ for _ in V.regions().values() if _.is_compact()]
+    V0 = [_ for _ in V.regions().values() if _.is_compact()]
     G = Graph()
-    regions = []
-    for reg in Vreg:
+    for reg in V0:
         regv = reg.vertex_graph()
         G = G.union(regv)
-        circ = orient_circuit(regv.eulerian_circuit(), convex = True)
-        regions.append(circ)
     E = Graph()
     for reg in V.regions().values():
         if reg.rays() or reg.lines():
             E = E.union(reg.vertex_graph())
     p = next(E.vertex_iterator())
     p0 = (p[0], p[1])
+    # Construct a dual graph for the compact regions; the dual edges
+    # of this graph have as labels the corresponding edges in G 
+    Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
+    Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+    DG = Graph(len(Vreg1))
+    DG.relabel(Vreg1)
+    Edges = []
+    crd = {}
+    for i, r in enumerate(Vreg):
+        for e in r:
+            a, b = e[:2]
+            e1 = (b, a, None)
+            if e not in Edges:
+                Edges += [e, e1]
+                crd[e]=(Vreg1[i],)
+                crd[e1]=(Vreg1[i],)
+            else:
+                crd[e] += (Vreg1[i],)
+                crd[e1] += (Vreg1[i],)
+    EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+    for e in EdgesDual:
+        DG.add_edge(crd[e] + (e,))
+    EC0 = orient_circuit(E.eulerian_circuit())
+    EC = [EC0[0][0]] + [e[1] for e in EC0]
     if computebm:
-        geombasis = geometric_basis(G, E, p, regions)
+        geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
         for p in geombasis:
             for s in zip(p[:-1], p[1:]):
@@ -1133,22 +1129,14 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         I = QQbar.gen()
         segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
         vertices = list(set(flatten(segs)))
-        #with open("debug.txt","a") as fd:
-            #print('vertices-aristas Voronoi: ' + str(len(vertices)) + ', ' + str(len(segs)), file = fd)
-        #with open("debug.txt","a") as fd:
-            #print('intervalos vertices empezado', file = fd)
         tocacheverts = tuple([(glist, v) for v in vertices])
         populate_roots_interval_cache(tocacheverts)
-        #with open("debug.txt","a") as fd:
-            #print('intervalos vertices hecho', file = fd)
         end_braid_computation = False
         while not end_braid_computation:
             try:
                 braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
                                                     for seg in segs]))
                 segsbraids = {}
-                #with open("debug.txt","a") as fd:
-                    #print('Antes de paralelizar', file = fd)
                 for braidcomputed in braidscomputed:
                     seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
                     beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
@@ -1159,7 +1147,6 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
                 end_braid_computation = True
             except ChildProcessError:  # hack to deal with random fails first time
                 pass
-        #B = b.parent()
         B=BraidGroup(d)
         result = []
         for path in geombasis:
@@ -1187,8 +1174,6 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         if not holdstrand:
             roots_base.sort()
             strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
-        #with open("debug.txt","a") as fd:
-        #   print('diccionario hecho: ' + str(dic1), file = fd) 
         if computebm and not holdstrand:
             return (result, strands)
         elif computebm and holdstrand:
@@ -1223,10 +1208,10 @@ def braid2rels(L, d):
     from sage.groups.finitely_presented import wrap_FpGroup
     B = BraidGroup(d)
     F = FreeGroup(d)
-    L1 = deepcopy(L)
+    L1 = copy(L)
     low = True
     while low:
-        L2 = deepcopy(L1)
+        L2 = copy(L1)
         j = 0
         l = L[j]
         other = False
@@ -1243,7 +1228,7 @@ def braid2rels(L, d):
             except ValueError:
                 j += 1
         low = len(L2) < len(L1)
-        L1 = deepcopy(L2)
+        L1 = copy(L2)
     c0 = ()
     b0 = L1
     while b0[0] + b0[-1] == 0:
@@ -1479,7 +1464,7 @@ def strand_components(flist):
         sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: strand_components(flist)
+        sage: strand_components(flist) # optional - sirocco
         {1: 1, 2: 2, 3: 1, 4: 1}
     """
     f = prod(flist)
