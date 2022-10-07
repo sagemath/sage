@@ -833,8 +833,7 @@ def orient_circuit(circuit, convex = False):
             return circuit
         prec *= 2
 
-#def geometric_basis(G, E, EC, p, dual_graph):
-def geometric_basis(G, E, p, regions):
+def geometric_basis(G, E, EC, p, dual_graph):
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -848,9 +847,6 @@ def geometric_basis(G, E, p, regions):
     - ``EC`` -- A counterclockwise orientation of the vertices of ``E``
 
     - ``p`` -- a vertex of ``E``
-    
-    - ``regions`` -- the bounded regions as a list of positively oriented
-      lists of edges of ``G``
       
     - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that 
       ``E`` is the boundary of the non-bounded component of the complement.
@@ -868,20 +864,39 @@ def geometric_basis(G, E, p, regions):
         sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, orient_circuit
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
+        sage: V0 = [_ for _ in V.regions().values() if _.is_compact()]
         sage: G = Graph()
-        sage: Vreg = [_ for _ in V.regions().values() if _.is_compact()]
-        sage: regions = []
-        sage: for reg in Vreg:
+        sage: for reg in V0:
         ....:     regv = reg.vertex_graph()
         ....:     G = G.union(regv)
-        ....:     circ = orient_circuit(regv.eulerian_circuit(), convex = True)
-        ....:     regions.append(circ)
         sage: E = Graph()
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
         sage: p = E.vertices(sort=True)[0]
-        sage: geometric_basis(G, E, p, regions)
+        sage: Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
+        sage: Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+        sage: DG = Graph(len(Vreg1))
+        sage: DG.relabel(Vreg1)
+        sage: Edges = []
+        sage: crd = {}
+        sage: for i, r in enumerate(Vreg):
+        ....:     for e in r:
+        ....:         a, b = e[ : 2]
+        ....:         e1 = (b, a, None)
+        ....:         if e not in Edges:
+        ....:             Edges += [e, e1]
+        ....:             crd[e]=(Vreg1[i],)
+        ....:             crd[e1]=(Vreg1[i],)
+        ....:         else:
+        ....:             crd[e] += (Vreg1[i],)
+        ....:             crd[e1] += (Vreg1[i],)
+        sage: EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+        sage: for e in EdgesDual:
+        ....:     DG.add_edge(crd[e] + (e,))
+        sage: EC0 = orient_circuit(E.eulerian_circuit())
+        sage: EC = [EC0[0][0]] + [e[1] for e in EC0]
+        sage: geometric_basis(G, E, EC, p, DG)
         [[A vertex at (-2, -2),
           A vertex at (2, -2),
           A vertex at (2, 2),
@@ -918,26 +933,14 @@ def geometric_basis(G, E, p, regions):
           A vertex at (-2, 2),
           A vertex at (-2, -2)]]
     """
-    ######## This will disappear after the changes
-    region_graphs = []
-    for reg in regions:
-        g = Graph(reg)
-        region_graphs.append(g)
-    EC = [v[0] for v in orient_circuit(E.eulerian_circuit())]
-    ########
     i = EC.index(p)
-    EC = EC[i:] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
+    EC = EC[i:-1] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
     InternalEdges = [_ for _ in G.edges(sort = False) if _ not in E.edges(sort = True)]
     InternalVertices=[v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices = InternalVertices, edges = InternalEdges)
-    # Internal = Graph() # Replaced by the above lines
-    # for e in G.edges(sort=False):
-    #     if not E.has_edge(e):
-    #         Internal.add_edge(e)   # interior graph
-    # treat the case where I is empty
     if not Internal:
         for v in E:
             if len(E.neighbors(v)) > 2:
@@ -954,56 +957,25 @@ def geometric_basis(G, E, p, regions):
     distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in E
                          if v in Internal.connected_component_containing_vertex(q) and not v == q]
     r = max(distancequotients)[1]
+    qi = EC.index(q)
+    ri = EC.index(r)
     cutpath = Internal.shortest_path(q, r)
     #Gcut = copy(G)
     Ecut = copy(E)
     Ecut.delete_vertices([q, r])
-    #Gcut.delete_vertices(cutpath)
-    ############## To be replaced
-    Gd = Graph(len(regions))
-    for i, j in Combinations(range(len(regions)), 2):
-        Ga = region_graphs[i]
-        La = Ga.edges(sort = True)
-        Gb = region_graphs[j]
-        Lb = Gb.edges(sort = True)
-        Uc = [(a, b, c) for a, b, c in La if (a, b, c) in Lb or (b, a, c) in Lb]
-        if len(Uc) >= 1:
-            arista = Uc[0]
-            if arista[0] in cutpath and arista[1] in cutpath:
-                k = cutpath.index(arista[0])
-                l = cutpath.index(arista[1])
-                if abs(k - l) != 1 and Set(k, l)!=Set(0, len(regions) - 1):
-                    Gd.add_edge((i,j))
-            else:
-                Gd.add_edge((i, j))
-    #######################
-    # Gd = copy(dual_graph)
-    # cp0 = cutpath + [cutpath[0]]
-    # cp1 = [(e, cp0[i + 1], None) for i, e in enumerate(cutpath)]
-    # cp1 += [(cp0[i + 1], e, None) for i, e in enumerate(cutpath)]
-    # borra = [_ for _ in DG.edges(sort = False) if _[2] in cp1]
-    # Gd.delete_edges(borra)
-    # Gd1, Gd2 = Gd.connected_components_subgraphs()
-    # GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]]+[v for e in Gd2.edges(sort=False) for v in e[2]]+[v for v in cutpath]
-    # G2=G.subgraph(GL2)
-    # GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]]+[v for e in Gd1.edges(sort=False) for v in e[2]]+[v for v in cutpath]
-    # G1=G.subgraph(GL1)
-    Gd1,Gd2 = Gd.connected_components()
-    GL1 = list(Set(_ for c in Gd1 for _ in regions[c]))
-    GL1 = flatten(GL1)
-    G1 = G.subgraph(GL1)
-    GL2 = list(Set(_ for c in Gd2 for _ in regions[c]))
-    GL2 = flatten(GL2)
-    G2 = G.subgraph(GL2)
-    regions1 = [regions[i] for i in Gd1]
-    regions2 = [regions[i] for i in Gd2]
-    ##########################
-    qi = EC.index(q)
-    ri = EC.index(r)
+    Gd = copy(dual_graph)
+    cp1 = [(e, cutpath[i + 1], None) for i, e in enumerate(cutpath[: -1])]
+    cp1 += [(cutpath[i + 1], e, None) for i, e in enumerate(cutpath[: -1])]
+    borra = [_ for _ in Gd.edges(sort = False) if _[2] in cp1]
+    Gd.delete_edges(borra)
+    Gd1, Gd2 = Gd.connected_components_subgraphs()
+    GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]]+[v for e in Gd2.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    G2=G.subgraph(GL2)
+    GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]]+[v for e in Gd1.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    G1=G.subgraph(GL1)
     if EC[qi + 1] in G2:
         G1, G2 = G2, G1
-        #Gd1, Gd2 = Gd2, Gd1
-        regions1, regions2 = regions2, regions1
+        Gd1, Gd2 = Gd2, Gd1
     E1, E2 = Ecut.connected_components_subgraphs()
     if EC[qi + 1] in E2:
         E1, E2 = E2, E1
@@ -1020,18 +992,16 @@ def geometric_basis(G, E, p, regions):
             if n in E2:
                 E2.add_edge(v, n, None)
     if qi < ri:
-        EC1 = [EC[j] for j in [qi..ri - 1]] + [_ for _ in reversed(cutpath)]
-        EC2 = cutpath + EC[ri + 1 : ] + EC[1 : qi + 1]
+        EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
+        EC2 = cutpath + EC[ri + 1 : -1] + EC[ : qi + 1]
     else:
         EC1 = EC[qi : ] + EC[1 : ri] + [_ for _ in reversed(cutpath)]
         EC2 = cutpath + EC[ri + 1 : qi + 1]
 
 
 
-    # gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
-    # gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
-    gb1 = geometric_basis(G1, E1, q, regions1)
-    gb2 = geometric_basis(G2, E2, q, regions2)
+    gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
+    gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
 
     reverse_connecting = list(reversed(connecting_path))
     resul = [connecting_path + path + reverse_connecting
@@ -1116,12 +1086,9 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     V = corrected_voronoi_diagram(tuple(disc))
     V0 = [_ for _ in V.regions().values() if _.is_compact()]
     G = Graph()
-    regions = []
     for reg in V0:
         regv = reg.vertex_graph()
         G = G.union(regv)
-        circ = orient_circuit(regv.eulerian_circuit(), convex = True)
-        regions.append(circ)
     E = Graph()
     for reg in V.regions().values():
         if reg.rays() or reg.lines():
@@ -1130,30 +1097,30 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     p0 = (p[0], p[1])
     # Construct a dual graph for the compact regions; the dual edges
     # of this graph have as labels the corresponding edges in G 
-    #Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
-    #Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
-    # DG = Graph(len(Vreg1))
-    # DG.relabel(Vreg1)
-    # Edges = []
-    # crd = {}
-    # for i, r in enumerate(Vreg):
-    #     for e in r:
-    #         a, b = e[:2]
-    #         e1 = (b, a, None)
-    #         if e not in Edges:
-    #             Edges += [e, e1]
-    #             crd[e]=(Vreg1[i],)
-    #             crd[e1]=(Vreg1[i],)
-    #         else:
-    #             crd[e] += (Vreg1[i],)
-    #             crd[e1] += (Vreg1[i],)
-    # EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-    # for e in EdgesDual:
-    #     DG.add_edge(crd[e] + (e,))
-    # EC = [v[0] for v in orient_circuit(E.eulerian_circuit())]    
+    Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
+    Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+    DG = Graph(len(Vreg1))
+    DG.relabel(Vreg1)
+    Edges = []
+    crd = {}
+    for i, r in enumerate(Vreg):
+        for e in r:
+            a, b = e[:2]
+            e1 = (b, a, None)
+            if e not in Edges:
+                Edges += [e, e1]
+                crd[e]=(Vreg1[i],)
+                crd[e1]=(Vreg1[i],)
+            else:
+                crd[e] += (Vreg1[i],)
+                crd[e1] += (Vreg1[i],)
+    EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+    for e in EdgesDual:
+        DG.add_edge(crd[e] + (e,))
+    EC0 = orient_circuit(E.eulerian_circuit())
+    EC = [EC0[0][0]] + [e[1] for e in EC0]
     if computebm:
-        geombasis = geometric_basis(G, E, p, regions)
-        #geombasis = geometric_basis(G, E, EC, p, GD)
+        geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
         for p in geombasis:
             for s in zip(p[:-1], p[1:]):
@@ -1162,22 +1129,14 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         I = QQbar.gen()
         segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
         vertices = list(set(flatten(segs)))
-        #with open("debug.txt","a") as fd:
-            #print('vertices-aristas Voronoi: ' + str(len(vertices)) + ', ' + str(len(segs)), file = fd)
-        #with open("debug.txt","a") as fd:
-            #print('intervalos vertices empez+ado', file = fd)
         tocacheverts = tuple([(glist, v) for v in vertices])
         populate_roots_interval_cache(tocacheverts)
-        #with open("debug.txt","a") as fd:
-            #print('intervalos vertices hecho', file = fd)
         end_braid_computation = False
         while not end_braid_computation:
             try:
                 braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
                                                     for seg in segs]))
                 segsbraids = {}
-                #with open("debug.txt","a") as fd:
-                    #print('Antes de paralelizar', file = fd)
                 for braidcomputed in braidscomputed:
                     seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
                     beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
@@ -1188,7 +1147,6 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
                 end_braid_computation = True
             except ChildProcessError:  # hack to deal with random fails first time
                 pass
-        #B = b.parent()
         B=BraidGroup(d)
         result = []
         for path in geombasis:
@@ -1216,8 +1174,6 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         if not holdstrand:
             roots_base.sort()
             strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
-        #with open("debug.txt","a") as fd:
-        #   print('diccionario hecho: ' + str(dic1), file = fd) 
         if computebm and not holdstrand:
             return (result, strands)
         elif computebm and holdstrand:
