@@ -969,9 +969,9 @@ def geometric_basis(G, E, EC, p, dual_graph):
     borra = [_ for _ in Gd.edges(sort = False) if _[2] in cp1]
     Gd.delete_edges(borra)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
-    GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]]+[v for e in Gd2.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]] + [v for e in Gd2.edges(sort = False) for v in e[2]] + [v for v in cutpath]
     G2=G.subgraph(GL2)
-    GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]]+[v for e in Gd1.edges(sort=False) for v in e[2]]+[v for v in cutpath]
+    GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]] + [v for e in Gd1.edges(sort = False) for v in e[2]] + [v for v in cutpath]
     G1=G.subgraph(GL1)
     if EC[qi + 1] in G2:
         G1, G2 = G2, G1
@@ -1097,8 +1097,8 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     p0 = (p[0], p[1])
     # Construct a dual graph for the compact regions; the dual edges
     # of this graph have as labels the corresponding edges in G 
-    Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
-    Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+    Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
+    Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
     DG = Graph(len(Vreg1))
     DG.relabel(Vreg1)
     Edges = []
