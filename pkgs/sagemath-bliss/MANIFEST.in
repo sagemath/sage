@@ -1,4 +1,3 @@
-prune sage
 global-exclude *.c
 global-exclude *.cpp
 
