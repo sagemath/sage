@@ -1,0 +1,1 @@
+$(PYTHON) sagelib bliss | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
