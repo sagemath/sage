@@ -63,7 +63,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     `\mathbb{F}_q`-algebra morphism `\phi: \mathbb{F}_q[X] \to
     K\{\tau\}` such that:
 
-    1. The image of `\phi` contains non-constant Ore polynomials.
+    1. The image of `\phi` contains nonconstant Ore polynomials.
     2. For every element `a` in the `\mathbb{F}_q[X]`, the constant
        coefficient `\phi(a)` is `\gamma(a)`.
 
@@ -184,12 +184,12 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ...
         ValueError: generator must have positive degree
 
-    The constant coefficient must be non zero::
+    The constant coefficient must be nonzero::
 
         sage: DrinfeldModule(FqX, [K(0), K(1)])
         Traceback (most recent call last):
         ...
-        ValueError: base must be a non zero morphism
+        ValueError: base must be a nonzero morphism
 
     The coefficients of the generator must lie in an
     `\mathbb{F}_q[X]`-field, where `\mathbb{F}_q[X]` is the function
@@ -344,7 +344,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     A morphism of Drinfeld modules `\phi \to \psi` is an Ore polynomial
     `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a` in
     the function ring. In our case, this is equivalent to `f \phi_X =
-    \psi_X f`. An isogeny is a non-zero morphism.
+    \psi_X f`. An isogeny is a nonzero morphism.
 
     Use the ``in`` syntax to test if an Ore polynomial defines a
     morphism::
@@ -411,7 +411,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: The Vélu formula
 
-    Let ``ore_pol`` be a non-zero Ore polynomial. We can decide if there
+    Let ``ore_pol`` be a nonzero Ore polynomial. We can decide if there
     exists a Drinfeld module ``psi`` such that ``ore_pol`` is an isogeny
     from ``self`` to ``psi``. If so, we find ``psi``::
 
@@ -842,7 +842,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- a nonnegative integer
 
         OUTPUT: an element in the base codomain
 
@@ -877,7 +877,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return the coefficients of the generator, as a list.
 
         If the flag ``sparse`` is ``True`` (default), only return the
-        non-zero coefficients; otherwise, return all of them.
+        nonzero coefficients; otherwise, return all of them.
 
         INPUT:
 
@@ -897,7 +897,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              z12^3,
              z12^5]
 
-        Careful, the method only returns the non-zero coefficients,
+        Careful, the method only returns the nonzero coefficients,
         unless otherwise specified::
 
             sage: rho = DrinfeldModule(FqX, [p_root, 0, 0, 0, 1])

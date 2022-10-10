@@ -52,7 +52,7 @@ class DrinfeldModules(Category_over_base):
         These notations will be used throughout this documentation.
 
     We say that `\mathbb{F}_q[X]` is the function ring of the category;
-    `K\{\tau\}` is the re polynomial ring of the category. The constant
+    `K\{\tau\}` is the polynomial ring of the category. The constant
     coefficient of the category is the image of `X` under the base. The
     `\mathbb{F}_q[X]`-characteristic of the `\mathbb{F}_q[X]`-field `K`
     can also be referred to as its function ring-characteristic.
@@ -170,7 +170,7 @@ class DrinfeldModules(Category_over_base):
         sage: cat = DrinfeldModules(base)
         Traceback (most recent call last):
         ...
-        ValueError: base must be a non zero morphism
+        ValueError: base must be a nonzero morphism
 
         sage: base = Hom(FqX, FqX)(1)
         sage: cat = DrinfeldModules(base)
@@ -245,9 +245,9 @@ class DrinfeldModules(Category_over_base):
         K = base.codomain()
         if not K.is_field():
             raise TypeError('base codomain must be a field')
-        # Check base is a non zero morphism
+        # Check base is a nonzero morphism
         if base(X).is_zero():
-            raise ValueError('base must be a non zero morphism')
+            raise ValueError('base must be a nonzero morphism')
         # Build K{t}
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)

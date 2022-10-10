@@ -33,7 +33,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     \to K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
     polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a
     \in \mathbb{F}_q[X]`. In our case, this is equivalent to `f \phi_X = \psi_X
-    f`. An *isogeny* is a non-zero morphism.
+    f`. An *isogeny* is a nonzero morphism.
 
     To create a morphism object, the user should never explicitly
     instantiate :class:`DrinfeldModuleMorphism`, but rather call the parent
