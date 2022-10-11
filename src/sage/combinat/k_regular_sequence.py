@@ -1049,6 +1049,25 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         A :class:`kRegularSequence`
 
+        ALGORITHM:
+
+        For the purposes of this description, the left vector valued sequence
+        associated with a regular sequence is consists of the left vector
+        multiplied by the corresponding matrix product, but without the right
+        vector of the regular sequence.
+
+        The algorithm maintains a left vector valued sequence consisting
+        of the left vector valued sequence of the argument ``sequence``
+        (replaced by an empty tuple if ``sequence`` is `None`) plus several
+        components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
+        ``t`` and ``r``.
+
+        Implicitly, the algorithm also maintains a `d \times n_max` matrix ``A``
+        (where ``d`` is the dimension of the left vector valued sequence)
+        whose columns are the current left vector valued sequence evaluated at
+        the non-negative integers less than `n_max` and ensures that this
+        matrix has full row rank.
+
         EXAMPLES:
 
         Binary sum of digits::
