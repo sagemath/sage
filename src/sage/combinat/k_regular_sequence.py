@@ -1040,7 +1040,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           terms
 
         - ``max_dimension`` -- (default: ``10``) a positive integer specifying
-          the maxium dimension which is tried when guessing the sequence
+          the maximum dimension which is tried when guessing the sequence
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
           for bootstrapping this guessing
