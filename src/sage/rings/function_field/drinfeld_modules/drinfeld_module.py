@@ -72,8 +72,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     The Drinfeld `\mathbb{F}_q[X]`-module `\phi` is uniquely determined
     by the image `\phi_X` of `X`. This serves as input of the class.
 
-    Despite an emphasis on the finite case, the base codomain can be any
-    extension of the field `\mathbb{F}_q`::
+    A Drinfeld module is saif to be finite if the base ring codomain is
+    a finite field. Despite an emphasis on this case, the base codomain
+    can be any extension of the field `\mathbb{F}_q`::
 
         sage: Fq = GF(25)
         sage: FqX.<X> = Fq[]
@@ -99,7 +100,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. NOTE::
 
-        In the first case, the Drinfeld module is said to be finite. See
+        Finite Drinfeld modules are implemented in the class
         :class:`sage.rings.function_field.drinfeld_modules.finite_drinfeld_module`.
 
     We say that `\mathbb{F}_q[X]` is the function ring of `\phi`;
@@ -146,6 +147,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           To:   Finite Field in z of size 3^12
           Defn: X |--> z
+
+    Note that the definition of the base morphism is implicit; it is
+    defined as the `\mathbb{F}_q`-algebra morphism `\mathbb{F}_q[X] \to
+    K` which maps `X` to the constant coefficient of the generator, and
+    where `K` is the compositum of all the parents of the coefficients::
+
+        sage: phi.base().codomain() is K
+        True
+
+    .. NOTE::
+
+            Formally, `K` is defined as `Sequence(gen).universe()`, where
+            `gen` is the generator of the Drinfeld module.
 
     The above Drinfeld module is finite; it can also be infinite::
 
@@ -493,6 +507,48 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi = DrinfeldModule(FqX, [K(1), 1])
         sage: isinstance(phi.ore_polring(), OrePolynomialRing)
         True
+
+    Test that the base morphism is correct::
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K = Frac(Fq)
+            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(1)])
+            sage: phi.base().codomain() is K
+            True
+
+        ::
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: k = Frac(Fq)
+            sage: kT.<T> = k[]
+            sage: K = k.extension(T^3 + T + 1)
+            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K.gen()])
+            sage: phi.base().codomain() is K
+            True
+
+        In particular, note that the field `K` may not be the smallest field
+        of definition of the coefficients::
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: k = Frac(Fq)
+            sage: kT.<T> = k[]
+            sage: K = k.extension(T^3 + T + 1)
+            sage: phi = DrinfeldModule(FqX, [K(k.gen()), 1])
+            sage: phi.base().codomain() is K
+            True
+
+        ::
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(Fq.gen())])
+            sage: phi.base().codomain() is K
+            True
+
     """
 
     @staticmethod
