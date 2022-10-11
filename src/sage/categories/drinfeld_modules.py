@@ -721,13 +721,3 @@ class DrinfeldModules(Category_over_base):
                 True
             """
             return self.category().ore_polring()
-
-        # FIXME
-        # The parent method `base_ring` is defined not here, as it
-        # should be, but in `DrinfeldModule`.
-        #
-        # This is because calling `phi.base_ring()` calls the
-        # `base_ring` method of `CategoryObject` and not the one defined
-        # here.
-        #
-        # This works, but any better solution would be welcome.

@@ -704,6 +704,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             AttributeError: the base of a Drinfeld module is a morphism
         """
+        # FIXME
+        # This method depends on the sole category of the Drinfeld
+        # module. It should therefore be implemented in the
+        # `ParentMethods` bloc of `DrinfeldModule`. This is not possible
+        # as the method `base_ring` from `CategoryObject` --- of which
+        # `Parent` and so `DrinfeldModule inherit --- is called instead.
+        # Any better way would be welcome.
         raise AttributeError('the base of a Drinfeld module is a morphism')
 
     def __call__(self, a):
