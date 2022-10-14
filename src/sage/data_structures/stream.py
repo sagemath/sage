@@ -1011,32 +1011,14 @@ class Stream_uninitialized(Stream_inexact):
             sage: C = Stream_uninitialized(0)
             sage: TestSuite(C).run(skip="_test_pickling")
         """
-        self._target = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
         super().__init__(False, true_order)
+        self._iter = None
         self._approximate_order = approximate_order
 
-    def iterate_coefficients(self):
-        """
-        A generator for the coefficients of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized
-            sage: from sage.data_structures.stream import Stream_exact
-            sage: z = Stream_exact([1], order=1)
-            sage: C = Stream_uninitialized(0)
-            sage: C._target
-            sage: C._target = z
-            sage: n = C.iterate_coefficients()
-            sage: [next(n) for _ in range(10)]
-            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-        """
-        n = self._approximate_order
-        while True:
-            yield self._target[n]
-            n += 1
+    def define(self, coeff_stream):
+        self._iter = coeff_stream.iterate_coefficients()
 
 
 class Stream_unary(Stream_inexact):

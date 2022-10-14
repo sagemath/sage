@@ -938,12 +938,7 @@ class LazyModuleElement(Element):
         if isinstance(self._coeff_stream, Stream_exact):
             return True
         if isinstance(self._coeff_stream, Stream_uninitialized):
-            if self._coeff_stream._target is None:
-                return True
-            if isinstance(self._coeff_stream._target, Stream_zero):
-                return False
-            if isinstance(self._coeff_stream._target, Stream_exact):
-                return True
+            return True
         if self._coeff_stream._is_sparse:
             cache = self._coeff_stream._cache
             if any(cache[a] for a in cache):
@@ -1207,7 +1202,7 @@ class LazyModuleElement(Element):
             O^7
 
         """
-        if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
+        if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._iter is not None:
             raise ValueError("series already defined")
 
         if not isinstance(s, LazyModuleElement):
@@ -1219,7 +1214,7 @@ class LazyModuleElement(Element):
             self._coeff_stream = coeff_stream
             return
 
-        self._coeff_stream._target = coeff_stream
+        self._coeff_stream.define(coeff_stream)
 
     # an alias for compatibility with padics
     set = define
@@ -1266,7 +1261,7 @@ class LazyModuleElement(Element):
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return '0'
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
+        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._iter is None:
             return 'Uninitialized Lazy Laurent Series'
         return self._format_series(repr)
 
@@ -1316,7 +1311,7 @@ class LazyModuleElement(Element):
         from sage.misc.latex import latex
         if isinstance(self._coeff_stream, Stream_zero):
             return latex('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
+        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._iter is None:
             return latex("Undef")
         return self._format_series(latex)
 
@@ -1336,7 +1331,7 @@ class LazyModuleElement(Element):
         from sage.typeset.ascii_art import ascii_art, AsciiArt
         if isinstance(self._coeff_stream, Stream_zero):
             return AsciiArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
+        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._iter is None:
             return AsciiArt('Uninitialized Lazy Laurent Series')
         return self._format_series(ascii_art, True)
 
@@ -1356,7 +1351,7 @@ class LazyModuleElement(Element):
         from sage.typeset.unicode_art import unicode_art, UnicodeArt
         if isinstance(self._coeff_stream, Stream_zero):
             return UnicodeArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
+        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._iter is None:
             return UnicodeArt('Uninitialized Lazy Laurent Series')
         return self._format_series(unicode_art, True)
 
@@ -3145,7 +3140,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
-        f._coeff_stream._target = int_d_self_f
+        f._coeff_stream.define(int_d_self_f)
         return f
 
     def log(self):
