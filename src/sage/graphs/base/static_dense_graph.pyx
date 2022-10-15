@@ -403,7 +403,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
     - ``edges_only`` -- boolean (default: ``False``); whether to return
       (Di)Graph or list of vertices
 
-    - ``labels`` -- boolean (default: ``False``); whether to return labeled
+    - ``labels`` -- boolean (default: ``False``); whether to return labelled
       edges or not. This parameter is used only when ``edges_only`` is ``True``.
 
     .. NOTE::
@@ -491,9 +491,10 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
     cdef Py_ssize_t n = G.order()
     if n <= 2:
         if edges_only:
-            return list(G.edges(sort=False, labels=labels))
+            yield list(G.edges(sort=False, labels=labels))
         else:
-            return G.copy()
+            yield G.copy()
+        return
 
     # We map vertices to integers. We sort them by degree as a heuristic to
     # reduce the number of operations.
@@ -564,8 +565,8 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
 
             if not bitset_len(boundary):
                 # We cannot extend
-                print("cannot extend")
                 continue
+
             E.append(edges)
             # otherwise, we select a vertex from the boundary and extend the order
 
@@ -603,7 +604,8 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
     sig_off()
 
 
-def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
+def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
+                                edges_only=False, labels=False, induced=True):
     r"""
     Iterator over the induced connected subgraphs of order at most `k`.
 
@@ -626,7 +628,20 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
       (equivalent to ``k == n``)
 
     - ``vertices_only`` -- boolean (default: ``False``); whether to return
-      (Di)Graph or list of vertices
+      (Di)Graph or list of vertices. This parameter is ignored when ``induced``
+      is ``True``.
+
+    - ``edges_only`` -- boolean (default: ``False``); whether to
+      return (Di)Graph or list of edges. When ``vertices_only`` is
+      ``True``, this parameter is ignored.
+
+    - ``labels`` -- boolean (default: ``False``); whether to return labelled
+      edges or not. This parameter is used only when ``vertices_only`` is
+      ``False`` and ``edges_only`` is ``True``.
+
+    - ``induced`` -- boolean (default: ``True``); whether to return induced
+      connected sub(di)graph only or also non-induced sub(di)graphs.
+      This parameter can be set to ``False`` for simple (di)graphs only.
 
     EXAMPLES::
 
@@ -666,6 +681,15 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
          Subgraph of (): Digraph on 1 vertex]
         sage: list(G.connected_subgraph_iterator(vertices_only=True))
         [[1], [1, 2], [2]]
+
+        sage: G = graphs.CompleteGraph(3)
+        sage: len(list(G.connected_subgraph_iterator()))
+        7
+        sage: len(list(G.connected_subgraph_iterator(vertices_only=True)))
+        7
+        sage: len(list(G.connected_subgraph_iterator(edges_only=True)))
+        7
+        sage: len(list(G.connected_subgraph_iterator(induced=False)))
 
     TESTS:
 
@@ -707,6 +731,10 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
         sage: len(list(G.connected_subgraph_iterator(vertices_only=True)))
         3
     """
+    if not induced:
+        G._scream_if_not_simple()
+        vertices_only = False
+
     cdef Py_ssize_t mk = G.order() if k is None else k
     cdef Py_ssize_t n = G.order()
     if not n or mk < 1:
@@ -733,6 +761,7 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
 
     cdef Py_ssize_t level
     cdef Py_ssize_t u, v, a
+    cdef list vertices
 
     # We first generate subsets containing vertex 0, then the subsets containing
     # vertex 1 but not vertex 0 since we have already generated all subsets
@@ -740,10 +769,15 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
     for u in range(n):
         sig_check()
 
+        vertices = [int_to_vertex[u]]
         if vertices_only:
-            yield [int_to_vertex[u]]
+            yield vertices
         else:
-            yield G.subgraph([int_to_vertex[u]])
+            H = G.subgraph(vertices)
+            if edges_only:
+                yield H.edges(sort=False, labels=labels)
+            else:
+                yield H
 
         # We initialize the loop with vertices u in current, {u+1, ..., n-1}
         # in left, and N(u) in boundary
@@ -783,12 +817,20 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
                 bitset_union(stack.rows[level + 2], boundary, DG.rows[v])
 
                 # We yield that new subset
+                vertices = [int_to_vertex[a] for a in range(u, n)
+                            if bitset_in(stack.rows[level], a)]
                 if vertices_only:
-                    yield [int_to_vertex[a] for a in range(u, n)
-                           if bitset_in(stack.rows[level], a)]
+                    yield vertices
                 else:
-                    yield G.subgraph([int_to_vertex[a] for a in range(u, n)
-                                      if bitset_in(stack.rows[level], a)])
+                    H = G.subgraph(vertices)
+                    if induced:
+                        if edges_only:
+                            yield H.edges(sort=False, labels=labels)
+                        else:
+                            yield H
+                    else:
+                        yield from connected_full_subgraphs(H, edges_only=edges_only,
+                                                            labels=labels)
 
             else:
                 # We cannot extend the current subset, either due to a lack of
