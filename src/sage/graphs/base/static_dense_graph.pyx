@@ -467,7 +467,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
 
         sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
         sage: list(connected_full_subgraphs(Graph(2)))
-        Traceback (most recent call last)
+        Traceback (most recent call last):
         ...
         ValueError: the input (di)graph is not connected
 
@@ -476,7 +476,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
         sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
         sage: G = graphs.StarGraph(100)
         sage: list(connected_full_subgraphs(G))
-        Traceback (most recent call last)
+        Traceback (most recent call last):
         ...
         ValueError: the degree of the graph is too large for this method
     """
@@ -690,6 +690,7 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
         sage: len(list(G.connected_subgraph_iterator(edges_only=True)))
         7
         sage: len(list(G.connected_subgraph_iterator(induced=False)))
+        10
 
     TESTS:
 
