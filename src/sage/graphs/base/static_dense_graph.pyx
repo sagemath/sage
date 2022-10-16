@@ -389,7 +389,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
     `E_H \subseteq E` and `H` is connected. Hence, this method may yield a huge
     number of graphs.
 
-    When the input (di)graph `D` is not connected, this method returns nothing.
+    When the input (di)graph `G` is not connected, this method returns nothing.
 
     As for method :meth:`sage.graphs.generic_graph.connected_components`, edge
     orientation is ignored. Hence, the directed graph with a single arc `0 \to
@@ -572,7 +572,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
 
         elif bitset_len(boundaries.rows[i]):
             # We prepare the boundary for the selection of the next vertex.
-            # This is equivalalnt to consider an empty neighborhood.
+            # This is equivalant to consider an empty neighborhood.
             bitset_copy(boundaries.rows[i + 1], boundaries.rows[i])
             bitset_clear(boundaries.rows[i])  # to prevent doing twice this operation
             E.append([])
