@@ -11,33 +11,33 @@ cd "$PKG_SRC_DIR"
 #    (GAP 4.8.6 still had it, but this is gone in 4.10)
 
 sdh_install \
-    aclib-* \
-    AutoDoc-* \
-    corelg-* \
-    crime-* \
+    aclib \
+    autodoc \
+    corelg \
+    crime \
     cryst \
     crystcat \
-    design-* \
+    design \
     gbnp \
-    genss-* \
-    hap-* \
-    hapcryst-* \
-    hecke-* \
-    images-* \
-    liealgdb-* \
-    liepring-* \
-    liering-* \
-    loops-* \
-    MapClass-* \
-    polymaking-* \
-    qpa-* \
-    quagroup-* \
-    radiroot-* \
-    repsn-* \
-    sla-* \
-    sonata-* \
-    Toric-* \
-    utils-* \
+    genss \
+    hap \
+    hapcryst \
+    hecke \
+    images \
+    liealgdb \
+    liepring \
+    liering \
+    loops \
+    mapclass \
+    polymaking \
+    qpa \
+    quagroup \
+    radiroot \
+    repsn \
+    sla \
+    sonata \
+    toric \
+    utils \
     "$PKG_DIR"
 
 install_compiled_pkg()
@@ -65,7 +65,7 @@ install_compiled_pkg()
 #
 # These packages have an old ./configure that take the GAP_ROOT as a positional
 # argument
-for pkg in cohomolo-* crypting-* grape-* guava-* orb-* datastructures-*
+for pkg in cohomolo crypting grape guava orb datastructures
 do
     echo "Building GAP package $pkg"
     CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
@@ -91,7 +91,7 @@ pararr=( " " " " "--with-external-planarity" "--with-external-libsemigroups" )
 ##############################################################################
 
 parind=0
-for pkg in nq-* io-* digraphs-* semigroups-*
+for pkg in nq io digraphs semigroups
 do
     echo "Building GAP package $pkg"
     cd "$PKG_SRC_DIR/$pkg"
