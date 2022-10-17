@@ -38,14 +38,13 @@ The KASH interface offers three pieces of functionality:
 Issues
 ------
 
-For some reason hitting Control-C to interrupt a calculation
-doesn't work correctly. (TODO)
+For some reason hitting :kbd:`Control` + :kbd:`C` to interrupt a calculation
+does not work correctly. (TODO)
 
 Tutorial
 --------
 
-The examples in this tutorial require that kash
-be installed.
+The examples in this tutorial require that kash be installed.
 
 Basics
 ~~~~~~

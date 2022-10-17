@@ -173,7 +173,9 @@ class Interface(WithEqualityById, ParentWithBase):
     def interact(self):
         r"""
         This allows you to interactively interact with the child
-        interpreter. Press Ctrl-D or type 'quit' or 'exit' to exit and
+        interpreter.
+
+        Press :kbd:`Ctrl` + :kbd:`D` or type 'quit' or 'exit' to exit and
         return to Sage.
 
         .. note::

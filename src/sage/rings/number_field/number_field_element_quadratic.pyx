@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Optimized Quadratic Number Field Elements
 
 This file defines a Cython class ``NumberFieldElement_quadratic`` to speed up
@@ -23,16 +23,15 @@ AUTHORS:
     The ``_new()`` method should be overridden in this class to copy the ``D``
     and ``standard_embedding`` attributes
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 include "sage/libs/ntl/decl.pxi"
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
@@ -1634,7 +1633,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 #################################################################################
 
     def __hash__(self):
-        """
+        r"""
         Return hash of this number field element.
 
         For elements in `\ZZ` or `\QQ` the hash coincides with the one in the
@@ -2019,10 +2018,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpq_canonicalize(res.value)
         return res
 
-
     def norm(self, K=None):
-        """
-        Return the norm of self. If the second argument is None, this is the
+        r"""
+        Return the norm of ``self``.
+
+        If the second argument is ``None``, this is the
         norm down to `\QQ`. Otherwise, return the norm down to K (which had
         better be either `\QQ` or this number field).
 

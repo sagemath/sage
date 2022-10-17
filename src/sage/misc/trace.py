@@ -28,7 +28,7 @@ def trace(code, preparse=True):
 
         sage: trace("factor(100)")             # not tested
 
-    then at the (Pdb) prompt type ``s`` (or ``step``), then press return
+    then at the (Pdb) prompt type ``s`` (or ``step``), then press :kbd:`Return`
     over and over to step through every line of Python that is called
     in the course of the above computation. Type ``?`` at any time for
     help on how to use the debugger (e.g., ``l`` lists 11 lines around

@@ -196,12 +196,12 @@ cdef class MPolynomial(CommutativeRingElement):
         var = R.variable_name()
         if var in self._parent.variable_names():
             return R(self.polynomial(self._parent(var)))
-        else:
-            return R([self])
+        return R([self])
 
     def coefficients(self):
-        """
+        r"""
         Return the nonzero coefficients of this polynomial in a list.
+
         The returned list is decreasingly ordered by the term ordering
         of ``self.parent()``, i.e. the list of coefficients matches the list
         of monomials returned by
@@ -1315,11 +1315,12 @@ cdef class MPolynomial(CommutativeRingElement):
         return R(dict([(k,f(v)) for (k,v) in self.dict().items()]))
 
     def _norm_over_nonprime_finite_field(self):
-        """
+        r"""
         Given a multivariate polynomial over a nonprime finite field
-        `\GF{p**e}`, compute the norm of the polynomial down to `\GF{p}`, which
-        is the product of the conjugates by the Frobenius action on
-        coefficients, where Frobenius acts by p-th power.
+        `\GF{p^e}`, compute the norm of the polynomial down to `\GF{p}`.
+
+        This is the product of the conjugates by the Frobenius action
+        on coefficients, where Frobenius acts by p-th power.
 
         This is (currently) an internal function used in factoring over finite
         fields.

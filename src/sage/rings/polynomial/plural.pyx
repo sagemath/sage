@@ -250,10 +250,9 @@ cdef class NCPolynomialRing_plural(Ring):
         sage: H.<x,y,z> = A.g_algebra({z*x:x*z+2*x, z*y:y*z-2*y})
         sage: x*y == y*x
         True
-
     """
     def __init__(self, base_ring, names, c, d, order, category, check=True):
-        """
+        r"""
         Construct a noncommutative polynomial G-algebra subject to the following conditions:
 
         INPUT:

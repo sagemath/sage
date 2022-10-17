@@ -146,6 +146,10 @@ def merge_js_index(app):
             titles = app.builder.indexer._titles
             for (res, title) in index._titles.items():
                 titles[fixpath(res)] = title
+            # merge the alltitles
+            alltitles = app.builder.indexer._all_titles
+            for (res, alltitle) in index._all_titles.items():
+                alltitles[fixpath(res)] = alltitle
             # merge the filenames
             filenames = app.builder.indexer._filenames
             for (res, filename) in index._filenames.items():

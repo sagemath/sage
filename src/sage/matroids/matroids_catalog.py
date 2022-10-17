@@ -3,8 +3,8 @@ Catalog of matroids
 
 A module containing constructors for several common matroids.
 
-A list of all matroids in this module is available via tab
-completion. Let ``<tab>`` indicate pressing the tab key.  So begin by typing
+A list of all matroids in this module is available via tab completion.
+Let ``<tab>`` indicate pressing the :kbd:`Tab` key. So begin by typing
 ``matroids.<tab>`` to see the various constructions available. Many special
 matroids can be accessed from the submenu ``matroids.named_matroids.<tab>``.
 

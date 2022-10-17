@@ -5,16 +5,16 @@ Common words
 AUTHORS:
 
 - Franco Saliola (2008-12-17): merged into sage
-- Sebastien Labbe (2008-12-17): merged into sage
+- Sébastien Labbé (2008-12-17): merged into sage
 - Arnaud Bergeron (2008-12-17): merged into sage
 - Amy Glen (2008-12-17): merged into sage
 - Sébastien Labbé (2009-12-19): Added S-adic words (:trac:`7543`)
 
 USE:
 
-To see a list of all word constructors, type ``words.`` and then press the tab
-key. The documentation for each constructor includes information about each
-word, which provides a useful reference.
+To see a list of all word constructors, type ``words.`` and then press
+the :kbd:`Tab` key. The documentation for each constructor includes
+information about each word, which provides a useful reference.
 
 REFERENCES:
 
@@ -22,11 +22,11 @@ REFERENCES:
    numbers with a regular expansion, J. Number Theory 103 (2003)
    27--37.
 
-.. [BmBGL07] \A. Blondin-Masse, S. Brlek, A. Glen, and S. Labbe. On the
+.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
    critical exponent of generalized Thue-Morse words. *Discrete Math.
    Theor. Comput.  Sci.* 9 (1):293--304, 2007.
 
-.. [BmBGL09] \A. Blondin-Masse, S. Brlek, A. Garon, and S. Labbe. Christoffel
+.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
    and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
 
 .. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
@@ -103,6 +103,7 @@ def _build_tab(sym, tab, W):
         w = w.delta_inv(W, tab[i])
         res.append((w[-1] % c) + 1)
     return res
+
 
 class LowerChristoffelWord(FiniteWord_list):
     r"""
@@ -310,6 +311,7 @@ class LowerChristoffelWord(FiniteWord_list):
         """
         return self.__class__, (self.__p, self.__q, self.parent().alphabet())
 
+
 class WordGenerator():
     r"""
     Constructor of several famous words.
@@ -351,7 +353,7 @@ class WordGenerator():
     .. NOTE::
 
         To see a list of all word constructors, type ``words.`` and then
-        hit the TAB key. The documentation for each constructor
+        hit the :kbd:`Tab` key. The documentation for each constructor
         includes information about each word, which provides a useful
         reference.
 
@@ -1275,7 +1277,7 @@ class WordGenerator():
         if not isinstance(directive_word, Word_class):
             raise TypeError("directive_word is not a word, so it cannot be used to build an episturmian word")
         epistandard = directive_word.parent()(\
-                self._StandardEpisturmianWord_LetterIterator(directive_word), \
+                self._StandardEpisturmianWord_LetterIterator(directive_word),
                 datatype='iter')
         return epistandard
 
@@ -2041,5 +2043,6 @@ class WordGenerator():
         outer = WordMorphism('a->00,b->01,c->10,d->11')
         inner = WordMorphism('a->aa,b->cb,c->ba,d->db')
         return outer(inner.fixed_point('d'))
+
 
 words = WordGenerator()
