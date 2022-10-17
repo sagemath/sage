@@ -934,7 +934,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
           A vertex at (-2, -2)]]
     """
     i = EC.index(p)
-    EC = EC[i:-1] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, based at p
+    EC = EC[i:-1] + EC[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
