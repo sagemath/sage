@@ -1984,7 +1984,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: R.<x,y> = QQ[]
             sage: x._new_constant_poly(2/1,R)
             2
-
         """
         if not x:
             return new_MP(P, NULL)
@@ -1993,7 +1992,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         return new_MP(P, _p)
 
     def __call__(self, *x, **kwds):
-        """
+        r"""
         Evaluate this multi-variate polynomial at ``x``, where ``x``
         is either the tuple of values to substitute in, or one can use
         functional notation ``f(a_0,a_1,a_2, \ldots)`` to evaluate
@@ -2261,7 +2260,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         return new_MP((<MPolynomial_libsingular>left)._parent,_p)
 
     cpdef _div_(left, right_ringelement):
-        """
+        r"""
         Divide left by right
 
         EXAMPLES::
@@ -4576,7 +4575,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         return Sequence(l, check=False, immutable=True)
 
     def reduce(self,I):
-        """
+        r"""
         Return a remainder of this polynomial modulo the
         polynomials in ``I``.
 
@@ -5288,15 +5287,14 @@ cdef class MPolynomial_libsingular(MPolynomial):
         return new_MP(self._parent,p)
 
     def integral(self, MPolynomial_libsingular var):
-        """
-        Integrates this polynomial with respect to the provided
-        variable.
+        r"""
+        Integrate this polynomial with respect to the provided variable.
 
         One requires that `\QQ` is contained in the ring.
 
         INPUT:
 
-        - ``variable`` - the integral is taken with respect to variable
+        - ``variable`` -- the integral is taken with respect to variable
 
         EXAMPLES::
 

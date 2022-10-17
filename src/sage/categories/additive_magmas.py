@@ -730,7 +730,7 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS:
 
-                We check that the method `is_empty` is inherited from this
+                We check that the method ``is_empty`` is inherited from this
                 category in both examples above::
 
                     sage: A.is_empty.__module__

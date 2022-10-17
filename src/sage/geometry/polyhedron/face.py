@@ -750,7 +750,7 @@ class PolyhedronFace(ConvexSet_closed):
                        for V in self.ambient_Vrepresentation())
 
     @cached_method
-    def as_polyhedron(self):
+    def as_polyhedron(self, **kwds):
         """
         Return the face as an independent polyhedron.
 
@@ -774,7 +774,12 @@ class PolyhedronFace(ConvexSet_closed):
         P = self._polyhedron
         parent = P.parent()
         Vrep = (self.vertices(), self.rays(), self.lines())
-        return P.__class__(parent, Vrep, None)
+        result = P.__class__(parent, Vrep, None)
+        if any(kwds.get(kwd) is not None
+               for kwd in ('base_ring', 'backend')):
+            from .constructor import Polyhedron
+            return Polyhedron(result, **kwds)
+        return result
 
     def _some_elements_(self):
         r"""

@@ -22,9 +22,9 @@ leaves and of `q` to internal nodes::
     sage: leaf = species.SingletonSpecies()
     sage: internal_node = species.SingletonSpecies(weight=q)
     sage: L = species.LinearOrderSpecies(min=1)
-    sage: T = species.CombinatorialSpecies()
+    sage: T = species.CombinatorialSpecies(min=1)
     sage: T.define(leaf + internal_node*L(T))
-    sage: T.isotype_generating_series().coefficients(6)
+    sage: T.isotype_generating_series()[0:6]
     [0, 1, q, q^2 + q, q^3 + 3*q^2 + q, q^4 + 6*q^3 + 6*q^2 + q]
 
 Consider the following::
@@ -335,7 +335,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]
             [1, 1, 2, 4, 11]
         """
         from .functorial_composition_species import FunctorialCompositionSpecies
@@ -360,7 +360,7 @@ class GenericCombinatorialSpecies(SageObject):
             Set species with min=3
             sage: S.structures([1,2]).list()
             []
-            sage: S.generating_series().coefficients(5)
+            sage: S.generating_series()[0:5]
             [0, 0, 0, 1/6, 1/24]
         """
         kwargs = {'min': self._min if min is None else min,
@@ -431,19 +431,19 @@ class GenericCombinatorialSpecies(SageObject):
             (Singleton species) and (Singleton species)) and (Product
             of (Singleton species) and (Singleton species)))
 
-            sage: (X^2).generating_series().coefficients(4)
+            sage: (X^2).generating_series()[0:4]
             [0, 0, 1, 0]
-            sage: (X^3).generating_series().coefficients(4)
+            sage: (X^3).generating_series()[0:4]
             [0, 0, 0, 1]
-            sage: ((One+X)^3).generating_series().coefficients(4)
+            sage: ((One+X)^3).generating_series()[0:4]
             [1, 3, 3, 1]
-            sage: ((One+X)^7).generating_series().coefficients(8)
+            sage: ((One+X)^7).generating_series()[0:8]
             [1, 7, 21, 35, 35, 21, 7, 1]
 
             sage: x = QQ[['x']].gen()
             sage: coeffs = ((1+x+x+x**2)**25+O(x**10)).padded_list()
             sage: T = ((One+X+X+X^2)^25)
-            sage: T.generating_series().coefficients(10) == coeffs
+            sage: T.generating_series()[0:10] == coeffs
             True
             sage: X^1 is X
             True
@@ -479,21 +479,23 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies(min=2, max=4)
-            sage: P.generating_series().coefficients(8) #indirect doctest
+            sage: P.generating_series()[0:8] #indirect doctest
             [0, 0, 1, 1, 0, 0, 0, 0]
         """
         series = self._series_helper(series_ring_class, prefix, base_ring=base_ring)
-
         # We need to restrict the series based on the min
         # and max of this species.  Note that if min and max
         # are both None (as in the default case), then the restrict
         # method will just return series.
-        return series.restricted(min=self._min, max=self._max)
+        if self._min is None and self._max is None:
+            return series
+        return series.parent()(lambda n: series[n],
+                               valuation=self._min, degree=self._max)
 
     def _series_helper(self, series_ring_class, prefix, base_ring=None):
         """
         This code handles much of the common work involved in getting the
-        generating series for this species (such has determining the
+        generating series for this species (such as determining the
         correct base ring to pass down to the subclass, determining which
         method on the subclass to call to get the series object, etc.)
 
@@ -516,13 +518,13 @@ class GenericCombinatorialSpecies(SageObject):
             sage: from sage.combinat.species.generating_series import OrdinaryGeneratingSeriesRing
             sage: S = species.SetSpecies()
             sage: itgs = S._series_helper(OrdinaryGeneratingSeriesRing, "itgs")
-            sage: itgs.coefficients(3)
+            sage: itgs[:3]
             [1, 1, 1]
 
         ::
 
             sage: itgs = S._series_helper(OrdinaryGeneratingSeriesRing, "itgs", base_ring=RDF)
-            sage: itgs.coefficients(3)
+            sage: itgs[:3]
             [1.0, 1.0, 1.0]
         """
         prefix = "_" + prefix
@@ -550,16 +552,16 @@ class GenericCombinatorialSpecies(SageObject):
         except AttributeError:
             pass
 
-        # Try to return things like self._gs_iterator(base_ring).
-        # This is used when the subclass just provides an iterator
+        # Try to return things like self._gs_callable(base_ring).
+        # This is used when the subclass just provides an callable
         # for the coefficients of the generating series.  Optionally,
         # the subclass can specify the order of the series.
         try:
-            iterator = getattr(self, prefix + "_iterator")(base_ring)
+            callable = getattr(self, prefix + "_callable")
             try:
-                return series_ring(iterator, order=self._order())
+                return series_ring(lambda n: callable(base_ring, n), valuation=self._order())
             except AttributeError:
-                return series_ring(iterator)
+                return series_ring(lambda n: callable(base_ring, n))
         except AttributeError:
             pass
 
@@ -567,7 +569,7 @@ class GenericCombinatorialSpecies(SageObject):
         # This is used when the generating series is just a single
         # term.
         try:
-            return series_ring.term(getattr(self, prefix + "_term")(base_ring),
+            return series_ring(getattr(self, prefix + "_term")(base_ring),
                                     self._order())
         except AttributeError:
             pass
@@ -578,7 +580,7 @@ class GenericCombinatorialSpecies(SageObject):
         # The generating series with all ones coefficients is generated this
         # way.
         try:
-            return series_ring(getattr(self, prefix + "_list")(base_ring))
+            return series_ring(lambda n: getattr(self, prefix + "_list")(base_ring, n))
         except AttributeError:
             pass
 
@@ -597,7 +599,7 @@ class GenericCombinatorialSpecies(SageObject):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.generating_series()
-            sage: g.coefficients(4)
+            sage: g[:4]
             [1, 1, 1, 1]
             sage: g.counts(4)
             [1, 1, 2, 6]
@@ -620,7 +622,7 @@ class GenericCombinatorialSpecies(SageObject):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.isotype_generating_series()
-            sage: g.coefficients(4)
+            sage: g[0:4]
             [1, 1, 2, 3]
             sage: g.counts(4)
             [1, 1, 2, 3]
@@ -642,7 +644,7 @@ class GenericCombinatorialSpecies(SageObject):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.cycle_index_series()
-            sage: g.coefficients(4)
+            sage: g[0:4]
             [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
         """
         return self._get_series(CycleIndexSeriesRing, "cis", base_ring)
@@ -774,10 +776,10 @@ class GenericCombinatorialSpecies(SageObject):
         ::
 
             sage: sorted(B.digraph().vertex_iterator(), key=str)
-            [Combinatorial species,
-             Product of (Combinatorial species) and (Combinatorial species),
+            [Combinatorial species with min=1,
+             Product of (Combinatorial species with min=1) and (Combinatorial species with min=1),
              Singleton species,
-             Sum of (Singleton species) and (Product of (Combinatorial species) and (Combinatorial species))]
+             Sum of (Singleton species) and (Product of (Combinatorial species with min=1) and (Combinatorial species with min=1))]
 
         ::
 

@@ -192,7 +192,7 @@ class DiGraph(GenericGraph):
     pre-defined digraphs, see the :mod:`~sage.graphs.digraph_generators` module.
 
     A :class:`DiGraph` object has many methods whose list can be obtained by
-    typing ``g.<tab>`` (i.e. hit the 'tab' key) or by reading the documentation
+    typing ``g.<tab>`` (i.e. hit the :kbd:`Tab` key) or by reading the documentation
     of :mod:`~sage.graphs.digraph`, :mod:`~sage.graphs.generic_graph`, and
     :mod:`~sage.graphs.graph`.
 

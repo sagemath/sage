@@ -43,4 +43,3 @@ latex_documents = [
 html_additional_pages = {
     'index': 'index_furo.html' if html_theme == 'furo' else 'index.html',
 }
-

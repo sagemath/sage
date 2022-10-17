@@ -17,7 +17,6 @@ Set Species
 #*****************************************************************************
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import _integers_from
 from sage.combinat.species.structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
@@ -102,11 +101,11 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: E.structures([1,2,3]).list()
             [{1, 2, 3}]
-            sage: E.isotype_generating_series().coefficients(4)
+            sage: E.isotype_generating_series()[0:4]
             [1, 1, 1, 1]
 
             sage: S = species.SetSpecies()
-            sage: c = S.generating_series().coefficients(3)
+            sage: c = S.generating_series()[0:3]
             sage: S._check()
             True
             sage: S == loads(dumps(S))
@@ -130,7 +129,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     _isotypes = _structures
 
-    def _gs_iterator(self, base_ring):
+    def _gs_callable(self, base_ring, n):
         r"""
         The generating series for the species of sets is given by
         `e^x`.
@@ -139,15 +138,14 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: S = species.SetSpecies()
             sage: g = S.generating_series()
-            sage: g.coefficients(10)
+            sage: [g.coefficient(i) for i in range(10)]
             [1, 1, 1/2, 1/6, 1/24, 1/120, 1/720, 1/5040, 1/40320, 1/362880]
             sage: [g.count(i) for i in range(10)]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
-        for n in _integers_from(0):
-            yield base_ring(self._weight / factorial(n))
+        return base_ring(self._weight / factorial(n))
 
-    def _itgs_list(self, base_ring):
+    def _itgs_list(self, base_ring, n):
         r"""
         The isomorphism type generating series for the species of sets is
         `\frac{1}{1-x}`.
@@ -156,12 +154,12 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: S = species.SetSpecies()
             sage: g = S.isotype_generating_series()
-            sage: g.coefficients(10)
+            sage: g[0:10]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: [g.count(i) for i in range(10)]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
-        return [base_ring(self._weight)]
+        return base_ring(self._weight)
 
     def _cis(self, series_ring, base_ring):
         r"""
@@ -172,7 +170,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: S = species.SetSpecies()
             sage: g = S.cycle_index_series()
-            sage: g.coefficients(5)
+            sage: g[0:5]
             [p[],
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

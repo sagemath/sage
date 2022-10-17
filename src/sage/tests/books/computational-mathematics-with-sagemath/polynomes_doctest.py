@@ -363,28 +363,27 @@ Sage example in ./polynomes.tex, line 1957::
 Sage example in ./polynomes.tex, line 2028::
 
   sage: L.<x> = LazyPowerSeriesRing(QQ)
-  sage: lazy_exp = x.exponential(); lazy_exp
-  O(1)
+  sage: lazy_exp = x.exp(); lazy_exp
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2039::
 
   sage: lazy_exp[5]
   1/120
   sage: lazy_exp
-  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2062::
 
   sage: f = L(1)  # the constant lazy series 1
   sage: for i in range(5):
-  ....:     f = (x*f).exponential()
-  ....:     f.compute_coefficients(5) # forces the computation
+  ....:     f = (x*f).exp()
   ....:     print(f)                  # of the first coefficients
-  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 49/5*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 54/5*x^5 + O(x^6)
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + 1057/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + 6607/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 49/5*x^5 + 12847/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 54/5*x^5 + 16087/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2091::
 
@@ -393,10 +392,9 @@ Sage example in ./polynomes.tex, line 2091::
 
 Sage example in ./polynomes.tex, line 2105::
 
-  sage: from sage.combinat.species.series import LazyPowerSeries
-  sage: f = LazyPowerSeries(L, name='f')
-  sage: f.define((x*f).exponential())
-  sage: f.coefficients(8)
+  sage: f = L.undefined(valuation=0)
+  sage: f.define((x*f).exp())
+  sage: f[:8]
   [1, 1, 3/2, 8/3, 125/24, 54/5, 16807/720, 16384/315]
 
 Sage example in ./polynomes.tex, line 2158::

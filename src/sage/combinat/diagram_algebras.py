@@ -166,11 +166,13 @@ def planar_diagrams(k):
     EXAMPLES::
 
         sage: import sage.combinat.diagram_algebras as da
-        sage: all_diagrams = da.partition_diagrams(2)
-        sage: [SetPartition(p) for p in all_diagrams if p not in da.planar_diagrams(2)]
+        sage: all_diagrams = [SetPartition(p) for p in da.partition_diagrams(2)]
+        sage: da2 = [SetPartition(p) for p in da.planar_diagrams(2)]
+        sage: [p for p in all_diagrams if p not in da2]
         [{{-2, 1}, {-1, 2}}]
-        sage: all_diagrams = da.partition_diagrams(5/2)
-        sage: [SetPartition(p) for p in all_diagrams if p not in da.planar_diagrams(5/2)]
+        sage: all_diagrams = [SetPartition(p) for p in da.partition_diagrams(5/2)]
+        sage: da5o2 = [SetPartition(p) for p in da.planar_diagrams(5/2)]
+        sage: [p for p in all_diagrams if p not in da5o2]
         [{{-3, -1, 3}, {-2, 1, 2}},
          {{-3, -2, 1, 3}, {-1, 2}},
          {{-3, -1, 1, 3}, {-2, 2}},
@@ -182,9 +184,73 @@ def planar_diagrams(k):
          {{-3, -1, 3}, {-2, 1}, {2}},
          {{-3, -1, 3}, {-2, 2}, {1}}]
     """
-    for i in partition_diagrams(k):
-        if is_planar(i):
-            yield i
+    if k in ZZ:
+        X = list(range(1,k+1)) + list(range(-k,0))
+        yield from planar_partitions_rec(X)
+    elif k + ZZ(1)/ZZ(2) in ZZ:  # Else k in 1/2 ZZ
+        k = ZZ(k + ZZ(1) / ZZ(2))
+        X = list(range(1,k+1)) + list(range(-k+1,0))
+        for Y in planar_partitions_rec(X):
+            Y = list(Y)
+            for part in Y:
+                if k in part:
+                    part.append(-k)
+                    break
+            yield Y
+    else:
+        raise ValueError("argument %s must be a half-integer" % k)
+
+def planar_partitions_rec(X):
+    r"""
+    Iterate over all planar set partitions of ``X`` by using a
+    recursive algorithm.
+
+    ALGORITHM:
+
+    To construct the set partition `\rho = \{\rho_1, \ldots, \rho_k\}` of
+    `[n]`, we remove the part of the set partition containing the last
+    element of ``X``, which, we consider to be `\rho_k = \{i_1, \ldots, i_m\}`
+    without loss of generality. The remaining parts come from the planar set
+    partitions of `\{1, \ldots, i_1-1\}, \{i_1+1, \ldots, i_2-1\}, \ldots,
+    \{i_m+1, \ldots, n\}`.
+
+    EXAMPLES::
+
+        sage: import sage.combinat.diagram_algebras as da
+        sage: list(da.planar_partitions_rec([1,2,3]))
+        [([1, 2], [3]), ([1], [2], [3]), ([2], [1, 3]), ([1], [2, 3]), ([1, 2, 3],)]
+    """
+    if not X:
+        return
+    if len(X) <= 2:
+        # Direct implementation of small cases
+        yield (X,)
+        if len(X) > 1:
+            yield ([X[0]], [X[1]])
+        return
+    from sage.misc.misc import powerset
+    from itertools import product
+    for S in powerset(range(len(X)-1)):
+        if not S:
+            for Y in planar_partitions_rec(X[:-1]):
+                yield Y + ([X[-1]],)
+            continue
+        last = [X[i] for i in S]
+        last.append(X[-1])
+        pt = []
+        if S[0] != 0:
+            pt += [X[:S[0]]]
+        pt = [X[S[i]+1:S[i+1]] for i in range(len(S)-1) if S[i]+1 != S[i+1]]
+        if S[-1] + 1 != len(X) - 1:
+            pt += [X[S[-1]+1:-1]]
+        parts = [planar_partitions_rec(X[S[i]+1:S[i+1]]) for i in range(len(S)-1)
+                 if S[i] + 1 != S[i+1]]
+        if S[0] != 0:
+            parts.append(planar_partitions_rec(X[:S[0]]))
+        if S[-1] + 1 != len(X) - 1:
+            parts.append(planar_partitions_rec(X[S[-1]+1:-1]))
+        for Y in product(*parts):
+            yield sum(Y, ()) + (last,)
 
 def ideal_diagrams(k):
     r"""
@@ -606,20 +672,20 @@ class PlanarDiagram(AbstractPartitionDiagram):
         sage: PlanarDiagrams(2)
         Planar diagrams of order 2
         sage: PlanarDiagrams(2).list()
-        [{{-2, -1, 1, 2}},
-         {{-2, 1, 2}, {-1}},
-         {{-2}, {-1, 1, 2}},
-         {{-2, -1}, {1, 2}},
-         {{-2}, {-1}, {1, 2}},
-         {{-2, -1, 1}, {2}},
+        [{{-2}, {-1}, {1, 2}},
+         {{-2}, {-1}, {1}, {2}},
          {{-2, 1}, {-1}, {2}},
-         {{-2, 2}, {-1, 1}},
-         {{-2, -1, 2}, {1}},
          {{-2, 2}, {-1}, {1}},
+         {{-2, 1, 2}, {-1}},
+         {{-2, 2}, {-1, 1}},
          {{-2}, {-1, 1}, {2}},
          {{-2}, {-1, 2}, {1}},
+         {{-2}, {-1, 1, 2}},
+         {{-2, -1}, {1, 2}},
          {{-2, -1}, {1}, {2}},
-         {{-2}, {-1}, {1}, {2}}]
+         {{-2, -1, 1}, {2}},
+         {{-2, -1, 2}, {1}},
+         {{-2, -1, 1, 2}}]
     """
     @staticmethod
     def __classcall_private__(cls, diag):
@@ -1183,27 +1249,27 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
             [{{-2, -1}, {1, 2}}, {{-2, 2}, {-1, 1}}]
 
             sage: list(da.PlanarDiagrams(3/2))
-            [{{-2, -1, 1, 2}},
-             {{-2, 1, 2}, {-1}},
+            [{{-2, 1, 2}, {-1}},
+             {{-2, 2}, {-1}, {1}},
              {{-2, 2}, {-1, 1}},
              {{-2, -1, 2}, {1}},
-             {{-2, 2}, {-1}, {1}}]
+             {{-2, -1, 1, 2}}]
 
             sage: list(da.PlanarDiagrams(2))
-            [{{-2, -1, 1, 2}},
-             {{-2, 1, 2}, {-1}},
-             {{-2}, {-1, 1, 2}},
-             {{-2, -1}, {1, 2}},
-             {{-2}, {-1}, {1, 2}},
-             {{-2, -1, 1}, {2}},
+            [{{-2}, {-1}, {1, 2}},
+             {{-2}, {-1}, {1}, {2}},
              {{-2, 1}, {-1}, {2}},
-             {{-2, 2}, {-1, 1}},
-             {{-2, -1, 2}, {1}},
              {{-2, 2}, {-1}, {1}},
+             {{-2, 1, 2}, {-1}},
+             {{-2, 2}, {-1, 1}},
              {{-2}, {-1, 1}, {2}},
              {{-2}, {-1, 2}, {1}},
+             {{-2}, {-1, 1, 2}},
+             {{-2, -1}, {1, 2}},
              {{-2, -1}, {1}, {2}},
-             {{-2}, {-1}, {1}, {2}}]
+             {{-2, -1, 1}, {2}},
+             {{-2, -1, 2}, {1}},
+             {{-2, -1, 1, 2}}]
 
             sage: list(da.IdealDiagrams(3/2))
             [{{-2, -1, 1, 2}},
@@ -1654,11 +1720,11 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
         sage: pld = da.PlanarDiagrams(3/2); pld
         Planar diagrams of order 3/2
         sage: pld.list()
-        [{{-2, -1, 1, 2}},
-         {{-2, 1, 2}, {-1}},
+        [{{-2, 1, 2}, {-1}},
+         {{-2, 2}, {-1}, {1}},
          {{-2, 2}, {-1, 1}},
          {{-2, -1, 2}, {1}},
-         {{-2, 2}, {-1}, {1}}]
+         {{-2, -1, 1, 2}}]
 
     TESTS::
 
@@ -3967,20 +4033,20 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         sage: Pl.basis().keys()([[-1, 1], [2, -2]])
         {{-2, 2}, {-1, 1}}
         sage: Pl.basis().list()
-        [Pl{{-2, -1, 1, 2}},
-         Pl{{-2, 1, 2}, {-1}},
-         Pl{{-2}, {-1, 1, 2}},
-         Pl{{-2, -1}, {1, 2}},
-         Pl{{-2}, {-1}, {1, 2}},
-         Pl{{-2, -1, 1}, {2}},
+        [Pl{{-2}, {-1}, {1, 2}},
+         Pl{{-2}, {-1}, {1}, {2}},
          Pl{{-2, 1}, {-1}, {2}},
-         Pl{{-2, 2}, {-1, 1}},
-         Pl{{-2, -1, 2}, {1}},
          Pl{{-2, 2}, {-1}, {1}},
+         Pl{{-2, 1, 2}, {-1}},
+         Pl{{-2, 2}, {-1, 1}},
          Pl{{-2}, {-1, 1}, {2}},
          Pl{{-2}, {-1, 2}, {1}},
+         Pl{{-2}, {-1, 1, 2}},
+         Pl{{-2, -1}, {1, 2}},
          Pl{{-2, -1}, {1}, {2}},
-         Pl{{-2}, {-1}, {1}, {2}}]
+         Pl{{-2, -1, 1}, {2}},
+         Pl{{-2, -1, 2}, {1}},
+         Pl{{-2, -1, 1, 2}}]
         sage: E = Pl([[1,2],[-1,-2]])
         sage: E^2 == x*E
         True

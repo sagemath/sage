@@ -282,7 +282,7 @@ class Hyperplane(LinearExpression):
         return self.A() * q + self._const == 0
 
     @cached_method
-    def polyhedron(self):
+    def polyhedron(self, **kwds):
         """
         Return the hyperplane as a polyhedron.
 
@@ -304,8 +304,10 @@ class Hyperplane(LinearExpression):
              A vertex at (0, 0, 4/3))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        R = self.parent().base_ring()
-        return Polyhedron(eqns=[self.coefficients()], base_ring=R)
+        R = kwds.pop('base_ring', None)
+        if R is None:
+            R = self.parent().base_ring()
+        return Polyhedron(eqns=[self.coefficients()], base_ring=R, **kwds)
 
     @cached_method
     def linear_part(self):

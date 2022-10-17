@@ -13,7 +13,7 @@ To get a path with 4 vertices, and the house graph::
     sage: h = graphs.HouseGraph()
 
 More interestingly, one can get the list of all graphs that Sage knows how to
-build by typing ``graphs.`` in Sage and then hitting tab.
+build by typing ``graphs.`` in Sage and then hitting :kbd:`Tab`.
 """
 
 import subprocess
@@ -484,7 +484,7 @@ class GraphGenerators():
 
     A list of all graphs and graph structures (other than isomorphism class
     representatives) in this database is available via tab completion. Type
-    "graphs." and then hit the tab key to see which graphs are available.
+    "graphs." and then hit the :kbd:`Tab` key to see which graphs are available.
 
     The docstrings include educational information about each named
     graph with the hopes that this class can be used as a reference.

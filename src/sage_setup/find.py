@@ -2,7 +2,12 @@
 Recursive Directory Contents
 """
 # ****************************************************************************
-#       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014      Volker Braun <vbraun.name@gmail.com>
+#                     2014      R. Andrew Ohana
+#                     2015-2018 Jeroen Demeyer
+#                     2017      Erik M. Bray
+#                     2021      Tobias Diez
+#                     2020-2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,49 +24,13 @@ import os
 from collections import defaultdict
 
 from sage.misc.package_dir import is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir
+from sage.misc.package_dir import read_distribution, SourceDistributionFilter
+
+assert read_distribution  # unused in this file, re-export for compatibility
 
 
-def read_distribution(src_file):
-    """
-    Parse ``src_file`` for a ``# sage_setup: distribution = PKG`` directive.
-
-    INPUT:
-
-    - ``src_file`` -- file name of a Python or Cython source file
-
-    OUTPUT:
-
-    - a string, the name of the distribution package (``PKG``); or the empty
-      string if no directive was found.
-
-    EXAMPLES::
-
-        sage: from sage.env import SAGE_SRC
-        sage: from sage_setup.find import read_distribution
-        sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
-        'sagemath-tdlib'
-        sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
-        ''
-    """
-    from Cython.Utils import open_source_file
-    with open_source_file(src_file, error_handling='ignore') as fh:
-        for line in fh:
-            # Adapted from Cython's Build/Dependencies.py
-            line = line.lstrip()
-            if not line:
-                continue
-            if line[0] != '#':
-                break
-            line = line[1:].lstrip()
-            kind = "sage_setup:"
-            if line.startswith(kind):
-                key, _, value = [s.strip() for s in line[len(kind):].partition('=')]
-                if key == "distribution":
-                    return value
-    return ''
-
-
-def find_python_sources(src_dir, modules=['sage'], distributions=None):
+def find_python_sources(src_dir, modules=['sage'], distributions=None,
+                        exclude_distributions=None):
     """
     Find all Python packages and Python/Cython modules in the sources.
 
@@ -77,6 +46,11 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
       ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
       directive in the module source file) is an element of
       ``distributions``.
+
+    - ``exclude_distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: exclude modules whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the module source file) is in ``exclude_distributions``.
 
     OUTPUT: Triple consisting of
 
@@ -164,6 +138,8 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
     python_modules = []
     cython_modules = []
 
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
+
     cwd = os.getcwd()
     try:
         os.chdir(src_dir)
@@ -171,24 +147,21 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
                 if not is_package_or_namespace_package_dir(dirpath):
+                    # Skip any subdirectories
+                    dirnames[:] = []
                     continue
                 # Ordinary package or namespace package.
                 if distributions is None or '' in distributions:
                     python_packages.append(package)
 
-                def is_in_distributions(filename):
-                    if distributions is None:
-                        return True
-                    distribution = read_distribution(os.path.join(dirpath, filename))
-                    return distribution in distributions
-
                 for filename in filenames:
                     base, ext = os.path.splitext(filename)
+                    filepath = os.path.join(dirpath, filename)
                     if ext == PYMOD_EXT and base != '__init__':
-                        if is_in_distributions(filename):
+                        if filepath in distribution_filter:
                             python_modules.append(package + '.' + base)
                     if ext == '.pyx':
-                        if is_in_distributions(filename):
+                        if filepath in distribution_filter:
                             cython_modules.append(Extension(package + '.' + base,
                                                             sources=[os.path.join(dirpath, filename)]))
 
@@ -196,7 +169,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         os.chdir(cwd)
     return python_packages, python_modules, cython_modules
 
-def filter_cython_sources(src_dir, distributions):
+def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
     """
     Find all Cython modules in the given source directory that belong to the
     given distributions.
@@ -235,12 +208,12 @@ def filter_cython_sources(src_dir, distributions):
         1 loops, best of 1: 850 ms per loop
     """
     files: list[str] = []
-
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
     for dirpath, dirnames, filenames in os.walk(src_dir):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             base, ext = os.path.splitext(filename)
-            if ext == '.pyx' and read_distribution(filepath) in distributions:
+            if ext == '.pyx' and filepath in distribution_filter:
                 files.append(filepath)
 
     return files

@@ -20,7 +20,6 @@ AUTHORS:
 - Lorenz Panny (2021): Refactor isogenies and isomorphisms into
   the common :class:`EllipticCurveHom` interface.
 """
-
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal, richcmp, op_EQ, op_NE
 
@@ -75,12 +74,9 @@ class EllipticCurveHom(Morphism):
             sage: phi * iso
             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 9*x over Finite Field of size 19 to Elliptic Curve defined by y^2 = x^3 + 15*x over Finite Field of size 19
             sage: phi.dual() * phi
-            Composite map:
+            Composite morphism of degree 4 = 2^2:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
-              Defn:   Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19 to Elliptic Curve defined by y^2 = x^3 + 15*x over Finite Field of size 19
-                    then
-                      Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 15*x over Finite Field of size 19 to Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
         """
         if not isinstance(self, EllipticCurveHom) or not isinstance(other, EllipticCurveHom):
             raise TypeError(f'cannot compose {type(self)} with {type(other)}')
@@ -93,9 +89,8 @@ class EllipticCurveHom(Morphism):
         if ret is not NotImplemented:
             return ret
 
-        # fall back to generic formal composite map
-        return Morphism._composition_(self, other, homset)
-
+        from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+        return EllipticCurveHom_composite.from_factors([other, self])
 
     @staticmethod
     def _comparison_impl(left, right, op):
@@ -196,7 +191,6 @@ class EllipticCurveHom(Morphism):
         # If not, fall back to comparing rational maps; cf. Trac #11327
 
         return richcmp(self.rational_maps(), other.rational_maps(), op)
-
 
     def degree(self):
         r"""
@@ -330,10 +324,9 @@ class EllipticCurveHom(Morphism):
             ...
             NotImplementedError: ...
         """
-        #TODO: could have a default implementation that simply
-        #      returns the first component of rational_maps()
+        # TODO: could have a default implementation that simply
+        # returns the first component of rational_maps()
         raise NotImplementedError('children must implement')
-
 
     def scaling_factor(self):
         r"""
@@ -411,7 +404,6 @@ class EllipticCurveHom(Morphism):
         th = -fh/gh
         assert th.valuation() == +1, f"th has valuation {th.valuation()} (should be +1)"
         return th
-
 
     def is_normalized(self):
         r"""
@@ -491,7 +483,6 @@ class EllipticCurveHom(Morphism):
         ALGORITHM: We check if :meth:`scaling_factor` returns `1`.
         """
         return self.scaling_factor() == 1
-
 
     def is_separable(self):
         r"""
@@ -660,6 +651,36 @@ class EllipticCurveHom(Morphism):
         """
         return hash((self.domain(), self.codomain(), self.kernel_polynomial()))
 
+    def as_morphism(self):
+        r"""
+        Return ``self`` as a morphism of projective schemes.
+
+        EXAMPLES::
+
+            sage: k = GF(11)
+            sage: E = EllipticCurve(k, [1,1])
+            sage: Q = E(6,5)
+            sage: phi = E.isogeny(Q)
+            sage: mor = phi.as_morphism()
+            sage: mor.domain() == E
+            True
+            sage: mor.codomain() == phi.codomain()
+            True
+            sage: mor(Q) == phi(Q)
+            True
+
+        TESTS::
+
+            sage: mor(0*Q)
+            (0 : 1 : 0)
+            sage: mor(1*Q)
+            (0 : 1 : 0)
+        """
+        from sage.schemes.curves.constructor import Curve
+        X_affine = Curve(self.domain()).affine_patch(2)
+        Y_affine = Curve(self.codomain()).affine_patch(2)
+        return X_affine.hom(self.rational_maps(), Y_affine).homogenize(2)
+
 
 def compare_via_evaluation(left, right):
     r"""
@@ -716,7 +737,6 @@ def compare_via_evaluation(left, right):
         EE = E.base_extend(F.extension(e))
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
-
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
@@ -724,6 +744,6 @@ def compare_via_evaluation(left, right):
                 return left._eval(P) == right._eval(P)
         else:
             assert False, "couldn't find a point of infinite order"
-
     else:
         raise NotImplementedError('not implemented for this base field')
+

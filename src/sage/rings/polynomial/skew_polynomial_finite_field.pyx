@@ -822,10 +822,9 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-
     cdef _factor_uniform_c(self):
         r"""
-        Compute a uniformly distrbuted factorization of ``self``.
+        Compute a uniformly distributed factorization of ``self``.
 
         This is the low level implementation of :meth:`factor`.
         """
