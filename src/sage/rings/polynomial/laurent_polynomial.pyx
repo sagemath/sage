@@ -294,10 +294,11 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k,f(v)) for (k,v) in self.dict().items()]))
+        return R(dict([(k, f(v)) for (k, v) in self.dict().items()]))
+
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
-    """
+    r"""
     A univariate Laurent polynomial in the form of `t^n \cdot f`
     where `f` is a polynomial in `t`.
 

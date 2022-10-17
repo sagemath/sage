@@ -1,4 +1,4 @@
-"""
+r"""
 Finite residue fields
 
 We can take the residue field of maximal ideals in the ring of integers
@@ -1846,7 +1846,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
     """
     # we change the order for consistency with FiniteField_ntl_gf2e's __cinit__
     def __init__(self, q, name, modulus, repr, p, to_vs, to_order, PB):
-        """
+        r"""
         INPUT:
 
         - ``p`` -- the prime ideal defining this residue field

@@ -3679,6 +3679,10 @@ REFERENCES:
             and its use for certified homotopy continuation of systems of plane
             algebraic curves, :arxiv:`1505.03432`
 
+.. [Krumm2016] Daid Krumm, *Computing Points of Bounded Height in Projective Space over a Number Field*,
+               MATHEMATICS OF COMPUTATION, Volume 85, Number 297, January 2016, Pages 423–447.
+               http://dx.doi.org/10.1090/mcom/2984
+
 .. [KR2001] \J. Kahane and A. Ryba. *The hexad game*, Electronic
             Journal of Combinatorics, **8**
             (2001). http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html

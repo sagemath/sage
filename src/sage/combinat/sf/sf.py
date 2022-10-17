@@ -1605,6 +1605,8 @@ class SymmetricaConversionOnBasis:
 
     def __call__(self, partition):
         """
+        EXAMPLES::
+
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
             sage: p[1] + s[1]                           # indirect doctest

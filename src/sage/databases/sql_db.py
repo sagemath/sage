@@ -1259,8 +1259,10 @@ class SQLDatabase(SageObject):
 
     def query(self, *args, **kwds):
         """
-        Create a ``SQLQuery`` on this database.  For full class details,
-        type ``SQLQuery?`` and press shift+enter.
+        Create a ``SQLQuery`` on this database.
+
+        For full class details,
+        type ``SQLQuery?`` and press :kbd:`Shift` + :kbd:`Enter`.
 
         EXAMPLES::
 

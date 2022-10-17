@@ -51,29 +51,3 @@ index c9fa4ace..43a4ab63 100644
  
  ZZ
  scalar_power(const vec_ZZ &generic_vector,
-diff --git a/code/latte/sqlite/IntegrationDB.cpp b/code/latte/sqlite/IntegrationDB.cpp
-index ab8df535..c1dde830 100644
---- a/code/latte/sqlite/IntegrationDB.cpp
-+++ b/code/latte/sqlite/IntegrationDB.cpp
-@@ -1277,7 +1277,7 @@ void  IntegrationDB::insertSpecficPolytopeIntegrationTest(string polymakeFile, i
-  * @parm filePath: to the latte-style polynomial.
-  * @return rowid of the inserted row.
-  */
--int IntegrationDB::insertPolynomial(int dim, int degree, const char*filePath) throw(SqliteDBexception)
-+int IntegrationDB::insertPolynomial(int dim, int degree, const char*filePath)
- {
- 	if ( doesPolynomialExist(filePath))
- 		throw SqliteDBexception(string("insertPolynomial::Polynomial ")+filePath+" already exist");
-diff --git a/code/latte/sqlite/IntegrationDB.h b/code/latte/sqlite/IntegrationDB.h
-index d690a832..ce8cfac6 100644
---- a/code/latte/sqlite/IntegrationDB.h
-+++ b/code/latte/sqlite/IntegrationDB.h
-@@ -67,7 +67,7 @@ class IntegrationDB: public SqliteDB
- 	int insertIntegrationTest(int polynomialID, int polytopeID);
- 	void insertIntegrationTest(int dim, int degree, int vertexCount, int count);
- 	void insertSpecficPolytopeIntegrationTest(string polymakeFile, int degree, int count);
--	int insertPolynomial(int dim, int degree, const char*filePath) throw(SqliteDBexception);
-+        int insertPolynomial(int dim, int degree, const char*filePath);
- 
- 	int insertPolytope(int dim, int vertexCount, int simple, int dualRowID, const char* latteFilePath, const char* polymakeFilePath);
- 

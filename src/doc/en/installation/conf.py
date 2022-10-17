@@ -36,4 +36,3 @@ latex_documents = [
   ('index', 'installation.tex', 'Installation Guide',
    'The Sage Development Team', 'manual'),
 ]
-

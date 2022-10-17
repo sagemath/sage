@@ -1,6 +1,7 @@
 SAGE_SPKG_CONFIGURE([pari], [
   dnl See gp_version below on how the version is computed from MAJV.MINV.PATCHV
-  m4_pushdef([SAGE_PARI_MINVER],["134401"])
+  m4_pushdef([SAGE_PARI_MINVER],["134401"])dnl this version and higher allowed
+  m4_pushdef([SAGE_PARI_MAXVER],["134912"])dnl this version and higher not allowed
   SAGE_SPKG_DEPCHECK([gmp readline], [
     AC_PATH_PROG([GP], [gp])
     if test x$GP = x; then dnl GP test
@@ -101,6 +102,7 @@ SAGE_SPKG_CONFIGURE([pari], [
                  [AC_MSG_RESULT([cross compiling. Assume they match])])
               AC_MSG_CHECKING([is GP's version good enough? ])
               AX_COMPARE_VERSION([$gp_version], [ge], [$SAGE_PARI_MINVER], [
+               AX_COMPARE_VERSION([$gp_version], [lt], [$SAGE_PARI_MAXVER], [
                   AC_MSG_RESULT([yes])
                   AC_MSG_CHECKING([getting GP's datadir])
                   gp_datadir=`echo "default(datadir)" | $GP -qf 2>> config.log`
@@ -127,13 +129,17 @@ SAGE_SPKG_CONFIGURE([pari], [
                     [AC_MSG_RESULT([libpari's datadir does not match GP's datadir. Not good])
                     sage_spkg_install_pari=yes],
                     [AC_MSG_RESULT([cross compiling. Assume yes])])
-                 ], [
+                  ], [dnl compared maxver
+                   AC_MSG_RESULT([no])
+                   sage_spkg_install_pari=yes], [AC_MSG_RESULT([cross compiling. Assume yes])])
+                 ], [dnl compared minver
                   AC_MSG_RESULT([no])
                   sage_spkg_install_pari=yes], [AC_MSG_RESULT([cross compiling. Assume yes])])
               AC_LANG_POP()
         ], [sage_spkg_install_pari=yes])
       fi dnl end main PARI test
   ])
+  m4_popdef([SAGE_PARI_MAXVER])
   m4_popdef([SAGE_PARI_MINVER])
 ], [], [], [
     if test x$sage_spkg_install_pari = xyes; then

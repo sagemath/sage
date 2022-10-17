@@ -1258,8 +1258,9 @@ def de_casteljau_intvec(Vector_integer_dense c, int c_bitsize, Rational x, int u
 # double-rounding on x86 PCs.
 cdef double half_ulp = ldexp(1.0 * 65/64, -54)
 
+
 def intvec_to_doublevec(Vector_integer_dense b, long err):
-    """
+    r"""
     Given a vector of integers A = [a1, ..., an], and an integer
     error bound E, returns a vector of floating-point numbers
     B = [b1, ..., bn], lower and upper error bounds F1 and F2, and
@@ -2139,19 +2140,22 @@ cdef int subsample_vec(int a, int slen, int llen):
         sage: [subsample_vec_doctest(a, 3, 4) for a in range(3)]
         [1, 2, 3]
     """
-
     # round((a + 0.5) * (llen - 1) / slen)
     # round((2*a + 1) * (llen - 1) / (2 * slen)
     # floor(((2*a + 1) * (llen - 1) + slen) / (2 * slen))
     return ((2*a + 1) * (llen - 1) + slen) // (2 * slen)
 
+
 def subsample_vec_doctest(a, slen, llen):
     return subsample_vec(a, slen, llen)
 
+
 def maximum_root_first_lambda(p):
-    """
+    r"""
     Given a polynomial with real coefficients, computes an upper bound
-    on its largest real root, using the first-\lambda algorithm from
+    on its largest real root.
+
+    This is using the first-\lambda algorithm from
     "Implementations of a New Theorem for Computing Bounds for Positive
     Roots of Polynomials", by Akritas, Strzebo\'nski, and Vigklas.
 

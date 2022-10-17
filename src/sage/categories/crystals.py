@@ -1563,7 +1563,9 @@ class Crystals(Category_singleton):
             r"""
             Return the highest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
-            elements in `index_set`. By default the index set is assumed to be
+            elements in ``index_set``.
+
+            By default the index set is assumed to be
             the full index set of self.
 
             EXAMPLES::
@@ -1602,8 +1604,10 @@ class Crystals(Category_singleton):
             r"""
             Return the lowest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
-            elements in `index_set`. By default the index set is assumed to be
-            the full index set of self.
+            elements in ``index_set``.
+
+            By default the index set is assumed to be the full index
+            set of self.
 
             EXAMPLES::
 
@@ -1642,7 +1646,7 @@ class Crystals(Category_singleton):
         def all_paths_to_highest_weight(self, index_set=None):
             r"""
             Iterate over all paths to the highest weight from ``self``
-            with respect to `index_set`.
+            with respect to ``index_set``.
 
             INPUT:
 

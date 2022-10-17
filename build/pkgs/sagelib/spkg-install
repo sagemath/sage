@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# From sage-spkg.
+# For type=script packages, the build rule in build/make/Makefile sources
+# sage-env but not sage-dist-helpers.
+lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
+source "$lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $lib"
+    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+    exit 1
+fi
+
 if [ "$SAGE_EDITABLE" = yes ]; then
     cd "$SAGE_SRC"
 else
@@ -27,8 +38,6 @@ export SAGE_SRC_ROOT=/doesnotexist
 export SAGE_DOC_SRC=/doesnotexist
 export SAGE_BUILD_DIR=/doesnotexist
 
-export PYTHON="$SAGE_LOCAL/bin/python3"
-
 # We also poison all directories below SAGE_LOCAL.
 export SAGE_PKGCONFIG=/doesnotexist
 export SAGE_SPKG_SCRIPTS=/doesnotexist
@@ -51,17 +60,27 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     # under the old distribution name "sage" (before #30912, which switched to setuptools
     # and renamed the distribution to "sagemath-standard").  There is no clean way to uninstall
     # them, so we just use rm.
-    (cd "$SITEPACKAGESDIR" && rm -rf sage sage_setup sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
-    # Until https://trac.sagemath.org/ticket/34209 switches us to PEP 660 editable wheels
-    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
-    time python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable . || exit 1
+    (cd "$SITEPACKAGESDIR" && rm -rf sage sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
+    time sdh_pip_editable_install .
+
+    if [ "$SAGE_WHEELS" = yes ]; then
+        # Additionally build a wheel (for use in other venvs)
+        cd $SAGE_PKGS/sagelib/src && time sdh_setup_bdist_wheel && sdh_store_wheel .
+    fi
 else
     # Make sure that an installed old version of sagelib in which sage is an ordinary package
     # does not shadow the namespace package sage during the build.
     (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
     # Likewise, we should remove the egg-link that may have been installed previously.
     (cd "$SITEPACKAGESDIR" && rm -f sagemath-standard.egg-link)
-    time python3 -u setup.py --no-user-cfg build install || exit 1
+
+    if [ "$SAGE_WHEELS" = yes ]; then
+        # Use --no-build-isolation to avoid rebuilds because of dependencies:
+        # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
+        time sdh_pip_install --no-build-isolation .
+    else
+        time python3 -u setup.py --no-user-cfg build install || exit 1
+    fi
 fi
 
 # Trac #33103: The temp.* directories are large after a full build.

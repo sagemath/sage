@@ -956,9 +956,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-        if not isinstance(self.__R, MPolynomialRing_libsingular) and \
-               (not hasattr(self.__R, '_has_singular') or not self.__R._has_singular):
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        if not (isinstance(self.__R, MPolynomialRing_base) and self.__R._has_singular):
             # pass through
             return super().ideal(gens, **kwds)
         if is_SingularElement(gens):
@@ -1224,7 +1223,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Q._check_valid()
             return Q
         except (AttributeError, ValueError):
-            return self._singular_init_(singular)
+            self.__singular = self._singular_init_(singular)
+            return self.__singular
 
     def _singular_init_(self, singular=None):
         """

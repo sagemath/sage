@@ -2749,9 +2749,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     var = ""
                 s += "%s %s" % (x, var)
         s = s.replace(" + -", " - ")
-        s = re.sub(" 1(\.0+)? \|"," ", s)
-        s = re.sub(" -1(\.0+)? \|", " -", s)
-        s = s.replace("|","")
+        s = re.sub(r" 1(\.0+)? \|", " ", s)
+        s = re.sub(r" -1(\.0+)? \|", " -", s)
+        s = s.replace("|", "")
         if s == " ":
             return "0"
         return s[1:].lstrip().rstrip()
@@ -2850,7 +2850,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         raise IndexError("polynomials are immutable")
 
     cpdef _floordiv_(self, right):
-        """
+        r"""
         Quotient of division of self by other. This is denoted //.
 
         If self = quotient \* right + remainder, this function returns
@@ -4959,9 +4959,10 @@ cdef class Polynomial(CommutativeAlgebraElement):
         return ~(q.leading_coefficient())*q  # make monic  (~ is inverse in python)
 
     def is_primitive(self, n=None, n_prime_divs=None):
-        """
-        Return ``True`` if the polynomial is primitive.  The semantics of
-        "primitive" depend on the polynomial coefficients.
+        r"""
+        Return ``True`` if the polynomial is primitive.
+
+        The semantics of "primitive" depend on the polynomial coefficients.
 
         - (field theory) A polynomial of degree `m` over a finite field
           `\GF{q}` is primitive if it is irreducible and its root in

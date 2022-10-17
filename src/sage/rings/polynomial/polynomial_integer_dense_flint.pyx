@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Dense univariate polynomials over `\ZZ`, implemented using FLINT
 
 AUTHORS:
@@ -1394,7 +1394,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         return smallInteger(fmpz_poly_degree(self.__poly))
 
     def pseudo_divrem(self, B):
-        """
+        r"""
         Write ``A = self``.  This function computes polynomials `Q` and `R`
         and an integer `d` such that
 
