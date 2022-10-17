@@ -390,7 +390,7 @@ class SpeciesWrapper(CombinatorialClass):
         try:
             if self.cardinality() == 0:
                 return iter([])
-        except RuntimeError:
+        except TypeError:
             raise NotImplementedError
 
         return getattr(self._species, self._iterator)(self._structure_class, self._labels)

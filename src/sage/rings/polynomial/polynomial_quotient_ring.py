@@ -256,7 +256,7 @@ def is_PolynomialQuotientRing(x):
     return isinstance(x, PolynomialQuotientRing_generic)
 
 
-class PolynomialQuotientRing_generic(CommutativeRing):
+class PolynomialQuotientRing_generic(QuotientRing_generic):
     """
     Quotient of a univariate polynomial ring by an ideal.
 
@@ -418,7 +418,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # Note that is_finite() is cheap so it does not seem to do a lazy
             # _refine_category_() in is_finite() as we do for is_field()
             category = category.Finite()
-        CommutativeRing.__init__(self, ring, names=name, category=category)
+
+        QuotientRing_generic.__init__(self, ring, ring.ideal(polynomial), names=name, category=category)
+        self._base = ring  # backwards compatibility -- different from QuotientRing_generic
 
     _ideal_class_ = QuotientRing_generic._ideal_class_
 
@@ -780,11 +782,11 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         -- Simon King (2010-05)
         """
         from sage.categories.pushout import QuotientFunctor
-        Cover = self.base()
+        Cover = self.__ring
+        kwds = {}
         if Cover in CommutativeRings():
-            return QuotientFunctor([self.modulus()]*Cover, self.variable_names(),
-                                   domain=CommutativeRings(), codomain=CommutativeRings()), Cover
-        return QuotientFunctor([self.modulus()]*self.base(), self.variable_names()), Cover
+            kwds['domain'] = kwds['codomain'] = CommutativeRings()
+        return QuotientFunctor([self.modulus()]*Cover, self.variable_names(), **kwds), Cover
 
     @cached_method
     def base_ring(self):

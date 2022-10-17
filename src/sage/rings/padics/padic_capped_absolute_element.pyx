@@ -9,8 +9,7 @@ AUTHORS:
 - Genya Zaytman: documentation
 - David Harvey: doctests
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -18,9 +17,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 include "sage/libs/linkages/padics/mpz.pxi"
 include "CA_template.pxi"
 
@@ -89,6 +87,8 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
     """
     def lift(self):
         """
+        EXAMPLES::
+
             sage: R = ZpCA(3)
             sage: R(10).lift()
             10

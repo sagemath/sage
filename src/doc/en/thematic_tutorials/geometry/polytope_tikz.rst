@@ -15,7 +15,7 @@ paper. TikZ is a very versatile tool to draw in scientific documents
 and Sage can deal easily with 3-dimensional polytopes. Finally sagetex
 makes everything work together nicely between Sage, TikZ and
 LaTeX. Since version 6.3 of Sage, there is a function for (projection
-of) polytopes to output a TikZ picture of the polytope. Since version 9.7 of
+of) polytopes to output a TikZ picture of the polytope. Since version 9.8 of
 SageMath, the tikz output can be a ``TikzPicture`` object from the sage module
 ``sage.misc.latex_standalone``. This short tutorial shows how it all works.
 
@@ -61,7 +61,7 @@ You can customize the polytope using the following options in the command ``P.ti
 - ``opacity`` : real number (default: ``0.8``) between 0 and 1 giving the opacity of the front facets,
 - ``axis`` : Boolean (default: ``False``) draw the axes at the origin or not.
 - ``output_type`` : string (default: ``None``) ``None``, ``'LatexExpr'`` or
-  ``'TikzPicture'``, the type of the output. Since SageMath 9.7, the value ``None`` is deprecated
+  ``'TikzPicture'``, the type of the output. Since SageMath 9.8, the value ``None`` is deprecated
   as the default value will soon be changed from ``'LatexExpr'`` to ``'TikzPicture'``.
 
 Examples
@@ -90,7 +90,7 @@ When you found a good angle, follow the above procedure to obtain the values
 
 .. end of output
 
-Note: the ``output_type='TikzPicture'`` is necessary since SagMath 9.7 to avoid
+Note: the ``output_type='TikzPicture'`` is necessary since SagMath 9.8 to avoid
 a deprecation warning message since the default output type will soon change
 from a ``LatexExpr`` (Python str) to a ``TikzPicture`` object (allowing more
 versatility, like being able to view it directly in the Jupyter notebook).

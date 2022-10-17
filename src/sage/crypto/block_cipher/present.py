@@ -838,7 +838,7 @@ class PRESENT_KS(SageObject):
         Computes the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
-        `master_key` argument.
+        ``master_key`` argument.
 
         INPUT:
 
@@ -860,7 +860,7 @@ class PRESENT_KS(SageObject):
     def __iter__(self):
         """
         Iterate over the ``self._rounds + 1`` PRESENT round keys, derived from
-        `master_key`
+        ``master_key``.
 
         EXAMPLES::
 

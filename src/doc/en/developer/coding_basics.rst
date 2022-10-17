@@ -44,7 +44,7 @@ In particular,
 
 - Use 4 spaces for indentation levels. Do not use tabs as they can
   result in indentation confusion. Most editors have a feature that
-  will insert 4 spaces when the tab key is hit. Also, many editors
+  will insert 4 spaces when the :kbd:`Tab` key is hit. Also, many editors
   will automatically search/replace leading tabs with 4 spaces.
 
 - Whitespace before and after assignment and binary operator of the

@@ -191,8 +191,7 @@ def enum_projective_number_field(X, **kwds):
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)
         sage: X = P.subscheme([x - y])
         sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)
-        [(0 : 0 : 1), (-1 : -1 : 1), (1 : 1 : 1), (-1/5*v^2 : -1/5*v^2 : 1), (-v : -v : 1),
-        (1/5*v^2 : 1/5*v^2 : 1), (v : v : 1), (1 : 1 : 0)]
+        [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
 
