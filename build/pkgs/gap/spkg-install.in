@@ -25,7 +25,7 @@ sdh_make -j1
 sdh_make install-headers install-libgap
 
 # Install config.h, which is not currently handled by `make install-headers`
-sdh_install gen/config.h "$SAGE_LOCAL/include/gap"
+sdh_install build/config.h "$SAGE_LOCAL/include/gap"
 
 # Now install the gap executable as "gap-bin"; it will be called normally
 # through our wrapper script that sets the appropriate GAP_ROOT
@@ -40,14 +40,14 @@ mkdir -p "$SAGE_DESTDIR$SAGE_BIN" || sdh_die "Failed to create the directory $SA
 
 # Now copy additional files GAP needs to run (and a few optional bits) into
 # GAP_ROOT; we don't need everything from the source tree
-sdh_install bin doc gen grp lib src tst sysinfo.gap "$GAP_ROOT"
+sdh_install bin doc grp lib src tst sysinfo.gap "$GAP_ROOT"
 
 # GAP's copy of libtool is also used by the toolchain for build GAP packages
 # (i.e. by gac)
 sdh_install libtool "$GAP_ROOT"
 
 # Install only the minimal packages GAP needs to run
-sdh_install pkg/GAPDoc-* pkg/primgrp-* pkg/SmallGrp-* pkg/transgrp "$GAP_ROOT"/pkg
+sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
 
 # Install additional packages that are not strictly required, but that are
 # typically "expected" to be loaded: These are the default packages that are
@@ -58,20 +58,20 @@ sdh_install pkg/GAPDoc-* pkg/primgrp-* pkg/SmallGrp-* pkg/transgrp "$GAP_ROOT"/p
 # Also include atlasrep which is a dependency of tomlib
 sdh_install \
     pkg/atlasrep \
-    pkg/autpgrp-* \
-    pkg/alnuth-* \
-    pkg/crisp-* \
-    pkg/ctbllib-* \
-    pkg/FactInt-* \
+    pkg/autpgrp \
+    pkg/alnuth \
+    pkg/crisp \
+    pkg/ctbllib \
+    pkg/factint \
     pkg/fga \
-    pkg/irredsol-* \
-    pkg/laguna-* \
-    pkg/PackageManager-* \
-    pkg/polenta-* \
-    pkg/polycyclic-* \
-    pkg/resclasses-* \
-    pkg/sophus-* \
-    pkg/tomlib-* \
+    pkg/irredsol \
+    pkg/laguna \
+    pkg/packagemanager \
+    pkg/polenta \
+    pkg/polycyclic \
+    pkg/resclasses \
+    pkg/sophus \
+    pkg/tomlib \
     "$GAP_ROOT"/pkg
 
 # Install the GAP startup script; ensure it is executable
