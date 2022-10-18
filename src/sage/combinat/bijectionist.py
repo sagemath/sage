@@ -483,6 +483,16 @@ class Bijectionist(SageObject):
 
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[], pi_rho=tuple(), elements_distributions=tuple(), a_values=tuple(), solver=None, key=None):
+        """
+        Initialize the bijectionist.
+
+        TESTS:
+
+        Check that large input sets are handled well::
+
+            sage: A = B = list(range(7000))
+            sage: bij = Bijectionist(A, B)
+        """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
         # ???? tilde_A, tilde_Z, ..., subsets?
@@ -746,9 +756,14 @@ class Bijectionist(SageObject):
         self._W = list(self._statistics_fibers)
 
         # the possible values of s(a) are tau(beta^{-1}(alpha(a)))
-        self._statistics_possible_values = {a: set(self._tau[b]
-                                                   for b in self._statistics_fibers[self._alpha(a)][1])
-                                            for a in self._A}
+        tau_beta_inverse = {}
+        self._statistics_possible_values = {}
+        for a in self._A:
+            alpha_a = self._alpha(a)
+            if alpha_a not in tau_beta_inverse:
+                tau_beta_inverse[alpha_a] = set(self._tau[b]
+                                                for b in self._statistics_fibers[alpha_a][1])
+            self._statistics_possible_values[a] = tau_beta_inverse[alpha_a]
 
     def statistics_fibers(self):
         r"""
@@ -1032,10 +1047,10 @@ class Bijectionist(SageObject):
         """
         # reset values
         set_Z = set(self._Z)
-        self._restrictions_possible_values = {a: set_Z.copy() for a in self._A}
+        self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in a_values:
             assert a in self._A, f"Element {a} was not found in A"
-            self._restrictions_possible_values[a].intersection_update(values)
+            self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)
 
     def _compute_possible_block_values(self):
         r"""
