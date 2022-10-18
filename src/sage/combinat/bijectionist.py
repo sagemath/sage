@@ -719,9 +719,6 @@ class Bijectionist(SageObject):
             {[]: 2, [1]: 1, [1, 2]: 0, [2, 1]: 0}
 
         """
-        # reset values
-        self._statistics_possible_values = {a: set(self._Z) for a in self._A}
-
         self._n_statistics = len(alpha_beta)
         # TODO: (low) do we really want to recompute statistics every time?
         self._alpha = lambda p: tuple(arg[0](p) for arg in alpha_beta)
@@ -1034,7 +1031,8 @@ class Bijectionist(SageObject):
 
         """
         # reset values
-        self._restrictions_possible_values = {a: set(self._Z) for a in self._A}
+        set_Z = set(self._Z)
+        self._restrictions_possible_values = {a: set_Z.copy() for a in self._A}
         for a, values in a_values:
             assert a in self._A, f"Element {a} was not found in A"
             self._restrictions_possible_values[a].intersection_update(values)
