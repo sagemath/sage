@@ -759,11 +759,11 @@ class Bijectionist(SageObject):
         tau_beta_inverse = {}
         self._statistics_possible_values = {}
         for a in self._A:
-            alpha_a = self._alpha(a)
-            if alpha_a not in tau_beta_inverse:
-                tau_beta_inverse[alpha_a] = set(self._tau[b]
-                                                for b in self._statistics_fibers[alpha_a][1])
-            self._statistics_possible_values[a] = tau_beta_inverse[alpha_a]
+            v = self._alpha(a)
+            if v not in tau_beta_inverse:
+                tau_beta_inverse[v] = set(self._tau[b]
+                                          for b in self._statistics_fibers[v][1])
+            self._statistics_possible_values[a] = tau_beta_inverse[v]
 
     def statistics_fibers(self):
         r"""
