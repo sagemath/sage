@@ -383,18 +383,13 @@ from sage.structure.sage_object import SageObject
 from copy import copy, deepcopy
 from sage.misc.verbose import get_verbose
 
-# TODO: (low) für sagemath sollten wir Zeilen möglichst auf 79
-# Zeichen beschränken, das ist zwar nicht streng, wird aber lieber
-# gesehen.
-
 # TODO: (low) we frequently need variable names for subsets of A, B,
 # Z.  In LaTeX, we mostly call them \tilde A, \tilde Z, etc. now.  It
 # would be good to have a standard name in code, too.
 
-# TODO: (medium) wann immer möglich, sollten die Tests in einer
-# Methode nur diese eine Methode testen.  Wir haben in fast allen
-# Methoden "system tests", das ist unpraktisch, wenn man größere
-# Änderungen durchführt.
+# TODO: (medium) whenever possible, doctests of a method should only
+# test this method.  Currently we have very many system tests, which
+# is inconvenient when modifying the design substantially.
 
 
 class Bijectionist(SageObject):
@@ -1000,7 +995,13 @@ class Bijectionist(SageObject):
 
         However, an error occurs if the set of possible values is
         empty.  In this example, the image of `\tau` under any
-        legal bijection is disjoint to the specified values. :: TODO: we now have to call _compute_possible_block_values() for the error message. Is this intended behaviour?
+        legal bijection is disjoint to the specified values.
+
+        .. TODO::
+
+            we now have to call
+            :meth:`_compute_possible_block_values` for the error
+            message. Is this intended behaviour?
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1044,7 +1045,8 @@ class Bijectionist(SageObject):
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
-            self._possible_block_values[p] = set.intersection(*[self._restrictions_possible_values[a] for a in block], *[self._statistics_possible_values[a] for a in block])
+            self._possible_block_values[p] = set.intersection(*[self._restrictions_possible_values[a] for a in block],
+                                                              *[self._statistics_possible_values[a] for a in block])
             if not self._possible_block_values[p]:
                 if len(block) == 1:
                     raise ValueError(f"No possible values found for singleton block {block}")
@@ -1531,11 +1533,13 @@ class Bijectionist(SageObject):
         self.set_constant_blocks(tmp_P)
 
     def possible_values(self, p=None, optimal=False):
-        r"""
-        Return for each block the values of `s` compatible with the
+        r"""Return for each block the values of `s` compatible with the
         imposed restrictions.
 
-        TODO: should this method update and return ``self._possible_block_values``?
+        .. TODO::
+
+            should this method update and return
+            ``self._possible_block_values``?
 
         INPUT:
 
@@ -1621,10 +1625,10 @@ class Bijectionist(SageObject):
             sage: bij.possible_values(p=[DyckWord([]), DyckWord([1, 0]), DyckWord([1, 0, 1, 0]), DyckWord([1, 1, 0, 0])], optimal=True)
             {[]: {0}, [1, 0]: {1}, [1, 0, 1, 0]: {1, 2}, [1, 1, 0, 0]: {1, 2}}
 
-        .. TODO:
+        .. TODO::
 
-            test der zeigt, dass die Lösung für alle Blöcke nicht
-            langsamer ist als mit solutions_iterator
+            test to show that the solution for all blocks is not more
+            expensive than using :meth:`solutions_iterator`
 
         """
         # convert input to set of block representatives
@@ -1689,7 +1693,9 @@ class Bijectionist(SageObject):
         together with submultisets `\tilde Z` with `s(\tilde A) =
         \tilde Z` as multisets.
 
-        TODO: should this method interact with ``self._elements_distributions``?
+        .. TODO::
+
+           should this method interact with ``self._elements_distributions``?
 
         INPUT:
 
@@ -1832,14 +1838,20 @@ class Bijectionist(SageObject):
             :meth:`minimal_subdistributions_iterator`, which is,
             however, computationally more expensive.
 
-        TODO: should this method interact with ``self._elements_distributions``?
+        .. TODO::
+
+            should this method interact with ``self._elements_distributions``?
 
         INPUT:
 
-        - ``p`` (optional, default: ``None``) -- a subset of `P` TODO: add this
+        - ``p`` (optional, default: ``None``) -- a subset of `P`
 
         If ``p`` is not ``None``, return an iterator of the
         subdistributions containing ``p``.
+
+        .. TODO::
+
+           the optional argument is not yet supported
 
         EXAMPLES::
 
@@ -1992,7 +2004,10 @@ class Bijectionist(SageObject):
         Return a solution `s` such that ``d`` is not a subdistribution of
         `s0`.
 
-        TODO: better name
+        .. TODO::
+
+            find a better name - possibly not relevant if we
+            implement the cache of solutions
 
         INPUT:
 
@@ -2003,6 +2018,7 @@ class Bijectionist(SageObject):
         - ``s0``, a solution
 
         - ``d``, a subset of `A`, in the form of a dict from `A` to `\{0, 1\}`
+
         """
         for v in self._Z:
             v_in_d_count = sum(d[p] for p in P if s0[p] == v)
@@ -2030,7 +2046,10 @@ class Bijectionist(SageObject):
 
     def _preprocess_intertwining_relations(self):
         r"""
-        TODO: (medium) untangle side effect and return value if possible
+
+        .. TODO::
+
+            (medium) untangle side effect and return value if possible
 
         Make `self._P` be the finest set partition coarser than `self._P`
         such that composing elements preserves blocks.
@@ -2051,10 +2070,10 @@ class Bijectionist(SageObject):
         In other words, `s(\pi(a_1,\dots,a_k))` only depends on the
         blocks of `a_1,\dots,a_k`.
 
-        TESTS::
+        .. TODO::
 
-        TODO: create one test with one and one test with two
-        intertwining_relations
+            create one test with one and one test with two
+            intertwining_relations
 
         """
         images = {}  # A^k -> A, a_1,...,a_k to pi(a_1,...,a_k), for all pi
@@ -2549,8 +2568,6 @@ class _BijectionistMILP(SageObject):
           (p_1,\dots,p_k))`, where `p` is the block of
           `\rho(s(a_1),\dots, s(a_k))`, for any `a_i\in p_i`.
 
-        TODO: TESTS
-
         """
         for composition_index, image_block, preimage_blocks in origins:
             pi_rho = self._bijectionist._pi_rho[composition_index]
@@ -2685,7 +2702,12 @@ Our benchmark example::
     ....:    cycle = Permutation(tuple(range(1, len(p)+1)))
     ....:    return Permutation([cycle.inverse()(p(cycle(i))) for i in range(1, len(p)+1)])
 
-    sage: N=5; As = [list(Permutations(n)) for n in range(N+1)]; A = B = sum(As, []); bij = Bijectionist(A, B, gamma); bij.set_statistics((len, len), (alpha1, beta1), (alpha2, beta2)); bij.set_constant_blocks(sum([orbit_decomposition(A, rotate_permutation) for A in As], []))
+    sage: N=5
+    sage: As = [list(Permutations(n)) for n in range(N+1)]
+    sage: A = B = sum(As, [])
+    sage: bij = Bijectionist(A, B, gamma)
+    sage: bij.set_statistics((len, len), (alpha1, beta1), (alpha2, beta2))
+    sage: bij.set_constant_blocks(sum([orbit_decomposition(A, rotate_permutation) for A in As], []))
 
     sage: P = bij.constant_blocks(optimal=True)
     sage: P = [sorted(p, key=lambda p: (len(p), p)) for p in P]
