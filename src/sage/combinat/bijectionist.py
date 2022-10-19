@@ -393,7 +393,9 @@ from sage.misc.verbose import get_verbose
 
 
 class Bijectionist(SageObject):
-    r"""Solver class for bijection-statistic problems.
+    r"""
+    A toolbox to list all possible bijections between two finite sets
+    under various constraints.
 
     INPUT:
 
@@ -517,6 +519,7 @@ class Bijectionist(SageObject):
             self._tau = {b: b for b in self._B}
         else:
             self._tau = {b: tau(b) for b in self._B}
+        # we store Z as a list to keep an order
         self._Z = set(self._tau.values())
         if key is not None and "Z" in key:
             self._sorter["Z"] = lambda x: sorted(x, key=key["Z"])
@@ -526,8 +529,8 @@ class Bijectionist(SageObject):
                 self._Z = sorted(self._Z)
                 self._sorter["Z"] = lambda x: sorted(x)
             except TypeError:
-                self._sorter["Z"] = lambda x: list(x)
                 self._Z = list(self._Z)
+                self._sorter["Z"] = lambda x: list(x)
 
         # set optional inputs
         self.set_statistics(*alpha_beta)
@@ -1045,7 +1048,10 @@ class Bijectionist(SageObject):
             AssertionError: Element (1, 2) was not found in A
 
         """
-        # reset values
+        # it might be much cheaper to construct the sets as subsets
+        # of _statistics_possible_values - however, we do not want to
+        # insist that set_value_restrictions is called after
+        # set_statistics
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in a_values:
@@ -1055,6 +1061,15 @@ class Bijectionist(SageObject):
     def _compute_possible_block_values(self):
         r"""
         Update the dictionary of possible values of each block.
+
+        This has to be called whenever `self._P` was modified.
+
+        .. TODO::
+
+            If `self._Z` is large, this is very memory expensive.  In
+        this case it would be good if equal values of the dictionary
+        `self._possible_block_values` would share memory.
+
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
@@ -1546,7 +1561,8 @@ class Bijectionist(SageObject):
         self.set_constant_blocks(tmp_P)
 
     def possible_values(self, p=None, optimal=False):
-        r"""Return for each block the values of `s` compatible with the
+        r"""
+        Return for each block the values of `s` compatible with the
         imposed restrictions.
 
         .. TODO::
@@ -1837,7 +1853,8 @@ class Bijectionist(SageObject):
         return
 
     def minimal_subdistributions_blocks_iterator(self, p=None):
-        r"""Return all representatives of minimal subsets `\tilde P`
+        r"""
+        Return all representatives of minimal subsets `\tilde P`
         of `P` containing `p` together with submultisets `\tilde Z`
         with `s(\tilde P) = \tilde Z` as multisets.
 
@@ -2416,7 +2433,9 @@ class Bijectionist(SageObject):
 
     def _generate_and_solve_initial_bmilp(self):
         r"""
-        Generate a _BijectionistMILP, add all relevant constraints and call MILP.solve().
+        Generate a ``_BijectionistMILP``, add all relevant constraints
+        and call ``MILP.solve()``.
+
         """
         preimage_blocks = self._preprocess_intertwining_relations()
         self._compute_possible_block_values()
