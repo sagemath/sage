@@ -252,8 +252,6 @@ class Stream_inexact(Stream):
             [-3, -2, -1, 0, 1, 2, 3, 4]
         """
         # self[n] = self._cache[n-self._offset]
-        if self._is_sparse:
-            raise ValueError("_offset is only for dense streams")
         return self._approximate_order
 
     def is_nonzero(self):
@@ -1018,6 +1016,9 @@ class Stream_uninitialized(Stream_inexact):
         self._approximate_order = approximate_order
 
     def define(self, coeff_stream):
+        mx = max(self._approximate_order, coeff_stream._approximate_order)
+        self._approximate_order = mx
+        coeff_stream._approximate_order = mx
         self._iter = coeff_stream.iterate_coefficients()
 
 
