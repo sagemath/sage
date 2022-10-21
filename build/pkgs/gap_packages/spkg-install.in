@@ -34,6 +34,7 @@ sdh_install \
     quagroup \
     radiroot \
     repsn \
+    singular \
     sla \
     sonata \
     toric \
