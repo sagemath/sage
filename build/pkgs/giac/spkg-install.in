@@ -56,7 +56,7 @@ if [ "$UNAME" = "CYGWIN" ]; then
     export ac_cv_header_nauty_naututil_h=no
 fi
 
-sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy --disable-quickjs
+sdh_configure --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy --disable-quickjs
 
 #############################################################
 #   Build
