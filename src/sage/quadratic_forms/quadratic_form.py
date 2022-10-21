@@ -532,7 +532,7 @@ class QuadraticForm(SageObject):
             sage: QuadraticForm(q)
             Traceback (most recent call last):
             ...
-            TypeError: polynomial is neither zero nor homogeneous of degree 2
+            ValueError: polynomial is neither zero nor homogeneous of degree 2
 
         TESTS::
 
