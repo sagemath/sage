@@ -12,7 +12,6 @@ cd "$PKG_SRC_DIR"
 
 sdh_install \
     aclib \
-    autodoc \
     corelg \
     crime \
     cryst \
@@ -37,7 +36,6 @@ sdh_install \
     sla \
     sonata \
     toric \
-    utils \
     "$PKG_DIR"
 
 install_compiled_pkg()
