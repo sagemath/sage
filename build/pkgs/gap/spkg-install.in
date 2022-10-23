@@ -69,6 +69,7 @@ sdh_install \
     pkg/packagemanager \
     pkg/polenta \
     pkg/polycyclic \
+    pkg/radiroot \
     pkg/resclasses \
     pkg/sophus \
     pkg/tomlib \
