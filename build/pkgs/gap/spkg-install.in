@@ -58,6 +58,7 @@ sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
 # Also include atlasrep which is a dependency of tomlib
 sdh_install \
     pkg/atlasrep \
+    pkg/autodoc \
     pkg/autpgrp \
     pkg/alnuth \
     pkg/crisp \
@@ -73,6 +74,7 @@ sdh_install \
     pkg/resclasses \
     pkg/sophus \
     pkg/tomlib \
+    pkg/utils \
     "$GAP_ROOT"/pkg
 
 # Install the GAP startup script; ensure it is executable
