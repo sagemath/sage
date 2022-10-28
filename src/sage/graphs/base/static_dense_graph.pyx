@@ -50,7 +50,7 @@ Functions
 from sage.data_structures.binary_matrix cimport *
 from cysignals.signals cimport sig_on, sig_off, sig_check
 from memory_allocator cimport MemoryAllocator
-
+from itertools import product
 
 cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False):
     r"""
@@ -379,6 +379,90 @@ def triangles_count(G):
     return ans
 
 
+def _format_result(G, edges, edges_only, labels):
+    r"""
+    Helper method for ``connected_full_subgraphs`` to return a result.
+
+    INPUT:
+
+    - ``G`` -- a :class:`DiGraph`
+
+    - ``edges`` -- list of edges ignoring the orientation
+
+    - ``edges_only`` -- boolean; whether to return DiGraph or list of vertices
+
+    - ``labels`` -- boolean; whether to return labelled edges or not. This
+      parameter is used only when ``edges_only`` is ``True``.
+
+    EXAMPLES:
+
+    The complete graph of order 3 has 4 connected subgraphs::
+
+        sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
+        sage: G = graphs.CompleteGraph(3)
+        sage: len(list(connected_full_subgraphs(G)))
+        4
+    """
+    if edges_only:
+        if labels:
+            return [(u, v, G.edge_label(u, v)) for u, v in edges]
+        else:
+            return edges
+    else:
+        return G.subgraph(vertices=G, edges=edges)
+
+
+def _yield_results_for_digraph(G, edges, edges_only, labels, min_edges, max_edges):
+    r"""
+    Helper method for ``connected_full_subgraphs`` to yield all subdigraphs.
+
+    INPUT:
+
+    - ``G`` -- a :class:`DiGraph`
+
+    - ``edges`` -- list of edges ignoring the orientation
+
+    - ``edges_only`` -- boolean; whether to return DiGraph or list of vertices
+
+    - ``labels`` -- boolean; whether to return labelled edges or not. This
+      parameter is used only when ``edges_only`` is ``True``.
+
+    - ``min_edges`` -- integer; minimum number of edges of reported subgraphs
+
+    - ``max_edges`` -- integer; maximum number of edges of reported subgraphs
+
+    EXAMPLES::
+
+        sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
+        sage: G = digraphs.Complete(3)
+        sage: len(list(connected_full_subgraphs(G)))
+        54
+    """
+    if not edges:
+        return
+    L = []
+    for u, v in edges:
+        tmp = []
+        if G.has_edge(u, v):
+            tmp.append([(u, v)])
+        if G.has_edge(v, u):
+            tmp.append([(v, u)])
+            if G.has_edge(u, v):
+                tmp.append([(u, v), (v, u)])
+        L.append(tmp)
+
+    if len(L) == 1:
+        for F in L[0]:
+            if min_edges <= len(F) and len(F) <= max_edges:
+                yield _format_result(G, F, edges_only, labels)
+    else:
+        for E in product(*L):
+            F = [e for le in E for e in le]
+            if min_edges <= len(F) and len(F) <= max_edges:
+                yield _format_result(G, F, edges_only, labels)
+    return
+
+
 def connected_full_subgraphs(G, edges_only=False, labels=False,
                              min_edges=None, max_edges=None):
     r"""
@@ -483,6 +567,13 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
         sage: next(it)
         [(0, 1, '01'), (0, 2, '02')]
 
+    Subgraphs of a digraph::
+
+        sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
+        sage: G = digraphs.Complete(2)
+        sage: list(connected_full_subgraphs(G, edges_only=True))
+        [[(0, 1)], [(1, 0)], [(0, 1), (1, 0)]]
+
     TESTS:
 
     Non connected input graph::
@@ -532,7 +623,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
     if min_edges > max_edges:
         raise ValueError("we must have {} <= min_edges <= max_edges <= {}".format(n -1, m))
 
-    if n <= 2 or min_edges == m:
+    if n <= 1 or (not G.is_directed() and n == 2) or min_edges == m:
         if edges_only:
             yield list(G.edges(sort=False, labels=labels))
         else:
@@ -580,13 +671,10 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
         if i == n - 1 and num_edges >= min_edges:
             # yield the current solution
             edges = [(int_to_vertex[u], int_to_vertex[v]) for le in E for u, v in le]
-            if edges_only:
-                if labels:
-                    yield [(u, v, G.edge_label(u, v)) for u, v in edges]
-                else:
-                    yield edges
+            if G.is_directed():
+                yield from _yield_results_for_digraph(G, edges, edges_only, labels, min_edges, max_edges)
             else:
-                yield G.subgraph(vertices=int_to_vertex, edges=edges)
+                yield _format_result(G, edges, edges_only, labels)
 
         if n_cpt[i] > 1:
             # Consider the next neighborhood of the current vertex.
