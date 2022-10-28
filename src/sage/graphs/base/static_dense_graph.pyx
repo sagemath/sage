@@ -379,7 +379,8 @@ def triangles_count(G):
     return ans
 
 
-def connected_full_subgraphs(G, edges_only=False, labels=False):
+def connected_full_subgraphs(G, edges_only=False, labels=False,
+                             min_edges=None, max_edges=None):
     r"""
     Iterator over the connected subgraphs of `G` with same vertex set.
 
@@ -405,6 +406,14 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
 
     - ``labels`` -- boolean (default: ``False``); whether to return labelled
       edges or not. This parameter is used only when ``edges_only`` is ``True``.
+
+    - ``min_edges`` -- integer (default: ``None``); minimum number of edges of
+      reported subgraphs. By default (``None``), this lower bound will be set to
+      `n - 1`.
+
+    - ``max_edges`` -- integer (default: ``None``); maximum number of edges of
+      reported subgraphs. By default (``None``), this lower bound will be set to
+      the number of edges of the input (di)graph.
 
     .. NOTE::
 
@@ -446,6 +455,19 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
         sage: len(F)
         18
 
+    Specifying bounds on the number of edges::
+
+        sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
+        sage: G = graphs.HouseGraph()
+        sage: [g.size() for g in connected_full_subgraphs(G)]
+        [6, 5, 5, 5, 4, 4, 5, 4, 4, 4, 5, 4, 4, 4, 5, 4, 4, 4]
+        sage: [g.size() for g in connected_full_subgraphs(G, max_edges=4)]
+        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        sage: [g.size() for g in connected_full_subgraphs(G, min_edges=6)]
+        [6]
+        sage: [g.size() for g in connected_full_subgraphs(G, min_edges=5, max_edges=5)]
+        [5, 5, 5, 5, 5, 5]
+
     Asking for edges only::
 
         sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
@@ -479,6 +501,19 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
         Traceback (most recent call last):
         ...
         ValueError: the degree of the graph is too large for this method
+
+    Wrong bounds on the number of edges::
+
+        sage: from sage.graphs.base.static_dense_graph import connected_full_subgraphs
+        sage: G = graphs.HouseGraph()
+        sage: [g.size() for g in connected_full_subgraphs(G, min_edges=G.size() + 1)]
+        Traceback (most recent call last):
+        ...
+        ValueError: we must have 4 <= min_edges <= max_edges <= 6
+        sage: [g.size() for g in connected_full_subgraphs(G, max_edges=G.order() - 2)]
+        Traceback (most recent call last):
+        ...
+        ValueError: we must have 4 <= min_edges <= max_edges <= 6
     """
     G._scream_if_not_simple()
     if not G.is_connected():
@@ -489,7 +524,15 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
             raise ValueError("the degree of the graph is too large for this method")
 
     cdef Py_ssize_t n = G.order()
-    if n <= 2:
+    cdef Py_ssize_t m = G.size()
+    if min_edges is None or min_edges < n - 1:
+        min_edges = n - 1
+    if max_edges is None or max_edges > m:
+        max_edges = m
+    if min_edges > max_edges:
+        raise ValueError("we must have {} <= min_edges <= max_edges <= {}".format(n -1, m))
+
+    if n <= 2 or min_edges == m:
         if edges_only:
             yield list(G.edges(sort=False, labels=labels))
         else:
@@ -505,7 +548,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * order = <int *> mem.calloc(n, sizeof(int))
-    cdef unsigned long * n_cpt = <unsigned long *> mem.calloc(n, sizeof(unsigned long))
+    cdef mp_bitcnt_t * n_cpt = <mp_bitcnt_t *> mem.calloc(n, sizeof(mp_bitcnt_t))
 
     # We use a several bitsets to store the current boundary and active neighbors.
     # We also need another bitset that we create at the same time
@@ -527,13 +570,14 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
     n_cpt[0] = 1 << bitset_len(DG.rows[0])
 
     cdef long u, v, j
-    cdef unsigned long c
+    cdef mp_bitcnt_t c
+    cdef Py_ssize_t num_edges = 0
     cdef list E = []
     cdef list edges
 
     while i >= 0:
         sig_check()
-        if i == n - 1:
+        if i == n - 1 and num_edges >= min_edges:
             # yield the current solution
             edges = [(int_to_vertex[u], int_to_vertex[v]) for le in E for u, v in le]
             if edges_only:
@@ -550,10 +594,14 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
             # use the binary representation of n_cpt[i] to indicate which of the
             # k neighbors are selected. We omit the empty neighborhood which is
             # considered else where.
-            boundary = boundaries.rows[i + 1]
-            bitset_copy(boundary, boundaries.rows[i])
             n_cpt[i] -= 1
             c = n_cpt[i]
+            if num_edges + _bitset_len(&c, 1) > max_edges:
+                # Too many edges
+                continue
+
+            boundary = boundaries.rows[i + 1]
+            bitset_copy(boundary, boundaries.rows[i])
             edges = []
             j = bitset_first(neighborhoods.rows[i])
             while c and j != -1:
@@ -568,6 +616,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
                 continue
 
             E.append(edges)
+            num_edges += len(edges)
             # otherwise, we select a vertex from the boundary and extend the order
 
         elif bitset_len(boundaries.rows[i]):
@@ -582,6 +631,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False):
             bitset_add(active, order[i])
             i -= 1
             if E:
+                num_edges -= len(E[-1])
                 E.pop()
             continue
 
