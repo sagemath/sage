@@ -895,17 +895,3 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         deallocate_agcl_work_space(work_space)
 
     return output
-
-
-
-
-
-
-
-
-
-
-
-
-
-

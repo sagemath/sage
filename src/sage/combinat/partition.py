@@ -4771,7 +4771,7 @@ class Partition(CombinatorialElement):
             sage: list(Partition([]).vertical_border_strip_cells(2))
             [[(0, 0), (1, 0)]]
             sage: list(Partition([2,2]).vertical_border_strip_cells(2))
-            [[(0, 2), (1, 2)], 
+            [[(0, 2), (1, 2)],
              [(0, 2), (2, 0)],
              [(2, 0), (3, 0)]]
             sage: list(Partition([3,2,2]).vertical_border_strip_cells(2))
@@ -4812,7 +4812,7 @@ class Partition(CombinatorialElement):
                 for _ in range(iv[t]):
                     current_strip.append((j, tmp[j]))
                     j += 1
-                j = sum(shelf[:t+1])    
+                j = sum(shelf[:t+1])
             yield current_strip
 
     def horizontal_border_strip_cells(self, k):

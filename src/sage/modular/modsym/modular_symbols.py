@@ -14,8 +14,7 @@ TESTS::
     sage: loads(dumps(s)) == s
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005, 2009 William Stein <wstein@gmail.com>
@@ -29,8 +28,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sage.modular.cusps as cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
@@ -316,11 +315,11 @@ class ModularSymbol(SageObject):
         space = self.__space
         i = self.__i
         k = space.weight()
-        a,b,c,d = tuple(g)
-        coeffs = apply_to_monomial(i, k-2, d, -b, -c, a)
+        a, b, c, d = tuple(g)
+        coeffs = apply_to_monomial(i, k - 2, d, -b, -c, a)
         g_alpha = self.__alpha.apply(g)
         g_beta = self.__beta.apply(g)
-        return formal_sum.FormalSum([(coeffs[j], ModularSymbol(space, j, g_alpha, g_beta)) \
+        return formal_sum.FormalSum([(coeffs[j], ModularSymbol(space, j, g_alpha, g_beta))
                                      for j in reversed(range(k-1)) if coeffs[j] != 0])
 
     def __manin_symbol_rep(self, alpha):

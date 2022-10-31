@@ -120,7 +120,7 @@ def construct_free_chain(A):
             ret = next_step(I, Y, U)
             if ret is not None:
                 return [prev] + ret
-        return None                
+        return None
 
     T = matrix.identity(S, r)
     for i in indices:

@@ -138,7 +138,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: F.<i> = QuadraticField(-1)
             sage: R.<t> = F[]
             sage: C = Conic([1,i*t,-t^2+4])
-            sage: C.has_rational_point(point = True)
+            sage: C.has_rational_point(point=True)
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::

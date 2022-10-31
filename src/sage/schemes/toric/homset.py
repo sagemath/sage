@@ -84,7 +84,7 @@ coordinates where the codomain is not implemented as a toric variety::
       From: Projective Space of dimension 2 over Rational Field
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
     sage: type(native_to_toric)
-    <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
+    <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
     sage: native_to_toric([u^2, v^2, w^2])
     Scheme morphism:
       From: Projective Space of dimension 2 over Rational Field

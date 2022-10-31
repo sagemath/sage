@@ -2549,7 +2549,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
     # Other special functions
     def agm(self, right, algorithm="optimal"):
-        """
+        r"""
         Return the Arithmetic-Geometric Mean (AGM) of ``self`` and ``right``.
 
         INPUT:

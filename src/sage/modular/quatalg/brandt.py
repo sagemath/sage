@@ -218,6 +218,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.ring import CommutativeRing
 from sage.structure.richcmp import richcmp, richcmp_method
@@ -490,7 +491,7 @@ def quaternion_order_with_given_level(A, level):
     level = abs(level)
     N = A.discriminant()
     N1 = gcd(level, N)
-    M1 = level / N1
+    M1 = level // N1
 
     O = maximal_order(A)
     # if N1 != 1:
@@ -1034,7 +1035,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         n = ZZ(n)
         if n <= 0:
-            raise IndexError("n must be positive.")
+            raise IndexError("n must be positive")
         if n not in self._hecke_matrices:
             if algorithm == 'default':
                 try:
@@ -1055,7 +1056,7 @@ class BrandtModule_class(AmbientHeckeModule):
             elif algorithm == 'brandt':
                 T = self._compute_hecke_matrix_brandt(n, sparse=sparse)
             else:
-                raise ValueError("unknown algorithm '%s'" % algorithm)
+                raise ValueError(f"unknown algorithm '{algorithm}'")
             T.set_immutable()
             self._hecke_matrices[n] = T
         return self._hecke_matrices[n]
@@ -1517,7 +1518,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [  1/6 + 2*t^2 + O(t^3)       1/6 + t + O(t^3)]
         """
         A = self._brandt_series_vectors(prec)
-        R = QQ[[var]]
+        R = PowerSeriesRing(QQ, var)
         n = len(A[0])
         return matrix(R, n, n,
                       [[R(x.list()[:prec], prec) for x in Y] for Y in A])
@@ -1560,7 +1561,7 @@ class BrandtModule_class(AmbientHeckeModule):
             V = A.kernel()
         return V
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return whether ``self`` is cuspidal, i.e. has no Eisenstein part.
 
@@ -1584,7 +1585,7 @@ class BrandtModule_class(AmbientHeckeModule):
         fixed choice of basis. The weight of an ideal class `[I]` is
         half the number of units of the right order `I`.
 
-        NOTE: The base ring must be `\QQ` or `\ZZ`.
+        .. NOTE:: The base ring must be `\QQ` or `\ZZ`.
 
         EXAMPLES::
 
@@ -1619,9 +1620,9 @@ class BrandtModule_class(AmbientHeckeModule):
         return tuple(a[1] / a[0] / 2 for a in thetas)
 
 
-#############################################################################
-# Benchmarking
-#############################################################################
+# ====================
+#     Benchmarking
+# ====================
 def benchmark_magma(levels, silent=False):
     """
     INPUT:

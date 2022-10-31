@@ -111,7 +111,8 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import prepare
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
-                                                       SchemeHomset_points_projective_field)
+                                                       SchemeHomset_points_projective_field,
+                                                       SchemeHomset_polynomial_projective_space)
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
@@ -458,7 +459,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._validate([x*y - z^2, x])
             [x*y - z^2, x]
 
-       ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate((x*y - z, x))
@@ -466,7 +467,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             ...
             TypeError: x*y - z is not a homogeneous polynomial
 
-      ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate(x*y - z)
@@ -739,6 +740,20 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     (x : y : z)
         """
         return SchemeMorphism_polynomial_projective_space(*args, **kwds)
+
+    def _homset(self, *args, **kwds):
+        """                                          ii
+        Construct the Hom-set
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
+            sage: Hom(P, P)
+            Set of morphisms
+              From: Projective Space of dimension 2 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+        """
+        return SchemeHomset_polynomial_projective_space(*args, **kwds)
 
     def _point_homset(self, *args, **kwds):
         """
@@ -1803,6 +1818,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 break
         return linearly_independent
 
+
 class ProjectiveSpace_field(ProjectiveSpace_ring):
     def _point_homset(self, *args, **kwds):
         """
@@ -2131,6 +2147,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         m = matrix(3, list(self.gens()) + list(p) + list(q))
         return Curve([f for f in m.minors(3) if f])
+
 
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):
     def _point(self, *args, **kwds):

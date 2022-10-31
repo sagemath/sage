@@ -269,7 +269,7 @@ Appendix
 REFERENCES:
 
     Komei Fukuda's `FAQ in Polyhedral Computation
-    <https://www.inf.ethz.ch/personal/fukudak/polyfaq/polyfaq.html>`_
+    <https://cddlib.github.io/polyhedral_faq/>`_
 
 AUTHORS:
 
