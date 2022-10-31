@@ -143,23 +143,23 @@ Miscellaneous
 * :doc:`Databases <databases/index>`
 * :doc:`Games <games/index>`
 
-Programming
-===========
+Infrastructure
+==============
 
-Facilities
-----------
+Programming Facilities
+----------------------
 
 * :doc:`Data Structures <data_structures/index>`
 * :doc:`Utilities <misc/index>`
 * :doc:`Test Framework <doctest/index>`
 * :doc:`Parallel Computing <parallel/index>`
+* :doc:`Python Technicalities <cpython/index>`
 
-Interfaces
-----------
+Subsystem Interfaces
+--------------------
 
 * :doc:`Interpreter Interfaces <interfaces/index>`
 * :doc:`C/C++ Library Interfaces <libs/index>`
-* :doc:`Python Technicalities <cpython/index>`
 
 Documentation System
 --------------------

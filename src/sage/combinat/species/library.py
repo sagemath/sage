@@ -1,7 +1,7 @@
 """
 Examples of Combinatorial Species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Examples of Combinatorial Species
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .set_species import SetSpecies
 from .partition_species import PartitionSpecies
@@ -31,6 +31,7 @@ from .composition_species import CompositionSpecies
 from .functorial_composition_species import FunctorialCompositionSpecies
 
 from sage.misc.cachefunc import cached_function
+
 
 @cached_function
 def SimpleGraphSpecies():
@@ -66,7 +67,7 @@ def SimpleGraphSpecies():
     E = SetSpecies()
     E2 = SetSpecies(size=2)
     WP = SubsetSpecies()
-    P2 = E2*E
+    P2 = E2 * E
     return WP.functorial_composition(P2)
 
 
@@ -104,8 +105,9 @@ def BinaryTreeSpecies():
     """
     B = CombinatorialSpecies(min=1)
     X = SingletonSpecies()
-    B.define(X + B*B)
+    B.define(X + B * B)
     return B
+
 
 @cached_function
 def BinaryForestSpecies():
@@ -141,5 +143,5 @@ def BinaryForestSpecies():
     F = S(B)
     return F
 
-del cached_function  # so it doesn't get picked up by tab completion
 
+del cached_function  # so it doesn't get picked up by tab completion

@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sage-docbuild ~= 9.8b2
+sage-docbuild ~= 9.8b3

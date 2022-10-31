@@ -733,8 +733,3 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     if work_space_prealloc is NULL:
         deallocate_dc_work_space(work_space)
     return 1 if (possible and not unknown) else 0
-
-
-
-
-

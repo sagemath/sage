@@ -6288,7 +6288,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             v = []
         elif not isinstance(v, (list, tuple)):
             v = [v]
-        
+
         v = [ZZ(p).abs() for p in v]
         v = sorted(set(v))
 

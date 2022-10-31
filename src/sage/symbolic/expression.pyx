@@ -11901,7 +11901,7 @@ cdef class Expression(Expression_abc):
 
         Check that :trac:`33640` is fixed::
 
-            sage: ((x + 1)^2 - 2*x - 1).factor() 
+            sage: ((x + 1)^2 - 2*x - 1).factor()
             x^2
         """
         from sage.calculus.calculus import symbolic_expression_from_maxima_string
