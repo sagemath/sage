@@ -1,4 +1,4 @@
-ipympl jupyterlab nodejs tornado $(PYTHON) | $(PYTHON_TOOLCHAIN) jupyter_packaging
+$(PYTHON) | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

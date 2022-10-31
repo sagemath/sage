@@ -302,5 +302,3 @@ def is_VectorSpace(x):
         return is_Module(x) and x.base_ring().is_field()
     except AttributeError:
         return False
-
-

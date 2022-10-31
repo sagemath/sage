@@ -269,7 +269,7 @@ class ChainHomotopy(Morphism):
             if matrices[i] * self.domain().differential(i-deg) * matrices[i] != matrices[i]:
                 return False
         return True
-       
+
     def in_degree(self, n):
         """
         The matrix representing this chain homotopy in degree ``n``.

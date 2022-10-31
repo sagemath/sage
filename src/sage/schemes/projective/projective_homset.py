@@ -27,21 +27,20 @@ AUTHORS:
 - Ben Hutz (2018): add numerical point support
 """
 
-
-#*****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
-#       Copyright (C) 2006 William Stein <wstein@gmail.com>
+# *****************************************************************************
+#        Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#        Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#   Distributed under the terms of the GNU General Public License (GPL)
+#   as published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
-from sage.schemes.generic.homset import SchemeHomset_points
+from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
 
 from sage.misc.verbose import verbose
 
@@ -53,9 +52,11 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from copy import copy
 
-#*******************************************************************
-# Projective varieties
-#*******************************************************************
+
+# *******************************************************************
+#  Projective varieties
+# *******************************************************************
+
 class SchemeHomset_points_projective_field(SchemeHomset_points):
     """
     Set of rational points of a projective variety over a field.
@@ -459,6 +460,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                 return rat_points
             raise NotImplementedError('numerical approximation of points only for dimension 0 subschemes')
 
+
 class SchemeHomset_points_projective_ring(SchemeHomset_points):
     """
     Set of rational points of a projective variety over a commutative ring.
@@ -527,9 +529,43 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
             raise TypeError("unable to enumerate points over %s"%R)
 
 
-#*******************************************************************
-# Abelian varieties
-#*******************************************************************
+class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):
+    """
+    Set of morphisms of a projective space.
+
+    EXAMPLES::
+
+        sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
+        sage: Hom(P, P)
+        Set of morphisms
+          From: Projective Space of dimension 2 over Rational Field
+          To:   Projective Space of dimension 2 over Rational Field
+    """
+    def identity(self):
+        """
+        Return the identity morphism of this hom-set.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
+            sage: Hom(P, P)
+            Set of morphisms
+              From: Projective Space of dimension 2 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+            sage: _.identity()
+            Scheme endomorphism of Projective Space of dimension 2 over Rational Field
+              Defn: Identity map
+        """
+        if self.is_endomorphism_set():
+            from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+            return SchemeMorphism_polynomial_id(self.domain())
+        raise TypeError("identity map is only defined for endomorphisms")
+
+
+# *******************************************************************
+#  Abelian varieties
+# *******************************************************************
+
 class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_field):
     r"""
     Set of rational points of an Abelian variety.

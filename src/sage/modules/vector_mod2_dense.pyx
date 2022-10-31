@@ -512,4 +512,3 @@ def unpickle_v0(parent, entries, degree, is_immutable):
             mzd_write_bit(v._entries, 0, i, entries[i]%2)
     v._is_immutable = int(is_immutable)
     return v
-

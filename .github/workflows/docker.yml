@@ -18,7 +18,7 @@ on:
         default: >-
           ["ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
-           "ubuntu-bionic-gcc_8",
+           "ubuntu-bionic-gcc_8-python3.8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
@@ -26,14 +26,14 @@ on:
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
-           "linuxmint-19-gcc_8",
-           "linuxmint-19.3-gcc_8",
+           "linuxmint-19-gcc_8-python3.8",
+           "linuxmint-19.3-gcc_8-python3.8",
            "linuxmint-20.1",
            "linuxmint-20.2",
            "linuxmint-20.3",
            "linuxmint-21",
-           "fedora-29",
-           "fedora-30",
+           "fedora-29-python3.8",
+           "fedora-30-python3.8",
            "fedora-31",
            "fedora-32",
            "fedora-33",
@@ -42,17 +42,16 @@ on:
            "fedora-36",
            "fedora-37",
            "centos-7-devtoolset-gcc_11",
-           "centos-stream-8",
-           "centos-stream-9",
+           "centos-stream-8-python3.9",
+           "centos-stream-9-python3.9",
            "gentoo-python3.9",
            "gentoo-python3.10",
            "archlinux-latest",
-           "opensuse-15.3-gcc_11",
-           "opensuse-15.4-gcc_11",
-           "opensuse-tumbleweed",
+           "opensuse-15.3-gcc_11-python3.9",
+           "opensuse-15.4-gcc_11-python3.10",
+           "opensuse-tumbleweed-python3.10",
            "conda-forge",
-           "ubuntu-bionic-i386",
-           "manylinux-2_24-i686",
+           "ubuntu-bionic-gcc_8-i386",
            "debian-buster-i386",
            ]
       tox_packages_factors:
@@ -128,6 +127,7 @@ jobs:
       FROM_DOCKER_REPOSITORY: ${{ inputs.from_docker_repository }}
       FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
       FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
+      EXTRA_CONFIGURE_ARGS: --enable-fat-binary
 
     steps:
       - name: Check out SageMath

@@ -1997,4 +1997,3 @@ cdef class LyndonBracket(GradedLieBracket):
         if self._hash == -1:
             self._hash = hash(self._index_word)
         return self._hash
-

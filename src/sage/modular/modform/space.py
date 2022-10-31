@@ -54,7 +54,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #########################################################################
 
 from sage.arith.misc import gcd
@@ -81,7 +81,8 @@ from .element import ModularFormElement, Newform
 from . import defaults
 from . import hecke_operator_on_qexp
 
-WARN=False
+WARN = False
+
 
 def is_ModularFormsSpace(x):
     r"""
@@ -528,8 +529,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         W = self._q_expansion_module()
         pr = W.degree()
         B = self.q_echelon_basis(pr)
-        E = [self(F.linear_combination_of_basis(W.coordinates(f.padded_list(pr)))) \
-                          for f in B]
+        E = [self(F.linear_combination_of_basis(W.coordinates(f.padded_list(pr))))
+             for f in B]
         return Sequence(E, cr=True, immutable=True)
 
     @cached_method
@@ -537,10 +538,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         Return an integral basis for this space of modular forms.
 
-        EXAMPLES: In this example the integral and echelon bases are
-        different.
+        EXAMPLES:
 
-        ::
+        In this example the integral and echelon bases are
+        different. ::
 
             sage: m = ModularForms(97,2,prec=10)
             sage: s = m.cuspidal_subspace()
@@ -908,8 +909,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         from sage.modular.modform.submodule import ModularFormsSubmodule
         if self.ambient_module() != right.ambient_module():
-            raise ArithmeticError(("Sum of %s and %s not defined because " + \
-                                    "they do not lie in a common ambient space.")%\
+            raise ArithmeticError(("Sum of %s and %s not defined because " +
+                                    "they do not lie in a common ambient space.") %
                                    (self, right))
         if self.is_ambient():
             return self
@@ -1381,8 +1382,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)
             ]
         """
-        return Sequence([self.element_class(self, x) for \
-          x in self.free_module().basis()], immutable=True, cr=True)
+        return Sequence([self.element_class(self, x)
+                         for x in self.free_module().basis()],
+                        immutable=True, cr=True)
 
     def gen(self, n):
         """

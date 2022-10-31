@@ -169,8 +169,7 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('import ipywidgets')
             sage: shell.run_cell('slider = ipywidgets.IntSlider()')
             sage: shell.run_cell('get_ipython().display_formatter.format(slider)')
-            IntSlider(value=0)
-            ({}, {})
+            ...IntSlider(value=0)..., {})
 
             sage: shell.run_cell('%display default')
             sage: shell.quit()

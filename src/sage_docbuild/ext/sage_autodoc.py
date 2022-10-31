@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Sage autodoc extension based on sphinx.ext.autodoc from Sphinx
+Sage autodoc extension
 
-From sphinx.ext.autodoc:
+This is based on :mod:`sphinx.ext.autodoc` from Sphinx.
+
+From :mod:`sphinx.ext.autodoc`:
 
     Automatically insert docstrings for functions, classes or whole modules into
     the doctree, thus avoiding duplication between docstrings and documentation
@@ -23,7 +25,7 @@ AUTHORS:
 - Simon King (2011-04): use sageinspect; include public cython attributes
   only in the documentation if they have a docstring
 
-- Kwankyu Lee (2018-12-26): rebase on the latest sphinx.ext.autodoc
+- Kwankyu Lee (2018-12-26): rebased on the latest sphinx.ext.autodoc
 
 """
 
@@ -64,7 +66,7 @@ logger = logging.getLogger(__name__)
 MethodDescriptorType = type(type.__subclasses__)
 
 
-#: extended signature RE: with explicit module name separated by ::
+# extended signature RE: with explicit module name separated by ``::``
 py_ext_sig_re = re.compile(
     r'''^ ([\w.]+::)?            # explicit module name
           ([\w.]+\.)?            # module and/or class name(s)
@@ -192,7 +194,8 @@ def cut_lines(pre, post=0, what=None):
        from sphinx.ext.autodoc import cut_lines
        app.connect('autodoc-process-docstring', cut_lines(4, what=['module']))
 
-    This can (and should) be used in place of :confval:`automodule_skip_lines`.
+    This can (and should) be used in place of ``automodule_skip_lines`` (config
+    value defined in Sphinx autodoc).
     """
     def process(app, what_, name, obj, options, lines):
         # type: (Sphinx, unicode, unicode, Any, Any, List[unicode]) -> None

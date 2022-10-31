@@ -109,10 +109,10 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # formula
         v = [f[m*n] for m in range(prec)]
     else:
-        l = k-1
+        l = k - 1
         for m in range(prec):
-            am = sum([eps(d) * d**l * f[m*n//(d*d)] for \
-                      d in divisors(gcd(n, m)) if (m*n) % (d*d) == 0])
+            am = sum([eps(d) * d**l * f[m*n//(d*d)]
+                      for d in divisors(gcd(n, m)) if (m*n) % (d*d) == 0])
             v.append(am)
     if _return_list:
         return v
@@ -121,6 +121,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
     else:
         R = f.parent()
     return R(v, prec)
+
 
 def _hecke_operator_on_basis(B, V, n, k, eps):
     """
