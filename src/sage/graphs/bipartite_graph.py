@@ -94,7 +94,7 @@ class BipartiteGraph(Graph):
     - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
       itself as weighted or not. See ``self.weighted()``
 
-    - ``hash_labels`` - boolean (default: ``None``); whether to include labels
+    - ``hash_labels`` - boolean (default: ``False``); whether to include labels
       / weights during hashing. Will raise a warning when __hash__ is invoked
       and default to true.
 
@@ -349,7 +349,7 @@ class BipartiteGraph(Graph):
 
     """
 
-    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
+    def __init__(self, data=None, partition=None, check=True, hash_labels=False, *args, **kwds):
         """
         Create a bipartite graph.
 
@@ -411,7 +411,6 @@ class BipartiteGraph(Graph):
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
 
-        # if None, then will default to true after the user is warned
         self.hash_labels=hash_labels
 
         from sage.structure.element import is_Matrix
@@ -551,24 +550,19 @@ class BipartiteGraph(Graph):
 
         return
 
-    # check whether the user has specified hash_labels parameter, and warn if not
-    # then default it to true
+    # true if specified by user, or if graph is weighted
     def _use_hash_labels(self):
-        if self.hash_labels is not None:
-            return self.hash_labels
-        else:
-            print("WARNING: hash_labels not set in graph constructor.\nIncluding edge labels in hash calculation if present.\nPass parameter hash_labels to BipartiteGraph constructor to stop this warning.")
-            self.hash_labels=True
+        return self.weighted() or self.hash_labels
 
 
     def __hash__(self):
         
-        left=tuple(sorted(list(self.left)))        
-        right=tuple(sorted(list(self.right)))
+        left=frozenset(self.left)
+        right=frozenset(self.right)
 
         data_to_hash=[left, right]
 
-        # warning logic to determine whether to use labels in hash
+        # determine whether to hash labels
         use_labels=self._use_hash_labels()
         tuple_depth = 3 if use_labels else 2
 
