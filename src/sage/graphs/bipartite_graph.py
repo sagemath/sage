@@ -411,7 +411,7 @@ class BipartiteGraph(Graph):
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
 
-        self.hash_labels = hash_labels
+        self.hash_labels=hash_labels
 
         from sage.structure.element import is_Matrix
         if isinstance(data, BipartiteGraph):
@@ -421,8 +421,7 @@ class BipartiteGraph(Graph):
         elif isinstance(data, str):
             import os
             alist_file = os.path.exists(data)
-            Graph.__init__(
-                self, data=None if alist_file else data, *args, **kwds)
+            Graph.__init__(self, data=None if alist_file else data, *args, **kwds)
 
             # methods; initialize left and right attributes
             self.left = set()
@@ -437,8 +436,7 @@ class BipartiteGraph(Graph):
                     if left & right:
                         raise ValueError("the parts are not disjoint")
                     if len(left) + len(right) != self.num_verts():
-                        raise ValueError(
-                            "not all vertices appear in partition")
+                        raise ValueError("not all vertices appear in partition")
 
                     if check:
                         if (any(left.intersection(self.neighbor_iterator(a)) for a in left) or
@@ -447,13 +445,11 @@ class BipartiteGraph(Graph):
                                             "respect to the given partition")
                     else:
                         for a in left:
-                            a_nbrs = left.intersection(
-                                self.neighbor_iterator(a))
+                            a_nbrs = left.intersection(self.neighbor_iterator(a))
                             if a_nbrs:
                                 self.delete_edges((a, b) for b in a_nbrs)
                         for a in right:
-                            a_nbrs = right.intersection(
-                                self.neighbor_iterator(a))
+                            a_nbrs = right.intersection(self.neighbor_iterator(a))
                             if a_nbrs:
                                 self.delete_edges((a, b) for b in a_nbrs)
                     self.left, self.right = left, right
@@ -558,21 +554,22 @@ class BipartiteGraph(Graph):
     def _use_hash_labels(self):
         return self.weighted() or self.hash_labels
 
+
     def __hash__(self):
+        
+        left=frozenset(self.left)
+        right=frozenset(self.right)
 
-        left = frozenset(self.left)
-        right = frozenset(self.right)
-
-        data_to_hash = [left, right]
+        data_to_hash=[left, right]
 
         # determine whether to hash labels
-        use_labels = self._use_hash_labels()
+        use_labels=self._use_hash_labels()
         tuple_depth = 3 if use_labels else 2
 
         for edge in self.edges(sort=True):
             data_to_hash.append(edge[:tuple_depth])
 
-        return hash(tuple(data_to_hash))
+        return hash(tuple(data_to_hash))            
 
     def _upgrade_from_graph(self):
         """
@@ -703,8 +700,7 @@ class BipartiteGraph(Graph):
                     (right and name in self.right)):
                 return
             else:
-                raise RuntimeError(
-                    "cannot add duplicate vertex to other partition")
+                raise RuntimeError("cannot add duplicate vertex to other partition")
 
         # add the vertex
         retval = Graph.add_vertex(self, name)
@@ -803,8 +799,7 @@ class BipartiteGraph(Graph):
         if ((new_left & self.right) or
                 (new_right & self.left) or
                 (new_right & new_left)):
-            raise RuntimeError(
-                "cannot add duplicate vertex to other partition")
+            raise RuntimeError("cannot add duplicate vertex to other partition")
 
         # add vertices
         Graph.add_vertices(self, vertices)
@@ -920,8 +915,7 @@ class BipartiteGraph(Graph):
             elif vertex in self.right:
                 self.right.remove(vertex)
             else:
-                raise RuntimeError(
-                    "vertex (%s) not found in partitions" % vertex)
+                raise RuntimeError("vertex (%s) not found in partitions" % vertex)
 
     def add_edge(self, u, v=None, label=None):
         r"""
@@ -981,13 +975,11 @@ class BipartiteGraph(Graph):
 
         # check for endpoints in different partitions
         if self.left.issuperset((u, v)) or self.right.issuperset((u, v)):
-            raise RuntimeError(
-                "edge vertices must lie in different partitions")
+            raise RuntimeError("edge vertices must lie in different partitions")
 
         # automatically decide partitions for the newly created vertices
         if u not in self:
-            self.add_vertex(
-                u, left=(v in self.right or v not in self), right=(v in self.left))
+            self.add_vertex(u, left=(v in self.right or v not in self), right=(v in self.left))
         if v not in self:
             self.add_vertex(v, left=(u in self.right), right=(u in self.left))
 
@@ -1038,21 +1030,17 @@ class BipartiteGraph(Graph):
                     u, v = edge
                     label = None
             except Exception:
-                raise TypeError(
-                    "cannot interpret {!r} as graph edge".format(edge))
+                raise TypeError("cannot interpret {!r} as graph edge".format(edge))
 
             # check for endpoints in different partitions
             if self.left.issuperset((u, v)) or self.right.issuperset((u, v)):
-                raise RuntimeError(
-                    "edge vertices must lie in different partitions")
+                raise RuntimeError("edge vertices must lie in different partitions")
 
             # automatically decide partitions for the newly created vertices
             if u not in self:
-                self.add_vertex(
-                    u, left=(v in self.right or v not in self), right=(v in self.left))
+                self.add_vertex(u, left=(v in self.right or v not in self), right=(v in self.left))
             if v not in self:
-                self.add_vertex(v, left=(u in self.right),
-                                right=(u in self.left))
+                self.add_vertex(v, left=(u in self.right), right=(u in self.left))
 
             self._backend.add_edge(u, v, label, self._directed)
 
@@ -1187,10 +1175,8 @@ class BipartiteGraph(Graph):
         """
         self._scream_if_not_simple()
 
-        E = [e for e in itertools.product(
-            self.left, self.right) if not self.has_edge(e)]
-        H = BipartiteGraph([self, E], format='vertices_and_edges', partition=[
-                           self.left, self.right])
+        E = [e for e in itertools.product(self.left, self.right) if not self.has_edge(e)]
+        H = BipartiteGraph([self, E], format='vertices_and_edges', partition=[self.left, self.right])
 
         if self.name():
             H.name("complement-bipartite({})".format(self.name()))
@@ -1237,8 +1223,7 @@ class BipartiteGraph(Graph):
         G.add_vertices(self.left)
         for v in G:
             for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w)
-                            for w in self.neighbor_iterator(u)), loops=False)
+                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
         return G
 
     def project_right(self):
@@ -1266,8 +1251,7 @@ class BipartiteGraph(Graph):
         G.add_vertices(self.right)
         for v in G:
             for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w)
-                            for w in self.neighbor_iterator(u)), loops=False)
+                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
         return G
 
     def plot(self, *args, **kwds):
@@ -1285,14 +1269,12 @@ class BipartiteGraph(Graph):
         if kwds["pos"] is None:
             if self.left:
                 y = 0 if len(self.left) == 1 else 1
-                pos = self._line_embedding(
-                    sorted(self.left), first=(-1, y), last=(-1, -y), return_dict=True)
+                pos = self._line_embedding(sorted(self.left), first=(-1, y), last=(-1, -y), return_dict=True)
             else:
                 pos = {}
             if self.right:
                 y = 0 if len(self.right) == 1 else 1
-                pos.update(self._line_embedding(sorted(self.right),
-                           first=(1, y), last=(1, -y), return_dict=True))
+                pos.update(self._line_embedding(sorted(self.right), first=(1, y), last=(1, -y), return_dict=True))
             kwds["pos"] = pos
         return Graph.plot(self, *args, **kwds)
 
@@ -1836,8 +1818,7 @@ class BipartiteGraph(Graph):
         else:
             # if we're normal or multi-edge, just create the matrix over ZZ
             for v1, v2, name in self.edge_iterator():
-                idx = (right[v2], left[v1]) if v1 in left else (
-                    right[v1], left[v2])
+                idx = (right[v2], left[v1]) if v1 in left else (right[v1], left[v2])
                 if idx in D:
                     D[idx] += 1
                 else:
@@ -2001,8 +1982,7 @@ class BipartiteGraph(Graph):
                 # NetworkX matching algorithms for bipartite graphs may fail
                 # when the graph is not connected
                 if not self.is_connected():
-                    CC = [g for g in self.connected_components_subgraphs()
-                          if g.size()]
+                    CC = [g for g in self.connected_components_subgraphs() if g.size()]
                 else:
                     CC = [self]
                 v2int = {v: i for i, v in enumerate(self)}
@@ -2325,8 +2305,7 @@ class BipartiteGraph(Graph):
             B = self
         else:
             # We make a copy of the graph
-            B = BipartiteGraph(data=self.edges(sort=True),
-                               partition=[self.left, self.right])
+            B = BipartiteGraph(data=self.edges(sort=True), partition=[self.left, self.right])
             attributes_to_update = ('_pos', '_assoc')
             for attr in attributes_to_update:
                 if hasattr(self, attr) and getattr(self, attr) is not None:
@@ -2336,8 +2315,7 @@ class BipartiteGraph(Graph):
         B.name("Subgraph of ({})".format(self.name()))
 
         vertices = set(vertices)
-        B.delete_vertices(
-            [v for v in B.vertex_iterator() if v not in vertices])
+        B.delete_vertices([v for v in B.vertex_iterator() if v not in vertices])
 
         edges_to_delete = []
         if edges is not None:
@@ -2352,8 +2330,7 @@ class BipartiteGraph(Graph):
         if edge_property is not None:
             # We might get duplicate edges, but this does handle the case of
             # multiple edges.
-            edges_to_delete.extend(
-                e for e in B.edge_iterator() if not edge_property(e))
+            edges_to_delete.extend(e for e in B.edge_iterator() if not edge_property(e))
 
         B.delete_edges(edges_to_delete)
         return B
@@ -2462,8 +2439,7 @@ class BipartiteGraph(Graph):
             cert = {}
 
             if edge_labels or self.has_multiple_edges():
-                G, partition, relabeling = graph_isom_equivalent_non_edge_labeled_graph(
-                    self, partition, return_relabeling=True)
+                G, partition, relabeling = graph_isom_equivalent_non_edge_labeled_graph(self, partition, return_relabeling=True)
                 G_vertices = list(chain(*partition))
                 G_to = {u: i for i, u in enumerate(G_vertices)}
                 H = Graph(len(G_vertices))
@@ -2472,8 +2448,7 @@ class BipartiteGraph(Graph):
                     HB.add_edge(G_to[u], G_to[v], None, False)
                 GC = HB.c_graph()[0]
                 partition = [[G_to[vv] for vv in cell] for cell in partition]
-                a, b, c = search_tree(
-                    GC, partition, certificate=True, dig=False)
+                a, b, c = search_tree(GC, partition, certificate=True, dig=False)
                 # c is a permutation to the canonical label of G,
                 # which depends only on isomorphism class of self.
                 cert = {v: c[G_to[relabeling[v]]] for v in self}
@@ -2487,8 +2462,7 @@ class BipartiteGraph(Graph):
                     HB.add_edge(G_to[u], G_to[v], None, False)
                 GC = HB.c_graph()[0]
                 partition = [[G_to[vv] for vv in cell] for cell in partition]
-                a, b, c = search_tree(
-                    GC, partition, certificate=True, dig=False)
+                a, b, c = search_tree(GC, partition, certificate=True, dig=False)
                 cert = {v: c[G_to[v]] for v in G_to}
 
             C = self.relabel(perm=cert, inplace=False)
