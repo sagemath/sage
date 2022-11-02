@@ -13,6 +13,12 @@
 # subdistributions with "smallest" (e.g., in the sorting order
 # defined above) elements first?
 
+# Priorities:
+
+# 1) for an all-knowing user, code should be as fast as possible
+# 2) code should be easy to understand
+# 3) anticipate that a user computes things in a bad order
+
 r"""
 A bijectionist's toolkit
 
@@ -492,7 +498,7 @@ class Bijectionist(SageObject):
 
         Check that large input sets are handled well::
 
-            sage: A = B = list(range(7000))
+            sage: A = B = list(range(20000))
             sage: bij = Bijectionist(A, B)
         """
         # glossary of standard letters:
@@ -1062,19 +1068,13 @@ class Bijectionist(SageObject):
         r"""
         Update the dictionary of possible values of each block.
 
-        This has to be called whenever `self._P` was modified.
-
-        .. TODO::
-
-            If `self._Z` is large, this is very memory expensive.  In
-        this case it would be good if equal values of the dictionary
-        `self._possible_block_values` would share memory.
-
+        This has to be called whenever ``self._P`` was modified.
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
-            self._possible_block_values[p] = set.intersection(*[self._restrictions_possible_values[a] for a in block],
-                                                              *[self._statistics_possible_values[a] for a in block])
+            sets = ([self._restrictions_possible_values[a] for a in block]
+                    + [self._statistics_possible_values[a] for a in block])
+            self._possible_block_values[p] = _non_copying_intersection(sets)
             if not self._possible_block_values[p]:
                 if len(block) == 1:
                     raise ValueError(f"No possible values found for singleton block {block}")
@@ -2435,7 +2435,6 @@ class Bijectionist(SageObject):
         r"""
         Generate a ``_BijectionistMILP``, add all relevant constraints
         and call ``MILP.solve()``.
-
         """
         preimage_blocks = self._preprocess_intertwining_relations()
         self._compute_possible_block_values()
@@ -2668,6 +2667,34 @@ def _disjoint_set_roots(d):
     Return the representatives of the blocks of the disjoint set.
     """
     return d.root_to_elements_dict().keys()
+
+
+def _non_copying_intersection(sets):
+    """
+    Return the intersection of the sets.
+
+    If the intersection is equal to one of the sets, return this
+    set.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.bijectionist import _non_copying_intersection
+        sage: A = set(range(7000)); B = set(range(8000));
+        sage: _non_copying_intersection([A, B]) is A
+        True
+
+    """
+    sets = sorted(sets, key=len)
+    result = set.intersection(*sets)
+    n = len(result)
+    if n < len(sets[0]):
+        return result
+    for s in sets:
+        N = len(s)
+        if N > n:
+            return result
+        if s == result:
+            return s
 
 
 """
