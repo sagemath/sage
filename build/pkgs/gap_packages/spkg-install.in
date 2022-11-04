@@ -1,4 +1,4 @@
-GAP_ROOT="$SAGE_LOCAL/share/gap"
+GAP_ROOT="$SAGE_LOCAL/lib/gap"
 PKG_DIR="$GAP_ROOT/pkg"
 
 PKG_SRC_DIR="$(pwd)/src/pkg"
@@ -43,20 +43,16 @@ install_compiled_pkg()
     local pkg="$1"
     # Install the bin/ dir (where compiled modules should end up)
     # under <prefix>/lib/gap; we then symlink to it later
-    sdh_install bin "$SAGE_LOCAL/lib/gap/pkg/$pkg"
+    sdh_install * "$SAGE_LOCAL/lib/gap/pkg/$pkg"
 
+    # TODO:
     # Clean up any build artificts before installing the rest of the package
     # Also remove configure/Makefiles
     # Note: None, if any of the packages really have a proper install target
-    make clean  # Works for some packages but not all
-    rm -rf bin/
-    rm -rf configure configure.* config.* autogen.sh *.m4 Makefile* m4/
+    #make clean  # Works for some packages but not all
+    #rm -rf bin/
+    #rm -rf configure configure.* config.* autogen.sh *.m4 Makefile* m4/
 
-    # Create the bin/ symlink
-    ln -s "$SAGE_LOCAL/lib/gap/pkg/$pkg/bin" bin
-
-    # Install the rest of the package files
-    sdh_install * "$PKG_DIR/$pkg"
 }
 
 # Build and install compiled packages:
