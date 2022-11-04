@@ -20,10 +20,10 @@ fi
 sdh_configure $SAGE_CONFIGURE_GMP LDFLAGS="-pthread" --prefix=$SAGE_LOCAL
 sdh_make
 
-# GAP's "make install" is work in progress; we use bits and pieces of it
-# but we install many things manually.
 sdh_make install
 # sdh_make install-headers install-libgap
+# The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
+mkdir -p "$SAGE_LOCAL/lib/gap/bin"
 
 # Install only the minimal packages GAP needs to run
 sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
