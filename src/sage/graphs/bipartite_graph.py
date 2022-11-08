@@ -349,7 +349,7 @@ class BipartiteGraph(Graph):
 
     """
 
-    def __init__(self, data=None, partition=None, check=True, hash_labels=False, *args, **kwds):
+    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
         """
         Create a bipartite graph.
 
@@ -552,24 +552,46 @@ class BipartiteGraph(Graph):
 
     # true if specified by user, or if graph is weighted
     def _use_hash_labels(self):
-        return self.weighted() or self.hash_labels
+        if self.hash_labels is None:
+            import warnings
+            fallback=self.weighted()
+            warnings.warn(f"Warning - hash_labels parameter not passed to BipartiteGraph constructor.\nDefaulting to {fallback} [aka self.weighted()]")
+            self.hash_labels=fallback
+        return self.hash_labels
 
 
     def __hash__(self):
+
+        """
+        Compute a hash for ``self``, if ``self`` is immutable.
+        """
+        if self.is_immutable():
         
-        left=frozenset(self.left)
-        right=frozenset(self.right)
+            left=frozenset(self.left)
+            right=frozenset(self.right)
 
-        data_to_hash=[left, right]
+            data_to_hash=[left, right]
 
-        # determine whether to hash labels
-        use_labels=self._use_hash_labels()
-        tuple_depth = 3 if use_labels else 2
+            # determine whether to hash labels
+            # warn user if not manually specified
+            use_labels=self._use_hash_labels()
+            tuple_depth = 3 if use_labels else 2
 
-        for edge in self.edges(sort=True):
-            data_to_hash.append(edge[:tuple_depth])
+            for edge in self.edges(sort=True):
+                data_to_hash.append(edge[:tuple_depth])
 
-        return hash(tuple(data_to_hash))            
+            
+            # edge_iter = self.edge_iterator(labels=use_labels)
+            
+            # if self.allows_multiple_edges():
+            #     from collections import Counter                
+            #     edge_items = Counter(edge_iter).items()
+            # else:
+            #     edge_items = edge_iter
+
+            return hash(tuple(data_to_hash))        
+        else:
+            raise TypeError("This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`")
 
     def _upgrade_from_graph(self):
         """
