@@ -772,7 +772,7 @@ cpdef poison_currRing(frame, event, arg):
         sage: from sage.libs.singular.ring import poison_currRing
         sage: sys.settrace(poison_currRing)
         sage: sys.gettrace()
-        <built-in function poison_currRing>
+        <cyfunction poison_currRing at ...>
         sage: sys.settrace(previous_trace_func)  # switch it off again
     """
     global currRing

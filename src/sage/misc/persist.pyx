@@ -298,7 +298,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }   
+    already_pickled = { }
 
     if compress:
         return comp.compress(gherkin)
@@ -326,7 +326,7 @@ def dumps(obj, compress=True):
     if make_pickle_jar:
         picklejar(obj)
     try:
-        ans = obj.dumps(compress)
+        ans = type(obj).dumps(obj, compress)
     except (AttributeError, RuntimeError, TypeError):
         ans = _base_dumps(obj, compress=compress)
     already_pickled = { }

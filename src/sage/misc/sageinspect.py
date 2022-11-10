@@ -152,7 +152,7 @@ def is_function_or_cython_function(obj):
         sage: is_function_or_cython_function(_mul_parent)
         True
         sage: is_function_or_cython_function(Integer.digits)     # unbound method
-        False
+        True
         sage: is_function_or_cython_function(Integer(1).digits)  # bound method
         False
 

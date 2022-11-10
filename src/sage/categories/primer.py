@@ -919,6 +919,7 @@ Where do all the operations on ``S`` and its elements come from?
 to use Sage's introspection tools to recover where it's implemented::
 
     sage: x._repr_.__module__
+    'sage.structure.element_wrapper'
     sage: sage.misc.sageinspect.sage_getfile(x._repr_)
     '.../sage/structure/element_wrapper.pyx'
 

@@ -310,17 +310,22 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
+            sage: ZZ.ideal_monoid()
+            Monoid of ideals of Integer Ring
+            sage: R.<x>=QQ[]; R.ideal_monoid()
+            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
+
             sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
             sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
             sage: Q = F.quotient(I)
             sage: Q.ideal_monoid()
             Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z) over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
+
             sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
             sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
             sage: Q = F.quo(I)
             sage: Q.ideal_monoid()
             Monoid of ideals of Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Integer Ring by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
         """
         if self.__ideal_monoid is not None:
             return self.__ideal_monoid
@@ -1089,25 +1094,6 @@ cdef class Ring(ParentWithGens):
             x = self.random_element(*args, **kwds)
             if not x.is_zero():
                 return x
-
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: ZZ.ideal_monoid()
-            Monoid of ideals of Integer Ring
-            sage: R.<x>=QQ[]; R.ideal_monoid()
-            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-        """
-        if self.__ideal_monoid is not None:
-            return self.__ideal_monoid
-        else:
-            from sage.rings.ideal_monoid import IdealMonoid
-            M = IdealMonoid(self)
-            self.__ideal_monoid = M
-            return M
 
     @cached_method
     def epsilon(self):

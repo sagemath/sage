@@ -358,14 +358,14 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
             sage: d = DisjointSet(5)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 3, 4])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 3, 4])
 
         ::
 
             sage: d.union(2,4)
             sage: d.union(1,3)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 1, 2])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 1, 2])
         """
         return DisjointSet, (self._nodes.degree,), self.__getstate__()
 
@@ -674,7 +674,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{0}, {1}, {2}, {3}, {4}}
             sage: d = _
             sage: d.__reduce__()
-            (<built-in function DisjointSet>,
+            (<cyfunction DisjointSet at ...>,
              ([0, 1, 2, 3, 4],),
              [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)])
 
@@ -683,7 +683,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(2,4)
             sage: d.union(1,3)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>,
+            (<cyfunction DisjointSet at ...>,
              ([0, 1, 2, 3, 4],),
              [(0, 0), (1, 1), (2, 2), (3, 1), (4, 2)])
         """

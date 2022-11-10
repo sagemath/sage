@@ -181,7 +181,7 @@ cpdef get_sfunction_from_serial(unsigned int serial):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import get_sfunction_from_serial
         sage: get_sfunction_from_serial(65) #random
         f
     """

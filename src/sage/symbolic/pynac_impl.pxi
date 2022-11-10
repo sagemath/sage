@@ -281,8 +281,7 @@ def get_fn_serial():
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import get_fn_serial, get_sfunction_from_serial
         sage: get_fn_serial() > 125
         True
         sage: print(get_sfunction_from_serial(get_fn_serial()))
@@ -460,8 +459,7 @@ def py_print_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -524,8 +522,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -662,10 +659,9 @@ def py_print_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial
+        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:     if get_sfunction_from_serial(i) == foo: break
@@ -740,11 +736,9 @@ def py_latex_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial
-
+        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:   if get_sfunction_from_serial(i) == foo: break
@@ -2391,7 +2385,7 @@ def register_symbol(obj, conversions, nargs=None):
       this can be deduced automatically.
 
     EXAMPLES::
-    
+
         sage: from sage.symbolic.expression import register_symbol as rs
         sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))

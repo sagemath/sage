@@ -36,7 +36,7 @@ def black_scholes(double spot_price, double strike_price, double time_to_maturit
         sage: finance.black_scholes
         doctest:warning...
         DeprecationWarning: the package sage.finance is deprecated...
-        <built-in function black_scholes>
+        <cyfunction black_scholes at ...>
 
         sage: finance.black_scholes(42, 40, 0.5, 0.1, 0.2, 'call')       # abs tol 1e-10
         4.759422392871532

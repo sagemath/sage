@@ -1154,7 +1154,7 @@ def is_RSHCD(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_RSHCD
         sage: t = is_RSHCD(64,27,10,12); t
-        [<built-in function SRG_from_RSHCD>, 64, 27, 10, 12]
+        [<cyfunction SRG_from_RSHCD at ...>, 64, 27, 10, 12]
         sage: g = t[0](*t[1:]); g
         Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)

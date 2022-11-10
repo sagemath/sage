@@ -550,7 +550,7 @@ cdef class UniqueFactory(SageObject):
             sage: a = test_factory(1, 2)
             Making object (1, 2)
             sage: test_factory.reduce_data(a)
-            (<built-in function generic_factory_unpickle>,
+            (<cyfunction generic_factory_unpickle at ...>,
              (<sage.structure.test_factory.UniqueFactoryTester object at ...>,
               (...),
               (1, 2),
