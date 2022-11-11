@@ -152,6 +152,7 @@ from sage.misc.fpickle import pickle_function, unpickle_function
 sfunctions_funcs = ['eval', 'evalf', 'conjugate', 'real_part', 'imag_part',
         'derivative', 'power', 'series', 'print', 'print_latex', 'tderivative']
 
+
 cdef class Function(SageObject):
     """
     Base class for symbolic functions defined through Pynac in Sage.
@@ -801,6 +802,7 @@ cdef class Function(SageObject):
         res = self(*args)
         res = sage_to_mpmath(res, prec)
         return res
+
 
 cdef class GinacFunction(BuiltinFunction):
     """
