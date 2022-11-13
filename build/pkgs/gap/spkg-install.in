@@ -20,7 +20,7 @@ fi
 sdh_configure $SAGE_CONFIGURE_GMP LDFLAGS="-pthread" --prefix=$SAGE_LOCAL
 sdh_make
 
-sdh_make install
+sdh_make_install
 # sdh_make install-headers install-libgap
 # The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
 mkdir -p "$SAGE_LOCAL/lib/gap/bin"
