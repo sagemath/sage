@@ -358,7 +358,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: R._repr_()
             'Callable function ring with arguments (x, y, theta)'
 
-        We verify that :trac:`12298` has been fixed:: 
+        We verify that :trac:`12298` has been fixed::
 
             sage: S = CallableSymbolicExpressionRing([var('z')])
             sage: S._repr_()

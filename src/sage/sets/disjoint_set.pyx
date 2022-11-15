@@ -887,7 +887,6 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
-
         """
         d = {}
         for i from 0 <= i < self.cardinality():
@@ -896,4 +895,3 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             d[e] = [p]
         from sage.graphs.graph import DiGraph
         return DiGraph(d)
-

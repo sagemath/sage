@@ -1184,6 +1184,27 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         return self({exponents: self.base_ring().one()})
 
+    def monomials_of_degree(self, degree):
+        r"""
+        Return a list of all monomials of the given total degree in this
+        multivariate polynomial ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = ZZ[]
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
+            [x^2, x*y, x*z, y^2, y*z, z^2]
+
+        The number of such monomials equals `\binom{n+k-1}{k}`
+        where `n` is the number of variables and `k` the degree::
+
+            sage: len(mons) == binomial(3+2-1,2)
+            True
+        """
+        from sage.combinat.integer_vector import IntegerVectors
+        return [self.monomial(*a) for a in IntegerVectors(degree, self.ngens())]
+
     def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""
         In the Macaulay resultant algorithm the list of all monomials of the total degree is partitioned into sets `S_i`.

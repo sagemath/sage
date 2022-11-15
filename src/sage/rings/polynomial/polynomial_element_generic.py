@@ -36,7 +36,7 @@ from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singu
 
 from sage.libs.pari.all import pari_gen
 from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
-from sage.structure.element import coerce_binop
+from sage.structure.element import coerce_binop, parent
 
 from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
@@ -542,6 +542,29 @@ class Polynomial_generic_sparse(Polynomial):
         if not self.__coeffs:
             return -1
         return max(self.__coeffs)
+
+    def __floordiv__(self, right):
+        """
+        Return the quotient upon division (no remainder).
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQbar, sparse=True)
+            sage: f = (1+2*x)^3 + 3*x; f
+            8*x^3 + 12*x^2 + 9*x + 1
+            sage: g = f // (1+2*x); g
+            4*x^2 + 4*x + 5/2
+            sage: f - g * (1+2*x)
+            -3/2
+            sage: f.quo_rem(1+2*x)
+            (4*x^2 + 4*x + 5/2, -3/2)
+
+        """
+        P = self.parent()
+        if P is parent(right):
+            return self._floordiv_(right)
+        d = P.base_ring()(right)
+        return self.map_coefficients(lambda c: c // d)
 
     def _add_(self, right):
         r"""

@@ -16,7 +16,6 @@ Empty Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from .species import GenericCombinatorialSpecies
-from .series_order import inf
 from sage.structure.unique_representation import UniqueRepresentation
 
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
@@ -34,11 +33,11 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         []
         sage: X.structures([1,2]).list()
         []
-        sage: X.generating_series().coefficients(4)
+        sage: X.generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: X.isotype_generating_series().coefficients(4)
+        sage: X.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: X.cycle_index_series().coefficients(4)
+        sage: X.cycle_index_series()[0:4]
         [0, 0, 0, 0]
 
     The empty species is the zero of the semi-ring of species.
@@ -49,14 +48,14 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: X = S + Empt
         sage: X == S    # TODO: Not Implemented
         True
-        sage: (X.generating_series().coefficients(4) ==
-        ....:  S.generating_series().coefficients(4))
+        sage: (X.generating_series()[0:4] ==
+        ....:  S.generating_series()[0:4])
         True
-        sage: (X.isotype_generating_series().coefficients(4) ==
-        ....:  S.isotype_generating_series().coefficients(4))
+        sage: (X.isotype_generating_series()[0:4] ==
+        ....:  S.isotype_generating_series()[0:4])
         True
-        sage: (X.cycle_index_series().coefficients(4) ==
-        ....:  S.cycle_index_series().coefficients(4))
+        sage: (X.cycle_index_series()[0:4] ==
+        ....:  S.cycle_index_series()[0:4])
         True
 
     The following tests that it is the zero element with respect to
@@ -65,11 +64,11 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: Y = Empt*S
         sage: Y == Empt   # TODO: Not Implemented
         True
-        sage: Y.generating_series().coefficients(4)
+        sage: Y.generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: Y.isotype_generating_series().coefficients(4)
+        sage: Y.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: Y.cycle_index_series().coefficients(4)
+        sage: Y.cycle_index_series()[0:4]
         [0, 0, 0, 0]
 
     TESTS::
@@ -102,7 +101,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: F = species.EmptySpecies()
-            sage: F.generating_series().coefficients(5) # indirect doctest
+            sage: F.generating_series()[0:5] # indirect doctest
             [0, 0, 0, 0, 0]
             sage: F.generating_series().count(3)
             0
@@ -113,18 +112,6 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     _itgs = _gs
     _cis  = _gs
-
-    def _order(self):
-        """
-        Returns the order of the generating series.
-
-        EXAMPLES::
-
-            sage: F = species.EmptySpecies()
-            sage: F._order()
-            Infinite series order
-        """
-        return inf
 
     def _structures(self, structure_class, labels):
         """

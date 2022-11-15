@@ -62,7 +62,7 @@ constructed as ::
     sage: simplicial_sets.ClassifyingSpace(Sigma4)
     Classifying space of Symmetric group of order 4! as a permutation group
 
-Type ``simplicial_sets.`` and hit the ``TAB`` key to get a full list
+Type ``simplicial_sets.`` and hit the :kbd:`Tab` key to get a full list
 of the predefined simplicial sets.
 
 You can construct new simplicial sets from old by taking quotients,

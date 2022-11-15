@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT
 
 This module gives a fast implementation of `(\ZZ/n\ZZ)[x]` whenever `n` is at

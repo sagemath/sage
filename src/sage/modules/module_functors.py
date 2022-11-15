@@ -7,7 +7,7 @@ AUTHORS:
   :class:`QuotientModuleFunctor`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,15 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
- 
+# ****************************************************************************
+
 ##############################################################
 # Construction functor for quotient modules
 ##############################################################
 
 from sage.categories.pushout import ConstructionFunctor
 from sage.categories.modules import Modules
+
 
 class QuotientModuleFunctor(ConstructionFunctor):
     r"""
@@ -48,9 +49,9 @@ class QuotientModuleFunctor(ConstructionFunctor):
         QuotientModuleFunctor
         sage: F(A) == Q
         True
-        
+
     The modules are constructed from the cover not the ambient module::
-    
+
         sage: F(B.ambient_module()) == Q
         False
 

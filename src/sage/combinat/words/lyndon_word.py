@@ -613,6 +613,7 @@ def standard_bracketing(lw):
         if lw[i:] in LyndonWords():
             return [standard_bracketing(lw[:i]), standard_bracketing(lw[i:])]
 
+
 def standard_unbracketing(sblw):
     """
     Return flattened ``sblw`` if it is a standard bracketing of a Lyndon word,

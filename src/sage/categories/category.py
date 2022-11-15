@@ -2236,7 +2236,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. NOTE::
 
-            The auxiliary function `_flatten_categories` used in the test
+            The auxiliary function ``_flatten_categories`` used in the test
             below expects a second argument, which is a type such that
             instances of that type will be replaced by its super
             categories. Usually, this type is :class:`JoinCategory`.

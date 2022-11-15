@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sage-setup ~= 9.8b1
+sage-setup ~= 9.8b3

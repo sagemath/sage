@@ -39,10 +39,10 @@ def prm_mul(p1, p2, mask_free, prec):
 
     - `p1,p2` -- polynomials as dictionaries
 
-    - `mask_free` -- an integer mask that give the list of free variables
+    - ``mask_free`` -- an integer mask that give the list of free variables
       (the `i`-th variable is free if the `i`-th bit of ``mask_free`` is `1`)
 
-    - `prec` -- if `prec` is not None, truncate the product at precision `prec`
+    - ``prec`` -- if ``prec`` is not ``None``, truncate the product at precision ``prec``
 
     EXAMPLES::
 

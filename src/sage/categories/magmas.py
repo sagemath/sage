@@ -774,12 +774,13 @@ class Magmas(Category_singleton):
 
         def __init_extra__(self):
             """
+            EXAMPLES::
+
                 sage: S = Semigroups().example("free")
                 sage: S('a') * S('b') # indirect doctest
                 'ab'
                 sage: S('a').__class__._mul_ == S('a').__class__._mul_parent
                 True
-
             """
             # This should instead register the multiplication to the coercion model
             # But this is not yet implemented in the coercion model

@@ -25,16 +25,15 @@ AUTHORS:
 - Ben Hutz (June 2012): added support for projective ring
 """
 
-
-#*****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
-#       Copyright (C) 2006 William Stein <wstein@gmail.com>
+# *****************************************************************************
+#        Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#        Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#   Distributed under the terms of the GNU General Public License (GPL)
+#   as published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
@@ -70,9 +69,10 @@ def is_SchemeHomset(H):
     return isinstance(H, SchemeHomset_generic)
 
 
-#*******************************************************************
-# Factory for Hom sets of schemes
-#*******************************************************************
+# *******************************************************************
+#  Factory for Hom sets of schemes
+# *******************************************************************
+
 class SchemeHomsetFactory(UniqueFactory):
     """
     Factory for Hom-sets of schemes.
@@ -212,10 +212,10 @@ class SchemeHomsetFactory(UniqueFactory):
 SchemeHomset = SchemeHomsetFactory('sage.schemes.generic.homset.SchemeHomset')
 
 
+# *******************************************************************
+#  Base class
+# *******************************************************************
 
-#*******************************************************************
-# Base class
-#*******************************************************************
 class SchemeHomset_generic(HomsetWithBase):
     r"""
     The base class for Hom-sets of schemes.
@@ -393,9 +393,11 @@ class SchemeHomset_generic(HomsetWithBase):
 
         raise TypeError("x must be a ring homomorphism, list or tuple")
 
-#*******************************************************************
-# Base class for points
-#*******************************************************************
+
+# *******************************************************************
+#  Base class for points
+# *******************************************************************
+
 class SchemeHomset_points(SchemeHomset_generic):
     """
     Set of rational points of the scheme.

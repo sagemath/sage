@@ -12,7 +12,7 @@ To get a circulant graph on 10 vertices in which a vertex `i` has `i+2` and
     sage: p = digraphs.Circulant(10,[2,3])
 
 More interestingly, one can get the list of all digraphs that Sage knows how to
-build by typing ``digraphs.`` in Sage and then hitting tab.
+build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
 
 .. csv-table::
     :class: contentstable

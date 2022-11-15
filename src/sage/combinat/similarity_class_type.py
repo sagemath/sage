@@ -156,7 +156,7 @@ REFERENCES:
 .. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
    over local rings of length two*. :arxiv:`1212.6157`
 
-.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field 
+.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
    interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
 
 .. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
@@ -170,7 +170,7 @@ AUTHOR:
 - Amritanshu Prasad (2013-09-09): added functions for similarity classes over
   rings of length two
 
-- Amritanshu Prasad (2022-07-31): added computation of similarity class type of 
+- Amritanshu Prasad (2022-07-31): added computation of similarity class type of
   a given matrix and invariant subspace generating function
 """
 # ****************************************************************************
@@ -387,7 +387,7 @@ def invariant_subspace_generating_function(la, q=None, t=None):
     u = invariant_subspace_generating_function(la[1:], q=q, t=t)
     return R((t**(la[0]+1) * q**(sum(la[1:])) * u.substitute(t=t/q) - u.substitute(t=t*q)) / (t - 1))
 
-    
+
 class PrimarySimilarityClassType(Element,
                                  metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -1068,7 +1068,7 @@ class SimilarityClassType(CombinatorialElement):
         .. MATH::
 
             \sum_{j\geq 0} a_j(q) t^j,
-        
+
         where `a_j(q)` denotes the number of `j`-dimensional invariant subspaces
         of dimensiona `j` for any matrix with the similarity class type ``self``
         with entries in a field of order `q`.

@@ -595,16 +595,15 @@ AUTHORS:
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+import os
 from sage.env import SAGE_LOCAL
 import pexpect
 import re
@@ -1676,10 +1675,9 @@ def qepcad(formula, assume=None, interact=False, solution=None,
             raise ValueError("Unknown solution type ({})".format(solution))
 
 
-import os
 def qepcad_console(memcells=None):
     r"""
-    Run QEPCAD directly.  To exit early, press Control-C.
+    Run QEPCAD directly.  To exit early, press :kbd:`Control` + :kbd:`C`.
 
     EXAMPLES::
 

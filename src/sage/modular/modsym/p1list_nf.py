@@ -1199,6 +1199,6 @@ def psi(N):
         raise ValueError("psi only defined for integral ideals")
 
     from sage.misc.misc_c import prod
-    return prod([(np+1)*np**(e-1) \
-                     for np,e in [(p.absolute_norm(),e) \
-                                  for p,e in N.factor()]])
+    return prod([(np + 1) * np**(e - 1)
+                 for np, e in [(p.absolute_norm(), e)
+                               for p, e in N.factor()]])

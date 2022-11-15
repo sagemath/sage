@@ -33,11 +33,11 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]
             [1, 1, 2, 4, 11]
 
             sage: G = species.SimpleGraphSpecies()
-            sage: c = G.generating_series().coefficients(2)
+            sage: c = G.generating_series()[0:2]
             sage: type(G)
             <class 'sage.combinat.species.functorial_composition_species.FunctorialCompositionSpecies'>
             sage: G == loads(dumps(G))
@@ -93,7 +93,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.generating_series().coefficients(5)
+            sage: G.generating_series()[0:5]
             [1, 1, 1, 4/3, 8/3]
         """
         return self._F.generating_series(base_ring).functorial_composition(self._G.generating_series(base_ring))
@@ -103,7 +103,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]
             [1, 1, 2, 4, 11]
         """
         return self.cycle_index_series(base_ring).isotype_generating_series()
@@ -113,7 +113,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.cycle_index_series().coefficients(5)
+            sage: G.cycle_index_series()[0:5]
             [p[],
              p[1],
              p[1, 1] + p[2],

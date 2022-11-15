@@ -112,7 +112,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         self._hint = hint
-        
+
     def hint(self):
         """
         Return the hint of this ideal.
@@ -130,7 +130,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         return self._hint
-    
+
     # Comparisons, using the associated polynomial ideal.
     def _richcmp_(self, right_r, op):
         r"""
@@ -192,9 +192,9 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         f = self.ring()(f)
         g = f.__reduce__()[1][0]
         return (g in self.polynomial_ideal())
-    
+
     # Operations on ideals
-    
+
     def change_ring(self, R, hint=None):
         """
         Coerce an ideal into a new ring.
@@ -313,7 +313,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             apply_to_hint = None
         return self.apply_map(lambda x, M=M: x.toric_coordinate_change(M),
                               apply_to_hint=apply_to_hint)
-    
+
     def __add__(self, other):
         """
         Return the sum of two ideals in the same ring.
@@ -361,7 +361,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             Ideal (x - 1, y + 1) of Multivariate Laurent Polynomial Ring in x, y over Rational Field
         """
         return self.ring().ideal(self.groebner_basis(), hint=self._hint)
-    
+
     # Structural queries and properties
 
     def polynomial_ideal(self, saturate=True):
@@ -406,7 +406,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         self._hint = I
         self._saturated = True
         return I
-    
+
     def groebner_basis(self, saturate=True):
         """
         Return the reduced Groebner basis for the specified term order.
@@ -456,7 +456,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         else:
             l = self.gens()
         return all(not f or f.number_of_terms() == 2 for f in l)
-    
+
     def associated_primes(self):
         """
         Return associated primes of this ideal.

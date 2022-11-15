@@ -318,7 +318,7 @@ since `\sigma` is an odd permutation.
 Many more available functions that can be applied to a permutation can
 be found via "tab-completion."  With ``sigma`` defined as an element
 of a permutation group, in a Sage cell, type ``sigma.`` (Note the
-"``.``") and then press the tab key.  You will get a list of available
+"``.``") and then press the :kbd:`Tab` key.  You will get a list of available
 functions (you may need to scroll down to see the whole list).
 Experiment and explore!  It is what Sage is all about.  You really
 cannot break anything.
@@ -359,13 +359,13 @@ and then a variety of functions become available.
 
 After trying the examples below, experiment with tab-completion.
 Having defined ``H``, type ``H.`` (note the "``.``") and then press
-the tab key.  You will get a list of available functions (you may need
+the :kbd:`Tab` key.  You will get a list of available functions (you may need
 to scroll down to see the whole list).  As before,
 *experiment and explore*---it is really hard to break anything.
 
 Here is another couple of ways to experiment and explore.  Find a
 function that looks interesting, say ``is_abelian()``.  Type
-``H.is_abelian?`` (note the question mark) followed by the enter key.
+``H.is_abelian?`` (note the question mark) followed by the :kbd:`Enter` key.
 This will display a portion of the source code for the
 ``is_abelian()`` function, describing the inputs and output, possibly
 illustrated with example uses.

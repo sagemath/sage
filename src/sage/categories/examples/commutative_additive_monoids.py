@@ -112,7 +112,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         return self(())
 
     class Element(FreeCommutativeAdditiveSemigroup.Element):
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Check if ``self`` is not the zero of the monoid
 
@@ -126,6 +126,5 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
             """
             return any(x for x in self.value.values())
 
-        
 
 Example = FreeCommutativeAdditiveMonoid

@@ -83,6 +83,7 @@ from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
+from sage.matrix.constructor import matrix
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.number_fields import NumberFields
@@ -2279,6 +2280,41 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             except ValueError:
                 pass
         raise ValueError('the morphism is not defined at this point')
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C = Curve(7*x^2 + 2*y*z + z^2)  # conic
+            sage: f, g = C.parametrization()
+            sage: f*g == C.identity_morphism()
+            True
+
+            sage: C = Curve(x^2 + y^2 - z^2)
+            sage: P.<u, v> = ProjectiveSpace(QQ, 1)
+            sage: f = C.hom([x + z, y], P)
+            sage: g = C.hom([y, z - x], P)
+            sage: f == g
+            True
+            sage: h = C.hom([z, x - y], P)
+            sage: f == h
+            False
+        """
+        Y = self.codomain()
+
+        if not isinstance(other, SchemeMorphism_polynomial):
+            return False
+        if self.domain() != other.domain() or Y != other.codomain():
+            return False
+
+        if not Y.is_projective():  # codomain is affine
+            e = Y.projective_embedding(0)
+            return (e * self) == (e * other)
+
+        R = self.domain().coordinate_ring()
+        mat = matrix([self.defining_polynomials(), other.defining_polynomials()])
+        return all(R(minor).is_zero() for minor in mat.minors(2))
 
     @cached_method
     def representatives(self):

@@ -206,7 +206,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: X = species.SingletonSpecies()
             sage: A = X*X
-            sage: A.generating_series().coefficients(4)
+            sage: A.generating_series()[0:4]
             [0, 0, 1, 0]
 
             sage: P = species.PermutationSpecies()
@@ -324,7 +324,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P * P
-            sage: F.generating_series().coefficients(5)
+            sage: F.generating_series()[0:5]
             [1, 2, 3, 4, 5]
         """
         res = (self.left_factor().generating_series(base_ring) *
@@ -339,7 +339,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P * P
-            sage: F.isotype_generating_series().coefficients(5)
+            sage: F.isotype_generating_series()[0:5]
             [1, 2, 5, 10, 20]
         """
         res = (self.left_factor().isotype_generating_series(base_ring) *
@@ -354,7 +354,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P * P
-            sage: F.cycle_index_series().coefficients(5)
+            sage: F.cycle_index_series()[0:5]
             [p[],
              2*p[1],
              3*p[1, 1] + 2*p[2],

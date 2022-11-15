@@ -2816,37 +2816,41 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
             sage: I.hilbert_polynomial()
             5*t - 5
+
+        Check for :trac:`33597`::
+
+            sage: R.<X, Y, Z> = QQ[]
+            sage: I = R.ideal([X^2*Y^3, X*Z])
+            sage: I.hilbert_polynomial()
+            t + 5
         """
         if not self.is_homogeneous():
             raise TypeError("ideal must be homogeneous")
-
         if algorithm == 'sage':
             from sage.misc.misc_c import prod
             hilbert_poincare = self.hilbert_series()
-            denom = hilbert_poincare.denominator().factor()
-            second_hilbert = hilbert_poincare.numerator()
-            t = second_hilbert.parent().gen()
-            if denom:
-                s = denom[0][1] # this is the pole order of the Hilbert-Poincaré series at t=1
-            else:
-                return t.parent().zero()
-            # we assume the denominator of the Hilbert series is of the form (1-t)^s, scale if needed
-            if hilbert_poincare.denominator().leading_coefficient() == 1:
-                second_hilbert = second_hilbert*(-1)**s
-            denom = ZZ(s-1).factorial()
-            out = sum(c / denom * prod(s - 1 - n - nu + t for nu in range(s-1))
-                      for n,c in enumerate(second_hilbert)) + t.parent().zero()
-            return out
-        elif algorithm == 'singular':
+            denom = hilbert_poincare.denominator()
+            if denom.degree() == 0:
+                return denom.parent().zero()
+            t = denom.parent().gen()
+            s = denom.valuation(t - 1)
+            numerator = hilbert_poincare.numerator()
+            # we assume the denominator of the Hilbert series is of
+            # the form (1 - t)^s, need to scale numerator
+            scalar = ~(denom[0] * (s - 1).factorial())
+            st = s - 1 + t
+            out = scalar * sum(c * prod(st - n - nu for nu in range(s - 1))
+                               for n, c in enumerate(numerator))
+            return t.parent().zero() + out
+        if algorithm == 'singular':
             from sage.libs.singular.function_factory import ff
             hilbPoly = ff.polylib__lib.hilbPoly
 
             hp = hilbPoly(self)
             t = ZZ['t'].gen()
-            fp = ZZ(len(hp)-1).factorial()
-            return sum(ZZ(coeff) * t**i for i,coeff in enumerate(hp)) / fp
-        else:
-            raise ValueError("'algorithm' must be 'sage' or 'singular'")
+            fp = ZZ(len(hp) - 1).factorial()
+            return sum(ZZ(coeff) * t**i for i, coeff in enumerate(hp)) / fp
+        raise ValueError("'algorithm' must be 'sage' or 'singular'")
 
     @require_field
     @handle_AA_and_QQbar

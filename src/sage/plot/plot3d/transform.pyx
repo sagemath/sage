@@ -266,4 +266,3 @@ def rotate_arbitrary(v, double theta):
         (1 - cos_t)*z*z + cos_t        ]
 
     return matrix(RDF, 3, 3, entries)
-
