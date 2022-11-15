@@ -89,4 +89,3 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
                 True
             """
             return [CommutativeRings()]
-

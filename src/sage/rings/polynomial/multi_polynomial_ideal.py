@@ -2467,7 +2467,8 @@ class MPolynomialIdeal_singular_repr(
              {y: 0.3611030805286474?, x: 2.769292354238632?},
              {y: 1, x: 1}]
 
-        We can also use the external program msolve to compute the variety.
+        We can also use the `optional package msolve <../spkg/msolve.html>`_
+        to compute the variety.
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
             sage: I.variety(RBF, algorithm='msolve', proof=False) # optional - msolve
@@ -2543,9 +2544,9 @@ class MPolynomialIdeal_singular_repr(
           uses triangular decomposition, via Singular if possible, falling back
           on a toy implementation otherwise.
 
-        - With ``algorithm`` = ``"msolve"``, calls the external program
-          `msolve <https://msolve.lip6.fr/>`_ (if available in the system
-          program search path). Note that msolve uses heuristics and therefore
+        - With ``algorithm`` = ``"msolve"``, uses the
+          `optional package msolve <../spkg/msolve.html>`_.
+          Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
           :mod:`~sage.rings.polynomial.msolve` for more information.
         """
@@ -2815,37 +2816,41 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
             sage: I.hilbert_polynomial()
             5*t - 5
+
+        Check for :trac:`33597`::
+
+            sage: R.<X, Y, Z> = QQ[]
+            sage: I = R.ideal([X^2*Y^3, X*Z])
+            sage: I.hilbert_polynomial()
+            t + 5
         """
         if not self.is_homogeneous():
             raise TypeError("ideal must be homogeneous")
-
         if algorithm == 'sage':
             from sage.misc.misc_c import prod
             hilbert_poincare = self.hilbert_series()
-            denom = hilbert_poincare.denominator().factor()
-            second_hilbert = hilbert_poincare.numerator()
-            t = second_hilbert.parent().gen()
-            if denom:
-                s = denom[0][1] # this is the pole order of the Hilbert-Poincaré series at t=1
-            else:
-                return t.parent().zero()
-            # we assume the denominator of the Hilbert series is of the form (1-t)^s, scale if needed
-            if hilbert_poincare.denominator().leading_coefficient() == 1:
-                second_hilbert = second_hilbert*(-1)**s
-            denom = ZZ(s-1).factorial()
-            out = sum(c / denom * prod(s - 1 - n - nu + t for nu in range(s-1))
-                      for n,c in enumerate(second_hilbert)) + t.parent().zero()
-            return out
-        elif algorithm == 'singular':
+            denom = hilbert_poincare.denominator()
+            if denom.degree() == 0:
+                return denom.parent().zero()
+            t = denom.parent().gen()
+            s = denom.valuation(t - 1)
+            numerator = hilbert_poincare.numerator()
+            # we assume the denominator of the Hilbert series is of
+            # the form (1 - t)^s, need to scale numerator
+            scalar = ~(denom[0] * (s - 1).factorial())
+            st = s - 1 + t
+            out = scalar * sum(c * prod(st - n - nu for nu in range(s - 1))
+                               for n, c in enumerate(numerator))
+            return t.parent().zero() + out
+        if algorithm == 'singular':
             from sage.libs.singular.function_factory import ff
             hilbPoly = ff.polylib__lib.hilbPoly
 
             hp = hilbPoly(self)
             t = ZZ['t'].gen()
-            fp = ZZ(len(hp)-1).factorial()
-            return sum(ZZ(coeff) * t**i for i,coeff in enumerate(hp)) / fp
-        else:
-            raise ValueError("'algorithm' must be 'sage' or 'singular'")
+            fp = ZZ(len(hp) - 1).factorial()
+            return sum(ZZ(coeff) * t**i for i, coeff in enumerate(hp)) / fp
+        raise ValueError("'algorithm' must be 'sage' or 'singular'")
 
     @require_field
     @handle_AA_and_QQbar
@@ -4089,7 +4094,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         'msolve'
-            `msolve <https://msolve.lip6.fr/>`_ (if available, degrevlex order,
+            `optional package msolve <../spkg/msolve.html>`_ (degrevlex order,
             prime fields)
 
         'magma:GroebnerBasis'
@@ -4215,9 +4220,8 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             sage: I.groebner_basis('macaulay2:mgb') # optional - macaulay2
             [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
 
-        Over prime fields of small characteristic, we can also use
-        `msolve <https://msolve.lip6.fr/>`_ (if available in the system program
-        search path)::
+        Over prime fields of small characteristic, we can also use the
+        `optional package msolve <../spkg/msolve.html>`_::
 
             sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching
@@ -5458,4 +5462,3 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
                 return not (contained and contains)
             else:  # remaining case <
                 return contained and not contains
-

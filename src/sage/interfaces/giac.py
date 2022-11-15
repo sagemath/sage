@@ -133,7 +133,7 @@ Giac console
 
 Another important feature of giac is its online help. We can
 access this through sage as well. After reading the description of
-the command, you can press q to immediately get back to your
+the command, you can press :kbd:`q` to immediately get back to your
 original prompt.
 
 Incidentally you can always get into a giac console by the

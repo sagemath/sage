@@ -40,6 +40,7 @@ from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 from sage.categories.fields import Fields
 _Fields = Fields()
 
+
 class ProjectiveConic_field(ProjectivePlaneCurve_field):
     r"""
     Create a projective plane conic curve over a field.
@@ -113,10 +114,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             if B == S:
                 return self
             if not S.has_coerce_map_from(B):
-                raise ValueError("No natural map from the base ring of self " \
+                raise ValueError("No natural map from the base ring of self "
                                   "(= %s) to S (= %s)" % (self, S))
             from .constructor import Conic
-            con = Conic([S(c) for c in self.coefficients()], \
+            con = Conic([S(c) for c in self.coefficients()],
                         self.variable_names())
             if self._rational_point is not None:
                 pt = [S(c) for c in Sequence(self._rational_point)]
@@ -188,9 +189,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             [1 2 1]
             [1 1 0]
 
-        An example in characteristic `2`:
-
-        ::
+        An example in characteristic `2`::
 
             sage: P.<t> = GF(2)[]
             sage: c = Conic([t, 1, t^2, 1, 1, 0]); c
@@ -203,9 +202,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             [t^2   1   0]
         """
         a, b, c, d, e, f = self.coefficients()
-        return Matrix([[ 2*a ,   b ,   c ],
-                       [   b , 2*d ,   e ],
-                       [   c ,   e , 2*f ]])
+        return Matrix([[2 * a, b, c],
+                       [b, 2 * d, e],
+                       [c, e, 2 * f]])
 
     def determinant(self):
         r"""
@@ -497,8 +496,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             # writing) fraction field elements are not converted automatically
             # from Magma to Sage.
             try:
-                return True, self.point( \
-                  [B(c.Numerator().sage()/c.Denominator().sage()) for c in pt])
+                return True, self.point(
+                    [B(c.Numerator().sage() / c.Denominator().sage()) for c in pt])
             except (TypeError, NameError):
                 pass
 
@@ -539,8 +538,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             if point:
                 return ret
             return ret[0]
-        raise NotImplementedError("has_rational_point not implemented for " \
-                                   "conics over base field %s" % B)
+        raise NotImplementedError("has_rational_point not implemented for "
+                                  "conics over base field %s" % B)
 
     def has_singular_point(self, point=False):
         r"""
@@ -693,8 +692,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             if Y is None:
                 Y = im
             elif not Y == im:
-                raise ValueError("The matrix x (= %s) does not define a " \
-                                 "map from self (= %s) to Y (= %s)" % \
+                raise ValueError("The matrix x (= %s) does not define a "
+                                 "map from self (= %s) to Y (= %s)" %
                                  (x, self, Y))
             x = Sequence(x*vector(self.ambient_space().gens()))
             return self.Hom(Y)(x, check=False)
@@ -1120,12 +1119,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             ...
             ValueError: Conic Projective Conic Curve over Real Field with 53 bits of precision defined by x^2 + y^2 + z^2 has no rational points over Real Field with 53 bits of precision!
         """
-        bl,pt = self.has_rational_point(point=True, algorithm=algorithm,
-                                        read_cache=read_cache)
+        bl, pt = self.has_rational_point(point=True, algorithm=algorithm,
+                                         read_cache=read_cache)
         if bl:
             return pt
-        raise ValueError("Conic %s has no rational points over %s!" % \
-                          (self, self.ambient_space().base_ring()))
+        raise ValueError("Conic %s has no rational points over %s!" %
+                         (self, self.ambient_space().base_ring()))
 
     def singular_point(self):
         r"""
@@ -1149,8 +1148,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         """
         b = self.has_singular_point(point=True)
         if not b[0]:
-            raise ValueError("The conic self (= %s) has no rational " \
-                              "singular point" % self)
+            raise ValueError("The conic self (= %s) has no rational "
+                             "singular point" % self)
         return b[1]
 
     def symmetric_matrix(self):
@@ -1175,13 +1174,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         a, b, c, d, e, f = self.coefficients()
         if self.base_ring().characteristic() == 2:
             if b == 0 and c == 0 and e == 0:
-                return Matrix([[a,0,0],[0,d,0],[0,0,f]])
-            raise ValueError("The conic self (= %s) has no symmetric matrix " \
-                              "because the base field has characteristic 2" % \
-                              self)
-        return Matrix([[  a , b/2, c/2 ],
-                       [ b/2,  d , e/2 ],
-                       [ c/2, e/2,  f  ]])
+                return Matrix([[a, 0, 0], [0, d, 0], [0, 0, f]])
+            raise ValueError("The conic self (= %s) has no symmetric matrix "
+                             "because the base field has characteristic 2" %
+                             self)
+        return Matrix([[a, b / 2, c / 2],
+                       [b / 2, d, e / 2],
+                       [c / 2, e / 2, f]])
 
     def upper_triangular_matrix(self):
         r"""

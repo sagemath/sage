@@ -613,7 +613,7 @@ class Option():
         """
         return other * self._options[self._name]
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return the value of this option interpreted as a boolean.
 
@@ -629,9 +629,6 @@ class Option():
             sage: RiggedConfigurations.options._reset()
         """
         return bool(self._options[self._name])
-
-    # for the less sensibly named python 2 family
-    
 
     def __call__(self, *args, **kwds):
         r"""

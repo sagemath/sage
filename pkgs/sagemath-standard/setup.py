@@ -15,6 +15,15 @@ if os.uname().sysname == 'Darwin':
     import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
 
+# If build isolation is not in use and setuptools_scm is installed,
+# then its file_finders entry point is invoked, which we don't need.
+# Workaround from ​https://github.com/pypa/setuptools_scm/issues/190#issuecomment-351181286
+try:
+    import setuptools_scm.integration
+    setuptools_scm.integration.find_files = lambda _: []
+except ImportError:
+    pass
+
 #########################################################
 ### Set source directory
 #########################################################
@@ -30,7 +39,7 @@ from sage.env import *
 ### Configuration
 #########################################################
 
-if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
+if len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"]):
     sdist = True
 else:
     sdist = False

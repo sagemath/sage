@@ -146,9 +146,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     Class used for morphisms from finitely presented groups to
     other groups. It just adds the images of the generators at the
     end of the representation.
-    
+
     EXAMPLES::
-    
+
         sage: F = FreeGroup(3)
         sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
         sage: H = AlternatingGroup(3)
@@ -166,9 +166,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1,2,3,1,2,3]),F([1,1,1])]
             sage: H = AlternatingGroup(3)
@@ -1427,17 +1427,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
-    
+
     def epimorphisms(self, H):
         r"""
         Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
-        
+
         INPUT:
-        
+
         - `H` -- Another group
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
@@ -1468,7 +1468,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                      x2 |--> (1,2,3)]
 
         ALGORITHM:
-        
+
         Uses libgap's GQuotients function.
         """
         from sage.misc.misc_c import prod

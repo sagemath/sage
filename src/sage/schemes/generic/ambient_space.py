@@ -279,6 +279,27 @@ class AmbientSpace(Scheme):
         """
         return ()
 
+    def identity_morphism(self):
+        """
+        Return the identity morphism.
+
+        OUTPUT: the identity morphism of the scheme ``self``
+
+        EXAMPLES::
+
+            sage: A = AffineSpace(2, GF(3))
+            sage: A.identity_morphism()
+            Scheme endomorphism of Affine Space of dimension 2 over Finite Field of size 3
+              Defn: Identity map
+
+            sage: P = ProjectiveSpace(3, ZZ)
+            sage: P.identity_morphism()
+            Scheme endomorphism of Projective Space of dimension 3 over Integer Ring
+              Defn: Identity map
+        """
+        from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+        return SchemeMorphism_polynomial_id(self)
+
     ######################################################################
     # Associated MPolynomial ring generators
     ######################################################################

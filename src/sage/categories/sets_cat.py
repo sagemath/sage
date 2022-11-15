@@ -1616,7 +1616,7 @@ class Sets(Category_singleton):
               of `S`, or ``None``
 
             This returns the space of formal linear combinations of
-            elements of `G` with coefficients in `R`, endowed with
+            elements of `S` with coefficients in `K`, endowed with
             whatever structure can be induced from that of `S`.
             See the documentation of
             :mod:`sage.categories.algebra_functor` for details.

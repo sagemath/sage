@@ -1062,7 +1062,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['A',4])
             sage: S.interact()
-            VBox(children=...
+            ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='seed')
 

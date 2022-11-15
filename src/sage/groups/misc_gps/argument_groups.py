@@ -31,15 +31,15 @@ AUTHORS:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2018 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
@@ -47,6 +47,7 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.abc
+
 
 class AbstractArgument(MultiplicativeGroupElement):
     r"""
@@ -488,7 +489,7 @@ class UnitCirclePoint(AbstractArgument):
         if R is None:
             R = SR
 
-        return exp(2*R('pi')*R('I') * self.exponent)
+        return exp(2 * R('pi') * R('I') * self.exponent)
 
     def _mul_(self, other):
         r"""
@@ -609,7 +610,7 @@ class UnitCirclePoint(AbstractArgument):
             False
         """
         from sage.rings.rational_field import QQ
-        return self.exponent == QQ(1)/QQ(2)
+        return self.exponent == QQ((1, 2))
 
 
 class UnitCircleGroup(AbstractArgumentGroup):
@@ -750,7 +751,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
                 exponent = 0
 
             elif data == -1 or data == '-1':
-                exponent = QQ(1)/QQ(2)
+                exponent = QQ((1, 2))
 
             else:
                 try:
@@ -762,7 +763,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
                     if data.is_one():
                         exponent = 0
                     elif data.is_minus_one():
-                        exponent = QQ(1)/QQ(2)
+                        exponent = QQ((1, 2))
 
                 elif isinstance(P, UnitCircleGroup):
                     exponent = data.exponent
@@ -961,11 +962,11 @@ class RootOfUnity(UnitCirclePoint):
         from sage.rings.rational_field import QQ
         if self.exponent == 0:
             return '1'
-        if self.exponent == QQ(1)/QQ(2):
+        if self.exponent == QQ((1, 2)):
             return '-1'
-        if self.exponent == QQ(1)/QQ(4):
+        if self.exponent == QQ((1, 4)):
             return 'I'
-        if self.exponent == QQ(3)/QQ(4):
+        if self.exponent == QQ((3, 4)):
             return '-I'
         num = self.exponent_numerator()
         den = self.exponent_denominator()
@@ -1008,8 +1009,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Category of commutative groups
         """
         category = cls._determine_category_(category)
-        return super(AbstractArgumentGroup, cls).__classcall__(
-            cls, category)
+        return super(AbstractArgumentGroup, cls).__classcall__(cls, category)
 
     def __init__(self, category):
         r"""
@@ -1143,7 +1143,7 @@ class ArgumentByElement(AbstractArgument):
         if R is None:
             R = SR
 
-        return exp(R('I')*arg(self._element_))
+        return exp(R('I') * arg(self._element_))
 
     def _mul_(self, other):
         r"""
@@ -1624,9 +1624,9 @@ class SignGroup(AbstractArgumentGroup):
             sage: from sage.groups.misc_gps.argument_groups import SignGroup
             sage: S = SignGroup()
             sage: S.category()  # indirect doctest
-            Category of commutative groups
+            Category of finite commutative groups
         """
-        category = cls._determine_category_(category)
+        category = cls._determine_category_(category).Finite()
         return super(AbstractArgumentGroup, cls).__classcall__(
             cls, category)
 

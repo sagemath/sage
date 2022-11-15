@@ -1106,7 +1106,7 @@ set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, you can use::
 
-    [user@localhost]$ sage -package create scikit_spatial --pypi --type optional
+    [user@localhost]$ sage --package create scikit_spatial --pypi --type optional
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
@@ -1117,7 +1117,11 @@ in the file ``install-requires.txt``.
 
 To create a pip package rather than a normal package, you can use::
 
-    [user@localhost]$ sage -package create scikit_spatial --pypi --source pip --type optional
+    [user@localhost]$ sage --package create scikit_spatial --pypi --source pip --type optional
+
+To create a wheel package rather than a normal package, you can use::
+
+    [user@localhost]$ sage --package create scikit_spatial --pypi --source wheel --type optional
 
 
 .. _section-manual-build:

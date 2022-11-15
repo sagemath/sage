@@ -89,7 +89,7 @@ jobs:
       targets: build doc-html
       targets_optional: ptest
       tox_packages_factors: >-
-          ["minimal]
+          ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   maximal-pre:

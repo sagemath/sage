@@ -24,7 +24,7 @@ cpdef generic_power(a, n):
     """
     Return `a^n`.
 
-    If `n` is negative, return `(1/a)^(-n)`.
+    If `n` is negative, return `(1/a)^{-n}`.
 
     INPUT:
 

@@ -489,4 +489,3 @@ Sage example in ./nonlinear.tex, line 2183::
   1/2*pi - (e^(1/2*pi) - 10)*e^(-1/2*pi)
 
 """
-

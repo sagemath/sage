@@ -2440,7 +2440,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         if self.backend() == 'normaliz' and not self.base_ring() in (ZZ, QQ):
             # Speeds up the doctest for significantly.
-            self = self.change_ring(self._normaliz_field)
+            self = self.change_ring(self._internal_base_ring)
 
         if not self.is_compact():
             with tester.assertRaises(NotImplementedError):

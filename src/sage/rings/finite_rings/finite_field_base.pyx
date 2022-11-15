@@ -1,5 +1,5 @@
 """
-Base Classes for Finite Fields
+Base class for finite fields
 
 TESTS::
 
@@ -1021,7 +1021,7 @@ cdef class FiniteField(Field):
         return self._modulus
 
     def polynomial(self, name=None):
-        """
+        r"""
         Return the minimal polynomial of the generator of ``self`` over
         the prime finite field.
 

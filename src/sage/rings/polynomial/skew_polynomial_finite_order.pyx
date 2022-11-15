@@ -71,6 +71,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         """
         SkewPolynomial_generic_dense.__init__ (self, parent, x, check, construct, **kwds)
         self._norm = None
+        self._charpoly = None
         self._optbound = None
 
 
@@ -87,7 +88,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         cdef k = parent.base_ring()
         cdef RingElement zero = k(0)
         cdef RingElement one = k(1)
-        cdef list line, phir = [ ]
+        cdef list line, phir = []
         if r < d:
             for i from 0 <= i < d-r:
                 line = d * [zero]
@@ -130,10 +131,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         Return the matrix of the multiplication by ``self`` on
         `K[X,\sigma]` considered as a free module over `K[X^r]`
         (here `r` is the order of `\sigma`).
-
-        .. WARNING::
-
-            Does not work if self is not monic.
         """
         from sage.matrix.constructor import matrix
         cdef Py_ssize_t i, j, deb, k, r = self.parent()._order
@@ -142,15 +139,15 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         cdef RingElement minusone = <RingElement?>base_ring(-1)
         cdef RingElement zero = <RingElement?>base_ring(0)
         cdef Polk = PolynomialRing (base_ring, 'xr')
-        cdef list M = [ ]
+        cdef list M = []
         cdef list l = self.list()
-        for j from 0 <= j < r:
-            for i from 0 <= i < r:
+        for j in range(r):
+            for i in range(r):
                 if i < j:
-                    pol = [ zero ]
+                    pol = [zero]
                     deb = i-j+r
                 else:
-                    pol = [ ]
+                    pol = []
                     deb = i-j
                 for k from deb <= k <= d by r:
                     pol.append(l[k])
@@ -213,10 +210,14 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: b = S.random_element(degree=7)
             sage: a.reduced_trace() + b.reduced_trace() == (a+b).reduced_trace()
             True
+
+        .. SEEALSO::
+
+            :meth:`reduced_norm`, :meth:`reduced_charpoly`
         """
         order = self.parent()._order
         twisting_morphism = self.parent().twisting_morphism()
-        coeffs = [ ]
+        coeffs = []
         for i in range(0, self.degree()+1, order):
             tr = c = self._coeffs[i]
             for _ in range(order-1):
@@ -265,7 +266,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         By default, the name of the central variable is usually ``z`` (see
         :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this). 
-        However, the user can speciify a different variable name if desired::
+        However, the user can specify a different variable name if desired::
 
             sage: a.reduced_norm(var='u')
             u^3 + 4*u^2 + 4
@@ -312,6 +313,10 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         polynomial of the left multiplication by `X` on the quotient
         `K[X,\sigma] / K[X,\sigma] P` (which is a `K`-vector space
         of dimension `d`).
+
+        .. SEEALSO::
+
+            :meth:`reduced_trace`, :meth:`reduced_charpoly`
         """
         if self._norm is None:
             if self.is_zero():
@@ -335,6 +340,84 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         center = self.parent().center(name=var)
         return center(self._norm)
 
+    def reduced_charpoly(self, var=None):
+        r"""
+        Return the reduced characteristic polynomial of this
+        skew polynomial.
+
+        INPUT:
+
+        - ``var`` -- a string, a pair of strings or ``None``
+          (default: ``None``); the variable names used for the
+          characteristic polynomial and the center
+
+        .. NOTE::
+
+            The result is cached.
+
+        EXAMPLES::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<u> = k['u', Frob]
+            sage: a = u^3 + (2*t^2 + 3)*u^2 + (4*t^2 + t + 4)*u + 2*t^2 + 2
+            sage: chi = a.reduced_charpoly()
+            sage: chi
+            x^3 + (2*z + 1)*x^2 + (3*z^2 + 4*z)*x + 4*z^3 + z^2 + 1
+
+        The reduced characteristic polynomial has coefficients in the center
+        of `S`, which is itself a univariate polynomial ring in the variable
+        `z = u^3` over `\GF{5}`. Hence it appears as a bivariate polynomial::
+
+            sage: chi.parent()
+            Univariate Polynomial Ring in x over Univariate Polynomial Ring in z over Finite Field of size 5
+
+        The constant coefficient of the reduced characteristic polynomial is
+        the reduced norm, up to a sign::
+
+            sage: chi[0] == -a.reduced_norm()
+            True
+
+        Its coefficient of degree `\deg(a) - 1` is the opposite of the reduced
+        trace::
+
+            sage: chi[2] == -a.reduced_trace()
+            True
+
+        By default, the name of the variable of the reduced characteristic
+        polynomial is ``x`` and the name of central variable is usually ``z``
+        (see :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
+        for more details about this). 
+        The user can speciify different names if desired::
+
+            sage: a.reduced_charpoly(var='T')  # variable name for the caracteristic polynomial
+            T^3 + (2*z + 1)*T^2 + (3*z^2 + 4*z)*T + 4*z^3 + z^2 + 1
+
+            sage: a.reduced_charpoly(var=('T', 'c'))
+            T^3 + (2*c + 1)*T^2 + (3*c^2 + 4*c)*T + 4*c^3 + c^2 + 1
+
+        .. SEEALSO::
+
+            :meth:`reduced_trace`, :meth:`reduced_norm`
+        """
+        if self._charpoly is None:
+            parent = self._parent
+            section = parent._embed_constants.section()
+            M = self._matmul_c()
+            chi = M.charpoly()
+            self._charpoly = [tuple(c.list()) for c in chi.list()]
+            if self._norm is not None:
+                self._norm = self._charpoly[-1]
+        varcenter = None
+        if var is None:
+            varcharpoly = 'x'
+        elif isinstance(var, (tuple, list)) and len(var) == 2:
+            (varcharpoly, varcenter) = var
+        else:
+            varcharpoly = var
+        center = self.parent().center(name=varcenter)
+        coeffs = [center(c) for c in self._charpoly]
+        return PolynomialRing(center, name=varcharpoly)(coeffs)
 
     def is_central(self):
         r"""
@@ -486,7 +569,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             except ValueError:
                 bound = self._matphir_c().minimal_polynomial()
                 section = self._parent._embed_constants.section()
-                self._optbound = [ section(x) for x in bound.list() ]
+                self._optbound = [section(x) for x in bound.list()]
         return center(self._optbound)
 
 

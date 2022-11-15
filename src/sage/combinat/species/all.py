@@ -11,14 +11,6 @@ Introductory material
 - :ref:`section-examples-catalan`
 - :ref:`section-generic-species`
 
-Lazy Power Series
------------------
-
-- :ref:`sage.combinat.species.stream`
-- :ref:`sage.combinat.species.series_order`
-- :ref:`sage.combinat.species.series`
-- :ref:`sage.combinat.species.generating_series`
-
 Basic Species
 -------------
 
@@ -52,6 +44,7 @@ Miscellaneous
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from .series import LazyPowerSeriesRing
-from .recursive_species import CombinatorialSpecies
-from . import library as species
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.combinat.species.recursive_species", "CombinatorialSpecies")
+lazy_import("sage.combinat.species", "library", as_="species")
+del lazy_import

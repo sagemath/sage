@@ -1018,14 +1018,14 @@ def _split_syntactical_unit(s):
             if s[i] == '\\':
                 escaped = not escaped
                 continue
-            if not escaped and s[i:i+l] == quot:
-                return s[:i], s[i+l:]
+            if not escaped and s[i:i + l] == quot:
+                return s[:i], s[i + l:]
             escaped = False
         raise SyntaxError("EOF while scanning string literal")
     # 1. s is a triple-quoted string
     if s.startswith('"""'):
         a, b = split_string(s[3:], '"""')
-        return '"""'+a+'"""', b.strip()
+        return '"""' + a + '"""', b.strip()
     if s.startswith('r"""'):
         a, b = split_string(s[4:], '"""')
         return 'r"""'+a+'"""', b.strip()
@@ -1313,7 +1313,7 @@ def _sage_getargspec_cython(source):
                         name = None
                         nb_stars = 0
                     else:
-                        raise SyntaxError("varargs can't be defined twice")
+                        raise SyntaxError("varargs cannot be defined twice")
                 elif nb_stars == 2:
                     if keywords is None:
                         keywords = name
@@ -1323,7 +1323,7 @@ def _sage_getargspec_cython(source):
                         name = None
                         nb_stars = 0
                     else:
-                        raise SyntaxError("varargs can't be defined twice")
+                        raise SyntaxError("varargs cannot be defined twice")
                 else:
                     raise SyntaxError("variable declaration comprises at most two '*'")
         else:

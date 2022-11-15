@@ -52,6 +52,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing_extensions import final
 from sage.arith.misc import is_prime
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
@@ -70,6 +71,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.arith.all import gcd, lcm, next_prime, binomial, primes, moebius
 from sage.categories.finite_fields import FiniteFields
+from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.finite_field_constructor import (is_FiniteField, GF,
                                                               is_PrimeFiniteField)
@@ -1102,6 +1104,303 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if n < 0:
             raise TypeError("must be a forward orbit")
         return self.orbit(P, [n,n+1], **kwds)[0]
+
+    def arakelov_zhang_pairing(self, g, **kwds):
+        r"""
+        Return an estimate of the Arakelov-Zhang pairing of the rational
+        maps ``self`` and ``g`` on `\mathbb{P}^1` over a number field.
+
+        The Arakelov-Zhang pairing was introduced by Petsche, Szpiro, and
+        Tucker in 2012, which measures the dynamical closeness of two rational
+        maps. They prove inter alia that if one takes a sequence of small points
+        for one map (for example, preperiodic points for ``self``) and measure
+        their dynamical height with respect to the other map (say, ``g``), then
+        the values of the height will tend to the value of the Arakelov-Zhang pairing.
+
+        The Arakelov-Zhang pairing involves mutual energy integrals between dynamical
+        measures, which are in the case of polynomials, the equilibrium measures
+        of the associated Julia sets at each place. As a result, these pairings
+        are very difficult to compute exactly via analytic methods. We use a
+        discrete approximation to these energy integrals.
+
+        ALGORITHM:
+
+        We select periodic points of order `n`, or ``n``-th preimages of a
+        specified starting value given by ``f_starting_point`` and ``g_starting_point``.
+        At the archimedean places and the places of bad reduction of the two maps,
+        we compute the discrete approximations to the energy integrals involved
+        using these points.
+
+        INPUT:
+
+        - ``g`` - a rational map of `\mathbb{P}^1` given as a projective morphism.
+          ``g`` and ``self`` should have the same field of definition.
+
+        kwds:
+
+        - ``n`` - (default: 5) a positive integer
+          Order of periodic points to use or preimages to take if starting points are specified.
+
+        - ``f_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+          If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
+          Otherwise, we take ``n``-th preimages of the point given by ``f_starting_point``
+          under ``f`` on the affine line.
+
+        - ``g_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+          If ``g_starting_point`` is None, we solve for points of period ``n`` for ``g``.
+          Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
+          under ``g`` on the affine line.
+
+        - ``check_primes_of_bad_reduction`` - (optional, default: ``False``) boolean.
+          Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
+
+        - ``prec`` - (optional, default: ``RealField`` default)
+          default precision for RealField values which are returned.
+
+        - ``noise_multiplier`` - (default: 2) a real number.
+          Discriminant terms involved in the computation at the archimedean places
+          are often not needed, particularly if the capacity of the Julia sets is 1,
+          and introduce a lot of error. By a well-known result of Mahler (see
+          also M. Baker, ""A lower bound for averages of dynamical Green's
+          functions") such error (for a set of `N` points) is on the order of
+          `\log(N)/N` after our normalization. We check if the value of the
+          archimedean discriminant terms is within ``2*noise_multiplier`` of
+          `\log(N)/N`. If so, we discard it. In practice this greatly improves
+          the accuracy of the estimate of the pairing. If desired,
+          ``noise_multiplier`` can be set to 0, and no terms will be ignored.
+
+        OUTPUT:
+
+        - a real number estimating the Arakelov-Zhang pairing of the two rational maps.
+
+        EXAMPLES::
+
+            sage: K.<k> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 + (2*k + 2)*y^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: pairingval = f.arakelov_zhang_pairing(g, n=5); pairingval
+            0.409598197761958
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + 4*y^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: pairingval = f.arakelov_zhang_pairing(g, n=6); pairingval
+            0.750178391443644
+            sage: # Compare to the exact value:
+            sage: dynheight = f.canonical_height(P(0, 1)); dynheight
+            0.75017839144364417318023000563
+            sage: dynheight - pairingval
+            0.000000000000000
+
+        Notice that if we set the noise_multiplier to 0, the accuracy is diminished::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + 4*y^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: pairingval = f.arakelov_zhang_pairing(g, n=6, noise_multiplier=0)
+            sage: pairingval
+            0.650660018921632
+            sage: dynheight = f.canonical_height(P(0, 1)); dynheight
+            0.75017839144364417318023000563
+            sage: pairingval - dynheight
+            -0.0995183725220122
+
+        We compute the example of Prop. 18(d) from Petsche, Szpiro and Tucker::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([y^2 - (y - x)^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: f.arakelov_zhang_pairing(g)
+            0.326954667248466
+            sage: # Correct value should be = 0.323067...
+            sage: f.arakelov_zhang_pairing(g, n=9)
+            0.323091061918965
+            sage: _ - 0.323067
+            0.0000240619189654789
+
+        Also from Prop. 18 of Petsche, Szpiro and Tucker, includes places of bad reduction::
+
+            sage: R.<z> = PolynomialRing(ZZ)
+            sage: K.<b> = NumberField(z^3 - 11)
+            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: a = 7/(b - 1)
+            sage: f = DynamicalSystem_projective([a*y^2 - (a*y - x)^2, y^2])
+            sage: g = DynamicalSystem_projective([x^2, y^2])
+            sage: # If all archimedean absolute values of a have modulus > 2,
+            sage: # then the pairing should be h(a).
+            sage: f.arakelov_zhang_pairing(g, n=6)
+            1.93846423207664
+            sage: _ - a.global_height()
+            -0.00744591697867292
+        """
+        n = kwds.pop('n', 5)
+        f_starting_point = kwds.pop('f_starting_point', None)
+        g_starting_point = kwds.pop('g_starting_point', None)
+        check_primes_of_bad_reduction = kwds.pop('check_primes_of_bad_reduction', False)
+        prec = kwds.pop('prec', None)
+        noise_multiplier = kwds.pop('noise_multiplier', 2)
+
+        f_domain = self.domain()
+        R = f_domain.base_ring()
+        g_domain = g.domain()
+
+        if f_domain != g_domain:
+            raise TypeError("Implemented only for rational maps of the same projective line.")
+
+        if n <= 0:
+            raise ValueError("Period must be a positive integer.")
+
+        if not (is_ProjectiveSpace(f_domain) and is_ProjectiveSpace(g_domain)):
+            raise NotImplementedError("Not implemented for subschemes.")
+
+        if f_domain.dimension_relative() > 1:
+            raise NotImplementedError("Only implemented for dimension 1.")
+
+        if not self.is_endomorphism():
+            raise TypeError("Self must be an endomorphism.")
+
+        if R not in NumberFields() and R is not QQbar:
+            raise NotImplementedError("Only implemented for number fields.")
+
+        f_iterate_map = self.nth_iterate_map(n)
+        f_iter_map_poly = f_iterate_map.defining_polynomials()
+        if f_starting_point is None:
+            f_poly_hom = f_iter_map_poly[0] * f_domain.gens()[1] - f_iter_map_poly[1] * f_domain.gens()[0]
+        else:
+            f_poly_hom = f_iter_map_poly[0] - f_starting_point * f_iter_map_poly[1]
+
+        g_iterate_map = g.nth_iterate_map(n)
+        g_iter_map_poly = g_iterate_map.defining_polynomials()
+        if g_starting_point is None:
+            g_poly_hom = g_iter_map_poly[0] * g_domain.gens()[1] - g_iter_map_poly[1] * g_domain.gens()[0]
+        else:
+            g_poly_hom = g_iter_map_poly[0] - g_starting_point * g_iter_map_poly[1]
+
+        f_poly = f_poly_hom([(f_domain.gens()[0]), 1]).univariate_polynomial().monic()
+        g_poly = g_poly_hom([(g_domain.gens()[0]), 1]).univariate_polynomial().monic()
+
+        # If f_poly and g_poly are not square-free, make them square-free.
+        if not f_poly.is_squarefree():
+            f_poly = f_poly.quo_rem(gcd(f_poly, f_poly.derivative()))[0]
+        if not g_poly.is_squarefree():
+            g_poly = g_poly.quo_rem(gcd(g_poly, g_poly.derivative()))[0]
+
+        if f_poly.degree() <= 2 or g_poly.degree() <= 2:
+            # f_point or g_point is exceptional
+            raise ValueError("One of the starting points is exceptional. \
+                              Please specify a non-exceptional initial point.")
+
+        if gcd(f_poly, g_poly).degree() > 0:
+            if f_poly.degree() > g_poly.degree():
+                f_poly = f_poly.quo_rem(gcd(f_poly, g_poly))[0]
+            else:
+                g_poly = g_poly.quo_rem(gcd(f_poly, g_poly))[0]
+
+            if f_poly.degree() <= 2 or g_poly.degree() <= 2:
+                raise ValueError("After removing common factors, the n-th \
+                                  iterates of 'self' and 'g' have too many \
+                                  roots in common. Try another 'n' or starting \
+                                  values.")
+
+        # We want higher precision here temporarily, since resultants are
+        # usually very large. This is not to say that the computation is
+        # very accurate, merely that we want to keep track of potentially
+        # very large height integers/rationals.
+        old_prec = prec
+        if prec is None:
+            Real = RealField(512)
+        elif prec < 512:
+            prec = 512
+            Real = RealField(prec)
+
+        bad_primes = list(set(self.primes_of_bad_reduction(check=check_primes_of_bad_reduction))
+                    .union(g.primes_of_bad_reduction(check=check_primes_of_bad_reduction)))
+
+        f_deg = f_poly.degree()
+        g_deg = g_poly.degree()
+
+        f_disc = f_poly.discriminant()
+        g_disc = g_poly.discriminant()
+
+        res = f_poly.resultant(g_poly)
+
+        # The code below actually computes -( mu_f - mu_g, mu_f - mu_g ),
+        # so flip the sign at the end.
+        AZ_pairing = Real(0)
+        if R is QQ:
+            for p in bad_primes:
+                temp = (ZZ(1)/2) * (-f_disc.ord(p)) * Real(p).log() / (f_deg**2)
+                if abs(temp) > noise_multiplier * Real(f_deg).log() / Real(f_deg):
+                    AZ_pairing += temp
+
+                temp = (ZZ(1)/2) * (-g_disc.ord(p)) * Real(p).log() / (g_deg**2)
+                if abs(temp) > noise_multiplier * Real(g_deg).log() / Real(g_deg):
+                    AZ_pairing += temp
+
+                AZ_pairing -= (-res.ord(p)) * Real(p).log() / (f_deg * g_deg)
+
+            temp = (ZZ(1)/2) * (Real(f_disc).abs().log()) / (f_deg**2)
+            if abs(temp) > noise_multiplier * Real(f_deg).log() / Real(f_deg):
+                AZ_pairing += temp
+
+            temp = (ZZ(1)/2) * (Real(g_disc).abs().log()) / (g_deg**2)
+            if abs(temp) > noise_multiplier * Real(g_deg).log() / Real(g_deg):
+                AZ_pairing += temp
+
+            AZ_pairing -= Real(res).abs().log() / (f_deg * g_deg)
+
+        # For number fields
+        else:
+            K = self.base_ring()
+            d = K.absolute_degree()
+
+            for v in bad_primes:
+                Nv = v.absolute_ramification_index() * v.residue_class_degree() / d
+
+                temp = Nv * ((ZZ(1)/2) * K(f_disc).abs_non_arch(v, prec=prec).log() / (f_deg**2))
+                if abs(temp) > noise_multiplier * Real(f_deg).log() / Real(f_deg):
+                    AZ_pairing += temp
+
+                temp = Nv * ((ZZ(1)/2) * K(g_disc).abs_non_arch(v, prec=prec).log() / (g_deg**2))
+                if abs(temp) > noise_multiplier * Real(g_deg).log() / Real(g_deg):
+                    AZ_pairing += temp
+
+                AZ_pairing -= Nv * (K(res).abs_non_arch(v, prec=prec).log() / (f_deg * g_deg))
+
+            if f_disc.is_rational():
+                f_disc = QQ(f_disc)
+                temp = (ZZ(1)/2) * (Real(f_disc).abs().log()) / (f_deg**2)
+                if abs(temp) > noise_multiplier * Real(f_deg).log() / Real(f_deg):
+                    AZ_pairing += temp
+            else:
+                temp = (ZZ(1)/d) * (ZZ(1)/2) * (Real(K(f_disc).norm()).abs().log()) / (f_deg**2)
+                if abs(temp) > noise_multiplier * Real(f_deg).log() / Real(f_deg):
+                    AZ_pairing += temp
+
+            if g_disc.is_rational():
+                g_disc = QQ(g_disc)
+                temp = (ZZ(1)/2) * (Real(g_disc).abs().log()) / (g_deg**2)
+                if abs(temp) > noise_multiplier * Real(g_deg).log() / Real(g_deg):
+                    AZ_pairing += temp
+            else:
+                temp = (ZZ(1)/d) * (ZZ(1)/2) * (Real(K(g_disc).norm()).abs().log()) / (g_deg**2)
+                if abs(temp) > noise_multiplier * Real(g_deg).log() / Real(g_deg):
+                    AZ_pairing += temp
+
+            if res.is_rational():
+                AZ_pairing -= (Real(res).abs().log()) / (f_deg * g_deg)
+            else:
+                AZ_pairing -= (ZZ(1)/d) * (Real(K(res).norm()).abs().log()) / (f_deg * g_deg)
+
+        if old_prec is None:
+            Real = RealField()
+        else:
+            Real = RealField(old_prec)
+
+        return Real(-AZ_pairing)
 
     def degree_sequence(self, iterates=2):
         r"""
@@ -3072,13 +3371,18 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: g = f.affine_preperiodic_model(0, 1); g
             Dynamical System of Projective Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (-x^2 : 2*x^2 + 2*x*y + y^2 : 2*x^2 + 2*x*y + 2*y^2 - 2*y*z + z^2)
+                    (-x^2 : -2*x^2 + 2*x*y - y^2 : 2*x^2 - 2*x*y + 2*y^2 + 2*y*z + z^2)
 
         We can check that ``g`` has affine fixed points::
 
             sage: g.periodic_points(1)
-            [(-1 : 1 : 1), (-1/2 : 1/2 : 1), (-1/2 : 1 : 1), (-1/3 : 2/3 : 1), (0 : 0 : 1),
-            (0 : 1/2 : 1), (0 : 1 : 1)]
+            [(-1 : -1 : 1),
+            (-1/2 : -1 : 1),
+            (-1/2 : -1/2 : 1),
+            (-1/3 : -2/3 : 1),
+            (0 : -1 : 1),
+            (0 : -1/2 : 1),
+            (0 : 0 : 1)]
 
         ::
 
@@ -3087,8 +3391,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.affine_preperiodic_model(0, 1)
             Dynamical System of Projective Space of dimension 2 over Finite Field in z2 of size 3^2
                   Defn: Defined on coordinates by sending (x : y : z) to
-                        ((z2 + 1)*x^2 : (z2 + 1)*x^2 + (z2 + 1)*x*y + (-z2 - 1)*y^2 :
-                        (z2 - 1)*x^2 + (z2 - 1)*x*y - y^2 + (-z2)*y*z + z^2)
+                        ((-z2)*x^2 : z2*x^2 + (-z2)*x*y + (-z2)*y^2 :
+                        (-z2)*x^2 + z2*x*y + (z2 + 1)*y^2 - y*z + z^2)
 
         ::
 
@@ -3099,9 +3403,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Dynamical System of Projective Space of dimension 2 over
             Univariate Polynomial Ring in c over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y : z) to
-                    ((2*c^4 + c^3)*x^2 : (2*c^4 + c^3)*x^2 + (2*c^4 + c^3)*x*y + (c^4 + 2*c^3)*y^2 :
-                    c^3*x^2 + c^3*x*y + (2*c^3 + 2*c^2)*y^2 + (c^3 + 2*c^2)*y*z + (2*c^4 + 2*c^3 +
-                    2*c^2)*z^2)
+                    (2*c^3*x^2 : c^3*x^2 + 2*c^3*x*y + 2*c^3*y^2 :
+                    2*c^3*x^2 + c^3*x*y + (c^3 + c^2)*y^2 + 2*c^2*y*z + c^2*z^2)
 
         ::
 
@@ -3112,8 +3415,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Dynamical System of Projective Space of dimension 2
             over Cyclotomic Field of order 3 and degree 2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x^2 + y^2 + (-k + 2)*x*z - 2*y*z + (-k + 3)*z^2 :
-                    -2*x^2 + (k - 4)*x*z + (k - 3)*z^2 : -x^2 + (k - 2)*x*z + (k - 2)*z^2)
+                    (-y^2 : x^2 : x^2 + (-k)*x*z + z^2)
 
         ::
 
@@ -3132,8 +3434,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Dynamical System of Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               2*y - z
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (2*x^2 + y^2 + 4*x*z - 2*y*z + 4*z^2 : -x^2 - y^2 - 2*x*z + 2*y*z - 3*z^2 :
-                    -x^2 - 2*x*z - 2*z^2)
+                    (-x^2 - y^2 : y^2 : x^2 + z^2)
 
         TESTS::
 
@@ -4219,7 +4520,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     f_deformed = DynamicalSystem(deformed_polys)
 
                     # after deforming by the parameter, the preperiodic points with multiplicity
-                    # will seperate into different points. we can now calculate the minimal preperiodic
+                    # will separate into different points. we can now calculate the minimal preperiodic
                     # points with the parameter, and then specialize to get the formal preperiodic points
                     ideal = f_deformed.preperiodic_points(m, n, return_scheme=True).defining_ideal()
                     L = [poly.specialization({t:0}) for poly in ideal.gens()]
@@ -4569,7 +4870,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                             f_deformed = DynamicalSystem(deformed_polys)
 
                             # after deforming by the parameter, the preperiodic points with multiplicity
-                            # will seperate into different points. we can now calculate the minimal preperiodic
+                            # will separate into different points. we can now calculate the minimal preperiodic
                             # points with the parameter, and then specialize to get the formal periodic points
                             ideal = f_deformed.periodic_points(n, return_scheme=True).defining_ideal()
                             L = [poly.specialization({t:0}) for poly in ideal.gens()]
@@ -4626,20 +4927,22 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         else:
             raise ValueError("algorithm must be either 'variety' or 'cyclegraph'")
 
-    def multiplier_spectra(self, n, formal=False, type='point', use_algebraic_closure=True):
+    def multiplier_spectra(self, n, formal=False, type='point', use_algebraic_closure=True, check=True):
         r"""
         Computes the ``n`` multiplier spectra of this dynamical system.
 
-        This is the set of multipliers of the periodic points of formal
+        This is the set of multipliers of all peroidic points of
         period ``n`` included with the appropriate multiplicity.
-        User can also specify to compute the ``n`` multiplier spectra
-        instead which includes the multipliers of all periodic points
-        of period ``n``. The map must be defined over
-        projective space of dimension 1 over a number field or finite field.
+        User can also specify to compute the formal ``n`` multiplier spectra
+        instead which includes the multipliers of all formal periodic points
+        of period ``n`` with appropriate multiplicity. The map must be defined over
+        projective space over a number field or finite field.
 
-        The computations can be done either over the algebraic closure of the
-        base field or over the minimal extension of the base field that
-        contains the critical points.
+        By default, the computations are done over the algebraic closure of the
+        base field. If the map is defined over projective space of dimension 1,
+        the computation can be done over the minimal extension of the base field that
+        contains the periodic points. Otherwise, it will be done over the base ring
+        of the map.
 
         INPUT:
 
@@ -4653,15 +4956,77 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           or ``'cycle'`` depending on whether you compute one multiplier
           per point or one per cycle
 
-       - ``use_algebraic_closure`` -- boolean (default: True) -- If True uses the
-          algebraic closure. If False, uses the smallest extension of the base field
-          containing all the critical points.
+        - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True`` uses the
+          algebraic closure. Using the algebraic closure can sometimes lead to numerical instability
+          and extraneous errors. For most accurate results in dimension 1, set to ``False``.
+          If ``False``, and the map is defined over projective space of
+          dimension 1, uses the smallest extension of the base field
+          containing all the periodic points. If the map is defined over projective space
+          of dimension greater than 1, then the base ring of the map is used.
 
-        OUTPUT: a list of field elements
+        - ``check`` -- (defualt: ``True``) whether to check if the
+          full multiplier spectra was computed. If ``False``, can lead to
+          mathematically incorrect answers in dimension greater than 1. Ignored
+          if ``use_algebraic_closure`` is ``True`` or if this dynamical system is defined
+          over projective space of dimension 1.
+
+        OUTPUT:
+
+        A list of field elements if the domain of the map is projective space of
+        dimension 1. If the domain of the map is projective space of dimension
+        greater than 1, a list of matrices
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2 - 3/4*y^2, y^2])
+            sage: sorted(f.multiplier_spectra(2, type='point'))
+            [0, 1, 1, 1, 9]
+            sage: sorted(f.multiplier_spectra(2, type='cycle'))
+            [0, 1, 1, 9]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
+            sage: f.multiplier_spectra(1)
+            [
+            [                       2 1 - 1.732050807568878?*I]
+            [                       0                       -2],
+            [                       2 1 + 1.732050807568878?*I]  [ 0  0]  [ 0  0]
+            [                       0                       -2], [ 0 -2], [ 0 -2],
+            [ 0  0]  [0 0]  [ 2 -2]
+            [ 0 -2], [0 0], [ 0 -2]
+            ]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
+            sage: f.multiplier_spectra(2, formal=True)
+            [
+            [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [0 0]  [0 0]
+            [0 4], [0 0], [0 0], [0 4], [0 4], [0 0], [0 0], [0 4], [0 0], [0 0],
+            [4 0]  [4 0]  [4 0]  [4 0]
+            [0 4], [0 4], [0 0], [0 0]
+            ]
+
+        ::
+
+            sage: set_verbose(None)
+            sage: z = QQ['z'].0
+            sage: K.<w> = NumberField(z^4 - 4*z^2 + 1,'z')
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([x^2 - w/4*y^2, y^2])
+            sage: sorted(f.multiplier_spectra(2, formal=False, type='cycle'))
+            [0,
+             0.0681483474218635? - 1.930649271699173?*I,
+             0.0681483474218635? + 1.930649271699173?*I,
+             5.931851652578137? + 0.?e-49*I]
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([4608*x^10 - 2910096*x^9*y + 325988068*x^8*y^2 + 31825198932*x^7*y^3 - 4139806626613*x^6*y^4\
             - 44439736715486*x^5*y^5 + 2317935971590902*x^4*y^6 - 15344764859590852*x^3*y^7 + 2561851642765275*x^2*y^8\
             + 113578270285012470*x*y^9 - 150049940203963800*y^10, 4608*y^10])
@@ -4680,29 +5045,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: set_verbose(None)
-            sage: z = QQ['z'].0
-            sage: K.<w> = NumberField(z^4 - 4*z^2 + 1,'z')
-            sage: P.<x,y> = ProjectiveSpace(K,1)
-            sage: f = DynamicalSystem_projective([x^2 - w/4*y^2, y^2])
-            sage: sorted(f.multiplier_spectra(2, formal=False, type='cycle'))
-            [0,
-             0.0681483474218635? - 1.930649271699173?*I,
-             0.0681483474218635? + 1.930649271699173?*I,
-             5.931851652578137? + 0.?e-49*I]
-
-        ::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: f = DynamicalSystem_projective([x^2 - 3/4*y^2, y^2])
-            sage: sorted(f.multiplier_spectra(2, formal=False, type='cycle'))
-            [0, 1, 1, 9]
-            sage: sorted(f.multiplier_spectra(2, formal=False, type='point'))
-            [0, 1, 1, 1, 9]
-
-        ::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^2 - 7/4*y^2, y^2])
             sage: f.multiplier_spectra(3, formal=True, type='cycle')
             [1, 1]
@@ -4711,7 +5054,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^4 + 3*y^4, 4*x^2*y^2])
             sage: f.multiplier_spectra(1, use_algebraic_closure=False)
             [0,
@@ -4728,7 +5071,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(5),1)
+            sage: P.<x,y> = ProjectiveSpace(GF(5), 1)
             sage: f = DynamicalSystem_projective([x^4 + 2*y^4, 4*x^2*y^2])
             sage: f.multiplier_spectra(1, use_algebraic_closure=False)
             [0, 3*a + 3, 2*a + 1, 1, 1]
@@ -4737,7 +5080,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)
             sage: f = DynamicalSystem_projective([x^5 + 3*y^5, 4*x^3*y^2])
             sage: f.multiplier_spectra(1)
             [0,
@@ -4750,25 +5093,73 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: K = GF(3).algebraic_closure()
-            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: f = DynamicalSystem_projective([x^5 + 2*y^5, 4*x^3*y^2])
             sage: f.multiplier_spectra(1)
             [0, z3 + 2, z3 + 1, z3, 1, 1]
 
         TESTS::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])
             sage: f.multiplier_spectra(1)
             [1, 1, 1]
 
         ::
 
+            sage: K = GF(3).algebraic_closure()
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([x^2 + 2*y^2, 4*x*y, z^2])
+            sage: f.multiplier_spectra(1)
+            [
+            [0 0]  [1 0]  [1 0]  [1 0]  [2 0]  [2 0]  [2 0]
+            [0 0], [0 0], [0 0], [0 0], [0 1], [0 1], [0 1]
+            ]
+
+        ::
+
             sage: F.<a> = GF(7)
-            sage: P.<x,y>=ProjectiveSpace(F,1)
+            sage: P.<x,y>=ProjectiveSpace(F, 1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
             sage: sorted(f.multiplier_spectra(1))
             [0, 3, 6]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
+            sage: g = f.change_ring(QQbar)
+            sage: f.multiplier_spectra(1) == g.multiplier_spectra(1)
+            True
+
+        ::
+
+            sage: K.<w> = QuadraticField(5)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([x^2 + w*x*y + y^2, y^2, z^2])
+            sage: f.multiplier_spectra(1)
+            [
+            [1.000000000000000? - 1.572302755514847?*I                                         0]
+            [1.000000000000000? - 1.572302755514847?*I 0.618033988749895? - 1.757887921270715?*I]
+            [1.000000000000000? + 1.572302755514847?*I                                         0]
+            [1.000000000000000? + 1.572302755514847?*I 0.618033988749895? + 1.757887921270715?*I]
+            [                                        0                                         0],
+            [                                        0                                         2],
+            [                                        0                                         0],
+            [                                        0                                         2],
+            [0 0]  [0 0]  [                 2 2.236067977499790?]
+            [0 0], [0 0], [                 0                  0]
+            ]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
+            sage: f.multiplier_spectra(1, use_algebraic_closure=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: failed to compute the full multiplier spectra. Try use_algebraic_closure=True
+            or extend the base ring of this dynamical system
         """
         PS = self.domain()
         n = Integer(n)
@@ -4777,43 +5168,138 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             raise ValueError("period must be a positive integer")
         if not is_ProjectiveSpace(PS):
             raise NotImplementedError("not implemented for subschemes")
-        if (PS.dimension_relative() > 1):
-            raise NotImplementedError("only implemented for dimension 1")
 
-        K = FractionField(self.codomain().base_ring())
-        if use_algebraic_closure:
-            Kbar = K.algebraic_closure()
-            if Kbar.has_coerce_map_from(K):
-                f = self.change_ring(Kbar)
+        if PS.dimension_relative() > 1:
+            K = self.domain().base_ring()
+
+            # if we are already using an algebraic closure, we move the
+            # map into a finite extension and set use_algebraic_closure to True
+            # in order to get a scheme defined over a finite extension
+            if K is QQbar or isinstance(K, AlgebraicClosureFiniteField_generic):
+                f = self.reduce_base_field()
+                K = f.base_ring()
+                use_algebraic_closure = True
             else:
-                embeds = K.embeddings(Kbar)
-                if embeds:
-                    f = self.change_ring(embeds[0])
+                f = self
+
+            # in order to calculate multiplicity, we need to have a scheme defined
+            # over a finite extension, not an algebraic closure
+            X = f.periodic_points(n, minimal=False, formal=formal, return_scheme=True)
+            if use_algebraic_closure:
+                number_field = False
+                finite_field = False
+                if K in NumberFields():
+                    number_field = True
+                if K in FiniteFields():
+                    finite_field = True
+                if not(number_field or finite_field):
+                    raise NotImplementedError('Only implemented for number fields, QQbar, finite fields, and algebraic closures of finite fields')
+                Kbar = K.algebraic_closure()
+                if Kbar.has_coerce_map_from(K):
+                    f = f.change_ring(Kbar)
+                    rat_points = X.rational_points(F=Kbar)
                 else:
-                    raise ValueError("no embeddings of base field to algebraic closure")
+                    embeds = K.embeddings(Kbar)
+                    if embeds:
+                        X2 = X.change_ring(embeds[0])
+                        rat_points = X2.rational_points()
+                        f = self.change_ring(embeds[0])
+                    else:
+                        raise ValueError("no embeddings of base field to algebraic closure")
+            else:
+                rat_points = X.rational_points()
+                f = self
+            PS = f.domain()
+            points = []
+            for point in rat_points:
+                if use_algebraic_closure:
+                    if number_field:
+                        # in order to calculate multiplicity, the point must be defined over a finite extension
+                        K2, pnt_lst, _ = number_field_elements_from_algebraics(list(point))
+                        # we coerce if we can
+                        if K.has_coerce_map_from(K2):
+                            for i in range(X.multiplicity(pnt_lst)):
+                                points.append(PS(point))
+                        elif K2.has_coerce_map_from(K):
+                            X_k = X.change_ring(K2)
+                            for i in range(X_k.multiplicity(pnt_lst)):
+                                points.append(PS(point))
+                        # otherwise, we need to calculate a composite field
+                        else:
+                            _, K_embed, K2_embed, _ = K.composite_fields(K2, both_maps=True)[0]
+                            X_k = X.change_ring(K_embed)
+                            pnt_lst = [K2_embed(pnt) for pnt in pnt_lst]
+                            new_point = X_k.ambient_space()(pnt_lst)
+                            for i in range(X_k.multiplicity(new_point)):
+                                points.append(PS(point))
+                    else:
+                        # we find a finite extension which the current point
+                        # and X coerce into
+                        final_degree = K.degree()
+                        new_point = []
+                        for num in list(point):
+                            ff_num = num.as_finite_field_element()[1]
+                            new_point.append(ff_num)
+                            degree = ff_num.parent().degree()
+                            final_degree = final_degree.lcm(degree)
+                        K_prime = GF(K.characteristic()**final_degree)
+                        X_k = X.change_ring(K_prime)
+                        for i in range(X_k.multiplicity(new_point)):
+                            points.append(PS(point))
+                else:
+                    for i in range(X.multiplicity(point)):
+                        points.append(point)
+            if not use_algebraic_closure:
+                if check:
+                    # we check if we computed the full multiplier spectra
+                    d = self.degree()
+                    N = self.domain().ambient_space().dimension_relative()
+                    if not formal:
+                        expected_number = sum(d**(n*i) for i in range(N+1))
+                    else:
+                        expected_number = 0
+                        for D in n.divisors():
+                            u = moebius(n/D)
+                            inner_sum = sum(d**(D*j) for j in range(N+1))
+                            expected_number += u*inner_sum
+                    if len(points) != expected_number:
+                        raise ValueError('failed to compute the full multiplier spectra. Try use_algebraic_closure=True'
+                         + ' or extend the base ring of this dynamical system')
         else:
-            embedding = self.field_of_definition_periodic(n, formal=formal, return_embedding=True)[1]
-            f = self.change_ring(embedding)
+            K = FractionField(self.codomain().base_ring())
+            if use_algebraic_closure:
+                Kbar = K.algebraic_closure()
+                if Kbar.has_coerce_map_from(K):
+                    f = self.change_ring(Kbar)
+                else:
+                    embeds = K.embeddings(Kbar)
+                    if embeds:
+                        f = self.change_ring(embeds[0])
+                    else:
+                        raise ValueError("no embeddings of base field to algebraic closure")
+            else:
+                embedding = self.field_of_definition_periodic(n, formal=formal, return_embedding=True)[1]
+                f = self.change_ring(embedding)
 
-        PS = f.domain()
-        if not formal:
-            G = f.nth_iterate_map(n)
-            F = G[0]*PS.gens()[1] - G[1]*PS.gens()[0]
-        else:
-            # periodic points of formal period n are the roots of the nth dynatomic polynomial
-            F = f.dynatomic_polynomial(n)
+            PS = f.domain()
+            if not formal:
+                G = f.nth_iterate_map(n)
+                F = G[0]*PS.gens()[1] - G[1]*PS.gens()[0]
+            else:
+                # periodic points of formal period n are the roots of the nth dynatomic polynomial
+                F = f.dynatomic_polynomial(n)
 
-        other_roots = F.parent()(F([(f.domain().gens()[0]),1])).univariate_polynomial().roots(ring=f.base_ring())
+            other_roots = F.parent()(F([(f.domain().gens()[0]),1])).univariate_polynomial().roots(ring=f.base_ring())
 
-        points = []
+            points = []
 
-        minfty = min(ex[1] for ex in F.exponents()) # include the point at infinity with the right multiplicity
-        for i in range(minfty):
-            points.append(PS([1,0]))
+            minfty = min(ex[1] for ex in F.exponents()) # include the point at infinity with the right multiplicity
+            for i in range(minfty):
+                points.append(PS([1,0]))
 
-        for R in other_roots:
-            for i in range(R[1]):
-                points.append(PS([R[0],1])) # include copies of higher multiplicity roots
+            for R in other_roots:
+                for i in range(R[1]):
+                    points.append(PS([R[0],1])) # include copies of higher multiplicity roots
 
         if type == 'cycle':
             # should include one representative point per cycle, included with the right multiplicity
@@ -4832,7 +5318,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     Q = f(Q)
             points = newpoints
 
-        multipliers = [f.multiplier(pt,n)[0,0] for pt in points]
+        if PS.dimension_relative() > 1:
+            multipliers = [f.multiplier(pt,n) for pt in points]
+        else:
+            multipliers = [f.multiplier(pt,n)[0,0] for pt in points]
 
         return multipliers
 
@@ -4901,7 +5390,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``n`` periodic points are repeated, multipliers are all distinct -- to deal
           with this case, we deform the map by a formal parameter `k`. The deformation
-          seperates the ``n`` periodic points, making them distinct, and we can recover
+          separates the ``n`` periodic points, making them distinct, and we can recover
           the ``n`` periodic points of the original map by specializing `k` to 0.
           This corresponds to ``deform=True``.
 
@@ -4952,7 +5441,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``check`` -- (default: ``True``) boolean; when ``True`` the degree of
           the sigma polynomial is checked against the expected degree. This is
-          done as the sigma polynomial may drop degree if multiplicites of periodic
+          done as the sigma polynomial may drop degree if multiplicities of periodic
           points or multipliers are not correctly accounted for using ``chow`` or
           ``deform``.
 
@@ -5236,8 +5725,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     # create polynomial ring for result
                     R2 = PolynomialRing(F, var[:N] + var[-2:])
                     psi = R2.hom(N*[0]+list(newR.gens()), newR)
-                    # create substition to set extra variables to 0
-                    R_zero = {R.gen(N):1}
+                    # create substitution to set extra variables to 0
+                    R_zero = {R.gen(N): 1}
                     for j in range(N+1, 2*N+1):
                         R_zero[R.gen(j)] = 0
                     t = var.pop()
@@ -5251,7 +5740,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     w = var.pop()
                 sigma_polynomial = 1
                 # go through each affine patch to avoid repeating periodic points
-                # setting the visited coordiantes to 0 as we go
+                # setting the visited coordinates to 0 as we go
                 for j in range(N,-1,-1):
                     Xa = X.affine_patch(j)
                     fa = Fn.dehomogenize(j)
@@ -5308,7 +5797,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                      'try setting chow=True and/or deform=True')
             if return_polynomial:
                 return sigma_polynomial
-            # if we are returing a numerical list, read off the coefficients
+            # if we are returning a numerical list, read off the coefficients
             # in order of degree adjusting sign appropriately
             sigmas = []
             sigma_dictionary = dict([list(reversed(i)) for i in list(sigma_polynomial)])
@@ -6833,7 +7322,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         by taking the fixed points of one map and mapping
         them to permutations of the fixed points of the other map.
         As conjugacy preserves the multipliers as a set, fixed points
-        are only maped to fixed points with the same multiplier.
+        are only mapped to fixed points with the same multiplier.
         If there are not enough fixed points the
         function compares the mapping between rational preimages of
         fixed points and the rational preimages of the preimages of

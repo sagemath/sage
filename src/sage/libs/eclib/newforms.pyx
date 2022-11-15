@@ -22,7 +22,7 @@ from sage.modular.all import Cusp
 
 
 cdef class ECModularSymbol:
-    """
+    r"""
     Modular symbol associated with an elliptic curve,  using John Cremona's newforms class.
 
     EXAMPLES::

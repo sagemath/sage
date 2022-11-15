@@ -744,7 +744,7 @@ class ArithmeticSubgroup(Group):
         so this should usually be overridden in subclasses; but it doesn't have
         to be.
         """
-        i = Cusp([1,0])
+        i = Cusp([1, 0])
         L = [i]
         for a in self.coset_reps():
             ai = i.apply([a.a(), a.b(), a.c(), a.d()])
@@ -757,11 +757,12 @@ class ArithmeticSubgroup(Group):
                 L.append(ai)
         return L
 
-    def are_equivalent(self, x, y, trans = False):
+    def are_equivalent(self, x, y, trans=False):
         r"""
-        Test whether or not cusps x and y are equivalent modulo self.  If self
-        has a reduce_cusp() method, use that; otherwise do a slow explicit
-        test.
+        Test whether or not cusps x and y are equivalent modulo self.
+
+        If self has a reduce_cusp() method, use that; otherwise do a
+        slow explicit test.
 
         If trans = False, returns True or False. If trans = True, then return
         either False or an element of self mapping x onto y.

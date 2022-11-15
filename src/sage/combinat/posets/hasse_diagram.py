@@ -3489,15 +3489,15 @@ class HasseDiagram(DiGraph):
         p = len(a_spec)
         q = len(b_spec)
 
-        for r in range(1, p+q+1):
+        for r in range(1, p + q + 1):
             new_a_spec.append(0)
-            for i in range(max(1, r-q), min(p, r) + 1):
-                k_val = binomial(r-1, i-1) * binomial(p+q-r, p-i)
+            for i in range(max(1, r - q), min(p, r) + 1):
+                k_val = binomial(r - 1, i - 1) * binomial(p + q - r, p - i)
                 if orientation:
-                    inner_sum = sum(b_spec[j-1] for j in range(r-i + 1, len(b_spec) + 1))
+                    inner_sum = sum(b_spec[j - 1] for j in range(r - i + 1, len(b_spec) + 1))
                 else:
-                    inner_sum = sum(b_spec[j-1] for j in range(1, r-i + 1))
-                new_a_spec[-1] = new_a_spec[-1] + (a_spec[i-1] * k_val * inner_sum)
+                    inner_sum = sum(b_spec[j - 1] for j in range(1, r - i + 1))
+                new_a_spec[-1] = new_a_spec[-1] + (a_spec[i - 1] * k_val * inner_sum)
 
         return new_a_spec
 

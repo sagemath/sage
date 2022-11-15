@@ -1,4 +1,6 @@
-"Transformations"
+"""
+Transformations
+"""
 
 #*****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -264,4 +266,3 @@ def rotate_arbitrary(v, double theta):
         (1 - cos_t)*z*z + cos_t        ]
 
     return matrix(RDF, 3, 3, entries)
-
