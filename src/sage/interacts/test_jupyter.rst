@@ -40,7 +40,7 @@ This is just to test that failures in the interact are actually seen::
 Test all interacts from the Sage interact library::
 
     sage: test(interacts.algebra.polar_prime_spiral)  # long time
-    Interactive function <function polar_prime_spiral at ...> with 6 widgets
+    ...Interactive function <function polar_prime_spiral at ...> with 6 widgets
       interval: IntRangeSlider(value=(1, 1000), description='range', max=4000, min=1, step=10)
       show_factors: Checkbox(value=True, description='show_factors')
       highlight_primes: Checkbox(value=True, description='highlight_primes')
@@ -53,7 +53,7 @@ Test all interacts from the Sage interact library::
     Green Curve: \(n^2 + n + -1\)
 
     sage: test(interacts.calculus.taylor_polynomial)
-    Interactive function <function taylor_polynomial at ...> with 3 widgets
+    ...Interactive function <function taylor_polynomial at ...> with 3 widgets
       title: HTMLText(value='<h2>Taylor polynomial</h2>')
       f: EvalText(value='e^(-x)*sin(x)', description='$f(x)=$', layout=Layout(max_width='81em'))
       order: SelectionSlider(description='order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
@@ -61,7 +61,7 @@ Test all interacts from the Sage interact library::
     \(\hat{f}(x;0)\;=\;x+\mathcal{O}(x^{2})\)
 
     sage: test(interacts.calculus.definite_integral)
-    Interactive function <function definite_integral at ...> with 6 widgets
+    ...Interactive function <function definite_integral at ...> with 6 widgets
       title: HTMLText(value='<h2>Definite integral</h2>')
       f: EvalText(value='3*x', description='$f(x)=$', layout=Layout(max_width='81em'))
       g: EvalText(value='x^2', description='$g(x)=$', layout=Layout(max_width='81em'))
@@ -71,7 +71,7 @@ Test all interacts from the Sage interact library::
     \(\int_{0.00}^{3.00}(\color{Blue}{f(x)})\,\mathrm{d}x=\int_{0.00}^{3.00}(3 \, x)\,\mathrm{d}x=13.50\)<br/>\(\int_{0.00}^{3.00}(\color{Green}{g(x)})\,\mathrm{d}x=\int_{0.00}^{3.00}(x^{2})\,\mathrm{d}x=9.00\)
 
     sage: test(interacts.calculus.function_derivative)
-    Interactive function <function function_derivative at ...> with 4 widgets
+    ...Interactive function <function function_derivative at ...> with 4 widgets
       title: HTMLText(value='<h2>Derivative grapher</h2>')
       function: EvalText(value='x^5-3*x^3+1', description='Function:', layout=Layout(max_width='81em'))
       x_range: FloatRangeSlider(value=(-2.0, 2.0), description='Range (x)', max=15.0, min=-15.0)
@@ -81,7 +81,7 @@ Test all interacts from the Sage interact library::
     <center>\(\color{Red}{f''(x) = 20 \, x^{3} - 18 \, x}\)</center>
 
     sage: test(interacts.calculus.difference_quotient)
-    Interactive function <function difference_quotient at ...> with 5 widgets
+    ...Interactive function <function difference_quotient at ...> with 5 widgets
       title: HTMLText(value='<h2>Difference quotient</h2>')
       f: EvalText(value='sin(x)', description='f(x)', layout=Layout(max_width='81em'))
       interval: FloatRangeSlider(value=(0.0, 10.0), description='Range', max=10.0)
@@ -96,7 +96,7 @@ Test all interacts from the Sage interact library::
     \(k = \frac{f(x_0)-f(a)}{x_0-a} = -0.62274\)<br>
 
     sage: test(interacts.calculus.quadratic_equation)
-    Interactive function <function quadratic_equation at ...> with 3 widgets
+    ...Interactive function <function quadratic_equation at ...> with 3 widgets
       A: IntSlider(value=1, description='A', max=7, min=-7)
       B: IntSlider(value=1, description='B', max=7, min=-7)
       C: IntSlider(value=-2, description='C', max=7, min=-7)
@@ -106,7 +106,7 @@ Test all interacts from the Sage interact library::
     \(x = \frac{-B\pm\sqrt{B^2-4AC}}{2A} = \frac{-1\pm\sqrt{1^2-4*1*-2}}{2*1} = \frac{-1\pm\sqrt{\color{Green}{9}}}{2} = \begin{cases}1\\-2\end{cases}\)
 
     sage: test(interacts.calculus.secant_method)
-    Interactive function <function secant_method at ...> with 5 widgets
+    ...Interactive function <function secant_method at ...> with 5 widgets
       title: HTMLText(value='<h2>Secant method for numerical root finding</h2>')
       f: EvalText(value='x^2-2', description='f(x)', layout=Layout(max_width='81em'))
       interval: IntRangeSlider(value=(0, 4), description='range', max=5, min=-5)
@@ -118,7 +118,7 @@ Test all interacts from the Sage interact library::
     \(6 \text{ iterations}\)
 
     sage: test(interacts.calculus.newton_method)
-    Interactive function <function newton_method at ...> with 7 widgets
+    ...Interactive function <function newton_method at ...> with 7 widgets
       title: HTMLText(value='<h2>Newton method</h2>')
       f: EvalText(value='x^2 - 2', description='f', layout=Layout(max_width='81em'))
       c: IntSlider(value=6, description='Start ($x$)', max=10, min=-10)
@@ -132,7 +132,7 @@ Test all interacts from the Sage interact library::
     \(6 \text{ iterations}\)
 
     sage: test(interacts.calculus.trapezoid_integration)
-    Interactive function <function trapezoid_integration at ...> with 7 widgets
+    ...Interactive function <function trapezoid_integration at ...> with 7 widgets
       title: HTMLText(value='<h2>Trapezoid integration</h2>')
       f: EvalText(value='x^2-5*x + 10', description='$f(x)=$', layout=Layout(max_width='81em'))
       n: IntSlider(value=5, description='# divisions', min=1)
@@ -155,7 +155,7 @@ Test all interacts from the Sage interact library::
     <BLANKLINE>
 
     sage: test(interacts.calculus.simpson_integration)
-    Interactive function <function simpson_integration at ...> with 7 widgets
+    ...Interactive function <function simpson_integration at ...> with 7 widgets
       title: HTMLText(value='<h2>Simpson integration</h2>')
       f: EvalText(value='x*sin(x)+x+1', description='$f(x)=$', layout=Layout(max_width='81em'))
       n: IntSlider(value=6, description='# divisions', min=2, step=2)
@@ -178,7 +178,7 @@ Test all interacts from the Sage interact library::
     <BLANKLINE>
 
     sage: test(interacts.calculus.bisection_method)
-    Interactive function <function bisection_method at ...> with 5 widgets
+    ...Interactive function <function bisection_method at ...> with 5 widgets
       title: HTMLText(value='<h2>Bisection method</h2>')
       f: EvalText(value='x^2-2', description='f(x)', layout=Layout(max_width='81em'))
       interval: IntRangeSlider(value=(0, 4), description='range', max=5, min=-5)
@@ -190,7 +190,7 @@ Test all interacts from the Sage interact library::
     \(9 \text{ iterations}\)
 
     sage: test(interacts.calculus.riemann_sum)
-    Manual interactive function <function riemann_sum at ...> with 9 widgets
+    ...Manual interactive function <function riemann_sum at ...> with 9 widgets
       title: HTMLText(value='<h2>Riemann integral with random sampling</h2>')
       f: EvalText(value='x^2+1', description='$f(x)=$', layout=Layout(max_width='41em'))
       n: IntSlider(value=5, description='# divisions', max=30, min=1)
@@ -206,7 +206,7 @@ Test all interacts from the Sage interact library::
     1\,\mathrm{d}x=4.666666666666668\)
 
     sage: test(interacts.calculus.function_tool)
-    Interactive function <function function_tool at ...> with 7 widgets
+    ...Interactive function <function function_tool at ...> with 7 widgets
       f: EvalText(value='sin(x)', description='f')
       g: EvalText(value='cos(x)', description='g')
       xrange: IntRangeSlider(value=(0, 1), description='x-range', max=3, min=-3)
@@ -219,7 +219,7 @@ Test all interacts from the Sage interact library::
     <center><font color="blue"><b>\(h = f = \sin\left(x\right)\)</b></font></center>
 
     sage: test(interacts.fractals.mandelbrot)
-    Interactive function <function mandelbrot at ...> with 6 widgets
+    ...Interactive function <function mandelbrot at ...> with 6 widgets
       expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
       iterations: IntSlider(value=20, description='# iterations', min=1)
       zoom_x: FloatRangeSlider(value=(-2.0, 1.0), description='Zoom X', max=2.0, min=-2.0, step=0.01)
@@ -230,7 +230,7 @@ Test all interacts from the Sage interact library::
     Recursive Formula: \(z \leftarrow z^{2.00} + c\) for \(c \in \mathbb{C}\)
 
     sage: test(interacts.fractals.julia)
-    Interactive function <function julia at ...> with 8 widgets
+    ...Interactive function <function julia at ...> with 8 widgets
       expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
       c_real: FloatSlider(value=0.5, description='real part const.', max=2.0, min=-2.0, step=0.01)
       c_imag: FloatSlider(value=0.5, description='imag part const.', max=2.0, min=-2.0, step=0.01)
@@ -243,20 +243,20 @@ Test all interacts from the Sage interact library::
     Recursive Formula: \(z \leftarrow z^{2.00} + (0.50+0.50*\mathbb{I})\)
 
     sage: test(interacts.fractals.cellular_automaton)
-    Interactive function <function cellular_automaton at ...> with 3 widgets
+    ...Interactive function <function cellular_automaton at ...> with 3 widgets
       N: IntSlider(value=100, description='Number of iterations', max=500, min=1)
       rule_number: IntSlider(value=110, description='Rule number', max=255)
       size: IntSlider(value=6, description='size of graphic', max=11, min=1)
     <h2>Cellular Automaton</h2><div style="white-space: normal;">"A cellular automaton is a collection of "colored" cells          on a grid of specified shape that evolves through a number of          discrete time steps according to a set of rules based on the          states of neighboring cells." &mdash;          <a target="_blank" href="http://mathworld.wolfram.com/CellularAutomaton.html">Mathworld,         Cellular Automaton</a></div>         <div>Rule 110 expands to 01110110</div>
 
     sage: test(interacts.geometry.unit_circle)
-    Interactive function <function unit_circle at ...> with 2 widgets
+    ...Interactive function <function unit_circle at ...> with 2 widgets
       function: Dropdown(description='function', options=(('sin(x)', 0), ('cos(x)', 1), ('tan(x)', 2)), value=0)
       x: TransformFloatSlider(value=0.0, description='x', max=6.283185307179586, step=0.015707963267948967)
     <div style="white-space: normal;">Lines of the same color have         the same length</div>
 
     sage: test(interacts.geometry.trigonometric_properties_triangle)
-    Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
+    ...Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
       a0: IntSlider(value=30, description='A', max=360)
       a1: IntSlider(value=180, description='B', max=360)
       a2: IntSlider(value=300, description='C', max=360)
@@ -266,7 +266,7 @@ Test all interacts from the Sage interact library::
     Area of triangle \(ABC = 1.183013\)
 
     sage: test(interacts.geometry.special_points)
-    Interactive function <function special_points at ...> with 10 widgets
+    ...Interactive function <function special_points at ...> with 10 widgets
       title: HTMLText(value='<h2>Special points in triangle</h2>')
       a0: IntSlider(value=30, description='A', max=360)
       a1: IntSlider(value=180, description='B', max=360)
@@ -279,10 +279,9 @@ Test all interacts from the Sage interact library::
       show_euler: Checkbox(value=False, description="Euler's Line")
 
     sage: test(interacts.statistics.coin)
-    Interactive function <function coin at ...> with 2 widgets
+    ...Interactive function <function coin at ...> with 2 widgets
       n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
       interval: IntRangeSlider(value=(0, 0), description='Plotting range (y)', max=1)
-    doctest:...: UserWarning: Attempting to set identical bottom == top == 0.0 results in singular transformations; automatically expanding.
 
 Test matrix control (see :trac:`27735`)::
 
@@ -291,7 +290,7 @@ Test matrix control (see :trac:`27735`)::
     ....:     print(A)
     ....:     print(parent(A))
     sage: test(matrix_test)
-    Interactive function <function matrix_test at ...> with 1 widget
+    ...Interactive function <function matrix_test at ...> with 1 widget
       A: Grid(value=[[0, 1], [2, 3]], children=(Label(value='A'), VBox(children=(EvalText(value='0', layout=Layout(max_width='5em')), EvalText(value='2', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='3', layout=Layout(max_width='5em'))))))
     [0 1]
     [2 3]

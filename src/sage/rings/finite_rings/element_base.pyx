@@ -983,9 +983,10 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         return self.pth_power(k=k)
 
+
 cdef class Cache_base(SageObject):
     cpdef FinitePolyExtElement fetch_int(self, number):
-        """
+        r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
         `a_0 + a_1 x + \cdots + a_k x^k`, where `x` is the
@@ -998,4 +999,3 @@ cdef class Cache_base(SageObject):
             a^33 + a + 1
         """
         raise NotImplementedError("this must be implemented by subclasses")
-

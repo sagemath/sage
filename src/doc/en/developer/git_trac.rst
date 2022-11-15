@@ -17,6 +17,8 @@ perform every development task with just git and a web browser.
 Installing the Git-Trac Command
 ===============================
 
+::
+
     [user@localhost]$ git clone https://github.com/sagemath/git-trac-command.git
     Cloning into 'git-trac-command'...
     [...]

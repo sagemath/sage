@@ -114,4 +114,3 @@ Sage example in ./sol/mpoly.tex, line 278::
   1/16*u^2*v^2 - 3/8*u^2*v + 7/16*u^2 + 1/8*v^2 - 1/8*v - 1/8
 
 """
-

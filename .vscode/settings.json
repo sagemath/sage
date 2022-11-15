@@ -27,11 +27,12 @@
     "python.linting.enabled": true,
     // The following pycodestyle arguments are the same as the pycodestyle-minimal
     // tox environnment, see the file SAGE_ROOT/src/tox.ini
-    "python.linting.pycodestyleArgs": ["--select=E111,E306,E401,E701,E702,E703,W605,E711,E712,E713,E721,E722"],
+    "python.linting.pycodestyleArgs": ["--select=E111,E306,E401,E701,E702,E703,W391,W605,E711,E712,E713,E721,E722"],
     "cSpell.words": [
         "furo",
         "Conda",
         "sagemath",
         "Cython"
-    ]
+    ],
+    "editor.formatOnType": true
 }

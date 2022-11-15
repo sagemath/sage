@@ -12,15 +12,25 @@ About SageMath
 
    https://www.sagemath.org
 
-SageMath fully supports all major Linux distributions, recent versions of macOS, and Windows (using Cygwin or Windows Subsystem for Linux).
+SageMath fully supports all major Linux distributions, recent versions of
+macOS, and Windows (using Cygwin or Windows Subsystem for Linux).
 
-The traditional and recommended way to install SageMath is from source via Sage-the-distribution (https://www.sagemath.org/download-source.html).  Sage-the-distribution first builds a large number of open source packages from source (unless it finds suitable versions installed in the system) and then installs the Sage Library (sagelib, implemented in Python and Cython).
+The traditional and recommended way to install SageMath is from source via
+Sage-the-distribution (https://www.sagemath.org/download-source.html).
+Sage-the-distribution first builds a large number of open source packages from
+source (unless it finds suitable versions installed in the system) and then
+installs the Sage Library (sagelib, implemented in Python and Cython).
 
 
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-objects` is an experimental distribution of a small part of the Sage Library.  Use at your own risk.  It provides a small, fundamental subset of the modules of the Sage library ("sagelib", `sagemath-standard`), making Sage objects, the element/parent framework, categories, the coercion system and the related metaclasses available.
+This pip-installable source distribution `sagemath-objects` is an experimental
+distribution of a small part of the Sage Library.  Use at your own risk.  It
+provides a small, fundamental subset of the modules of the Sage library
+("sagelib", `sagemath-standard`), making Sage objects, the element/parent
+framework, categories, the coercion system and the related metaclasses
+available.
 
 
 Dependencies

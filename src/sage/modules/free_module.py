@@ -8243,4 +8243,3 @@ class EchelonMatrixKey():
             True
         """
         return self.obj._echelon_matrix_richcmp(other.obj, op)
-

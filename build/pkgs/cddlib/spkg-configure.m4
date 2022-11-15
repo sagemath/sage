@@ -40,15 +40,8 @@ EOF
             AC_MSG_RESULT([yes])
         ])
     ])
-    dnl Recent versions (>= 0.94k) of cddlib put these headers in
-    dnl a "cddlib" subdirectory, and Debian currently relocates them
-    dnl under "cdd". But for now they're at the top-level, in e.g.
-    dnl /usr/include/cdd.h. The lattE and gfan packages within
-    dnl SageMath both look for them there, so that's where we have to
-    dnl check, passing up a chance to detect cddlib on Fedora and Debian
-    dnl for now. Once all of cddlib's consumers know about the new (or
-    dnl both) locations, we can update this check to support them.
-    dnl See https://trac.sagemath.org/ticket/29413
+    dnl Recent versions (>= 0.94k) of cddlib put cddlib's headers in
+    dnl a "cddlib" subdirectory.
     AC_CHECK_HEADER([cddlib/cdd.h],[],[sage_spkg_install_cddlib=yes],[
       #include <cddlib/setoper.h>
       #include <cddlib/cddmp.h>

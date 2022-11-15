@@ -2007,7 +2007,7 @@ class Graphics(WithEqualityById, SageObject):
         We can also do custom formatting if you need it.  See above for full
         details::
 
-            sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex")
+            sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex") # not tested (broken with matplotlib 3.6)
             Graphics object consisting of 1 graphics primitive
 
         This is particularly useful when setting custom ticks in multiples
@@ -2341,7 +2341,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: subplot = Figure().add_subplot(111)
             sage: p._objects[0]._render_on_subplot(subplot)
             sage: p._matplotlib_tick_formatter(subplot, **d)
-            (<AxesSubplot:>,
+            (<AxesSubplot:...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.ScalarFormatter object at ...>,

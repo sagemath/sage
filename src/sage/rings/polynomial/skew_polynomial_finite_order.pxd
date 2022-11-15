@@ -2,6 +2,7 @@ from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generi
 
 cdef class SkewPolynomial_finite_order_dense (SkewPolynomial_generic_dense):
     cdef _norm
+    cdef _charpoly
     cdef _optbound
 
     cdef _matphir_c(self)

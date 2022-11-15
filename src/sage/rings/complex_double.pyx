@@ -1637,7 +1637,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self.real().is_NaN() or self.imag().is_NaN()
 
     cpdef _pow_(self, other):
-        """
+        r"""
         The complex number ``self`` raised to the power ``other``.
 
         This is computed using complex logarithms and exponentials

@@ -982,4 +982,3 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
                     del d[tp]
 
         return self.__class__(self._parent, d)
-

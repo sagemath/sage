@@ -668,7 +668,7 @@ class CoxeterGroups(Category_singleton):
 
         def simple_projection(self, i, side='right', length_increasing=True):
             r"""
-            Return the simple projection `\pi_i` (or `\overline\pi_i` if `length_increasing` is ``False``).
+            Return the simple projection `\pi_i` (or `\overline\pi_i` if ``length_increasing`` is ``False``).
 
             INPUT:
 

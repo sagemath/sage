@@ -4,7 +4,7 @@ Manifolds Catalog
 A catalog of manifolds to rapidly create various simple manifolds.
 
 The current entries to the catalog are obtained by typing
-``manifolds.<tab>``, where ``<tab>`` indicates pressing the tab key.
+``manifolds.<tab>``, where ``<tab>`` indicates pressing the :kbd:`Tab` key.
 They are:
 
 - :class:`~sage.manifolds.differentiable.examples.euclidean.EuclideanSpace`: Euclidean space
@@ -29,7 +29,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 # Lazy import from examples folders:

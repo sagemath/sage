@@ -197,7 +197,7 @@ AUTHORS:
   magma.functions...
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -210,8 +210,8 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
+from __future__ import annotations
 import re
 import sys
 
@@ -2133,14 +2133,14 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
         """
         if n <= 0:
             raise IndexError("index must be positive since Magma indexes are 1-based")
-        return self.gens()[n-1]
+        return self.gens()[n - 1]
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return generators for self.
+        Return generators for ``self``.
 
         If self is named X in Magma, this function evaluates X.1, X.2,
-        etc., in Magma until an error occurs. It then returns a Sage list
+        etc., in Magma until an error occurs. It then returns a Sage tuple
         of the resulting X.i. Note - I don't think there is a Magma command
         that returns the list of valid X.i. There are numerous ad hoc
         functions for various classes but nothing systematic. This function
@@ -2154,9 +2154,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
         EXAMPLES::
 
             sage: magma("VectorSpace(RationalField(),3)").gens()         # optional - magma
-            [(1 0 0), (0 1 0), (0 0 1)]
+            ((1 0 0), (0 1 0), (0 0 1))
             sage: magma("AbelianGroup(EllipticCurve([1..5]))").gens()    # optional - magma
-            [$.1]
+            ($.1,)
         """
         try:
             return self._magma_gens
@@ -2172,8 +2172,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             except (RuntimeError, TypeError):
                 break
             i += 1
-        self._magma_gens = G
-        return G
+        tG = tuple(G)
+        self._magma_gens = tG
+        return tG
 
     def gen_names(self):
         """

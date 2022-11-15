@@ -1,5 +1,5 @@
 """
-Matrix Plots
+Matrix plots
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,

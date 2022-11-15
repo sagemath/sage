@@ -656,7 +656,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         if R not in Fields():
             raise NotImplementedError("only implemented with coefficients in a field")
         self._group = A
-        
+
         names = tuple(['e' + name[1:] for name in A.variable_names()])
         from sage.graphs.independent_sets import IndependentSets
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -857,4 +857,3 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         An element in the cohomology ring of a right-angled Artin group.
         """
-

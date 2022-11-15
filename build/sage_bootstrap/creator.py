@@ -87,6 +87,8 @@ class PackageCreator(object):
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
         ``install-requires.txt``.
 
+        If ``source`` is ``"wheel"``, write the file ``install-requires.txt``.
+
         If ``source`` is ``"pip"``, write the file ``requirements.txt``.
         """
         if pypi_package_name is None:
@@ -99,10 +101,13 @@ class PackageCreator(object):
                 f.write('cd src\nsdh_pip_install .\n')
             with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
+        elif source == 'wheel':
+            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+                f.write('{0}\n'.format(pypi_package_name))
         elif source == 'pip':
             with open(os.path.join(self.path, 'requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
         elif source == 'script':
             pass
         else:
-            raise ValueError('package source must be one of normal, script, or pip')
+            raise ValueError('package source must be one of normal, script, pip, or wheel')

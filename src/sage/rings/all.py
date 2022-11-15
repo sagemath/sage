@@ -146,7 +146,7 @@ from .laurent_series_ring import LaurentSeriesRing
 lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
 # Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyTaylorSeriesRing',
+lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
                                             'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
 
 # Tate algebras

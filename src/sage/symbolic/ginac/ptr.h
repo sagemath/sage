@@ -158,8 +158,7 @@ namespace std {
 
 /** Specialization of std::less for ptr<T> to enable ordering of ptr<T>
  *  objects (e.g. for the use as std::map keys). */
-template <class T> struct less< GiNaC::ptr<T> >
- : public binary_function<GiNaC::ptr<T>, GiNaC::ptr<T>, bool> {
+template <class T> struct less< GiNaC::ptr<T> > {
 	bool operator()(const GiNaC::ptr<T> &lhs, const GiNaC::ptr<T> &rhs) const
 	{
 		return less<T*>()(lhs.p, rhs.p);

@@ -6,7 +6,7 @@ currently implemented in Sage. Using tab-completion on this object is an
 easy way to discover and quickly create the algebras that are available
 (as listed here).
 
-Let ``<tab>`` indicate pressing the tab key.  So begin by typing
+Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 ``algebras.<tab>`` to the see the currently implemented named algebras.
 
 - :class:`algebras.AlternatingCentralExtensionQuantumOnsager
@@ -133,5 +133,4 @@ lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
 lazy_import('sage.algebras.yangian', 'Yangian')
 
-del lazy_import # We remove the object from here so it doesn't appear under tab completion
-
+del lazy_import  # We remove the object from here so it doesn't appear under tab completion

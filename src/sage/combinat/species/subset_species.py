@@ -19,7 +19,6 @@ Subset Species
 
 from .species import GenericCombinatorialSpecies
 from .set_species import SetSpecies
-from .generating_series import _integers_from
 from .structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
@@ -143,13 +142,13 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.generating_series().coefficients(5)
+            sage: S.generating_series()[0:5]
             [1, 2, 2, 4/3, 2/3]
-            sage: S.isotype_generating_series().coefficients(5)
+            sage: S.isotype_generating_series()[0:5]
             [1, 2, 3, 4, 5]
 
             sage: S = species.SubsetSpecies()
-            sage: c = S.generating_series().coefficients(3)
+            sage: c = S.generating_series()[0:3]
             sage: S._check()
             True
             sage: S == loads(dumps(S))
@@ -187,7 +186,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         for i in range(len(labels)+1):
             yield structure_class(self, labels, range(1, i+1))
 
-    def _gs_iterator(self, base_ring):
+    def _gs_callable(self, base_ring, n):
         """
         The generating series for the species of subsets is
         `e^{2x}`.
@@ -195,13 +194,12 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.generating_series().coefficients(5)
+            sage: [S.generating_series().coefficient(i) for i in range(5)]
             [1, 2, 2, 4/3, 2/3]
         """
-        for n in _integers_from(0):
-            yield base_ring(2)**n / base_ring(factorial(n))
+        return base_ring(2)**n / base_ring(factorial(n))
 
-    def _itgs_iterator(self, base_ring):
+    def _itgs_callable(self, base_ring, n):
         r"""
         The generating series for the species of subsets is
         `e^{2x}`.
@@ -209,11 +207,10 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.isotype_generating_series().coefficients(5)
+            sage: S.isotype_generating_series()[0:5]
             [1, 2, 3, 4, 5]
         """
-        for n in _integers_from(1):
-            yield base_ring(n)
+        return base_ring(n + 1)
 
     def _cis(self, series_ring, base_ring):
         r"""
@@ -226,7 +223,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.cycle_index_series().coefficients(5)
+            sage: S.cycle_index_series()[0:5]
             [p[],
              2*p[1],
              2*p[1, 1] + p[2],

@@ -207,11 +207,13 @@ cdef class ntl_ZZ_pX():
 
     def __setitem__(self, long i, a):
         r"""
-        sage: c = ntl.ZZ_pContext(23)
-        sage: x = ntl.ZZ_pX([2, 3, 4], c)
-        sage: x[1] = 5
-        sage: x
-        [2 5 4]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(23)
+            sage: x = ntl.ZZ_pX([2, 3, 4], c)
+            sage: x[1] = 5
+            sage: x
+            [2 5 4]
         """
         if i < 0:
             raise IndexError("index (i=%s) must be >= 0" % i)

@@ -70,4 +70,3 @@ class Monoid_class(Parent):
         """
         from sage.sets.family import Family
         return Family(self.gens())
-

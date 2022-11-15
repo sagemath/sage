@@ -194,6 +194,16 @@ class DefiniteIntegral(BuiltinFunction):
             sage: from sage.symbolic.integration.integral import definite_integral
             sage: definite_integral(sin(x),x,0,pi)
             2
+
+        TESTS:
+
+        Check for :trac:`32354`::
+
+            sage: ex = 1/max_symbolic(x, 1)**2
+            sage: integral(ex, x, 0, 2, algorithm='giac')
+            3/2
+            sage: integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac')
+            2
         """
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of

@@ -2030,4 +2030,3 @@ def misty_construction(*args):
         64
     """
     return sbox_construction(misty_substitute, list(args))
-

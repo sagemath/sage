@@ -1,5 +1,5 @@
 """
-Finite Prime Fields
+Finite prime fields
 
 AUTHORS:
 

@@ -346,6 +346,5 @@ class qCommutingPolynomials(CombinatorialFreeModule):
         Ly = y.list()
 
         # This could be made more efficient
-        qpow = sum(exp * sum(self._B[j,i] * val for j, val in enumerate(Ly[:i])) for i,exp in enumerate(Lx))
+        qpow = sum(exp * sum(self._B[j, i] * val for j, val in enumerate(Ly[:i])) for i, exp in enumerate(Lx))
         return self.term(x * y, self._q ** qpow)
-

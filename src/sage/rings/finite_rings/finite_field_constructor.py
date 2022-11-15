@@ -1,5 +1,5 @@
 r"""
-Finite Fields
+Finite fields
 
 Sage supports arithmetic in finite prime and extension fields.
 Several implementation for prime fields are implemented natively in

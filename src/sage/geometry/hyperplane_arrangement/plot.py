@@ -410,7 +410,7 @@ def plot_hyperplane(hyperplane, **kwds):
     # the extra keywords have now been handled
     # now create the plot
     if hyperplane.dimension() == 0:  # a point on a line
-        x, = hyperplane.A() 
+        x, = hyperplane.A()
         d = hyperplane.b()
         p = point((d/x,0), size=pt_size, **kwds)
         if has_hyp_label:
@@ -456,7 +456,7 @@ def plot_hyperplane(hyperplane, **kwds):
             s0, s1 = -3, 3
             t0, t1 = -3, 3
         p = parametric_plot3d(pnt+s*w[0]+t*w[1], (s,s0,s1), (t,t0,t1), **kwds)
-        if has_hyp_label: 
+        if has_hyp_label:
             if has_offset:
                 b0, b1, b2 = label_offset
             else:
@@ -518,7 +518,7 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
     for i in range(N):
         p += line([(0,0),(0,0)], color=hyperplane_colors[i], thickness=8,
                 legend_label=labels[i], axes=False)
-    p.set_legend_options(title='Hyperplanes', loc='center', labelspacing=0.4, 
+    p.set_legend_options(title='Hyperplanes', loc='center', labelspacing=0.4,
             fancybox=True, font_size='x-large', ncol=2)
     p.legend(True)
     return p

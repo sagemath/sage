@@ -1,5 +1,5 @@
 """
-Homset for Finite Fields
+Homset for finite fields
 
 This is the set of all field homomorphisms between two finite fields.
 

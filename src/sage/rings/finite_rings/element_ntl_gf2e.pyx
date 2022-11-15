@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-Finite Fields of characteristic 2.
+Finite field of characteristic 2 elements
 
 This implementation uses NTL's GF2E class to perform the arithmetic
 and is the standard implementation for ``GF(2^n)`` for ``n >= 16``.
@@ -401,7 +401,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         raise ValueError("Cannot coerce element %s to this field." % e)
 
     cpdef FiniteField_ntl_gf2eElement fetch_int(self, number):
-        """
+        r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
         `a_0 + a_1 x + \cdots + a_k x^k`, where `x` is the

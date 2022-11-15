@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Finite field morphisms using Givaro
+Givaro finite field morphisms
 
 Special implementation for givaro finite fields of:
 

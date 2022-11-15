@@ -47,6 +47,7 @@ from libc.stdint cimport uint_fast32_t
 cdef dict _brouwer_database = None
 _small_srg_database = None
 
+
 @cached_function
 def is_paley(int v, int k, int l, int mu):
     r"""
@@ -72,12 +73,13 @@ def is_paley(int v, int k, int l, int mu):
         (13, 6, 2, 3)
         sage: t = is_paley(5,5,5,5); t
     """
-    if (v%4 == 1 and is_prime_power(v) and
-        k   == (v-1)//2 and
-        l   == (v-5)//4 and
-        mu  == (v-1)//4):
+    if (v % 4 == 1 and is_prime_power(v) and
+            k == (v - 1)//2 and
+            l == (v - 5)//4 and
+            mu == (v - 1)//4):
         from sage.graphs.generators.families import PaleyGraph
-        return (PaleyGraph,v)
+        return (PaleyGraph, v)
+
 
 @cached_function
 def is_mathon_PC_srg(int v, int k, int l, int mu):
@@ -119,21 +121,21 @@ def is_mathon_PC_srg(int v, int k, int l, int mu):
         sage: t = is_mathon_PC_srg(4*mu+1,2*mu,mu-1,mu); t
     """
     cdef int t
-    if (v%4 == 1 and
-        k   == (v-1)//2 and
-        l   == (v-5)//4 and
-        mu  == (v-1)//4):
+    if (v % 4 == 1 and
+            k == (v - 1)//2 and
+            l == (v - 5)//4 and
+            mu == (v - 1)//4):
         from sage.rings.integer_ring import ZZ
         K = ZZ['x']
         x = K.gen()
-        rpoly = (w for w in (x*(4*x*(4*x-1)-1) - mu).roots() if w[0] > 0)
+        rpoly = (w for w in (x*(4*x*(4*x - 1) - 1) - mu).roots() if w[0] > 0)
         try:
             t = next(rpoly)[0]
-            if (is_prime_power(4*t-1) and
-                is_prime_power(4*t+1)): # extra assumption in TODO!
+            if (is_prime_power(4*t - 1) and
+                    is_prime_power(4*t + 1)):  # extra assumption in TODO!
                 from sage.graphs.generators.families import \
                                     MathonPseudocyclicStronglyRegularGraph
-                return (MathonPseudocyclicStronglyRegularGraph,t)
+                return (MathonPseudocyclicStronglyRegularGraph, t)
         except StopIteration:
             pass
 
@@ -167,15 +169,18 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
     """
     cdef int n, d
     from sage.rings.integer_ring import ZZ
-    n_list = [n for n in range(l-1) if ZZ(n).is_prime_power()]
+    n_list = [n for n in range(l - 1) if ZZ(n).is_prime_power()]
     for n in n_list:
         d = 2
-        while n**d * ((n**d-1)//(n-1)+1) <= v:
-            if v == n**d * ((n**d-1)//(n-1)+1) and k == n**(d-1)*(n**d-1)//(n-1) - 1\
-            and l == mu - 2 and mu == n**(d-1) * (n**(d-1)-1) // (n-1):
+        while n**d * ((n**d - 1)//(n - 1) + 1) <= v:
+            if (v == n**d * ((n**d - 1)//(n - 1) + 1) and
+                    k == n**(d - 1)*(n**d - 1)//(n - 1) - 1 and
+                    l == mu - 2 and
+                    mu == n**(d - 1) * (n**(d - 1) - 1)//(n - 1)):
                 from sage.graphs.generators.families import MuzychukS6Graph
                 return (MuzychukS6Graph, n, d)
             d += 1
+
 
 @cached_function
 def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
@@ -232,18 +237,19 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
         m, n = latin_squares_graph_parameters(v, k, l, mu)
     except Exception:
         return
-    if orthogonal_array(m,n,existence=True) is True:
+    if orthogonal_array(m, n, existence=True) is True:
         from sage.graphs.generators.intersection import OrthogonalArrayBlockGraph
-        return (lambda m,n : OrthogonalArrayBlockGraph(m, n), m,n)
+        return (lambda m, n: OrthogonalArrayBlockGraph(m, n), m, n)
 
-    elif n>2 and skew_hadamard_matrix(n+1, existence=True) is True:
-        if m==(n+1)/2:
+    elif n > 2 and skew_hadamard_matrix(n+1, existence=True) is True:
+        if m == (n + 1)/2:
             from sage.graphs.generators.families import SquaredSkewHadamardMatrixGraph as G
-        elif m==(n-1)//2:
+        elif m == (n - 1)//2:
             from sage.graphs.generators.families import PasechnikGraph as G
         else:
             return
         return (G, (n+1)//4)
+
 
 @cached_function
 def is_johnson(int v, int k, int l, int mu):
@@ -276,10 +282,11 @@ def is_johnson(int v, int k, int l, int mu):
     # J(n,m) has parameters v = m(m – 1)/2, k = 2(m – 2), λ = m – 2, μ = 4.
     m = l + 2
     if (mu == 4 and
-        k  == 2*(m-2) and
-        v  == m*(m-1)//2):
+            k == 2*(m - 2) and
+            v == m*(m - 1)//2):
         from sage.graphs.generators.families import JohnsonGraph
-        return (lambda m: JohnsonGraph(m,2), m)
+        return (lambda m: JohnsonGraph(m, 2), m)
+
 
 @cached_function
 def is_steiner(int v, int k, int l, int mu):
@@ -317,14 +324,15 @@ def is_steiner(int v, int k, int l, int mu):
     if mu <= 1 or not is_square(mu):
         return
     m = int(sqrt(mu))
-    n = (k*(m-1))//m+m
+    n = (k*(m - 1))//m + m
 
-    if (v == (n*(n-1))/(m*(m-1)) and
-        k == m*(n-m)/(m-1) and
-        l == (m-1)**2 + (n-1)/(m-1)-2 and
-        balanced_incomplete_block_design(n,m,existence=True) is True):
+    if (v == (n*(n - 1))/(m*(m - 1)) and
+            k == m*(n - m)/(m - 1) and
+            l == (m - 1)**2 + (n - 1)/(m - 1) - 2 and
+            balanced_incomplete_block_design(n, m, existence=True) is True):
         from sage.graphs.generators.intersection import IntersectionGraph
         return (lambda n, m: IntersectionGraph([frozenset(b) for b in balanced_incomplete_block_design(n, m)]), n, m)
+
 
 @cached_function
 def is_affine_polar(int v, int k, int l, int mu):
@@ -361,25 +369,25 @@ def is_affine_polar(int v, int k, int l, int mu):
     #
     # VO−(2e,q) has parameters v = q^(2e), k = (q^(e−1) - 1)(q^e + 1), λ =
     # q(q^(e−2) - 1)(q^(e−1) + 1) + q − 2, μ = q^(e−1)(q^(e−1) - 1)
-    if (not is_square(v) or
-        not is_prime_power(v)):
+    if not is_square(v) or not is_prime_power(v):
         return
-    prime,power = is_prime_power(v,get_data=True)
-    if power%2:
+    prime, power = is_prime_power(v, get_data=True)
+    if power % 2:
         return
     for e in divisors(power/2):
         q = prime**(power//(2*e))
         assert v == q**(2*e)
-        if (k == (q**(e-1) + 1)*(q**e-1) and
-            l == q*(q**(e-2) + 1)*(q**(e-1)-1)+q-2 and
-            mu== q**(e-1)*(q**(e-1) + 1)):
+        if (k == (q**(e - 1) + 1)*(q**e - 1) and
+                l == q*(q**(e - 2) + 1)*(q**(e - 1) - 1) + q - 2 and
+                mu == q**(e - 1)*(q**(e - 1) + 1)):
             from sage.graphs.generators.classical_geometries import AffineOrthogonalPolarGraph
-            return (lambda d,q : AffineOrthogonalPolarGraph(d,q,sign='+'),2*e,q)
-        if (k == (q**(e-1) - 1)*(q**e+1) and
-            l == q*(q**(e-2)- 1)*(q**(e-1)+1)+q-2 and
-            mu== q**(e-1)*(q**(e-1) - 1)):
+            return (lambda d, q: AffineOrthogonalPolarGraph(d, q, sign='+'), 2*e, q)
+        if (k == (q**(e - 1) - 1)*(q**e + 1) and
+                l == q*(q**(e - 2) - 1)*(q**(e - 1) + 1) + q - 2 and
+                mu == q**(e - 1)*(q**(e - 1) - 1)):
             from sage.graphs.generators.classical_geometries import AffineOrthogonalPolarGraph
-            return (lambda d,q : AffineOrthogonalPolarGraph(d,q,sign='-'),2*e,q)
+            return (lambda d, q: AffineOrthogonalPolarGraph(d, q, sign='-'), 2*e, q)
+
 
 @cached_function
 def is_orthogonal_polar(int v, int k, int l, int mu):
@@ -427,34 +435,35 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
     q_pow_m_minus_one = -s-1 if abs(s) > r else r+1
 
     if is_prime_power(q_pow_m_minus_one):
-        prime,power = is_prime_power(q_pow_m_minus_one,get_data=True)
+        prime, power = is_prime_power(q_pow_m_minus_one, get_data=True)
         for d in divisors(power):
             q = prime**d
-            m = (power//d)+1
+            m = (power//d) + 1
 
             # O(2m+1,q)
-            if (v == (q**(2*m)-1)//(q-1)              and
-                k == q*(q**(2*m-2)-1)//(q-1)          and
-                l == q**2*(q**(2*m-4)-1)//(q-1) + q-1 and
-                mu== (q**(2*m-2)-1)//(q-1)):
+            if (v == (q**(2*m) - 1)//(q - 1) and
+                    k == q*(q**(2*m - 2) - 1)//(q - 1) and
+                    l == q**2*(q**(2*m - 4) - 1)//(q - 1) + q - 1 and
+                    mu == (q**(2*m - 2) - 1)//(q - 1)):
                 from sage.graphs.generators.classical_geometries import OrthogonalPolarGraph
                 return (OrthogonalPolarGraph, 2*m+1, q, "")
 
             # O^+(2m,q)
-            if (v ==   (q**(2*m-1)-1)//(q-1) + q**(m-1)   and
-                k == q*(q**(2*m-3)-1)//(q-1) + q**(m-1) and
-                k == q**(2*m-3) + l + 1                  and
-                mu== k//q):
+            if (v == (q**(2*m - 1) - 1)//(q - 1) + q**(m - 1) and
+                    k == q*(q**(2*m - 3) - 1)//(q - 1) + q**(m - 1) and
+                    k == q**(2*m - 3) + l + 1 and
+                    mu == k//q):
                 from sage.graphs.generators.classical_geometries import OrthogonalPolarGraph
                 return (OrthogonalPolarGraph, 2*m, q, "+")
 
             # O^+(2m+1,q)
-            if (v ==   (q**(2*m-1)-1)//(q-1) - q**(m-1)   and
-                k == q*(q**(2*m-3)-1)//(q-1) - q**(m-1) and
-                k == q**(2*m-3) + l + 1                  and
-                mu== k//q):
+            if (v == (q**(2*m - 1) - 1)//(q - 1) - q**(m - 1) and
+                    k == q*(q**(2*m - 3) - 1)//(q - 1) - q**(m - 1) and
+                    k == q**(2*m - 3) + l + 1 and
+                    mu == k//q):
                 from sage.graphs.generators.classical_geometries import OrthogonalPolarGraph
                 return (OrthogonalPolarGraph, 2*m, q, "-")
+
 
 @cached_function
 def is_goethals_seidel(int v, int k, int l, int mu):
@@ -520,15 +529,15 @@ def is_goethals_seidel(int v, int k, int l, int mu):
     # - the number of vertices v is equal to v_bibd*(r_bibd+1)
     # - the degree k of the graph is equal to k=(v+r_bibd-1)/2
 
-    r_bibd = k - (v-1-k)
-    v_bibd = v//(r_bibd+1)
-    k_bibd = (v_bibd-1)//r_bibd + 1 if r_bibd>0 else -1
+    r_bibd = k - (v - 1 - k)
+    v_bibd = v//(r_bibd + 1)
+    k_bibd = (v_bibd - 1)//r_bibd + 1 if r_bibd > 0 else -1
 
-    if (v   == v_bibd*(r_bibd+1)                  and
-        2*k == v+r_bibd-1                         and
-        4*l == -2*v + 6*k -v_bibd -k_bibd         and
-        hadamard_matrix(r_bibd+1, existence=True) is True and
-        balanced_incomplete_block_design(v_bibd, k_bibd, existence = True) is True):
+    if (v == v_bibd*(r_bibd + 1) and
+            2*k == v + r_bibd - 1 and
+            4*l == -2*v + 6*k - v_bibd - k_bibd and
+            hadamard_matrix(r_bibd + 1, existence=True) is True and
+            balanced_incomplete_block_design(v_bibd, k_bibd, existence=True) is True):
         from sage.graphs.generators.families import GoethalsSeidelGraph
         return [GoethalsSeidelGraph, k_bibd, r_bibd]
 

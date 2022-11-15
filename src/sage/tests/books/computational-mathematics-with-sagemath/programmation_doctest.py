@@ -661,4 +661,3 @@ Sage example in ./programmation.tex, line 3894::
   ....:   return len(D) == len (Set(D.values()))
 
 """
-

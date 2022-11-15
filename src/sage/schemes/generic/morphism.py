@@ -667,6 +667,7 @@ class SchemeMorphism(Element):
         from . import glue
         return glue.GluedScheme(self, other)
 
+
 class SchemeMorphism_id(SchemeMorphism):
     """
     Return the identity morphism from `X` to itself.
@@ -927,11 +928,11 @@ class SchemeMorphism_spec(SchemeMorphism):
 
 
 ############################################################################
-# Morphisms between schemes given on points
-# The _affine and _projective below refer to the CODOMAIN.
-# The domain can be either affine or projective regardless
-# of the class
+# Morphisms between schemes given on points. The _affine and _projective below
+# refer to the CODOMAIN. The domain can be either affine or projective
+# regardless of the class
 ############################################################################
+
 class SchemeMorphism_polynomial(SchemeMorphism):
     r"""
     A morphism of schemes determined by polynomials that define what
@@ -1018,6 +1019,26 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         self._polys = tuple(polys)
 
         SchemeMorphism.__init__(self, parent)
+
+    def __eq__(self, other):
+        """
+        Check equality of ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- a morphism
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(2, QQ)
+            sage: I = A.identity_morphism()
+            sage: I.parent().identity() == I
+            True
+        """
+        if isinstance(other, SchemeMorphism_polynomial):
+            if self.parent() == other.parent() and self._polys == other._polys:
+                return True
+        raise TypeError('cannot determine equality')
 
     def defining_polynomials(self):
         """
@@ -1206,7 +1227,6 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         # containment of x in the domain has already been checked, in __call__
         P = [f(x._coords) for f in self.defining_polynomials()]
         return self._codomain.point(P,check)
-
 
     def _repr_defn(self):
         """
@@ -1729,6 +1749,36 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         except AttributeError:
             return super()._composition_(other, homset)
         return homset([p(*opolys) for p in self._polys])
+
+
+class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial):
+    """
+    Return the identity morphism from `X` to itself.
+
+    INPUT:
+
+    - ``X`` -- an affine or projective scheme
+
+    EXAMPLES::
+
+        sage: X = Spec(ZZ)
+        sage: X.identity_morphism()  # indirect doctest
+        Scheme endomorphism of Spectrum of Integer Ring
+          Defn: Identity map
+    """
+    def __init__(self, X):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: A = AffineSpace(2, GF(3))
+            sage: A.identity_morphism().defining_polynomials()
+            (x0, x1)
+        """
+        super().__init__(X)
+        variables = X.ambient_space().coordinate_ring().gens()
+        SchemeMorphism_polynomial.__init__(self, X.Hom(X), variables, check=False)
 
 
 ############################################################################

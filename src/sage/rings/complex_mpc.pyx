@@ -137,15 +137,15 @@ cdef inline mpfr_rnd_t rnd_im(mpc_rnd_t rnd):
 sign = '[+-]'
 digit_ten = '[0123456789]'
 exponent_ten = '[e@]' + sign + '?[0123456789]+'
-number_ten = 'inf(?:inity)?|@inf@|nan(?:\([0-9A-Z_]*\))?|@nan@(?:\([0-9A-Z_]*\))?'\
-    '|(?:' + digit_ten + '*\.' + digit_ten + '+|' + digit_ten + '+\.?)(?:' + exponent_ten + ')?'
-imaginary_ten = 'i(?:\s*\*\s*(?:' + number_ten + '))?|(?:' + number_ten + ')\s*\*\s*i'
-complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + ')?\s*(?P<im_first_im_abs>' + imaginary_ten + ')' \
-    '(\s*(?P<im_first_re_sign>' + sign + ')\s*(?P<im_first_re_abs>' + number_ten + '))?)' \
+number_ten = r'inf(?:inity)?|@inf@|nan(?:\([0-9A-Z_]*\))?|@nan@(?:\([0-9A-Z_]*\))?'\
+    '|(?:' + digit_ten + r'*\.' + digit_ten + '+|' + digit_ten + r'+\.?)(?:' + exponent_ten + ')?'
+imaginary_ten = r'i(?:\s*\*\s*(?:' + number_ten + '))?|(?:' + number_ten + r')\s*\*\s*i'
+complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_im_abs>' + imaginary_ten + r')' \
+    r'(\s*(?P<im_first_re_sign>' + sign + r')\s*(?P<im_first_re_abs>' + number_ten + '))?)' \
     '|' \
-    '(?P<re_first>(?P<re_first_re_sign>' + sign + ')?\s*(?P<re_first_re_abs>' + number_ten + ')' \
-    '(\s*(?P<re_first_im_sign>' + sign + ')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
-re_complex_ten = re.compile('^\s*(?:' + complex_ten + ')\s*$', re.I)
+    '(?P<re_first>(?P<re_first_re_sign>' + sign + r')?\s*(?P<re_first_re_abs>' + number_ten + r')' \
+    r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
+re_complex_ten = re.compile(r'^\s*(?:' + complex_ten + r')\s*$', re.I)
 
 cpdef inline split_complex_string(string, int base=10):
     """
@@ -185,17 +185,17 @@ cpdef inline split_complex_string(string, int base=10):
 
         # Warning: number, imaginary, and complex should be enclosed in parentheses
         # when used as regexp because of alternatives '|'
-        number = '@nan@(?:\([0-9A-Z_]*\))?|@inf@|(?:' + digit + '*\.' + digit + '+|' + digit + '+\.?)(?:' + exponent + ')?'
+        number = r'@nan@(?:\([0-9A-Z_]*\))?|@inf@|(?:' + digit + r'*\.' + digit + '+|' + digit + r'+\.?)(?:' + exponent + ')?'
         if base <= 10:
-            number = 'nan(?:\([0-9A-Z_]*\))?|inf(?:inity)?|' + number
-        imaginary = 'i(?:\s*\*\s*(?:' + number + '))?|(?:' + number + ')\s*\*\s*i'
-        complex = '(?P<im_first>(?P<im_first_im_sign>' + sign + ')?\s*(?P<im_first_im_abs>' + imaginary + ')' \
-            '(\s*(?P<im_first_re_sign>' + sign + ')\s*(?P<im_first_re_abs>' + number + '))?)' \
+            number = r'nan(?:\([0-9A-Z_]*\))?|inf(?:inity)?|' + number
+        imaginary = r'i(?:\s*\*\s*(?:' + number + '))?|(?:' + number + r')\s*\*\s*i'
+        complex = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_im_abs>' + imaginary + r')' \
+            r'(\s*(?P<im_first_re_sign>' + sign + r')\s*(?P<im_first_re_abs>' + number + '))?)' \
             '|' \
-            '(?P<re_first>(?P<re_first_re_sign>' + sign + ')?\s*(?P<re_first_re_abs>' + number + ')' \
-            '(\s*(?P<re_first_im_sign>' + sign + ')\s*(?P<re_first_im_abs>' + imaginary + '))?)'
+            '(?P<re_first>(?P<re_first_re_sign>' + sign + r')?\s*(?P<re_first_re_abs>' + number + r')' \
+            r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary + '))?)'
 
-        z = re.match('^\s*(?:' + complex + ')\s*$', string, re.I)
+        z = re.match(r'^\s*(?:' + complex + r')\s*$', string, re.I)
 
     x, y = None, None
     if z is not None:
@@ -207,18 +207,18 @@ cpdef inline split_complex_string(string, int base=10):
             return None
 
         if  z.group(prefix + '_re_abs') is not None:
-            x = z.expand('\g<' + prefix + '_re_abs>')
+            x = z.expand(r'\g<' + prefix + '_re_abs>')
             if z.group(prefix + '_re_sign') is not None:
-                x = z.expand('\g<' + prefix + '_re_sign>') + x
+                x = z.expand(r'\g<' + prefix + '_re_sign>') + x
 
         if z.group(prefix + '_im_abs') is not None:
-            y = re.search('(?P<im_part>' + number + ')', z.expand('\g<' + prefix + '_im_abs>'), re.I)
+            y = re.search('(?P<im_part>' + number + ')', z.expand(r'\g<' + prefix + '_im_abs>'), re.I)
             if y is None:
                 y = '1'
             else:
-                y = y.expand('\g<im_part>')
+                y = y.expand(r'\g<im_part>')
             if z.group(prefix + '_im_sign') is not None:
-                y = z.expand('\g<' + prefix + '_im_sign>') + y
+                y = z.expand(r'\g<' + prefix + '_im_sign>') + y
 
     return x, y
 
@@ -1701,7 +1701,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def cosh(self):
-        """
+        r"""
         Return the hyperbolic cosine of this complex number:
 
         .. MATH::
@@ -1721,7 +1721,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def sinh(self):
-        """
+        r"""
         Return the hyperbolic sine of this complex number:
 
         .. MATH::
@@ -2063,7 +2063,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         return z
 
     def exp(self):
-        """
+        r"""
         Return the exponential of this complex number:
 
         .. MATH::

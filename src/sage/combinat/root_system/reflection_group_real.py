@@ -706,7 +706,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             [0, 1, 2]
         """
         return self._index_set_inverse[i]
-    
+
     def bruhat_cone(self, x, y, side='upper', backend='cdd'):
         r"""
         Return the (upper or lower) Bruhat cone associated to the interval ``[x,y]``.

@@ -1,5 +1,5 @@
 """
-Givaro Finite Field
+Givaro finite fields
 
 Finite fields that are implemented using Zech logs and the
 cardinality must be less than `2^{16}`. By default, Conway polynomials are

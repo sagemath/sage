@@ -265,7 +265,7 @@ class FormalSum(ModuleElement):
         """
         return self.__class__([(s*c, x) for (c, x) in self], check=False, parent=self.parent())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -277,8 +277,6 @@ class FormalSum(ModuleElement):
             True
         """
         return not all(c.is_zero() for c, _ in self._data)
-
-    
 
     def reduce(self):
         """

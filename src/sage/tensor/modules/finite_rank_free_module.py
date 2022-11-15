@@ -721,6 +721,28 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, Parent):
         result._index_maps = tuple(index_maps)
         return result
 
+    def tensor(self, *args, **kwds):
+        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # TensorProductFunctor._functor_name is "tensor", so here we delegate.
+        r"""
+        Return the tensor product of ``self`` and ``others``.
+
+        This method is invoked when :class:`~sage.categories.tensor.TensorProductFunctor`
+        is applied to parents.
+
+        It just delegates to :meth:`tensor_product`.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2); M
+            2-dimensional vector space over the Rational Field
+            sage: M20 = M.tensor_module(2, 0); M20
+            Free module of type-(2,0) tensors on the 2-dimensional vector space over the Rational Field
+            sage: tensor([M20, M20])
+            Free module of type-(4,0) tensors on the 2-dimensional vector space over the Rational Field
+        """
+        return self.tensor_product(*args, **kwds)
+
     def rank(self) -> int:
         r"""
         Return the rank of the free module ``self``.
@@ -2122,7 +2144,7 @@ class FiniteRankFreeModule(FiniteRankFreeModule_abstract):
         TestSuite(b).run(verbose=tester._verbose, prefix=tester._prefix + "  ",
                          raise_on_failure=is_sub_testsuite)
 
-    def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
+    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
                antisym=None):
         r"""
         Construct a tensor on the free module ``self``.
@@ -2131,10 +2153,81 @@ class FiniteRankFreeModule(FiniteRankFreeModule_abstract):
 
         - ``tensor_type`` -- pair ``(k, l)`` with ``k`` being the
           contravariant rank and ``l`` the covariant rank
+
         - ``name`` -- (default: ``None``) string; name given to the tensor
+
         - ``latex_name`` -- (default: ``None``) string;  LaTeX symbol to
           denote the tensor; if none is provided, the LaTeX symbol is set
           to ``name``
+
+        - ``sym`` -- (default: ``None``) a symmetry or an iterable of symmetries
+          among the tensor arguments: each symmetry is described by a tuple
+          containing the positions of the involved arguments, with the
+          convention ``position = 0`` for the first argument. For instance:
+
+          * ``sym = (0,1)`` for a symmetry between the 1st and 2nd arguments
+          * ``sym = [(0,2), (1,3,4)]`` for a symmetry between the 1st and 3rd
+            arguments and a symmetry between the 2nd, 4th and 5th arguments.
+
+        - ``antisym`` -- (default: ``None``) antisymmetry or iterable of
+          antisymmetries among the arguments, with the same convention
+          as for ``sym``
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
+          representing the tensor defined on ``self`` with the provided
+          characteristics
+
+        EXAMPLES:
+
+        Tensors on a rank-3 free module::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: t = M._tensor((1,0), name='t') ; t
+            Element t of the Rank-3 free module M over the Integer Ring
+        """
+        from .comp import CompWithSym
+        sym, antisym = CompWithSym._canonicalize_sym_antisym(
+            tensor_type[0] + tensor_type[1], sym, antisym)
+        # Special cases:
+        if tensor_type == (1,0):
+            return self.element_class(self, name=name, latex_name=latex_name)
+        elif tensor_type == (0,1):
+            return self.linear_form(name=name, latex_name=latex_name)
+        elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
+            if len(antisym[0]) == tensor_type[1]:
+                return self.alternating_form(tensor_type[1], name=name,
+                                             latex_name=latex_name)
+        elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
+            if len(antisym[0]) == tensor_type[0]:
+                return self.alternating_contravariant_tensor(tensor_type[0],
+                                           name=name, latex_name=latex_name)
+        # Generic case:
+        return self.tensor_module(*tensor_type).element_class(self,
+                                 tensor_type, name=name, latex_name=latex_name,
+                                 sym=sym, antisym=antisym)
+
+    def tensor(self, *args, **kwds):
+        r"""
+        Construct a tensor on the free module ``self`` or a tensor product with other modules.
+
+        If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
+
+        Otherwise, construct a tensor from the following input.
+
+        INPUT:
+
+        - ``tensor_type`` -- pair ``(k, l)`` with ``k`` being the
+          contravariant rank and ``l`` the covariant rank
+
+        - ``name`` -- (default: ``None``) string; name given to the tensor
+
+        - ``latex_name`` -- (default: ``None``) string;  LaTeX symbol to
+          denote the tensor; if none is provided, the LaTeX symbol is set
+          to ``name``
+
         - ``sym`` -- (default: ``None``) a symmetry or an iterable of symmetries
           among the tensor arguments: each symmetry is described by a tuple
           containing the positions of the involved arguments, with the
@@ -2189,26 +2282,12 @@ class FiniteRankFreeModule(FiniteRankFreeModule_abstract):
             sage: M.tensor((3,0), antisym=[[]])
             Type-(3,0) tensor on the Rank-3 free module M over the Integer Ring
         """
-        from .comp import CompWithSym
-        sym, antisym = CompWithSym._canonicalize_sym_antisym(
-            tensor_type[0] + tensor_type[1], sym, antisym)
-        # Special cases:
-        if tensor_type == (1,0):
-            return self.element_class(self, name=name, latex_name=latex_name)
-        elif tensor_type == (0,1):
-            return self.linear_form(name=name, latex_name=latex_name)
-        elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
-            if len(antisym[0]) == tensor_type[1]:
-                return self.alternating_form(tensor_type[1], name=name,
-                                             latex_name=latex_name)
-        elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
-            if len(antisym[0]) == tensor_type[0]:
-                return self.alternating_contravariant_tensor(tensor_type[0],
-                                           name=name, latex_name=latex_name)
-        # Generic case:
-        return self.tensor_module(*tensor_type).element_class(self,
-                                 tensor_type, name=name, latex_name=latex_name,
-                                 sym=sym, antisym=antisym)
+        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # TensorProductFunctor._functor_name is "tensor", so this method
+        # also needs to double as the tensor product construction
+        if isinstance(args[0], Parent):
+            return self.tensor_product(*args, **kwds)
+        return self._tensor(*args, **kwds)
 
     def tensor_from_comp(self, tensor_type, comp, name=None, latex_name=None):
         r"""
