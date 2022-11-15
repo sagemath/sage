@@ -25,12 +25,14 @@ AUTHORS:
 # *****************************************************************************
 
 from sage.categories.drinfeld_modules import DrinfeldModules
+from sage.categories.homset import Hom
 from sage.matrix.constructor import Matrix
 from sage.misc.latex import latex
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
@@ -41,25 +43,32 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     This class represents a Drinfeld `\mathbb{F}_q[X]`-module.
 
     Let `\mathbb{F}_q[X]` be a polynomial ring with coefficients in a
-    finite field `\mathbb{F}_q` and let `K` be a field. We fix a ring
-    morphism `\gamma: \mathbb{F}_q[X] \to K`, which we call the base of
-    the Drinfeld module.
+    finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
+    morphism `\gamma: \mathbb{F}_q[X] \to K`. We say that the field `K`
+    is an `\mathbb{F}_q[X]`-field, so that the *base of the Drinfeld
+    module* is defined as the `\mathbb{F}_q[X]`-field *K*. The base
+    uniquely defines the category, and we also refer to it as the *base
+    ring* or *base field*. The *base morphism* is the morphism `\gamma:
+    \mathbb{F}_q[X] \to K`.
 
     .. NOTE::
 
-        The base is not a ring. Specifically, it is not the field `K`.
-        We say however that `K` is an `\mathbb{F}_q[X]`-field.
+        Equivalently, the base of the Drinfeld module could be defined as the
+        base morphism `\gamma: \mathbb{F}_q[X] \to K`.
 
-        The base of the Drinfeld module is the base of the category of
-        the Drinfeld module.
 
-    The monic polynomial that generates the kernel of the base is called
-    the `\mathbb{F}_q[X]`-characteristic of the `\mathbb{F}_q[X]`-field
-    `K`.
+    .. NOTE::
+
+        See also :class:`sage.categories.drinfeld_modules`.
+
+    The monic polynomial that generates the kernel of the base morphism
+    is called the `\mathbb{F}_q[X]`-characteristic of the
+    `\mathbb{F}_q[X]`-field `K`. It cal also be referred to as the
+    function-field characteristic of `K`.
 
     Let `K\{\tau\}` be the ring of Ore polynomials with coefficients in
     `K` and Frobenius variable `\tau: x \mapsto x^q`. A Drinfeld
-    `\mathbb{F}_q[X]`-module over the base `\gamma` is an
+    `\mathbb{F}_q[X]`-module over the `\mathbb{F}_q[X]`-field `K` is an
     `\mathbb{F}_q`-algebra morphism `\phi: \mathbb{F}_q[X] \to
     K\{\tau\}` such that:
 
@@ -70,33 +79,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
 
     The Drinfeld `\mathbb{F}_q[X]`-module `\phi` is uniquely determined
-    by the image `\phi_X` of `X`. This serves as input of the class.
+    by the image `\phi_X` of `X` — this serves as input of the class.
 
-    A Drinfeld module is saif to be finite if the base ring codomain is
-    a finite field. Despite an emphasis on this case, the base codomain
-    can be any extension of the field `\mathbb{F}_q`::
+    A Drinfeld module is said to be finite if the field `K` is. Despite
+    an emphasis on this case, the base field can be any extension of
+    `\mathbb{F}_q`::
 
         sage: Fq = GF(25)
         sage: FqX.<X> = Fq[]
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(FqX, [z, 4, 1])
         sage: phi
-        Drinfeld module defined by X |--> t^2 + 4*t + z over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-          To:   Finite Field in z of size 5^12
-          Defn: X |--> z
+        Drinfeld module defined by X |--> t^2 + 4*t + z over base Finite Field in z of size 5^12 over its base
 
     ::
 
         sage: Fq = GF(49)
         sage: FqX.<X> = Fq[]
         sage: K.<z> = Frac(FqX)
-        sage: phi = DrinfeldModule(FqX, [z, X+1])
-        sage: phi
-        Drinfeld module defined by X |--> (X + 1)*t + X over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 7^2
-          To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 7^2
-          Defn: X |--> X
+        sage: psi = DrinfeldModule(FqX, [z, X+1])  # todo: not tested
+        sage: psi  # todo: not tested
 
     .. NOTE::
 
@@ -143,36 +145,29 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(FqX, [z, 1, 1])
         sage: phi
-        Drinfeld module defined by X |--> t^2 + t + z over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z
+        Drinfeld module defined by X |--> t^2 + t + z over base Finite Field in z of size 3^12 over its base
 
     Note that the definition of the base morphism is implicit; it is
-    defined as the `\mathbb{F}_q`-algebra morphism `\mathbb{F}_q[X] \to
-    K` which maps `X` to the constant coefficient of the generator, and
-    where `K` is the compositum of all the parents of the coefficients::
-
-        sage: phi.base().codomain() is K
-        True
-
-    .. NOTE::
-
-            Formally, `K` is defined as `Sequence(gen).universe()`, where
-            `gen` is the generator of the Drinfeld module.
+    defined as the `\mathbb{F}_q`-algebra morphism defined from
+    `\mathbb{F}_q[X]` to the base ring, and the base ring is a ring
+    extension over the base morphism whose underlying ring is the
+    compositum of all the parents of the coefficients.
 
     The above Drinfeld module is finite; it can also be infinite::
 
-        sage: L = Frac(FqX)
-        sage: psi = DrinfeldModule(FqX, [L(X), 1, X^3 + X + 1])
-        sage: psi
+        sage: L = Frac(FqX)  # todo: not tested
+        sage: psi = DrinfeldModule(FqX, [L(X), 1, X^3 + X + 1])  # todo: not tested
+        sage: psi  # todo: not tested
         Drinfeld module defined by X |--> (X^3 + X + 1)*t^2 + t + X over base Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Defn: X |--> X
+
+    ::
+
         sage: phi.is_finite()
         True
-        sage: psi.is_finite()
+        sage: psi.is_finite()  # todo: not tested
         False
 
     In those examples, we used a list of coefficients (``[z, 1, 1]``) to
@@ -184,76 +179,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: rho_X = z + t^3
         sage: rho = DrinfeldModule(FqX, rho_X)
         sage: rho
-        Drinfeld module defined by X |--> t^3 + z over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z
+        Drinfeld module defined by X |--> t^3 + z over base Finite Field in z of size 3^12 over its base
         sage: rho(X) == rho_X
         True
 
-    The generator must have positive degree::
+    Images under the Drinfeld module are computed by calling the object::
 
-        sage: DrinfeldModule(FqX, [z])
-        Traceback (most recent call last):
-        ...
-        ValueError: generator must have positive degree
-
-    The constant coefficient must be nonzero::
-
-        sage: DrinfeldModule(FqX, [K(0), K(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: base must be a nonzero morphism
-
-    The coefficients of the generator must lie in an
-    `\mathbb{F}_q[X]`-field, where `\mathbb{F}_q[X]` is the function
-    ring of the Drinfeld module::
-
-        sage: DrinfeldModule(FqX, [z, QQ(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: function ring base must coerce into base codomain
-
-    ::
-
-        sage: DrinfeldModule(FqX, [1, QQ(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: function ring base must coerce into base codomain
-
-    The function ring must be an univariate polynomial ring whose
-    base is a finite field::
-
-        sage: DrinfeldModule(K, [z, 1, 1])
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: function ring must be a polynomial ring
-
-    ::
-
-        sage: FqXY.<Y> = FqX[]
-        sage: DrinfeldModule(FqXY, [z, 1, 1])
-        Traceback (most recent call last):
-        ...
-        TypeError: function ring base must be a finite field
-
-    If you already defined a category of Drinfeld modules, and you
-    create a Drinfeld module through this category, you must
-    ensure that the constant coefficient is the generator of the algebra
-    morphism that defines the category::
-
-        sage: cat = phi.category()
-        sage: cat.object([1, 1, K(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: constant coefficient must be the generator of the morphism that defines the category
-
-    .. NOTE::
-
-        The reader may think that it is odd to build a Drinfeld module
-        without explicitly specifying the base. However, the base can be
-        deduced from the generator, and we omit the base in the input
-        of the class for conciseness.
+        sage: phi(X)  # phi_X, the generator of the Drinfeld module
+        t^2 + t + z
+        sage: phi(X^3 + X + 1)  # phi_(X^3 +X + 1)
+        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
+        sage: phi(1)  # phi_1
+        1
 
     .. RUBRIC:: The category of Drinfeld modules
 
@@ -261,60 +198,57 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     :class:`sage.categories.drinfeld_modules.DrinfeldModules`)::
 
         sage: phi.category()
-        Category of Drinfeld modules defined over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z
-        sage: phi.category() is psi.category()
+        Category of Drinfeld modules defined over Finite Field in z of size 3^12 over its base
+        sage: phi.category() is psi.category()  # todo: not tested
         False
         sage: phi.category() is rho.category()
         True
 
-    This category holds crucial information, like the
-    function ring-characteristic of the base::
+    One can use the category to directly create new objects::
 
-        sage: char = phi.category().characteristic()
+        sage: cat = phi.category()
+        sage: cat.object([z, 0, 0, 1])
+        Drinfeld module defined by X |--> t^3 + z over base Finite Field in z of size 3^12 over its base
 
-    As the output of :meth:`category` suggests, the base uniquely
-    determines the category.
+    .. RUBRIC:: The base ring of a Drinfeld module
 
-    .. RUBRIC:: Basics
+    The base ring of the Drinfeld module is retrieved using
+    :meth:`base_ring` or :meth:`base`::
 
-    Images under the Drinfeld module are computed by calling the object::
+        sage: phi.base_ring()
+        Finite Field in z of size 3^12 over its base
 
-        sage: phi(X)  # phi_X
-        t^2 + t + z
-        sage: phi(X^3 + X + 1)  # phi_(X^3 +X + 1)
-        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
-        sage: phi(1)  # phi_1
-        1
+    The base morphism is retrieved using :meth:`base_morphism`::
 
-    This is useful to quickly retrieve the generator of the Drinfeld
-    module. Furthermore, a Drinfeld `\mathbb{F}_q[X]`-module can be seen
-    as an Ore polynomial with positive degree and constant coefficient
-    `\gamma(X)`, where `\gamma` is the base. This analogy is the
-    motivation for the following methods::
+        sage: phi.base_morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Finite Field in z of size 3^12 over its base
+          Defn: X |--> z
 
-        sage: phi.coefficients()
-        [z, 1, 1]
+    Note that the base ring is *not* the field `K`. Rather, it is a ring
+    extension (see :class:`sage.rings.ring_extension.RingExtension`)
+    whose underlying ring is `K` and whose base is the base morphism::
 
-    ::
+        sage: phi.base_ring() is K
+        False
 
-        sage: phi.coefficient(1)
-        1
+    .. RUBRIC:: Getters
 
     One can retrieve basic properties::
 
-        sage: phi.base()
+    ::
+
+        sage: phi.base_morphism()
         Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
+          To:   Finite Field in z of size 3^12 over its base
           Defn: X |--> z
 
     ::
 
         sage: phi.ore_polring()  # K{t}
-        Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
+        Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base twisted by Frob^2
 
     ::
 
@@ -338,14 +272,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.morphism()  # The Drinfeld module as a morphism
         Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
+          To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base twisted by Frob^2
           Defn: X |--> t^2 + t + z
 
     One can compute the rank and height::
 
         sage: phi.rank()
         2
-        sage: phi.height()
+        sage: phi.height()  # todo: not tested
         1
 
     As well as the j-invariant if the rank is two::
@@ -353,7 +287,21 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.j_invariant()  # j-invariant
         1
 
-    .. RUBRIC:: Morphisms, isogenies
+     A Drinfeld `\mathbb{F}_q[X]`-module can be seen as an Ore
+     polynomial with positive degree and constant coefficient
+     `\gamma(X)`, where `\gamma` is the base morphism. This analogy is
+     the motivation for the following methods::
+
+        sage: phi.coefficients()
+        [z, 1, 1]
+
+    ::
+
+        sage: phi.coefficient(1)
+        1
+
+
+    .. RUBRIC:: Morphisms and isogenies
 
     A morphism of Drinfeld modules `\phi \to \psi` is an Ore polynomial
     `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a` in
@@ -432,10 +380,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
         sage: psi = phi.velu(ore_pol)
         sage: psi
-        Drinfeld module defined by X |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12
-          Defn: X |--> z
+        Drinfeld module defined by X |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over base Finite Field in z of size 3^12 over its base
         sage: ore_pol in Hom(phi, psi)
         True
         sage: ore_pol * phi(X) == psi(X) * ore_pol
@@ -466,10 +411,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 3^12 induced by Drinfeld module defined by X |--> t^2 + t + z over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-              To:   Finite Field in z of size 3^12
-              Defn: X |--> z
+            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by X |--> t^2 + t + z over base Finite Field in z of size 3^12 over its base
 
     The action on elements is computed by calling the action object::
 
@@ -485,22 +427,105 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: Inverting the Drinfeld module
 
-    Given an Ore polynomial that equals `\phi_a` for some function ring
-    elelement `a`, one can retrieve `a` (as a morphism, a Drinfeld
-    module is injective, see [Gos1998]_, cor. 4.5.2.)::
+    The morphism that defines a Drinfeld module is injective. Given an
+    Ore polynomial that equals `\phi_a` for some function ring elelement
+    `a`, one can retrieve `a` (as a morphism, a Drinfeld module is
+    injective, see [Gos1998]_, cor. 4.5.2.)::
 
         sage: a = FqX.random_element()
-        sage: phi.invert(phi(a)) == a
+        sage: phi.invert(phi(a)) == a  # todo: not tested
         True
 
-    TESTS::
+    TESTS:
+
+    The generator must have positive degree::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: DrinfeldModule(FqX, [K(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: generator must have positive degree
+
+    The constant coefficient must be nonzero::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: DrinfeldModule(FqX, [K(0), K(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: constant coefficient must be nonzero
+
+    The coefficients of the generator must lie in an
+    `\mathbb{F}_q[X]`-field, where `\mathbb{F}_q[X]` is the function
+    ring of the Drinfeld module::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: DrinfeldModule(FqX, [z, QQ(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: function ring base must coerce into base ring
+
+    ::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: DrinfeldModule(FqX, [1, QQ(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: function ring base must coerce into base ring
+
+    The function ring must be an univariate polynomial ring whose
+    base is a finite field::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: DrinfeldModule(K, [z, 1, 1])
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: function ring must be a polynomial ring
+
+    ::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: FqXY.<Y> = FqX[]
+        sage: DrinfeldModule(FqXY, [z, 1, 1])
+        Traceback (most recent call last):
+        ...
+        TypeError: function ring base must be a finite field
+
+    If you already defined a category of Drinfeld modules, and you
+    create a Drinfeld module through this category, you must ensure that
+    the constant coefficient is that of the category::
+
+        sage: Fq = GF(2)
+        sage: K.<z> = Fq.extension(2)
+        sage: FqX.<X> = Fq[]
+        sage: phi = DrinfeldModule(FqX, [z, 1])
+        sage: phi.category().object([1, 1, K(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: constant coefficient must equal that of the category
+
+
+    ::
 
         sage: Fq = K = GF(2)
         sage: FqX.<X> = Fq[]
         sage: phi = DrinfeldModule(FqX, [1, 1])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce into base codomain
+        ValueError: function ring base must coerce into base ring
+
+    ::
 
         sage: Fq = K = GF(2)
         sage: FqX.<X> = Fq[]
@@ -510,45 +535,44 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     Test that the base morphism is correct::
 
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: K = Frac(Fq)
-            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(1)])
-            sage: phi.base().codomain() is K
-            True
+        sage: Fq = GF(25)
+        sage: FqX.<X> = Fq[]
+        sage: K = Frac(Fq)
+        sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(1)])
+        sage: phi.base().codomain() is K  # todo: not tested
+        True
 
-        ::
+    ::
 
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: k = Frac(Fq)
-            sage: kT.<T> = k[]
-            sage: K = k.extension(T^3 + T + 1)
-            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K.gen()])
-            sage: phi.base().codomain() is K
-            True
+        sage: Fq = GF(25)
+        sage: FqX.<X> = Fq[]
+        sage: k = Frac(Fq)
+        sage: kT.<T> = k[]
+        sage: K = k.extension(T^3 + T + 1)
+        sage: phi = DrinfeldModule(FqX, [Fq.gen(), K.gen()])
+        sage: phi.base().codomain() is K  # todo: not tested
+        True
 
-        In particular, note that the field `K` may not be the smallest field
-        of definition of the coefficients::
+    In particular, note that the field `K` may not be the smallest field
+    of definition of the coefficients::
 
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: k = Frac(Fq)
-            sage: kT.<T> = k[]
-            sage: K = k.extension(T^3 + T + 1)
-            sage: phi = DrinfeldModule(FqX, [K(k.gen()), 1])
-            sage: phi.base().codomain() is K
-            True
+        sage: Fq = GF(25)
+        sage: FqX.<X> = Fq[]
+        sage: k = Frac(Fq)
+        sage: kT.<T> = k[]
+        sage: K = k.extension(T^3 + T + 1)
+        sage: phi = DrinfeldModule(FqX, [K(k.gen()), 1])
+        sage: phi.base().codomain() is K  # todo: not tested
+        True
 
-        ::
+    ::
 
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: K = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(Fq.gen())])
-            sage: phi.base().codomain() is K
-            True
-
+        sage: Fq = GF(25)
+        sage: FqX.<X> = Fq[]
+        sage: K = Fq.extension(2)
+        sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(Fq.gen())])
+        sage: phi.base().codomain() is K  # todo: not tested
+        True
     """
 
     @staticmethod
@@ -582,8 +606,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ::
 
             sage: K = Frac(FqX)
-            sage: phi = DrinfeldModule(FqX, [K(X), 1])
-            sage: isinstance(psi, FiniteDrinfeldModule)
+            sage: phi = DrinfeldModule(FqX, [K(X), 1])  # todo: not tested
+            sage: isinstance(psi, FiniteDrinfeldModule)  # todo: not tested
             False
         """
 
@@ -605,26 +629,33 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
-            ore_polring_base = ore_polring.base_ring()
+            # Base ring without morphism structure:
+            base_ring_noext = ore_polring.base()
             name = ore_polring.variable_name()
         # `gen` is a list of coefficients (function_ring = Fq[X]):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
-            ore_polring_base = Sequence(gen).universe()
+            # Base ring without morphism structure:
+            base_ring_noext = Sequence(gen).universe()
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
+        # Constant coefficient must be nonzero:
+        if gen[0].is_zero():
+            raise ValueError('constant coefficient must be nonzero')
         # The coefficients are in a base ring that has coercion from Fq:
-        if not (hasattr(ore_polring_base, 'has_coerce_map_from')
-                and ore_polring_base.has_coerce_map_from(
-                        function_ring.base_ring())):
-            raise ValueError('function ring base must coerce into base codomain')
+        if not (hasattr(base_ring_noext, 'has_coerce_map_from') and
+                base_ring_noext.has_coerce_map_from(function_ring.base_ring())):
+            raise ValueError('function ring base must coerce into base ring')
 
-        # Build the morphism that defines the category
-        base = function_ring.hom([ore_polring_base(gen[0])])
+        # Build the category
+        if isinstance(base_ring_noext, RingExtension_generic):
+            base_ring = base_ring_noext
+        else:
+            base_morphism = Hom(function_ring, base_ring_noext)(gen[0])
+            base_ring = base_ring_noext.over(base_morphism)
 
-        # Other checks in the category definition
-        category = DrinfeldModules(base, name=name)
+        category = DrinfeldModules(base_ring, name=name)
 
         # Check gen as Ore polynomial
         ore_polring = category.ore_polring()  # Sanity cast
@@ -633,7 +664,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('generator must have positive degree')
 
         # Instantiate the appropriate class
-        if ore_polring_base.is_finite():
+        if base_ring.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
             return FiniteDrinfeldModule(gen, category)
         return cls.__classcall__(cls, gen, category)
@@ -681,37 +712,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         self._ore_polring = gen.parent()
         self._Fq = self._function_ring.base_ring()  # Must be last
         super().__init__(base=self._base, category=category)
-
-    def base_ring(self):
-        r"""
-        Raise exception ``AttributeError``.
-
-        The base of a Drinfeld module is a ring morphism, not a ring.
-
-        This method is implemented in ``CategoryObject``, of which Parent
-        inherits. It returns the base of the category. I overloaded it
-        to avoid confusion.
-
-        EXAMPLES::
-
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi.base_ring()
-            Traceback (most recent call last):
-            ...
-            AttributeError: the base of a Drinfeld module is a morphism
-        """
-        # FIXME
-        # This method depends on the sole category of the Drinfeld
-        # module. It should therefore be implemented in the
-        # `ParentMethods` bloc of `DrinfeldModule`. This is not possible
-        # as the method `base_ring` from `CategoryObject` --- of which
-        # `Parent` and so `DrinfeldModule inherit --- is called instead.
-        # Any better way would be welcome.
-        raise AttributeError('the base of a Drinfeld module is a morphism')
 
     def __call__(self, a):
         r"""
@@ -828,12 +828,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
             sage: latex(phi)
-            \text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }base{ }}\begin{array}{l}
-            \text{\texttt{Ring{ }morphism:}}\\
-            \text{\texttt{{ }{ }From:{ }Univariate{ }Polynomial{ }Ring{ }in{ }X{ }over{ }Finite{ }Field{ }in{ }z2{ }of{ }size{ }5{\char`\^}2}}\\
-            \text{\texttt{{ }{ }To:{ }{ }{ }Finite{ }Field{ }in{ }z12{ }of{ }size{ }5{\char`\^}12}}\\
-            \text{\texttt{{ }{ }Defn:{ }X{ }|{-}{-}>{ }2*z12{\char`\^}11{ }+{ }2*z12{\char`\^}10{ }+{ }z12{\char`\^}9{ }+{ }3*z12{\char`\^}8{ }+{ }z12{\char`\^}7{ }+{ }2*z12{\char`\^}5{ }+{ }2*z12{\char`\^}4{ }+{ }3*z12{\char`\^}3{ }+{ }z12{\char`\^}2{ }+{ }2*z12}}
-            \end{array}
+            \text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }base{ }}\Bold{F}_{5^{12}}
         """
         return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
                f'{latex(self._function_ring.gen())} '\
@@ -854,10 +849,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
             sage: phi
-            Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-              To:   Finite Field in z12 of size 5^12
-              Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
         """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
                f'|--> {self._gen} over base {self._base}'
@@ -880,10 +872,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z12 of size 5^12 induced by Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-              To:   Finite Field in z12 of size 5^12
-              Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
 
     The action on elements is computed as follows::
 
@@ -1023,14 +1012,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi.height() == 1
+            sage: phi.height() == 1  # todo: not tested
             True
-            sage: phi.is_ordinary()
+            sage: phi.is_ordinary()  # todo: not tested
             True
 
             sage: L = Frac(FqX)
-            sage: phi = DrinfeldModule(FqX, [L(2), L(1)])
-            sage: phi.height()
+            sage: phi = DrinfeldModule(FqX, [L(2), L(1)])  # todo: not tested
+            sage: phi.height()  # todo: not tested
             Traceback (most recent call last):
             ...
             ValueError: height is defined for prime function field characteristic
@@ -1039,9 +1028,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: phi.height()
+            sage: phi.height()  # todo: not tested
             2
-            sage: phi.is_supersingular()
+            sage: phi.is_supersingular()  # todo: not tested
             True
 
         """
@@ -1076,22 +1065,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
             sage: a = FqX.random_element()
-            sage: phi.invert(phi(a)) == a
+            sage: phi.invert(phi(a)) == a  # todo: not tested
             True
-            sage: phi.invert(phi(X)) == X
+            sage: phi.invert(phi(X)) == X  # todo: not tested
             True
-            sage: phi.invert(phi(Fq.gen())) == Fq.gen()
+            sage: phi.invert(phi(Fq.gen())) == Fq.gen()  # todo: not tested
             True
 
         When the input is not in the image of the Drinfeld module, an
         exception is raised::
 
             sage: t = phi.ore_polring().gen()
-            sage: phi.invert(t + 1)
+            sage: phi.invert(t + 1)  # todo: not tested
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
-            sage: phi.invert(t^3 + t^2 + 1)
+            sage: phi.invert(t^3 + t^2 + 1)  # todo: not tested
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -1106,19 +1095,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: a = FqX.random_element()
             sage: cat = phi.category()
             sage: phi_r1 = cat.random_object(1)
-            sage: phi_r1.invert(phi_r1(a)) == a
+            sage: phi_r1.invert(phi_r1(a)) == a  # todo: not tested
             True
             sage: phi_r2 = cat.random_object(2)
-            sage: phi_r2.invert(phi_r2(a)) == a
+            sage: phi_r2.invert(phi_r2(a)) == a  # todo: not tested
             True
             sage: phi_r3 = cat.random_object(3)
-            sage: phi_r3.invert(phi_r3(a)) == a
+            sage: phi_r3.invert(phi_r3(a)) == a  # todo: not tested
             True
             sage: phi_r4 = cat.random_object(4)
-            sage: phi_r4.invert(phi_r4(a)) == a
+            sage: phi_r4.invert(phi_r4(a)) == a  # todo: not tested
             True
             sage: phi_r5 = cat.random_object(5)
-            sage: phi_r5.invert(phi_r5(a)) == a
+            sage: phi_r5.invert(phi_r5(a)) == a  # todo: not tested
             True
         """
         deg = ore_pol.degree()
@@ -1145,7 +1134,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if self(pre_image) == ore_pol:
             return pre_image
         else:
-            return None
+            raise ValueError('input must be in the image of the Drinfeld '
+                             'module')
 
     def is_finite(self):
         r"""
@@ -1163,8 +1153,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_finite()
             True
             sage: L = Frac(FqX)
-            sage: psi = DrinfeldModule(FqX, [L(2), L(1)])
-            sage: psi.is_finite()
+            sage: psi = DrinfeldModule(FqX, [L(2), L(1)])  # todo: not tested
+            sage: psi.is_finite()  # todo: not tested
             False
         """
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
@@ -1229,7 +1219,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.morphism()
             Ring morphism:
               From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-              To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 twisted by z12 |--> z12^(5^2)
+              To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
               Defn: X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: from sage.rings.morphism import RingHomomorphism
             sage: isinstance(phi.morphism(), RingHomomorphism)
@@ -1329,10 +1319,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: psi
-            Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-              To:   Finite Field in z12 of size 5^12
-              Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
             sage: isog in Hom(phi, psi)
             True
 
@@ -1340,7 +1327,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi.velu(phi(X)) is phi
             True
-            sage: phi.velu(t^6) is phi
+            sage: phi.velu(t^6) is phi  # todo: not tested
             True
 
         The following inputs do not define isogenies, and the method

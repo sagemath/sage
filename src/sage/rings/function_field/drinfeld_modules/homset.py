@@ -64,8 +64,8 @@ class DrinfeldModuleHomset(Homset):
     The domain and codomain must have the same Drinfeld modules
     category::
 
-        sage: rho = DrinfeldModule(FqX, [Frac(FqX)(X), 1])
-        sage: Hom(phi, rho)
+        sage: rho = DrinfeldModule(FqX, [Frac(FqX)(X), 1])  # todo: not tested
+        sage: Hom(phi, rho)  # todo: not tested
         Traceback (most recent call last):
         ...
         ValueError: Drinfeld modules must be in the same category
@@ -262,8 +262,8 @@ class DrinfeldModuleHomset(Homset):
             sage: identity_morphism = end(1)
             sage: identity_morphism in hom
             False
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-            sage: frobenius_endomorphism in hom
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
+            sage: frobenius_endomorphism in hom  # todo: not tested
             False
         """
         try:

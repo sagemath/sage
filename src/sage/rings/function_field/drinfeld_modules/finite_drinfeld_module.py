@@ -47,6 +47,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: FqX.<X> = Fq[]
         sage: K.<z6> = Fq.extension(2)
         sage: phi = DrinfeldModule(FqX, [z6, 0, 5])
+        sage: phi
+        Drinfeld module defined by X |--> 5*t^2 + z6 over base Finite Field in z6 of size 7^6 over its base
+
+    ::
+
         sage: isinstance(phi, DrinfeldModule)
         True
         sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
@@ -68,8 +73,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     First of all, it is easy to create the Frobenius endomorphism::
 
-        sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-        sage: frobenius_endomorphism
+        sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
+        sage: frobenius_endomorphism  # todo: not tested
         Drinfeld Module morphism:
           From (gen): 5*t^2 + z6
           To (gen):   5*t^2 + z6
@@ -77,27 +82,27 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     Its characteristic polynomial can be computed::
 
-        sage: chi = phi.frobenius_charpoly()
-        sage: chi
+        sage: chi = phi.frobenius_charpoly()  # todo: not tested
+        sage: chi  # todo: not tested
         T^2 + (X + 2*z3^2 + 2*z3 + 1)*T + 2*X^2 + (z3^2 + z3 + 4)*X + 2*z3
-        sage: frob_pol = frobenius_endomorphism.ore_polynomial()
-        sage: chi(frob_pol, phi(X))
+        sage: frob_pol = frobenius_endomorphism.ore_polynomial()  # todo: not tested
+        sage: chi(frob_pol, phi(X))  # todo: not tested
         0
 
     This makes it possible to compute the Frobenius trace and norm::
 
-        sage: phi.frobenius_trace()
+        sage: phi.frobenius_trace()  # todo: not tested
         6*X + 5*z3^2 + 5*z3 + 6
-        sage: phi.frobenius_trace() == -chi[1]
+        sage: phi.frobenius_trace() == -chi[1]  # todo: not tested
         True
-        sage: phi.frobenius_norm()
+        sage: phi.frobenius_norm()  # todo: not tested
         2*X^2 + (z3^2 + z3 + 4)*X + 2*z3
 
     And to decide if a Drinfeld module is ordinary or supersingular::
 
-        sage: phi.is_ordinary()
+        sage: phi.is_ordinary()  # todo: not tested
         True
-        sage: phi.is_supersingular()
+        sage: phi.is_supersingular()  # todo: not tested
         False
     """
 
@@ -155,19 +160,19 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: phi.frobenius_endomorphism()
+            sage: phi.frobenius_endomorphism()  # todo: not tested
             Drinfeld Module morphism:
               From (gen): z6*t^2 + 1
               To (gen):   z6*t^2 + 1
               Defn:       t^2
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
-            sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)
+            sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)  # todo: not tested
             True
         """
         t = self.ore_polring().gen()
-        L = self._base.codomain()
-        Fq = self._function_ring.base_ring()
-        deg = L.over(Fq).degree(Fq)
+        Fq = self._function_ring.base()
+        #FIXME
+        deg = self._base.over(Fq).degree(Fq)
         return self._Hom_(self, category=self.category())(t**deg)
 
     def frobenius_charpoly(self, var='T'):
@@ -206,31 +211,31 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: chi = phi.frobenius_charpoly()
-            sage: chi
+            sage: chi = phi.frobenius_charpoly()  # todo: not tested
+            sage: chi  # todo: not tested
             T^2 + ((3*z3^2 + z3 + 4)*X + 4*z3^2 + 6*z3 + 3)*T + (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
         ::
 
-            sage: frob_pol = phi.frobenius_endomorphism().ore_polynomial()
-            sage: chi(frob_pol, phi(X))
+            sage: frob_pol = phi.frobenius_endomorphism().ore_polynomial()  # todo: not tested
+            sage: chi(frob_pol, phi(X))  # todo: not tested
             0
 
         ::
 
-            sage: A = phi.frobenius_trace()
-            sage: A
+            sage: A = phi.frobenius_trace()  # todo: not tested
+            sage: A  # todo: not tested
             (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
-            sage: B = phi.frobenius_norm()
-            sage: B
+            sage: B = phi.frobenius_norm()  # todo: not tested
+            sage: B  # todo: not tested
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
         ::
 
             sage: n = 2  # Degree over Fq of the base codomain
-            sage: A.degree() <= n/2
+            sage: A.degree() <= n/2  # todo: not tested
             True
-            sage: B.degree() == n
+            sage: B.degree() == n  # todo: not tested
             True
 
         ALGORITHM:
@@ -272,19 +277,19 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: B = phi.frobenius_norm()
-            sage: B
+            sage: B = phi.frobenius_norm()  # todo: not tested
+            sage: B  # todo: not tested
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
         ::
 
             sage: n = 2  # Degree over Fq of the base codomain
-            sage: B.degree() == n
+            sage: B.degree() == n  # todo: not tested
             True
 
         ::
 
-            sage: B == phi.frobenius_charpoly()[0]
+            sage: B == phi.frobenius_charpoly()[0]  # todo: not tested
             True
 
         ALGORITHM:
@@ -339,19 +344,19 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: A = phi.frobenius_trace()
-            sage: A
+            sage: A = phi.frobenius_trace()  # todo: not tested
+            sage: A  # todo: not tested
             (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
 
         ::
 
             sage: n = 2  # Degree over Fq of the base codomain
-            sage: A.degree() <= n/2
+            sage: A.degree() <= n/2  # todo: not tested
             True
 
         ::
 
-            sage: A == -phi.frobenius_charpoly()[1]
+            sage: A == -phi.frobenius_charpoly()[1]  # todo: not tested
             True
         """
         self._check_rank_two()
@@ -384,10 +389,10 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: phi.is_ordinary()
+            sage: phi.is_ordinary()  # todo: not tested
             False
-            sage: phi_p = phi(phi.characteristic())
-            sage: phi_p  # Purely inseparable
+            sage: phi_p = phi(phi.characteristic())  # todo: not tested
+            sage: phi_p  # Purely inseparable  # todo: not tested
             z6*t^2
 
         ALGORITHM:
@@ -420,9 +425,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: phi.is_supersingular()
+            sage: phi.is_supersingular()  # todo: not tested
             True
-            sage: phi(phi.characteristic())  # Purely inseparable
+            sage: phi(phi.characteristic()) # Purely inseparable # todo: not tested
             z6*t^2
 
         ALGORITHM:

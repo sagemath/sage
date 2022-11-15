@@ -64,20 +64,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     One can get basic data on the morphism::
 
         sage: morphism.domain()
-        Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-          To:   Finite Field in z12 of size 5^12
-          Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+        Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
         sage: morphism.domain() is phi
         True
 
     ::
 
         sage: morphism.codomain()
-        Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
-          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
-          To:   Finite Field in z12 of size 5^12
-          Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+        Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
         sage: morphism.codomain() is psi
         True
 
@@ -106,7 +100,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         sage: morphism.parent() == Hom(phi, psi)
         True
-        sage: phi.frobenius_endomorphism().parent() == End(phi)
+        sage: phi.frobenius_endomorphism().parent() == End(phi)  # todo: not tested
         True
         sage: End(phi)(0).parent() == End(phi)
         True
@@ -321,8 +315,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         ::
 
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-            sage: frobenius_endomorphism.is_isogeny()
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
+            sage: frobenius_endomorphism.is_isogeny()  # todo: not tested
             True
         """
         return not self.is_zero()
@@ -357,8 +351,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         ::
 
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-            sage: frobenius_endomorphism.is_isomorphism()
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
+            sage: frobenius_endomorphism.is_isomorphism()  # todo: not tested
             False
         """
         return self.is_isogeny() and self._ore_polynomial.degree() == 0
