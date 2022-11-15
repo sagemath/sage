@@ -35,7 +35,6 @@ htmlhelp_basename = name
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name+'.tex', 'Sage Turu',
+  ('index', name + '.tex', 'Sage Turu',
    'The Sage Development Team', 'manual'),
 ]
-

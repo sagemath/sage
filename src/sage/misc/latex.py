@@ -1859,7 +1859,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         sage: with NamedTemporaryFile(mode="w+t", suffix=".tex") as f:  # optional - latex latex_package_tkz_graph
         ....:     _ = f.write(_latex_file_(g))
         ....:     f.flush()
-        ....:     _run_latex_(file, engine="pdflatex")
+        ....:     _run_latex_(f.name, engine="pdflatex")
         'pdf'
 
         sage: view(4, margin=5, debug=True)     # not tested

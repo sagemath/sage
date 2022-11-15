@@ -101,7 +101,7 @@ pypi-wheels:
 	    rm -f venv/var/lib/sage/installed/$$a-*; \
 	done
 	for a in $(PYPI_WHEEL_PACKAGES); do \
-	    $(MAKE) SAGE_EDITABLE=no $$a; \
+	    $(MAKE) SAGE_EDITABLE=no SAGE_WHEELS=yes $$a; \
 	done
 	@echo "Built wheels are in venv/var/lib/sage/wheels/"
 
@@ -112,7 +112,7 @@ wheels:
 	    rm -f venv/var/lib/sage/installed/$$a-*; \
 	done
 	for a in $(WHEEL_PACKAGES); do \
-	    $(MAKE) SAGE_EDITABLE=no $$a; \
+	    $(MAKE) SAGE_EDITABLE=no SAGE_WHEELS=yes $$a; \
 	done
 	@echo "Built wheels are in venv/var/lib/sage/wheels/"
 

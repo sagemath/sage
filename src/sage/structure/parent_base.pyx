@@ -41,4 +41,3 @@ cdef class ParentWithBase(Parent_old):
         check_old_coerce(self)
         raise CoercionException("BUG: the base_extend method must be defined for '%s' (class '%s')" %
                                 (self, type(self)))
-

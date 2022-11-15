@@ -1200,8 +1200,8 @@ cdef class SingularFunction(SageObject):
 
         - ``args`` -- a list of arguments
         - ``ring`` -- a multivariate polynomial ring
-        - ``interruptible`` -- if ``True`` pressing Ctrl-C during the
-          execution of this function will interrupt the computation
+        - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C`
+          during the execution of this function will interrupt the computation
           (default: ``True``)
 
         - ``attributes`` -- a dictionary of optional Singular
@@ -1332,7 +1332,7 @@ INPUT:
 
 - ``args`` -- a list of arguments
 - ``ring`` -- a multivariate polynomial ring
-- ``interruptible`` -- if ``True`` pressing Ctrl-C during the
+- ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C` during the
   execution of this function will interrupt the computation
   (default: ``True``)
 - ``attributes`` -- a dictionary of optional Singular attributes

@@ -17,7 +17,6 @@ Partition Species
 #*****************************************************************************
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import _integers_from
 from sage.arith.misc import factorial
 from .subset_species import SubsetSpeciesStructure
 from .set_species import SetSpecies
@@ -152,9 +151,9 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: P.generating_series().coefficients(5)
+            sage: P.generating_series()[0:5]
             [1, 1, 1, 5/6, 5/8]
-            sage: P.isotype_generating_series().coefficients(5)
+            sage: P.isotype_generating_series()[0:5]
             [1, 1, 2, 3, 5]
 
             sage: P = species.PartitionSpecies()
@@ -233,20 +232,19 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         breaks = [sum(p[:i]) for i in range(len(p) + 1)]
         return structure_class(self, labels, [list(range(breaks[i]+1, breaks[i+1]+1)) for i in range(len(p))])
 
-    def _gs_iterator(self, base_ring):
+    def _gs_callable(self, base_ring, n):
         r"""
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
             sage: g = P.generating_series()
-            sage: g.coefficients(5)
+            sage: [g.coefficient(i) for i in range(5)]
             [1, 1, 1, 5/6, 5/8]
         """
         from sage.combinat.combinat import bell_number
-        for n in _integers_from(0):
-            yield self._weight * base_ring(bell_number(n) / factorial(n))
+        return self._weight * base_ring(bell_number(n) / factorial(n))
 
-    def _itgs_iterator(self, base_ring):
+    def _itgs_callable(self, base_ring, n):
         r"""
         The isomorphism type generating series is given by
         `\frac{1}{1-x}`.
@@ -255,12 +253,11 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
             sage: P = species.PartitionSpecies()
             sage: g = P.isotype_generating_series()
-            sage: g.coefficients(10)
+            sage: [g.coefficient(i) for i in range(10)]
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         from sage.combinat.partition import number_of_partitions
-        for n in _integers_from(0):
-            yield self._weight*base_ring(number_of_partitions(n))
+        return self._weight*base_ring(number_of_partitions(n))
 
     def _cis(self, series_ring, base_ring):
         r"""
@@ -276,7 +273,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
             sage: P = species.PartitionSpecies()
             sage: g = P.cycle_index_series()
-            sage: g.coefficients(5)
+            sage: g[0:5]
             [p[],
              p[1],
              p[1, 1] + p[2],
@@ -284,7 +281,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
              5/8*p[1, 1, 1, 1] + 7/4*p[2, 1, 1] + 7/8*p[2, 2] + p[3, 1] + 3/4*p[4]]
         """
         ciset = SetSpecies().cycle_index_series(base_ring)
-        res = ciset.composition(ciset - 1)
+        res = ciset(ciset - 1)
         if self.is_weighted():
             res *= self._weight
         return res

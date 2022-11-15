@@ -1464,4 +1464,3 @@ def random_boolean_function(n):
         sig_check()
         T.bits[i] = r.randrange(0,Integer(1)<<(sizeof(unsigned long)*8))
     return B
-

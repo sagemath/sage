@@ -47,8 +47,10 @@ AUTHORS:
 
 - Simon King (2013-02): added examples
 """
+
 # ****************************************************************************
-#  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>, William Stein <wstein@gmail.com>
+#  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>,
+#                     William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -61,7 +63,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 
 from sage.categories.category import Category, JoinCategory
 from . import morphism
@@ -85,7 +86,6 @@ def Hom(X, Y, category=None, check=True):
     Create the space of homomorphisms from X to Y in the category ``category``.
 
     INPUT:
-
 
     - ``X`` -- an object of a category
 
@@ -734,7 +734,7 @@ class Homset(Set_generic):
         """
         return hash((self._domain, self._codomain, self.base()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         TESTS::
 
@@ -742,8 +742,6 @@ class Homset(Set_generic):
             True
         """
         return True
-
-    
 
     def homset_category(self):
         """
@@ -1083,7 +1081,7 @@ class Homset(Set_generic):
             True
         """
         return not (self == other)
-    
+
     def __contains__(self, x):
         """
         Test whether the parent of the argument is ``self``.

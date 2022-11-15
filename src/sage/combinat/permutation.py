@@ -2216,8 +2216,8 @@ class Permutation(CombinatorialElement):
 
     def longest_increasing_subsequences(self):
         r"""
-        Return the list of the longest increasing subsequences of ``self``
-        
+        Return the list of the longest increasing subsequences of ``self``.
+
         A theorem of Schensted ([Sch1961]_) states that an increasing
         subsequence of length `i` ends with the value entered in the `i`-th
         column of the p-tableau. The algorithm records which column of the
@@ -2247,9 +2247,9 @@ class Permutation(CombinatorialElement):
         # getting the column in which each element is inserted
         first_row_p_tableau = []
         columns = []
-        D = DiGraph(n+2)
+        D = DiGraph(n + 2)
         for x in self._list:
-            j = bisect(first_row_p_tableau, x) 
+            j = bisect(first_row_p_tableau, x)
             if j == len(first_row_p_tableau):
                 if columns:
                     for k in columns[-1]:
@@ -7550,6 +7550,32 @@ def from_lehmer_code(lehmer, parent=None):
 
     if parent is None:
         parent = Permutations()
+    return parent(p)
+
+def from_lehmer_cocode(lehmer, parent=Permutations()):
+    r"""
+    Return the permutation with Lehmer cocode ``lehmer``.
+
+    The Lehmer cocode of a permutation `p` is defined as the
+    list `(c_1, c_2, \ldots, c_n)`, where `c_i` is the number
+    of `j < i` such that `p(j) > p(i)`.
+
+    EXAMPLES::
+
+        sage: import sage.combinat.permutation as permutation
+        sage: lcc = Permutation([2,1,5,4,3]).to_lehmer_cocode(); lcc
+        [0, 1, 0, 1, 2]
+        sage: permutation.from_lehmer_cocode(lcc)
+        [2, 1, 5, 4, 3]
+    """
+    p = []
+    ell = len(lehmer)
+    i = ell-1
+    open_spots = list(range(1, ell+1))
+    for ivi in reversed(lehmer):
+        p.append(open_spots.pop(i-ivi))
+        i -= 1
+    p.reverse()
     return parent(p)
 
 def from_reduced_word(rw, parent=None):

@@ -39,9 +39,10 @@ following sections:
 
 - :ref:`Saving`
 
-This tutorial assumes that one is familiar with the basics of Sage, such
-as evaluating a cell by clicking the "evaluate" link, or by pressing
-Shift\-Enter (hold down Shift while pressing the Enter key).
+This tutorial assumes that one is familiar with the basics of Sage,
+such as evaluating a cell by clicking the "evaluate" link, or by
+pressing :kbd:`Shift` + :kbd:`Enter` (hold down :kbd:`Shift` while
+pressing the :kbd:`Enter` key).
 
 .. fixme - if log plots are in by the time this makes it in, put them in!!!
 

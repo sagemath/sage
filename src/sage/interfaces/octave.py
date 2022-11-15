@@ -156,14 +156,17 @@ class Octave(Expect):
 
     EXAMPLES::
 
-        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]")    # optional - octave
-        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33\n'
-        sage: octave.eval("b = [ 1; 3; 13]")                         # optional - octave
-        'b =\n\n 1\n 3\n 13\n'
-        sage: octave.eval(r"c=a \ b") # solves linear equation: a*c = b  # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
-        sage: octave.eval("c")                                 # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
+        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]").strip()    # optional - octave
+        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33'
+        sage: octave.eval("b = [ 1; 3; 13]").strip()                         # optional - octave
+        'b =\n\n 1\n 3\n 13'
+
+    The following solves the linear equation: a*c = b::
+
+        sage: octave.eval(r"c=a \ b").strip()          # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
+        sage: octave.eval("c").strip()                 # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
 
     TESTS:
 

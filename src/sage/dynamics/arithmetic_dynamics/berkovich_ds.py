@@ -1,5 +1,5 @@
 r"""
-Dynamical systmes on Berkovich space over `\CC_p`.
+Dynamical systems on Berkovich space over `\CC_p`.
 
 A dynamical system on Berkovich space over `\CC_p` is
 determined by a dynamical system on `A^1(\CC_p)` or `P^1(\CC_p)`,

@@ -2200,7 +2200,7 @@ class RightQuantumWord:
 
         .. TODO::
 
-            Paralellize this function, calculating all summands in the sum
+            Parallelize this function, calculating all summands in the sum
             in parallel.
         """
         M = self._algebra._indices
@@ -2245,7 +2245,7 @@ class RightQuantumWord:
 
         .. TODO::
 
-            Paralellize this function, calculating all summands in the sum
+            Parallelize this function, calculating all summands in the sum
             in parallel.
         """
         def eps_monom(q_tuple):

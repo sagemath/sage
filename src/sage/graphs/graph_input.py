@@ -371,6 +371,8 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
 
+    .. NOTE:: ``weighted`` is currently ignored.
+
     EXAMPLES::
 
         sage: from sage.graphs.graph_input import from_oriented_incidence_matrix
@@ -426,8 +428,6 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
             positions.append(tuple(NZ))
         else:
             positions.append((NZ[1], NZ[0]))
-    if weighted is None:
-        weighted = False
     if multiedges is None:
         total = len(positions)
         multiedges = len(set(positions)) < total

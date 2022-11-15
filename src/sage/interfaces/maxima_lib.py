@@ -158,14 +158,14 @@ ecl_eval(r"""
                             (mterpri))))))))
 """)
 
-## Redirection of ECL and Maxima stdout to /dev/null
+# Redirection of ECL and Maxima stdout to /dev/null
 ecl_eval(r"""(defparameter *dev-null* (make-two-way-stream
               (make-concatenated-stream) (make-broadcast-stream)))""")
 ecl_eval("(setf original-standard-output *standard-output*)")
 ecl_eval("(setf *standard-output* *dev-null*)")
 #ecl_eval("(setf *error-output* *dev-null*)")
 
-## Default options set in Maxima
+# Default options set in Maxima
 # display2d -- no ascii art output
 # keepfloat -- don't automatically convert floats to rationals
 
@@ -183,48 +183,21 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 init_code.append('nolabels : true')
 for l in init_code:
     ecl_eval("#$%s$"%l)
-## To get more debug information uncomment the next line
-## should allow to do this through a method
+# To get more debug information uncomment the next line
+# should allow to do this through a method
 #ecl_eval("(setf *standard-output* original-standard-output)")
 
-## This is the main function (ECL object) used for evaluation
+# This is the main function (ECL object) used for evaluation
 # This returns an EclObject
 maxima_eval=ecl_eval("""
 (defun maxima-eval( form )
-    (let ((result (catch 'macsyma-quit (cons 'maxima_eval (meval form)))))
-        ;(princ (list "result=" result))
-        ;(terpri)
-        ;(princ (list "$error=" $error))
-        ;(terpri)
-        (cond
-            ((and (consp result) (eq (car result) 'maxima_eval)) (cdr result))
-            ((eq result 'maxima-error)
-                (let ((the-jig (process-error-argl (cddr $error))))
-                    (mapc #'set (car the-jig) (cadr the-jig))
-                    (error (concatenate 'string
-                        "Error executing code in Maxima: "
-                        (with-output-to-string (stream)
-                           (apply #'mformat stream (cadr $error)
-                             (caddr the-jig)))))
-                ))
-            (t
-                (let ((the-jig (process-error-argl (cddr $error))))
-                    (mapc #'set (car the-jig) (cadr the-jig))
-                    (error (concatenate 'string "Maxima condition. result:"
-                        (princ-to-string result) "$error:"
-                        (with-output-to-string (stream)
-                            (apply #'mformat stream (cadr $error)
-                              (caddr the-jig)))))
-                ))
-        )
-    )
-)
+    (with-$error (meval form)))
 """)
 
-## Number of instances of this interface
+# Number of instances of this interface
 maxima_lib_instances = 0
 
-## Here we define several useful ECL/Maxima objects
+# Here we define several useful ECL/Maxima objects
 # The Maxima string function can change the structure of its input
 #maxprint=EclObject("$STRING")
 maxprint=EclObject(r"""(defun mstring-for-sage (form)
@@ -678,10 +651,10 @@ class MaximaLib(MaximaAbstract):
         """
         return MaximaLibElementFunction
 
-    ## some helper functions to wrap the calculus use of the maxima interface.
-    ## these routines expect arguments living in the symbolic ring
-    ## and return something that is hopefully coercible into the symbolic
-    ## ring again.
+    # some helper functions to wrap the calculus use of the maxima interface.
+    # these routines expect arguments living in the symbolic ring
+    # and return something that is hopefully coercible into the symbolic
+    # ring again.
 
     def sr_integral(self,*args):
         """
@@ -864,7 +837,7 @@ class MaximaLib(MaximaAbstract):
             sage: sum(1/(m^4 + 2*m^3 + 3*m^2 + 2*m)^2, m, 0, infinity)
             Traceback (most recent call last):
             ...
-            RuntimeError: ECL says: Error executing code in Maxima: Zero to negative power computed.
+            RuntimeError: ECL says: Zero to negative power computed.
 
         Similar situation for :trac:`12410`::
 
@@ -872,8 +845,7 @@ class MaximaLib(MaximaAbstract):
             sage: sum(1/x*(-1)^x, x, 0, oo)
             Traceback (most recent call last):
             ...
-            RuntimeError: ECL says: Error executing code in Maxima: Zero to negative power computed.
-
+            RuntimeError: ECL says: Zero to negative power computed.
         """
         try:
             return max_to_sr(maxima_eval([[max_ratsimp],[[max_simplify_sum],([max_sum],[sr_to_max(SR(a)) for a in args])]]))
@@ -1201,7 +1173,7 @@ meval=EclObject("meval")
 NIL=EclObject("NIL")
 lisp_length=EclObject("length")
 
-## Dictionaries for standard operators
+# Dictionaries for standard operators
 sage_op_dict = {
     sage.functions.other.abs : "MABS",
     add_vararg : "MPLUS",
@@ -1230,7 +1202,7 @@ sage_op_dict = dict([(k,EclObject(sage_op_dict[k])) for k in sage_op_dict])
 max_op_dict = dict([(sage_op_dict[k],k) for k in sage_op_dict])
 
 
-## Here we correct the dictionaries for some simple operators
+# Here we correct the dictionaries for some simple operators
 
 def sage_rat(x,y):
     r"""
@@ -1260,7 +1232,7 @@ max_op_dict[mtimes]=mul_vararg
 max_op_dict[rat]=sage_rat
 
 
-## Here we build dictionaries for operators needing special conversions.
+# Here we build dictionaries for operators needing special conversions.
 ratdisrep = EclObject("ratdisrep")
 mrat = EclObject("MRAT")
 mqapply = EclObject("MQAPPLY")
@@ -1508,12 +1480,12 @@ special_sage_to_max={
 }
 
 
-## Dictionaries for symbols
+# Dictionaries for symbols
 sage_sym_dict={}
 max_sym_dict={}
 
 
-## Generic conversion functions
+# Generic conversion functions
 
 max_i=EclObject("$%I")
 def pyobject_to_max(obj):

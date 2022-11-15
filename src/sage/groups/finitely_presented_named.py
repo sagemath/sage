@@ -214,7 +214,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
 
     - ``p`` -- (optional) a prime number, where we construct the
       Heisenberg group over the finite field `\ZZ/p\ZZ`
- 
+
     OUTPUT:
 
     Finitely generated Heisenberg group over the finite field
@@ -249,7 +249,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
         [0 0 1]
         sage: p = 3
         sage: Hp = groups.presentation.Heisenberg(p=3)
-        sage: Hp.order() == p**3 
+        sage: Hp.order() == p**3
         True
         sage: Hnp = groups.presentation.Heisenberg(n=2, p=3)
         sage: len(Hnp.relations())

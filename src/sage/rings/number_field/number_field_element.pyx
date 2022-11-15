@@ -493,7 +493,7 @@ cdef class NumberFieldElement(FieldElement):
         return codomain(f(im_gens[0]))
 
     def _latex_(self):
-        """
+        r"""
         Returns the latex representation for this element.
 
         EXAMPLES::
@@ -3988,8 +3988,8 @@ cdef class NumberFieldElement(FieldElement):
         return ht
 
     def global_height_non_arch(self, prec=None):
-        """
-        Returns the total non-archimedean component of the height of self.
+        r"""
+        Return the total non-archimedean component of the height of ``self``.
 
         INPUT:
 

@@ -339,11 +339,8 @@ Comprehensive Module List
     sage/combinat/species/permutation_species
     sage/combinat/species/product_species
     sage/combinat/species/recursive_species
-    sage/combinat/species/series
-    sage/combinat/species/series_order
     sage/combinat/species/set_species
     sage/combinat/species/species
-    sage/combinat/species/stream
     sage/combinat/species/structure
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species

@@ -38,4 +38,3 @@ latex_documents = [
   ('index', name+'.tex', project,
    'The Sage Group', 'manual'),
 ]
-

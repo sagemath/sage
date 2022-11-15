@@ -1918,9 +1918,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                     and x.lift().base_ring() is self.base_ring():
                 d = x.parent().modulus().degree()
                 evaluate = m < 220 or \
-                            (d <  10 and m < 420) or (d <  15 and m < 340) or \
-                            (d <  30 and m < 280) or (d < 100 and m < 250) or \
-                            m <= min(250, d)
+                    (d < 10 and m < 420) or (d < 15 and m < 340) or \
+                    (d < 30 and m < 280) or (d < 100 and m < 250) or \
+                    m <= min(250, d)
 
         # Check if we should (attempt to) compute the result by simply
         # evaluating a cached polynomial at the given input.
@@ -2849,7 +2849,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return E, self.isomorphism_to(E)
             return E
 
-        P2, (x,y,z) = self.ambient_space().objgens()
+        P2, (x, y, z) = self.ambient_space().objgens()
         f = B * y**2*z - x * (x * (x + A*z) + z**2)
         C = plane_curve.ProjectivePlaneCurve(P2, f)
 
@@ -2857,8 +2857,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             return C
 
         t = ~(B * s).sqrt()
-        iso_maps = (x     - r * z,  t * y  ,  s * z)
-        inv_maps = (x * s + r * z,  s * y/t,      z)
+        iso_maps = (x - r * z, t * y, s * z)
+        inv_maps = (x * s + r * z, s * y / t, z)
 
         w = self.isomorphism_to(Ew)
         wmap, winv = w.rational_maps(), (~w).rational_maps()
@@ -2868,7 +2868,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         inv = [f(*inv_maps) for f in winv]
 
         from sage.schemes.elliptic_curves.weierstrass_transform \
-                import WeierstrassTransformationWithInverse as WTI
+            import WeierstrassTransformationWithInverse as WTI
         iso = WTI(self, C, iso, 1, inv, s**-3)
         return C, iso
 
@@ -3194,7 +3194,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         k = 1
         log_order = 2
         if m <= log_order:
-            return [[P1,1],[P2,1]]
+            return [[P1, 1], [P2, 1]]
 
         pts1 = P1.division_points(p)
         pts2 = P2.division_points(p)
@@ -3255,7 +3255,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return [[P1, n], [P2, k]]
             pts = P1.division_points(p)
             if not pts:
-                for Q in generic.multiples(P2,p-1,P1+P2,operation='+'):
+                for Q in generic.multiples(P2, p-1, P1+P2, operation='+'):
                     # Q runs through P1+a*P2 for a=1,2,...,p-1
                     pts = Q.division_points(p)
                     if pts:

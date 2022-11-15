@@ -40,4 +40,3 @@ latex_documents = [
   ('index', name + '.tex', 'Three Lectures about Explicit Methods in\nNumber Theory Using Sage',
    'William Stein', 'manual'),
 ]
-
