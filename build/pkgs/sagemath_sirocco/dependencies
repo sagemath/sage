@@ -1,0 +1,1 @@
+$(PYTHON) sagelib sirocco | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
