@@ -55,7 +55,7 @@ unset SAGE_PKG_CONFIG_PATH
 
 SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
 
-export SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS="mcqd,tdlib,coxeter3,fes,sirocco,meataxe"
+export SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS=""
 
 if [ "$SAGE_EDITABLE" = yes ]; then
     # In an incremental build, we may need to uninstall old versions installed by distutils
@@ -81,7 +81,7 @@ else
         # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
         time sdh_pip_install --no-build-isolation .
     else
-        SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS+=",bliss"
+        SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS+="mcqd,tdlib,coxeter3,fes,sirocco,meataxe,bliss"
         time python3 -u setup.py --no-user-cfg build install || exit 1
     fi
 fi
