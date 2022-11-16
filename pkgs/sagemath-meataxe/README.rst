@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with meataxe
-==============================================================================
+========================================================================================
+ Sage: Open Source Mathematics Software: Matrices over small finite fields with meataxe
+========================================================================================
 
 About SageMath
 --------------
@@ -28,5 +28,9 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-meataxe`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-It provides a Cython interface to the ``meataxe`` library for the purpose
-of computing graph (iso/auto)morphisms.
+This distribution provides the SageMath modules :mod:`sage.libs.meataxe`
+and :mod:`sage.matrix.matrix_gfpn_dense`.
+
+It provides a specialized implementation of matrices over the finite field F_q, where
+q <= 255, using the `SharedMeatAxe <http://users.minet.uni-jena.de/~king/SharedMeatAxe/>`
+library.

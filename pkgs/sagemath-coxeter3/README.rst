@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with coxeter3
-==============================================================================
+====================================================================================================================
+ Sage: Open Source Mathematics Software: Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials with coxeter3
+====================================================================================================================
 
 About SageMath
 --------------
@@ -28,5 +28,4 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-coxeter3`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-It provides a Cython interface to the ``coxeter3`` library for the purpose
-of computing graph (iso/auto)morphisms.
+It provides a Cython interface to the ``coxeter3`` library.

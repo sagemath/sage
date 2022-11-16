@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with mcqd
-==============================================================================
+===========================================================================
+ Sage: Open Source Mathematics Software: Finding maximum cliques with mcqd
+===========================================================================
 
 About SageMath
 --------------
@@ -28,5 +28,6 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-mcqd`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-It provides a Cython interface to the ``mcqd`` library for the purpose
-of computing graph (iso/auto)morphisms.
+It provides a Cython interface to the ``mcqd`` library,
+providing a fast exact algorithm for finding a maximum clique in
+an undirected graph.

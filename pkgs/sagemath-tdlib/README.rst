@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with tdlib
-==============================================================================
+========================================================================
+ Sage: Open Source Mathematics Software: Tree decompositions with tdlib
+========================================================================
 
 About SageMath
 --------------
@@ -28,5 +28,5 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-tdlib`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-It provides a Cython interface to the ``tdlib`` library for the purpose
-of computing graph (iso/auto)morphisms.
+It provides a Cython interface to the ``tdlib`` library, providing
+algorithms concerning tree decompositions.
