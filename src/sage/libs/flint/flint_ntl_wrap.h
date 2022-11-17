@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint-arb
 #ifndef SAGE_FLINT_NTL_WRAP_H
 #define SAGE_FLINT_NTL_WRAP_H
 /*
