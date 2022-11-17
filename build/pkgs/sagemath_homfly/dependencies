@@ -1,0 +1,1 @@
+$(PYTHON) sagelib libhomfly | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
