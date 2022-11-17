@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.groups.semimonomial_transformations.semimonomial_transformation cimport SemimonomialTransformation
 from sage.modules.free_module_element cimport FreeModuleElement

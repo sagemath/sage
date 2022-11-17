@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 #*****************************************************************************
 #       Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
 #

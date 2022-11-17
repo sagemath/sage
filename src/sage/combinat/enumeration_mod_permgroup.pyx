@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Tools for enumeration modulo the action of a permutation group
 """

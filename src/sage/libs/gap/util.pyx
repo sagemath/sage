@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Utility functions for GAP
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Partition backtrack functions for sets
 

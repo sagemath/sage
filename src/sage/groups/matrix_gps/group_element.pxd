@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 from sage.structure.element cimport MultiplicativeGroupElement, Element, MonoidElement, Matrix
 from sage.groups.libgap_wrapper cimport ElementLibGAP
 

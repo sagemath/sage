@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Canonical forms and automorphism group computation for linear codes over finite fields
 

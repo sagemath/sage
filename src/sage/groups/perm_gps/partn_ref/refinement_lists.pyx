@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Partition backtrack functions for lists -- a simple example of using partn_ref
 
