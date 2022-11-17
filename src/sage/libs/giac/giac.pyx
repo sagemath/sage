@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-giac
 # distutils: libraries = giac
 # distutils: language = c++
 r"""
