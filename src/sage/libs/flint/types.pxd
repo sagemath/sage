@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 # distutils: depends = flint/flint.h flint/fmpz.h flint/fmpz_poly.h flint/fmpz_mat.h flint/fmpq.h flint/fmpq_poly.h flint/fmpq_mat.h flint/fmpz_mod_poly.h flint/nmod_poly.h flint/fq.h flint/fq_nmod.h flint/ulong_extras.h flint/padic.h flint/padic_poly.h flint/qadic.h flint/fmpz_poly_q.h
 
 """

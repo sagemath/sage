@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 #ifndef SAGE_FLINT_WRAP_H
 #define SAGE_FLINT_WRAP_H
 /* Using flint headers together in the same module as headers from some other

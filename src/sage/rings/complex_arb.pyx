@@ -1,4 +1,4 @@
-# -*- coding: utf-8
+# sage_setup: distribution = sagemath-flint-arb
 r"""
 Arbitrary precision complex balls using Arb
 

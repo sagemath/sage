@@ -1,4 +1,4 @@
-# -*- coding: utf-8
+# sage_setup: distribution = sagemath-flint-arb
 from sage.libs.arb.arb cimport arb_version 
 from sage.cpython.string cimport char_to_str
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 # distutils: libraries = flint
 r"""
 Fast evaluation of polynomials (Horner's rule)

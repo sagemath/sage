@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 # distutils: depends = acb_mat.h
 
 from sage.libs.arb.types cimport acb_t, acb_ptr, acb_srcptr, acb_mat_t, acb_poly_t, mag_t

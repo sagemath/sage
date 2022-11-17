@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 # distutils: libraries = ARB_LIBRARY
 r"""
 Arbitrary precision complex ball matrices using Arb

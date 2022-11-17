@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint-arb
 # distutils: libraries = gmp flint ARB_LIBRARY
 # distutils: depends = arb.h
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8
+# sage_setup: distribution = sagemath-flint-arb
 r"""
 Univariate polynomials over `\CC` with interval coefficients using Arb.
 
