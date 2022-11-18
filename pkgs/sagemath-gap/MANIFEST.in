@@ -9,3 +9,5 @@ global-exclude *~
 prune .tox
 prune build
 prune dist
+
+include VERSION.txt
