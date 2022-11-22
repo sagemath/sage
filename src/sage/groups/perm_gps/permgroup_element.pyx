@@ -1061,11 +1061,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             # current behavior where if you pass in an integer which
             # is not in the domain of the permutation group, then that
             # integer itself will be returned.
-            if isinstance(i, (long, int, Integer)):
+            if isinstance(i, (int, Integer)):
                 return i
 
-
-            if not isinstance(i,(list,tuple,str)):
+            if not isinstance(i, (list, tuple, str)):
                 raise ValueError("must be in the domain or a list, tuple or string")
 
             permuted = [i[self.perm[j]] for j from 0 <= j < self.n]

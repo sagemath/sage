@@ -165,6 +165,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_ring import polygens
 from sage.sets.set import Set
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1521,6 +1522,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         The `f`-triangle is given by `f_{i,j}` being the number of
         faces `F` of size `j` such that `i = \max_{G \subseteq F} |G|`.
 
+        .. SEEALSO::
+
+            Not to be confused with :meth:`F_triangle` .
+
         EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2,3], [3,4,5], [1,4], [1,5], [2,4], [2,5]])
@@ -1576,6 +1581,48 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 row[j] = sum((-1)**(j-k) * binomial(i-k, j-k) * f[i][k]
                              for k in range(j+1))
         return ret
+
+    def F_triangle(self, S):
+        """
+        Return the F-triangle of ``self`` with respect
+        to one maximal simplex ``S``.
+
+        This is the bivariate generating polynomial of all faces,
+        according to the number of elements in ``S`` and outside ``S``.
+
+        OUTPUT:
+
+        an :class:`~sage.combinat.triangles_FHM.F_triangle`
+
+        .. SEEALSO::
+
+            Not to be confused with :meth:`f_triangle` .
+
+        EXAMPLES::
+
+            sage: cs = simplicial_complexes.Torus()
+            sage: cs.F_triangle(cs.facets()[0])
+            F: x^3 + 9*x^2*y + 3*x*y^2 + y^3 + 6*x^2 + 12*x*y
+            + 3*y^2 + 4*x + 3*y + 1
+
+        TESTS::
+
+            sage: S = SimplicialComplex([])
+            sage: S.F_triangle(S.facets()[0])
+            F: 1
+        """
+        x, y = polygens(ZZ, 'x, y')
+        from sage.combinat.triangles_FHM import F_triangle
+
+        def nega(f):
+            return sum(1 for v in f if v in S)
+
+        def posi(f):
+            return f.dimension() + 1 - nega(f)
+
+        poly = sum(x**posi(fa) * y**nega(fa)
+                   for fa in self.face_iterator())
+        return F_triangle(poly)
 
     def flip_graph(self):
         """

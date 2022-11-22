@@ -380,7 +380,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             return x
         elif isinstance(x, tuple):
             return ComplexDoubleElement(x[0], x[1])
-        elif isinstance(x, (float, int, long)):
+        elif isinstance(x, (float, int)):
             return ComplexDoubleElement(x, 0)
         elif isinstance(x, complex):
             return ComplexDoubleElement(x.real, x.imag)

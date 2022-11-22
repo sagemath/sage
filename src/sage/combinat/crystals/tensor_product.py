@@ -51,7 +51,7 @@ from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrysta
         TensorProductOfSuperCrystalsElement, TensorProductOfQueerSuperCrystalsElement)
 from sage.misc.flatten import flatten
 from sage.structure.element import get_coercion_model
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.arith.misc import integer_trunc as trunc
 
 

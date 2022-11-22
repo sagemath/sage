@@ -857,6 +857,7 @@ class Magmas(Category_singleton):
               this can be used when the base set is infinite.
 
             OUTPUT:
+
             The multiplication table as an object of the class
             :class:`~sage.matrix.operation_table.OperationTable`
             which defines several methods for manipulating and

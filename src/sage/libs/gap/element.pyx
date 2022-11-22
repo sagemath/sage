@@ -264,7 +264,7 @@ cdef Obj make_gap_string(sage_string) except NULL:
     try:
         GAP_Enter()
         b = str_to_bytes(sage_string)
-        C_NEW_STRING(result, len(b), b)
+        result = MakeStringWithLen(b, len(b))
         return result
     finally:
         GAP_Leave()

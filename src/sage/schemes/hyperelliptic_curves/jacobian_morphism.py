@@ -339,6 +339,7 @@ def cantor_composition(D1,D2,f,h,genus):
     a = a.monic()
     return (a, b)
 
+
 class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism):
     r"""
     An element of a Jacobian defined over a field, i.e. in
@@ -348,10 +349,13 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         r"""
         Create a new Jacobian element in Mumford representation.
 
-        INPUT: parent: the parent Homset polys: Mumford's `u` and
-        `v` polynomials check (default: True): if True, ensure that
-        polynomials define a divisor on the appropriate curve and are
-        reduced
+        INPUT:
+
+        - parent -- the parent Homset
+        - polys -- Mumford's `u` and `v` polynomials
+        - check (default: ``True``) -- if ``True``, ensure that
+          polynomials define a divisor on the appropriate curve and are
+          reduced
 
         .. warning::
 

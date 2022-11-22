@@ -1214,8 +1214,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
                 ZZ_pX_add(xnew_q, xnew_q, x[0])
         return 0
 
+
 cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
-    """
+    r"""
     This class only caches a context and modulus for p^prec_cap.
 
     Designed for use with fixed modulus p-adic rings, in Eisenstein

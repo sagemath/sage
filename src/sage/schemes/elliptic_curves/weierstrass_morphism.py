@@ -634,12 +634,28 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             (-3/4 : 3/4 : 1)
             sage: w(P).curve() == E.change_weierstrass_model((2,3,4,5))
             True
+
+        TESTS:
+
+        Check that copying the order over works::
+
+            sage: E = EllipticCurve(GF(431^2), [1,0])
+            sage: i = next(a for a in E.automorphisms() if a^2 == -a^24)
+            sage: P,_ = E.gens()
+            sage: P._order
+            432
+            sage: i(P)._order
+            432
+            sage: E(i(P))._order
+            432
         """
         if P[2] == 0:
             return self._codomain(0)
-        return self._codomain.point(baseWI.__call__(self,
-                                                          tuple(P._coords)),
-                                          check=False)
+        res = baseWI.__call__(self, tuple(P._coords))
+        Q = self._codomain.point(res, check=False)
+        if hasattr(P, '_order'):
+            Q._order = P._order
+        return Q
 
     def __invert__(self):
         r"""

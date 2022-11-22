@@ -38,7 +38,7 @@ from .combinat import catalan_number
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.monoids import Monoids
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.structure.element import Element
 from sage.structure.parent import Parent

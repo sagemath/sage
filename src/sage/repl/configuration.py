@@ -81,7 +81,10 @@ class SageIpythonConfiguration():
             sage: sage_ipython_config.simple_prompt()
             True
         """
-        return 'LightBG' if self._allow_ansi() else 'NoColor'
+        if not self._allow_ansi():
+            return 'NoColor'
+        from sage.repl.interpreter import SageTerminalInteractiveShell
+        return SageTerminalInteractiveShell.colors.default()
 
     def simple_prompt(self):
         """

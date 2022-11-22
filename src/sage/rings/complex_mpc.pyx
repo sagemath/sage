@@ -869,7 +869,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, Integer):
                 mpc_set_z(self.value, (<Integer>z).value, rnd)
                 return
-            elif isinstance(z, (int, long)):
+            elif isinstance(z, int):
                 mpc_set_si(self.value, z, rnd)
                 return
             else:
@@ -1623,7 +1623,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         x = <MPComplexNumber>self
         z = x._new()
 
-        if isinstance(right, (int,long)):
+        if isinstance(right, int):
             mpc_pow_si(z.value, x.value, right, (<MPComplexField_class>x._parent).__rnd)
         elif isinstance(right, Integer):
             mpc_pow_z(z.value, x.value, (<Integer>right).value, (<MPComplexField_class>x._parent).__rnd)

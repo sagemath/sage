@@ -878,7 +878,7 @@ cdef class GenericBackend:
         tester = self._tester(**options)
         p = self
         tester.assertGreaterEqual(self.ncols(), 0)
-    
+
     cpdef int nrows(self):
         """
         Return the number of rows/constraints.
@@ -1265,7 +1265,7 @@ cdef class GenericBackend:
                                    "{}({}) does not match".format(method, i))
         for method in ("row_bounds", "row", "row_name"):
             assert_equal_row_data(method)
-    
+
     def _test_copy(self, **options):
         """
         Test whether the backend can be copied

@@ -67,9 +67,11 @@ from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.tensor.modules.free_module_morphism import \
                                                    FiniteRankFreeModuleMorphism
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
+
 from .tensor_free_submodule_basis import TensorFreeSubmoduleBasis_sym
 
-class TensorFreeModule(FiniteRankFreeModule_abstract):
+class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
     r"""
     Class for the free modules over a commutative ring `R` that are
     tensor products of a given free module `M` over `R` with itself and its
@@ -366,29 +368,6 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
                              fmodule._latex_name + r'\right)'
         super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name, category=category)
         fmodule._all_modules.add(self)
-
-    def tensor_factors(self):
-        r"""
-        Return the tensor factors of this tensor module.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: T = M.tensor_module(2, 3)
-            sage: T.tensor_factors()
-            [Rank-3 free module M over the Integer Ring,
-             Rank-3 free module M over the Integer Ring,
-             Dual of the Rank-3 free module M over the Integer Ring,
-             Dual of the Rank-3 free module M over the Integer Ring,
-             Dual of the Rank-3 free module M over the Integer Ring]
-        """
-        if self._tensor_type == (0,1):  # case of the dual
-            raise NotImplementedError
-        factors = [self._fmodule] * self._tensor_type[0]
-        dmodule = self._fmodule.dual()
-        if self._tensor_type[1]:
-            factors += [dmodule] * self._tensor_type[1]
-        return factors
 
     #### Parent Methods
 

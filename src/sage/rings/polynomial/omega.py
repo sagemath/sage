@@ -358,8 +358,7 @@ def _simplify_(numerator, terms):
     OUTPUT:
 
     A pair of a Laurent polynomial and a tuple of Laurent polynomials
-    representing numerator and denominator as described in the
-    INPUT-section.
+    representing numerator and denominator as described in the INPUT-section.
 
     EXAMPLES::
 
