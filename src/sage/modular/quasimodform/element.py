@@ -477,7 +477,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: F.homogeneous_components()
             {4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
              6: 1 + 216*q - 3672*q^2 - 62496*q^3 - 322488*q^4 - 1121904*q^5 + O(q^6),
-             10: 2 - 168*q - 159624*q^2 - 3756192*q^3 - 103979976*q^4 - 315731952*q^5 + O(q^6),
+             10: 2 - 96*q - 149040*q^2 - 4986240*q^3 - 67535952*q^4 - 538187328*q^5 + O(q^6),
              18: 1 - 1080*q + 294840*q^2 - 902880*q^3 - 452402280*q^4 + 105456816*q^5 + O(q^6)}
             sage: F = QM.zero()
             sage: F.homogeneous_components()
