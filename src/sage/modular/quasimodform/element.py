@@ -496,7 +496,7 @@ class QuasiModularFormsElement(ModuleElement):
                 forms = c._forms_dictionary
                 for k in forms.keys():
                     try:
-                        components[ZZ(k + 2*i)] += QM(forms[k]*(E2**(2*i)))
+                        components[ZZ(k + 2*i)] += QM(forms[k]*(E2**i))
                     except KeyError:
                         components[ZZ(k + 2*i)] = QM(forms[k]*(E2**i))
         return components
