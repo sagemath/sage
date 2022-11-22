@@ -5,7 +5,7 @@ Polynomial Rings
 ----------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/polynomial_ring_constructor
 
@@ -13,7 +13,7 @@ Univariate Polynomials
 ----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    polynomial_rings_univar
    sage/rings/polynomial/convolution
@@ -23,7 +23,7 @@ Multivariate Polynomials
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    polynomial_rings_multivar
    invariant_theory

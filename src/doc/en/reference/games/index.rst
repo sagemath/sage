@@ -6,7 +6,7 @@ Rubik's cube solver (see
 `Rubik's Cube Group <../groups/sage/groups/perm_gps/cubegroup.html>`_).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/games/sudoku
    sage/games/quantumino

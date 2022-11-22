@@ -63,6 +63,8 @@ AUTHORS:
   Pfaffian
 
 - Moritz Firsching(2020-10-05): added ``quantum_determinant``
+
+- Dima Pasechnik (2022-11-08): fixed ``echelonize`` for inexact matrices
 """
 
 # ****************************************************************************
@@ -797,7 +799,7 @@ cdef class Matrix(Matrix1):
             sage: RF = RealField(52)
             sage: B = matrix(RF, 2, 2, 1)
             sage: A = matrix(RF, [[0.24, 1, 0], [1, 0, 0]])
-            sage: 0 < (A * A.solve_right(B) - B).norm() < 1e-14
+            sage: 0 <= (A * A.solve_right(B) - B).norm() < 1e-14
             True
 
         Over the inexact ring ``SR``, we can still verify the solution
@@ -1534,19 +1536,15 @@ cdef class Matrix(Matrix1):
         Beware that the ``exact`` algorithm is not numerically stable,
         but the default ``numpy`` algorithm is::
 
-            sage: M = matrix(RR, 3, 3, [1,2,3,1/3,2/3,3/3,1/5,2/5,3/5])
-            sage: M.pseudoinverse()  # tol 1e-15
-            [0.0620518477661335 0.0206839492553778 0.0124103695532267]
-            [ 0.124103695532267 0.0413678985107557 0.0248207391064534]
-            [ 0.186155543298400 0.0620518477661335 0.0372311086596801]
-            sage: M.pseudoinverse(algorithm="numpy")  # tol 1e-15
-            [0.0620518477661335 0.0206839492553778 0.0124103695532267]
-            [ 0.124103695532267 0.0413678985107557 0.0248207391064534]
-            [ 0.186155543298400 0.0620518477661335 0.0372311086596801]
-            sage: M.pseudoinverse(algorithm="exact")
-            [ 0.125000000000000 0.0625000000000000 0.0312500000000000]
-            [ 0.250000000000000  0.125000000000000 0.0625000000000000]
-            [ 0.000000000000000  0.000000000000000 0.0625000000000000]
+            sage: M = matrix.hilbert(12,ring=RR)
+            sage: (~M*M).norm()  # a considerable error
+            1.3...
+            sage: Mx = M.pseudoinverse(algorithm="exact")
+            sage: (Mx*M).norm()  # huge error
+            11.5...
+            sage: Mx = M.pseudoinverse(algorithm="numpy")
+            sage: (Mx*M).norm()  # still OK
+            1.00...
 
         When multiplying the given matrix with the pseudoinverse, the
         result is symmetric for the ``exact`` algorithm or hermitian
@@ -1579,6 +1577,11 @@ cdef class Matrix(Matrix1):
             sage: M.pseudoinverse(algorithm="numpy")  # random
             [-1286742750677287/643371375338643 1000799917193445/1000799917193444]
             [  519646110850445/346430740566963  -300239975158034/600479950316067]
+
+        Although it is not too far off::
+
+            sage: (~M-M.pseudoinverse(algorithm="numpy")).norm() < 1e-14
+            True
 
         TESTS::
 
@@ -7599,8 +7602,18 @@ cdef class Matrix(Matrix1):
             sage: transformation_matrix = m.echelonize(transformation=True)
             sage: m == transformation_matrix * m_original
             True
+
+        TESTS::
+
+        Check that :trac:`34724` is fixed (indirect doctest)::
+
+            sage: a=6.12323399573677e-17
+            sage: m=matrix(RR,[[-a, -1.72508242466029], [ 0.579682446302195, a]])
+            sage: (~m*m).norm()
+            1.0
         """
         self.check_mutability()
+        basring = self.base_ring()
 
         if algorithm == 'default':
             from sage.categories.discrete_valuation import DiscreteValuationFields
@@ -7610,16 +7623,22 @@ cdef class Matrix(Matrix1):
             # In general, we would like to do so in any rank one valuation ring,
             # but this should be done by introducing a category of general valuation rings and fields,
             # which we don't have at the moment
-            elif self.base_ring() in DiscreteValuationFields():
+            elif basring in DiscreteValuationFields():
                 try:
-                    self.base_ring().one().abs()
+                    basring.one().abs()
                     algorithm = 'scaled_partial_pivoting'
                 except (AttributeError, TypeError):
                     algorithm = 'scaled_partial_pivoting_valuation'
-            else:
+            elif basring.is_exact():
                 algorithm = 'classical'
+            else:
+                try:
+                    (basring(0.42)).abs()
+                    algorithm = 'scaled_partial_pivoting'
+                except (AttributeError, ArithmeticError, TypeError):
+                    algorithm = 'classical'
         try:
-            if self.base_ring() in _Fields:
+            if basring in _Fields:
                 if algorithm in ['classical', 'partial_pivoting', 'scaled_partial_pivoting', 'scaled_partial_pivoting_valuation']:
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
@@ -7631,7 +7650,7 @@ cdef class Matrix(Matrix1):
                     kwds['algorithm'] = algorithm
                 return self._echelonize_ring(**kwds)
         except ArithmeticError as msg:
-            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,self.base_ring()))
+            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,basring))
 
     def echelon_form(self, algorithm="default", cutoff=0, **kwds):
         r"""

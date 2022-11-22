@@ -45,7 +45,7 @@ from sage.structure.sage_object import SageObject
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.trig import cos, sin
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.plot", "parametric_plot")

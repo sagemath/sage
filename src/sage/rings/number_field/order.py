@@ -867,12 +867,12 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
             sage: F.<alpha> = NumberField(x**2+3)
             sage: F.ring_of_integers().zeta(6)
-            1/2*alpha + 1/2
+            -1/2*alpha + 1/2
             sage: O = F.order([3*alpha])
             sage: O.zeta(3)
             Traceback (most recent call last):
             ...
-            ArithmeticError: There are no 3rd roots of unity in self.
+            ArithmeticError: there are no 3rd roots of unity in self
         """
         roots_in_field = self.number_field().zeta(n, True)
         roots_in_self = [self(x) for x in roots_in_field if x in self]
@@ -880,7 +880,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             if all:
                 return []
             else:
-                raise ArithmeticError("There are no %s roots of unity in self." % n.ordinal_str())
+                raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
         if all:
             return roots_in_self
         else:

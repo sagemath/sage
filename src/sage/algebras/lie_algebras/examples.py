@@ -41,7 +41,7 @@ from sage.algebras.lie_algebras.classical_lie_algebra import gl
 from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra as ClassicalMatrix
 
 
-# the next 6 lines are here to silent pyflakes and lgtm warnings
+# the next 6 lines are here to silence pyflakes warnings
 assert VirasoroAlgebra
 assert RankTwoHeisenbergVirasoro
 assert OnsagerAlgebra
@@ -96,6 +96,7 @@ def three_dimensional(R, a, b, c, d, names=['X', 'Y', 'Z']):
     from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
     s_coeff = {(X,Y): {Z:a, Y:d}, (Y,Z): {X:b}, (Z,X): {Y:c, Z:d}}
     return LieAlgebraWithStructureCoefficients(R, s_coeff, tuple(names))
+
 
 def cross_product(R, names=['X', 'Y', 'Z']):
     r"""
@@ -160,7 +161,7 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
         return AbelianLieAlgebra(R, names=names)
 
     if n == 1:
-        L = three_dimensional(R, 0, 1, 0, 0, names=names) # Strictly upper triangular matrices
+        L = three_dimensional(R, 0, 1, 0, 0, names=names)  # Strictly upper triangular matrices
         L.rename("Lie algebra of 3x3 strictly upper triangular matrices over {}".format(R))
         return L
 
@@ -184,17 +185,18 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
         return L
 
     if n == 3:
-        #return sl(R, 2)
+        # return sl(R, 2)
         from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
         E = names[0]
         F = names[1]
         H = names[2]
-        s_coeff = { (E,F): {H:R.one()}, (H,E): {E:R(2)}, (H,F): {F:R(-2)} }
+        s_coeff = {(E, F): {H: R.one()}, (H, E): {E: R(2)}, (H, F): {F: R(-2)}}
         L = LieAlgebraWithStructureCoefficients(R, s_coeff, tuple(names))
         L.rename("sl2 over {}".format(R))
         return L
 
     raise ValueError("Invalid rank")
+
 
 def affine_transformations_line(R, names=['X', 'Y'], representation='bracket'):
     """
@@ -232,6 +234,7 @@ def affine_transformations_line(R, names=['X', 'Y'], representation='bracket'):
     L = LieAlgebraWithStructureCoefficients(R, s_coeff, names=names)
     L.rename("Lie algebra of affine transformations of a line over {}".format(R))
     return L
+
 
 def abelian(R, names=None, index_set=None):
     """
@@ -365,6 +368,7 @@ def upper_triangular_matrices(R, n):
     L.rename("Lie algebra of {}-dimensional upper triangular matrices over {}".format(n, L.base_ring()))
     return L
 
+
 def strictly_upper_triangular_matrices(R, n):
     r"""
     Return the Lie algebra `\mathfrak{n}_k` of strictly `k \times k` upper
@@ -401,13 +405,13 @@ def strictly_upper_triangular_matrices(R, n):
     MS = MatrixSpace(R, n, sparse=True)
     one = R.one()
     names = tuple('n{}'.format(i) for i in range(n-1))
-    gens = tuple(MS({(i,i+1):one}) for i in range(n-1))
+    gens = tuple(MS({(i,i+1): one}) for i in range(n-1))
     L = LieAlgebraFromAssociative(MS, gens, names=names)
     L.rename("Lie algebra of {}-dimensional strictly upper triangular matrices over {}".format(n, L.base_ring()))
     return L
 
 #####################################################################
-## Classical Lie algebras
+#  Classical Lie algebras
 
 
 def sl(R, n, representation='bracket'):
@@ -510,6 +514,7 @@ def su(R, n, representation='matrix'):
         from sage.combinat.root_system.cartan_type import CartanType
         return MatrixCompactRealForm(R, CartanType(['A', n-1]))
     raise ValueError("invalid representation")
+
 
 def so(R, n, representation='bracket'):
     r"""

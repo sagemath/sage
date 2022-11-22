@@ -5,7 +5,7 @@ General
 -------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot
    sage/plot/text
@@ -16,7 +16,7 @@ Function and Data Plots
 -----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/complex_plot
    sage/plot/contour_plot
@@ -32,7 +32,7 @@ Plots of Other Mathematical Objects
 -----------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/graphs/graph_plot
    sage/plot/matrix_plot
@@ -41,7 +41,7 @@ Basic Shapes
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/arc
    sage/plot/arrow
@@ -60,7 +60,7 @@ Infrastructure and Low-Level Functions
 --------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/graphics
    sage/plot/multigraphics

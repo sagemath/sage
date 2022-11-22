@@ -75,8 +75,11 @@ class DiscreteRandomVariable(RandomVariable_generic):
         r"""
         Create free binary string monoid on `n` generators.
 
-        INPUT: x: A probability space f: A dictionary such that X[x] =
-        value for x in X is the discrete function on X
+        INPUT:
+
+        - X -- a probability space
+        - f -- a dictionary such that X[x] = value for x in X
+          is the discrete function on X
         """
         if not is_DiscreteProbabilitySpace(X):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)

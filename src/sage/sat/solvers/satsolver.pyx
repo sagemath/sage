@@ -328,7 +328,7 @@ def SAT(solver=None, *args, **kwds):
         - ``"picosat"`` -- note that the pycosat package must be installed.
 
         - ``"glucose"`` -- note that the glucose package must be installed.
-        
+
         - ``"glucose-syrup"`` -- note that the glucose package must be installed.
 
         - ``"LP"`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the

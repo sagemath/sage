@@ -1390,7 +1390,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             sage: Partitions.options == Tableaux.options
             False
         """
-        return self.__getstate__() == other.__getstate__()
+        return isinstance(other, GlobalOptions) and self.__getstate__() == other.__getstate__()
 
     def _add_option(self, option, specifications):
         r"""

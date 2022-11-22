@@ -1394,9 +1394,7 @@ The Singular documentation for '%s' is given below.
                 ring2 = a.parent()
             elif is_sage_wrapper_for_singular_ring(a):
                 ring2 = a
-            elif isinstance(a, int) or\
-                isinstance(a, long) or\
-                isinstance(a, basestring):
+            elif isinstance(a, (int, str)):
                 continue
             elif isinstance(a, Matrix_integer_dense):
                 continue

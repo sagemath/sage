@@ -35,7 +35,9 @@ class FiniteMonoids(CategoryWithAxiom):
             r"""
             The nerve (classifying space) of this monoid.
 
-            OUTPUT: the nerve `BG` (if `G` denotes this monoid), as a
+            OUTPUT:
+
+            the nerve `BG` (if `G` denotes this monoid), as a
             simplicial set.  The `k`-dimensional simplices of this
             object are indexed by products of `k` elements in the
             monoid:

@@ -5,7 +5,7 @@ Univariate Ore polynomial rings
 -------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/ore_polynomial_ring
    sage/rings/polynomial/ore_polynomial_element
@@ -18,7 +18,7 @@ Fraction field of Ore polynomial rings
 --------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/ore_function_field
    sage/rings/polynomial/ore_function_element

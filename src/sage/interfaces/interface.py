@@ -1340,8 +1340,6 @@ class InterfaceElement(Element):
                             P._false_symbol())
         return P.eval(cmd) != P._true_symbol()
 
-    
-
     def __float__(self):
         """
         EXAMPLES::

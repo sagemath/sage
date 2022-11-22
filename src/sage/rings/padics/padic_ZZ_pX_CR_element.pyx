@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 `p`-adic ``ZZ_pX`` CR Element
 
 This file implements elements of Eisenstein and unramified extensions
@@ -230,7 +230,7 @@ cdef inline int check_ordp(long a) except -1:
 
 cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
-        """
+        r"""
         Creates an element of a capped relative precision, unramified
         or Eisenstein extension of `\ZZ_p` or `\QQ_p`.
 
@@ -2833,7 +2833,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         return ulist
 
     def matrix_mod_pn(self):
-        """
+        r"""
         Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the

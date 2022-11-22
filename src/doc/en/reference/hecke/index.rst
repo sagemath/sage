@@ -8,7 +8,7 @@ Symbols <../modsym/index.html>`_ and `Modular Forms
 <../modfrm/index.html>`_.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/hecke/module
    sage/modular/hecke/ambient_module

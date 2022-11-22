@@ -665,8 +665,6 @@ class OctaveElement(ExpectElement):
         """
         return str(self) != ' [](0x0)' and any(x != '0' for x in str(self).split())
 
-    
-
     def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this octave element.

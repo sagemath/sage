@@ -308,7 +308,7 @@ cdef class NumberFieldElement(FieldElement):
         self.__fld_numerator, self.__fld_denominator = parent.absolute_polynomial_ntl()
 
         cdef ZZ_c coeff
-        if isinstance(f, (int, long, Integer_sage)):
+        if isinstance(f, (int, Integer_sage)):
             # set it up and exit immediately
             # fast pathway
             mpz_to_ZZ(&coeff, (<Integer>ZZ(f)).value)

@@ -281,7 +281,7 @@ cdef class ntl_ZZ():
 
         AUTHOR: David Harvey (2006-08-05)
         """
-        cdef int ans
+        cdef int ans = 0
         ZZ_conv_to_int(ans, self.x)
         return ans
 
