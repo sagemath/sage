@@ -1941,6 +1941,7 @@ def normalise_periods(w1, w2):
 def extended_agm_iteration(a, b, c):
     r"""
     Internal function for the extended AGM used in elliptic logarithm computation.
+
     INPUT:
 
     - ``a``, ``b``, ``c`` (real or complex) -- three real or complex numbers.

@@ -6,7 +6,7 @@ The diophantine approximation deals with the approximation of real numbers
 See the article :wikipedia:`Diophantine_approximation` for more information.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/continued_fraction
 

@@ -395,7 +395,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             x_GEN = _new_GEN_from_mpz_t((<Integer>x).value)
             self.construct(_INT_to_FFELT(g, x_GEN))
 
-        elif isinstance(x, int) or isinstance(x, long):
+        elif isinstance(x, int):
             g = (<pari_gen>self._parent._gen_pari).g
             x = objtogen(x)
             sig_on()

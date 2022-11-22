@@ -205,6 +205,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         Functorial construction application
 
         INPUT:
+
          - ``self``: a covariant functorial construction `F`
          - ``args``: a tuple (or iterable) of parents or elements
 

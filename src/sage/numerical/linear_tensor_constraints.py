@@ -317,8 +317,8 @@ class LinearTensorConstraintsParent_class(Parent):
         Field and Linear functions over Real Double Field
         sage: from sage.numerical.linear_tensor_constraints import LinearTensorConstraintsParent
         sage: LTC = LinearTensorConstraintsParent(LT);  LTC
-        Linear constraints in the tensor product of Vector space of 
-        dimension 2 over Real Double Field and Linear functions over 
+        Linear constraints in the tensor product of Vector space of
+        dimension 2 over Real Double Field and Linear functions over
         Real Double Field
         sage: type(LTC)
         <class 'sage.numerical.linear_tensor_constraints.LinearTensorConstraintsParent_class'>
@@ -330,10 +330,10 @@ class LinearTensorConstraintsParent_class(Parent):
         The Python constructor
 
         INPUT:
-        
+
         - ``linear_tensor_parent`` -- instance of
           :class:`LinearTensorParent_class`.
-        
+
         TESTS::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent

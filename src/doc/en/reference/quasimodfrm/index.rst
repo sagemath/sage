@@ -5,7 +5,7 @@ Module List
 -----------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/quasimodform/ring
    sage/modular/quasimodform/element

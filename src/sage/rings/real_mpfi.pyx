@@ -2912,7 +2912,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1.0) << 32
             4294967296
         """
-        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int,long, Integer)):
+        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int, Integer)):
             return x._lshift_(y)
         return sage.structure.element.bin_op(x, y, operator.lshift)
 
@@ -2944,7 +2944,7 @@ cdef class RealIntervalFieldElement(RingElement):
             0.062500000000000000?
         """
         if isinstance(x, RealIntervalFieldElement) and \
-               isinstance(y, (int,long,Integer)):
+               isinstance(y, (int, Integer)):
             return x._rshift_(y)
         return sage.structure.element.bin_op(x, y, operator.rshift)
 
@@ -4411,7 +4411,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         if exponent == 2:
             return self.square()
-        if isinstance(exponent, (int, long, Integer)):
+        if isinstance(exponent, (int, Integer)):
             q, r = divmod (exponent, 2)
             if r == 0:  # x^(2q) = (x^q)^2
                 xq = RingElement.__pow__(self, q)

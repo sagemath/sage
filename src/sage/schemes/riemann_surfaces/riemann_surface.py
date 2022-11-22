@@ -268,9 +268,9 @@ def numerical_inverse(C):
         ....: -0.091587 + 0.19276*I,
         ....: 3.9443e-31 + 0.38552*I])
         sage: from sage.schemes.riemann_surfaces.riemann_surface import numerical_inverse
-        sage: max(abs(c) for c in (C^(-1)*C-C^0).list()) < 1e-10
-        False
-        sage: max(abs(c) for c in (numerical_inverse(C)*C-C^0).list()) < 1e-10
+        sage: 3e-16 < (C^-1*C-C^0).norm() < 1e-15
+        True
+        sage: (numerical_inverse(C)*C-C^0).norm() < 3e-16
         True
     """
     R = C.parent()

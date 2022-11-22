@@ -1024,53 +1024,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         else:
             return L
 
-    def _fetch_cached_order(self, other):
-        r"""
-        This method copies the ``_order`` member from ``other``
-        to ``self`` if their base field is the same and finite.
-
-        This is used in :class:`EllipticCurveIsogeny` to keep track of
-        an already computed curve order: According to Tate's theorem
-        [Tate1966b]_, isogenous elliptic curves over a finite field
-        have the same number of rational points.
-
-        EXAMPLES::
-
-            sage: E1 = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
-            sage: E1.set_order(170141183460469231746191640949390434666)
-            sage: E2 = EllipticCurve(GF(2^127-1), [115649500210559831225094148253060920818, 36348294106991415644658737184600079491])
-            sage: E2._fetch_cached_order(E1)
-            sage: E2._order
-            170141183460469231746191640949390434666
-
-        TESTS::
-
-            sage: E3 = EllipticCurve(GF(17), [1,2,3,4,5])
-            sage: hasattr(E3, '_order')
-            False
-            sage: E3._fetch_cached_order(E1)
-            Traceback (most recent call last):
-            ...
-            ValueError: curves have distinct base fields
-
-        ::
-
-            sage: E4 = EllipticCurve([1,2,3,4,5])
-            sage: E4._fetch_cached_order(E1.change_ring(QQ))
-            sage: hasattr(E4, '_order')
-            False
-        """
-        if hasattr(self, '_order') or not hasattr(other, '_order'):
-            return
-        F = self.base_field()
-        if F != other.base_field():
-            raise ValueError('curves have distinct base fields')
-        if not F.is_finite():
-            raise ValueError('base field must be finite')
-        n = getattr(other, '_order', None)
-        if n is not None:
-            self._order = n
-
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.

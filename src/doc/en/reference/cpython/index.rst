@@ -5,7 +5,7 @@ SageMath has various modules to provide access to low-level Python
 internals.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/cpython/atexit
    sage/cpython/string
