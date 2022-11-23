@@ -11648,7 +11648,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: R.<y> = P[]
             sage: f = y^10 + R.random_element(9)
             sage: g = y^5 + R.random_element(4)
-            sage: q,r = f.quo_rem(g)
+            sage: q, r = f.quo_rem(g)
             sage: f == q*g + r
             True
             sage: g = x*y^5
@@ -11662,6 +11662,17 @@ cdef class Polynomial_generic_dense(Polynomial):
             ...
             ZeroDivisionError: division by zero polynomial
 
+        Polynomials over noncommutative rings are also allowed
+        (after :trac:`34733`)::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = HH[]
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
+
         TESTS:
 
         The following shows that :trac:`16649` is indeed fixed. ::
@@ -11674,7 +11685,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: h.quo_rem(f)
             ((-1/13*x^2 - x)*y^2 + (-x^2 + 3*x - 155/4)*y - x - 1, 0)
             sage: h += (2/3*x^2-3*x+1)*y + 7/17*x+6/5
-            sage: q,r = h.quo_rem(f)
+            sage: q, r = h.quo_rem(f)
             sage: h == q*f + r and r.degree() < f.degree()
             True
 
@@ -11709,7 +11720,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             convert = True
         if convert:
             for k from m-n >= k >= 0:
-                q = inv * x[n+k-1]
+                q = x[n+k-1] * inv
                 try:
                     q = R(q)
                 except TypeError:
@@ -11719,7 +11730,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 quo.append(q)
         else:
             for k from m-n >= k >= 0:
-                q = inv * x[n+k-1]
+                q = x[n+k-1] * inv
                 for j from n+k-2 >= j >= k:
                     x[j] -= q * y[j-k]
                 quo.append(q)

@@ -60,8 +60,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis.
 
-    OUTPUT: ``B`` a unique size-reduced triangular (primal: lower_left,
-      dual: lower_right) basis of row vectors for the lattice in question.
+    OUTPUT:
+
+    ``B`` a unique size-reduced triangular (primal: lower_left,
+    dual: lower_right) basis of row vectors for the lattice in question.
 
     EXAMPLES:
 

@@ -2,7 +2,7 @@ Sage's Doctesting Framework
 ===========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/doctest/control
    sage/doctest/sources

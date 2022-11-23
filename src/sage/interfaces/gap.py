@@ -952,8 +952,6 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         return self != P(0) and repr(self) != 'false'
 
-    
-
     def __len__(self):
         """
         EXAMPLES::

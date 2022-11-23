@@ -307,7 +307,7 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.arith.all import factorial, gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
@@ -3952,6 +3952,10 @@ class Partition(CombinatorialElement):
         where `i` and `j` are the coordinates of the respective corner.
         The coordinates are counted from `0`.
 
+        .. NOTE::
+
+            This is referred to as an "inner corner" in [Sag2001]_.
+
         EXAMPLES::
 
             sage: Partition([3,2,1]).corners()
@@ -4023,6 +4027,10 @@ class Partition(CombinatorialElement):
         The entries of the list returned are pairs of the form `(i,j)`,
         where `i` and `j` are the coordinates of the respective corner.
         The coordinates are counted from `0`.
+
+        .. NOTE::
+
+            These are called "outer corners" in [Sag2001]_.
 
         EXAMPLES::
 
@@ -4785,7 +4793,6 @@ class Partition(CombinatorialElement):
             return []
 
         shelf = []
-        res = []
         i = 0
         ell = len(self._list)
         while i < ell:
@@ -4842,7 +4849,6 @@ class Partition(CombinatorialElement):
             return list()
 
         L = self._list
-        res = []
         shelf = [k]  # the number of boxes which will fit in a row
         mapping = [0]  # a record of the rows
         for i in range(len(L)-1):

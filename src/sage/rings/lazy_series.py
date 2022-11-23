@@ -574,12 +574,12 @@ class LazyModuleElement(Element):
             if not any(initial_coefficients) and not c:
                 return P.zero()
             coeff_stream = Stream_exact(initial_coefficients,
-                                        self._coeff_stream._is_sparse,
                                         order=coeff_stream._approximate_order,
                                         degree=coeff_stream._degree,
                                         constant=P.base_ring()(c))
             return P.element_class(P, coeff_stream)
-        coeff_stream = Stream_map_coefficients(self._coeff_stream, func)
+        coeff_stream = Stream_map_coefficients(self._coeff_stream, func,
+                                               P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     def truncate(self, d):
@@ -626,8 +626,7 @@ class LazyModuleElement(Element):
         coeff_stream = self._coeff_stream
         v = coeff_stream._approximate_order
         initial_coefficients = [coeff_stream[i] for i in range(v, d)]
-        return P.element_class(P, Stream_exact(initial_coefficients, P._sparse,
-                                               order=v))
+        return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
     def shift(self, n):
         r"""
@@ -687,7 +686,7 @@ class LazyModuleElement(Element):
             init_coeff = self._coeff_stream._initial_coefficients
             degree = self._coeff_stream._degree + n
             valuation = self._coeff_stream._approximate_order + n
-            coeff_stream = Stream_exact(init_coeff, self._coeff_stream._is_sparse,
+            coeff_stream = Stream_exact(init_coeff,
                                         constant=self._coeff_stream._constant,
                                         order=valuation, degree=degree)
         else:
@@ -945,7 +944,7 @@ class LazyModuleElement(Element):
                 return False
             if isinstance(self._coeff_stream._target, Stream_exact):
                 return True
-        if self.parent()._sparse:
+        if self._coeff_stream._is_sparse:
             cache = self._coeff_stream._cache
             if any(cache[a] for a in cache):
                 return True
@@ -979,6 +978,8 @@ class LazyModuleElement(Element):
             sage: C.define(1 + z*C^2)
             sage: C
             1 + z + 2*z^2 + 5*z^3 + 14*z^4 + 42*z^5 + 132*z^6 + O(z^7)
+            sage: binomial(2000, 1000) / C[1000]
+            1001
 
         The Catalan numbers but with a valuation 1::
 
@@ -1212,12 +1213,13 @@ class LazyModuleElement(Element):
         if not isinstance(s, LazyModuleElement):
             s = self.parent()(s)
 
+        coeff_stream = s._coeff_stream
         # Special case when it has a trivial definition
-        if isinstance(s._coeff_stream, (Stream_zero, Stream_exact)):
-            self._coeff_stream = s._coeff_stream
+        if isinstance(coeff_stream, (Stream_zero, Stream_exact)):
+            self._coeff_stream = coeff_stream
             return
 
-        self._coeff_stream._target = s._coeff_stream
+        self._coeff_stream._target = coeff_stream
 
     # an alias for compatibility with padics
     set = define
@@ -1506,13 +1508,13 @@ class LazyModuleElement(Element):
             if not any(initial_coefficients) and not constant:
                 return P.zero()
             coeff_stream = Stream_exact(initial_coefficients,
-                                        P._sparse,
                                         constant=constant,
                                         degree=degree,
                                         order=approximate_order)
             return P.element_class(P, coeff_stream)
         return P.element_class(P, Stream_add(self._coeff_stream,
-                                             other._coeff_stream))
+                                             other._coeff_stream,
+                                             P.is_sparse()))
 
     def _sub_(self, other):
         """
@@ -1584,14 +1586,15 @@ class LazyModuleElement(Element):
             if not any(initial_coefficients) and not constant:
                 return P.zero()
             coeff_stream = Stream_exact(initial_coefficients,
-                                        P._sparse,
                                         constant=constant,
                                         degree=degree,
                                         order=approximate_order)
             return P.element_class(P, coeff_stream)
         if left == right:
             return P.zero()
-        return P.element_class(P, Stream_sub(self._coeff_stream, other._coeff_stream))
+        return P.element_class(P, Stream_sub(self._coeff_stream,
+                                             other._coeff_stream,
+                                             P.is_sparse()))
 
     def _acted_upon_(self, scalar, self_on_left):
         r"""
@@ -1729,13 +1732,14 @@ class LazyModuleElement(Element):
                 c = scalar * coeff_stream._constant
                 initial_coefficients = [scalar * val for val in init_coeffs]
             return P.element_class(P, Stream_exact(initial_coefficients,
-                                                   P._sparse,
                                                    order=v,
                                                    constant=c,
                                                    degree=coeff_stream._degree))
         if self_on_left or R.is_commutative():
-            return P.element_class(P, Stream_lmul(coeff_stream, scalar))
-        return P.element_class(P, Stream_rmul(coeff_stream, scalar))
+            return P.element_class(P, Stream_lmul(coeff_stream, scalar,
+                                                  P.is_sparse()))
+        return P.element_class(P, Stream_rmul(coeff_stream, scalar,
+                                              P.is_sparse()))
 
     def _neg_(self):
         """
@@ -1791,7 +1795,6 @@ class LazyModuleElement(Element):
             initial_coefficients = [-v for v in coeff_stream._initial_coefficients]
             constant = -coeff_stream._constant
             coeff_stream = Stream_exact(initial_coefficients,
-                                        P._sparse,
                                         constant=constant,
                                         degree=coeff_stream._degree,
                                         order=coeff_stream.order())
@@ -1799,7 +1802,7 @@ class LazyModuleElement(Element):
         # -(-f) = f
         if isinstance(coeff_stream, Stream_neg):
             return P.element_class(P, coeff_stream._series)
-        return P.element_class(P, Stream_neg(coeff_stream))
+        return P.element_class(P, Stream_neg(coeff_stream, P.is_sparse()))
 
     # === special functions ===
 
@@ -1809,36 +1812,10 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
-            sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: exp(z)
-            1 + z + 1/2*z^2 + 1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + O(z^7)
-            sage: exp(z + z^2)
-            1 + z + 3/2*z^2 + 7/6*z^3 + 25/24*z^4 + 27/40*z^5 + 331/720*z^6 + O(z^7)
-            sage: exp(0)
-            1
-            sage: exp(1 + z)
-            Traceback (most recent call last):
-            ...
-            ValueError: can only compose with a positive valuation series
-
-            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
-            sage: exp(x+y)[4].factor()
-            (1/24) * (x + y)^4
-            sage: exp(x/(1-y)).polynomial(3)
-            1/6*x^3 + x^2*y + x*y^2 + 1/2*x^2 + x*y + x + 1
-
-        TESTS::
-
-            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
-            sage: exp(z)[0:6] == exp(x).series(x, 6).coefficients(sparse=False)
-            True
-
-        Check the exponential when the base ring is a lazy ring::
-
-            sage: L.<t> = LazyPowerSeriesRing(QQ)
-            sage: M.<x> = LazyPowerSeriesRing(L)
-            sage: exp(x)
-            1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+            sage: L = LazyDirichletSeriesRing(QQ, "s")
+            sage: Z = L(constant=1, valuation=2)
+            sage: exp(Z)
+            1 + 1/(2^s) + 1/(3^s) + 3/2/4^s + 1/(5^s) + 2/6^s + 1/(7^s) + O(1/(8^s))
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -1851,24 +1828,10 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
-            sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: log(1/(1-z))
-            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
-
-            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
-            sage: log((1 + x/(1-y))).polynomial(3)
-            1/3*x^3 - x^2*y + x*y^2 - 1/2*x^2 + x*y + x
-
-        TESTS::
-
-            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
-            sage: log(1+z)[0:6] == log(1+x).series(x, 6).coefficients(sparse=False)
-            True
-
-            sage: log(z)
-            Traceback (most recent call last):
-            ...
-            ValueError: can only compose with a positive valuation series
+            sage: L = LazyDirichletSeriesRing(QQ, "s")
+            sage: Z = L(constant=1)
+            sage: log(Z)
+            1/(2^s) + 1/(3^s) + 1/2/4^s + 1/(5^s) + 1/(7^s) + O(1/(8^s))
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2447,6 +2410,64 @@ class LazyModuleElement(Element):
               valuation=0)
         return f(self)
 
+    # === named special functions ===
+
+    def q_pochhammer(self, q=None):
+        r"""
+        Return the infinite ``q``-Pochhammer symbol `(a; q)_{\infty}`,
+        where `a` is ``self``.
+
+        This is also one version of the quantum dilogarithm or
+        the `q`-Exponential function.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.q_pochhammer`
+
+        INPUT:
+
+        - ``q`` -- (default: `q \in \QQ(q)`) the parameter `q`
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: L.<z> = LazyLaurentSeriesRing(q.parent())
+            sage: qp = L.q_pochhammer(q)
+            sage: (z + z^2).q_pochhammer(q) - qp(z + z^2)
+            O(z^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        f = P.q_pochhammer(q)
+        return f(self)
+
+    def euler(self):
+        r"""
+        Return the Euler function evaluated at ``self``.
+
+        The *Euler function* is defined as
+
+        .. MATH::
+
+            \phi(z) = (z; z)_{\infty}
+            = \sum_{n=0}^{\infty} (-1)^n q^{(3n^2-n)/2}.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.euler`
+
+        EXAMPLES::
+
+            sage: L.<q> = LazyLaurentSeriesRing(ZZ)
+            sage: phi = L.euler()
+            sage: (q + q^2).euler() - phi(q + q^2)
+            O(q^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        phi = P.euler()
+        return phi(self)
+
     # === powers ===
 
     def __pow__(self, n):
@@ -2713,12 +2734,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
             else:
                 c = left._constant  # this is zero
             coeff_stream = Stream_exact(initial_coefficients,
-                                        P._sparse,
                                         order=lv + rv,
                                         constant=c)
             return P.element_class(P, coeff_stream)
 
-        return P.element_class(P, Stream_cauchy_mul(left, right))
+        return P.element_class(P, Stream_cauchy_mul(left, right, P.is_sparse()))
 
     def __pow__(self, n):
         r"""
@@ -2794,7 +2814,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
             deg = ret.degree() + 1
             initial_coefficients = [ret[i] for i in range(val, deg)]
             return P.element_class(P, Stream_exact(initial_coefficients,
-                                                   P._sparse,
                                                    constant=cs._constant,
                                                    degree=deg,
                                                    order=val))
@@ -2876,7 +2895,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 v = -coeff_stream.order()
                 c = P._internal_poly_ring.base_ring().zero()
                 coeff_stream = Stream_exact((i, -i),
-                                            P._sparse,
                                             order=v,
                                             constant=c)
                 return P.element_class(P, coeff_stream)
@@ -2885,7 +2903,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 v = -coeff_stream.order()
                 c = P._internal_poly_ring.base_ring().zero()
                 coeff_stream = Stream_exact((i,),
-                                            P._sparse,
                                             order=v,
                                             constant=c)
                 return P.element_class(P, coeff_stream)
@@ -2895,7 +2912,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 v = -coeff_stream.order()
                 c = ~initial_coefficients[0]
                 coeff_stream = Stream_exact((),
-                                            P._sparse,
                                             order=v,
                                             constant=c)
                 return P.element_class(P, coeff_stream)
@@ -3055,7 +3071,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 initial_coefficients = [num[i] / d for i in range(v, num.degree() + 1)]
                 order = v - den.valuation()
                 return P.element_class(P, Stream_exact(initial_coefficients,
-                                                       P._sparse,
                                                        order=order,
                                                        constant=0))
 
@@ -3081,12 +3096,10 @@ class LazyCauchyProductSeries(LazyModuleElement):
                         order = 0
                     initial_coefficients = [quo[i] for i in range(order, quo.degree() + 1)]
                     return P.element_class(P, Stream_exact(initial_coefficients,
-                                                           P._sparse,
                                                            order=order,
                                                            degree=v,
                                                            constant=constant))
                 return P.element_class(P, Stream_exact([],
-                                                       P._sparse,
                                                        order=v,
                                                        degree=v,
                                                        constant=constant))
@@ -3095,7 +3108,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
-        return P.element_class(P, Stream_cauchy_mul(left, right_inverse))
+        return P.element_class(P, Stream_cauchy_mul(left, right_inverse, P.is_sparse()))
 
 
     def _floordiv_(self, other):
@@ -3128,6 +3141,121 @@ class LazyCauchyProductSeries(LazyModuleElement):
         if P not in IntegralDomains():
             raise TypeError("must be an integral domain")
         return P(self / other)
+
+    # === fast special functions ===
+
+    def exp(self):
+        r"""
+        Return the exponential series of ``self``.
+
+        We use the identity
+
+        .. MATH::
+
+            \exp(s) = 1 + \int s' \exp(s).
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: exp(z)
+            1 + z + 1/2*z^2 + 1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + O(z^7)
+            sage: exp(z + z^2)
+            1 + z + 3/2*z^2 + 7/6*z^3 + 25/24*z^4 + 27/40*z^5 + 331/720*z^6 + O(z^7)
+            sage: exp(0)
+            1
+            sage: exp(1 + z)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a positive valuation series
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: exp(x+y)[4].factor()
+            (1/24) * (x + y)^4
+            sage: exp(x/(1-y)).polynomial(3)
+            1/6*x^3 + x^2*y + x*y^2 + 1/2*x^2 + x*y + x + 1
+
+        TESTS::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
+            sage: exp(z)[0:6] == exp(x).series(x, 6).coefficients(sparse=False)
+            True
+
+        Check the exponential when the base ring is a lazy ring::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: M.<x> = LazyPowerSeriesRing(L)
+            sage: exp(x)
+            1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+        """
+        P = self.parent()
+        R = self.base_ring()
+        coeff_stream = self._coeff_stream
+        # TODO: coefficients should not be checked here, it prevents
+        # us from using self.define in some cases!
+        if any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1)):
+            raise ValueError("can only compose with a positive valuation series")
+        # WARNING: d_self need not be a proper element of P, e.g. for
+        # multivariate power series
+        # We make the streams dense, because all coefficients have to be computed anyway
+        d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
+                                 False, 0)
+        f = P.undefined(valuation=0)
+        d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
+        int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
+                                       False, 0)
+        f._coeff_stream._target = int_d_self_f
+        return f
+
+    def log(self):
+        r"""
+        Return the series for the natural logarithm of ``self``.
+
+        We use the identity
+
+        .. MATH::
+
+            \log(s) = \int s' / s.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: log(1/(1-z))
+            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
+
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: log((1 + x/(1-y))).polynomial(3)
+            1/3*x^3 - x^2*y + x*y^2 - 1/2*x^2 + x*y + x
+
+        TESTS::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
+            sage: log(1+z)[0:6] == log(1+x).series(x, 6).coefficients(sparse=False)
+            True
+
+            sage: log(z)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a positive valuation series
+        """
+        P = self.parent()
+        R = self.base_ring()
+        coeff_stream = self._coeff_stream
+        # TODO: coefficients should not be checked here, it prevents
+        # us from using self.define in some cases!
+        if (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
+            or coeff_stream[0] != R.one()):
+            raise ValueError("can only compose with a positive valuation series")
+        # WARNING: d_self need not be a proper element of P, e.g. for
+        # multivariate power series
+        d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
+                                 P.is_sparse(), 0)
+        d_self_quo_self = Stream_cauchy_mul(d_self,
+                                            Stream_cauchy_invert(coeff_stream),
+                                            P.is_sparse())
+        int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
+                                              P.is_sparse(), 1)
+        return P.element_class(P, int_d_self_quo_self)
+
 
 class LazyLaurentSeries(LazyCauchyProductSeries):
     r"""
@@ -3583,7 +3711,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                     deg = ret.degree() + 1
                     initial_coefficients = [ret[i] for i in range(val, deg)]
                     coeff_stream = Stream_exact(initial_coefficients,
-                                                self._coeff_stream._is_sparse,
                                                 constant=P.base_ring().zero(),
                                                 degree=deg, order=val)
                     return P.element_class(P, coeff_stream)
@@ -3652,7 +3779,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             coeff_stream = Stream_function(coefficient, P._sparse, 1)
             return P.element_class(P, coeff_stream)
 
-        coeff_stream = Stream_cauchy_compose(self._coeff_stream, g._coeff_stream)
+        coeff_stream = Stream_cauchy_compose(self._coeff_stream,
+                                             g._coeff_stream,
+                                             P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     compose = __call__
@@ -3807,7 +3936,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                     a = coeff_stream[0]
                     b = coeff_stream[1]
                     coeff_stream = Stream_exact((-a/b, 1/b),
-                                                coeff_stream._is_sparse,
                                                 order=0)
                     return P.element_class(P, coeff_stream)
 
@@ -3910,15 +4038,16 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                           for i, c in enumerate(coeff_stream._initial_coefficients,
                                                 coeff_stream._approximate_order)]
             coeff_stream = Stream_exact(coeffs,
-                                        self._coeff_stream._is_sparse,
                                         order=coeff_stream._approximate_order - order,
                                         constant=coeff_stream._constant)
             return P.element_class(P, coeff_stream)
 
-        coeff_stream = Stream_derivative(self._coeff_stream, order)
+        coeff_stream = Stream_derivative(self._coeff_stream, order,
+                                         P.is_sparse())
         if vars:
             coeff_stream = Stream_map_coefficients(coeff_stream,
-                                                   lambda c: c.derivative(vars))
+                                                   lambda c: c.derivative(vars),
+                                                   P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     def approximate_series(self, prec, name=None):
@@ -4462,7 +4591,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 coeff_stream = Stream_function(coefficient, P._sparse, 1)
                 return P.element_class(P, coeff_stream)
 
-            coeff_stream = Stream_cauchy_compose(self._coeff_stream, g0._coeff_stream)
+            coeff_stream = Stream_cauchy_compose(self._coeff_stream,
+                                                 g0._coeff_stream,
+                                                 P.is_sparse())
             return P.element_class(P, coeff_stream)
 
         # The arity is at least 2
@@ -4606,7 +4737,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                     a = coeff_stream[0]
                     b = coeff_stream[1]
                     coeff_stream = Stream_exact((-a/b, 1/b),
-                                                coeff_stream._is_sparse,
                                                 order=0)
                     return P.element_class(P, coeff_stream)
 
@@ -4690,7 +4820,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             v = gen_vars + vars
             d = -len(gen_vars)
             coeff_stream = Stream_map_coefficients(coeff_stream,
-                                                   lambda c: R(c).derivative(v))
+                                                   lambda c: R(c).derivative(v),
+                                                   P.is_sparse())
             coeff_stream = Stream_shift(coeff_stream, d)
             return P.element_class(P, coeff_stream)
 
@@ -4707,15 +4838,16 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                           for i, c in enumerate(coeff_stream._initial_coefficients,
                                                 coeff_stream._approximate_order)]
             coeff_stream = Stream_exact(coeffs,
-                                        self._coeff_stream._is_sparse,
                                         order=coeff_stream._approximate_order - order,
                                         constant=coeff_stream._constant)
             return P.element_class(P, coeff_stream)
 
-        coeff_stream = Stream_derivative(self._coeff_stream, order)
+        coeff_stream = Stream_derivative(self._coeff_stream, order,
+                                         P.is_sparse())
         if vars:
             coeff_stream = Stream_map_coefficients(coeff_stream,
-                                                   lambda c: c.derivative(vars))
+                                                   lambda c: c.derivative(vars),
+                                                   P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     def _format_series(self, formatter, format_strings=False):
@@ -5337,7 +5469,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             else:
                 ps = tensor([R._sets[0].realization_of().p()]*P._arity)
             coeff_stream = Stream_plethysm(self._coeff_stream, g._coeff_stream,
-                                           ps, R)
+                                           P.is_sparse(), ps, R)
             return P.element_class(P, coeff_stream)
 
         else:
@@ -5438,7 +5570,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             b = coeff_stream[1][Partition([1])]
             X = R(Partition([1]))
             coeff_stream = Stream_exact((-a/b, 1/b * X),
-                                        coeff_stream._is_sparse,
                                         order=0)
             return P.element_class(P, coeff_stream)
 
@@ -5521,7 +5652,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             raise ValueError("arity must be equal to 1")
 
         coeff_stream = Stream_map_coefficients(self._coeff_stream,
-                                               lambda c: c.derivative_with_respect_to_p1(n))
+                                               lambda c: c.derivative_with_respect_to_p1(n),
+                                               P.is_sparse())
         coeff_stream = Stream_shift(coeff_stream, -n)
         return P.element_class(P, coeff_stream)
 
@@ -5656,8 +5788,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             p = R.realization_of().p()
             # TODO: does the following introduce a memory leak?
-            g = Stream_map_coefficients(g._coeff_stream, p)
-            f = Stream_map_coefficients(self._coeff_stream, p)
+            g = Stream_map_coefficients(g._coeff_stream, p, P.is_sparse())
+            f = Stream_map_coefficients(self._coeff_stream, p, P.is_sparse())
 
             def g_cycle_type(s, n):
                 # the cycle type of G[sigma] of any permutation sigma
@@ -5913,8 +6045,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             p = R.realization_of().p()
             # TODO: does the following introduce a memory leak?
-            g = Stream_map_coefficients(g._coeff_stream, p)
-            f = Stream_map_coefficients(self._coeff_stream, p)
+            g = Stream_map_coefficients(g._coeff_stream, p, P.is_sparse())
+            f = Stream_map_coefficients(self._coeff_stream, p, P.is_sparse())
 
             def coefficient(n):
                 if not n:
@@ -6132,7 +6264,7 @@ class LazyDirichletSeries(LazyModuleElement):
             and right._initial_coefficients == (P._internal_poly_ring.base_ring().one(),)
             and right.order() == 1):
             return self  # other == 1
-        coeff = Stream_dirichlet_convolve(left, right)
+        coeff = Stream_dirichlet_convolve(left, right, P.is_sparse())
         # Performing exact arithmetic is slow because the series grow large
         #   very quickly as we are multiplying the degree
         #if (isinstance(left, Stream_exact) and not left._constant
@@ -6142,7 +6274,7 @@ class LazyDirichletSeries(LazyModuleElement):
         #    deg = (left._degree - 1) * (right._degree - 1) + 1
         #    order = left._approximate_order * right._approximate_order
         #    coeff_vals = [coeff[i] for i in range(order, deg)]
-        #    return P.element_class(P, Stream_exact(coeff_vals, coeff._is_sparse,
+        #    return P.element_class(P, Stream_exact(coeff_vals,
         #                                           constant=left._constant, order=order, degree=deg))
         return P.element_class(P, coeff)
 
@@ -6175,7 +6307,8 @@ class LazyDirichletSeries(LazyModuleElement):
             ZeroDivisionError: rational division by zero
         """
         P = self.parent()
-        return P.element_class(P, Stream_dirichlet_invert(self._coeff_stream))
+        return P.element_class(P, Stream_dirichlet_invert(self._coeff_stream,
+                                                          P.is_sparse()))
 
     def __call__(self, p, *, check=True):
         r"""

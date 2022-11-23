@@ -398,6 +398,16 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: R = E.lift_x(15/4 * (a+3))
             sage: psi(R)    # indirect doctest
             (1033648757/303450 : 58397496786187/1083316500*a - 62088706165177/2166633000 : 1)
+
+        Check that copying the order over works::
+
+            sage: E = EllipticCurve(GF(431), [1,0])
+            sage: P, = E.gens()
+            sage: Q = 2^99*P; Q.order()
+            27
+            sage: phi = E.isogeny(3^99*P, algorithm='factored')
+            sage: phi(Q)._order
+            27
         """
         return _eval_factored_isogeny(self._phis, P)
 

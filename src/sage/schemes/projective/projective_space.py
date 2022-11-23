@@ -1392,7 +1392,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c>=ProjectiveSpace(RR, 2)
             sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target)
+            sage: P1.point_transformation_matrix(points_source, points_target) # abs tol 1e-13
             [-0.0619047619047597  -0.609523809523810  -0.119047619047621]
             [  0.853968253968253  0.0380952380952380  0.0412698412698421]
             [ -0.214285714285712  -0.933333333333333   0.280952380952379]

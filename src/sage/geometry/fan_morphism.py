@@ -1477,7 +1477,7 @@ class FanMorphism(FreeModuleMorphism):
         If the fan morphism is dominant, then the associated morphism
         of toric varieties is dominant in the algebraic-geometric
         sense (that is, surjective onto a dense subset).
-        
+
         OUTPUT:
 
         Boolean.
@@ -1878,13 +1878,13 @@ class FanMorphism(FreeModuleMorphism):
     def relative_star_generators(self, domain_cone):
         """
         Return the relative star generators of ``domain_cone``.
-        
+
         INPUT:
-        
+
         - ``domain_cone`` -- a cone of the :meth:`domain_fan` of ``self``.
-        
+
         OUTPUT:
-        
+
         - :meth:`~RationalPolyhedralFan.star_generators` of ``domain_cone``
           viewed as a cone of :meth:`preimage_fan` of :meth:`image_cone` of
           ``domain_cone``.

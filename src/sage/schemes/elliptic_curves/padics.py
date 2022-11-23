@@ -178,10 +178,10 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
         sage: L = e.padic_lseries(3, implementation = 'sage')
         sage: L.series(5,prec=10)
         2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 3^6 + O(3^7) + (1 + 3 + 2*3^2 + 3^3 + O(3^4))*T + (1 + 2*3 + O(3^4))*T^2 + (3 + 2*3^2 + O(3^3))*T^3 + (2*3 + 3^2 + O(3^3))*T^4 + (2 + 2*3 + 2*3^2 + O(3^3))*T^5 + (1 + 3^2 + O(3^3))*T^6 + (2 + 3^2 + O(3^3))*T^7 + (2 + 2*3 + 2*3^2 + O(3^3))*T^8 + (2 + O(3^2))*T^9 + O(T^10)
-        
+
     Also the numerical modular symbols can be used.
-    This may allow for much larger conductor in some instances::   
-    
+    This may allow for much larger conductor in some instances::
+
         sage: E = EllipticCurve([101,103])
         sage: L = E.padic_lseries(5, implementation="num")
         sage: L.series(2)

@@ -460,7 +460,8 @@ class GenericGraph(GenericGraph_pyx):
     """
 
     # Nice defaults for plotting arrays of graphs (see sage.misc.functional.show)
-    graphics_array_defaults =  {'layout': 'circular', 'vertex_size':50, 'vertex_labels':False, 'graph_border':True}
+    graphics_array_defaults = {'layout': 'circular', 'vertex_size': 50,
+                               'vertex_labels': False, 'graph_border': True}
 
     def __init__(self):
         r"""
@@ -601,16 +602,16 @@ class GenericGraph(GenericGraph_pyx):
         if not isinstance(other, GenericGraph):
             return False
         from sage.graphs.graph import Graph
-        g1_is_graph = isinstance(self, Graph) # otherwise, DiGraph
-        g2_is_graph = isinstance(other, Graph) # otherwise, DiGraph
+        g1_is_graph = isinstance(self, Graph)  # otherwise, DiGraph
+        g2_is_graph = isinstance(other, Graph)  # otherwise, DiGraph
         # Fast checks
         if (g1_is_graph != g2_is_graph or
-            self.allows_multiple_edges() != other.allows_multiple_edges() or
-            self.allows_loops() != other.allows_loops() or
-            self.order() != other.order() or
-            self.size() != other.size() or
-            self.weighted() != other.weighted()):
-                return False
+                self.allows_multiple_edges() != other.allows_multiple_edges() or
+                self.allows_loops() != other.allows_loops() or
+                self.order() != other.order() or
+                self.size() != other.size() or
+                self.weighted() != other.weighted()):
+            return False
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
@@ -809,11 +810,18 @@ class GenericGraph(GenericGraph_pyx):
         n = self.order()
         if self._directed:
             total_length = n * n
-            bit = lambda x, y: x * n + y
+
+            def bit(x, y):
+                return x * n + y
         else:
             total_length = (n * (n - 1)) // 2
-            n_ch_2 = lambda b: int(b * (b - 1)) // 2
-            bit = lambda x, y: n_ch_2(max(x, y)) + min(x, y)
+
+            def n_ch_2(b):
+                return int(b * (b - 1)) // 2
+
+            def bit(x, y):
+                return n_ch_2(max(x, y)) + min(x, y)
+
         bit_vector = set()
 
         try:
@@ -821,13 +829,13 @@ class GenericGraph(GenericGraph_pyx):
         except TypeError:
             V = self
         v_to_int = {v: i for i, v in enumerate(V)}
-        for u,v,_ in self.edge_iterator():
+        for u, v in self.edge_iterator(labels=False):
             bit_vector.add(bit(v_to_int[u], v_to_int[v]))
         bit_vector = sorted(bit_vector)
         s = []
         j = 0
         for i in bit_vector:
-            s.append( '0' * (i - j) + '1' )
+            s.append('0' * (i - j) + '1')
             j = i + 1
         s = "".join(s)
         s += '0' * (total_length - len(s))
@@ -921,7 +929,7 @@ class GenericGraph(GenericGraph_pyx):
             name += "multi-"
         if self._directed:
             name += "di"
-        name += "graph on %d vert"%self.order()
+        name += "graph on %d vert" % self.order()
         if self.order() == 1:
             name += "ex"
         else:
@@ -945,7 +953,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return getattr(self, '_immutable', False)
 
-    ### Formats
+    # Formats
 
     def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None):
         """
@@ -1164,7 +1172,7 @@ class GenericGraph(GenericGraph_pyx):
                 (weighted is None or self._weighted == weighted)):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             if (isinstance(self._backend, StaticSparseBackend) and
-                (data_structure=='static_sparse' or data_structure is None)):
+                    (data_structure == 'static_sparse' or data_structure is None)):
                 return self
 
         if data_structure is None:
@@ -1306,7 +1314,7 @@ class GenericGraph(GenericGraph_pyx):
         if format not in formats:
             raise ValueError("format '{}' unknown".format(format))
 
-        formats[format](self.networkx_graph(),filename,**kwds)
+        formats[format](self.networkx_graph(), filename, **kwds)
 
     def _scream_if_not_simple(self, allow_loops=False, allow_multiple_edges=False):
         r"""
@@ -1931,20 +1939,20 @@ class GenericGraph(GenericGraph_pyx):
             i = new_indices[u]
             j = new_indices[v]
             if multiple_edges and (i, j) in D:
-                D[i,j] += 1
+                D[i, j] += 1
                 if not directed and i != j:
-                    D[j,i] += 1
+                    D[j, i] += 1
             else:
-                D[i,j] = 1
+                D[i, j] = 1
                 if not directed and i != j:
-                    D[j,i] = 1
+                    D[j, i] = 1
         from sage.matrix.constructor import matrix
         if base_ring is None:
             base_ring = ZZ
         M = matrix(base_ring, n, n, D, sparse=sparse, **kwds)
         return M
 
-    am = adjacency_matrix # shorter call makes life easier
+    am = adjacency_matrix  # shorter call makes life easier
 
     def incidence_matrix(self, oriented=None, sparse=True, vertices=None, edges=None,
                          *, base_ring=None, **kwds):
@@ -2277,13 +2285,13 @@ class GenericGraph(GenericGraph_pyx):
         from sage.matrix.constructor import matrix
 
         if ((self.is_directed() and not self.is_strongly_connected()) or
-            (not self.is_directed() and not self.is_connected())):
+                (not self.is_directed() and not self.is_connected())):
             raise ValueError("input (di)graph must be (strongly) connected")
 
         if vertices is None:
             vertices = self.vertices(sort=True)
         elif (len(vertices) != self.order() or
-            set(vertices) != set(self.vertex_iterator())):
+              set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")
 
         # We extract from **kwds the arguments for distance_all_pairs
@@ -2396,20 +2404,20 @@ class GenericGraph(GenericGraph_pyx):
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")
 
-        new_indices = {v: i for i,v in enumerate(vertices)}
+        new_indices = {v: i for i, v in enumerate(vertices)}
 
         D = {}
         if self._directed:
             for u, v, l in self.edge_iterator():
                 i = new_indices[u]
                 j = new_indices[v]
-                D[i,j] = l
+                D[i, j] = l
         else:
             for u, v, l in self.edge_iterator():
                 i = new_indices[u]
                 j = new_indices[v]
-                D[i,j] = l
-                D[j,i] = l
+                D[i, j] = l
+                D[j, i] = l
         from sage.matrix.constructor import matrix
         if base_ring is None:
             M = matrix(self.num_verts(), D, sparse=sparse, **kwds)
@@ -2572,29 +2580,28 @@ class GenericGraph(GenericGraph_pyx):
         if M.is_sparse():
             row_sums = {}
             if indegree:
-                for (i,j), entry in M.dict().items():
+                for (i, j), entry in M.dict().items():
                     row_sums[j] = row_sums.get(j, 0) + entry
             else:
-                for (i,j), entry in M.dict().items():
+                for (i, j), entry in M.dict().items():
                     row_sums[i] = row_sums.get(i, 0) + entry
 
-
             for i in range(M.nrows()):
-                D[i,i] += row_sums.get(i, 0)
+                D[i, i] += row_sums.get(i, 0)
 
         else:
             if indegree:
                 col_sums = [sum(v) for v in M.columns()]
                 for i in range(M.nrows()):
-                    D[i,i] += col_sums[i]
+                    D[i, i] += col_sums[i]
             else:
-                row_sums=[sum(v) for v in M.rows()]
+                row_sums = [sum(v) for v in M.rows()]
                 for i in range(M.nrows()):
-                    D[i,i] += row_sums[i]
+                    D[i, i] += row_sums[i]
 
         if normalized:
             from sage.misc.functional import sqrt
-            Dsqrt = diagonal_matrix([1 / sqrt(D[i,i]) if D[i,i] else 1 \
+            Dsqrt = diagonal_matrix([1 / sqrt(D[i, i]) if D[i, i] else 1
                                      for i in range(D.nrows())])
             if signless:
                 ret = Dsqrt * (D + M) * Dsqrt
@@ -2612,7 +2619,7 @@ class GenericGraph(GenericGraph_pyx):
 
     laplacian_matrix = kirchhoff_matrix
 
-    ### Attributes
+    # Attributes
 
     def set_embedding(self, embedding):
         """
@@ -2639,8 +2646,14 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.set_embedding({0: [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7], 3: [8, 2, 4], 4: [0, 9, 3], 5: [0, 8, 7], 6: [8, 1, 9], 7: [9, 2, 5], 8: [3, 5, 6], 9: [4, 6, 7]})
-            sage: G.set_embedding({'s': [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7], 3: [8, 2, 4], 4: [0, 9, 3], 5: [0, 8, 7], 6: [8, 1, 9], 7: [9, 2, 5], 8: [3, 5, 6], 9: [4, 6, 7]})
+            sage: G.set_embedding({0: [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7],
+            ....:                  3: [8, 2, 4], 4: [0, 9, 3], 5: [0, 8, 7],
+            ....:                  6: [8, 1, 9], 7: [9, 2, 5], 8: [3, 5, 6],
+            ....:                  9: [4, 6, 7]})
+            sage: G.set_embedding({'s': [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7],
+            ....:                  3: [8, 2, 4], 4: [0, 9, 3], 5: [0, 8, 7],
+            ....:                  6: [8, 1, 9], 7: [9, 2, 5], 8: [3, 5, 6],
+            ....:                  9: [4, 6, 7]})
             Traceback (most recent call last):
             ...
             ValueError: vertices in ['s'] from the embedding do not belong to the graph
@@ -2677,7 +2690,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.genus()
             1
             sage: G.get_embedding()
-            {0: [1, 4, 5], 1: [0, 2, 6], 2: [1, 3, 7], 3: [2, 4, 8], 4: [0, 3, 9], 5: [0, 7, 8], 6: [1, 9, 8], 7: [2, 5, 9], 8: [3, 6, 5], 9: [4, 6, 7]}
+            {0: [1, 4, 5], 1: [0, 2, 6], 2: [1, 3, 7], 3: [2, 4, 8],
+             4: [0, 3, 9], 5: [0, 7, 8], 6: [1, 9, 8], 7: [2, 5, 9],
+             8: [3, 6, 5], 9: [4, 6, 7]}
 
         Note that the embeddings gets properly modified on vertex or edge deletion::
 
@@ -2746,7 +2761,9 @@ class GenericGraph(GenericGraph_pyx):
 
         EXAMPLES::
 
-            sage: d = {0: [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7], 3: [8, 2, 4], 4: [0, 9, 3], 5: [0, 8, 7], 6: [8, 1, 9], 7: [9, 2, 5], 8: [3, 5, 6], 9: [4, 6, 7]}
+            sage: d = {0: [1, 5, 4], 1: [0, 2, 6], 2: [1, 3, 7], 3: [8, 2, 4],
+            ....:      4: [0, 9, 3], 5: [0, 8, 7], 6: [8, 1, 9], 7: [9, 2, 5],
+            ....:      8: [3, 5, 6], 9: [4, 6, 7]}
             sage: G = graphs.PetersenGraph()
             sage: G._check_embedding_validity(d)
             True
@@ -2794,28 +2811,36 @@ class GenericGraph(GenericGraph_pyx):
             if boolean:
                 return False
             if set(embedding).difference(self):
-                raise ValueError("vertices in {} from the embedding do not belong to the graph".format(list(set(embedding).difference(self))))
+                raise ValueError("vertices in {} from the embedding do not "
+                                 "belong to the graph".format(list(set(embedding).difference(self))))
             else:
-                raise ValueError("vertices in {} have no corresponding entry in the embedding".format(list(set(self).difference(embedding))))
+                raise ValueError("vertices in {} have no corresponding entry "
+                                 "in the embedding".format(list(set(self).difference(embedding))))
 
         if self._directed:
-            connected = lambda u, v: self.has_edge(u, v) or self.has_edge(v, u)
+            def connected(u, v):
+                return self.has_edge(u, v) or self.has_edge(v, u)
         else:
             connected = self.has_edge
         for v in embedding:
             if len(embedding[v]) != self.degree(v):
                 if boolean:
                     return False
-                raise ValueError("the list associated with vertex {} has length {} but d({})={}".format(v, len(embedding[v]), v, self.degree(v)))
+                raise ValueError("the list associated with vertex {} has "
+                                 "length {} but d({})={}".format(v, len(embedding[v]),
+                                                                 v, self.degree(v)))
             if len(embedding[v]) != len(set(embedding[v])):
                 if boolean:
                     return False
-                raise ValueError("the list associated with vertex {} contains >1 occurrences of {}".format(v, [x for x in set(embedding[v]) if embedding[v].count(x) > 1]))
+                raise ValueError("the list associated with vertex {} contains >1 "
+                                 "occurrences of {}".format(v, [x for x in set(embedding[v])
+                                                                if embedding[v].count(x) > 1]))
             for u in embedding[v]:
                 if not connected(v, u):
                     if boolean:
                         return False
-                    raise ValueError("{} and {} are not neighbors but {} is in the list associated with {}".format(u, v, u, v))
+                    raise ValueError("{} and {} are not neighbors but {} is in "
+                                     "the list associated with {}".format(u, v, u, v))
         return True
 
     def has_loops(self):
@@ -23125,7 +23150,6 @@ class GenericGraph(GenericGraph_pyx):
         except EmptySetError:
             return False
 
-
     def is_isomorphic(self, other, certificate=False, verbosity=0, edge_labels=False):
         r"""
         Tests for isomorphism between self and other.
@@ -24154,7 +24178,7 @@ class GenericGraph(GenericGraph_pyx):
         other nodes. ::
 
             sage: G = DiGraph({1: [10], 2:[10,11], 3:[10,11], 4:[], 5:[11, 4], 6:[11], 7:[10,11], 8:[10,11], 9:[10], 10:[11, 5, 8], 11:[6]})
-            sage: G.katz_centrality(.85)
+            sage: G.katz_centrality(.85) # rel tol 1e-14
             {1: 0.000000000000000,
              2: 0.000000000000000,
              3: 0.000000000000000,

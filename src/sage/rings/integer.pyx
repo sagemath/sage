@@ -1184,7 +1184,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0x' is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important
@@ -1208,7 +1208,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0' (or '0o') is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important

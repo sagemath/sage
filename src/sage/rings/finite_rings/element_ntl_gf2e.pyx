@@ -434,7 +434,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         if number < 0 or number >= self._order:
             raise TypeError("n must be between 0 and self.order()")
 
-        if isinstance(number, int) or isinstance(number, long):
+        if isinstance(number, int):
             if not number:
                 n = 0
             else:

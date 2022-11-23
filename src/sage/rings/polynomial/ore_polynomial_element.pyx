@@ -2735,7 +2735,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: P * Q == Q * P
             False
 
-        TESTS::
+        TESTS:
 
         We check associativity and distributivity::
 

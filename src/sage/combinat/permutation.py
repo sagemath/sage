@@ -200,11 +200,8 @@ Below are listed all methods and classes defined in this file.
 AUTHORS:
 
 - Mike Hansen
-
 - Dan Drake (2008-04-07): allow Permutation() to take lists of tuples
-
 - Sébastien Labbé (2009-03-17): added robinson_schensted_inverse
-
 - Travis Scrimshaw:
 
   * (2012-08-16): ``to_standard()`` no longer modifies input
@@ -216,11 +213,10 @@ AUTHORS:
 - Darij Grinberg (2013-09-07): added methods; ameliorated :trac:`14885` by
   exposing and documenting methods for global-independent
   multiplication.
-
 - Travis Scrimshaw (2014-02-05): Made :class:`StandardPermutations_n` a
   finite Weyl group to make it more uniform with :class:`SymmetricGroup`.
   Added ability to compute the conjugacy classes.
-
+- Trevor K. Karn (2022-08-05): Add :meth:`Permutation.n_reduced_words`
 - Amrutha P, Shriya M, Divya Aggarwal (2022-08-16): Added Multimajor Index.
 
 Classes and methods
@@ -229,6 +225,7 @@ Classes and methods
 
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
+#                     2022 Trevor K. Karn <karnx018 at umn.edu>
 #                     2022 Amrutha P <amruthap1916@gmail.com>
 #                     2022 Shriya M <25shriya@gmail.com>
 #                     2022 Divya Aggarwal <divyaa@iiitd.ac.in>
@@ -2993,6 +2990,38 @@ class Permutation(CombinatorialElement):
 
         return rw
 
+    def rothe_diagram(self):
+        r"""
+        Return the Rothe diagram of ``self``.
+
+        EXAMPLES::
+
+            sage: p = Permutation([4,2,1,3])
+            sage: D = p.rothe_diagram(); D
+            [(0, 0), (0, 1), (0, 2), (1, 0)]
+            sage: D.pp()
+            O O O .
+            O . . .
+            . . . .
+            . . . .
+        """
+        from sage.combinat.diagram import RotheDiagram
+        return RotheDiagram(self)
+
+    def number_of_reduced_words(self):
+        r"""
+        Return the number of reduced words of ``self`` without explicitly
+        computing them all.
+
+        EXAMPLES::
+
+            sage: p = Permutation([6,4,2,5,1,8,3,7])
+            sage: len(p.reduced_words()) == p.number_of_reduced_words()
+            True
+        """
+        Tx = self.rothe_diagram().peelable_tableaux()
+
+        return sum(map(_tableau_contribution, Tx))
 
     ################
     # Fixed Points #
@@ -5242,6 +5271,20 @@ class Permutation(CombinatorialElement):
         return self.shifted_concatenation(other, "right").\
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
 
+def _tableau_contribution(T):
+    r"""
+    Get the number of SYT of shape(``T``).
+
+    EXAMPLES::
+
+        sage: T = Tableau([[1,1,1],[2]])
+        sage: from sage.combinat.permutation import _tableau_contribution
+        sage: _tableau_contribution(T)
+        3
+    """
+    from sage.combinat.tableau import StandardTableaux
+    return(StandardTableaux(T.shape()).cardinality())
+
 ################################################################
 # Parent classes
 ################################################################
@@ -7478,57 +7521,52 @@ def from_cycles(n, cycles, parent=None):
         sage: Permutation("(-12,2)(3,4)")
         Traceback (most recent call last):
         ...
-        ValueError: All elements should be strictly positive integers, and I just found a non-positive one.
+        ValueError: all elements should be strictly positive integers, but I found -12
         sage: Permutation("(1,2)(2,4)")
         Traceback (most recent call last):
         ...
-        ValueError: an element appears twice in the input
+        ValueError: the element 2 appears more than once in the input
         sage: permutation.from_cycles(4, [[1,18]])
         Traceback (most recent call last):
         ...
-        ValueError: You claimed that this was a permutation on 1...4 but it contains 18
+        ValueError: you claimed that this is a permutation on 1...4, but it contains 18
+
+    TESTS:
+
+    Verify that :trac:`34662` has been fixed::
+
+        sage: permutation.from_cycles(6, (c for c in [[1,2,3], [4,5,6]]))
+        [2, 3, 1, 5, 6, 4]
     """
     if parent is None:
         parent = Permutations(n)
 
-    p = list(range(1, n+1))
-
-    # Is it really a permutation on 1...n ?
-    flattened_and_sorted = []
-    for c in cycles:
-        flattened_and_sorted.extend(c)
-    flattened_and_sorted.sort()
-
-    # Empty input
-    if not flattened_and_sorted:
-        return parent(p, check_input=False)
-
-    # Only positive elements
-    if int(flattened_and_sorted[0]) < 1:
-        raise ValueError("All elements should be strictly positive "
-                         "integers, and I just found a non-positive one.")
-
-    # Really smaller or equal to n ?
-    if flattened_and_sorted[-1] > n:
-        raise ValueError("You claimed that this was a permutation on 1..."+
-                         str(n)+" but it contains "+str(flattened_and_sorted[-1]))
-
-    # Disjoint cycles ?
-    previous = flattened_and_sorted[0] - 1
-    for i in flattened_and_sorted:
-        if i == previous:
-            raise ValueError("an element appears twice in the input")
-        else:
-            previous = i
+    # None represents a value of the permutation that has not been specified yet
+    p = n * [None]
 
     for cycle in cycles:
-        if not cycle:
-            continue
-        first = cycle[0]
-        for i in range(len(cycle)-1):
-            p[cycle[i]-1] = cycle[i+1]
-        p[cycle[-1]-1] = first
+        cycle_length = len(cycle)
+        for i in range(cycle_length):
+            # two consecutive terms in the cycle represent k and p(k)
+            k = ZZ(cycle[i])
+            pk = ZZ(cycle[(i + 1) % cycle_length])
 
+            # check that the values are valid
+            if (k < 1) or (pk < 1):
+                raise ValueError("all elements should be strictly positive "
+                                f"integers, but I found {min(k, pk)}")
+            if (k > n) or (pk > n):
+                raise ValueError("you claimed that this is a permutation on "
+                                f"1...{n}, but it contains {max(k, pk)}")
+            if p[k - 1] is not None:
+                raise ValueError(f"the element {k} appears more than once"
+                                " in the input")
+
+            p[k - 1] = pk
+    # values that are not in any cycle are fixed points of the permutation
+    for i in range(n):
+        if p[i] is None:
+            p[i] = ZZ(i + 1)
     return parent(p, check_input=False)
 
 def from_lehmer_code(lehmer, parent=None):

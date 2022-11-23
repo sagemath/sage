@@ -2144,11 +2144,11 @@ def sage_getsource(obj):
     - William Stein
     - extensions by Nick Alexander
     """
-    #First we should check if the object has a _sage_src_
-    #method.  If it does, we just return the output from
-    #that.  This is useful for getting pexpect interface
-    #elements to behave similar to regular Python objects
-    #with respect to introspection.
+    # First we should check if the object has a _sage_src_
+    # method.  If it does, we just return the output from
+    # that.  This is useful for getting pexpect interface
+    # elements to behave similar to regular Python objects
+    # with respect to introspection.
     try:
         return obj._sage_src_()
     except (AttributeError, TypeError):
@@ -2174,7 +2174,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         sage: print(sage_getsource(C.parent_class))  #indirect doctest
         class ParentMethods:
         ...
-                Returns the Lie bracket `[x, y] = x y - y x` of `x` and `y`.
+                Return the Lie bracket `[x, y] = x y - y x` of `x` and `y`.
         ...
 
     TESTS:

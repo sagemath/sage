@@ -371,6 +371,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             y = cofactor * x
 
             pvals = [o.valuation(p) for o in ords]
+            if not any(pvals):
+                continue
+
             plog = _discrete_log_pgroup(p, pvals, pgens, y)
 
             for i, (r, v) in enumerate(zip(plog, pvals)):
@@ -472,7 +475,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 def _discrete_log_pgroup(p, vals, aa, b):
     r"""
     Attempt to express an element of p-power order in terms of
-    generators of a p-subgroup of this group.
+    generators of a nontrivial p-subgroup of this group.
 
     Used as a subroutine in :meth:`discrete_log`.
 
@@ -491,6 +494,18 @@ def _discrete_log_pgroup(p, vals, aa, b):
         sage: from sage.groups.additive_abelian.additive_abelian_wrapper import _discrete_log_pgroup
         sage: _discrete_log_pgroup(5, [1,2,4,4], gs, a + 17*b + 123*c + 456*d)
         (1, 17, 123, 456)
+
+    TESTS:
+
+    Check for :trac:`34716`::
+
+        sage: E = EllipticCurve(GF(487^2), [311,205])
+        sage: G = E.abelian_group().torsion_subgroup(42)
+        sage: G.invariants()
+        (6, 42)
+        sage: P, Q = G.torsion_subgroup(6).gens()
+        sage: G.discrete_log(2*P + 3*Q, [P, Q])  # indirect doctest
+        (2, 3)
     """
     from itertools import product as iproduct
 
