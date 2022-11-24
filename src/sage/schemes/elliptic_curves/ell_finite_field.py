@@ -10,7 +10,9 @@ AUTHORS:
 - John Cremona (2008-02): Point counting and group structure for
   non-prime fields, Frobenius endomorphism and order, elliptic logs
 
-- Mariah Lenox (2011-03): Added set_order method
+- Mariah Lenox (2011-03): Added ``set_order`` method
+
+- Lorenz Panny (2022-11): ``.twists()``
 """
 
 # ****************************************************************************
@@ -1352,6 +1354,117 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         n = getattr(other, '_order', None)
         if n is not None:
             self._order = n
+
+    def twists(self):
+        r"""
+        Return a list of `k`-isomorphism representatives of all
+        twists of this elliptic curve, where `k` is the base field.
+
+        The input curve appears as the first entry of the result.
+
+        .. NOTE::
+
+            A *twist* of `E/k` is an elliptic curve `E'` defined over
+            `k` that is isomorphic to `E` over the algebraic closure
+            `\bar k`.
+
+            Most elliptic curves over a finite field only admit a
+            single nontrivial twist (the quadratic twist); the only
+            exceptions are curves with `j`-invariant `0` or `1728`.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.quadratic_twist`
+            - :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.quartic_twist`
+            - :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.sextic_twist`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(97), [1,1])
+            sage: E.j_invariant()
+            54
+            sage: E.twists()
+            [Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97]
+
+        ::
+
+            sage: E = EllipticCurve(GF(97), [1,0])
+            sage: E.j_invariant()
+            79
+            sage: E.twists()
+            [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97]
+
+        ::
+
+            sage: E = EllipticCurve(GF(97), [0,1])
+            sage: E.j_invariant()
+            0
+            sage: E.twists()
+            [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97]
+
+        TESTS:
+
+        Randomized check that we find all twists and there are no duplicates::
+
+            sage: p = next_prime(randrange(4,100))
+            sage: e = randrange(1,10)
+            sage: F.<t> = GF((p,e))
+            sage: while True:
+            ....:     try:
+            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
+            ....:     except ArithmeticError:
+            ....:         pass
+            ....:     else:
+            ....:         break
+            sage: twists1 = E.twists()
+            sage: {sum(E1.is_isomorphic(E2) for E2 in twists1) == 1 for E1 in twists1}
+            {True}
+            sage: j = E.j_invariant()
+            sage: A,B = polygens(F, 'A,B')
+            sage: eq = 1728*4*A**3 - j * (4*A**3 + 27*B**2)
+            sage: twists2 = []
+            sage: for _ in range(10):
+            ....:     V = Ideal([eq, A + B - F.random_element()]).variety()
+            ....:     if not V:
+            ....:         continue
+            ....:     sol = choice(V)
+            ....:     a, b = sol[A], sol[B]
+            ....:     try:
+            ....:         twists2.append(EllipticCurve([a, b]))
+            ....:     except ArithmeticError:
+            ....:         pass
+            sage: all(any(E2.is_isomorphic(E1) for E1 in twists1) for E2 in twists2)
+            True
+        """
+        K = self.base_field()
+        if K.characteristic() in (2,3):
+            raise NotImplementedError(f'not implemented in characteristic {K.characteristic()}')
+        q = K.cardinality()
+
+        if not self.j_invariant():
+            meth = self.sextic_twist
+            deg = gcd(q-1, 6)
+        elif self.j_invariant() == 1728:
+            meth = self.quartic_twist
+            deg = gcd(q-1, 4)
+        else:
+            meth = self.quadratic_twist
+            deg = ZZ(2)
+        assert deg.divides(q-1)
+
+        D = None
+        while not D or any(D**((q-1)//d) == 1 for d in deg.prime_divisors()):
+            D = K.random_element()
+        return [self] + [meth(D**i) for i in range(1,deg)]
 
 
 # dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):
