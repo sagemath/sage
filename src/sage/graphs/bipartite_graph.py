@@ -550,46 +550,28 @@ class BipartiteGraph(Graph):
 
         return
 
-    # true if specified by user, or if graph is weighted
-    def _use_hash_labels(self):
-        if self.hash_labels is None:
-            import warnings
-            fallback=self.weighted()
-            warnings.warn(f"Warning - hash_labels parameter not passed to BipartiteGraph constructor.\nDefaulting to {fallback} [aka self.weighted()]")
-            self.hash_labels=fallback
-        return self.hash_labels
-
-
     def __hash__(self):
 
         """
         Compute a hash for ``self``, if ``self`` is immutable.
         """
         if self.is_immutable():
-        
-            left=frozenset(self.left)
-            right=frozenset(self.right)
-
-            data_to_hash=[left, right]
 
             # determine whether to hash labels
             # warn user if not manually specified
             use_labels=self._use_hash_labels()
-            tuple_depth = 3 if use_labels else 2
 
-            for edge in self.edges(sort=True):
-                data_to_hash.append(edge[:tuple_depth])
 
             
-            # edge_iter = self.edge_iterator(labels=use_labels)
+            edge_iter = self.edge_iterator(labels=use_labels)
             
-            # if self.allows_multiple_edges():
-            #     from collections import Counter                
-            #     edge_items = Counter(edge_iter).items()
-            # else:
-            #     edge_items = edge_iter
+            if self.allows_multiple_edges():
+                from collections import Counter                
+                edge_items = Counter(edge_iter).items()
+            else:
+                edge_items = edge_iter
 
-            return hash(tuple(data_to_hash))        
+            return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))        
         else:
             raise TypeError("This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`")
 

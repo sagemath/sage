@@ -614,6 +614,13 @@ class GenericGraph(GenericGraph_pyx):
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
+    # check if specified by the user, if not then fallback
+    def _use_labels_for_hash(self):
+        if not hasattr(self, "hash_labels") or self.hash_labels is None:
+            fallback=self.weighted()
+            self.hash_labels=fallback
+        return self.hash_labels
+
     @cached_method
     def __hash__(self):
         """
@@ -684,9 +691,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: G1.__hash__() == G2.__hash__()
             True
 
+        Make sure hash_labels parameter behaves as expected:
+
+
         """
         if self.is_immutable():
-            edge_items = self.edge_iterator(labels=self._weighted)
+            use_labels=self._use_labels_for_hash()
+            edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
                 from collections import Counter
                 edge_items = Counter(edge_items).items()
@@ -947,7 +958,7 @@ class GenericGraph(GenericGraph_pyx):
 
     ### Formats
 
-    def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None):
+    def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None, hash_labels=None):
         """
         Change the graph implementation
 
@@ -1133,7 +1144,86 @@ class GenericGraph(GenericGraph_pyx):
             sage: G._immutable = True
             sage: G.copy()._backend
             <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+
+        Copying and changing hash_labels parameter::
+
+            sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: G1c = G1.copy(hash_labels=True, immutable=True)
+            sage: hash(G1)==hash(G1c)
+            False
+
+            sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True, hash_labels=False)
+            sage: hash(G1)==hash(G2)
+            True
+            sage: G1c = G1.copy(hash_labels=True)
+            sage: G2c = G2.copy(hash_labels=True)
+            sage: hash(G1c)==hash(G2c)
+            False
+
+        Making sure the .copy behaviour works correctly with hash_labels and immutable in all 54 cases::
+            sage: for old_immutable in [True, False]:
+            ....:     for new_immutable in [True, False, None]:
+            ....:         for old_hash_labels in [True, False, None]:
+            ....:             for new_hash_labels in [True, False, None]:
+            ....:
+            ....:                 # make a graph with old_immutable, old_hash_labels
+            ....:                 G = Graph({0: {1: 'edge label A'}}, immutable=old_immutable, hash_labels=old_hash_labels)
+            ....:                 old_immutable=G.is_immutable()
+            ....:                 old_hash_labels=G.hash_labels
+            ....:
+            ....:                 # copy the graph, passing the overrides
+            ....:                 G2 = G.copy(immutable=new_immutable, hash_labels=new_hash_labels)
+            ....:
+            ....:                 if new_immutable is None:
+            ....:                     # make sure immutability is preserved if we don't update it
+            ....:                     assert G2.is_immutable() == old_immutable, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+            ....:                 else:
+            ....:                     # make sure that updating immutability works
+            ....:                     assert G2.is_immutable() == new_immutable, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+            ....:
+            ....:                 if new_hash_labels is None:
+            ....:                     # make sure hash_labels is preserved if we don't update it
+            ....:                     assert G2.hash_labels == old_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+            ....:                 else:
+            ....:                     # make sure updating hash labels works
+            ....:                     assert G2.hash_labels == new_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+                        
         """
+
+        # This is an ugly hack but it works.
+        # This function contains some fairly complex logic
+        # There is a comment further down that says
+
+        ### Immutable copy of an immutable graph ? return self !
+
+        # The issue being that if we want to change the hash_labels behaviour, then
+        # returning self is no longer a good option. I'd argue that a copy function
+        # returning self is always bad behaviour, but that's out of the scope for this ticket.
+        # Trying to weaken the if statement to include something like
+        
+        ### and (hash_labels is None or (hash_labels==self._use_labels_for_hash()))
+
+        # doesn't work, since there is no fallback logic for making
+        # an immutable copy of an immutable graph, and my attempts at
+        # implementing one caused other tests to break in different
+        # bits of the code
+
+        # the hack I've used creates a mutable copy of the graph
+        # and then makes an immutable copy of that one. I think this is a fairly
+        # inobtrusive implementation, since the function still runs as normally,
+        # assuming that they pass nothing into hash_labels, and seems to behave
+        # correctly otherwise.
+
+        # However, this is obviously not optimal, and could definitely be improved upon
+        # by someone who understands the logic better.        
+        if hash_labels is not None:
+            desired_immutable = self.is_immutable() if immutable is None else immutable
+            forced_mutable_copy = self.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=False)
+            fresh_copy = forced_mutable_copy.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=desired_immutable)
+            fresh_copy.hash_labels=hash_labels
+            return fresh_copy
+
         # Which data structure should be used ?
         if data_structure is not None:
             # data_structure is already defined so there is nothing left to do
@@ -1166,19 +1256,19 @@ class GenericGraph(GenericGraph_pyx):
             if (isinstance(self._backend, StaticSparseBackend) and
                 (data_structure=='static_sparse' or data_structure is None)):
                 return self
-
+            
         if data_structure is None:
             from sage.graphs.base.dense_graph import DenseGraphBackend
             if isinstance(self._backend, DenseGraphBackend):
                 data_structure = "dense"
             else:
                 data_structure = "sparse"
-
+        
         G = self.__class__(self, name=self.name(), pos=copy(self._pos),
-                           weighted=weighted,
-                           data_structure=data_structure)
+                weighted=weighted,
+                data_structure=data_structure)
 
-        attributes_to_copy = ('_assoc', '_embedding')
+        attributes_to_copy = ('_assoc', '_embedding', 'hash_labels')
         for attr in attributes_to_copy:
             if hasattr(self, attr):
                 copy_attr = {}
@@ -3988,7 +4078,6 @@ class GenericGraph(GenericGraph_pyx):
             return True, color
         else:
             return True
-
 
     def is_eulerian(self, path=False):
         r"""
@@ -7228,7 +7317,6 @@ class GenericGraph(GenericGraph_pyx):
             answer.append([l0, l1])
         return tuple(answer)
 
-
     def multiway_cut(self, vertices, value_only=False, use_edge_labels=False,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -7371,7 +7459,6 @@ class GenericGraph(GenericGraph_pyx):
                 return Integer(sum(1 for e in self.edge_iterator(labels=False) if cut[good_edge(e)]))
 
         return [e for e in self.edge_iterator() if cut[good_edge((e[0], e[1]))]]
-
 
     def max_cut(self, value_only=True, use_edge_labels=False, vertices=False,
                 solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -8162,7 +8249,6 @@ class GenericGraph(GenericGraph_pyx):
         tsp.name("Hamiltonian path from {}".format(self.name()))
         weight = lambda l: 1 if l is None else l
         return (sum(map(weight,tsp.edge_labels())), tsp) if use_edge_labels else tsp
-
 
     def traveling_salesman_problem(self, use_edge_labels=False, maximize=False,
                                    solver=None, constraint_generation=None,
