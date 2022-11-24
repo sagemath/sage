@@ -1411,6 +1411,17 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
              Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97,
              Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 97]
 
+        This can be useful to quickly compute a list of all elliptic curves
+        over a finite field `k` up to `k`-isomorphism::
+
+            sage: Es = [E for j in GF(13) for E in EllipticCurve(j=j).twists()]
+            sage: len(Es)
+            32
+            sage: Es
+            [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 13,
+             ...
+             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 13]
+
         TESTS:
 
         Randomized check that we find all twists and there are no duplicates::
