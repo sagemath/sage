@@ -12,6 +12,7 @@ exclude sage/categories/basic.*
 exclude sage/categories/cartesian_product.*
 exclude sage/categories/category*.*
 exclude sage/categories/covariant_functorial_construction.*
+exclude sage/categories/facade_sets.*
 exclude sage/categories/functor.*
 exclude sage/categories/homset.*
 exclude sage/categories/homsets.*

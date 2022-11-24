@@ -371,8 +371,6 @@ class FeatureTestResult():
         """
         return bool(self.is_present)
 
-    
-
     def __repr__(self):
         r"""
         TESTS::
@@ -385,6 +383,7 @@ class FeatureTestResult():
 
 
 _cache_package_systems = None
+
 
 def package_systems():
     """

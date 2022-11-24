@@ -11,7 +11,7 @@ Integer vectors modulo the action of a permutation group
 # ****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

@@ -3502,7 +3502,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         - ``other`` -- a Tate series
 
-        TESTS::
+        TESTS:
 
         We check that the S-polynomial of two monomials vanishes::
 

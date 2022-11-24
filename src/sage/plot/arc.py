@@ -273,9 +273,9 @@ class Arc(GraphicPrimitive):
         p = patches.Arc((self.x, self.y),
                         2. * self.r1,
                         2. * self.r2,
-                        fmod(self.angle, 2 * pi) * (180. / pi),
-                        self.s1 * (180. / pi),
-                        self.s2 * (180. / pi))
+                        angle=fmod(self.angle, 2 * pi) * (180. / pi),
+                        theta1=self.s1 * (180. / pi),
+                        theta2=self.s2 * (180. / pi))
         return p
 
     def bezier_path(self):

@@ -5,7 +5,7 @@ Module List
 -----------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/modform/constructor
    sage/modular/modform/space
@@ -32,7 +32,7 @@ Design Notes
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/modform/notes
 

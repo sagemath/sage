@@ -2851,7 +2851,7 @@ class QuotientFunctor(ConstructionFunctor):
         if codomain is None:
             codomain = Rings()
         Functor.__init__(self, domain, codomain)
-        
+
         self.I = I
         if names is None:
             self.names = None

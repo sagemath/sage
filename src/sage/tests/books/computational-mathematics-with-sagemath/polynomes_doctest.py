@@ -257,7 +257,7 @@ Sage example in ./polynomes.tex, line 1492::
 Sage example in ./polynomes.tex, line 1531::
 
   sage: C = ComplexField(15)
-  sage: Frac(C['x'])(r).partial_fraction_decomposition()
+  sage: Frac(C['x'])(r).partial_fraction_decomposition() #abs tol 2e-4
   (x^4 - x^2 + 6.000, [0.5312/(x - 1.000), 0.06250/(x^2 - 2.000*x + 1.000),
   4.385*I/(x - 1.732*I), (-4.385*I)/(x + 1.732*I),
   (-0.5312)/(x + 1.000), 0.06250/(x^2 + 2.000*x + 1.000)])

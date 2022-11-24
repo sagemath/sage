@@ -544,7 +544,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         return self._repr_(mode=mode)
 
     def _repr_(self, mode=None, do_latex=False):
-        """
+        r"""
         Returns a string representation of this element.
 
         INPUT:
@@ -565,7 +565,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: K.<pi> = Qp(2).extension(x^3 - 2)
             sage: latex(pi)
             \pi + O(\pi^{61})
-
         """
         return self.parent()._printer.repr_gen(self, do_latex, mode=mode)
 
@@ -3028,7 +3027,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         return series_unit*nfactorial_unit.inverse_of_unit()<<(series_val-nfactorial_val)
 
     def _exp_binary_splitting(self, aprec):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -3038,7 +3037,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -3074,7 +3073,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         raise NotImplementedError("the binary splitting algorithm is not implemented for the parent: %s" % self.parent())
 
     def _exp_newton(self, aprec, log_algorithm=None):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -3089,7 +3088,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
           method. See :meth:`log` for more details about the possible
           algorithms.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -3783,7 +3782,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             return parent(root)
 
     def _inverse_pth_root(self, twist=None, hint=None):
-        """
+        r"""
         In its simplest form, computes the inverse of
         ``p``-th root of this element.
 
@@ -4409,8 +4408,9 @@ def _polylog_c(n, p):
     """
     return p/(p-1) - (n-1)/p.log().n() + (n-1)*(n*(p-1)/p.log().n()).log(p).n() + (2*p*(p-1)*n/p.log().n()).log(p).n()
 
+
 def _findprec(c_1, c_2, c_3, p):
-    """
+    r"""
     Return an integer k such that c_1*k - c_2*log_p(k) > c_3.
     This is an internal function, used by :meth:`polylog`.
 
@@ -4439,16 +4439,17 @@ def _findprec(c_1, c_2, c_3, p):
             return k
         k += 1
 
+
 def _compute_g(p, n, prec, terms):
-    """
+    r"""
     Return the list of power series `g_i = \int(-g_{i-1}/(v-v^2))` used in the computation of polylogarithms.
+
     This is an internal function, used by :meth:`polylog`.
 
     EXAMPLES::
 
         sage: sage.rings.padics.padic_generic_element._compute_g(7, 3, 3, 3)[0]
         O(7^3)*v^2 + (1 + O(7^3))*v + O(7^3)
-
     """
     from sage.rings.power_series_ring import PowerSeriesRing
     from sage.functions.other import ceil

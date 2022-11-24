@@ -2652,17 +2652,13 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
                 pass
         return True
 
-    
-
     def sub(self, gens):
         """
         Return the sub-object of self with given gens.
 
         INPUT:
 
-
-        -  ``gens`` - object or list/tuple of generators
-
+        -  ``gens`` -- object or list/tuple of generators
 
         EXAMPLES::
 

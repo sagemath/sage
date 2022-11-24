@@ -50,7 +50,7 @@ AUTHORS:
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.subword_complex import SubwordComplex, SubwordComplexFacet
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 
 class ClusterComplexFacet(SubwordComplexFacet):

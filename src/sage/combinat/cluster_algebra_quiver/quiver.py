@@ -699,7 +699,7 @@ class ClusterQuiver(SageObject):
 
             sage: S = ClusterQuiver(['A',4])
             sage: S.interact()
-            VBox(children=...
+            ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind="quiver")
 

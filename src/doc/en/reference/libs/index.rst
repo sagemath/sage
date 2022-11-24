@@ -21,14 +21,14 @@ to be aware of the modules described in this chapter.
 ECL
 ---
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/ecl
 
 eclib
 -----
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/eclib/interface
    sage/libs/eclib/mwrank
@@ -40,7 +40,7 @@ eclib
 FLINT
 -----
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/flint/flint
    sage/libs/flint/fmpz_poly
@@ -49,35 +49,35 @@ FLINT
 Giac
 ----
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/giac
 
 GMP-ECM
 -------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/libecm
 
 GSL
 ---
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/gsl/array
 
 lcalc
 -----
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/lcalc/lcalc_Lfunction
 
 libSingular
 -----------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/singular/function
    sage/libs/singular/function_factory
@@ -90,7 +90,7 @@ libSingular
 GAP
 ---
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/gap/context_managers
    sage/libs/gap/gap_functions
@@ -104,35 +104,35 @@ GAP
 LinBox
 ------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/linbox/linbox_flint_interface
 
 lrcalc
 ------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/lrcalc/lrcalc
 
 mpmath
 ------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/mpmath/utils
 
 NTL
 ---
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/ntl/all
 
 PARI
 ----
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/pari
    sage/libs/pari/convert_sage
@@ -141,7 +141,7 @@ PARI
 Symmetrica
 ----------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/libs/symmetrica/symmetrica
 

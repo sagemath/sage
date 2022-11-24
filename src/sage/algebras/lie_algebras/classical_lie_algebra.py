@@ -1332,7 +1332,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
             from sage.typeset.unicode_art import unicode_art
             return unicode_art(self._combined_matrix())
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             r"""
             Return if ``self`` is nonzero.
 
@@ -1345,8 +1345,6 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
                 False
             """
             return bool(self._real) or bool(self._imag)
-
-        
 
         def __hash__(self):
             r"""

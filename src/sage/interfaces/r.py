@@ -1606,9 +1606,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             sage: bool(r(1))  # optional - rpy2
             True
         """
-        return "FALSE" in repr(self==0)
-
-    
+        return "FALSE" in repr(self == 0)
 
     def _comparison(self, other, symbol):
         """

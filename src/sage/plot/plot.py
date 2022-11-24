@@ -1741,7 +1741,7 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex")
+        sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex") # not tested (broken with matplotlib 3.6)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::

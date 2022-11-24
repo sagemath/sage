@@ -139,7 +139,7 @@ def plot(hyperplane_arrangement, **kwds):
       :mod:`sage.geometry.hyperplane_arrangement.plot`.
 
     OUTPUT:
-    
+
     A graphics object of the plot.
 
     EXAMPLES::
@@ -338,7 +338,6 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: a.plot(point_size=100,hyperplane_label='hello')  # optional - sage.plot
         Graphics object consisting of 3 graphics primitives
 
-    
         sage: H2.<x,y> = HyperplaneArrangements(QQ)
         sage: b = 3*x + 4*y + 5
         sage: b.plot()  # optional - sage.plot
@@ -410,7 +409,7 @@ def plot_hyperplane(hyperplane, **kwds):
     # the extra keywords have now been handled
     # now create the plot
     if hyperplane.dimension() == 0:  # a point on a line
-        x, = hyperplane.A() 
+        x, = hyperplane.A()
         d = hyperplane.b()
         p = point((d/x,0), size=pt_size, **kwds)
         if has_hyp_label:
@@ -456,7 +455,7 @@ def plot_hyperplane(hyperplane, **kwds):
             s0, s1 = -3, 3
             t0, t1 = -3, 3
         p = parametric_plot3d(pnt+s*w[0]+t*w[1], (s,s0,s1), (t,t0,t1), **kwds)
-        if has_hyp_label: 
+        if has_hyp_label:
             if has_offset:
                 b0, b1, b2 = label_offset
             else:
@@ -469,14 +468,15 @@ def plot_hyperplane(hyperplane, **kwds):
 
 def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
     r"""
-    Create plot of a 3d legend for an arrangement of planes in 3-space.  The
-    ``length`` parameter determines whether short or long labels are used in
-    the legend.
+    Create plot of a 3d legend for an arrangement of planes in 3-space.
+
+    The ``length`` parameter determines whether short or long labels
+    are used in the legend.
 
     INPUT:
 
     - ``hyperplane_arrangement`` -- a hyperplane arrangement
-    
+
     - ``hyperplane_colors`` -- list of colors
 
     - ``length`` -- either ``'short'`` or ``'long'``
@@ -518,7 +518,7 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
     for i in range(N):
         p += line([(0,0),(0,0)], color=hyperplane_colors[i], thickness=8,
                 legend_label=labels[i], axes=False)
-    p.set_legend_options(title='Hyperplanes', loc='center', labelspacing=0.4, 
+    p.set_legend_options(title='Hyperplanes', loc='center', labelspacing=0.4,
             fancybox=True, font_size='x-large', ncol=2)
     p.legend(True)
     return p

@@ -1789,6 +1789,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # orbits under the action of a group:
             # def orbits(seeds, operators)
             #     INPUT:
+
             #     - seeds: a list of elements
             #     - operators: a list of functions
             #
@@ -3848,7 +3849,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                True
             """
             alphacheck = self.parent().simple_coroots()
-            from sage.rings.semirings.all import NN
+            from sage.rings.semirings.non_negative_integer_semiring import NN
             return all(self.inner_product(alphacheck[i]) in NN
                        for i in self.parent().index_set())
 
@@ -4122,8 +4123,9 @@ class RootLatticeRealizations(Category_over_base_ring):
         def translation(self, x):
             """
             INPUT:
-             - ``self`` - an element `t` at level `0`
-             - ``x`` - an element of the same space
+
+             - ``self`` -- an element `t` at level `0`
+             - ``x`` -- an element of the same space
 
             Returns `x` translated by `t`, that is `x+level(x) t`
 

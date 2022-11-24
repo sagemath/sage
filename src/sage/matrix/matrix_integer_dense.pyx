@@ -1639,7 +1639,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         from .matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
         from .matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
 
-        if isinstance(moduli, (int, long, Integer)):
+        if isinstance(moduli, (int, Integer)):
             return self._mod_int(moduli)
         elif isinstance(moduli, list):
             moduli = MultiModularBasis(moduli)

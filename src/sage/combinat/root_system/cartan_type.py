@@ -594,7 +594,7 @@ class CartanTypeFactory(SageObject):
         if isinstance(t, (CartanType_abstract, SuperCartanType_standard)):
             return t
 
-        from sage.rings.semirings.all import NN
+        from sage.rings.semirings.non_negative_integer_semiring import NN
         if isinstance(t, str):
             if "x" in t:
                 from . import type_reducible
@@ -2025,7 +2025,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         We check that :meth:`classical`,
         :meth:`sage.combinat.root_system.cartan_type.CartanType_crystallographic.dynkin_diagram`,
-        and :meth:`.special_node` are consistent::
+        and :meth:`special_node` are consistent::
 
             sage: for ct in CartanType.samples(affine = True):
             ....:     g1 = ct.classical().dynkin_diagram()
@@ -2193,12 +2193,15 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
     def translation_factors(self):
         r"""
-        Returns the translation factors for ``self``. Those are the
-        smallest factors `t_i` such that the translation by `t_i
-        \alpha_i` maps the fundamental polygon to another polygon in
-        the alcove picture.
+        Return the translation factors for ``self``.
 
-        OUTPUT: a dictionary from ``self.index_set()`` to `\ZZ`
+        Those are the smallest factors `t_i` such that the translation
+        by `t_i \alpha_i` maps the fundamental polygon to another
+        polygon in the alcove picture.
+
+        OUTPUT:
+
+        a dictionary from ``self.index_set()`` to `\ZZ`
         (or `\QQ` for affine type `BC`)
 
         Those coefficients are all `1` for dual untwisted, and in
@@ -2206,9 +2209,11 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         `c_i` coefficients (see :meth:`c`) for untwisted and dual
         thereof. See the discussion below for affine type `BC`.
 
-        Note: one usually realizes the alcove picture in the coweight
-        lattice, with translations by coroots; in that case, one will
-        use the translation factors for the dual Cartan type.
+        .. NOTE::
+
+            One usually realizes the alcove picture in the coweight
+            lattice, with translations by coroots; in that case, one will
+            use the translation factors for the dual Cartan type.
 
         FIXME: the current implementation assumes that the Cartan
         matrix is indexed by `[0,1,...]`, in the same order as the

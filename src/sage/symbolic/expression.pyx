@@ -4712,7 +4712,7 @@ cdef class Expression(Expression_abc):
                 return self.gradient()
             else:
                 raise ValueError("No differentiation variable specified.")
-        if not isinstance(deg, (int, long, sage.rings.integer.Integer)) \
+        if not isinstance(deg, (int, sage.rings.integer.Integer)) \
                 or deg < 1:
             raise TypeError("argument deg should be an integer >= 1.")
         cdef Expression symbol = self.coerce_in(symb)
@@ -11290,10 +11290,11 @@ cdef class Expression(Expression_abc):
 
     def canonicalize_radical(self):
         r"""
-        Choose a canonical branch of the given expression. The square
-        root, cube root, natural log, etc. functions are multi-valued. The
-        ``canonicalize_radical()`` method will choose *one* of these values
-        based on a heuristic.
+        Choose a canonical branch of the given expression.
+
+        The square root, cube root, natural log, etc. functions are
+        multi-valued. The ``canonicalize_radical()`` method will
+        choose *one* of these values based on a heuristic.
 
         For example, ``sqrt(x^2)`` has two values: ``x``, and
         ``-x``. The ``canonicalize_radical()`` function will choose
@@ -11901,7 +11902,7 @@ cdef class Expression(Expression_abc):
 
         Check that :trac:`33640` is fixed::
 
-            sage: ((x + 1)^2 - 2*x - 1).factor() 
+            sage: ((x + 1)^2 - 2*x - 1).factor()
             x^2
         """
         from sage.calculus.calculus import symbolic_expression_from_maxima_string
@@ -13722,10 +13723,11 @@ cpdef new_Expression(parent, x):
             from sage.symbolic.constants import NaN
             return NaN
         exp = x
-    elif isinstance(x, long):
-        exp = x
     elif isinstance(x, int):
-        exp = GEx(<long>x)
+        try:
+            exp = GEx(<long>x)
+        except OverflowError:
+            exp = x
     elif x is infinity:
         return new_Expression_from_GEx(parent, g_Infinity)
     elif x is minus_infinity:

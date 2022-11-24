@@ -341,6 +341,22 @@ class AlgebraicScheme(scheme.Scheme):
         """
         return self.__A
 
+    def identity_morphism(self):
+        """
+        Return the identity morphism.
+
+        OUTPUT: the identity morphism of the scheme ``self``
+
+        EXAMPLES::
+
+            sage: X = Spec(QQ)
+            sage: X.identity_morphism()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
+        """
+        from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+        return SchemeMorphism_polynomial_id(self)
+
     def embedding_morphism(self):
         r"""
         Return the default embedding morphism of ``self``.

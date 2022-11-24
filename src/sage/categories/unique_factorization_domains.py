@@ -16,9 +16,11 @@ from sage.categories.gcd_domains import GcdDomains
 
 class UniqueFactorizationDomains(Category_singleton):
     """
-    The category of unique factorization domains
-    constructive unique factorization domains, i.e. where one can constructively
-    factor members into a product of a finite number of irreducible elements
+    The category of (constructive) unique factorization domains.
+
+    In a constructive unique factorization domain we can
+    constructively factor members into a product of a finite number
+    of irreducible elements.
 
     EXAMPLES::
 
@@ -30,6 +32,7 @@ class UniqueFactorizationDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(UniqueFactorizationDomains()).run()
+
     """
 
     def super_categories(self):

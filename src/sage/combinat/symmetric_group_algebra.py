@@ -215,7 +215,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGg.group().conjugacy_classes_representatives()
         [(), (1,2), (1,2,3)]
     """
-    from sage.rings.semirings.all import NN
+    from sage.rings.semirings.non_negative_integer_semiring import NN
     if W in NN:
         W = Permutations(W)
     if category is None:

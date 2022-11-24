@@ -2213,7 +2213,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
                 self.base_ring().has_coerce_map_from(other.parent()) and \
                         self.base_ring()(other).is_one():
                             return self._one_element
-        elif isinstance(other, (int, long)) and other % 2:
+        elif isinstance(other, int) and other % 2:
             return self._one_element
 
         elif isinstance(other, (list, set)):

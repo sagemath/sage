@@ -837,7 +837,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  the 0-dimensional abelian Lie algebra over Rational Field
                  with basis matrix:
                 []
-            
+
             If ``self`` is semisimple, then the derived subalgebra is ``self``::
 
                 sage: sl3 = LieAlgebra(QQ, cartan_type=['A',2])
@@ -1107,8 +1107,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: E,F,H = g.basis()
                 sage: n = g.subalgebra([F,H])
                 sage: ascii_art(n.chevalley_eilenberg_complex())
-                                        [0]      
-                            [0 0]       [2]      
+                                        [0]
+                            [0 0]       [2]
                  0 <-- C_0 <------ C_1 <---- C_2 <-- 0
 
             REFERENCES:
