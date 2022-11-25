@@ -584,6 +584,62 @@ def _multiply_point(E, R, P, m):
 
     return theta, omega, psi_m * d
 
+def _multiple_to_make_good_reduction(E):
+    """
+    Return the integer n2 such that for all points P in E(Q)
+    n2*P has good reduction at all primes.
+    If the model is globally minimal the lcm of the
+    Tamagawa numbers will do, otherwise we have to take into
+    account the change of the model.
+
+    INPUT:
+
+    - an elliptic curve ``E``
+
+    OUTPUT:
+
+    - a positive integer ``n2``
+
+    EXAMPLE::
+
+        sage: from sage.schemes.elliptic_curves.padics import _multiple_to_make_good_reduction
+        sage: E = EllipticCurve([-1728,-100656])
+        sage: _multiple_to_make_good_reduction(E)
+        30
+
+    The number ``n2`` is not always optimal but it is in this example.
+    The first multiple of the generator `P` with good reduction in this
+    non-minimal model is `30 P`.
+
+    """
+    if not E.is_integral():
+        st = ("This only implemented for integral models. "
+              "Please change the model first.")
+        raise NotImplementedError(st)
+    if E.is_minimal():
+        n2 = arith.LCM(E.tamagawa_numbers())
+    else:
+        # generalising to number fields one can get the u from local_data
+        Emin = E.global_minimal_model()
+        iota = E.isomorphism_to(Emin)
+        u = Integer(iota.u)
+        ps = u.prime_divisors()
+        li = []
+        for p in ps:
+            np = u.valuation(p)
+            if Emin.discriminant() %p != 0:
+                li.append(Emin.Np(p) * p**(np-1))
+            elif Emin.has_additive_reduction(p):
+                li.append(E.tamagawa_number(p) * p**np)
+            elif E.has_split_multiplicative_reduction(p):
+                li.append(E.tamagawa_number(p) * (p-1) * p**(np-1))
+            else: # non split
+                li.append(E.tamagawa_number(p) * (p+1) * p**(np-1))
+        otherbad = Integer(Emin.discriminant()).prime_divisors()
+        otherbad = [p for p in otherbad if u%p != 0 ]
+        li += [E.tamagawa_number(p) for p in otherbad]
+        n2 = arith.LCM(li)
+    return n2
 
 def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     r"""
