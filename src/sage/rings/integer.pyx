@@ -2951,12 +2951,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return n
 
-    def prime_divisors(self):
+    def prime_divisors(self, *, limit=None):
         """
         Return the prime divisors of this integer, sorted in increasing order.
 
         If this integer is negative, we do *not* include -1 among
         its prime divisors, since -1 is not a prime number.
+
+        If ``limit`` is given, only primes up to the limit are returned.
 
         EXAMPLES::
 
@@ -2968,8 +2970,22 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             [2, 5]
             sage: a = 2004; a.prime_divisors()
             [2, 3, 167]
+
+        ::
+
+            sage: a = 10^100 + 1
+            sage: a.prime_divisors()
+            [73, 137, 401, 1201, 1601, 1676321, 5964848081,
+             129694419029057750551385771184564274499075700947656757821537291527196801]
+            sage: a.prime_divisors(limit=10^3)
+            [73, 137, 401]
+            sage: a.prime_divisors(limit=10^7)
+            [73, 137, 401, 1201, 1601, 1676321]
         """
-        return [r[0] for r in self.factor()]
+        res = [r[0] for r in self.factor(limit=limit)]
+        if limit is not None:
+            res = [r for r in res if r <= limit]
+        return res
 
     prime_factors = prime_divisors
 
