@@ -89,6 +89,7 @@ from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
 
+
 @richcmp_method
 class pAdicLseries(SageObject):
     r"""
@@ -1670,7 +1671,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
         elog = Ehat.log(prec + Integer(3))
 
         # we will have to do it properly with David Harvey's _multiply_point()
-        n = LCM(E.tamagawa_numbers())
+        # import here to avoid circular import
+        from sage.schemes.elliptic_curves.padics import _multiple_to_make_good_reduction
+        n = _multiple_to_make_good_reduction(E)
         n = LCM(n, E.Np(p)) # allowed here because E has good reduction at p
 
         def height(P,check=True):

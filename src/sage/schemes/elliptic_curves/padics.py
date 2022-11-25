@@ -794,7 +794,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     # p-adic Heights", David Harvey (unpublished)
 
     n1 = self.change_ring(rings.GF(p)).cardinality()
-    n2 = arith.LCM(self.tamagawa_numbers())
+    n2 = _multiple_to_make_good_reduction(self)
     n = arith.LCM(n1, n2)
     m = int(n / n2)
 
@@ -939,7 +939,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
     # multiplication'' (David Harvey, still in draft form)
 
     n1 = self.change_ring(rings.GF(p)).cardinality()
-    n2 = arith.LCM(self.tamagawa_numbers())
+    n2 = _multiple_to_make_good_reduction(self)
     n = arith.LCM(n1, n2)
     m = int(n / n2)
 
