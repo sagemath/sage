@@ -1888,9 +1888,9 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
-             no. 8, 2687-2727. 
+             no. 8, 2687-2727.
 
 .. [CW2015] Cui, S. X. and Wang, Z. (2015). Universal quantum computation with
             metaplectic anyons. Journal of Mathematical Physics, 56(3), 032202.
@@ -2275,7 +2275,7 @@ REFERENCES:
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
 
-.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and 
+.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
 .. _ref-E:
@@ -3013,6 +3013,9 @@ REFERENCES:
 
 .. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
 
+.. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
+             LMS J. Comput. Math. **11** (2008), 40–59.
+
 .. [Harako2020] Shuichi Harako. *The second homology group of the commutative
                 case of Kontsevich's symplectic derivation Lie algebra*.
                 Preprint, 2020, :arxiv:`2006.06064`.
@@ -3506,7 +3509,7 @@ REFERENCES:
             :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
 
 .. [JS2021] \D. Jahn, C. Stump.
-            *Bruhat intervals, subword complexes and brick polyhedra for 
+            *Bruhat intervals, subword complexes and brick polyhedra for
             finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
@@ -4708,17 +4711,21 @@ REFERENCES:
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
 
+.. [MST2006] Barry Mazur, William Stein, John Tate.
+             *Computation of p-adic heights and log convergence*.
+             Doc. Math. 2006, Extra Vol., 577-614.
+
 .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel. *Game
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). The `p`-adic sigma
-            function. Duke Mathematical Journal, 62(3), 663-688.
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+            function*. Duke Mathematical Journal, **62** (3), 663-688.
 
-.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-             analogues of the conjectures of Birch and
-             Swinnerton-Dyer, Inventiones Mathematicae 84, (1986),
-             1-48.
+.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
+             *On `p`-adic analogues of the conjectures of Birch and
+             Swinnerton-Dyer*,
+             Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes

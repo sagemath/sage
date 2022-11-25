@@ -1,7 +1,7 @@
 r"""
-√élu algorithm for elliptic-curve isogenies
+Vélu algorithm for elliptic-curve isogenies
 
-The √élu algorithm computes isogenies of elliptic curves in time `\tilde
+The Vélu algorithm computes isogenies of elliptic curves in time `\tilde
 O(\sqrt\ell)` rather than naïvely `O(\ell)`, where `\ell` is the degree.
 
 The core idea is to reindex the points in the kernel subgroup in a
@@ -26,7 +26,7 @@ EXAMPLES::
     10009
     sage: phi = EllipticCurveHom_velusqrt(E, K)
     sage: phi
-    Elliptic-curve isogeny (using √élu) of degree 10009:
+    Elliptic-curve isogeny (using Vélu) of degree 10009:
       From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 6666679
       To:   Elliptic Curve defined by y^2 = x^3 + 227975*x + 3596133 over Finite Field of size 6666679
     sage: phi.codomain()
@@ -56,7 +56,7 @@ the constructor supports a ``model`` keyword argument::
     sage: K = E(9091, 517864)
     sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
     sage: phi
-    Elliptic-curve isogeny (using √élu) of degree 2999:
+    Elliptic-curve isogeny (using Vélu) of degree 2999:
       From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 6666679
       To:   Elliptic Curve defined by y^2 = x^3 + 1559358*x^2 + x over Finite Field of size 6666679
 
@@ -68,7 +68,7 @@ Weierstraß curves, but it performs the conversion automatically::
     sage: K.order()
     37
     sage: EllipticCurveHom_velusqrt(E, K)
-    Elliptic-curve isogeny (using √élu) of degree 37:
+    Elliptic-curve isogeny (using Vélu) of degree 37:
       From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 101
       To:   Elliptic Curve defined by y^2 = x^3 + 66*x + 86 over Finite Field of size 101
 
@@ -88,7 +88,7 @@ Curves without a short Weierstraß model exist in characteristics
 
 Furthermore, the implementation is restricted to finite fields,
 since this appears to be the most relevant application for the
-√élu algorithm::
+Vélu algorithm::
 
     sage: E = EllipticCurve('26b1')
     sage: P = E(1,0)
@@ -534,7 +534,7 @@ def _point_outside_subgroup(P):
         Frobenius). Thus, once `\pi-1` can be represented in Sage,
         we may just return that in
         :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogeny`
-        rather than insisting on using √élu.
+        rather than insisting on using Vélu.
     """
     E = P.curve()
     n = P.order()
@@ -555,7 +555,7 @@ def _point_outside_subgroup(P):
 class EllipticCurveHom_velusqrt(EllipticCurveHom):
     r"""
     This class implements separable odd-degree isogenies of elliptic
-    curves over finite fields using the √élu algorithm.
+    curves over finite fields using the Vélu algorithm.
 
     The complexity is `\tilde O(\sqrt{\ell})` base-field operations,
     where `\ell` is the degree.
@@ -578,7 +578,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         sage: E = EllipticCurve(F, [t,t])
         sage: K = E(2154*t^2 + 5711*t + 2899, 7340*t^2 + 4653*t + 6935)
         sage: phi = EllipticCurveHom_velusqrt(E, K); phi
-        Elliptic-curve isogeny (using √élu) of degree 601:
+        Elliptic-curve isogeny (using Vélu) of degree 601:
           From: Elliptic Curve defined by y^2 = x^3 + t*x + t over Finite Field in t of size 10009^3
           To:   Elliptic Curve defined by y^2 = x^3 + (263*t^2+3173*t+4759)*x + (3898*t^2+6111*t+9443) over Finite Field in t of size 10009^3
         sage: phi(K)
@@ -644,7 +644,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     """
     def __init__(self, E, P, *, codomain=None, model=None, Q=None):
         r"""
-        Initialize this √élu isogeny from a kernel point of odd order.
+        Initialize this Vélu isogeny from a kernel point of odd order.
 
         EXAMPLES::
 
@@ -652,7 +652,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E = EllipticCurve(GF(71), [5,5])
             sage: P = E(-2, 22)
             sage: EllipticCurveHom_velusqrt(E, P)
-            Elliptic-curve isogeny (using √élu) of degree 19:
+            Elliptic-curve isogeny (using Vélu) of degree 19:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 13*x + 11 over Finite Field of size 71
 
@@ -661,16 +661,16 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E.<P> = EllipticCurve(GF(419), [1,0])
             sage: K = 4*P
             sage: EllipticCurveHom_velusqrt(E, K)
-            Elliptic-curve isogeny (using √élu) of degree 105:
+            Elliptic-curve isogeny (using Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 301*x + 86 over Finite Field of size 419
             sage: E2 = EllipticCurve(GF(419), [0,6,0,385,42])
             sage: EllipticCurveHom_velusqrt(E, K, codomain=E2)
-            Elliptic-curve isogeny (using √élu) of degree 105:
+            Elliptic-curve isogeny (using Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
             sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
-            Elliptic-curve isogeny (using √élu) of degree 105:
+            Elliptic-curve isogeny (using Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
 
@@ -739,7 +739,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
     def _raw_eval(self, x, y=None):
         r"""
-        Evaluate the "inner" √élu isogeny (i.e., without applying
+        Evaluate the "inner" Vélu isogeny (i.e., without applying
         pre- and post-isomorphism) at either just an `x`-coordinate
         or a pair `(x,y)` of coordinates.
 
@@ -812,7 +812,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
     def _compute_codomain(self, model=None):
         r"""
-        Helper method to compute the codomain of this √élu isogeny
+        Helper method to compute the codomain of this Vélu isogeny
         once the data for :meth:`_raw_eval` has been initialized.
 
         Called by the constructor.
@@ -839,7 +839,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
             sage: phi._compute_codomain('montgomery')
             sage: phi
-            Elliptic-curve isogeny (using √élu) of degree 19:
+            Elliptic-curve isogeny (using Vélu) of degree 19:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field of size 71
 
@@ -849,7 +849,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E = EllipticCurve([3*t, 2*t+4, 3*t+2, t+4, 3*t])
             sage: K = E(3*t, 2)
             sage: EllipticCurveHom_velusqrt(E, K)   # indirect doctest
-            Elliptic-curve isogeny (using √élu) of degree 19:
+            Elliptic-curve isogeny (using Vélu) of degree 19:
               From: Elliptic Curve defined by y^2 + 3*t*x*y + (3*t+2)*y = x^3 + (2*t+4)*x^2 + (t+4)*x + 3*t over Finite Field in t of size 5^2
               To:   Elliptic Curve defined by y^2 = x^3 + (4*t+3)*x + 2 over Finite Field in t of size 5^2
         """
@@ -883,7 +883,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
     def _eval(self, P):
         r"""
-        Evaluate this √élu isogeny at a point.
+        Evaluate this Vélu isogeny at a point.
 
         INPUT:
 
@@ -896,7 +896,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: K = E(4, 19)
             sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
             sage: phi
-            Elliptic-curve isogeny (using √élu) of degree 19:
+            Elliptic-curve isogeny (using Vélu) of degree 19:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field of size 71
             sage: phi(K)
@@ -955,7 +955,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
     def _repr_(self):
         r"""
-        Return basic information about this √élu isogeny as a string.
+        Return basic information about this Vélu isogeny as a string.
 
         EXAMPLES::
 
@@ -963,18 +963,18 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E.<P> = EllipticCurve(GF(71), [5,5])
             sage: phi = EllipticCurveHom_velusqrt(E, P)
             sage: phi   # indirect doctest
-            Elliptic-curve isogeny (using √élu) of degree 57:
+            Elliptic-curve isogeny (using Vélu) of degree 57:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 19*x + 45 over Finite Field of size 71
         """
-        return f'Elliptic-curve isogeny (using √élu) of degree {self._degree}:' \
+        return f'Elliptic-curve isogeny (using Vélu) of degree {self._degree}:' \
                 f'\n  From: {self._domain}' \
                 f'\n  To:   {self._codomain}'
 
     @staticmethod
     def _comparison_impl(left, right, op):
         r"""
-        Compare a √élu isogeny to another elliptic-curve morphism.
+        Compare a Vélu isogeny to another elliptic-curve morphism.
 
         Called by :meth:`EllipticCurveHom._richcmp_`.
 
@@ -991,11 +991,11 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
             sage: E = EllipticCurve(GF(101), [5,5,5,5,5])
             sage: phi = EllipticCurveHom_velusqrt(E, E.lift_x(11)); phi
-            Elliptic-curve isogeny (using √élu) of degree 59:
+            Elliptic-curve isogeny (using Vélu) of degree 59:
               From: Elliptic Curve defined by y^2 + 5*x*y + 5*y = x^3 + 5*x^2 + 5*x + 5 over Finite Field of size 101
               To:   Elliptic Curve defined by y^2 = x^3 + 15*x + 25 over Finite Field of size 101
             sage: psi = EllipticCurveHom_velusqrt(E, E.lift_x(-1)); psi
-            Elliptic-curve isogeny (using √élu) of degree 59:
+            Elliptic-curve isogeny (using Vélu) of degree 59:
               From: Elliptic Curve defined by y^2 + 5*x*y + 5*y = x^3 + 5*x^2 + 5*x + 5 over Finite Field of size 101
               To:   Elliptic Curve defined by y^2 = x^3 + 15*x + 25 over Finite Field of size 101
             sage: phi == psi
@@ -1008,7 +1008,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     @cached_method
     def kernel_polynomial(self):
         r"""
-        Return the kernel polynomial of this √élu isogeny.
+        Return the kernel polynomial of this Vélu isogeny.
 
         .. NOTE::
 
@@ -1039,19 +1039,19 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     @cached_method
     def dual(self):
         r"""
-        Return the dual of this √élu isogeny as an :class:`EllipticCurveHom`.
+        Return the dual of this Vélu isogeny as an :class:`EllipticCurveHom`.
 
         .. NOTE::
 
             The dual is computed by :class:`EllipticCurveIsogeny`,
-            hence it does not benefit from the √élu speedup.
+            hence it does not benefit from the Vélu speedup.
 
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = E.cardinality() // 11 * E.gens()[0]
             sage: phi = E.isogeny(K, algorithm='velusqrt'); phi
-            Elliptic-curve isogeny (using √élu) of degree 11:
+            Elliptic-curve isogeny (using Vélu) of degree 11:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
@@ -1072,7 +1072,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     @cached_method
     def rational_maps(self):
         r"""
-        Return the pair of explicit rational maps of this √élu isogeny
+        Return the pair of explicit rational maps of this Vélu isogeny
         as fractions of bivariate polynomials in `x` and `y`.
 
         .. NOTE::
@@ -1084,7 +1084,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
             sage: phi = E.isogeny(K, algorithm='velusqrt'); phi
-            Elliptic-curve isogeny (using √élu) of degree 11:
+            Elliptic-curve isogeny (using Vélu) of degree 11:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.rational_maps()
@@ -1109,7 +1109,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     @cached_method
     def x_rational_map(self):
         r"""
-        Return the `x`-coordinate rational map of this √élu isogeny
+        Return the `x`-coordinate rational map of this Vélu isogeny
         as a univariate rational function in `x`.
 
         .. NOTE::
@@ -1121,7 +1121,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
             sage: phi = E.isogeny(K, algorithm='velusqrt'); phi
-            Elliptic-curve isogeny (using √élu) of degree 11:
+            Elliptic-curve isogeny (using Vélu) of degree 11:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.x_rational_map()
@@ -1145,7 +1145,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     def scaling_factor(self):
         r"""
         Return the Weierstrass scaling factor associated to this
-        √élu isogeny.
+        Vélu isogeny.
 
         The scaling factor is the constant `u` (in the base field)
         such that `\varphi^* \omega_2 = u \omega_1`, where
@@ -1158,7 +1158,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
             sage: phi = E.isogeny(K, algorithm='velusqrt', model='montgomery'); phi
-            Elliptic-curve isogeny (using √élu) of degree 11:
+            Elliptic-curve isogeny (using Vélu) of degree 11:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
             sage: phi.scaling_factor()
@@ -1187,7 +1187,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
 def _random_example_for_testing():
     r"""
-    Function to generate somewhat random valid √élu inputs
+    Function to generate somewhat random valid Vélu inputs
     for testing purposes.
 
     EXAMPLES::
