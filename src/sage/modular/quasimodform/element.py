@@ -425,6 +425,7 @@ class QuasiModularFormsElement(ModuleElement):
                     return False
                 if k is None:
                     k = c.weight() + 2*i
+                    continue
                 if c.weight() + 2*i != k:
                     return False
         return True
