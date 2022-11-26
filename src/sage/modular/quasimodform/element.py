@@ -392,7 +392,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: QM(1/2).weights_list()
             [0]
         """
-        return sorted(list(self.homogeneous_components().keys()))
+        return sorted(self.homogeneous_components().keys())
 
     def is_homogeneous(self):
         r"""
