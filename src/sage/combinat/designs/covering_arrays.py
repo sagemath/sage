@@ -1,64 +1,144 @@
-
-"""
-Covering Arrays
+r"""
+Covering Arrays (CA)
 
 A Covering Array, denoted CA(N,k,v,t), is an n by k array with entries from a 
 set of v elements with theproperty that in every selection of t columns, each 
 row contains every sequence of t-elements at least once.
 
-An Orthogonal Array, denoted OA(N,k,v,t) is a covering array with the property
-that each row contains every sequence of t-elements exactly once
+An Orthogonal Array, denoted OA(N,k,v,t) is a covering array with the 
+property that each row contains every sequence of t-elements exactly once
 
 REFERENCES:
     
-- reference 1
+.. [Col2004] \C.J. Colbourn. “Combinatorial aspects of covering arrays”. 
+            Matematiche (Catania) 59 (2004), pp. 125–172.
 
-- reference 2
+.. [Sher2006] \G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn, "Covering 
+              arrays of higher strength from permutation vectors". J. Combin. 
+              Designs, 14 (2006) pp. 202-213.
+
+.. [Wal2007] \R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families: 
+             Constructions and Existence". J. Math. Crypt. 1 (2007), 
+             pp.125-150
 
 AUTHORS:
     
-- Aaron Dwyer and brett stevens
+- Aaron Dwyer and brett stevens (2022): initial version
 
 .. NOTES::
     
-This is a work in progress, it will be an implementation of a Covering Array (CA) 
-class for sagemath. The initial commit will include the definition of the 
-Covering Array class and some basic methods to check and return the parameters 
-N,k,v,t of the CA, as well as an ordering based on the lexicographic ordering 
-of each row.
+This is a work in progress, it will be an implementation of a Covering Array 
+(CA) class for sagemath. The initial commit will include the definition of 
+the Covering Array class and some basic methods to check and return the 
+parameters N,k,v,t of the CA, as well as an ordering based on the 
+lexicographic ordering of each row.
 
-Later commits will include methods to create CAs from Perfect Hash Families 
-and Covering Perfect Hash Families (CPHF) as well as recursive methods.
+Later commits will include methods to create CAs from Linear Feedback Shift 
+Register (LFSR), Perfect Hash Families and Covering Perfect Hash Families 
+(CPHF) as well as recursive methods.
 
 The Covering Array class may be used as a basis for an Orthogonal Array class
 which will be implemented afterwards
 
+Classes and methods
+-------------------
 """
 
+# ****************************************************************************
+#       Copyright (C) 2022 Aaron Dwyer <aarondwyer@cmail.carleton.ca>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.rings.finite_rings.finite_field_constructor import GF
 import itertools
 import copy
 
 def is_covering_array(Array,levels,strength): 
-    """
-    Input is a tuple of tuples called 'Array' that represents a N x k array, 
-    and integers ``levels`` and ``strength`` which represent the desired 
-    covering arrays values for v and t respectively.
+    r"""
+    Check whether the tuple of tuples in ``Array`` forms a covering array.
     
-    Checks if 'Array' with given parameters is a Covering Array CA(n,k,v,t) 
-    and outputs True or False.
+    INPUT:
+    
+    - ``Array`` - a tuple of tuples that represents a N x k array
+    - ``levels`` - positive integer representing the v value of the CA
+    - ``strength`` - positive integer representing the t value of the CA
+    
+    OUTPUT:
+     
+    A boolean representing if the input is a covering array or not
     
     EXAMPLES::
         
-        sage: C = ((1,1,1,0),
-                   (1,1,0,1),
-                   (1,0,1,1),
-                   (0,1,1,1),
-                   (0,0,0,0))        
+        sage: from sage.combinat.designs.covering_arrays import is_covering_array
+        sage: C = ((1,1,1,0),\
+                   (1,1,0,1),\
+                   (1,0,1,1),\
+                   (0,1,1,1),\
+                   (0,0,0,0))
+        sage: D = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),\
+                   (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),\
+                   (1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0),\
+                   (0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1),\
+                   (2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2),\
+                   (1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2),\
+                   (1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1),\
+                   (2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2),\
+                   (1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0),\
+                   (0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2),\
+                   (1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0),\
+                   (0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0),\
+                   (0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1),\
+                   (2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1),\
+                   (2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1),\
+                   (2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0),\
+                   (0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2),\
+                   (1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1),\
+                   (2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1),\
+                   (2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2),\
+                   (1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1),\
+                   (2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0),\
+                   (0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1),\
+                   (2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0),\
+                   (0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0),\
+                   (0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2),\
+                   (1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2),\
+                   (1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0),\
+                   (0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0),\
+                   (0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1),\
+                   (2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0),\
+                   (0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1),\
+                   (2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2),\
+                   (1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1),\
+                   (2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1),\
+                   (2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2),\
+                   (1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0),\
+                   (0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1),\
+                   (2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1),\
+                   (2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1),\
+                   (2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0),\
+                   (0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0),\
+                   (0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2),\
+                   (1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0),\
+                   (0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2),\
+                   (1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1),\
+                   (2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2),\
+                   (1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2),\
+                   (1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1),\
+                   (2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0),\
+                   (0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2),\
+                   (1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2),\
+                   (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         sage: is_covering_array(C,2,2)
         True
         sage: is_covering_array(C,2,3)
         False
-        
+        sage: is_covering_array(D,3,3)
+        True
     """
     tupledict={}
     a=[ttuple for ttuple in itertools.product(GF(levels),repeat=strength)]
@@ -73,87 +153,118 @@ def is_covering_array(Array,levels,strength):
     return True
 
 class CoveringArray():
-    """
-    A class for covering array objects. The objects will contain the array 
-    itself and its paramters v, and t
+    r"""
+    Covering Array (CA)
     
     INPUT:
         
-    -``Array`` -- The N x k array itself. This is stored as a tuple of tuples.
-    the N and k parameters are derived from this inputted array
+    - ``Array`` -- The N by k array itself stored as a tuple of tuples.
+      The N and k parameters are derived from this inputted array
     
-    -``strength`` -- The parameter t, such that in any selection of t columns
-    of the array, every t tuple appears at least once. 
+    - ``strength`` -- The parameter t, such that in any selection of t columns
+      of the array, every t tuple appears at least once. If ``None`` then the
+      maxiumum t is found by iterating from t=0 until array is not a CA with 
+      strength t+1.
     
-    If a covering array has strength t, it also has strength t-1,t-2...1. So 
-    we wish to only store the maximum strength of the given covering array, so 
-    the class automatically checks if the CA(N,K,v,t) is a CA(N,k,v,t+1) until
-    it finds the maximum t
-    
-    -----------------all arrays are CA t=1??------
-    
-    -``levels`` -- The paramter v, such that v is the size of the symbol set 
-    of the array.
-    
-    If no such symbol set or size is given, then a v will be assumed by 
-    counting how many unique elements appear in the array.
+    - ``levels`` -- The paramter v, such that v is the size of the symbol set 
+      of the array. If ``None`` then a v will be assumed by counting number of
+      unique elements appear in the array.
     
     EXAMPLES::
         
-        sage: C = ((1,1,1,0),
-                   (1,1,0,1),
-                   (1,0,1,1),
-                   (0,1,1,1),
-                   (0,0,0,0))           
+        sage: from sage.combinat.designs.covering_arrays import CoveringArray
+        sage: C = ((1,1,1,0),\
+                   (1,1,0,1),\
+                   (1,0,1,1),\
+                   (0,1,1,1),\
+                   (0,0,0,0))          
         sage: CoveringArray(C,strength=2)
         A 5 by 4 Covering Array of strength 2 with 2 levels
         
-        sage: C= ((0,0,0,0,0,0,0,0,0,0),
-                 (1,1,1,1,1,1,1,1,1,1),
-                 (1,1,1,0,1,0,0,0,0,1),
-                 (1,0,1,1,0,1,0,1,0,0),
-                 (1,0,0,0,1,1,1,0,0,0),
-                 (0,1,1,0,0,1,0,0,1,0),
-                 (0,0,1,0,1,0,1,1,1,0),
-                 (1,1,0,1,0,0,1,0,1,0),
-                 (0,0,0,1,1,1,0,0,1,1),
-                 (0,0,1,1,0,0,1,0,0,1),
-                 (0,1,0,1,1,0,0,1,0,0),
-                 (1,0,0,0,0,0,0,1,1,1),
-                 (0,1,0,0,0,1,1,1,0,1))
+        sage: C = ((0,0,0,0,0,0,0,0,0,0),\
+                  (1,1,1,1,1,1,1,1,1,1),\
+                  (1,1,1,0,1,0,0,0,0,1),\
+                  (1,0,1,1,0,1,0,1,0,0),\
+                  (1,0,0,0,1,1,1,0,0,0),\
+                  (0,1,1,0,0,1,0,0,1,0),\
+                  (0,0,1,0,1,0,1,1,1,0),\
+                  (1,1,0,1,0,0,1,0,1,0),\
+                  (0,0,0,1,1,1,0,0,1,1),\
+                  (0,0,1,1,0,0,1,0,0,1),\
+                  (0,1,0,1,1,0,0,1,0,0),\
+                  (1,0,0,0,0,0,0,1,1,1),\
+                  (0,1,0,0,0,1,1,1,0,1))
         sage: CoveringArray(C,2,3)
         A 5 by 4 Covering Array of strength 3 with 2 levels
+        
+        sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                   (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                   (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                   (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                   (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                   (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+        sage: CoveringArray(C)
+        A 6 by 10 Covering Array of strength 2 with 2 levels
+
+        sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                   (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
+                   (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                   (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                   (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                   (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                   (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+        A 7 by 15 Covering Array of strength 2 with 2 levels
+
     """
     def __init__(self, Array, strength=None, levels=None):
-        """
+        r"""
         Constructor function    
         
         EXAMPLES::
-            
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+        
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))           
             sage: CoveringArray(C,strength=2)
             A 5 by 4 Covering Array of strength 2 with 2 levels
-            
-            sage: C= ((0,0,0,0,0,0,0,0,0,0),
-                     (1,1,1,1,1,1,1,1,1,1),
-                     (1,1,1,0,1,0,0,0,0,1),
-                     (1,0,1,1,0,1,0,1,0,0),
-                     (1,0,0,0,1,1,1,0,0,0),
-                     (0,1,1,0,0,1,0,0,1,0),
-                     (0,0,1,0,1,0,1,1,1,0),
-                     (1,1,0,1,0,0,1,0,1,0),
-                     (0,0,0,1,1,1,0,0,1,1),
-                     (0,0,1,1,0,0,1,0,0,1),
-                     (0,1,0,1,1,0,0,1,0,0),
-                     (1,0,0,0,0,0,0,1,1,1),
-                     (0,1,0,0,0,1,1,1,0,1))
+
+            sage: C = ((0,0,0,0,0,0,0,0,0,0),\
+                      (1,1,1,1,1,1,1,1,1,1),\
+                      (1,1,1,0,1,0,0,0,0,1),\
+                      (1,0,1,1,0,1,0,1,0,0),\
+                      (1,0,0,0,1,1,1,0,0,0),\
+                      (0,1,1,0,0,1,0,0,1,0),\
+                      (0,0,1,0,1,0,1,1,1,0),\
+                      (1,1,0,1,0,0,1,0,1,0),\
+                      (0,0,0,1,1,1,0,0,1,1),\
+                      (0,0,1,1,0,0,1,0,0,1),\
+                      (0,1,0,1,1,0,0,1,0,0),\
+                      (1,0,0,0,0,0,0,1,1,1),\
+                      (0,1,0,0,0,1,1,1,0,1))
             sage: CoveringArray(C,2,3)
             A 5 by 4 Covering Array of strength 3 with 2 levels
-        """
+
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CoveringArray(C)
+            A 6 by 10 Covering Array of strength 2 with 2 levels
+
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            A 7 by 15 Covering Array of strength 2 with 2 levels
+
+    """
         #From the array input, grab the dimensions of the array
         N=len(Array)
         self.__n=N
@@ -204,91 +315,91 @@ class CoveringArray():
         self.__t=strength
         
     def numrows(self):
-        """
-        Method that returns the number of rows, N, of the covering array
+        r"""
+        Return the number of rows, N, of the covering array
         
         EXAMPLES::
                 
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))         
-            sage: CA=CoveringArray(C,2,2)
+            sage: CA = CoveringArray(C,2,2)
             sage: CA.numrows()
             5
         """
         return self.__n
         
     def numcols(self):
-        """
-        Method that returns the number of columns, k, of the covering array
+        r"""
+        Returns the number of columns, k, of the covering array
         
         EXAMPLES::
                 
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))          
-            sage: CA=CoveringArray(C,2,2)
+            sage: CA = CoveringArray(C,2,2)
             sage: CA.numcols()
             4
         """
         return self.__k
     
     def levels(self):
-        """
-        Method that returns the number of levels for the covering array, which 
-        is the paramter v, such that v is the size of the symbol set of the 
+        r"""
+        Return the number of levels for the covering array, which is 
+        the paramter v, such that v is the size of the symbol set of the 
         array.
     
         EXAMPLES::
                 
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))         
-            sage: CA=CoveringArray(C,2,2)
+            sage: CA = CoveringArray(C,2,2)
             sage: CA.levels()
             2
         """
         return self.__v
         
     def strength(self):
-        """
-        Method that returns the strength of the covering array, which is the 
-        paramter t, such that in any selection of t columns of the array, 
-        every t tuple appears at least once.
+        r"""
+        Return the strength of the covering array, which is the paramter 
+        t, such that in any selection of t columns of the array, every 
+        t tuple appears at least once.
     
         EXAMPLES::
                 
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))        
-            sage: CA=CoveringArray(C,2,2)
+            sage: CA = CoveringArray(C,2,2)
             sage: CA.strength()
             2
         """
         return self.__t
     
     def array_representation(self):
-        """
-        Method that returns the covering array as a tuple of tuples, but where
+        r"""
+        Return the covering array as a tuple of tuples, but where
         the output is such that each row of the array is sorted in 
         lexicographic order
         
         EXAMPLES::
                 
-            sage: C = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+            sage: C = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)         
-            sage: CA=CoveringArray(C,2,2)
+            sage: CA = CoveringArray(C,2,2)
             sage: CA.array_representation()
             ((0,0,0,0),(0,1,1,1),(1,0,1,1),(1,1,0,1),(1,1,1,0))
             
@@ -297,191 +408,287 @@ class CoveringArray():
     
     
     def __repr__(self):
-        """
+        r"""
+        Returns a string that describes self
+        
         EXAMPLES::
-            
-            sage: C = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+        
+            sage: C = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))           
             sage: CoveringArray(C,strength=2)
             A 5 by 4 Covering Array of strength 2 with 2 levels
-            
-            sage: C= ((0,0,0,0,0,0,0,0,0,0),
-                     (1,1,1,1,1,1,1,1,1,1),
-                     (1,1,1,0,1,0,0,0,0,1),
-                     (1,0,1,1,0,1,0,1,0,0),
-                     (1,0,0,0,1,1,1,0,0,0),
-                     (0,1,1,0,0,1,0,0,1,0),
-                     (0,0,1,0,1,0,1,1,1,0),
-                     (1,1,0,1,0,0,1,0,1,0),
-                     (0,0,0,1,1,1,0,0,1,1),
-                     (0,0,1,1,0,0,1,0,0,1),
-                     (0,1,0,1,1,0,0,1,0,0),
-                     (1,0,0,0,0,0,0,1,1,1),
-                     (0,1,0,0,0,1,1,1,0,1))
+
+            sage: C = ((0,0,0,0,0,0,0,0,0,0),\
+                      (1,1,1,1,1,1,1,1,1,1),\
+                      (1,1,1,0,1,0,0,0,0,1),\
+                      (1,0,1,1,0,1,0,1,0,0),\
+                      (1,0,0,0,1,1,1,0,0,0),\
+                      (0,1,1,0,0,1,0,0,1,0),\
+                      (0,0,1,0,1,0,1,1,1,0),\
+                      (1,1,0,1,0,0,1,0,1,0),\
+                      (0,0,0,1,1,1,0,0,1,1),\
+                      (0,0,1,1,0,0,1,0,0,1),\
+                      (0,1,0,1,1,0,0,1,0,0),\
+                      (1,0,0,0,0,0,0,1,1,1),\
+                      (0,1,0,0,0,1,1,1,0,1))
             sage: CoveringArray(C,2,3)
             A 5 by 4 Covering Array of strength 3 with 2 levels
-        """
+
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CoveringArray(C)
+            A 6 by 10 Covering Array of strength 2 with 2 levels
+
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            A 7 by 15 Covering Array of strength 2 with 2 levels
+
+    """
         return 'A {} by {} Covering Array of strength {} with {} levels'.format(
-            self.nrows, self.ncols, self.strength, self.levels)
+            self.numrows(), self.numcols(), self.strength(), self.levels())
         
     __str__=__repr__
     
-    
-    def __eq__(self, other):
-        """
-        A method that desrcibes whether two covering arrays are equal by 
-        considering the array with rows sorted in lexicographic order
+    def pprint(self):
+        r"""
+        Prints the covering array in a format easy for users to read
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
-                       (0,1,1,1),)
-            sage: C2 = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+        EXAMPLES::
+                
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA = CoveringArray(C,2,2)
+            sage: CA.pprint()
+            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+            (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1)
+            (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1)
+            (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1)
+            (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0)
+            (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0)
+        """
+        for i in self.__array:
+            print(str(i))
+        
+    def __hash__(self):
+        r"""
+        Hashs the tuple of tuples and all tuples inside
+        
+        EXAMPLES::
+    
+            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                       (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
+                       (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                       (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                       (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                       (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                       (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA = CoveringArray(C,2,2)
+            sage: CA.pprint()
+            sage: hash(CA)
+            -2522140066511050633
+        """
+        return hash((self.array_representation(),self.strength(),self.levels()))
+        
+    def __eq__(self, other):
+        r"""
+        Return whether two covering arrays are equal by considering the 
+        array with rows sorted in lexicographic order
+        
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
+                       (0,1,1,1),\
+            sage: C2 = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))
-            sage: C3 = ((0,0,0,0,0,0,0,0,0,0),
-                       (1,1,1,1,1,1,1,1,1,1),
-                       (1,1,1,0,1,0,0,0,0,1),
-                       (1,0,1,1,0,1,0,1,0,0),
-                       (1,0,0,0,1,1,1,0,0,0),
-                       (0,1,1,0,0,1,0,0,1,0),
-                       (0,0,1,0,1,0,1,1,1,0),
-                       (1,1,0,1,0,0,1,0,1,0),
-                       (0,0,0,1,1,1,0,0,1,1),
-                       (0,0,1,1,0,0,1,0,0,1),
-                       (0,1,0,1,1,0,0,1,0,0),
-                       (1,0,0,0,0,0,0,1,1,1),
+            sage: C3 = ((0,0,0,0,0,0,0,0,0,0),\
+                       (1,1,1,1,1,1,1,1,1,1),\
+                       (1,1,1,0,1,0,0,0,0,1),\
+                       (1,0,1,1,0,1,0,1,0,0),\
+                       (1,0,0,0,1,1,1,0,0,0),\
+                       (0,1,1,0,0,1,0,0,1,0),\
+                       (0,0,1,0,1,0,1,1,1,0),\
+                       (1,1,0,1,0,0,1,0,1,0),\
+                       (0,0,0,1,1,1,0,0,1,1),\
+                       (0,0,1,1,0,0,1,0,0,1),\
+                       (0,1,0,1,1,0,0,1,0,0),\
+                       (1,0,0,0,0,0,0,1,1,1),\
                        (0,1,0,0,0,1,1,1,0,1))
-            sage: C1=C2
+            sage: C1==C2
             True
-            sage: C1=C3
+            sage: C1==C3
             False
         """
-        if self.ArrayRepresentation() == other.ArrayRepresentation():
+        if self.array_representation() == other.array_representation():
             return True
         else:
             return False
         
     def __neq__(self, other):
-        """
-        A method that desrcibes whether two covering arrays are not equal by 
-        considering the array with rows sorted in lexicographic order
+        r"""
+        Return whether two covering arrays are not equal by considering 
+        the array with rows sorted in lexicographic order
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)
-            sage: C2 = ((1,1,1,0),
-                       (1,1,0,1),
-                       (1,0,1,1),
-                       (0,1,1,1),
+            sage: C2 = ((1,1,1,0),\
+                       (1,1,0,1),\
+                       (1,0,1,1),\
+                       (0,1,1,1),\
                        (0,0,0,0))
-            sage: C3 = ((0,0,0,0,0,0,0,0,0,0),
-                       (1,1,1,1,1,1,1,1,1,1),
-                       (1,1,1,0,1,0,0,0,0,1),
-                       (1,0,1,1,0,1,0,1,0,0),
-                       (1,0,0,0,1,1,1,0,0,0),
-                       (0,1,1,0,0,1,0,0,1,0),
-                       (0,0,1,0,1,0,1,1,1,0),
-                       (1,1,0,1,0,0,1,0,1,0),
-                       (0,0,0,1,1,1,0,0,1,1),
-                       (0,0,1,1,0,0,1,0,0,1),
-                       (0,1,0,1,1,0,0,1,0,0),
-                       (1,0,0,0,0,0,0,1,1,1),
+            sage: C3 = ((0,0,0,0,0,0,0,0,0,0),\
+                       (1,1,1,1,1,1,1,1,1,1),\
+                       (1,1,1,0,1,0,0,0,0,1),\
+                       (1,0,1,1,0,1,0,1,0,0),\
+                       (1,0,0,0,1,1,1,0,0,0),\
+                       (0,1,1,0,0,1,0,0,1,0),\
+                       (0,0,1,0,1,0,1,1,1,0),\
+                       (1,1,0,1,0,0,1,0,1,0),\
+                       (0,0,0,1,1,1,0,0,1,1),\
+                       (0,0,1,1,0,0,1,0,0,1),\
+                       (0,1,0,1,1,0,0,1,0,0),\
+                       (1,0,0,0,0,0,0,1,1,1),\
                        (0,1,0,0,0,1,1,1,0,1))
             sage: C1!=C2
             False
             sage: C1!=C3
             True
         """
-        if self.ArrayRepresentation() != other.ArrayRepresentation():
+        if self.array_representation() != other.array_representation():
             return True
         else:
             return False
         
     def __lt__(self, other):
-        """
-        A method that desrcibes whether one covering array is less than another
+        r"""
+        Return whether one covering array is less than another
         based on the lexicographic order on the rows
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)
-            
+            sage: C2 = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                        (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                        (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                        (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                        (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA1 = CoveringArray(C1,2,2)
+            sage: CA2 = CoveringArray(C2,2,2)
+            sage: CA1<CA2
+            True
         """
-        if self.ArrayRepresentation() < other.ArrayRepresentation():
+        if self.array_representation() < other.array_representation():
             return True
         else:
             return False
         
     def __le__(self, other):
-        """
-        A method that desrcibes whether one covering array is less than or 
+        r"""
+        Return whether one covering array is less than or 
         equal to another based on the lexicographic order on the rows
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)
-            
+            sage: C2 = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                        (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                        (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                        (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                        (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA1 = CoveringArray(C1,2,2)
+            sage: CA2 = CoveringArray(C2,2,2)
+            sage: CA1<=CA2
+            True
         """
-        if self.ArrayRepresentation() <= other.ArrayRepresentation():
+        if self.array_representation() <= other.array_representation():
             return True
         else:
             return False
         
     def __gt__(self, other):
-        """
-        A method that desrcibes whether one covering array is greater than 
+        r"""
+        Return whether one covering array is greater than 
         another based on the lexicographic order on the rows
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)
-            
+            sage: C2 = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                        (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                        (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                        (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                        (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA1 = CoveringArray(C1,2,2)
+            sage: CA2 = CoveringArray(C2,2,2)
+            sage: CA1>CA2
+            False
         """
-        if self.ArrayRepresentation() > other.ArrayRepresentation():
+        if self.array_representation() > other.array_representation():
             return True
         else:
             return False
-        
-        
-        (0,1,0,0)
-        
-        (1,0)
         
     def __ge__(self, other):
-        """
-        A method that desrcibes whether one covering array is greater than or 
+        r"""
+        Return whether one covering array is greater than or 
         equal to another based on the lexicographic order on the rows
         
-        EXMAPLES::
-            sage: C1 = ((1,1,1,0),
-                       (0,0,0,0),
-                       (1,0,1,1),
-                       (1,1,0,1),
+        EXAMPLES::
+            sage: C1 = ((1,1,1,0),\
+                       (0,0,0,0),\
+                       (1,0,1,1),\
+                       (1,1,0,1),\
                        (0,1,1,1),)
-            
+            sage: C2 = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
+                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
+                        (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),\
+                        (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
+                        (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
+                        (1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CA1 = CoveringArray(C1,2,2)
+            sage: CA2 = CoveringArray(C2,2,2)
+            sage: CA1>=CA2
+            False
         """
-        if self.ArrayRepresentation() >= other.ArrayRepresentation():
+        if self.array_representation() >= other.array_representation():
             return True
         else:
             return False
-    
