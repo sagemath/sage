@@ -135,7 +135,7 @@ from sage.categories.morphism cimport Morphism
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 
 
@@ -5105,8 +5105,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
             y = self._parent.quo(self).gen()
             from sage.groups.generic import order_from_multiple
             return n == order_from_multiple(y, n, n_prime_divs, operation="*")
+        elif isinstance(R, NumberFieldOrder):
+            K = R.number_field()
+            return K.fractional_ideal(self.coefficients()) == K.fractional_ideal(1)
         else:
-            return R.ideal(self.coefficients())==R.ideal(1)
+            return R.ideal(self.coefficients()) == R.ideal(1)
 
     def is_constant(self):
         """

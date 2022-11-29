@@ -1657,7 +1657,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         (A,B,C) = f
         if A%c == 0:
             A, C = C, A
-        return K.maximal_order().ideal([A, (-B+c*sqrtD)/2])
+        return K.fractional_ideal([A, (-B+c*sqrtD)/2])
 
 ##     def __call__(self, z):
 ##         """
