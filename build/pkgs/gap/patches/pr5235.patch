@@ -1,0 +1,11 @@
+--- a/Makefile.rules
++++ b/Makefile.rules
+@@ -303,7 +303,7 @@ else
+     # HACK: we need to point to the real GAP binary, not a shell script
+     # wrapper. We can remove this hack (and once again use SYSINFO_GAP)
+     # once we get rid of the shell script wrapper
+-    GAC_LDFLAGS = -bundle -bundle_loader $(SYSINFO_GAP2)
++    GAC_LDFLAGS = -bundle -flat_namespace -bundle_loader $(SYSINFO_GAP2)
+   else
+     GAC_CFLAGS = -fPIC
+     GAC_LDFLAGS = -shared
