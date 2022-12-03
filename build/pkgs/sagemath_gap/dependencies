@@ -1,1 +1,1 @@
-$(PYTHON) sagelib gap | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
+$(PYTHON) sagemath_environment sagemath_categories gap | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
