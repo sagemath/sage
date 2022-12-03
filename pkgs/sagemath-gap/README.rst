@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with gap
-==============================================================================
+=============================================================================
+ Sage: Open Source Mathematics Software: Computational Group Theory with GAP
+=============================================================================
 
 About SageMath
 --------------
@@ -26,7 +26,5 @@ About this pip-installable source distribution
 ----------------------------------------------
 
 This pip-installable source distribution ``sagemath-gap`` is a small
-optional distribution for use with ``sagemath-standard``.
-
-It provides a Cython interface to the ``gap`` library for the purpose
-of computing graph (iso/auto)morphisms.
+distribution that provides modules that depend on the GAP system, see
+https://www.gap-system.org
