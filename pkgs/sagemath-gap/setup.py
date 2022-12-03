@@ -19,50 +19,43 @@ try:
 except ImportError:
     pass
 
-# PEP 517 builds do not have . in sys.path
 import sys
-sys.path.insert(0, os.path.dirname(__file__))
+from sage_setup.excepthook import excepthook
+sys.excepthook = excepthook
 
-if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
-    sdist = True
-else:
-    sdist = False
+from sage_setup.setenv import setenv
+setenv()
 
-if sdist:
-    cmdclass = {}
-else:
-    from sage_setup.excepthook import excepthook
-    sys.excepthook = excepthook
+import sage.env
+sage.env.default_required_modules = sage.env.default_optional_modules = ()
 
-    from sage_setup.setenv import setenv
-    setenv()
+from sage_setup.command.sage_build_cython import sage_build_cython
+from sage_setup.command.sage_build_ext import sage_build_ext
+import os.path
 
-    import sage.env
-    sage.env.default_required_modules = sage.env.default_optional_modules = ()
+sage_build_cython.built_distributions = ['sagemath-gap']
 
-    from sage_setup.command.sage_build_cython import sage_build_cython
-    from sage_setup.command.sage_build_ext import sage_build_ext
-    sage_build_cython.built_distributions = ['sagemath-gap']
+cmdclass = dict(build_cython=sage_build_cython,
+                build_ext=sage_build_ext)
 
-    cmdclass = dict(build_cython=sage_build_cython,
-                    build_ext=sage_build_ext)
+from sage_setup.find import find_python_sources, find_extra_files
+python_packages, python_modules, cython_modules = find_python_sources(
+    '.', ['sage'], distributions=['sagemath-gap'])
+extra_files = find_extra_files(
+    '.', ['sage'], '/doesnotexist', distributions=['sagemath-gap'])
+package_data = {"": [f
+                     for pkg, files in extra_files.items()
+                     for f in files ]}
 
-if sdist:
-    python_packages = []
-    python_modules = []
-    cython_modules = []
-else:
-    from sage_setup.find import find_python_sources
-    python_packages, python_modules, cython_modules = find_python_sources(
-        '.', ['sage'], distributions=['sagemath-gap'])
-
-    log.warn('python_packages = {0}'.format(python_packages))
-    log.warn('python_modules = {0}'.format(python_modules))
-    log.warn('cython_modules = {0}'.format(cython_modules))
+log.warn('python_packages = {0}'.format(python_packages))
+log.warn('python_modules = {0}'.format(python_modules))
+log.warn('cython_modules = {0}'.format(cython_modules))
+log.warn('package_data = {0}'.format(package_data))
 
 setup(
     cmdclass = cmdclass,
     packages = python_packages,
     py_modules  = python_modules,
     ext_modules = cython_modules,
+    package_data = package_data,
 )

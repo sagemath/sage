@@ -1,3 +1,13 @@
+include VERSION.txt
+
+prune sage
+global-include all__sagemath_gap.py
+graft sage/libs/gap
+graft sage/data_structures   # FIXME
+include sage/combinat/enumeration_mod_permgroup.pyx
+graft sage/groups/perm_gps
+include sage/matrix/matrix_gap.pyx
+
 global-exclude *.c
 global-exclude *.cpp
 
@@ -9,5 +19,3 @@ global-exclude *~
 prune .tox
 prune build
 prune dist
-
-include VERSION.txt
