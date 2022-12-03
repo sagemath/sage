@@ -12,9 +12,11 @@ include           sage/graphs/spanning_tree.p*
 graft             sage/groups/perm_gps
 include           sage/groups/libgap_wrapper.p*
 include           sage/groups/matrix_gps/group_element.p*
+recursive-include sage/groups/semimonomial_transformations *.pxd        # FIXME
 graft             sage/libs/gap
 recursive-include sage/matrix *.pxd                                     # FIXME
 include           sage/matrix/matrix_gap.p*
+recursive-include sage/modules *.pxd                                    # FIXME
 recursive-include sage/rings *.pxd                                      # FIXME
 include           sage/sets/disjoint_set.p*
 
