@@ -34,7 +34,6 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
-from sage.libs.flint.ulong_extras cimport n_is_prime
 
 # OrbitPartition (OP)
 
@@ -1145,6 +1144,8 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     Running time is roughly O(-ln(1-p)*n*ln(m)) where m <= n is the size of the
     support of the group.
     """
+    from sage.libs.flint.ulong_extras import n_is_prime
+
     cdef int i, j, num_steps, support_root
     cdef size_t m = 1
     cdef unsigned long q
