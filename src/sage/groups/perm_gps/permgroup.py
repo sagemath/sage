@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 # -*- coding: utf-8 -*-
 r"""
 Permutation groups

@@ -1,12 +1,22 @@
 include VERSION.txt
 
 prune sage
-global-include all__sagemath_gap.py
-graft sage/libs/gap
-graft sage/data_structures   # FIXME
-include sage/combinat/enumeration_mod_permgroup.pyx
-graft sage/groups/perm_gps
-include sage/matrix/matrix_gap.pyx
+global-include    all__sagemath_gap.py
+
+graft             sage/coding/codecan
+include           sage/combinat/enumeration_mod_permgroup.p*
+include           sage/combinat/root_system/reflection_group*.p*
+graft             sage/data_structures                                  # FIXME
+recursive-include sage/graphs *.pxd                                     # FIXME
+include           sage/graphs/spanning_tree.p*
+graft             sage/groups/perm_gps
+include           sage/groups/libgap_wrapper.p*
+include           sage/groups/matrix_gps/group_element.p*
+graft             sage/libs/gap
+recursive-include sage/matrix *.pxd                                     # FIXME
+include           sage/matrix/matrix_gap.p*
+recursive-include sage/rings *.pxd                                      # FIXME
+include           sage/sets/disjoint_set.p*
 
 global-exclude *.c
 global-exclude *.cpp
