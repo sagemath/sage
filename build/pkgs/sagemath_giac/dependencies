@@ -1,0 +1,1 @@
+$(PYTHON) sagelib giac | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
