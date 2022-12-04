@@ -2,7 +2,7 @@
 [metadata]
 name = sagemath-flint-arb
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with flint-arb
+description = Sage: Open Source Mathematics Software: Fast computations with FLINT and arb
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later

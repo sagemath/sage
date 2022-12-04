@@ -1,5 +1,5 @@
 ==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with flint-arb
+ Sage: Open Source Mathematics Software: Fast computations with FLINT and arb
 ==============================================================================
 
 About SageMath
@@ -25,8 +25,5 @@ installs the Sage Library (sagelib, implemented in Python and Cython).
 About this pip-installable source distribution
 ----------------------------------------------
 
-This pip-installable source distribution ``sagemath-flint-arb`` is a small
-optional distribution for use with ``sagemath-standard``.
-
-It provides a Cython interface to the ``flint-arb`` library for the purpose
-of computing graph (iso/auto)morphisms.
+This pip-installable source distribution ``sagemath-flint-arb`` provides
+Cython interfaces to the ``FLINT`` and ``arb`` libraries.
