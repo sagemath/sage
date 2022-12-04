@@ -178,14 +178,26 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-categories/setup.cfg
 /pkgs/sagemath-environment/setup.cfg
 /pkgs/sagemath-repl/setup.cfg
+/pkgs/sagemath-flint-arb/setup.cfg
+/pkgs/sagemath-gap/setup.cfg
+/pkgs/sagemath-giac/setup.cfg
+/pkgs/sagemath-homfly/setup.cfg
 /pkgs/sagemath-objects/pyproject.toml
 /pkgs/sagemath-categories/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
+/pkgs/sagemath-flint-arb/pyproject.toml
+/pkgs/sagemath-gap/pyproject.toml
+/pkgs/sagemath-giac/pyproject.toml
+/pkgs/sagemath-homfly/pyproject.toml
 /pkgs/sagemath-objects/requirements.txt
 /pkgs/sagemath-categories/requirements.txt
 /pkgs/sagemath-environment/requirements.txt
 /pkgs/sagemath-repl/requirements.txt
+/pkgs/sagemath-flint-arb/requirements.txt
+/pkgs/sagemath-gap/requirements.txt
+/pkgs/sagemath-giac/requirements.txt
+/pkgs/sagemath-homfly/requirements.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
 # same for old locations - before Trac #31577
