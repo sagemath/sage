@@ -36,6 +36,7 @@ py_modules =
     sage.version
     sage.misc.all__sagemath_environment
     sage.misc.package
+    sage.misc.package_dir
     sage.misc.temporary_file
     sage.misc.viewer
 
