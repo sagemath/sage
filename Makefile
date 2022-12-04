@@ -99,7 +99,7 @@ pypi-sdists: sage_setup
 # Ensuring wheels are present, even for packages that may have been installed
 # as editable. Until we have better uninstallation of script packages, we
 # just remove the timestamps, which will lead to rebuilds of the packages.
-PYPI_WHEEL_PACKAGES = sage_sws2rst sage_setup sagemath_environment sagemath_objects sagemath_repl sagemath_categories
+PYPI_WHEEL_PACKAGES = sage_sws2rst sage_setup sagemath_environment sagemath_objects sagemath_repl sagemath_categories sagemath_giac sagemath_flint_arb sagemath_gap sagemath_homfly
 pypi-wheels:
 	for a in $(PYPI_WHEEL_PACKAGES); do \
 	    rm -f venv/var/lib/sage/installed/$$a-*; \
