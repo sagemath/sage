@@ -6,9 +6,8 @@ requires = [
         wheel          \
         sage_setup     \
         sagemath_environment \
-        sagemath_standard \
+        sagemath_objects \
         cython         \
-        gmpy2          \
         cysignals      \
                     ')]
 build-backend = "setuptools.build_meta"

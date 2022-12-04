@@ -1,3 +1,9 @@
+include VERSION.txt
+
+prune sage
+global-include    all__sagemath_homfly.py
+include           sage/libs/homfly.p*
+
 global-exclude *.c
 global-exclude *.cpp
 

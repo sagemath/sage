@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with homfly
-==============================================================================
+==========================================================================================
+ Sage: Open Source Mathematics Software: Homfly polynomials of knots/links with libhomfly
+==========================================================================================
 
 About SageMath
 --------------
@@ -28,5 +28,4 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-homfly`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-It provides a Cython interface to the ``homfly`` library for the purpose
-of computing graph (iso/auto)morphisms.
+It provides a Cython interface to the ``libhomfly`` library.
