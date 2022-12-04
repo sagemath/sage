@@ -4,7 +4,7 @@
 # This script is not used during build.
 #
 # HOW TO MAKE THE TARBALL:
-# ./sage --sh build/pkgs/sagemath_flint-arb/spkg-src
+# ./sage --sh build/pkgs/sagemath_flint_arb/spkg-src
 
 if [ -z "$SAGE_ROOT" ] ; then
     echo >&2 "Error - SAGE_ROOT undefined ... exiting"
@@ -15,7 +15,7 @@ fi
 # Exit on failure
 set -e
 
-cd build/pkgs/sagemath_flint-arb
+cd build/pkgs/sagemath_flint_arb
 
 cd src
 python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"

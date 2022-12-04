@@ -90,6 +90,10 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagemath_categories/spkg-src
 	./sage --sh build/pkgs/sagemath_environment/spkg-src
 	./sage --sh build/pkgs/sagemath_repl/spkg-src
+	./sage --sh build/pkgs/sagemath_giac/spkg-src
+	./sage --sh build/pkgs/sagemath_flint_arb/spkg-src
+	./sage --sh build/pkgs/sagemath_gap/spkg-src
+	./sage --sh build/pkgs/sagemath_homfly/spkg-src
 	@echo "Built sdists are in upstream/"
 
 # Ensuring wheels are present, even for packages that may have been installed
