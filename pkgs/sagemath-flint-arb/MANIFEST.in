@@ -1,0 +1,33 @@
+include VERSION.txt
+
+prune sage
+global-include    all__sagemath_flint_arb.py
+
+graft             sage/libs/arb
+graft             sage/libs/flint
+recursive-include sage/libs/gsl *.pxd                                           # FIXME
+recursive-include sage/libs/mpfr *.pxd                                          # FIXME
+recursive-include sage/libs/mpfi *.pxd                                          # FIXME
+recursive-include sage/matrix *.pxd                                             # FIXME
+include           sage/matrix/matrix_complex_ball_dense.p*
+include           sage/misc/binary_tree.p*                                      # FIXME
+recursive-include sage/rings *.pxd                                              # FIXME
+include           sage/rings/complex_arb.p*
+include           sage/rings/integer_fake.h                                     # FIXME
+include           sage/rings/number_field/number_field_element_quadratic.p*
+include           sage/rings/padics/qadic_flint_FP.p*
+include           sage/rings/polynomial/evaluation_flint.p*
+include           sage/rings/polynomial/polynomial_complex_arb.p*
+include           sage/rings/real_arb.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist
