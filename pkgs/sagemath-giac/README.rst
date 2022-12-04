@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with giac
-==============================================================================
+========================================================================
+ Sage: Open Source Mathematics Software: Symbolic computation with GIAC
+========================================================================
 
 About SageMath
 --------------
@@ -25,8 +25,5 @@ installs the Sage Library (sagelib, implemented in Python and Cython).
 About this pip-installable source distribution
 ----------------------------------------------
 
-This pip-installable source distribution ``sagemath-giac`` is a small
-optional distribution for use with ``sagemath-standard``.
-
-It provides a Cython interface to the ``giac`` library for the purpose
-of computing graph (iso/auto)morphisms.
+This pip-installable source distribution ``sagemath-giac`` provides a Cython
+interface to GIAC.
