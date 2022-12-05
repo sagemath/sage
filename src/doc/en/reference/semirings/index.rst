@@ -2,7 +2,7 @@ Standard Semirings
 ==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/semirings/non_negative_integer_semiring
    sage/rings/semirings/tropical_semiring

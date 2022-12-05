@@ -85,7 +85,7 @@ in the error message::
     sage: LCM([2..60])*P
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Inverse of 1520944668 does not exist (characteristic = 1715761513 = 26927*63719)
+    ZeroDivisionError: Inverse of 26927 does not exist (characteristic = 1715761513 = 26927*63719)
 
 AUTHORS:
 
@@ -630,7 +630,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: LCM([2..60])*P
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse of 1520944668 does not exist
+            ZeroDivisionError: Inverse of 26927 does not exist
             (characteristic = 1715761513 = 26927*63719)
 
             sage: N = 35
@@ -639,8 +639,15 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: 4*P
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse of 28 does not exist
+            ZeroDivisionError: Inverse of 7 does not exist
             (characteristic = 35 = 7*5)
+
+        Checks that :trac:`34681` is fixed::
+
+            sage: P+P
+            (15 : 14 : 1)
+            sage: 2*P
+            (15 : 14 : 1)
         """
         # Use Prop 7.1.7 of Cohen "A Course in Computational Algebraic
         # Number Theory"
@@ -3497,7 +3504,16 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         try:
             pariQ = pari.ellmul(E, self, k)
-        except PariError:
+        except PariError as err:
+            if str(err.errdata().component(1)) == "Fp_inv":
+                val = err.errdata().component(2)
+                a = val.lift()
+                N = val.mod()
+                N1 = N.gcd(a)
+                N2 = N//N1
+                raise ZeroDivisionError(
+                        f"Inverse of {a} does not exist"
+                        f" (characteristic = {N} = {N1}*{N2})")
             pariQ = None
 
         if pariQ is not None:
@@ -3505,7 +3521,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                 vQ = 0
             else:
                 assert len(pariQ) == 2
-                vQ = Sequence(tuple(pariQ) + (1,), E.base_field())
+                vQ = Sequence(tuple(pariQ) + (1,), E.base_ring())
             Q = EllipticCurvePoint_finite_field(E, vQ, check=False)
 
         else:

@@ -344,6 +344,8 @@ import shlex
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 
+import sage.interfaces.abc
+
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.sequence import Sequence_generic
 from sage.structure.element import RingElement
@@ -1308,7 +1310,7 @@ class Singular(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class SingularElement(ExtraTabCompletion, ExpectElement):
+class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.SingularElement):
 
     def __init__(self, parent, type, value, is_name=False):
         """
@@ -2284,16 +2286,24 @@ class SingularFunctionElement(FunctionElement):
 
 def is_SingularElement(x):
     r"""
-    Returns True is x is of type ``SingularElement``.
+    Return True is ``x`` is of type :class:`SingularElement`.
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.SingularElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.singular import is_SingularElement
         sage: is_SingularElement(singular(2))
+        doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
+        See https://trac.sagemath.org/34804 for details.
         True
         sage: is_SingularElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead")
+
     return isinstance(x, SingularElement)
 
 

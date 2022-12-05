@@ -1242,8 +1242,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         cmd = '%s===%s' % (self._name, P._false_symbol())
         return not str(P(cmd)) == P._true_symbol()
 
-    
-
     def n(self, *args, **kwargs):
         r"""
         Numerical approximation by converting to Sage object first

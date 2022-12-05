@@ -93,8 +93,8 @@ def hadamard_matrix_paleyI(n, normalize=True):
     r"""
     Implement the Paley type I construction.
 
-    The Paley type I case corresponds to the case `p \cong 3 \mod{4}` for a
-    prime `p` (see [Hora]_).
+    The Paley type I case corresponds to the case `p=n-1 \cong 3 \mod{4}` for a
+    prime power `p` (see [Hora]_).
 
     INPUT:
 
@@ -160,8 +160,8 @@ def hadamard_matrix_paleyII(n):
     r"""
     Implement the Paley type II construction.
 
-    The Paley type II case corresponds to the case `p \cong 1 \mod{4}` for a
-    prime `p` (see [Hora]_).
+    The Paley type II case corresponds to the case `p=n/2-1 \cong 1 \mod{4}` for a
+    prime power `p` (see [Hora]_).
 
     EXAMPLES::
 
@@ -405,12 +405,18 @@ def hadamard_matrix(n,existence=False, check=True):
         False
         sage: matrix.hadamard(12,existence=True)
         True
-        sage: matrix.hadamard(92,existence=True)
+        sage: matrix.hadamard(116,existence=True)
         Unknown
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
         ...
         ValueError: The Hadamard matrix of order 10 does not exist
+        sage: matrix.hadamard(312, existence=True)
+        True
+        sage: matrix.hadamard(1904, existence=True)
+        True
+        sage: matrix.hadamard(324, existence=True)
+        True
     """
     if not(n % 4 == 0) and (n > 2):
         if existence:
@@ -428,9 +434,9 @@ def hadamard_matrix(n,existence=False, check=True):
         if existence:
             return True
         M = hadamard_matrix_paleyII(n)
-    elif n == 4 or n % 8 == 0:
+    elif n == 4 or n % 8 == 0 and hadamard_matrix(n//2,existence=True) is True:
         if existence:
-            return hadamard_matrix(n//2,existence=True)
+            return True
         had = hadamard_matrix(n//2,check=False)
         chad1 = matrix([list(r) + list(r) for r in had.rows()])
         mhad = (-1) * had
@@ -442,13 +448,21 @@ def hadamard_matrix(n,existence=False, check=True):
         if existence:
             return True
         M = hadamard_matrix_paleyI(n)
+    elif skew_hadamard_matrix(n, existence=True) is True:
+        if existence:
+            return True
+        M = skew_hadamard_matrix(n, check=False)
+    elif regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1, existence=True) is True:
+        if existence: 
+            return True
+        M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
     else:
         if existence:
             return Unknown
         raise ValueError("The Hadamard matrix of order %s is not yet implemented." % n)
 
     if check:
-        assert is_hadamard_matrix(M, normalized=True)
+        assert is_hadamard_matrix(M)
 
     return M
 

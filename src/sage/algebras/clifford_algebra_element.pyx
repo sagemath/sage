@@ -90,6 +90,15 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             0
             sage: 0*x
             0
+
+        :trac:`34707`::
+
+            sage: Q = QuadraticForm(QQ, 2, [0,5,0])
+            sage: C.<p,q> = CliffordAlgebra(Q)
+            sage: (q * p) * q
+            5*q
+            sage: q * (p * q)
+            5*q
         """
         Q = self._parent._quadratic_form
         zero = self._parent._base.zero()
@@ -110,7 +119,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             if ml.isempty():
                 return rhs._mul_term_self(ml, cl)
         if len(rhs._monomial_coefficients) == 1:
-            mr, cr = next(iter(self._monomial_coefficients.items()))
+            mr, cr = next(iter(rhs._monomial_coefficients.items()))
             if mr.isempty():
                 return self._mul_self_term(mr, cr)
 
@@ -125,7 +134,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
                 # the dictionary describing the element
                 # ``e[i]`` * (the element described by the dictionary ``cur``)
                 # (where ``e[i]`` is the ``i``-th standard basis vector).
-                for mr,cr in cur.items():
+                for mr, cr in cur.items():
 
                     # Commute the factor as necessary until we are in order
                     for j in mr:
@@ -161,7 +170,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
                 cur = next_level
 
             # Add the distributed terms to the total
-            for index,coeff in cur.items():
+            for index, coeff in cur.items():
                 d[index] = d.get(index, zero) + cl * coeff
                 if d[index] == zero:
                     del d[index]

@@ -559,6 +559,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                       (ell_point.EllipticCurvePoint_field,
                        ell_point.EllipticCurvePoint_number_field,
                        ell_point.EllipticCurvePoint)):
+            if P.curve() is self:
+                return P
             # check if denominator of the point contains a factor of the
             # characteristic of the base ring. if so, coerce the point to
             # infinity.
@@ -2350,10 +2352,23 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.multiplication_by_m_isogeny(2).rational_maps()
             ((1/4*x^4 + 33/4*x^2 - 121/2*x + 363/4)/(x^3 - 3/4*x^2 - 33/2*x + 121/4),
              (-1/256*x^7 + 1/128*x^6*y - 7/256*x^6 - 3/256*x^5*y - 105/256*x^5 - 165/256*x^4*y + 1255/256*x^4 + 605/128*x^3*y - 473/64*x^3 - 1815/128*x^2*y - 10527/256*x^2 + 2541/128*x*y + 4477/32*x - 1331/128*y - 30613/256)/(1/16*x^6 - 3/32*x^5 - 519/256*x^4 + 341/64*x^3 + 1815/128*x^2 - 3993/64*x + 14641/256))
+
+        Test for :trac:`34727`::
+
+            sage: E = EllipticCurve([5,5])
+            sage: E.multiplication_by_m_isogeny(-1)
+            Isogeny of degree 1 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
+            sage: E.multiplication_by_m_isogeny(-2)
+            Isogeny of degree 4 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
+            sage: E.multiplication_by_m_isogeny(-3)
+            Isogeny of degree 9 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
+            sage: mu = E.multiplication_by_m_isogeny
+            sage: all(mu(-m) == -mu(m) for m in (1,2,3,5,7))
+            True
         """
         mx, my = self.multiplication_by_m(m)
 
-        torsion_poly = self.torsion_polynomial(m).monic()
+        torsion_poly = self.torsion_polynomial(abs(m)).monic()
         phi = self.isogeny(torsion_poly, codomain=self)
         phi._EllipticCurveIsogeny__initialize_rational_maps(precomputed_maps=(mx, my))
 

@@ -1018,7 +1018,7 @@ cdef py_real(x):
         sage: py_real(complex(2,2))
         2.0
     """
-    if isinstance(x, (float, int, long)):
+    if isinstance(x, (float, int)):
         return x
     elif isinstance(x, complex):
         return x.real
@@ -1118,7 +1118,7 @@ cdef py_conjugate(x):
 cdef bint py_is_rational(x):
     return (type(x) is Rational or
             type(x) is Integer or
-            isinstance(x, (int, long)))
+            isinstance(x, int))
 
 
 cdef bint py_is_equal(x, y):
@@ -1156,7 +1156,7 @@ cdef bint py_is_integer(x):
         sage: py_is_integer(3.0r)
         False
     """
-    if isinstance(x, (int, long, Integer)):
+    if isinstance(x, (int, Integer)):
         return True
     if not isinstance(x, Element):
         return False
@@ -1220,7 +1220,7 @@ def py_is_crational_for_doctest(x):
 
 
 cdef bint py_is_real(a):
-    if isinstance(a, (int, long, Integer, float)):
+    if isinstance(a, (int, Integer, float)):
         return True
     try:
         P = parent(a)
@@ -1246,7 +1246,7 @@ cdef bint py_is_prime(n):
 
 
 cdef bint py_is_exact(x):
-    if isinstance(x, (int, long, Integer)):
+    if isinstance(x, (int, Integer)):
         return True
     if not isinstance(x, Element):
         return False
@@ -1281,7 +1281,7 @@ cdef py_numer(n):
         sage: py_numer(no_numer())
         42
     """
-    if isinstance(n, (int, long, Integer)):
+    if isinstance(n, (int, Integer)):
         return n
     try:
         return n.numerator()
@@ -1319,7 +1319,7 @@ cdef py_denom(n):
         sage: py_denom(2/3*i)
         3
     """
-    if isinstance(n, (int, long, Integer)):
+    if isinstance(n, (int, Integer)):
         return 1
     try:
         return n.denominator()
@@ -1441,7 +1441,7 @@ cdef py_tgamma(x):
         sage: py_tgamma(1/2)
         1.77245385090552
     """
-    if isinstance(x, (int, long)):
+    if isinstance(x, int):
         x = float(x)
     if type(x) is float:
         return math.tgamma(PyFloat_AS_DOUBLE(x))
@@ -1759,7 +1759,7 @@ cdef py_log(x):
     """
     cdef gsl_complex res
     cdef double real, imag
-    if isinstance(x, (int, long)):
+    if isinstance(x, int):
         x = float(x)
     if type(x) is float:
         real = PyFloat_AS_DOUBLE(x)

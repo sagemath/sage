@@ -278,7 +278,7 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     cdef ModField *F = new ModField(<long>modulus)
     cdef celement *cpy = linbox_copy(modulus, entries, n, n)
 
-    cdef celement d
+    cdef celement d = 0
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 

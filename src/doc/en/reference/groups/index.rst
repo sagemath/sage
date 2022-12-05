@@ -2,7 +2,7 @@ Groups
 ======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/groups_catalog
    sage/groups/group
@@ -31,7 +31,7 @@ Abelian Groups
 --------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/abelian_gps/abelian_group
    sage/groups/abelian_gps/abelian_group_gap
@@ -51,7 +51,7 @@ Permutation Groups
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/perm_gps/permutation_groups_catalog
    sage/groups/perm_gps/constructor
@@ -66,7 +66,7 @@ Matrix and Affine Groups
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/matrix_gps/catalog
    sage/groups/matrix_gps/matrix_group
@@ -90,7 +90,7 @@ Lie Groups
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/lie_gps/nilpotent_lie_group
 
@@ -98,7 +98,7 @@ Partition Refinement
 --------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/perm_gps/partn_ref/canonical_augmentation
    sage/groups/perm_gps/partn_ref/data_structures
@@ -110,7 +110,7 @@ Internals
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/groups/matrix_gps/named_group
 

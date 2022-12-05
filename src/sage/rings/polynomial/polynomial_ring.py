@@ -149,17 +149,13 @@ from sage.categories.morphism import IdentityMorphism
 
 import sage.rings.ring as ring
 from sage.structure.element import is_RingElement
+import sage.rings.polynomial.polynomial_element_generic as polynomial_element_generic
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import is_NumberField
-
-try:
-    from cypari2.gen import Gen as pari_gen
-except ImportError:
-    pari_gen = ()
-
+from sage.libs.pari.all import pari_gen
 from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
 
 import sage.misc.latex as latex
@@ -171,20 +167,17 @@ import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
 
-try:
-    from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
-except ImportError:
-    Polynomial_integer_dense_flint = ()
-
+from .polynomial_element import PolynomialBaseringInjection
+from .polynomial_real_mpfr_dense import PolynomialRealDense
+from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
 _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
-try:
-    from sage.interfaces.singular import SingularElement
-except ImportError:
-    SingularElement = ()
+from . import cyclotomic
+
+import sage.interfaces.abc
 
 
 def is_PolynomialRing(x):
@@ -298,11 +291,10 @@ class PolynomialRing_general(ring.Algebra):
             self._polynomial_class = element_class
         else:
             if sparse:
-                from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
-                self._polynomial_class = Polynomial_generic_sparse
+                self._polynomial_class = polynomial_element_generic.Polynomial_generic_sparse
             else:
-                from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense
-                self._polynomial_class = Polynomial_generic_dense
+                from sage.rings.polynomial import polynomial_element
+                self._polynomial_class = polynomial_element.Polynomial_generic_dense
         self.Element = self._polynomial_class
         self.__cyclopoly_cache = {}
         self._has_singular = False
@@ -443,13 +435,13 @@ class PolynomialRing_general(ring.Algebra):
             elif P == self.base_ring():
                 return C(self, [x], check=True, is_gen=False,
                          construct=construct)
-        if isinstance(x, SingularElement) and self._has_singular:
+        if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
             except Exception:
                 raise TypeError("Unable to coerce singular object")
-        elif isinstance(x , str):
+        elif isinstance(x, str):
             try:
                 from sage.misc.parser import Parser, LookupNameMaker
                 R = self.base_ring()
@@ -684,7 +676,6 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))
         """
-        from .polynomial_element import PolynomialBaseringInjection
         return PolynomialBaseringInjection(self.base_ring(), self)
 
     def _coerce_map_from_(self, P):
@@ -1176,7 +1167,6 @@ class PolynomialRing_general(ring.Algebra):
         elif n == 1:
             return self.gen() - 1
         else:
-            from . import cyclotomic
             return self(cyclotomic.cyclotomic_coeffs(n), check=True)
 
     @cached_method
@@ -1988,10 +1978,11 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: x^(10^20) # this should be fast
             x^100000000000000000000
         """
+        import sage.rings.complex_arb
+
         if not element_class:
             if sparse:
-                from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse_field
-                element_class = Polynomial_generic_sparse_field
+                element_class = polynomial_element_generic.Polynomial_generic_sparse_field
             elif isinstance(base_ring, rational_field.RationalField):
                 from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
                 element_class = Polynomial_rational_flint
@@ -2003,14 +1994,12 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
                     element_class = Polynomial_relative_number_field_dense
             elif isinstance(base_ring, sage.rings.abc.RealField):
-                from .polynomial_real_mpfr_dense import PolynomialRealDense
                 element_class = PolynomialRealDense
             elif isinstance(base_ring, sage.rings.abc.ComplexBallField):
                 from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
                 element_class = Polynomial_complex_arb
             else:
-                from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
-                element_class = Polynomial_generic_dense_field
+                element_class = polynomial_element_generic.Polynomial_generic_dense_field
 
         PolynomialRing_integral_domain.__init__(self, base_ring, name=name, sparse=sparse, element_class=element_class, category=category)
 

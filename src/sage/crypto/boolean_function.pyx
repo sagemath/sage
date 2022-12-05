@@ -321,7 +321,7 @@ cdef class BooleanFunction(SageObject):
                 bitset_set(self._truth_table, i)
             reed_muller(self._truth_table.bits, ZZ(self._truth_table.limbs).exact_log(2) )
 
-        elif isinstance(x, (int,long,Integer) ):
+        elif isinstance(x, (int, Integer)):
         # initialisation to the zero function
             self._nvariables = ZZ(x)
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
@@ -651,7 +651,7 @@ cdef class BooleanFunction(SageObject):
             ...
             IndexError: index out of bound
         """
-        if isinstance(x, (int,long,Integer)):
+        if isinstance(x, (int, Integer)):
             if x >= self._truth_table.size:
                 raise IndexError("index out of bound")
             return bitset_in(self._truth_table, <mp_bitcnt_t> x)

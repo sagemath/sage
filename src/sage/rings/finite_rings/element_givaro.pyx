@@ -66,12 +66,14 @@ import operator
 import sage.arith.all
 import sage.rings.finite_rings.finite_field_constructor as finite_field
 
-import sage.interfaces.gap
 from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
+
+
+from sage.interfaces.abc import GapElement
 
 cdef object is_IntegerMod
 cdef object Integer
@@ -378,7 +380,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer, long)) or is_IntegerMod(e):
+        elif isinstance(e, (int, Integer)) or is_IntegerMod(e):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)
@@ -431,9 +433,12 @@ cdef class Cache_givaro(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif sage.interfaces.gap.is_GapElement(e):
-            from sage.interfaces.gap import gfq_gap_to_sage
-            return gfq_gap_to_sage(e, self.parent)
+        elif isinstance(e, sage.libs.gap.element.GapElement_FiniteField):
+            return e.sage(ring=self.parent)
+
+        elif isinstance(e, GapElement):
+            from sage.libs.gap.libgap import libgap
+            return libgap(e).sage(ring=self.parent)
 
         elif isinstance(e, list):
             if len(e) > self.exponent():
@@ -1636,6 +1641,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: (4*b+3)._gap_init_()
             'Z(25)^3'
             sage: S(gap('Z(25)^3'))
+            4*b + 3
+            sage: S(libgap.Z(25)^3)
             4*b + 3
         """
         cdef Cache_givaro cache = self._cache

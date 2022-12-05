@@ -209,5 +209,25 @@ class NumberFields(Category_singleton):
 
             raise ValueError('algorithm must be "gp" or "pari"')
 
+        def _test_absolute_disc(self, **options):
+            r"""
+            Run basic tests for the method :meth:`absolute_discriminant` of ``self``.
+
+            See the documentation for :class:`TestSuite` for information on
+            further options.
+
+            INPUT:
+
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+            EXAMPLES::
+
+                sage: S = NumberField(x**3-x-1, 'a')
+                sage: S._test_absolute_disc()
+            """
+            from sage.rings.integer import Integer
+            tester = self._tester(**options)
+            tester.assertIsInstance(self.absolute_discriminant(), Integer)
+
     class ElementMethods:
         pass

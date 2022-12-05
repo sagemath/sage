@@ -100,6 +100,8 @@ from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.misc.cachefunc import cached_function
 
+import sage.interfaces.abc
+
 
 def sorting_keys(element):
     r"""
@@ -1269,8 +1271,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             R = self.cover_ring()
             x = R(x)
 
-        from sage.interfaces.singular import is_SingularElement
-        if is_SingularElement(x):
+        if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x

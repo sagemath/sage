@@ -166,6 +166,21 @@ cdef maxima
 from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
+    def echelonize(self, **kwds):
+        """
+        Echelonize using the classical algorithm.
+
+
+        TESTS::
+
+            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
+            sage: m.echelonize(); m
+            [1 0]
+            [0 1]
+        """
+
+        return super().echelonize(algorithm="classical", **kwds)
+
     def eigenvalues(self, extend=True):
         """
         Compute the eigenvalues by solving the characteristic

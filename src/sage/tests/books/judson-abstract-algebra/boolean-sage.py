@@ -56,7 +56,6 @@ r"""
 
     sage: D = Poset([X, R])
     sage: D.plot()   # not tested
-    
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -73,7 +72,6 @@ r"""
 
     sage: Q = Posets.PentagonPoset()
     sage: Q.plot()   # not tested
-    
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

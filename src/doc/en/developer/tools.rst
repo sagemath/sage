@@ -319,14 +319,3 @@ Pyright
 Pyflakes
 ========
 `Pyflakes <https://github.com/PyCQA/pyflakes>`_ checks for common coding errors.
-
-
-.. _section-tools-lgtm:
-
-LGTM
-====
-The website ``lgtm.com`` offers a detailed diagnostic about the global code quality and its evolution.
-
-The reports can be found `here <https://lgtm.com/projects/g/sagemath/sage/>`_.
-
-Our choice of configuration is made in ``.lgtm.yml``.

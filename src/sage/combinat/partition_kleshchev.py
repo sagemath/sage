@@ -85,7 +85,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.cpython.getattr import getattr_from_other_class
 
 from collections import defaultdict

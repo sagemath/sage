@@ -147,6 +147,7 @@ from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
 import sage.rings.complex_mpfr
 from sage.misc.instancedoc import instancedoc
+import sage.interfaces.abc
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -821,7 +822,7 @@ class Gp(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class GpElement(ExpectElement):
+class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
     """
     EXAMPLES: This example illustrates dumping and loading GP elements
     to compressed strings.

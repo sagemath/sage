@@ -61,9 +61,16 @@ on:
           ["minimal",
            "standard",
            ]
+      extra_sage_packages:
+        description: 'Extra Sage packages to install as system packages'
+        type: string
+        default: ""
       max_parallel:
         type: number
         default: 24
+      free_disk_space:
+        default: false
+        type: boolean
       #
       # Publishing to GitHub Packages
       #
@@ -128,14 +135,14 @@ jobs:
       FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
       FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
       EXTRA_CONFIGURE_ARGS: --enable-fat-binary
-
+      EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Check out SageMath
         uses: actions/checkout@v2
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
-          fetch-depth: 2000
+          fetch-depth: 10000
       - name: fetch tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: free disk space
@@ -149,6 +156,7 @@ jobs:
           dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
           sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
           df -h
+        if: inputs.free_disk_space
       - name: Check out git-trac-command
         uses: actions/checkout@v2
         with:
@@ -190,7 +198,7 @@ jobs:
               TOKEN="${{ secrets.GITHUB_TOKEN }}"
             fi
             if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
-              echo "DOCKER_PUSH_REPOSITORY=${{ inputs.docker_push_repository }}" >> $GITHUB_ENV
+              echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
             # From the docker documentation via .ci/update-env.sh:

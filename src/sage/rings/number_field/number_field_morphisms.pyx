@@ -695,7 +695,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
     def section(self):
         """
         Return the section of ``self``.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding
@@ -740,7 +740,7 @@ cdef class CyclotomicFieldConversion(Map):
     def __init__(self, K, L):
         """
         Construct a conversion map between cyclotomic fields.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding

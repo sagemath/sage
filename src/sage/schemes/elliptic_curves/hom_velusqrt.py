@@ -897,23 +897,22 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             raise ValueError('cannot specify a codomain curve and model name simultaneously')
 
         try:
+            P = E(P)
+        except TypeError:
+            raise ValueError('given kernel point P does not lie on E')
+        self._degree = P.order()
+        if self._degree % 2 != 1 or self._degree < 9:
+            raise NotImplementedError('only implemented for odd degrees >= 9')
+
+        try:
             self._raw_domain = E.short_weierstrass_model()
         except ValueError:
             raise NotImplementedError('only implemented for curves having a short Weierstrass model')
         self._pre_iso = E.isomorphism_to(self._raw_domain)
-
-        try:
-            P = E(P)
-        except TypeError:
-            raise ValueError('given kernel point P does not lie on E')
         self._P = self._pre_iso(P)
 
-        self._degree = self._P.order()
-        if self._degree % 2 != 1 or self._degree < 9:
-            raise NotImplementedError('only implemented for odd degrees >= 9')
-
         if Q is not None:
-            self._Q = E(Q)
+            self._Q = self._pre_iso(E(Q))
             EE = E
         else:
             self._Q = _point_outside_subgroup(self._P)  # may extend base field
@@ -1390,7 +1389,7 @@ def _random_example_for_testing():
         sage: 5 <= K.order()
         True
     """
-    from sage.all import prime_range, choice, randrange, GF, gcd
+    from sage.all import prime_range, choice, randrange, GF, lcm, Mod
     while True:
         p = choice(prime_range(2, 100))
         e = randrange(1,5)
@@ -1412,9 +1411,10 @@ def _random_example_for_testing():
             deg = choice(ds)
             break
     G = A.torsion_subgroup(deg)
+    os = G.generator_orders()
     while True:
-        v = [randrange(deg) for _ in range(G.ngens())]
-        if gcd([deg] + v) == 1:
+        v = [randrange(o) for o in os]
+        if lcm(Mod(c,o).additive_order() for c,o in zip(v,os)) == deg:
             break
     K = G(v).element()
     assert K.order() == deg
