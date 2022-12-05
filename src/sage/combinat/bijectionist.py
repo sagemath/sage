@@ -1529,16 +1529,16 @@ class Bijectionist(SageObject):
                 if updated_preimages:
                     break
                 for i, j in itertools.combinations(copy(multiple_preimages[values]), r=2):  # copy to be able to modify list
-                    bmilp_veto = deepcopy(bmilp)  # adding constraints to a simple copy adds them to the original instance, too
+                    tmp_constraints = []
                     try:
                         # veto the two blocks having the same value
                         for z in self._possible_block_values[i]:
                             if z in self._possible_block_values[j]:  # intersection
-                                bmilp_veto.milp.add_constraint(bmilp_veto._x[i, z] + bmilp_veto._x[j, z] <= 1)
-                        bmilp_veto.milp.solve()
+                                tmp_constraints.append(bmilp._x[i, z] + bmilp._x[j, z] <= 1)
+                        bmilp.solve(tmp_constraints)
 
                         # solution exists, update dictionary
-                        solution = self._solution_by_blocks(bmilp_veto)
+                        solution = self._solution_by_blocks(bmilp)
                         updated_multiple_preimages = {}
                         for values in multiple_preimages:
                             for p in multiple_preimages[values]:
@@ -1688,17 +1688,17 @@ class Bijectionist(SageObject):
 
             # iterate through blocks and generate all values
             for p in blocks:
-                veto_bmilp = deepcopy(bmilp)  # adding constraints to a simple copy adds them to the original instance, too
+                tmp_constraints = []
                 for value in solutions[p]:
-                    veto_bmilp.milp.add_constraint(veto_bmilp._x[p, value] == 0)
+                    tmp_constraints.append(bmilp._x[p, value] == 0)
                 while True:
                     try:
-                        veto_bmilp.milp.solve()
                         # problem has a solution, so new value was found
-                        solution = self._solution(veto_bmilp)
+                        bmilp.solve(tmp_constraints)
+                        solution = self._solution(bmilp)
                         add_solution(solutions, solution)
                         # veto new value and try again
-                        veto_bmilp.milp.add_constraint(veto_bmilp._x[p, solution[p]] == 0)
+                        tmp_constraints.append(bmilp._x[p, solution[p]] == 0)
                     except MIPSolverException:
                         # no solution, so all possible values have been found
                         break
@@ -1788,6 +1788,7 @@ class Bijectionist(SageObject):
         except MIPSolverException:
             return
         s = self._solution(bmilp)
+        tmp_constraints = []
         while True:
             for v in self._Z:
                 minimal_subdistribution.add_constraint(sum(D[a] for a in self._A if s[a] == v) == V[v])
@@ -1833,10 +1834,9 @@ class Bijectionist(SageObject):
             if not v_in_d_count:
                 continue
 
-            veto_bmilp = deepcopy(bmilp)  # adding constraints to a simple copy adds them to the original instance, too
             # try to find a solution which has a different
             # subdistribution on d than s0
-            v_in_d = sum(d[a] * veto_bmilp._x[self._P.find(a), v]
+            v_in_d = sum(d[a] * bmilp._x[self._P.find(a), v]
                          for a in self._A
                          if v in self._possible_block_values[self._P.find(a)])
 
@@ -1844,10 +1844,10 @@ class Bijectionist(SageObject):
             # a value among {a | d[a] == 1} than it does in
             # v_in_d_count, because, if the distributions are
             # different, one such v must exist
-            veto_bmilp.milp.add_constraint(v_in_d <= v_in_d_count - 1)
+            tmp_constraints = [v_in_d <= v_in_d_count - 1]
             try:
-                veto_bmilp.milp.solve()
-                return self._solution(veto_bmilp)
+                bmilp.solve(tmp_constraints)
+                return self._solution(bmilp)
             except MIPSolverException:
                 pass
         return
@@ -2055,10 +2055,9 @@ class Bijectionist(SageObject):
             if not v_in_d_count:
                 continue
 
-            veto_bmilp = deepcopy(bmilp)  # adding constraints to a simple copy adds them to the original instance, too
             # try to find a solution which has a different
             # subdistribution on d than s0
-            v_in_d = sum(d[p] * veto_bmilp._x[p, v]
+            v_in_d = sum(d[p] * bmilp._x[p, v]
                          for p in P
                          if v in self._possible_block_values[p])
 
@@ -2066,10 +2065,10 @@ class Bijectionist(SageObject):
             # a value among {a | d[a] == 1} than it does in
             # v_in_d_count, because, if the distributions are
             # different, one such v must exist
-            veto_bmilp.milp.add_constraint(v_in_d <= v_in_d_count - 1)
+            tmp_constraints = [v_in_d <= v_in_d_count - 1]
             try:
-                veto_bmilp.milp.solve()
-                return self._solution_by_blocks(veto_bmilp)
+                bmilp.solve(tmp_constraints)
+                return self._solution_by_blocks(bmilp)
             except MIPSolverException:
                 pass
         return
@@ -2346,17 +2345,16 @@ class Bijectionist(SageObject):
 
         """
         try:
-            bmilp = self._generate_and_solve_initial_bmilp()
+            self.bmilp = self._generate_and_solve_initial_bmilp()
         except MIPSolverException:
             return
         while True:
-            yield self._solution(bmilp)
-            bmilp.veto_current_solution()
+            yield self._solution(self.bmilp)
             if get_verbose() >= 2:
                 print("after vetoing")
-                self._show_bmilp(bmilp, variables=False)
+                self._show_bmilp(self.bmilp, variables=False)
             try:
-                bmilp.milp.solve()
+                self.bmilp.solve([], force_new_solution=True)
             except MIPSolverException:
                 return
 
@@ -2369,7 +2367,7 @@ class Bijectionist(SageObject):
         map = {}  # A -> Z, a +-> s(a)
         for p, block in self._P.root_to_elements_dict().items():
             for z in self._possible_block_values[p]:
-                if bmilp.milp.get_values(bmilp._x[p, z]) == 1:
+                if bmilp.get_value(p, z) == 1:
                     for a in block:
                         map[a] = z
                     break
@@ -2384,7 +2382,7 @@ class Bijectionist(SageObject):
         map = {}  # P -> Z, a +-> s(a)
         for p in _disjoint_set_roots(self._P):
             for z in self._possible_block_values[p]:
-                if bmilp.milp.get_values(bmilp._x[p, z]) == 1:
+                if bmilp.get_value(p, z) == 1:
                     map[p] = z
                     break
         return map
@@ -2447,7 +2445,7 @@ class Bijectionist(SageObject):
         if get_verbose() >= 2:
             self._show_bmilp(bmilp)
         assert n == bmilp.milp.number_of_variables(), "The number of variables increased."
-        bmilp.milp.solve()
+        bmilp.solve([])
         return bmilp
 
 
@@ -2464,6 +2462,11 @@ class _BijectionistMILP(SageObject):
         # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
         self.milp.set_objective(None)
+        self._n_variables = -1
+        self._solution_cache = []
+        self._last_solution = {}
+        self._index_block_value_dict = None
+        self._block_value_index_dict = None# TODO: may not be needed?
         self._x = self.milp.new_variable(binary=True)  # indexed by P x Z
 
         self._bijectionist = bijectionist
@@ -2473,6 +2476,79 @@ class _BijectionistMILP(SageObject):
             self.milp.add_constraint(sum(self._x[p, z]
                                          for z in bijectionist._possible_block_values[p]) == 1,
                                      name=name[:50])
+
+    def clear_solution_cache(self):
+        self._n_variables = -1
+        self._solution_cache = []
+        self._last_solution = {}
+        self._index_block_value_dict = None
+        self._block_value_index_dict = None # TODO: may not be needed?
+
+    def solve(self, tmp_constraints, force_new_solution=False):
+        if self._n_variables < 0:
+            self._n_variables = self.milp.number_of_variables()
+            self._index_block_value_dict = {}
+            self._block_value_index_dict = {}
+            for (p, z), v in self._x.items():
+                variable_index = next(iter(v.dict().keys()))
+                self._index_block_value_dict[variable_index] = (p,z)
+                self._block_value_index_dict[(p,z)] = variable_index
+        assert self._n_variables == self.milp.number_of_variables(), "The number of variables changed." # number of variables would change with creation of constraints with new variables
+
+        # check if previous solution exists with constraints
+        previous_solution_exists = False
+        self.last_solution = {}
+        if not force_new_solution:
+            for solution in self._solution_cache:
+                fulfills_constraints = True
+                # loop through all constraints
+                for constraint in tmp_constraints:
+                    # check equations
+                    for linear_function, value in constraint.equations():
+                        solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
+                        if solution_value != value.dict()[-1]:
+                            fulfills_constraints = False
+                            break
+                    if not fulfills_constraints:
+                        break
+                    # check inequalities
+                    for linear_function, value in constraint.inequalities():
+                        solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
+                        if solution_value > value.dict()[-1]:
+                            fulfills_constraints = False
+                            break
+                    if not fulfills_constraints:
+                        break
+                if fulfills_constraints:
+                    previous_solution_exists = True
+                    self.last_solution = solution
+                    break
+
+        # if no previous solution satisfies the constraints, generate a new one
+        if not previous_solution_exists:
+            try:
+                n_constraints = self.milp.number_of_constraints()
+                for constraint in tmp_constraints:
+                    self.milp.add_constraint(constraint)
+                self.milp.solve()
+                for _ in range(self.milp.number_of_constraints()-n_constraints):
+                    self.milp.remove_constraint(n_constraints)
+            except MIPSolverException as error:
+                for _ in range(self.milp.number_of_constraints()-n_constraints):
+                    self.milp.remove_constraint(n_constraints)
+                raise error
+
+            self.last_solution = self.milp.get_values(self._x)
+            self._solution_cache.append(self.last_solution)
+
+            self.veto_current_solution()
+        return self.last_solution
+
+    def _evaluate_linear_function(self, linear_function_dict, block_index_dict, values):
+        return float(sum(linear_function_dict[index]*values[block_index_dict[index]] for index in linear_function_dict))
+
+    def get_value(self, p, v):
+        return self.last_solution[p,v]
 
     def add_alpha_beta_constraints(self):
         r"""
@@ -2700,12 +2776,62 @@ def _non_copying_intersection(sets):
 """
 TESTS::
 
+    #####################
+    # caching base test #
+    #####################
+    sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
+    sage: tau = lambda D: D.number_of_touch_points()
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
+    sage: bmilp = bij._generate_and_solve_initial_bmilp()
+
+Print the generated solution::
+
+    sage: bmilp.milp.get_values(bmilp._x)
+    {([], 0): 1.0,
+     ([1, 0], 1): 1.0,
+     ([1, 0, 1, 0], 1): 0.0,
+     ([1, 0, 1, 0], 2): 1.0,
+     ([1, 1, 0, 0], 1): 1.0,
+     ([1, 1, 0, 0], 2): 0.0}
+
+Generating a new solution that also maps `1010` to `2` fails:
+
+    sage: from sage.combinat.bijectionist import _disjoint_set_roots
+    sage: permutation1010root = list(_disjoint_set_roots(bij._P))[2]
+    sage: permutation1010root
+    [1, 0, 1, 0]
+    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5], force_new_solution=True)
+    Traceback (most recent call last):
+    ...
+    MIPSolverException: GLPK: Problem has no feasible solution
+
+However, searching for a cached solution succeeds, for inequalities and equalities::
+
+    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5])
+    {([], 0): 1.0,
+     ([1, 0], 1): 1.0,
+     ([1, 0, 1, 0], 1): 0.0,
+     ([1, 0, 1, 0], 2): 1.0,
+     ([1, 1, 0, 0], 1): 1.0,
+     ([1, 1, 0, 0], 2): 0.0}
+
+    sage: bmilp.solve([bmilp._x[permutation1010root, 1] == 0])
+    {([], 0): 1.0,
+     ([1, 0], 1): 1.0,
+     ([1, 0, 1, 0], 1): 0.0,
+     ([1, 0, 1, 0], 2): 1.0,
+     ([1, 1, 0, 0], 1): 1.0,
+     ([1, 1, 0, 0], 2): 0.0}
+
+
     sage: As = Bs = [[],
     ....:            [(1,i,j) for i in [-1,0,1] for j in [-1,1]],
     ....:            [(2,i,j) for i in [-1,0,1] for j in [-1,1]],
     ....:            [(3,i,j) for i in [-2,-1,0,1,2] for j in [-1,1]]]
 
-    # adding [(2,-2,-1), (2,2,-1), (2,-2,1), (2,2,1)] makes it take (seemingly) forever
+Note that adding ``[(2,-2,-1), (2,2,-1), (2,-2,1), (2,2,1)]`` makes
+it take (seemingly) forever.::
 
     sage: c1 = lambda a, b: (a[0]+b[0], a[1]*b[1], a[2]*b[2])
     sage: c2 = lambda a: (a[0], -a[1], a[2])
@@ -2745,10 +2871,6 @@ Let us try a smaller example::
     sage: sorted(l1, key=lambda s: tuple(s.items())) == l2
     True
 
-"""
-
-
-"""
 Our benchmark example::
 
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
