@@ -106,9 +106,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 
 ################ end setup warnings ###############################
 
-import sage.misc.startup_guard
-startup_guard = sage.misc.startup_guard.startup()
-startup_guard.__enter__()
 
 from .all__sagemath_environment import *
 
@@ -292,8 +289,9 @@ lazy_import('sage.misc.sageinspect', 'is_function_or_cython_function',
 # Sage startup).
 set_random_seed()
 
+
 # From now on it is ok to resolve lazy imports
-startup_guard.__exit__(None, None, None)
+sage.misc.lazy_import.finish_startup()
 
 
 ### Python broke large ints; see trac #34506

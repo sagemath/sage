@@ -58,8 +58,6 @@ AUTHOR:
 cimport cython
 from cpython.object cimport PyObject_RichCompare
 from cpython.number cimport PyNumber_TrueDivide, PyNumber_Power, PyNumber_Index
-import sage.misc.startup_guard as startup_guard
-from sage.misc.startup_guard import StartupState
 
 cdef extern from *:
     int likely(int) nogil  # Defined by Cython
@@ -87,33 +85,88 @@ cdef inline obj(x):
     else:
         return x
 
-cdef list imports_resolved_at_startup = []
 
-def _get_imports_resolved_at_startup():
+# boolean to determine whether Sage is still starting up
+cdef bint startup_guard = True
+
+cdef bint finish_startup_called = False
+
+
+cpdef finish_startup():
     """
-    Return all lazy imports that were resolved during startup.
-    Only used for integration tests.
+    Finish the startup phase.
+
+    This function must be called exactly once at the end of the Sage
+    import process (:mod:`~sage.all`).
+
+    TESTS::
+
+        sage: from sage.misc.lazy_import import finish_startup
+        sage: finish_startup()
+        Traceback (most recent call last):
+        ...
+        AssertionError: finish_startup() must be called exactly once
+    """
+    global startup_guard, finish_startup_called
+    assert startup_guard, 'finish_startup() must be called exactly once'
+    startup_guard = False
+    finish_startup_called = True
+
+
+cpdef ensure_startup_finished():
+    """
+    Make sure that the startup phase is finished.
+
+    In contrast to :func:`finish_startup`, this function can
+    be called repeatedly.
+
+    TESTS::
+
+        sage: from sage.misc.lazy_import import ensure_startup_finished
+        sage: ensure_startup_finished()
+    """
+    global startup_guard
+    startup_guard = False
+
+
+cpdef bint is_during_startup():
+    """
+    Return whether Sage is currently starting up.
+
+    OUTPUT:
+
+    Boolean
+
+    TESTS::
+
+        sage: from sage.misc.lazy_import import is_during_startup
+        sage: is_during_startup()
+        False
+    """
+    global startup_guard
+    return startup_guard
+
+
+cpdef test_fake_startup():
+    """
+    For testing purposes only.
+
+    Switch the startup lazy import guard back on.
 
     EXAMPLES::
 
-        sage: from sage.misc.lazy_import import LazyImport, _get_imports_resolved_at_startup
-        sage: import sage.misc.startup_guard
-        sage: with sage.misc.startup_guard.startup():
-        ....:     flatten = LazyImport('sage.misc.flatten', 'flatten')
-        ....:     result = flatten([[1,1],[1],2])
-        sage: _get_imports_resolved_at_startup()
-        ['flatten']
-
-    TESTS::
-        
-    No imports (except for the above test) should be resolved during import of sage.all (which has been done globally for doctests) 
-
-        sage: from sage.misc.lazy_import import _get_imports_resolved_at_startup
-        sage: _get_imports_resolved_at_startup()
-        ['flatten']
+        sage: sage.misc.lazy_import.test_fake_startup()
+        sage: lazy_import('sage.rings.all', 'ZZ', 'my_ZZ')
+        sage: my_ZZ(123)
+        doctest:warning...
+        UserWarning: Resolving lazy import ZZ during startup
+        123
+        sage: sage.misc.lazy_import.finish_startup()
     """
-    global imports_resolved_at_startup
-    return imports_resolved_at_startup
+    global startup_guard, finish_startup_called
+    startup_guard = True
+    finish_startup_called = False
+
 
 @cython.final
 cdef class LazyImport():
@@ -198,11 +251,12 @@ cdef class LazyImport():
         if self._object is not None:
             return self._object
 
-        if startup_guard.startup_state is StartupState.RUNNING and not self._at_startup:
-            global imports_resolved_at_startup
-            imports_resolved_at_startup.append(self._name)
-        elif startup_guard.startup_state is StartupState.FINISHED and self._at_startup:
-            warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+        if startup_guard and not self._at_startup:
+            warn(f"Resolving lazy import {self._name} during startup")
+        elif self._at_startup and not startup_guard:
+            if finish_startup_called:
+                warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
         except ImportError as e:
