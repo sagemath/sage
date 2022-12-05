@@ -434,8 +434,6 @@ class LispElement(RingElement, ExpectElement):
         """
         return self != 0 and repr(self) != 'NIL'
 
-    
-
     def _add_(self, right):
         """
         EXAMPLES::
@@ -445,7 +443,7 @@ class LispElement(RingElement, ExpectElement):
             3
         """
         P = self._check_valid()
-        return P.new('(+ %s %s)'%(self._name, right._name))
+        return P.new('(+ %s %s)' % (self._name, right._name))
 
     def _sub_(self, right):
         """

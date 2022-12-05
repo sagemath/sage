@@ -248,8 +248,8 @@ def _delta_poly(prec=10):
 
     stop = int((-1+math.sqrt(1+8*prec))/2.0)
     # make list of index/value pairs for the sparse poly
-    values = [(n*(n+1)//2, ((-2*n-1) if (n & 1) else (2*n+1))) \
-              for n in range(stop+1)]
+    values = [(n*(n+1)//2, ((-2*n-1) if (n & 1) else (2*n+1)))
+              for n in range(stop + 1)]
 
     for (i1, v1) in values:
         for (i2, v2) in values:
@@ -260,15 +260,14 @@ def _delta_poly(prec=10):
 
     f = Fmpz_poly(v)
     t = verbose('made series')
-    f = f*f
+    f = f * f
     f._unsafe_mutate_truncate(prec)
     t = verbose('squared (2 of 3)', t)
-    f = f*f
+    f = f * f
     f._unsafe_mutate_truncate(prec - 1)
     t = verbose('squared (3 of 3)', t)
     f = f.left_shift(1)
     t = verbose('shifted', t)
-
     return f
 
 

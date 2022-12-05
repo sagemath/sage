@@ -134,7 +134,7 @@ def enum_product_projective_rational_field(X, B):
     m = R.num_components()
     iters = [ R[i].points_of_bounded_height(bound=B) for i in range(m) ]
     dim = [R[i].dimension_relative() + 1 for i in range(m)]
-    
+
     dim_prefix = [0, dim[0]] # prefixes dim list
     for i in range(1, len(dim)):
         dim_prefix.append(dim_prefix[i] + dim[i])
@@ -189,7 +189,7 @@ def enum_product_projective_number_field(X, **kwds):
 
     This is an implementation of the revised algorithm (Algorithm 4) in
     [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
-    
+
     INPUT:
 
     kwds:
@@ -540,5 +540,5 @@ def sieve(X, bound):
         m.append(temp)
 
     rat_points = lift_all_points()
-    
+
     return sorted(rat_points)

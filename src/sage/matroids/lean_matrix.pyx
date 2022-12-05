@@ -3682,4 +3682,3 @@ cdef class RationalMatrix(LeanMatrix):
         version = 0
         data = (self.nrows(), self.ncols(), entries)
         return unpickle_rational_matrix, (version, data)
-

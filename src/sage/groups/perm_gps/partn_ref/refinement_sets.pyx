@@ -854,9 +854,3 @@ def sets_modulo_perm_group(list generators, int max_size,
         else:
             out_list.append(MemoryError())
     return out_list
-
-
-
-
-
-

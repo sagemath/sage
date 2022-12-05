@@ -2,7 +2,7 @@ Miscellaneous Modular-Form-Related Modules
 ==========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/dirichlet
    sage/modular/cusps

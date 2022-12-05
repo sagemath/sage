@@ -2167,12 +2167,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             pass
 
         # The general case
-        num_prec = max(\
-            ZZ(getattr(tau,'prec',lambda: num_prec)()),\
-            num_prec\
-        )
+        num_prec = max(ZZ(getattr(tau, 'prec', lambda: num_prec)()), num_prec)
+
         tau = tau.n(num_prec)
-        (x,y,z,d) = self.parent().rat_field().gens()
+        (x, y, z, d) = self.parent().rat_field().gens()
 
         if (self.is_homogeneous() and self.is_modular()):
             q_exp = self.q_expansion_fixed_d(prec=prec, d_num_prec=num_prec)

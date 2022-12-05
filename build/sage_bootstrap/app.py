@@ -148,13 +148,22 @@ class Application(object):
         """
         Update a package to the latest version. This modifies the Sage sources.
         """
+        pkg = Package(package_name)
+        dist_name = pkg.distribution_name
+        if dist_name is None:
+            log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
+            return
+        if pkg.tarball_pattern.endswith('.whl'):
+            source = 'wheel'
+        else:
+            source = 'pypi'
         try:
-            pypi = PyPiVersion(package_name)
+            pypi = PyPiVersion(dist_name, source=source)
         except PyPiNotFound:
-            log.debug('%s is not a pypi package', package_name)
+            log.debug('%s is not a pypi package', dist_name)
             return
         else:
-            pypi.update(Package(package_name))
+            pypi.update(pkg)
         if commit:
             self.commit(package_name)
 

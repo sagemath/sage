@@ -9,7 +9,6 @@ AUTHORS:
 The code here implements the algorithm of Cremona and Najman presented
 in [CrNa2020]_.
 """
-
 ##############################################################################
 #       Copyright (C) 2020-2021 John Cremona <john.cremona@gmail.com>
 #
@@ -24,9 +23,9 @@ in [CrNa2020]_.
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring import polygen
+
 
 def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     r"""
@@ -195,16 +194,25 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         'core_poly': x^2 - 840064*x + 1593413632,
         'r': 1,
         'rho': 1}
+
+    TESTS::
+
+        sage: E = EllipticCurve([GF(5)(t) for t in [2,3,5,7,11]])
+        sage: is_Q_curve(E)
+        Traceback (most recent call last):
+        ...
+        TypeError: Elliptic Curve defined by ... must be an elliptic curve
+        defined over a number field
     """
     from sage.rings.number_field.number_field_base import is_NumberField
 
     if verbose:
-        print("Checking whether {} is a Q-curve".format(E))
+        print(f"Checking whether {E} is a Q-curve")
 
     try:
         assert is_NumberField(E.base_field())
     except (AttributeError, AssertionError):
-        raise TypeError("{} must be an elliptic curve defined over a number field in is_Q_curve()")
+        raise TypeError(f"{E} must be an elliptic curve defined over a number field")
 
     from sage.rings.integer_ring import ZZ
     from sage.arith.functions import lcm
@@ -224,7 +232,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             # test for CM
             for d, f, j in cm_j_invariants_and_orders(QQ):
                 if jE == j:
-                    return True, {'CM': d*f**2}
+                    return True, {'CM': d * f**2}
             # else not CM
             return True, {'CM': ZZ(0), 'r': ZZ(0), 'rho': ZZ(0), 'N': ZZ(1), 'core_poly': polygen(QQ)}
         else:
@@ -234,7 +242,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     flag, df = is_cm_j_invariant(jE)
     if flag:
         d, f = df
-        D = d*f**2
+        D = d * f**2
         if verbose:
             print("Yes: E is CM (discriminant {})".format(D))
         if certificate:
@@ -246,15 +254,15 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
     K = E.base_field()
     jpoly = jE.minpoly()
-    if jpoly.degree()<K.degree():
+    if jpoly.degree() < K.degree():
         if verbose:
             print("switching to smaller base field: j's minpoly is {}".format(jpoly))
-        f = pari(jpoly).polredbest().sage({'x':jpoly.parent().gen()})
+        f = pari(jpoly).polredbest().sage({'x': jpoly.parent().gen()})
         K2 = NumberField(f, 'b')
         jE = jpoly.roots(K2)[0][0]
         if verbose:
             print("New j is {} over {}, with minpoly {}".format(jE, K2, jE.minpoly()))
-        #assert jE.minpoly()==jpoly
+        # assert jE.minpoly() == jpoly
         E = EllipticCurve(j=jE)
         K = K2
         if verbose:
@@ -265,14 +273,14 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     NN = E.conductor().norm()
     for p in NN.support():
         Plist = K.primes_above(p)
-        if len(Plist)<2:
+        if len(Plist) < 2:
             continue
         # pot_mult = potential multiplicative reduction
         pot_mult = [jE.valuation(P) < 0 for P in Plist]
         consistent = all(pot_mult) or not any(pot_mult)
         if not consistent:
             if verbose:
-                print("No: inconsistency at the {} primes dividing {}".format(len(Plist),p))
+                print(f"No: inconsistency at the {len(Plist)} primes dividing {p}")
                 print("  - potentially multiplicative: {}".format(pot_mult))
             if certificate:
                 return False, p
@@ -308,13 +316,14 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         if certificate:
             for f in centrejpols:
                 rho = f.degree().valuation(2)
-                centre_indices = [i for i,j in enumerate(jC) if f(j) == 0]
+                centre_indices = [i for i, j in enumerate(jC) if f(j) == 0]
                 M = C.matrix()
                 core_degs = [M[centre_indices[0], i] for i in centre_indices]
                 level = lcm(core_degs)
                 if level.is_squarefree():
                     r = len(level.prime_divisors())
-                    cert = {'CM': ZZ(0), 'core_poly':f, 'rho':rho, 'r':r, 'N':level, 'core_degs':core_degs}
+                    cert = {'CM': ZZ(0), 'core_poly': f, 'rho': rho,
+                            'r': r, 'N': level, 'core_degs': core_degs}
                     return True, cert
             print("No central curve found")
         else:
@@ -379,6 +388,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         return False, 0
     else:
         return False
+
 
 def Step4Test(E, B, oldB=0, verbose=False):
     r"""
@@ -450,7 +460,7 @@ def Step4Test(E, B, oldB=0, verbose=False):
         consistent = all(ordinary) or not any(ordinary)
         if not consistent:
             if verbose:
-                print("No: inconsistency at the {} primes dividing {} ".format(len(Plist),p))
+                print(f"No: inconsistency at the {len(Plist)} primes dividing {p} ")
                 print("  - ordinary: {}".format(ordinary))
             return False, p
 
@@ -468,6 +478,7 @@ def Step4Test(E, B, oldB=0, verbose=False):
             return False, p
     # Now we have failed to prove that E is not a Q-curve
     return True, 0
+
 
 def conjugacy_test(jlist, verbose=False):
     r"""
@@ -524,7 +535,7 @@ def conjugacy_test(jlist, verbose=False):
         if verbose:
             print("Yes: an isogenous curve has rational j-invariant {}".format(jQ))
         x = polygen(QQ)
-        return [x-jQ]
+        return [x - jQ]
 
     # If the degree d is odd then we know that none of the
     # j-invariants in the class have 2-power degree, so we can exit.
@@ -538,13 +549,13 @@ def conjugacy_test(jlist, verbose=False):
     # If K has no quadratic subfields we can similarly conclude right
     # away.  This is one way of determining this.
 
-    if K(1).descend_mod_power(QQ,2) == [1]:
+    if K(1).descend_mod_power(QQ, 2) == [1]:
         if verbose:
             print("No-quadratic-subfield case: no rational j-invariant in the class {}".format(jlist))
         return []
 
     # compute the minimum polynomials of the j-invariants in the class
-    pols = [j.minpoly() for j in jlist]
+    pols = (j.minpoly() for j in jlist)
 
     # pick out those of 2-power degree
     pols = [f for f in pols if f.degree().prime_to_m_part(2) == 1]
@@ -558,7 +569,7 @@ def conjugacy_test(jlist, verbose=False):
     # classes defined over the core field but not central, so we
     # return all those with the minimal degree.
 
-    mindeg = min([f.degree() for f in pols])
+    mindeg = min(f.degree() for f in pols)
     minpols = [f for f in pols if f.degree() == mindeg]
     centrepols = list(Set([f for f in pols if f.degree() == minpols.count(f)]))
     if centrepols:

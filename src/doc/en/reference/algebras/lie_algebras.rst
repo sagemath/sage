@@ -2,7 +2,7 @@ Lie Algebras
 ============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/lie_algebras/abelian
    sage/algebras/lie_algebras/affine_lie_algebra

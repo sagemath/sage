@@ -128,7 +128,7 @@ cdef class TimeSeries:
         cdef cnumpy.ndarray np
         cdef double *np_data
         cdef unsigned int j
-        if isinstance(values, (int, long, Integer)):
+        if isinstance(values, (int, Integer)):
             self._length = values
             values = None
         elif isinstance(values, (Vector_real_double_dense, cnumpy.ndarray)):

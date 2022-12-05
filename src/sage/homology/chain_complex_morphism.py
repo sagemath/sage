@@ -140,7 +140,7 @@ class ChainComplexMorphism(Morphism):
         d = C.degree_of_differential()
         if d != D.degree_of_differential():
             raise ValueError('degree of differential does not match')
-            
+
         degrees = list(C.differential()) + list(D.differential())
         degrees = sorted(set(degrees))
         initial_matrices = dict(matrices)

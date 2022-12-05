@@ -730,7 +730,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             Ideal (1) of Multivariate Laurent Polynomial Ring in x0, x1 over Rational Field
 
         TESTS:
- 
+
         check that :trac:`26421` is fixed:
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)

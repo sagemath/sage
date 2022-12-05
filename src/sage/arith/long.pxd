@@ -194,15 +194,10 @@ cdef inline long dig(const digit* D, int n):
 cdef inline bint integer_check_long_py(x, long* value, int* err):
     """
     Part of ``integer_check_long`` in ``long.pxd``, checking only for
-    Python objects of type ``int`` and ``long``. See that function for
+    Python objects of type ``int``. See that function for
     documentation and tests.
     """
-    if not isinstance(x, long):
-        if isinstance(x, int):
-            # This can happen only on Python 2
-            value[0] = PyInt_AS_LONG(x)
-            err[0] = 0
-            return 1
+    if not isinstance(x, int):
         err[0] = ERR_TYPE
         return 0
 

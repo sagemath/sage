@@ -105,7 +105,7 @@ def read_distribution(src_file):
     EXAMPLES::
 
         sage: from sage.env import SAGE_SRC
-        sage: from sage_setup.find import read_distribution
+        sage: from sage.misc.package_dir import read_distribution
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
         'sagemath-tdlib'
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))

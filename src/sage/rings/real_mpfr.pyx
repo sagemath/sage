@@ -678,7 +678,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         - Any MPFR real field with precision that is as large as this one
 
-        - int, long, integer, and rational rings.
+        - int, integer, and rational rings.
 
         - the field of algebraic reals
 
@@ -6074,7 +6074,7 @@ cdef class int_toRR(Map):
         cdef long x_long
         cdef mpz_t x_mpz
 
-        if not isinstance(x, (int, long)):
+        if not isinstance(x, int):
             x = int(x)
 
         integer_check_long_py(x, &x_long, &err)

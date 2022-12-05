@@ -1184,7 +1184,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0x' is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important
@@ -1208,7 +1208,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0' (or '0o') is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important
@@ -1257,7 +1257,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         return self.str(2)
 
     def bits(self):
-        """
+        r"""
         Return the bits in self as a list, least significant first. The
         result satisfies the identity
 
@@ -2434,7 +2434,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                                            integer_ring.ZZ(n).ordinal_str()))
 
     cpdef size_t _exact_log_log2_iter(self,Integer m):
-        """
+        r"""
         This is only for internal use only.  You should expect it to crash
         and burn for negative or other malformed input.  In particular, if
         the base `2 \leq m < 4` the log2 approximation of m is 1 and certain
@@ -3463,7 +3463,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         return q, r
 
     def powermod(self, exp, mod):
-        """
+        r"""
         Compute self\*\*exp modulo mod.
 
         EXAMPLES::
@@ -6714,8 +6714,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ArithmeticError("inverse does not exist")
 
     def inverse_mod(self, n):
-        """
-        Returns the inverse of self modulo `n`, if this inverse exists.
+        r"""
+        Return the inverse of self modulo `n`, if this inverse exists.
+
         Otherwise, raises a ``ZeroDivisionError`` exception.
 
         INPUT:

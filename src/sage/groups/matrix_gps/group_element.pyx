@@ -823,4 +823,3 @@ def _unpickle_generic_element(G, mat):
         True
     """
     return G.element_class(G, mat, False, False)
-

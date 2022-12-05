@@ -536,7 +536,7 @@ cdef class NCGroebnerStrategy(SageObject):
         if unlikely(self._parent._ring != currRing):
             rChangeCurrRing(self._parent._ring)
 
-        cdef int max_ind
+        cdef int max_ind = 0
         cdef poly *_p = redNF(p_Copy(p._poly, self._parent._ring), max_ind, 0, self._strat)
         if likely(_p!=NULL):
             _p = redtailBba(_p, max_ind, self._strat)

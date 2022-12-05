@@ -263,8 +263,10 @@ class CoxeterGroups(Category_singleton):
             - ``word``: a list (or iterable) of indices in
               ``self.index_set()``
 
-            OUTPUT: a list of all lists that can be obtained from
-                    ``word`` by replacements of braid relations
+            OUTPUT:
+
+            a list of all lists that can be obtained from
+            ``word`` by replacements of braid relations
 
             See :meth:`braid_relations` for the definition of braid
             relations.

@@ -3,7 +3,7 @@ Modular Forms for Hecke Triangle Groups
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/modform_hecketriangle/readme
 

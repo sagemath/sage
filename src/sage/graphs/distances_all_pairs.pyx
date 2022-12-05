@@ -1441,7 +1441,7 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
 
     - ``source`` -- starting node of the first BFS
 
-    TESTS::
+    TESTS:
 
     The diameter of a weakly connected digraph is infinity ::
 
