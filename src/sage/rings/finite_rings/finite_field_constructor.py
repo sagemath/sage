@@ -177,7 +177,7 @@ from sage.structure.category_object import normalize_names
 from sage.rings.integer import Integer
 
 # the import below is just a redirection
-from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 assert is_FiniteField  # just to silent pyflakes
 
 try:
