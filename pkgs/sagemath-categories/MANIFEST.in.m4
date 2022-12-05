@@ -48,7 +48,6 @@ include sage/rings/rational*.*
 include sage/rings/infinity.*
 
 include sage/arith/*.*
-##################################### NEED TO ADD a file sage/misc/all__sagemath_categories
 include sage/misc/allocator.*
 include sage/misc/functional.p*
 include sage/misc/latex*.*
