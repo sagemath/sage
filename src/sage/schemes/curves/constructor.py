@@ -38,7 +38,7 @@ from sage.categories.fields import Fields
 
 from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.rings.rational_field import QQ
 
@@ -294,7 +294,7 @@ def Curve(F, A=None):
 
     if is_AffineSpace(A):
         if n != 2:
-            if is_FiniteField(k):
+            if isinstance(k, FiniteField):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralAffineCurve_finite_field(A, F)
             if k in Fields():
@@ -307,7 +307,7 @@ def Curve(F, A=None):
             raise TypeError("need a single nonconstant polynomial to define a plane curve")
 
         F = F[0]
-        if is_FiniteField(k):
+        if isinstance(k, FiniteField):
             if _is_irreducible_and_reduced(F):
                 return IntegralAffinePlaneCurve_finite_field(A, F)
             return AffinePlaneCurve_finite_field(A, F)
@@ -321,7 +321,7 @@ def Curve(F, A=None):
         if n != 2:
             if not all(f.is_homogeneous() for f in F):
                 raise TypeError("polynomials defining a curve in a projective space must be homogeneous")
-            if is_FiniteField(k):
+            if isinstance(k, FiniteField):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralProjectiveCurve_finite_field(A, F)
             if k in Fields():
@@ -339,7 +339,7 @@ def Curve(F, A=None):
         if not F.is_homogeneous():
             raise TypeError("{} is not a homogeneous polynomial".format(F))
 
-        if is_FiniteField(k):
+        if isinstance(k, FiniteField):
             if _is_irreducible_and_reduced(F):
                 return IntegralProjectivePlaneCurve_finite_field(A, F)
             return ProjectivePlaneCurve_finite_field(A, F)

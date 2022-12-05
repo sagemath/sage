@@ -45,7 +45,7 @@ from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.categories.fields import Fields
 from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.polynomial.polydict import ETuple
@@ -137,7 +137,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
                 raise AttributeError("components must be over the same base ring")
             N.append(PS.dimension_relative())
             names += PS.variable_names()
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             X = ProductProjectiveSpaces_finite_field(N, R, names)
         elif R in Fields():
             X = ProductProjectiveSpaces_field(N, R, names)
@@ -162,7 +162,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             else:
                 n_vars = sum(1+d for d in n)
                 names = normalize_names(n_vars, name_list)
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             X = ProductProjectiveSpaces_finite_field(n, R, names)
         elif R in Fields():
             X = ProductProjectiveSpaces_field(n, R, names)
@@ -1302,6 +1302,6 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
         """
         if F is None:
             return list(self)
-        elif not is_FiniteField(F):
+        elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field"%F)
         return list(self.base_extend(F))

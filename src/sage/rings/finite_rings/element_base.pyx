@@ -37,8 +37,8 @@ def is_FiniteFieldElement(x):
         sage: is_FiniteFieldElement(GF(5)(2))
         True
     """
-    from sage.rings.finite_rings.finite_field_base import is_FiniteField
-    return isinstance(x, Element) and is_FiniteField(x.parent())
+    from sage.rings.finite_rings.finite_field_base import FiniteField
+    return isinstance(x, Element) and isinstance(x.parent(), FiniteField)
 
 
 cdef class FiniteRingElement(CommutativeRingElement):

@@ -58,7 +58,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
 
 from sage.rings.finite_rings.element_base import is_FiniteFieldElement
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
 from sage.structure.element import FieldElement
 from sage.structure.richcmp import richcmp
@@ -659,7 +659,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if other is self:
             return True
-        elif is_FiniteField(other) and self._subfield(other.degree()) is other:
+        elif isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
             return True
         elif self._subfield(1).has_coerce_map_from(other):
             return True
@@ -1092,7 +1092,7 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
             :meth:`AlgebraicClosureFiniteFieldElement.__init__`.
 
         """
-        if not (is_FiniteField(base_ring) and base_ring.is_prime_field()):
+        if not (isinstance(base_ring, FiniteField) and base_ring.is_prime_field()):
             raise NotImplementedError('algebraic closures of finite fields are only implemented for prime fields')
         from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         p = base_ring.characteristic()

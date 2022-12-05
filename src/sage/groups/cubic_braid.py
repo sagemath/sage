@@ -1543,10 +1543,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 self._classical_invariant_form = herm_form
 
         if unitary:
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
             from sage.groups.matrix_gps.unitary import GU
             d, d = herm_form.dimensions()
-            if is_FiniteField(domain):
+            if isinstance(domain, FiniteField):
                 base_group = GU(d, domain, var=domain.gen(), invariant_form=herm_form)
             else:
                 base_group = GU(d, domain, invariant_form=herm_form)

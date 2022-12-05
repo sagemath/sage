@@ -217,7 +217,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.complex_mpfr import ComplexField
             from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
             from sage.rings.real_lazy import RLF, CLF
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
 
             from sage.interfaces.maxima import Maxima
 
@@ -235,7 +235,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                                     sage.rings.abc.RealBallField,
                                     sage.rings.abc.ComplexBallField,
                                     sage.rings.abc.IntegerModRing))
-                  or is_FiniteField(R)):
+                  or isinstance(R, FiniteField)):
                 return True
             elif isinstance(R, GenericSymbolicSubring):
                 return True

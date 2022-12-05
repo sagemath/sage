@@ -29,7 +29,7 @@ from sage.categories.homset import Hom
 from sage.matrix.constructor import matrix
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 
@@ -982,7 +982,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not(is_RationalField(K) or is_FiniteField(K)):
+        if not(is_RationalField(K) or isinstance(K, FiniteField)):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()

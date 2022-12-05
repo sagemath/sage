@@ -132,7 +132,7 @@ from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
@@ -886,7 +886,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         if bound == 0:
             if is_RationalField(F):
                 raise TypeError("A positive bound (= %s) must be specified."%bound)
-            if not is_FiniteField(F):
+            if not isinstance(F, FiniteField):
                 raise TypeError("Argument F (= %s) must be a finite field."%F)
         pts = []
         for P in self.ambient_space().rational_points(F):
