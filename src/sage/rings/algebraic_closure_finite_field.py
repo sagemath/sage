@@ -59,7 +59,7 @@ from sage.misc.fast_methods import WithEqualityById
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
-from sage.structure.element import FieldElement
+from sage.structure.element import Element, FieldElement
 from sage.structure.richcmp import richcmp
 
 
@@ -90,7 +90,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             and ``loads(dumps(x))``.
 
         """
-        if isinstance(value, FieldElement) and value.parent().is_finite():
+        if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
             n = value.parent().degree()
         else:
             from sage.rings.integer import Integer

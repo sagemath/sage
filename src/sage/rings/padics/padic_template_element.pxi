@@ -37,7 +37,7 @@ from sage.rings.infinity import infinity
 from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
-from sage.structure.element import canonical_coercion, FieldElement
+from sage.structure.element import canonical_coercion, Element
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -146,7 +146,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s"%x.parent().order())
-        elif isinstance(x, FieldElement) and isinstance(x.parent(), FiniteField):
+        elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
                 raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented")

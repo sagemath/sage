@@ -30,7 +30,7 @@ from .constructor import EllipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
 from sage.rings.all import Integer, ZZ, PolynomialRing, GF, polygen
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.structure.element import FieldElement
+from sage.structure.element import Element
 import sage.groups.generic as generic
 from . import ell_point
 from sage.arith.all import gcd, lcm, binomial
@@ -1530,7 +1530,7 @@ def is_j_supersingular(j, proof=True):
         sage: [p for p in prime_range(100) if is_j_supersingular(GF(p)(123456))]
         [2, 3, 59, 89]
     """
-    if not (isinstance(j, FieldElement) and isinstance(j.parent(), FiniteField)):
+    if not (isinstance(j, Element) and isinstance(j.parent(), FiniteField)):
         raise ValueError("%s must be an element of a finite field" % j)
 
     F = j.parent()
