@@ -1307,8 +1307,8 @@ class FunctionField_polymod(FunctionField):
             TypeError: unable to evaluate 'x' in Fraction Field of Univariate
             Polynomial Ring in t over Rational Field
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if polynomial.parent().ngens()>1 or not is_Polynomial(polynomial):
+        from sage.structure.element import Polynomial
+        if polynomial.parent().ngens()>1 or not isinstance(polynomial, Polynomial):
             raise TypeError("polynomial must be univariate a polynomial")
         if names is None:
             names = (polynomial.variable_name(), )

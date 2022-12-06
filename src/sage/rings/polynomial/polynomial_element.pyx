@@ -149,14 +149,14 @@ cpdef is_Polynomial(f):
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.polynomial_element import is_Polynomial
+        sage: from sage.structure.element import Polynomial
         sage: R.<x> = ZZ[]
-        sage: is_Polynomial(x^3 + x + 1)
+        sage: isinstance(x^3 + x + 1, Polynomial)
         True
         sage: S.<y> = R[]
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
+        sage: isinstance(f, Polynomial)
         True
 
     However this function does not return True for genuine multivariate
@@ -166,13 +166,13 @@ cpdef is_Polynomial(f):
         sage: R.<x,y> = QQ[]
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
+        sage: isinstance(f, Polynomial)
         False
         sage: var('x,y')
         (x, y)
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
+        sage: isinstance(f, Polynomial)
         False
     """
     return isinstance(f, Polynomial)
@@ -182,7 +182,7 @@ from .polynomial_compiled cimport CompiledPolynomialFunction
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class Polynomial(Polynomial_base):
     """
     A polynomial.
 

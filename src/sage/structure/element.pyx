@@ -4291,6 +4291,26 @@ def is_CommutativeAlgebraElement(x):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
+    ##############################################
+
+cdef class Polynomial(CommutativeAlgebraElement):
+    r"""
+    Abstract base class for :class:`~sage.rings.polynomial.polynomial_element.Polynomial`
+    """
+
+    pass
+
+    ##############################################
+
+cdef class MPolynomial(CommutativeAlgebraElement):
+    r"""
+    Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial.MPolynomial`
+    """
+
+    pass
+
+    ##############################################
+
 def is_InfinityElement(x):
     """
     Return ``True`` if x is of type InfinityElement.

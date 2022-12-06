@@ -83,7 +83,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             Type I point centered at 4 + O(5^20)
         """
         from sage.rings.function_field.element import is_FunctionFieldElement
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.structure.element import Polynomial
         from sage.rings.fraction_field_element import FractionFieldElement_1poly_field
         self._type = None
 
@@ -117,9 +117,9 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     raise TypeError('center was %s, a multivariable polynomial' % center)
 
             # check if the radius and the center are functions
-            center_func_check = is_FunctionFieldElement(center) or is_Polynomial(center) or\
+            center_func_check = is_FunctionFieldElement(center) or isinstance(center, Polynomial) or\
                 isinstance(center, FractionFieldElement_1poly_field) or isinstance(center, Expression)
-            radius_func_check = is_FunctionFieldElement(radius) or is_Polynomial(radius) or\
+            radius_func_check = is_FunctionFieldElement(radius) or isinstance(radius, Polynomial) or\
                 isinstance(radius, FractionFieldElement_1poly_field) or isinstance(radius, Expression)
 
             if center_func_check:

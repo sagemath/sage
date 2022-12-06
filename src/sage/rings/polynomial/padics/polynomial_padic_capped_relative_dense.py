@@ -661,7 +661,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             return Polynomial_padic_capped_relative_dense(self.parent(), (self._poly // fdiv, 0, [0 if a <= shift else a - shift for a in self._relprecs], False, None, None), construct=True)
 
     # def __floordiv__(self, right):
-    #     if is_Polynomial(right) and right.is_constant() and right[0] in self.base_ring():
+    #     if isinstance(right, Polynomial) and right.is_constant() and right[0] in self.base_ring():
     #         d = self.base_ring()(right[0])
     #     elif (right in self.base_ring()):
     #         d = self.base_ring()(right)

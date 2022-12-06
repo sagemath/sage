@@ -30,7 +30,7 @@ from sage.rings.real_mpfr import RealField_class,RealField
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 
-cdef class MPolynomial(CommutativeRingElement):
+cdef class MPolynomial(MPolynomial_base):
 
     ####################
     # Some standard conversions
