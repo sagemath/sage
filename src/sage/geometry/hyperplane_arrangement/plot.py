@@ -139,7 +139,7 @@ def plot(hyperplane_arrangement, **kwds):
       :mod:`sage.geometry.hyperplane_arrangement.plot`.
 
     OUTPUT:
-    
+
     A graphics object of the plot.
 
     EXAMPLES::
@@ -338,7 +338,6 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: a.plot(point_size=100,hyperplane_label='hello')  # optional - sage.plot
         Graphics object consisting of 3 graphics primitives
 
-    
         sage: H2.<x,y> = HyperplaneArrangements(QQ)
         sage: b = 3*x + 4*y + 5
         sage: b.plot()  # optional - sage.plot
@@ -469,14 +468,15 @@ def plot_hyperplane(hyperplane, **kwds):
 
 def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
     r"""
-    Create plot of a 3d legend for an arrangement of planes in 3-space.  The
-    ``length`` parameter determines whether short or long labels are used in
-    the legend.
+    Create plot of a 3d legend for an arrangement of planes in 3-space.
+
+    The ``length`` parameter determines whether short or long labels
+    are used in the legend.
 
     INPUT:
 
     - ``hyperplane_arrangement`` -- a hyperplane arrangement
-    
+
     - ``hyperplane_colors`` -- list of colors
 
     - ``length`` -- either ``'short'`` or ``'long'``

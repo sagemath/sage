@@ -1148,8 +1148,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # but be careful, since for relations things like is(equal(a,b)) are
         # what Maxima needs
 
-    
-
     def _richcmp_(self, other, op):
         """
         Compare this Maxima object with ``other``.

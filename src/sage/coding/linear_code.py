@@ -586,8 +586,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         if mode=="verbose":
             for w in nonzerowts:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
-                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(\
-                        w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
+                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
+                            w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
         wtsp = Cp.weight_distribution()
         dp = min([i for i in range(1,len(wtsp)) if wtsp[i]!=0])
         nonzerowtsp = [i for i in range(len(wtsp)) if wtsp[i]!=0 and i<=n-t and i>=dp]
@@ -595,8 +595,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         if mode=="verbose":
             for w in nonzerowtsp:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
-                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(\
-                        w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
+                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
+                            w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
         if s<=d-t:
             des = [[t,(n,w,wts[w]*binomial(w,t)//binomial(n,t))] for w in nonzerowts]
             ans = ans + ["weights from C: ",nonzerowts,"designs from C: ",des]
@@ -1370,7 +1370,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         # This is done only if algorithm is None.
         if algorithm not in (None, "gap", "guava"):
             raise ValueError("The algorithm argument must be one of None, "
-                        "'gap' or 'guava'; got '{0}'".format(algorithm))
+                             "'gap' or 'guava'; got '{0}'".format(algorithm))
 
         F = self.base_ring()
         q = F.order()
@@ -1380,14 +1380,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                                       "of size at most 256")
 
         G = self.generator_matrix()
-        if (q == 2 or q == 3) and algorithm=="guava":
+        if (q == 2 or q == 3) and algorithm == "guava":
             gap.load_package("guava")
             C = gap(G).GeneratorMatCode(gap(F))
             d = C.MinimumWeight()
             return ZZ(d)
         return self._minimum_weight_codeword(algorithm).hamming_weight()
 
-    def _minimum_weight_codeword(self, algorithm = None):
+    def _minimum_weight_codeword(self, algorithm=None):
         r"""
         Return a minimum weight codeword of ``self``.
 
@@ -1431,7 +1431,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         current_randstate().set_seed_gap()
 
-        if algorithm=="guava":
+        if algorithm == "guava":
             GapPackage("guava", spkg="gap_packages").require()
             gap.load_package("guava")
             from sage.interfaces.gap import gfq_gap_to_sage
@@ -1464,8 +1464,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     def module_composition_factors(self, gp):
         r"""
-        Prints the GAP record of the Meataxe composition factors module in
-        Meataxe notation. This uses GAP but not Guava.
+        Print the GAP record of the Meataxe composition factors module.
+
+        This is displayed in Meataxe notation.
+
+        This uses GAP but not Guava.
 
         EXAMPLES::
 
@@ -1473,25 +1476,29 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: G  = MS([[1,0,0,0,1,1,1,0],[0,1,1,1,0,0,0,0],[0,0,0,0,0,0,0,1],[0,0,0,0,0,1,0,0]])
             sage: C  = LinearCode(G)
             sage: gp = C.permutation_automorphism_group()
-
-        Now type "C.module_composition_factors(gp)" to get the record printed.
+            sage: C.module_composition_factors(gp)
+            [ rec(
+                  IsIrreducible := true,
+                  IsOverFiniteField := true,
+            ...) ]
         """
+        from sage.libs.gap.libgap import libgap
         F = self.base_ring()
-        q = F.order()
         gens = gp.gens()
         G = self.generator_matrix()
         n = len(G.columns())
-        MS = MatrixSpace(F,n,n)
-        mats = [] # initializing list of mats by which the gens act on self
+        MS = MatrixSpace(F, n, n)
+        mats = []  # initializing list of mats by which the gens act on self
         Fn = VectorSpace(F, n)
-        W = Fn.subspace_with_basis(G.rows()) # this is self
+        W = Fn.subspace_with_basis(G.rows())  # this is self
         for g in gens:
             p = MS(g.matrix())
-            m = [W.coordinate_vector(r*p) for r in G.rows()]
+            m = [W.coordinate_vector(r * p) for r in G.rows()]
             mats.append(m)
-        mats_str = str(gap([[list(r) for r in m] for m in mats]))
-        gap.eval("M:=GModuleByMats("+mats_str+", GF("+str(q)+"))")
-        print(gap("MTX.CompositionFactors( M )"))
+        mats_gap = libgap(mats)
+        M_gap = mats_gap.GModuleByMats(F)
+        compo = libgap.function_factory('MTX.CompositionFactors')
+        print(compo(M_gap))
 
     def permutation_automorphism_group(self, algorithm="partition"):
         r"""
@@ -1619,7 +1626,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 gap.eval("matCwt:=List(Cwt,c->VectorCodeword(c))")            # for each i until stop = 1)
                 if gap("Length(matCwt)") > 0:
                     A = gap("MatrixAutomorphisms(matCwt)")
-                    G2 = gap("Intersection2(%s,%s)"%(str(A).replace("\n",""),str(Gp).replace("\n",""))) #  bottleneck 3
+                    G2 = gap("Intersection2(%s,%s)"%(str(A).replace("\n",""),str(Gp).replace("\n","")))  #  bottleneck 3
                     Gp = G2
                     if Gp.Size()==1:
                         return PermutationGroup([()])
@@ -1830,7 +1837,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             q = self.base_ring().order()
             z = 'Z(%s)*%s'%(q, [0]*self.length())     # GAP zero vector as a string
             _ = gap.eval("w:=DistancesDistributionMatFFEVecFFE("+Gmat+", GF("+str(q)+"),"+z+")")
-            v = [eval(gap.eval("w["+str(i)+"]")) for i in range(1,self.length()+2)] # because GAP returns vectors in compressed form
+            v = [eval(gap.eval("w["+str(i)+"]")) for i in range(1,self.length()+2)]  # because GAP returns vectors in compressed form
             return v
         elif algorithm=="binary":
             from sage.coding.binary_code import weight_dist
@@ -2144,7 +2151,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         return G
 
 
-############################ linear codes python class ########################
+# ########################### linear codes python class ########################
 
 class LinearCode(AbstractLinearCode):
     r"""
@@ -2773,7 +2780,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         # distance 1 gracefully
         zero_syndrome = vector(F,[F.zero()]*(n-k))
         zero_syndrome.set_immutable()
-        lookup = { zero_syndrome : vector(F,[F.zero()]*n) }
+        lookup = {zero_syndrome: vector(F,[F.zero()]*n)}
         error_position_tables = [cartesian_product([l]*i) for i in range(1, t+1)]
         first_collision = True
         #Filling the lookup table
@@ -2814,14 +2821,13 @@ class LinearCodeSyndromeDecoder(Decoder):
         # Update decoder types depending on whether we are decoding beyond d/2
         if self._code_minimum_distance:
             if self._maximum_error_weight == (self._code_minimum_distance-1)//2:
-                self._decoder_type.update({"minimum-distance","always-succeed"})
+                self._decoder_type.update({"minimum-distance", "always-succeed"})
             else:
                 # then t > (d-1)/2
                 self._decoder_type.add("might-error")
         else:
             self._decoder_type.add("always-succeed")
         return lookup
-
 
     def decode_to_code(self, r):
         r"""

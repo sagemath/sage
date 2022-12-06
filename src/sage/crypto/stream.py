@@ -288,7 +288,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     is the period. ::
 
         sage: from sage.crypto.stream import blum_blum_shub
-        sage: from sage.crypto.util import carmichael_lambda
+        sage: from sage.arith.misc import carmichael_lambda
         sage: carmichael_lambda(carmichael_lambda(7*11))
         4
         sage: s = [GF(2)(int(str(x))) for x in blum_blum_shub(60, p=7, q=11, seed=13)]

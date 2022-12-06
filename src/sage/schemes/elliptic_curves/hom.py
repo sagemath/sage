@@ -35,6 +35,39 @@ class EllipticCurveHom(Morphism):
     """
     Base class for elliptic-curve morphisms.
     """
+    def __init__(self, *args, **kwds):
+        r"""
+        Constructor for elliptic-curve morphisms.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(257^2), [5,5])
+            sage: P = E.lift_x(1)
+            sage: E.isogeny(P)                        # indirect doctest
+            Isogeny of degree 127 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2 to Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
+            sage: E.isogeny(P, algorithm='factored')  # indirect doctest
+            Composite morphism of degree 127 = 127:
+              From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
+            sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
+            Elliptic-curve isogeny (using √élu) of degree 127:
+              From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 119*x + 231 over Finite Field in z2 of size 257^2
+            sage: E.montgomery_model(morphism=True)   # indirect doctest
+            (Elliptic Curve defined by y^2 = x^3 + (199*z2+73)*x^2 + x over Finite Field in z2 of size 257^2,
+             Elliptic-curve morphism:
+               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
+               To:   Elliptic Curve defined by y^2 = x^3 + (199*z2+73)*x^2 + x over Finite Field in z2 of size 257^2
+               Via:  (u,r,s,t) = (88*z2 + 253, 208*z2 + 90, 0, 0))
+        """
+        super().__init__(*args, **kwds)
+
+        # Over finite fields, isogenous curves have the same number of
+        # rational points, hence we copy over the cached curve orders.
+        if isinstance(self.base_ring(), finite_field_base.FiniteField) and self.degree():
+            self._codomain._fetch_cached_order(self._domain)
+            self._domain._fetch_cached_order(self._codomain)
+
     def _repr_type(self):
         """
         Return a textual representation of what kind of morphism

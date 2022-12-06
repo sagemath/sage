@@ -364,9 +364,9 @@ def RealProjectiveSpace(dim=2):
     charts = {0: U0.chart(''.join(names[1:]))}
 
     # create the charts
-    for j in range(1, dim+1):
+    for j in range(1, dim + 1):
         U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
-        
+
         # The chart where we assert that x_i == 1
         Cj = U.chart(''.join(names[:j] + names[j+1:]))
         gj = Cj[:]

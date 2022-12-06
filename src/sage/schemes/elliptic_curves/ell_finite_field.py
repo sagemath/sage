@@ -1289,6 +1289,46 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         self._order = value
 
+    def _fetch_cached_order(self, other):
+        r"""
+        This method copies the ``_order`` member from ``other`` to
+        ``self``. Both curves must have the same finite base field.
+
+        This is used in
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+        to keep track of an already computed curve order: According
+        to Tate's theorem [Tate1966b]_, isogenous elliptic curves
+        over a finite field have the same number of rational points.
+
+        EXAMPLES::
+
+            sage: E1 = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E1.set_order(170141183460469231746191640949390434666)
+            sage: E2 = EllipticCurve(GF(2^127-1), [115649500210559831225094148253060920818, 36348294106991415644658737184600079491])
+            sage: E2._fetch_cached_order(E1)
+            sage: E2._order
+            170141183460469231746191640949390434666
+
+        TESTS::
+
+            sage: E3 = EllipticCurve(GF(17), [1,2,3,4,5])
+            sage: hasattr(E3, '_order')
+            False
+            sage: E3._fetch_cached_order(E1)
+            Traceback (most recent call last):
+            ...
+            ValueError: curves have distinct base fields
+        """
+        if hasattr(self, '_order') or not hasattr(other, '_order'):
+            return
+        F = self.base_field()
+        if F != other.base_field():
+            raise ValueError('curves have distinct base fields')
+        n = getattr(other, '_order', None)
+        if n is not None:
+            self._order = n
+
+
 # dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):
 
 supersingular_j_polynomials = {}

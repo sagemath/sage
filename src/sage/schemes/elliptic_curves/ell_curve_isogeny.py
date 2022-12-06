@@ -1018,12 +1018,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         # Inheritance house keeping
         self.__perform_inheritance_housekeeping()
 
-        # over finite fields, isogenous curves have the same number
-        # of rational points, hence we copy over cached curve orders
-        if self.__base_field.is_finite():
-            self._codomain._fetch_cached_order(self._domain)
-            self._domain._fetch_cached_order(self._codomain)
-
     def _eval(self, P):
         r"""
         Less strict evaluation method for internal use.
@@ -1157,6 +1151,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             Traceback (most recent call last):
             ...
             TypeError: (20 : 90 : 1) fails to convert into the map's domain Elliptic Curve defined by y^2 = x^3 + 7*x over Number Field in th with defining polynomial x^2 + 3, but a `pushforward` method is not properly implemented
+
+        Check that copying the order over works::
+
+            sage: E = EllipticCurve(GF(431), [1,0])
+            sage: P, = E.gens()
+            sage: Q = 2^99*P; Q.order()
+            27
+            sage: phi = E.isogeny(3^99*P)
+            sage: phi(Q)._order
+            27
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1187,7 +1191,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             yP = self.__posti_ratl_maps[1](xP, yP)
             xP = self.__posti_ratl_maps[0](xP)
 
-        return self._codomain(xP, yP)
+        Q = self._codomain(xP, yP)
+        if hasattr(P, '_order') and P._order.gcd(self._degree).is_one():
+            # TODO: For non-coprime degree, the order of the point
+            # gets reduced by a divisor of the degree when passing
+            # through the isogeny. We could run something along the
+            # lines of order_from_multiple() to determine the new
+            # order, but this probably shouldn't happen by default
+            # as it'll be detrimental to performance in some cases.
+            Q._order = P._order
+        return Q
 
     def __getitem__(self, i):
         r"""

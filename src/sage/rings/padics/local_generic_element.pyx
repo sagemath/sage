@@ -408,8 +408,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
         return ans
 
     def _latex_(self):
-        """
-        Returns a latex representation of self.
+        r"""
+        Return a latex representation of self.
 
         EXAMPLES::
 

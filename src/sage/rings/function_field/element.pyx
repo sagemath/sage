@@ -281,13 +281,13 @@ cdef class FunctionFieldElement(FieldElement):
         Return the max degree between the denominator and numerator.
 
         EXAMPLES::
-        
+
             sage: FF.<t> = FunctionField(QQ)
             sage: f = (t^2 + 3) / (t^3 - 1/3); f
             (t^2 + 3)/(t^3 - 1/3)
             sage: f.degree()
             3
-        
+
             sage: FF.<t> = FunctionField(QQ)
             sage: f = (t+8); f
             t + 8

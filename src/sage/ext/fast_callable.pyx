@@ -983,7 +983,7 @@ cdef class Expression:
         # flag.)
 
         cdef Expression es
-        if isinstance(o, (int, long, Integer)):
+        if isinstance(o, (int, Integer)):
             es = s
             return ExpressionIPow(es._etb, s, o)
         else:
