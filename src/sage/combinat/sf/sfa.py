@@ -218,7 +218,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import Polynomial
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.structure.element import MPolynomial
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n, Partition
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
@@ -6404,7 +6404,7 @@ def _nonnegative_coefficients(x):
         sage: _nonnegative_coefficients(x^2-4)
         False
     """
-    if isinstance(x, Polynomial) or is_MPolynomial(x):
+    if isinstance(x, Polynomial) or isinstance(x, MPolynomial):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0

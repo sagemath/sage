@@ -419,8 +419,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             ring = v.parent()
             return ring([self._A[0,0], self._b[0]])
 
-        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-        if is_MPolynomial(v) and parent.degree() == v.parent().ngens():
+        from sage.structure.element import MPolynomial
+        if isinstance(v, MPolynomial) and parent.degree() == v.parent().ngens():
             ring = v.parent()
             from sage.modules.free_module_element import vector
             image_coords = self._A * vector(ring, ring.gens()) + self._b

@@ -94,7 +94,7 @@ from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.structure.element import MPolynomial
 import copy
 
 
@@ -249,7 +249,7 @@ class InfinitePolynomial_sparse(RingElement):
         # the wrong ring and we get here without going through
         # _element_constructor_.  See trac 22514 for examples.
         # So a little extra checking is done here.
-        if not is_MPolynomial(p) or p.base_ring() is not A.base_ring():
+        if not isinstance(p, MPolynomial) or p.base_ring() is not A.base_ring():
             # coerce to a convenient multivariate polynomial ring
             p = A._minP(p)
 

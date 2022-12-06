@@ -109,8 +109,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         # is_FunctionFieldElement calls .parent
         elif hasattr(center, "parent") and hasattr(radius, 'parent'):
-            from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
-            if is_MPolynomial(center):
+            from sage.structure.element import MPolynomial
+            if isinstance(center, MPolynomial):
                 try:
                     center = center.univariate_polynomial()
                 except AttributeError:

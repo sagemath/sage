@@ -78,7 +78,7 @@ from sage.categories.all import GradedAlgebrasWithBasis
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.structure.element import MPolynomial
 from sage.combinat.permutation import Permutations, Permutation
 import sage.libs.symmetrica.all as symmetrica
 from sage.misc.cachefunc import cached_method
@@ -147,7 +147,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             x0
         """
         p = symmetrica.t_SCHUBERT_POLYNOM(self)
-        if not is_MPolynomial(p):
+        if not isinstance(p, MPolynomial):
             R = PolynomialRing(self.parent().base_ring(), 1, 'x0')
             p = R(p)
         return p
@@ -439,7 +439,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
         elif isinstance(x, Permutation):
             perm = x.remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif is_MPolynomial(x):
+        elif isinstance(x, MPolynomial):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
         else:
             raise TypeError

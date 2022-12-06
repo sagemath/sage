@@ -115,7 +115,7 @@ from cypari2.gen cimport Gen
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.rings.all      import ZZ, Integer
 from sage.structure.element import Polynomial
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.structure.element import MPolynomial
 from sage.structure.element import is_Matrix
 from sage.matrix.all     import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -1230,7 +1230,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                     raise ValueError("%s does not act on %s" % (self,
                                                                 left.parent()))
                 return left
-            elif is_MPolynomial(left):
+            elif isinstance(left, MPolynomial):
                 R = left.parent()
                 vars = R.gens()
                 try:

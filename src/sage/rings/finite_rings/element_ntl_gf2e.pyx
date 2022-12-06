@@ -1005,7 +1005,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             a^15 + a^13 + a^11 + a^10 + a^9 + a^8 + a^7 + a^6 + a^4 + a + 1
 
             sage: from sage.structure.element import Polynomial
-            sage: is_Polynomial(e.polynomial())
+            sage: isinstance(e.polynomial(), Polynomial)
             True
 
             sage: e.polynomial('x')
