@@ -249,7 +249,11 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     genus_classes = {2: HyperellipticCurve_g2}
 
-    is_pAdicField = lambda x: isinstance(x, sage.rings.abc.pAdicField)
+    def is_FiniteField(x):
+        return isinstance(x, FiniteField)
+
+    def is_pAdicField(x):
+        return isinstance(x, sage.rings.abc.pAdicField)
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurve_finite_field),

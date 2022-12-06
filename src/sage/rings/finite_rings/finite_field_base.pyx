@@ -2122,6 +2122,7 @@ def is_FiniteField(R):
         sage: from sage.rings.finite_rings.finite_field_base import FiniteField
         sage: is_FiniteField(GF(9,'a'))
         doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
+        See https://trac.sagemath.org/32664 for details.
         True
         sage: is_FiniteField(GF(next_prime(10^10)))
         True
