@@ -18,6 +18,9 @@ from sage.misc.derivative import multi_derivative
 from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
+    from sage.misc.superseded import deprecation
+    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.structure.element.MPolynomial) instead")
+
     return isinstance(x, MPolynomial)
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

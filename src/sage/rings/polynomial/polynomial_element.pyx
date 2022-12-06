@@ -143,20 +143,24 @@ cpdef is_Polynomial(f):
     """
     Return True if f is of type univariate polynomial.
 
+    This function is deprecated.
+
     INPUT:
 
     -  ``f`` -- an object
 
     EXAMPLES::
 
-        sage: from sage.structure.element import Polynomial
+        sage: from sage.rings.polynomial.polynomial_element import is_Polynomial
         sage: R.<x> = ZZ[]
-        sage: isinstance(x^3 + x + 1, Polynomial)
+        sage: is_Polynomial(x^3 + x + 1)
+        doctest:...: DeprecationWarning: the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead
+        See https://trac.sagemath.org/32709 for details.
         True
         sage: S.<y> = R[]
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: isinstance(f, Polynomial)
+        sage: is_Polynomial(f)
         True
 
     However this function does not return True for genuine multivariate
@@ -166,15 +170,18 @@ cpdef is_Polynomial(f):
         sage: R.<x,y> = QQ[]
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: isinstance(f, Polynomial)
+        sage: is_Polynomial(f)
         False
         sage: var('x,y')
         (x, y)
         sage: f = y^3 + x*y -3*x; f
         y^3 + x*y - 3*x
-        sage: isinstance(f, Polynomial)
+        sage: is_Polynomial(f)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+
     return isinstance(f, Polynomial)
 
 from .polynomial_compiled cimport CompiledPolynomialFunction
