@@ -425,6 +425,7 @@ Since ``expand_key_poly`` is not actually a
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import column_matrix
 from sage.structure.element import Element, Matrix
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.structure.sage_object import SageObject
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -759,7 +760,7 @@ class RijndaelGF(SageObject):
         """
         if not isinstance(GF, Matrix) and \
            not isinstance(GF, list) and \
-           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField)):
+           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField_base)):
             msg = ("keyword 'GF' must be a matrix over {0}, a list of "
                    "elements from {0}, or a single element from {0}")
             raise TypeError(msg.format(self._F))
@@ -884,7 +885,7 @@ class RijndaelGF(SageObject):
         """
         if not isinstance(GF, Matrix) and \
            not isinstance(GF, list) and \
-           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField)):
+           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField_base)):
             msg = ("keyword 'GF' must be a matrix over {0}, a list of "
                    "elements from {0}, or a single element from {0}")
             raise TypeError(msg.format(self))
