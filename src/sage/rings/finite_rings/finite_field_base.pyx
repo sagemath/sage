@@ -2119,7 +2119,7 @@ def is_FiniteField(R):
 
     EXAMPLES::
 
-        sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+        sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
         sage: is_FiniteField(GF(9,'a'))
         doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
         See https://trac.sagemath.org/32664 for details.
