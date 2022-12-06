@@ -33,7 +33,10 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
-from sage.libs.flint.ulong_extras cimport n_is_prime
+# from sage.libs.flint.ulong_extras cimport n_is_prime
+# -- avoid modularization obstruction -- function is only used for a doctest helper
+from sage.arith.misc import is_prime as n_is_prime
+
 
 # OrbitPartition (OP)
 
