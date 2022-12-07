@@ -46,12 +46,10 @@ exclude sage/misc/sage_ostools.p*
 
 graft sage/parallel
 
-include sage/interfaces/__init__.py
 include sage/interfaces/process.p*
 include sage/interfaces/latte.p*
 include sage/interfaces/four_ti_2.p*
 
-include sage/sets/__init__.py
 include sage/sets/set.py
 
 graft sage/modules
@@ -61,9 +59,6 @@ exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
 # Need sage.combinat.free_module for polyhedral modules
-include sage/combinat/__init__.py
-include sage/combinat/quickref.py     # pulled in by __init__
-include sage/combinat/tutorial.py     # pulled in by __init__
 include sage/combinat/free_module.py
 include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
