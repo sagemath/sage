@@ -147,8 +147,6 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
                 if not is_package_or_namespace_package_dir(dirpath):
-                    # Skip any subdirectories
-                    dirnames[:] = []
                     continue
                 # Ordinary package or namespace package.
                 if distributions is None or '' in distributions:
