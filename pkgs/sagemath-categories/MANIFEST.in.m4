@@ -29,8 +29,6 @@ exclude sage/categories/sets_with_partial_maps.*
 exclude sage/categories/subobjects.*
 exclude sage/categories/subquotients.*
 exclude sage/categories/with_realizations.*
-# Exclude to make it a namespace package
-exclude sage/categories/__init__.py
 
 include sage/rings/ideal.*
 include sage/rings/ring.*
@@ -55,7 +53,6 @@ include sage/misc/html.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
 
-include sage/rings/finite_rings/__init__.py
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
 include sage/rings/finite_rings/finite_field_base.p*
@@ -64,7 +61,6 @@ include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
 
-include sage/rings/number_field/__init__.py
 include sage/rings/number_field/number_field_base.*
 
 include sage/rings/real_double.p*
@@ -72,7 +68,6 @@ include sage/rings/real_double.p*
 include sage/rings/fraction_field.p*
 include sage/rings/fraction_field_element.p*
 
-include sage/rings/polynomial/__init__.py
 include sage/rings/polynomial/polynomial_ring.p*
 include sage/rings/polynomial/polynomial_ring_constructor.p*
 include sage/rings/polynomial/polynomial_singular_interface.p*
