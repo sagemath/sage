@@ -39,6 +39,8 @@ dnl From build/pkgs/sagelib/dependencies
         cysignals      \
         cython         \
         gmpy2          \
+        importlib_metadata \
+        importlib_resources \
         jinja2         \
         jupyter_core   \
         lrcalc_python  \

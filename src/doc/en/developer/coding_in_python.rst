@@ -33,8 +33,9 @@ using one of two mechanisms:
   Sage library code that uses type annotations should include this
   ``__future__`` import and follow PEP 563.
 
-- The Sage distribution includes the backport packages ``importlib_metadata``,
-  ``importlib_resources``, and ``typing_extensions``.
+- Backport packages ``importlib_metadata``, ``importlib_resources``, and
+  ``typing_extensions``; the Sage library declares these packages as
+  dependencies.
 
 Meta-ticket :trac:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the

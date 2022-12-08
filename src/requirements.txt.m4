@@ -20,6 +20,8 @@ dnl ... but building bdist_wheel of cypari2 fails with recent pip... https://git
 cysignals==esyscmd(`printf $(sed "s/[.]p.*//;" ../cysignals/package-version.txt)')
 Cython==esyscmd(`printf $(sed "s/[.]p.*//;" ../cython/package-version.txt)')
 gmpy2==esyscmd(`printf $(sed "s/[.]p.*//;" ../gmpy2/package-version.txt)')
+importlib_metadata==esyscmd(`printf $(sed "s/[.]p.*//;" ../importlib_metadata/package-version.txt)')
+importlib_resources==esyscmd(`printf $(sed "s/[.]p.*//;" ../importlib_resources/package-version.txt)')
 jinja2==esyscmd(`printf $(sed "s/[.]p.*//;" ../jinja2/package-version.txt)')
 dnl ... for sage_setup.autogen.interpreters
 jupyter_core==esyscmd(`printf $(sed "s/[.]p.*//;" ../jupyter_core/package-version.txt)')
