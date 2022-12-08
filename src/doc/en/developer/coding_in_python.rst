@@ -34,12 +34,14 @@ using one of two mechanisms:
   should include this ``__future__`` import and follow PEP 563.
 
 - Backport packages
+
   - `importlib_metadata <../reference/spkg/importlib_metadata>`_
     (to be used in place of ``importlib.metadata``),
   - `importlib_resources <../reference/spkg/importlib_resources>`_
     (to be used in place of ``importlib.resources``),
   - `typing_extensions <../reference/spkg/typing_extensions>`_
     (to be used in place of ``typing``).
+
   The Sage library declares these packages as dependencies and ensures that
   versions that provide features of Python 3.11 are available.
 
