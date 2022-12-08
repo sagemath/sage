@@ -32,6 +32,7 @@ pplpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../pplpy/package-version.txt)')
 primecountpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../primecountpy/package-version.txt)')
 pycygwin==esyscmd(`printf $(sed "s/[.]p.*//;" ../pycygwin/package-version.txt)'); sys_platform == 'cygwin'
 requests==esyscmd(`printf $(sed "s/[.]p.*//;" ../requests/package-version.txt)')
+typing_extensions==esyscmd(`printf $(sed "s/[.]p.*//;" ../typing_extensions/package-version.txt)')
 
 dnl From Makefile.in: SAGERUNTIME
 ipython==esyscmd(`printf $(sed "s/[.]p.*//;" ../ipython/package-version.txt)')

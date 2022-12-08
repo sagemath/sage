@@ -48,6 +48,7 @@ dnl From build/pkgs/sagelib/dependencies
         pplpy          \
         primecountpy   \
         requests       \
+        typing_extensions \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \
