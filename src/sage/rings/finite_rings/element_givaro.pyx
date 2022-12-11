@@ -643,7 +643,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache._element_int_repr(a^20)
             '74'
         """
-        return str(e.integer_representation())
+        return str(e._integer_representation())
 
     def _element_poly_repr(self, FiniteField_givaroElement e, varname=None):
         """
@@ -1350,7 +1350,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             raise TypeError("Cannot coerce element to an integer.")
         return self_int
 
-    def integer_representation(FiniteField_givaroElement self):
+    def _integer_representation(FiniteField_givaroElement self):
         r"""
         Return the integer representation of ``self``.  When ``self`` is in the
         prime subfield, the integer returned is equal to ``self``.
@@ -1362,15 +1362,19 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         OUTPUT: A Python ``int``.
 
+        .. SEEALSO::
+
+            :meth:`sage.rings.finite_rings.element_base.FinitePolyExtElement.to_integer`
+
         EXAMPLES::
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: k(4).integer_representation()
+            sage: k(4)._integer_representation()
             4
-            sage: b.integer_representation()
+            sage: b._integer_representation()
             5
-            sage: type(b.integer_representation())
+            sage: type(b._integer_representation())
             <... 'int'>
         """
         return self._cache.log_to_int(self.element)
@@ -1669,7 +1673,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: hash(a)
             5
         """
-        return hash(self.integer_representation())
+        return hash(self._integer_representation())
 
     def _vector_(FiniteField_givaroElement self, reverse=False):
         """

@@ -10501,11 +10501,21 @@ class NumberField_absolute(NumberField_generic):
             sage: x = polygen(K,'x')
             sage: factor(x*x+4)  # indirect doctest
             (x - 2*i) * (x + 2*i)
+
+        TESTS::
+
+            sage: with seed(0):
+            ....:     P.<y> = NumberField(QQ['a'].random_element(30,10^100), 'a')[]
+            sage: (3*y^4/4).factor()
+            (3/4) * y^4
         """
         if self.degree() == 1:
             factors = poly.change_ring(QQ).factor()
             return Factorization([(p.change_ring(self), e)
                                   for p, e in factors], self(factors.unit()))
+        elif poly.is_term():
+            return Factorization([(poly.parent().gen(), poly.degree())],
+                                 poly.leading_coefficient())
 
         # Convert the polynomial we want to factor to PARI
         f = poly._pari_with_name()

@@ -1721,6 +1721,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self.ext_p_list_precs(pos, self.prime_pow.ram_prec_cap)
 
+
 def make_ZZpXFMElement(parent, f):
     """
     Create a new ``pAdicZZpXFMElement`` out of an ``ntl_ZZ_pX`` ``f``, with
@@ -1737,4 +1738,3 @@ def make_ZZpXFMElement(parent, f):
         True
     """
     return pAdicZZpXFMElement(parent, f)
-

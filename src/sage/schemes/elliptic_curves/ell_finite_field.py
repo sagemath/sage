@@ -36,8 +36,6 @@ from sage.arith.all import gcd, lcm, binomial
 from sage.misc.cachefunc import cached_method
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 
-import sage.plot.all as plot
-
 
 class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_field):
     r"""
@@ -98,10 +96,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         if not R.is_prime_field():
             raise NotImplementedError
 
-        G = plot.Graphics()
-        G += plot.points([P[0:2] for P in self.points() if not P.is_zero()], *args, **kwds)
+        from sage.plot.point import points
 
-        return G
+        return points([P[0:2] for P in self.points() if not P.is_zero()], *args, **kwds)
 
     def _points_via_group_structure(self):
         """

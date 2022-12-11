@@ -92,7 +92,7 @@ from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 
 from sage.schemes.elliptic_curves.weierstrass_morphism \
-        import WeierstrassIsomorphism, isomorphisms, baseWI
+        import WeierstrassIsomorphism, _isomorphisms, baseWI
 
 #
 # Private function for parsing input to determine the type of
@@ -3372,9 +3372,9 @@ def compute_intermediate_curves(E1, E2):
     # We cannot even just use pre_iso = E1.isomorphism_to(E1w) since
     # it may have u=-1; similarly for E2
 
-    urst = [w for w in isomorphisms(E1, E1w) if w[0] == 1][0]
+    urst = [w for w in _isomorphisms(E1, E1w) if w[0] == 1][0]
     pre_iso = WeierstrassIsomorphism(E1, urst, E1w)
-    urst = [w for w in isomorphisms(E2w, E2) if w[0] == 1][0]
+    urst = [w for w in _isomorphisms(E2w, E2) if w[0] == 1][0]
     post_iso = WeierstrassIsomorphism(E2w, urst, E2)
     return E1w, E2w, pre_iso, post_iso
 

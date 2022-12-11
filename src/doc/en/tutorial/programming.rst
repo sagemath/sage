@@ -704,10 +704,9 @@ declares the :math:`1 \in \GF{5}` equal to :math:`1 \in \QQ`.
 Profiling
 =========
 
-Section Author: Martin Albrecht (malb@informatik.uni-bremen.de)
-
     "Premature optimization is the root of all evil." - Donald Knuth
 
+.. sectionauthor:: Martin Albrecht <malb@informatik.uni-bremen.de>
 
 Sometimes it is useful to check for bottlenecks in code to
 understand which parts take the most computational time; this can
@@ -764,7 +763,7 @@ closer examination:
 
 .. skip
 
-:: 
+::
 
     sage: %prun -r A*A
     sage: stats = _
@@ -810,3 +809,4 @@ On a system shell, type
 The output file ``cachegrind.out.42`` can now be examined with
 ``kcachegrind``. Please note that the naming convention
 ``cachegrind.out.XX`` needs to be obeyed.
+

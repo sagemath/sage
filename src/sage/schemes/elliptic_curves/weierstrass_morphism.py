@@ -27,27 +27,23 @@ from sage.structure.element import get_coercion_model
 
 from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom
-from sage.structure.richcmp import (richcmp_method, richcmp, richcmp_not_equal,
-                                    op_NE)
+from sage.structure.richcmp import (richcmp, richcmp_not_equal, op_EQ, op_NE)
 from sage.structure.sequence import Sequence
 from sage.rings.all import Integer, PolynomialRing
 
-
-@richcmp_method
 class baseWI():
     r"""
     This class implements the basic arithmetic of isomorphisms between
     Weierstrass models of elliptic curves.
 
-    These are specified by lists of the form `[u,r,s,t]` (with
-    `u\not=0`) which specifies a transformation `(x,y) \mapsto (x',y')`
-    where
+    These are specified by lists of the form `[u,r,s,t]` (with `u \neq 0`)
+    which specifies a transformation `(x,y) \mapsto (x',y')` where
 
             `(x,y) = (u^2x'+r , u^3y' + su^2x' + t).`
 
     INPUT:
 
-    - ``u,r,s,t`` (default (1,0,0,0)) -- standard parameters of an
+    - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
       isomorphism between Weierstrass models.
 
     EXAMPLES::
@@ -67,7 +63,7 @@ class baseWI():
 
         INPUT:
 
-        - ``u,r,s,t`` (default (1,0,0,0)) -- standard parameters of an
+        - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
           isomorphism between Weierstrass models.
 
         EXAMPLES::
@@ -81,44 +77,12 @@ class baseWI():
             sage: baseWI(u,r,s,t)
             (u, r, s, t)
         """
-        if u == 0:
+        if not u:
             raise ValueError("u!=0 required for baseWI")
         self.u = u
         self.r = r
         self.s = s
         self.t = t
-
-    def __richcmp__(self, other, op):
-        """
-        Standard comparison function.
-
-        The ordering is just lexicographic on the tuple `(u,r,s,t)`.
-
-        .. NOTE::
-
-            In a list of automorphisms, there is no guarantee that the
-            identity will be first!
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
-            sage: baseWI(1,2,3,4) == baseWI(1,2,3,4)
-            True
-            sage: baseWI(1,2,3,4) != baseWI(1,2,3,4)
-            False
-            sage: baseWI(1,2,3,4) < baseWI(1,2,3,5)
-            True
-            sage: baseWI(1,2,3,4) > baseWI(1,2,3,4)
-            False
-
-        It will never return equality if ``other`` is of another type::
-
-            sage: baseWI() == 1
-            False
-        """
-        if not isinstance(other, baseWI):
-            return (op == op_NE)
-        return richcmp(self.tuple(), other.tuple(), op)
 
     def tuple(self):
         r"""
@@ -174,7 +138,7 @@ class baseWI():
             (1, 0, 0, 0)
         """
         u, r, s, t = self.tuple()
-        return baseWI(1/u, -r/(u**2), -s/u, (r*s-t)/(u**3))
+        return baseWI(1/u, -r/u**2, -s/u, (r*s-t)/u**3)
 
     def __repr__(self):
         r"""
@@ -255,38 +219,26 @@ class baseWI():
         raise ValueError("baseWI(a) only for a=(x,y), (x:y:z) or (a1,a2,a3,a4,a6)")
 
 
-def isomorphisms(E, F, JustOne=False):
+def _isomorphisms(E, F):
     r"""
-    Return one or all isomorphisms between two elliptic curves.
+    Enumerate all isomorphisms between two elliptic curves,
+    as a generator object.
 
     INPUT:
 
     - ``E``, ``F`` (EllipticCurve) -- Two elliptic curves.
 
-    - ``JustOne`` (bool) If ``True``, returns one isomorphism, or ``None`` if
-      the curves are not isomorphic.  If ``False``, returns a (possibly
-      empty) list of isomorphisms.
-
     OUTPUT:
 
-    Either ``None``, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
-    or a list of these.
-
-    .. NOTE::
-
-        This function is not intended for users, who should use the
-        interface provided by ``ell_generic``.
+    A generator object producing 4-tuples `(u,r,s,t)` representing an isomorphism.
 
     EXAMPLES::
 
-        sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
-        sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a3'))
-        [(-1, 0, 0, -1), (1, 0, 0, 0)]
-        sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a3'),JustOne=True)
-        (1, 0, 0, 0)
-        sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a1'))
+        sage: from sage.schemes.elliptic_curves.weierstrass_morphism import _isomorphisms
+        sage: list(_isomorphisms(EllipticCurve_from_j(0), EllipticCurve('27a3')))
+        [(1, 0, 0, 0), (-1, 0, 0, -1)]
+        sage: list(_isomorphisms(EllipticCurve_from_j(0), EllipticCurve('27a1')))
         []
-        sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a1'),JustOne=True)
 
     TESTS:
 
@@ -294,23 +246,61 @@ def isomorphisms(E, F, JustOne=False):
 
         sage: z8 = GF(2^8).gen()
         sage: E1 = EllipticCurve([z8, z8, z8, z8, z8])
-        sage: isomorphisms(E1, E1)
+        sage: list(_isomorphisms(E1, E1))
         [(1, 0, 0, 0), (1, 0, z8, z8)]
         sage: E2 = EllipticCurve([z8^2, 0, 0, 0, z8^7 + z8^4])
-        sage: isomorphisms(E1, E2)
+        sage: list(_isomorphisms(E1, E2))
         [(z8^7 + z8^3 + z8^2 + z8, 1, 1, z8^7 + z8^3 + z8^2 + z8 + 1),
          (z8^7 + z8^3 + z8^2 + z8, 1, z8 + 1, z8^7 + z8^3 + z8^2 + z8 + 1)]
+
+    Random testing::
+
+        sage: p = random_prime(100)
+        sage: F = GF(p).algebraic_closure()
+        sage: while True:
+        ....:     try:
+        ....:         E = EllipticCurve(list((F^5).random_element()))
+        ....:     except ArithmeticError:
+        ....:         continue
+        ....:     break
+        sage: Aut = E.automorphisms()
+        sage: len(set(Aut)) == len(Aut)
+        True
+        sage: all(-a in Aut for a in Aut)
+        True
+        sage: len(Aut) in (2, 4, 6, 12, 24)
+        True
+        sage: j = E.j_invariant()
+        sage: {
+        ....:      2: j not in (0, 1728),
+        ....:      4: p >= 5 and j == 1728,
+        ....:      6: p >= 5 and j == 0,
+        ....:     12: p == 3 and j == 0,  # note 1728 == 0
+        ....:     24: p == 2 and j == 0,  # note 1728 == 0
+        ....: }[len(Aut)]
+        True
+        sage: u,r,s,t = (F^4).random_element()
+        sage: u = u or 1
+        sage: F = E.change_weierstrass_model(u,r,s,t)
+        sage: Iso = E.isomorphisms(F)
+        sage: len(set(Iso)) == len(Iso)
+        True
+        sage: all(-f in Iso for f in Iso)
+        True
+        sage: len(Iso) == len(Aut)
+        True
+        sage: all({iso2*iso1 for iso1 in Iso} == set(Aut) for iso2 in F.isomorphisms(E))
+        True
     """
     from .ell_generic import is_EllipticCurve
     if not is_EllipticCurve(E) or not is_EllipticCurve(F):
         raise ValueError("arguments are not elliptic curves")
-    K = E.base_ring()
 
     j = E.j_invariant()
     if j != F.j_invariant():
-        if JustOne:
-            return None
-        return []
+        return
+
+    K = E.base_ring()
 
     from sage.rings.polynomial.polynomial_ring import polygen
     x = polygen(K, 'x')
@@ -322,71 +312,46 @@ def isomorphisms(E, F, JustOne=False):
 
     if char == 2:
         if j == 0:
-            ulist = (x**3-(a3E/a3F)).roots(multiplicities=False)
-            ans = []
+            ulist = (x**3 - a3E/a3F).roots(multiplicities=False)
             for u in ulist:
-                slist = (x**4+a3E*x+(a2F**2+a4F)*u**4+a2E**2+a4E).roots(multiplicities=False)
+                slist = (x**4 + a3E*x + (a2F**2 + a4F)*u**4 + a2E**2 + a4E).roots(multiplicities=False)
                 for s in slist:
-                    r = s**2+a2E+a2F*u**2
+                    r = s**2 + a2E + a2F*u**2
                     tlist = (x**2 + a3E*x + r**3 + a2E*r**2 + a4E*r + a6E + a6F*u**6).roots(multiplicities=False)
                     for t in tlist:
-                        if JustOne:
-                            return (u, r, s, t)
-                        ans.append((u, r, s, t))
-            if JustOne:
-                return None
-            ans.sort()
-            return ans
+                        yield (u, r, s, t)
         else:
-            ans = []
             u = a1E/a1F
-            r = (a3E+a3F*u**3)/a1E
-            slist = [s[0] for s in (x**2+a1E*x+(r+a2E+a2F*u**2)).roots()]
+            r = (a3E + a3F*u**3)/a1E
+            slist = (x**2 + a1E*x + r + a2E + a2F*u**2).roots(multiplicities=False)
             for s in slist:
-                t = (a4E+a4F*u**4 + s*a3E + r*s*a1E + r**2) / a1E
-                if JustOne:
-                    return (u, r, s, t)
-                ans.append((u, r, s, t))
-            if JustOne:
-                return None
-            ans.sort()
-            return ans
+                t = (a4E + a4F*u**4 + s*a3E + r*s*a1E + r**2) / a1E
+                yield (u, r, s, t)
+        return
 
     b2E, b4E, b6E, b8E = E.b_invariants()
     b2F, b4F, b6F, b8F = F.b_invariants()
 
     if char == 3:
         if j == 0:
-            ulist = (x**4-(b4E/b4F)).roots(multiplicities=False)
-            ans = []
+            ulist = (x**4 - b4E/b4F).roots(multiplicities=False)
             for u in ulist:
-                s = a1E-a1F*u
-                t = a3E-a3F*u**3
-                rlist = (x**3-b4E*x+(b6E-b6F*u**6)).roots(multiplicities=False)
+                s = a1E - a1F*u
+                t = a3E - a3F*u**3
+                rlist = (x**3 - b4E*x + b6E - b6F*u**6).roots(multiplicities=False)
                 for r in rlist:
-                    if JustOne:
-                        return (u, r, s, t+r*a1E)
-                    ans.append((u, r, s, t+r*a1E))
-            if JustOne:
-                return None
-            ans.sort()
-            return ans
+                    yield (u, r, s, t + r*a1E)
         else:
-            ulist = (x**2 - b2E / b2F).roots(multiplicities=False)
-            ans = []
+            ulist = (x**2 - b2E/b2F).roots(multiplicities=False)
             for u in ulist:
                 r = (b4F * u**4 - b4E) / b2E
-                s = (a1E - a1F * u)
-                t = (a3E - a3F * u**3 + a1E * r)
-                if JustOne:
-                    return (u, r, s, t)
-                ans.append((u, r, s, t))
-            if JustOne:
-                return None
-            ans.sort()
-            return ans
+                s = a1E - a1F * u
+                t = a3E - a3F * u**3 + a1E * r
+                yield (u, r, s, t)
+        return
 
-# now char!=2,3:
+    # now char != 2,3:
+
     c4E, c6E = E.c_invariants()
     c4F, c6F = F.c_invariants()
 
@@ -396,19 +361,12 @@ def isomorphisms(E, F, JustOne=False):
         m, um = 4, c4E/c4F
     else:
         m, um = 2, (c6E*c4F)/(c6F*c4E)
-    ulist = (x**m-um).roots(multiplicities=False)
-    ans = []
+    ulist = (x**m - um).roots(multiplicities=False)
     for u in ulist:
         s = (a1F*u - a1E)/2
         r = (a2F*u**2 + a1E*s + s**2 - a2E)/3
         t = (a3F*u**3 - a1E*r - a3E)/2
-        if JustOne:
-            return (u, r, s, t)
-        ans.append((u, r, s, t))
-    if JustOne:
-        return None
-    ans.sort()
-    return ans
+        yield (u, r, s, t)
 
 
 class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
@@ -516,8 +474,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             E = EllipticCurve(baseWI.__call__(inv_urst, list(F.a_invariants())))
 
         elif urst is None:  # try to construct the morphism
-            urst = isomorphisms(E, F, True)
-            if urst is None:
+            try:
+                urst = next(_isomorphisms(E, F))
+            except StopIteration:
                 raise ValueError("elliptic curves not isomorphic")
             baseWI.__init__(self, *urst)
 
@@ -549,7 +508,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: w1 = E.isomorphism_to(F)
             sage: w1 == w1
             True
-            sage: w2 = F.automorphisms()[0] *w1
+            sage: w2 = F.automorphisms()[1] * w1
             sage: w1 == w2
             False
 
@@ -578,7 +537,21 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
-        return baseWI.__richcmp__(left, right, op)
+        if op in (op_EQ, op_NE):
+            return richcmp(left.tuple(), right.tuple(), op)
+
+        # This makes sure that the identity and negation morphisms
+        # come first in a sorted list of WeierstrassIsomorphisms.
+        # More generally, we're making sure that a morphism and its
+        # negative appear next to each other, and that those pairs
+        # of isomorphisms satisfying u=+-1 come first.
+        def _sorting_key(iso):
+            v, w = iso.tuple(), (-iso).tuple()
+            i = 0 if (1,0,0,0) in (v,w) else 1
+            j = 0 if v[0] == 1 else 1 if w[0] == 1 else 2
+            return (i,) + min(v,w) + (j,) + v
+
+        return richcmp(_sorting_key(left), _sorting_key(right), op)
 
     def _eval(self, P):
         r"""

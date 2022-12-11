@@ -572,8 +572,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
                 self._optbound = [section(x) for x in bound.list()]
         return center(self._optbound)
 
-
      # TODO:
      # fast multiplication
      # reduced characteristic polynomial
-

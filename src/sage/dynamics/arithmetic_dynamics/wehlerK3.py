@@ -27,13 +27,12 @@ REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.number_fields import NumberFields
 from sage.misc.functional import sqrt
 from sage.misc.cachefunc import cached_method
 from sage.misc.mrange import xmrange
-from sage.rings.all import CommutativeRing
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
@@ -48,6 +47,7 @@ from copy import copy
 
 _NumberFields = NumberFields()
 _Fields = Fields()
+_CommutativeRings = CommutativeRings()
 
 
 def WehlerK3Surface(polys):
@@ -75,14 +75,12 @@ def WehlerK3Surface(polys):
 
     R = polys[0].parent().base_ring()
     if R in _Fields:
-        if is_FiniteField(R):
+        if R in _Fields.Finite():
             return WehlerK3Surface_finite_field(polys)
-        else:
-            return WehlerK3Surface_field(polys)
-    elif isinstance(R, CommutativeRing):
+        return WehlerK3Surface_field(polys)
+    if R in _CommutativeRings:
         return WehlerK3Surface_ring(polys)
-    else:
-        raise TypeError("R (= %s) must be a commutative ring" % R)
+    raise TypeError("R (= %s) must be a commutative ring" % R)
 
 
 def random_WehlerK3Surface(PP):
@@ -131,7 +129,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
           x*y*v^2 + z^2*u*w
     """
     def __init__(self, polys):
-        if not isinstance(polys, (list,tuple)):
+        if not isinstance(polys, (list, tuple)):
             raise TypeError("polys must be a list or tuple of polynomials")
         R = polys[0].parent()
         vars = R.variable_names()
@@ -2295,7 +2293,6 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             : 3992260691327218828582255586014718568398539828275296031491644987908/18550615454277582153932951051931712107449915856862264913424670784695 :
             1 , -117756062505511/54767410965117 : -23134047983794359/37466994368025041 : 1)]
         """
-
         if not isinstance(N, (list, tuple)):
             N = [0, N]
         try:

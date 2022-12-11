@@ -1098,4 +1098,3 @@ cdef class LookupNameMaker:
             if self.fallback is not None:
                 return self.fallback(name)
             raise NameError("Unknown variable: '{}'".format(name))
-
