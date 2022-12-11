@@ -4182,6 +4182,3 @@ cdef class BinaryCodeClassifier:
         sig_free(ortho_basis)
         sig_free(temp_basis)
         return output
-
-
-

@@ -418,4 +418,3 @@ class Ideal_nc(Ideal_generic):
                 return other.ring().ideal(other.gens(), side='twosided')
 
         raise NotImplementedError("cannot multiply non-commutative ideals")
-

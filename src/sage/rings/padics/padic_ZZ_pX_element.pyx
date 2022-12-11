@@ -914,4 +914,3 @@ cdef get_val_prec(PowComputer_ext pp, a):
             print(py_tmp)
             raise TypeError("modulus must be a positive power of the appropriate prime")
     raise TypeError("unsupported type for list element: %s" % type(a))
-

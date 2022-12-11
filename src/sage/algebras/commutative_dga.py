@@ -211,7 +211,7 @@ class Differential(UniqueRepresentation, Morphism,
                 raise ValueError("The given dictionary does not determine a degree 1 map")
 
         im_gens = tuple(im_gens.get(x, A.zero()) for x in A.gens())
-        return super(Differential, cls).__classcall__(cls, A, im_gens)
+        return super().__classcall__(cls, A, im_gens)
 
     def __init__(self, A, im_gens):
         r"""
@@ -998,9 +998,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                              for i in range(n) if is_odd(tot_degs[i])],
                             side='twosided')
 
-        return super(GCAlgebra, cls).__classcall__(cls, base=base, names=names,
-                                                   degrees=degrees, R=R, I=I,
-                                                   category=category)
+        return super().__classcall__(cls, base=base, names=names,
+                                     degrees=degrees, R=R, I=I,
+                                     category=category)
 
     def __init__(self, base, R=None, I=None, names=None, degrees=None, category=None):
         """
@@ -1236,7 +1236,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                                                         .gens()):
                 return False
             return self.cover_ring().has_coerce_map_from(other.cover_ring())
-        return super(GCAlgebra, self)._coerce_map_from_(other)
+        return super()._coerce_map_from_(other)
 
     def _element_constructor_(self, x, coerce=True):
         r"""
@@ -1755,7 +1755,7 @@ class GCAlgebra_multigraded(GCAlgebra):
                 return False
         elif isinstance(other, GCAlgebra):   # Not multigraded
             return False
-        return super(GCAlgebra_multigraded, self)._coerce_map_from_(other)
+        return super()._coerce_map_from_(other)
 
     def basis(self, n, total=False):
         """

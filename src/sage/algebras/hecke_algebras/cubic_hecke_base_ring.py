@@ -11,17 +11,15 @@ AUTHORS:
 
 - Sebastian Oehms May 2020: initial version
 """
-
-##############################################################################
+# ###########################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 from sage.structure.category_object import normalize_names
 from sage.structure.element import get_coercion_model
 from sage.categories.action import Action
@@ -152,7 +150,7 @@ class GaloisGroupAction(Action):
         for key, value in pol.dict().items():
             newkey = [0] * len(key)
             for pos, k in enumerate(key):
-                newkey[perm(pos+1)-1] = k
+                newkey[perm(pos + 1) - 1] = k
             pol_dict[tuple(newkey)] = value
         return self.domain()(pol_dict)
 
@@ -313,7 +311,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         from sage.interfaces.gap3 import GAP3Element
         if isinstance(x, GAP3Element):
             return self._convert_from_gap3_mvp(x)
-        return super(CubicHeckeExtensionRing, self)._element_constructor_(x, mon=mon)
+        return super()._element_constructor_(x, mon=mon)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -338,8 +336,8 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             markov = R.markov_trace_version()
             a, b, c, *rem = self.gens()
             iu = a + b + c
-            iv = a*b + a*c + b*c
-            iw = a*b*c
+            iv = a * b + a * c + b * c
+            iw = a * b * c
             im_gens = [iu, iv, iw]
             if markov:
                 if self.markov_trace_version():
@@ -351,7 +349,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             else:
                 embedding_into_extension_ring = R.hom(im_gens)
             return embedding_into_extension_ring
-        return super(CubicHeckeExtensionRing, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def hom(self, im_gens, codomain=None, check=True, base_map=None):
         r"""
@@ -383,13 +381,13 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             e3, *im_remain = im_gens
             hom_cycl_gen = self.base_ring().hom([e3], codomain=e3.parent(), check=check, base_map=base_map)
             verbose("hom_cycl_gen %s" % hom_cycl_gen, level=2)
-            return super(CubicHeckeExtensionRing, self).hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
+            return super().hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
         else:
             if base_map is None:
                 raise ValueError('number of images must be four (inculding a '
                                  'third root of unity at first position) or a '
                                  'base_map (on %s) must be given' % self.base_ring())
-            return super(CubicHeckeExtensionRing, self).hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
 
     def _an_element_(self):
         r"""
@@ -1164,10 +1162,10 @@ class CubicHeckeRingOfDefinition(Localization):
         if self._mirror is None:
             if self._is_markov_trace_version():
                 u, v, w, s = self.gens()
-                self._mirror = self.hom([v/w, u/w, ~w, ~s])
+                self._mirror = self.hom([v / w, u / w, ~w, ~s])
             else:
                 u, v, w = self.gens()
-                self._mirror = self.hom([v/w, u/w, ~w])
+                self._mirror = self.hom([v / w, u / w, ~w])
         return self._mirror
 
     def create_specialization(self, im_cubic_equation_parameters, im_writhe_parameter=None):

@@ -1961,4 +1961,3 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         if subdivide:
             M.subdivide([Anr*i for i in range(1,nr)], [Anc*i for i in range(1,nc)])
         return M
-

@@ -805,4 +805,3 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 cdef mpq_t minus_one
 mpq_init(minus_one)
 mpq_set_si(minus_one, -1,1)
-
