@@ -397,7 +397,7 @@ class ModularFormsRing(Parent):
         nb_gens = self.ngens()
         if nb_var != nb_gens:
             raise ValueError('the number of variables (%s) must be equal to the number of generators of the modular forms ring (%s)'%(nb_var, self.ngens()))
-        return {poly_parent.gen(i) : self(gens[i]) for i in range(0, nb_var)}
+        return {poly_parent.gen(i): self(gens[i]) for i in range(0, nb_var)}
 
     def from_polynomial(self, polynomial, gens=None):
         r"""
@@ -518,7 +518,7 @@ class ModularFormsRing(Parent):
             forms_dictionary = forms_datum._forms_dictionary
         elif is_ModularFormElement(forms_datum):
             if self.group().is_subgroup(forms_datum.group()) and self.base_ring().has_coerce_map_from(forms_datum.base_ring()):
-                forms_dictionary = {forms_datum.weight():forms_datum}
+                forms_dictionary = {forms_datum.weight(): forms_datum}
             else:
                 raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistant with the base space: %s'%(forms_datum.group(), forms_datum.base_ring(), self))
         elif forms_datum in self.base_ring():

@@ -443,4 +443,3 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             x^4 + x^3 + x
         """
         return self.shift(-n)
-

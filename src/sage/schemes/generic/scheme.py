@@ -22,11 +22,11 @@ AUTHORS:
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
-
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
+
 
 def is_Scheme(x):
     """
@@ -109,7 +109,7 @@ class Scheme(Parent):
             self._base_scheme = X
         elif is_SchemeMorphism(X):
             self._base_morphism = X
-        elif isinstance(X, CommutativeRing):
+        elif X in CommutativeRings():
             self._base_ring = X
         elif isinstance(X, Map) and X.category_for().is_subcategory(Rings()):
             # X is a morphism of Rings
@@ -253,7 +253,7 @@ class Scheme(Parent):
         if len(args) == 1:
             from sage.schemes.generic.morphism import SchemeMorphism_point
             S = args[0]
-            if isinstance(S, CommutativeRing):
+            if S in CommutativeRings():
                 return self.point_homset(S)
             elif is_Scheme(S):
                 return S.Hom(self)
@@ -866,7 +866,6 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: type(S)
             <class 'sage.schemes.generic.scheme.AffineScheme_with_category'>
         """
-        from sage.categories.commutative_rings import CommutativeRings
         if R not in CommutativeRings():
             raise TypeError("R (={}) must be a commutative ring".format(R))
         self.__R = R
@@ -1142,7 +1141,6 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: Spec(ZZ['x']).base_extend(Spec(QQ))
             Spectrum of Univariate Polynomial Ring in x over Rational Field
         """
-        from sage.categories.commutative_rings import CommutativeRings
         if R in CommutativeRings():
             return AffineScheme(self.coordinate_ring().base_extend(R), self.base_ring())
         if not self.base_scheme() == R.base_scheme():

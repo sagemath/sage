@@ -775,4 +775,3 @@ cdef class CyclotomicFieldConversion(Map):
             return self.phi.preimage(M(x))
         except ValueError:
             raise ValueError('Element {} has no image in the codomain'.format(x))
-

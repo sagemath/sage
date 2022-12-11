@@ -11,7 +11,7 @@ A more convenient notation may be ``R*[a,b,...]`` or ``[a,b,...]*R``.
 If `R` is non-commutative, the former creates a left and the latter
 a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -23,15 +23,22 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from types import GeneratorType
 
-import sage.rings.ring
+from sage.categories.rings import Rings
+from sage.categories.fields import Fields
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
+
+
+# for efficiency
+_Rings = Rings()
+_Fields = Fields()
+
 
 def Ideal(*args, **kwds):
     r"""
@@ -171,7 +178,7 @@ def Ideal(*args, **kwds):
     first = args[0]
 
     inferred_field = False
-    if not isinstance(first, sage.rings.ring.Ring):
+    if first not in _Rings:
         if isinstance(first, Ideal_generic) and len(args) == 1:
             R = first.ring()
             gens = first.gens()
@@ -182,12 +189,12 @@ def Ideal(*args, **kwds):
                 gens = args
             gens = Sequence(gens)
             R = gens.universe()
-            inferred_field = isinstance(R, sage.rings.ring.Field)
+            inferred_field = R in _Fields
     else:
         R = first
         gens = args[1:]
 
-    if not isinstance(R, sage.rings.ring.CommutativeRing):
+    if R not in _Rings.Commutative():
         raise TypeError("R must be a commutative ring")
 
     I = R.ideal(*gens, **kwds)
@@ -199,6 +206,7 @@ def Ideal(*args, **kwds):
                       ' This warning can be muted by passing the base ring to Ideal() explicitly.')
 
     return I
+
 
 def is_Ideal(x):
     r"""

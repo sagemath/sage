@@ -867,4 +867,3 @@ def test(n, m, R, c=2):
 
 ##         sage: C == D
 ##         True
-
