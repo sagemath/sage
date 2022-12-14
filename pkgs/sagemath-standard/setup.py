@@ -91,7 +91,12 @@ else:
     print("Discovering Python/Cython source code....")
     t = time.time()
     from sage.misc.package import is_package_installed_and_updated
-    distributions = ['']
+    distributions = ['',
+                     'sagemath-flint-arb',
+                     'sagemath-gap',
+                     'sagemath-giac',
+                     'sagemath-homfly',
+                     ]
     optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
                                          'coxeter3', 'sirocco', 'meataxe']
     distributions += ['sagemath-{}'.format(pkg)
