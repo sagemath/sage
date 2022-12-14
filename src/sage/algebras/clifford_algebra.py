@@ -6,8 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-09-06): Initial version
 - Trevor K. Karn (2022-07-27): Rewrite basis indexing using FrozenBitset
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2022 Travis Scrimshaw <tcscrims at gmail.com>
 #                 (C) 2022 Trevor Karn <karnx018 at umn.edu>
 #
@@ -15,9 +14,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -631,7 +629,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             return self.element_class(self, {FrozenBitset((i,)): R.one() for i in x})
 
         try:
-            return super(CliffordAlgebra, self)._element_constructor_(x)
+            return super()._element_constructor_(x)
         except TypeError:
             raise TypeError(f'do not know how to make {x=} an element of self')
 

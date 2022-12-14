@@ -395,4 +395,3 @@ def SAT(solver=None, *args, **kwds):
         return GlucoseSyrup(*args, **kwds)
     else:
         raise ValueError("Solver '{}' is not available".format(solver))
-

@@ -4128,7 +4128,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return self.connected_component(Simplex([base_point])).fundamental_group(simplify=simplify)
 
         from sage.groups.free_group import FreeGroup
-        from sage.interfaces.gap import gap
+        from sage.libs.gap.libgap import libgap as gap
         G = self.graph()
         # If the vertices and edges of G are not sortable, e.g., a mix
         # of str and int, Sage+Python 3 may raise a TypeError when

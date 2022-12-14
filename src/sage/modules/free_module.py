@@ -5681,7 +5681,9 @@ class FreeModule_ambient(FreeModule_generic):
 
     def change_ring(self, R):
         """
-        Return the ambient free module over R of the same rank as self.
+        Return the ambient free module over ``R`` of the same rank as ``self``.
+
+        This also preserves the sparsity.
 
         EXAMPLES::
 
@@ -5690,20 +5692,27 @@ class FreeModule_ambient(FreeModule_generic):
             sage: A = ZZ^3; A.change_ring(GF(5))
             Vector space of dimension 3 over Finite Field of size 5
 
-        For ambient modules any change of rings is defined.
-
-        ::
+        For ambient modules any change of rings is defined::
 
             sage: A = GF(5)**3; A.change_ring(QQ)
             Vector space of dimension 3 over Rational Field
+
+        TESTS:
+
+        Check for :trac:`29630`::
+
+            sage: V = VectorSpace(QQ, 2, sparse=True)
+            sage: V.change_ring(RR).is_sparse()
+            True
         """
         if self.base_ring() is R:
             return self
         from .free_quadratic_module import is_FreeQuadraticModule
         if is_FreeQuadraticModule(self):
-            return FreeModule(R, self.rank(), inner_product_matrix=self.inner_product_matrix())
-        else:
-            return FreeModule(R, self.rank())
+            return FreeModule(R, self.rank(),
+                              inner_product_matrix=self.inner_product_matrix(),
+                              sparse=self.is_sparse())
+        return FreeModule(R, self.rank(), sparse=self.is_sparse())
 
     def linear_combination_of_basis(self, v):
         """

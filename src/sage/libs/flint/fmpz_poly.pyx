@@ -441,7 +441,6 @@ cdef class Fmpz_poly(SageObject):
         cdef long nn = n
         fmpz_poly_truncate(self.poly, nn) # mutating!
 
-
     def _sage_(self, var='x'):
         """
         Return self as an element of the sage ZZ[var].
@@ -457,4 +456,3 @@ cdef class Fmpz_poly(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         return ZZ[var](self.list())
-

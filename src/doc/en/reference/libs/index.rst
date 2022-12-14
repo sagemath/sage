@@ -147,6 +147,6 @@ Symmetrica
 
 .. Cannot be imported independently of mpmath: sage/libs/mpmath/ext_main sage/libs/mpmath/ext_impl sage/libs/mpmath/ext_libmp
 
-.. Modules depending on optional packages: sage/libs/coxeter3/coxeter sage/libs/coxeter3/coxeter_group sage/libs/fes sage/libs/homfly sage/libs/braiding
+.. Modules depending on optional packages: sage/libs/coxeter3/coxeter sage/libs/coxeter3/coxeter_group  sage/libs/homfly sage/libs/braiding
 
 .. include:: ../footer.txt

@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Prepare
         id: prepare
@@ -55,7 +55,7 @@ jobs:
 
       - name: Set up node to install pyright
         if: always() && steps.prepare.outcome == 'success'
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '12'
 

@@ -1919,5 +1919,3 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             return FiniteField_ntl_gf2e._element_constructor_(self, x)
         except TypeError:
             return ResidueField_generic._element_constructor_(self, x)
-
-

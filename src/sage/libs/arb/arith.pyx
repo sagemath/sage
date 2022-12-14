@@ -58,6 +58,7 @@ def bernoulli(n):
     fmpq_clear(x)
     return q
 
+
 def hilbert_class_polynomial(D):
     """
     Return the Hilbert class polynomial for discriminant ``D`` using ``arb``.
@@ -83,4 +84,3 @@ def hilbert_class_polynomial(D):
     poly = PolynomialRing(ZZ, "x", implementation="FLINT")()
     acb_modular_hilbert_class_poly(poly.__poly, n)
     return poly
-

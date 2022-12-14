@@ -1466,13 +1466,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             S = PolynomialSequence( R_solving, [ R_solving(f) for f in T] )
 
         if S != []:
-            if algorithm == "exhaustive_search":
-                from sage.features.fes import LibFES
-                LibFES().require()
-                from sage.libs.fes import exhaustive_search
-                solutions = exhaustive_search(S, max_sols=n, verbose=verbose, **kwds)
-
-            elif algorithm == "polybori":
+            if algorithm == "polybori":
                 I = S.ideal()
                 if verbose:
                     I.groebner_basis(full_prot=True, **kwds)

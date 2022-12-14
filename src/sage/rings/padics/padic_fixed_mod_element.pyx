@@ -567,7 +567,6 @@ cdef class pAdicFixedModElement(FMElement):
         return ans
 
 
-
 def make_pAdicFixedModElement(parent, value):
     """
     Unpickles a fixed modulus element.
@@ -580,4 +579,3 @@ def make_pAdicFixedModElement(parent, value):
         2*5^2 + 3*5^3
     """
     return unpickle_fme_v2(pAdicFixedModElement, parent, value)
-
