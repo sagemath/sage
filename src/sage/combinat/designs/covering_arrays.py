@@ -194,8 +194,8 @@ class CoveringArray():
                   (0,1,0,1,1,0,0,1,0,0),\
                   (1,0,0,0,0,0,0,1,1,1),\
                   (0,1,0,0,0,1,1,1,0,1))
-        sage: CoveringArray(C,2,3)
-        A 5 by 4 Covering Array of strength 3 with 2 levels
+        sage: CoveringArray(C,3,2)
+        A 13 by 10 Covering Array of strength 3 with 2 levels
         
         sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                    (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -213,6 +213,7 @@ class CoveringArray():
                    (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
                    (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
                    (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+        sage: CoveringArray(C)
         A 7 by 15 Covering Array of strength 2 with 2 levels
 
     """
@@ -222,6 +223,7 @@ class CoveringArray():
         
         EXAMPLES::
         
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -243,8 +245,8 @@ class CoveringArray():
                       (0,1,0,1,1,0,0,1,0,0),\
                       (1,0,0,0,0,0,0,1,1,1),\
                       (0,1,0,0,0,1,1,1,0,1))
-            sage: CoveringArray(C,2,3)
-            A 5 by 4 Covering Array of strength 3 with 2 levels
+            sage: CoveringArray(C,3,2)
+            A 13 by 10 Covering Array of strength 3 with 2 levels
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -262,6 +264,7 @@ class CoveringArray():
                        (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
                        (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
                        (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CoveringArray(C)
             A 7 by 15 Covering Array of strength 2 with 2 levels
 
     """
@@ -319,7 +322,8 @@ class CoveringArray():
         Return the number of rows, N, of the covering array
         
         EXAMPLES::
-                
+               
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -336,7 +340,8 @@ class CoveringArray():
         Returns the number of columns, k, of the covering array
         
         EXAMPLES::
-                
+            
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -356,6 +361,7 @@ class CoveringArray():
     
         EXAMPLES::
                 
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -375,6 +381,7 @@ class CoveringArray():
     
         EXAMPLES::
                 
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -394,6 +401,7 @@ class CoveringArray():
         
         EXAMPLES::
                 
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -401,7 +409,7 @@ class CoveringArray():
                        (0,1,1,1),)         
             sage: CA = CoveringArray(C,2,2)
             sage: CA.array_representation()
-            ((0,0,0,0),(0,1,1,1),(1,0,1,1),(1,1,0,1),(1,1,1,0))
+            ((0, 0, 0, 0), (0, 1, 1, 1), (1, 0, 1, 1), (1, 1, 0, 1), (1, 1, 1, 0))
             
         """
         return self.__array
@@ -413,6 +421,7 @@ class CoveringArray():
         
         EXAMPLES::
         
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -434,8 +443,8 @@ class CoveringArray():
                       (0,1,0,1,1,0,0,1,0,0),\
                       (1,0,0,0,0,0,0,1,1,1),\
                       (0,1,0,0,0,1,1,1,0,1))
-            sage: CoveringArray(C,2,3)
-            A 5 by 4 Covering Array of strength 3 with 2 levels
+            sage: CoveringArray(C,3,2)
+            A 13 by 10 Covering Array of strength 3 with 2 levels
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -453,7 +462,9 @@ class CoveringArray():
                        (1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1),\
                        (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
                        (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
+            sage: CoveringArray(C)
             A 7 by 15 Covering Array of strength 2 with 2 levels
+
 
     """
         return 'A {} by {} Covering Array of strength {} with {} levels'.format(
@@ -467,6 +478,7 @@ class CoveringArray():
         
         EXAMPLES::
                 
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
                        (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -493,6 +505,7 @@ class CoveringArray():
         
         EXAMPLES::
     
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
                        (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -501,7 +514,6 @@ class CoveringArray():
                        (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),\
                        (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
             sage: CA = CoveringArray(C,2,2)
-            sage: CA.pprint()
             sage: hash(CA)
             -2522140066511050633
         """
@@ -513,11 +525,13 @@ class CoveringArray():
         array with rows sorted in lexicographic order
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
                        (1,1,0,1),\
-                       (0,1,1,1),\
+                       (0,1,1,1))
             sage: C2 = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -536,9 +550,12 @@ class CoveringArray():
                        (0,1,0,1,1,0,0,1,0,0),\
                        (1,0,0,0,0,0,0,1,1,1),\
                        (0,1,0,0,0,1,1,1,0,1))
-            sage: C1==C2
+            sage: CA1 = CoveringArray(C1)
+            sage: CA2 = CoveringArray(C2)
+            sage: CA3 = CoveringArray(C3)
+            sage: CA1==CA2
             True
-            sage: C1==C3
+            sage: CA1==CA3
             False
         """
         if self.array_representation() == other.array_representation():
@@ -552,11 +569,13 @@ class CoveringArray():
         the array with rows sorted in lexicographic order
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
                        (1,1,0,1),\
-                       (0,1,1,1),)
+                       (0,1,1,1))
             sage: C2 = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -575,9 +594,12 @@ class CoveringArray():
                        (0,1,0,1,1,0,0,1,0,0),\
                        (1,0,0,0,0,0,0,1,1,1),\
                        (0,1,0,0,0,1,1,1,0,1))
-            sage: C1!=C2
+            sage: CA1 = CoveringArray(C1)
+            sage: CA2 = CoveringArray(C2)
+            sage: CA3 = CoveringArray(C3)
+            sage: CA1!=CA2
             False
-            sage: C1!=C3
+            sage: CA1!=CA3
             True
         """
         if self.array_representation() != other.array_representation():
@@ -591,6 +613,8 @@ class CoveringArray():
         based on the lexicographic order on the rows
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -618,6 +642,8 @@ class CoveringArray():
         equal to another based on the lexicographic order on the rows
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -645,6 +671,8 @@ class CoveringArray():
         another based on the lexicographic order on the rows
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -672,6 +700,8 @@ class CoveringArray():
         equal to another based on the lexicographic order on the rows
         
         EXAMPLES::
+        
+            sage: from sage.combinat.designs.covering_arrays import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
