@@ -80,7 +80,7 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
-pypi-sdists: sage_setup
+pypi-sdists: sage_setup python_build
 	./sage --sh build/pkgs/sage_conf/spkg-src
 	./sage --sh build/pkgs/sage_sws2rst/spkg-src
 	./sage --sh build/pkgs/sage_docbuild/spkg-src
