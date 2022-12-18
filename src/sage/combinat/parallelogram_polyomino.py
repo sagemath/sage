@@ -40,7 +40,7 @@ from sage.matrix.constructor import matrix
 from sage.combinat.combinat import catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.trig", "cos", "sin")
+lazy_import("sage.functions.trig", ["cos", "sin"])
 from sage.misc.functional import sqrt
 
 from sage.misc.lazy_import import lazy_import

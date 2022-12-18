@@ -11,7 +11,7 @@ Affine `n` space over a ring
 # ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.orthogonal_polys", "chebyshev_T", "chebyshev_U")
+lazy_import("sage.functions.orthogonal_polys", ["chebyshev_T", "chebyshev_U"])
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

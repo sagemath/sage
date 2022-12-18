@@ -47,7 +47,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.trig", "cos", "sin")
+lazy_import("sage.functions.trig", ["cos", "sin"])
 lazy_import("sage.plot.plot", "parametric_plot")
 lazy_import("sage.plot.graphics", "Graphics")
 lazy_import("sage.plot.polygon", "polygon2d")
@@ -55,12 +55,12 @@ lazy_import("sage.plot.circle", "circle")
 lazy_import("sage.plot.bezier_path", "bezier_path")
 lazy_import("sage.plot.point", "point")
 lazy_import("sage.plot.line", "line")
-lazy_import("sage.symbolic.constants", "pi", "I")
+lazy_import("sage.symbolic.constants", ["pi", "I"])
 lazy_import("sage.functions.log", "exp")
 lazy_import("sage.functions.other", "ceil")
 from sage.misc.flatten import flatten
 lazy_import("sage.symbolic.ring", "SR")
-lazy_import("sage.functions.other", "real_part", "imag_part")
+lazy_import("sage.functions.other", ["real_part", "imag_part"])
 from sage.misc.cachefunc import cached_method
 
 

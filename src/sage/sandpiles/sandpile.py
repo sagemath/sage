@@ -348,7 +348,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-lazy_import("sage.symbolic.constants", "I", "pi")
+lazy_import("sage.symbolic.constants", ["I", "pi"])
 lazy_import("sage.symbolic.ring", "SR")
 from sage.features.four_ti_2 import FourTi2Executable
 lazy_import("sage.plot.colors", "rainbow")
