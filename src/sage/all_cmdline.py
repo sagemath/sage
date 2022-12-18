@@ -15,7 +15,10 @@ This is all.py (load all sage functions) plus set-up for the Sage commandline.
 sage_mode = 'cmdline'
 
 from sage.all import *
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.predefined", "x")
+
+try:
+    from sage.calculus.predefined import x
+except ImportError:
+    pass
 
 sage.misc.session.init()
