@@ -566,6 +566,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: magma = Magma()
             sage: magma._preparse_colon_equals = False
             sage: magma._preparse('a = 5')
             'a = 5'

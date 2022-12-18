@@ -672,7 +672,7 @@ class Kash(Expect):
 
         EXAMPLES::
 
-            sage: kash._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
+            sage: Kash()._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
             'Expand(x,y,rec(Prec:=10))'
         """
         if not kwds:

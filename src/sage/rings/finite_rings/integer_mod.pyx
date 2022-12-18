@@ -91,8 +91,6 @@ from sage.libs.pari.all import pari, PariError
 import sage.rings.integer_ring as integer_ring
 import sage.rings.rational_field
 
-import sage.interfaces.all
-
 import sage.rings.integer
 cimport sage.rings.integer
 from sage.rings.integer cimport Integer

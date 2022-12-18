@@ -474,7 +474,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: lie.__reduce__()
+            sage: LiE().__reduce__()
             (<function reduce_load_lie at 0x...>, ())
         """
         return reduce_load_lie, tuple([])

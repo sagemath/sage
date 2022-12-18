@@ -237,7 +237,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: rlm2, t = macaulay2.__reduce__()
+            sage: rlm2, t = Macaulay2().__reduce__()
             sage: rlm2(*t)
             Macaulay2
         """

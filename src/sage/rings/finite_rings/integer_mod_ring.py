@@ -72,7 +72,6 @@ import sage.rings.quotient_ring as quotient_ring
 
 from sage.libs.pari.all import pari, PariError
 
-import sage.interfaces.all
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.factory import UniqueFactory
