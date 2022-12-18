@@ -291,6 +291,12 @@ lazy_import('sage.misc.sageinspect', 'is_function_or_cython_function',
 set_random_seed()
 
 
+# Relink imported lazy_import objects to point to the appropriate namespace
+
+from sage.misc.lazy_import import clean_namespace
+clean_namespace()
+del clean_namespace
+
 # From now on it is ok to resolve lazy imports
 sage.misc.lazy_import.finish_startup()
 
