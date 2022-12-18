@@ -28,9 +28,7 @@ AUTHORS:
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.functions", "jacobian")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.hyperbolic", "cosh", "sinh")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "exp")
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod

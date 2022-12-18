@@ -62,7 +62,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from sage.rings.integer import Integer
 from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.generalized", "sign")
 from sage.homology.chain_complex import ChainComplex
 from sage.misc.flatten import flatten

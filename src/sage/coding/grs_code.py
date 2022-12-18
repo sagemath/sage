@@ -66,7 +66,6 @@ from sage.misc.misc_c import prod
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "binomial")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 
 from .linear_code import AbstractLinearCode

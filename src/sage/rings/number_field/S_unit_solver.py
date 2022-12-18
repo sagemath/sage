@@ -61,7 +61,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RealField, RR
 from sage.rings.complex_mpfr import ComplexField
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "exp")
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import is_real_place, refine_embedding

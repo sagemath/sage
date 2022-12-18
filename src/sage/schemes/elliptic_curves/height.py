@@ -45,8 +45,7 @@ from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.log", "log", "exp")
-from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", ["log", "exp"])
 lazy_import("sage.symbolic.ring", "SR")
 
 

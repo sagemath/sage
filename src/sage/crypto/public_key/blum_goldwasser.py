@@ -36,7 +36,6 @@ from sage.crypto.util import least_significant_bits
 from sage.crypto.util import random_blum_prime
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "Function_floor")
 from sage.monoids.string_monoid import BinaryStrings
 from sage.arith.all import gcd, power_mod, xgcd

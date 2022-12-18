@@ -94,8 +94,7 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
+from sage.symbolic.ring import SR
 
 from sage.libs.ecl import EclObject, ecl_eval
 
@@ -1160,8 +1159,7 @@ def reduce_load_MaximaLib():
 import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.operators", "FDerivativeOperator", "add_vararg, mul_vararg")
+from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 
 car=EclObject("car")
 cdr=EclObject("cdr")
@@ -1631,8 +1629,7 @@ def sr_to_max(expr):
             return maxima(expr).ecl()
 
 # This goes from EclObject to SR
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.expression", "symbol_table")
+from sage.symbolic.expression import symbol_table
 max_to_pynac_table = symbol_table['maxima']
 
 

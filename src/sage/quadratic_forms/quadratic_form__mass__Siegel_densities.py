@@ -22,7 +22,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.all", "sgn")
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.misc.functional import squarefree_part
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "pi")
 from sage.matrix.matrix_space import MatrixSpace
 

@@ -81,9 +81,9 @@ import sage.matrix.all as matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "floor")
 from sage.misc.cachefunc import cached_method
+
 
 @richcmp_method
 class pAdicLseries(SageObject):

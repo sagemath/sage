@@ -58,7 +58,6 @@ EXAMPLES::
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "exp")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "ceil")
 from sage.rings.all import RealField, RR, ZZ, QQ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler

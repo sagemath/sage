@@ -17,7 +17,7 @@ from sage.rings.real_double import RDF
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "floor")
+lazy_import("sage.functions.other", "floor")
 from sage.rings.integer_ring import ZZ
 from sage.arith.all import GCD
 

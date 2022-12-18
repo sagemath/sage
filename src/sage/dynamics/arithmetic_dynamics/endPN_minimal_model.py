@@ -34,7 +34,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "e")
 from sage.arith.all import gcd
 from copy import copy

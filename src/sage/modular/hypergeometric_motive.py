@@ -66,9 +66,7 @@ from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.generalized", "sgn")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "floor", "ceil")
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial

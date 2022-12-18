@@ -55,8 +55,7 @@ Test pickling/unpickling::
 #*****************************************************************************
 
 from . import free_module_element
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.all", "Expression")
+from sage.symbolic.all import Expression
 
 
 def apply_map(phi):

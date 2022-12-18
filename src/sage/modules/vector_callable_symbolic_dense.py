@@ -50,8 +50,7 @@ TESTS::
 #*****************************************************************************
 
 from . import free_module_element
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
+from sage.symbolic.ring import SR
 
 
 class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):

@@ -203,9 +203,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.ring import Ring
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.var", "var")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.functional", "diff")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer

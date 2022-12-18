@@ -93,7 +93,7 @@ REFERENCES:
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log")
-lazy_import("sage.functions.other", "floor, ceil")
+lazy_import("sage.functions.other", ["floor", "ceil"])
 from sage.misc.functional import sqrt, cyclotomic_polynomial, round
 from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import randint

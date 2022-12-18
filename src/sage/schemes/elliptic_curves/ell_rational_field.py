@@ -92,7 +92,6 @@ lazy_import("sage.functions.log", "log")
 
 import sage.matrix.all as matrix
 from sage.libs.pari.all import pari
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.gamma", "gamma_inc")
 from math import sqrt
 from sage.interfaces.gp import gp
