@@ -20,15 +20,15 @@ from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStru
 from sage.categories.lie_groups import LieGroups
 from sage.categories.lie_algebras import LieAlgebras
 from sage.groups.group import Group
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.manifolds.differentiable.manifold", "DifferentiableManifold")
-lazy_import("sage.manifolds.structure", ("DifferentialStructure", "RealDifferentialStructure"))
+from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.structure import (DifferentialStructure,
+                                      RealDifferentialStructure)
 from sage.misc.cachefunc import cached_method
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
-lazy_import("sage.symbolic.ring", "SR")
+from sage.symbolic.ring import SR
 
 
 def _symbolic_lie_algebra_copy(L):
