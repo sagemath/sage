@@ -18,4 +18,8 @@ set -e
 cd "$SAGE_ROOT"/build/pkgs/sagelib
 
 cd src
-python3 -m build --sdist --outdir "$SAGE_DISTFILES"
+
+# Get rid of old sagemath_standard.egg-info/SOURCES.txt
+rm -Rf *.egg-info
+
+python3 -m build --sdist --no-isolation --outdir "$SAGE_DISTFILES"
