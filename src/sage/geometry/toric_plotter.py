@@ -50,10 +50,9 @@ from copy import copy
 from math import pi
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "arccos, arctan2, ceil", "floor")
+lazy_import("sage.functions.all", ["arccos", "arctan2", "ceil", "floor"])
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.modules.free_module_element import vector
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Color", "Graphics",
                               "arrow", "disk", "line", "point",
                               "polygon", "rainbow", "text"])
