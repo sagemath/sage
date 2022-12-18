@@ -129,7 +129,7 @@ cdef class M4RIE_finite_field:
             gf2e_free(self.ff)
 
 cdef m4ri_word poly_to_word(f):
-    return f.integer_representation()
+    return f.to_integer()
 
 
 cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):

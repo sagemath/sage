@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Configure git
       run: git config --global core.symlinks true
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install Ubuntu 20.04 (in WSL)
       run: |
         (New-Object System.Net.WebClient).DownloadFile("https://aka.ms/wslubuntu2004", "Ubuntu.appx")
@@ -44,7 +44,7 @@ jobs:
       run: mkdir -p "artifacts/logs"; cp -r .tox/*/log "artifacts/logs"
       shell: bash
       if: always()
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         path: artifacts
         name: logs

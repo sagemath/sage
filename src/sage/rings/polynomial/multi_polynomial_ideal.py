@@ -3093,12 +3093,21 @@ class MPolynomialIdeal_singular_repr(
             sage: I = R.ideal(x^2-2*x*z+5, x*y^2+y*z+1, 3*y^2-8*x*z)
             sage: I._normal_basis_libsingular(5)
             []
+
+        Check what happens with weights but no degree (:trac:`34789`)::
+
+            sage: TO = TermOrder('wdegrevlex', (2,))
+            sage: R = PolynomialRing(QQ, 1, ['k'], order=TO)
+            sage: k = R.gen()
+            sage: I = R.ideal([k**2])
+            sage: I.normal_basis()
+            [k, 1]
         """
         from sage.rings.polynomial.multi_polynomial_ideal_libsingular import kbase_libsingular
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         gb = self._groebner_basis_libsingular()
         J = self.ring().ideal(gb)
-        if weights is None:
+        if weights is None or degree is None:
             res = kbase_libsingular(J, degree)
         else:
             from sage.libs.singular.function_factory import ff
@@ -3180,21 +3189,8 @@ class MPolynomialIdeal_singular_repr(
             sage: S.<x,y,z> = PolynomialRing(GF(2), order=T)
             sage: S.ideal(x^6 + y^3 + z^2).normal_basis(6, algorithm='singular')
             [x^4*y, x^2*y^2, y^3, x^3*z, x*y*z, z^2]
-
-        Check the deprecation::
-
-            sage: R.<x,y> = PolynomialRing(QQ)
-            sage: _ = R.ideal(x^2+y^2, x*y+2*y).normal_basis('singular')
-            doctest:...: DeprecationWarning: "algorithm" should be used as keyword argument
-            See https://trac.sagemath.org/29543 for details.
         """
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        if isinstance(degree, str):
-            from sage.misc.superseded import deprecation
-            deprecation(29543,
-                        '"algorithm" should be used as keyword argument')
-            algorithm = degree
-            degree = None
 
         weights = tuple(x.degree() for x in self.ring().gens())
         if all(w == 1 for w in weights):

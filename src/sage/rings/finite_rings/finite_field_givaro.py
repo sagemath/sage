@@ -23,6 +23,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
 from sage.libs.pari.all import pari
+from sage.misc.superseded import deprecated_function_alias
 
 
 class FiniteField_givaro(FiniteField):
@@ -479,7 +480,7 @@ class FiniteField_givaro(FiniteField):
         """
         return self._cache.int_to_log(n)
 
-    def fetch_int(self, n):
+    def from_integer(self, n):
         r"""
         Given an integer `n` return a finite field element in ``self``
         which equals `n` under the condition that :meth:`gen()` is set to
@@ -488,14 +489,16 @@ class FiniteField_givaro(FiniteField):
         EXAMPLES::
 
             sage: k.<a> = GF(2^8)
-            sage: k.fetch_int(8)
+            sage: k.from_integer(8)
             a^3
-            sage: e = k.fetch_int(151); e
+            sage: e = k.from_integer(151); e
             a^7 + a^4 + a^2 + a + 1
             sage: 2^7 + 2^4 + 2^2 + 2 + 1
             151
         """
         return self._cache.fetch_int(n)
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

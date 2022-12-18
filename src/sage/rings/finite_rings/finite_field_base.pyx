@@ -41,7 +41,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
 from sage.rings.integer cimport Integer
 import sage.rings.abc
-from sage.misc.superseded import deprecation_cython as deprecation
+from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
@@ -406,50 +406,60 @@ cdef class FiniteField(Field):
         if lim == <unsigned long>(-1):
             raise NotImplementedError("iterating over all elements of a large finite field is not supported")
 
-    def fetch_int(self, n):
+    def from_integer(self, n, reverse=False):
         r"""
-        Return the element of ``self`` that equals `n` under the condition that
-        :meth:`gen()` is set to the characteristic of the finite field ``self``.
+        Return the finite field element obtained by reinterpreting the base-`p`
+        expansion of `n` as a polynomial and evaluating it at the generator of
+        this finite field.
+
+        If ``reverse`` is set to ``True`` (default: ``False``),
+        the list of digits is reversed prior to evaluation.
+
+        Inverse of :meth:`sage.rings.finite_rings.element_base.FinitePolyExtElement.to_integer`.
 
         INPUT:
 
-        - `n` -- integer. Must not be negative, and must be less than the
-          cardinality of ``self``.
+        - `n` -- integer between `0` and the cardinality of this field minus `1`.
 
         EXAMPLES::
 
             sage: p = 4091
             sage: F = GF(p^4, 'a')
             sage: n = 100*p^3 + 37*p^2 + 12*p + 6
-            sage: F.fetch_int(n)
+            sage: F.from_integer(n)
             100*a^3 + 37*a^2 + 12*a + 6
-            sage: F.fetch_int(n) in F
+            sage: F.from_integer(n) in F
             True
+            sage: F.from_integer(n, reverse=True)
+            6*a^3 + 12*a^2 + 37*a + 100
 
         TESTS::
 
             sage: F = GF(19^5)
-            sage: F.fetch_int(0)
+            sage: F.from_integer(0)
             0
             sage: _.parent()
             Finite Field in ... of size 19^5
-            sage: F.fetch_int(-5)
+            sage: F.from_integer(-5)
             Traceback (most recent call last):
             ...
-            TypeError: n must be between 0 and self.order()
-            sage: F.fetch_int(F.cardinality())
+            ValueError: n must be between 0 and self.order()
+            sage: F.from_integer(F.cardinality())
             Traceback (most recent call last):
             ...
-            TypeError: n must be between 0 and self.order()
+            ValueError: n must be between 0 and self.order()
         """
         n = Integer(n)
-        if (n < 0) or (n >= self.order()):
-            raise TypeError("n must be between 0 and self.order()")
-        if n == 0:
-            return self.zero()
-        cdef list digs = n.digits(base=self.characteristic())
+        if not 0 <= n < self.order():
+            raise ValueError("n must be between 0 and self.order()")
+        cdef list digs = n.digits(self.characteristic())
         g = self.gen()
-        return self.sum(self(d) * g**i for i, d in enumerate(digs) if d)
+        r = self.zero()
+        for d in (digs if reverse else digs[::-1]):
+            r = r * g + self(d)
+        return r
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """

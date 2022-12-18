@@ -690,4 +690,3 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             q.append(c)
         q.reverse()
         return (self._new_c(q, parent), self._new_c(a[:db], parent, 1))
-

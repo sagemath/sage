@@ -1741,15 +1741,15 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex") # not tested (broken with matplotlib 3.6)
+        sage: plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex")
+        g = plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
         sphinx_plot(g)
 
-    This is particularly useful when setting custom ticks in multiples of `pi`.
+    This is particularly useful when setting custom ticks in multiples of `\pi`.
 
     ::
 

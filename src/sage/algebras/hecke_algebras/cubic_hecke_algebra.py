@@ -113,17 +113,15 @@ AUTHORS:
 
 - Sebastian Oehms May 2020: initial version
 """
-
-##############################################################################
+# ###########################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 from warnings import warn
 
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -188,7 +186,8 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
         inverse_Tietze = ()
         len_self = len(self_Tietze)
 
-        inverse_Tietze = tuple([-1*self_Tietze[len_self - i - 1] for i in range(len_self)])
+        inverse_Tietze = tuple([-1 * self_Tietze[len_self - i - 1]
+                                for i in range(len_self)])
         P = self.parent()
         return P(inverse_Tietze)
 
@@ -829,9 +828,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         from sage.structure.category_object import normalize_names
         names = tuple(normalize_names(n, names))
-        return super(CubicHeckeAlgebra, cls).__classcall__(cls, names,
-                                                           cubic_equation_parameters=cubic_equation_parameters,
-                                                           cubic_equation_roots=cubic_equation_roots)
+        return super().__classcall__(cls, names,
+                                     cubic_equation_parameters=cubic_equation_parameters,
+                                     cubic_equation_roots=cubic_equation_roots)
 
     def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None):
         r"""
@@ -3272,7 +3271,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         if nstrands == self._nstrands - 1 and self._cubic_hecke_subalgebra is not None:
             return self._cubic_hecke_subalgebra
 
-        names_red = names[:nstrands-1]
+        names_red = names[:nstrands - 1]
         if self.base_ring() == self.base_ring(generic=True):
             SubHeckeAlg = CubicHeckeAlgebra(names=names_red)
         else:

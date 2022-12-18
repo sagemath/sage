@@ -43,9 +43,9 @@ REFERENCES:
 import sys
 from cysignals.memory cimport sig_malloc, sig_free
 
-import sage.plot.plot
 from sage.libs.gsl.all cimport *
 import sage.misc.prandom as random
+import sage.rings.real_double
 from sage.modules.free_module_element import vector
 
 #TODO: Add more distributions available in gsl
@@ -952,7 +952,7 @@ cdef class RealDistribution(ProbabilityDistribution):
     def plot(self, *args, **kwds):
         """
         Plot the distribution function for the probability
-        distribution. Parameters to ``sage.plot.plot.plot.plot`` can be
+        distribution. Parameters to :func:`sage.plot.plot.plot` can be
         passed through ``*args`` and ``**kwds``.
 
         EXAMPLES::
@@ -960,8 +960,9 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('uniform', [0, 2])
             sage: P = T.plot()
         """
+        from sage.plot.plot import plot
+        return plot(self.distribution_function, *args, **kwds)
 
-        return sage.plot.plot.plot(self.distribution_function, *args, **kwds)
 
 cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     """
