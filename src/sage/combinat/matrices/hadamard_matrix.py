@@ -31,7 +31,7 @@ of `4`.
 
 The module below implements the Paley constructions (see for example
 [Hora]_) and the Sylvester construction. It also allows you to pull a
-Hadamard matrix from the database at [HadaSloa]_.
+Hadamard matrix from the database at [SloaHada]_.
 
 AUTHORS:
 
@@ -39,11 +39,11 @@ AUTHORS:
 
 REFERENCES:
 
-.. [HadaSloa] \N.J.A. Sloane's Library of Hadamard Matrices, at
-   http://neilsloane.com/hadamard/
-.. [HadaWiki] Hadamard matrices on Wikipedia, :wikipedia:`Hadamard_matrix`
-.. [Hora] \K. J. Horadam, Hadamard Matrices and Their Applications,
-   Princeton University Press, 2006.
+- [SloaHada]_
+
+- [HadaWiki]_
+
+- [Hora]_
 """
 
 #*****************************************************************************
@@ -62,12 +62,15 @@ from sage.arith.all import is_square, is_prime_power, divisors
 from math import sqrt
 from sage.matrix.constructor import identity_matrix as I
 from sage.matrix.constructor import ones_matrix     as J
+from sage.matrix.constructor import zero_matrix
 from sage.misc.unknown import Unknown
 from sage.cpython.string import bytes_to_str
+from sage.modules.free_module_element import vector
+from sage.combinat.t_sequences import T_sequences_smallcases
 
 
 def normalise_hadamard(H):
-    """
+    r"""
     Return the normalised Hadamard matrix corresponding to ``H``.
 
     The normalised Hadamard matrix corresponding to a Hadamard matrix `H` is a
@@ -223,9 +226,871 @@ def hadamard_matrix_paleyII(n):
 
     return normalise_hadamard(H)
 
+def hadamard_matrix_williamson_type(a, b, c, d, check=True):
+    r"""
+    Construction of Williamson type Hadamard matrix.
+
+    Given `n\times n` circulant matrices `A`, `B`, `C`, `D` with 1,-1 entries,
+    and satisfying `AA^\top + BB^\top + CC^\top + DD^\top = 4nI`,
+    one can construct a  Hadamard matrix of order `4n`, cf. [Ha83]_.
+
+    INPUT:
+
+    - ``a`` -- (1,-1) list specifying the 1st row of `A`.
+
+    - ``b`` -- (1,-1) list specifying the 1st row of `B`.
+
+    - ``d`` -- (1,-1) list specifying the 1st row of `C`.
+
+    - ``c`` -- (1,-1) list specifying the 1st row of `D`.
+
+    - ``check`` (boolean) -- Whether to check that the output is an Hadamard matrix before returning it.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_williamson_type
+        sage: a = [ 1,  1, 1]
+        sage: b = [ 1, -1, -1]
+        sage: c = [ 1, -1, -1]
+        sage: d = [ 1, -1, -1]
+        sage: M = hadamard_matrix_williamson_type(a,b,c,d,check=True)
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_williamson_type, is_hadamard_matrix
+        sage: a = [ 1,  1, 1]
+        sage: b = [ 1, -1, -1]
+        sage: c = [ 1, -1, -1]
+        sage: d = [ 1, -1, -1]
+        sage: is_hadamard_matrix(hadamard_matrix_williamson_type(a,b,c,d))
+        True
+        sage: e = [1, 1, 1]
+        sage: hadamard_matrix_williamson_type(a,b,c,e, check=True)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: f = [1, -1, 1, -1]
+        sage: hadamard_matrix_williamson_type(a,b,c,f, check=True)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    A, B, C, D = map(matrix.circulant, [a, b, c, d])
+
+    n = len(a)
+    assert len(a) == len(b) == len(c) == len(d)
+    assert A*A.T+B*B.T+C*C.T+D*D.T==4*n*I(n)
+
+    M = block_matrix([[ A,  B,  C,  D],
+                      [-B,  A, -D,  C],
+                      [-C,  D,  A, -B],
+                      [-D, -C,  B, A]])
+    if check:
+        assert is_hadamard_matrix(M, normalized=False, skew=False)
+    return M
+
+def williamson_type_quadruples_smallcases(n, existence=False):
+    r"""
+    Quadruples of matrices that can be used to construct Williamson type Hadamard matrices.
+
+    This function contains for some values of n, four `n\times n` matrices used in the
+    Williamson construction of Hadamard matrices. Namely, the function returns the first row of
+    4 `n\times n` circulant matrices with the properties described in
+    :func:`sage.combinat.matrices.hadamard_matrix.hadamard_matrix_williamson_type`.
+    The matrices for n=29 and n=43 are given in [Ha83]_.
+
+    INPUT:
+
+    - ``n`` -- the order of the matrices to be returned
+
+    - ``existence`` -- if true, only check that we have the quadruple (default false).
+
+    OUTPUT:
+
+    If ``existence`` is false, returns a tuple containing four vectors, each being the first line
+    of one of the four matrices. It raises an error if no such matrices are available.
+    If ``existence`` is true, returns a boolean representing whether the matrices are available or not.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import williamson_type_quadruples_smallcases
+        sage: williamson_type_quadruples_smallcases(29)
+        ((1, 1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, 1, 1),
+         (1, -1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, 1, -1),
+         (1, 1, 1, 1, -1, 1, 1, -1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, -1, 1, 1, -1, 1, 1, 1),
+         (1, 1, -1, -1, 1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, -1, 1))
+        sage: williamson_type_quadruples_smallcases(43, existence=True)
+        True
+
+    TESTS::
+
+        sage: williamson_type_quadruples_smallcases(123, existence=True)
+        False
+        sage: williamson_type_quadruples_smallcases(123)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Williamson type quadruple of order 123 is not yet implemented.
+    """
+    db = {
+        1: ([1], [1], [1], [1]),
+        29: ([1, 1, 1,-1,-1,-1, 1, 1,-1,-1, 1,-1, 1,-1,-1,-1,-1, 1,-1, 1,-1,-1, 1, 1,-1,-1,-1, 1, 1],
+            [1,-1, 1,-1,-1,-1, 1, 1,-1,-1, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1,-1,-1, 1, 1,-1,-1,-1, 1,-1],
+            [1, 1, 1, 1,-1, 1, 1,-1, 1,-1,-1,-1, 1, 1, 1, 1, 1, 1,-1,-1,-1, 1,-1, 1, 1,-1, 1, 1, 1],
+            [1, 1,-1,-1, 1,-1,-1, 1,-1, 1, 1, 1,-1, 1, 1, 1, 1,-1, 1, 1, 1,-1, 1,-1,-1, 1,-1,-1, 1]),
+        43: ([1, 1, -1, -1, -1, 1, 1, 1, 1, -1, 1, -1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, 1, -1, 1, 1, 1, 1, -1, -1, -1, 1],
+            [1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1, -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1],
+            [1, 1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1],
+            [1, -1, -1, -1, 1, 1, -1, -1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, -1]),
+    }
+
+    if existence:
+        return n in db
+
+    if n not in db:
+        raise ValueError("The Williamson type quadruple of order %s is not yet implemented." % n)
+    a, b, c, d = map(vector, db[n])
+    return a, b, c, d
+
+def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
+    r"""
+    Construct Williamson type Hadamard matrices for some small values of n.
+
+    This function uses the data contained in
+    :func:`sage.combinat.matrices.hadamard_matrix.williamson_type_quadruples_smallcases`
+    to create Hadamard matrices of the Williamson type, using the construction from
+    :func:`sage.combinat.matrices.hadamard_matrix.hadamard_matrix_williamson_type`.
+
+    INPUT:
+
+    - ``n`` -- the order of the matrix.
+
+    - ``existence`` -- if true, only check that we can do the construction (default false).
+
+    - ``check`` -- if true (default), check the result.
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import williamson_hadamard_matrix_smallcases
+        sage: williamson_hadamard_matrix_smallcases(116)
+        116 x 116 dense matrix over Integer Ring...
+        sage: williamson_hadamard_matrix_smallcases(172)
+        172 x 172 dense matrix over Integer Ring...
+        sage: williamson_hadamard_matrix_smallcases(100)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Williamson type Hadamard matrix of order 100 is not yet implemented.
+    """
+    assert n%4 == 0
+
+    if not  williamson_type_quadruples_smallcases(n//4, existence=True):
+        if existence:
+            return False
+        raise ValueError("The Williamson type Hadamard matrix of order %s is not yet implemented." % n)
+
+    if existence:
+        return True
+
+    a, b, c, d = williamson_type_quadruples_smallcases(n//4)
+    return hadamard_matrix_williamson_type(a, b, c, d, check=check)
+
+
+def hadamard_matrix_156():
+    r"""
+    Construct an Hadamard matrix of order 156.
+
+    The matrix is created using the construction detailed in [BH1965]_.
+    This uses four circulant matrices of size `13\times 13`,
+    which are composed into a `156\times 156` block matrix.
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix, hadamard_matrix_156
+        sage: is_hadamard_matrix(hadamard_matrix_156())
+        True
+        sage: hadamard_matrix_156()
+        156 x 156 dense matrix over Integer Ring...
+    """
+    a = [1, 1,-1,-1, 1,-1, 1, 1,-1, 1,-1,-1, 1]
+    b = [1,-1,-1,-1, 1, 1, 1, 1, 1, 1,-1,-1,-1]
+    c = [1, 1, 1,-1, 1, 1,-1,-1, 1, 1,-1, 1, 1]
+    d = [1, 1,-1, 1,-1, 1, 1, 1, 1,-1, 1,-1, 1]
+
+    A, B, C, D = map(matrix.circulant, [a, b, c, d])
+
+    return block_matrix([[ A, A, A, B,-B, C,-C,-D, B, C,-D,-D],
+                         [ A,-A, B,-A,-B,-D, D,-C,-B,-D,-C,-C],
+                         [ A,-B,-A, A,-D, D,-B, B,-C,-D, C,-C],
+                         [ B, A,-A,-A, D, D, D, C, C,-B,-B,-C],
+                         [ B,-D, D, D, A, A, A, C,-C, B,-C, B],
+                         [ B, C,-D, D, A,-A, C,-A,-D, C, B,-B],
+                         [ D,-C, B,-B, A,-C,-A, A, B, C, D,-D],
+                         [-C,-D,-C,-D, C, A,-A,-A,-D, B,-B,-B],
+                         [ D,-C,-B,-B,-B, C, C,-D, A, A, A, D],
+                         [-D,-B, C, C, C, B, B,-D, A,-A, D,-A],
+                         [ C,-B,-C, C, D,-B,-D,-B, A,-D,-A, A],
+                         [-C,-D,-D, C,-C,-B, B, B, D, A,-A,-A]])
+
+def construction_four_symbol_delta_code_I(X, Y, Z, W):
+    r"""
+    Construct 4-symbol `\delta` code of length `2n+1`.
+
+    The 4-symbol `\delta` code is constructed from sequences `X, Y, Z, W` of
+    length `n+1`, `n+1`, `n`, `n` satisfying for all `s > 0`:
+
+    .. MATH::
+
+        N_X(s) + N_Y(s) + N_Z(s) + N_W(s) = 0
+
+    where `N_A(s)` is the nonperiodic correlation function:
+
+    .. MATH::
+
+        N_A(s) = \sum_{i=1}^{n-s}a_ia_{i+s}
+
+    The construction (detailed in [Tur1974]_) is as follows:
+
+    .. MATH::
+
+        \begin{aligned}
+        T_1 &= X;Z \\
+        T_2 &= X;-Z \\
+        T_3 &= Y;W \\
+        T_4 &= Y;-W
+        \end{aligned}
+
+    INPUT:
+
+    - ``X`` -- a list, representing the first sequence (length `n+1`).
+
+    - ``Y`` -- a list, representing the second sequence (length `n+1`).
+
+    - ``Z`` -- a list, representing the third sequence (length `n`).
+
+    - ``W`` -- a list, representing the fourth sequence (length `n`).
+
+    OUTPUT:
+        A tuple containing the 4-symbol `\delta` code of length `2n+1`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import construction_four_symbol_delta_code_I
+        sage: construction_four_symbol_delta_code_I([1, 1], [1, -1], [1], [1])
+        ([1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1])
+
+    TESTS::
+
+        sage: construction_four_symbol_delta_code_I([1, 1], [1, -1], [1, 1], [1])
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: construction_four_symbol_delta_code_I([1, 1], [1, 1], [-1], [1])
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    n = len(X)
+    assert len(Y) == n and len(Z) == n-1 and len(W) == n-1
+
+    autocorrelation =  lambda seq, j: sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
+    for j in range(1, n):
+        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+
+    T1 = X + Z
+    T2 = X + [-z for z in Z]
+    T3 = Y + W
+    T4 = Y + [-w for w in W]
+    return T1, T2, T3, T4
+
+
+def construction_four_symbol_delta_code_II(X, Y, Z, W):
+    r"""
+    Construct 4-symbol `\delta` code of length `4n+3`.
+
+    The 4-symbol `\delta` code is constructed from sequences  `X, Y, Z, W` of
+    length `n+1`, `n+1`, `n`, `n` satisfying for all `s > 0`:
+
+    .. MATH::
+        N_X(s) + N_Y(s) + N_Z(s) + N_W(s) = 0
+
+    where `N_A(s)` is the nonperiodic correlation function:
+
+    .. MATH::
+
+        N_A(s) = \sum_{i=1}^{n-s}a_ia_{i+s}
+
+    The construction (detailed in [Tur1974]_) is as follows (writing
+    `A/B` to mean `A` alternated with `B`):
+
+    .. MATH::
+
+        \begin{aligned}
+        T_1 &= X/Z;Y/W;1 \\
+        T_2 &= X/Z;Y/-W;-1 \\
+        T_3 &= X/Z;-Y/-W;1 \\
+        T_4 &= X/Z;-Y/W;-1
+        \end{aligned}
+
+    INPUT:
+
+    - ``X`` -- a list, representing the first sequence (length `n+1`).
+
+    - ``Y`` -- a list, representing the second sequence (length `n+1`).
+
+    - ``Z`` -- a list, representing the third sequence (length `n`).
+
+    - ``W`` -- a list, representing the fourth sequence (length `n`).
+
+    OUTPUT:
+        A tuple containing the four 4-symbol `\delta` code of length `4n+3`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import construction_four_symbol_delta_code_II
+        sage: construction_four_symbol_delta_code_II([1, 1], [1, -1], [1], [1])
+        ([1, 1, 1, 1, 1, -1, 1],
+         [1, 1, 1, 1, -1, -1, -1],
+         [1, 1, 1, -1, -1, 1, 1],
+         [1, 1, 1, -1, 1, 1, -1])
+
+    TESTS::
+
+        sage: construction_four_symbol_delta_code_II([1, 1], [1, -1], [1, 1], [1])
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: construction_four_symbol_delta_code_II([1, 1], [1, 1], [-1], [1, 1])
+        Traceback (most recent call last):
+        ...
+        AssertionError
+
+    """
+
+    n = len(Z)
+    assert len(X) == n+1 and len(Y) == n+1 and len(W) == n
+
+    autocorrelation =  lambda seq, j: sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
+    for j in range(1, n):
+        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+
+    def alternate(seq1, seq2):
+        return [seq1[i//2] if i%2 == 0 else seq2[(i-1)//2] for i in range(len(seq1)+len(seq2))]
+
+    XaltZ = alternate(X, Z)
+    Wneg = [-w for w in W]
+    Yneg = [-y for y in Y]
+
+    T1 = XaltZ + alternate(Y, W) + [1]
+    T2 = XaltZ + alternate(Y, Wneg) + [-1]
+    T3 = XaltZ + alternate(Yneg, Wneg) + [1]
+    T4 = XaltZ + alternate(Yneg, W) + [-1]
+    return T1, T2, T3, T4
+
+def four_symbol_delta_code_smallcases(n, existence=False):
+    r"""
+    Return the 4-symobl `\delta` code of length `n` if available.
+
+    The 4-symbol `\delta` codes are constructed using :func:`construction_four_symbol_delta_code_I`
+    or :func:`construction_four_symbol_delta_code_II`.
+    The base sequences used are taken from [Tur1974]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the length of the desired 4-symbol `\delta` code.
+
+    - ``existence`` -- boolean, if true only check if the sequences are available.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import four_symbol_delta_code_smallcases
+        sage: four_symbol_delta_code_smallcases(3)
+        ([1, -1, 1], [1, -1, -1], [1, 1, 1], [1, 1, -1])
+        sage: four_symbol_delta_code_smallcases(3, existence=True)
+        True
+
+    TESTS::
+
+        sage: four_symbol_delta_code_smallcases(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: The four-symbol delta code of length 17 have not yet been implemented
+        sage: four_symbol_delta_code_smallcases(17, existence=True)
+        False
+    """
+    db = {
+        1: ([1, -1], [1, 1], [1], [1]),
+        14: ([1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, 1],
+            [1, 1, 1,-1, 1, 1, -1, -1, -1, 1, 1, -1, 1, 1, -1],
+            [1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1],
+            [1, -1, -1, -1, -1, 1, -1, 1, -1, 1, 1, 1, 1, -1])
+    }
+
+    T1, T2, T3, T4 = None, None, None, None
+    if n%2 == 1 and (n-1)//2 in db:
+        if existence:
+            return True
+        X, Y, Z, W = db[(n-1)//2]
+        T1, T2, T3, T4 = construction_four_symbol_delta_code_I(X, Y, Z, W)
+    elif n%4 == 3 and (n-3)//4 in db:
+        if existence:
+            return True
+        X, Y, Z, W = db[(n-3)//4]
+        T1, T2, T3, T4 = construction_four_symbol_delta_code_II(X, Y, Z, W)
+
+    if existence:
+        return False
+
+    if T1 is None:
+        raise ValueError("The four-symbol delta code of length %s have not yet been implemented" % n)
+
+    return T1, T2, T3, T4
+
+def _construction_goethals_seidel_matrix(A, B ,C, D):
+    r"""
+    Construct the Goethals Seidel matrix.
+
+    The matrix is described in [GS70s]_. Given matrices `A`, `B`, `C`, `D`
+    the construction is:
+
+    .. MATH::
+
+        \left(\begin{array}{rrrr}
+        A & BR & CR & DR \\
+        -BR & A & -D\top R & C\top R \\
+        -CR & D\top R & A & -B\top R \\
+        -DR & -C\top R & B\top R & A
+        \end{array}\right)
+
+    Where `R` is the anti-diagonal matrix with all nonzero entries
+    equal to one.
+
+    INPUT:
+
+    - ``A`` -- The first matrix used in the construction.
+
+    - ``B`` -- The second matrix used in the construction.
+
+    - ``C`` -- The third matrix used in the construction.
+
+    - ``D`` -- The fourth matrix used in the construction.
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import _construction_goethals_seidel_matrix
+        sage: A = matrix([[1, -1], [1, 1]])
+        sage: B = matrix([[-1, -1], [-1, 1]])
+        sage: C = matrix([[1, 1], [1, -1]])
+        sage: D = matrix([[-1, 1], [-1, 1]])
+        sage: _construction_goethals_seidel_matrix(A, B, C, D)
+        [ 1 -1|-1 -1| 1  1| 1 -1]
+        [ 1  1| 1 -1|-1  1| 1 -1]
+        [-----+-----+-----+-----]
+        [ 1  1| 1 -1| 1  1| 1  1]
+        [-1  1| 1  1|-1 -1|-1  1]
+        [-----+-----+-----+-----]
+        [-1 -1|-1 -1| 1 -1| 1  1]
+        [ 1 -1| 1  1| 1  1|-1  1]
+        [-----+-----+-----+-----]
+        [-1  1|-1 -1|-1 -1| 1 -1]
+        [-1  1| 1 -1| 1 -1| 1  1]
+    """
+    n = len(A[0])
+    R = matrix(ZZ, n, n, lambda i,j: 1 if i+j==n-1 else 0)
+    return block_matrix([[   A,    B*R,    C*R,    D*R],
+                         [-B*R,      A, -D.T*R,  C.T*R],
+                         [-C*R,  D.T*R,      A, -B.T*R],
+                         [-D*R, -C.T*R,  B.T*R,      A]])
+
+def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
+    r"""
+    Create an Hadamard matrix using the contruction detailed in [CW1972]_.
+
+    Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
+    such that the entrywise product of two distinct matrices is always equal to `0` and that
+    `\sum_{i=1}^{4}X_iX_i^\top = nI_n` holds, and four matrices `A, B, C, D` of order `m` with
+    elements (1, -1) such that `MN^\top = NM^\top` for all distinct `M`, `N` and
+    `AA^\top + BB^\top + CC^\top + DD^\top =  4mI_n` holds, we construct an Hadamard matrix
+    of order `4nm`.
+
+    INPUT:
+
+    - ``x1`` -- a list or vector, representing the first row of the circulant matrix `X_1`.
+
+    - ``x2`` -- a list or vector, representing the first row of the circulant matrix `X_2`.
+
+    - ``x3`` -- a list or vector, representing the first row of the circulant matrix `X_3`.
+
+    - ``x4`` -- a list or vector, representing the first row of the circulant matrix `X_4`.
+
+    - ``A`` -- the matrix described above.
+
+    - ``B`` -- the matrix described above.
+
+    - ``C`` -- the matrix described above.
+
+    - ``D`` -- the matrix described above.
+
+    - ``check`` -- a boolean, if true (default) check that the resulting matrix is Hadamard
+      before returing it.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_cooper_wallis_construction
+        sage: from sage.combinat.t_sequences import T_sequences_smallcases
+        sage: seqs = T_sequences_smallcases(19)
+        sage: hadamard_matrix_cooper_wallis_construction(seqs[0], seqs[1], seqs[2], seqs[3], matrix([1]), matrix([1]), matrix([1]), matrix([1]))
+        76 x 76 dense matrix over Integer Ring...
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_cooper_wallis_construction, is_hadamard_matrix
+        sage: seqs = T_sequences_smallcases(13)
+        sage: H = hadamard_matrix_cooper_wallis_construction(seqs[0], seqs[1], seqs[2], seqs[3], matrix([1]), matrix([1]), matrix([1]), matrix([1]))
+        sage: is_hadamard_matrix(H)
+        True
+        sage: len(H[0]) == 13*4*1
+        True
+        sage: hadamard_matrix_cooper_wallis_construction(seqs[0], seqs[1], seqs[2], seqs[3], matrix([1]), matrix([1, -1]), matrix([1]), matrix([1]))
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: hadamard_matrix_cooper_wallis_construction([1,-1], [1, 1], [1,1], [1,1], matrix([1]), matrix([1]), matrix([1]), matrix([1]))
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+
+    n = len(x1)
+    assert n == len(x2) == len(x3) == len(x4)
+
+    X1, X2, X3, X4 = map(matrix.circulant, [x1, x2, x3, x4])
+
+    matrices = [X1, X2, X3, X4]
+    for i in range(4):
+        for j in range(i+1, 4):
+            assert matrices[i].elementwise_product(matrices[j]) == zero_matrix(n)
+    assert X1*X1.T + X2*X2.T + X3*X3.T + X4*X4.T == n*I(n)
+
+    m = len(A[0])
+    assert m == len(B[0]) == len(C[0]) == len(D[0])
+    will_matrices = [A, B, C, D]
+    for i in range(4):
+        for j in range(i+1, 4):
+            assert will_matrices[i]*will_matrices[j].T == will_matrices[j]*will_matrices[i].T
+    assert A*A.T + B*B.T + C*C.T + D*D.T == 4*m*I(m)
+
+    e1 = _construction_goethals_seidel_matrix(X1, X2, X3, X4)
+    e2 = _construction_goethals_seidel_matrix(X2, -X1, X4, -X3)
+    e3 = _construction_goethals_seidel_matrix(X3, -X4, -X1, X2)
+    e4 = _construction_goethals_seidel_matrix(X4, X3, -X2, -X1)
+
+    H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
+    r"""
+    Construct Hadamard matrices using the Cooper-Wallis construction for some small values of `n`.
+
+    This function calls the function :func:`hadamard_matrix_cooper_wallis_construction`
+    with the appropriate arguments.
+    It constructs the matrices `X_1`, `X_2`, `X_3`, `X_4` using either
+    T-matrices or the T-sequences from :func:`sage.combinat.t_sequences.t_sequences_smallcases`.
+    The matrices `A`, `B`, `C`, `D` are taken from :func:`williamson_type_quadruples_smallcases`.
+
+    Data for T-matrices of order 67 is taken from [Saw1985]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is an Hadamard matrix before returning.
+
+    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises an error if no data
+    is available to construct the matrix of the given order.
+    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+
+    .. SEEALSO::
+
+        :func:`hadamard_matrix_cooper_wallis_construction`
+
+    EXAMPLES:
+
+    By default The function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_cooper_wallis_smallcases
+        sage: hadamard_matrix_cooper_wallis_smallcases(28)
+        28 x 28 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns a boolean ::
+
+        sage: hadamard_matrix_cooper_wallis_smallcases(20, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_cooper_wallis_smallcases, is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_cooper_wallis_smallcases(188))
+        True
+        sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
+        False
+        sage: hadamard_matrix_cooper_wallis_smallcases(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Cooper-Wallis construction for Hadamard matrices of order 64 is not yet implemented.
+        sage: hadamard_matrix_cooper_wallis_smallcases(14)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    assert n%4 == 0 and n > 0
+
+    db = {
+        67: (
+            [1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, -1, -1, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 1, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, -1, 0, 0, 1, 0, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 1, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, -1, 0, 0, -1, 0, 0, 0, 0, -1, 0, -1, 1, 1, 0, 0, 0]
+        )
+    }
+
+    for T_seq_len in divisors(n//4):
+        will_size = n//(4* T_seq_len)
+        if (T_seq_len in db or T_sequences_smallcases(T_seq_len, existence=True)) and williamson_type_quadruples_smallcases(will_size, existence=True):
+            if existence:
+                return True
+
+            e1, e2, e3, e4 = None, None, None, None
+            if T_seq_len in db:
+                e1, e2, e3, e4 = db[T_seq_len]
+            else:
+                e1, e2, e3, e4 = T_sequences_smallcases(T_seq_len, check=False)
+
+            will_matrices = williamson_type_quadruples_smallcases(will_size)
+            A, B, C, D = map(matrix.circulant, will_matrices)
+            M = hadamard_matrix_cooper_wallis_construction(e1, e2, e3, e4, A, B, C, D, check=False)
+
+            if check:
+                assert is_hadamard_matrix(M)
+            return M
+
+    if existence:
+        return False
+    raise ValueError("The Cooper-Wallis construction for Hadamard matrices of order %s is not yet implemented." % n)
+
+def _get_baumert_hall_units(n, existence=False):
+    r"""
+    Construct Baumert-Hall units of size `n` from available 4-symbol `\delta` codes.
+
+    The construction is detailed in Theroem 2 from [Tur1974]_, and is based on the
+    Goethals-Seidel construction of Hadamard matrices.
+    We need a 4-symbol `\delta` code to detail the first row of circulant matrices M1, M2, M3, M4
+    used in the construction.
+
+    INPUT:
+
+    - ``n`` -- integer, the size of the Baumert-Hall units.
+
+    - ``existence`` -- boolean (default False): if true only check whether the units can be contructed.
+
+    OUTPUT:
+
+        If ``existence`` is true, return a boolean representing whether the Baumert-Hall units can
+        be constructed. Otherwise, return a tuple containing the four Baumert-Hall units.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import _get_baumert_hall_units
+        sage: _get_baumert_hall_units(28)
+        (28 x 28 dense matrix over Integer Ring,
+         28 x 28 dense matrix over Integer Ring,
+         28 x 28 dense matrix over Integer Ring,
+         28 x 28 dense matrix over Integer Ring)
+
+    TESTS::
+
+        sage: _get_baumert_hall_units(116, existence=True)
+        True
+        sage: _get_baumert_hall_units(200, existence=True)
+        False
+        sage: _get_baumert_hall_units(15)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: _get_baumert_hall_units(200)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Baumert-Hall units of size 200 have not yet been implemented
+    """
+    assert n%4 == 0 and n > 0
+
+
+    delta_codes_len = n//4
+    if not four_symbol_delta_code_smallcases(delta_codes_len, existence=True):
+        if existence:
+            return False
+        raise ValueError("The Baumert-Hall units of size %s have not yet been implemented" % n)
+
+    if existence:
+        return True
+
+    T1, T2, T3, T4 = four_symbol_delta_code_smallcases(delta_codes_len)
+    M1 = matrix.circulant(T1)
+    M2 = matrix.circulant(T2)
+    M3 = matrix.circulant(T3)
+    M4 = matrix.circulant(T4)
+
+    M1hat = matrix(ZZ, 0.25*(M1+M2+M3+M4))
+    M2hat = matrix(ZZ, 0.25*(M1-M2-M3+M4))
+    M3hat = matrix(ZZ, 0.25*(M1+M2-M3-M4))
+    M4hat = matrix(ZZ, 0.25*(M1-M2+M3-M4))
+
+    e1 = _construction_goethals_seidel_matrix(M1hat, -M2hat, -M3hat, -M4hat)
+    e2 = _construction_goethals_seidel_matrix(M2hat, M1hat, M4hat, -M3hat)
+    e3 = _construction_goethals_seidel_matrix(M3hat, -M4hat, M1hat, M2hat)
+    e4 = _construction_goethals_seidel_matrix(M4hat, M3hat, -M2hat, M1hat)
+    return e1, e2, e3, e4
+
+def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
+    r"""
+    Construction of Turyn type Hadamard matrix.
+
+    Given `n\times n` circulant matrices `A`, `B`, `C`, `D` with 1,-1 entries,
+    satisfying `AA^\top + BB^\top + CC^\top + DD^\top = 4nI`, and a set of
+    Baumert-Hall units of order `4t`, one can construct a Hadamard matrix of order
+    `4tn` as detailed by Turyn in [Tur1974]_.
+
+    INPUT:
+
+    - ``a`` -- 1,-1 list specifying the 1st row of `A`.
+
+    - ``b`` -- 1,-1 list specifying the 1st row of `B`.
+
+    - ``d`` -- 1,-1 list specifying the 1st row of `C`.
+
+    - ``c`` -- 1,-1 list specifying the 1st row of `D`.
+
+    - ``e1`` -- Matrix representing the first Baumert-Hall unit.
+
+    - ``e2`` -- Matrix representing the second Baumert-Hall unit.
+
+    - ``e3`` -- Matrix representing the third Baumert-Hall unit.
+
+    - ``e4`` -- Matrix representing the fourth Baumert-Hall unit.
+
+    - ``check`` -- Whether to check that the output is an Hadamard matrix before returning it.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_turyn_type, _get_baumert_hall_units
+        sage: A, B, C, D = _get_baumert_hall_units(28)
+        sage: hadamard_matrix_turyn_type([1], [1], [1], [1], A, B, C, D)
+        28 x 28 dense matrix over Integer Ring...
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_turyn_type, _get_baumert_hall_units, is_hadamard_matrix
+        sage: A, B, C, D = _get_baumert_hall_units(12)
+        sage: is_hadamard_matrix(hadamard_matrix_turyn_type([1], [1], [1], [1], A, B, C, D))
+        True
+        sage: hadamard_matrix_turyn_type([1, -1], [1], [1], [1], A, B, C, D)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: hadamard_matrix_turyn_type([1, -1], [1, 1], [1, 1], [1, 1], A, B, C, D)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    A, B, C, D = map(matrix.circulant, [a, b, c, d])
+
+    n = len(a)
+    assert len(a) == len(b) == len(c) == len(d)
+    assert A*A.T+B*B.T+C*C.T+D*D.T==4*n*I(n)
+
+    t4 = len(e1[0])
+    assert t4 %4 == 0
+    t = t4//4
+
+    # Check that e1, e2, e3, e4 are valid Baumert-Hall units
+    for i in range(t4):
+        for j in range(t4):
+            assert abs(e1[i, j]) + abs(e2[i, j]) + abs(e3[i, j]) + abs(e4[i, j]) == 1
+
+    assert e1*e1.T == t*I(t4) and e2*e2.T == t*I(t4) and e3*e3.T == t*I(t4) and e4*e4.T == t*I(t4)
+
+    units = [e1, e2, e3, e4]
+    for i in range(len(units)):
+        for j in range(i+1, len(units)):
+            assert units[i]*units[j].T + units[j]*units[i].T == 0*I(t4)
+
+
+    H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
+    r"""
+    Construct an Hadamard matrix of order `n` from available 4-symbol `\delta` codes and Williamson quadruples.
+
+    The function looks for Baumert-Hall units and Williamson type matrices from
+    :func:`four_symbol_delta_code_smallcases` and :func:`williamson_type_quadruples_smallcases`
+    and use them to construct an Hadamard matrix with the Turyn construction
+    defined in :func:`hadamard_matrix_turyn_type`.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
+
+    - ``check`` -- bolean: if True (default), check the the matrix is an Hadamard matrix before returning.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import turyn_type_hadamard_matrix_smallcases
+        sage: turyn_type_hadamard_matrix_smallcases(28, existence=True)
+        True
+        sage: turyn_type_hadamard_matrix_smallcases(28)
+        28 x 28 dense matrix over Integer Ring...
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import turyn_type_hadamard_matrix_smallcases, is_hadamard_matrix
+        sage: is_hadamard_matrix(turyn_type_hadamard_matrix_smallcases(236)) # long time
+        True
+        sage: turyn_type_hadamard_matrix_smallcases(64, existence=True)
+        False
+        sage: turyn_type_hadamard_matrix_smallcases(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Turyn type construction for Hadamard matrices of order 64 is not yet implemented.
+    """
+    assert n%4 == 0 and n > 0
+
+    for delta_code_len in divisors(n//4):
+        units_size = delta_code_len*4
+        will_size = n//units_size
+        if _get_baumert_hall_units(units_size, existence=True) and williamson_type_quadruples_smallcases(will_size, existence=True):
+            if existence:
+                return True
+
+            e1, e2, e3, e4 = _get_baumert_hall_units(units_size)
+            a, b, c, d = williamson_type_quadruples_smallcases(will_size)
+            return hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=check)
+
+    if existence:
+        return False
+    raise ValueError("The Turyn type construction for Hadamard matrices of order %s is not yet implemented." % n)
+
 def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
     r"""
-    Test if `M` is a hadamard matrix.
+    Test if `M` is a Hadamard matrix.
 
     INPUT:
 
@@ -405,7 +1270,7 @@ def hadamard_matrix(n,existence=False, check=True):
         False
         sage: matrix.hadamard(12,existence=True)
         True
-        sage: matrix.hadamard(116,existence=True)
+        sage: matrix.hadamard(476,existence=True)
         Unknown
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
@@ -448,12 +1313,28 @@ def hadamard_matrix(n,existence=False, check=True):
         if existence:
             return True
         M = hadamard_matrix_paleyI(n)
+    elif williamson_hadamard_matrix_smallcases(n, existence=True):
+        if existence:
+            return True
+        M = williamson_hadamard_matrix_smallcases(n, check=False)
+    elif n == 156:
+        if existence:
+            return True
+        M = hadamard_matrix_156()
+    elif hadamard_matrix_cooper_wallis_smallcases(n, existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_cooper_wallis_smallcases(n, check=False)
+    elif turyn_type_hadamard_matrix_smallcases(n, existence=True):
+        if existence:
+            return True
+        M = turyn_type_hadamard_matrix_smallcases(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
         if existence:
             return True
         M = skew_hadamard_matrix(n, check=False)
     elif regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1, existence=True) is True:
-        if existence: 
+        if existence:
             return True
         M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
     else:
@@ -468,7 +1349,7 @@ def hadamard_matrix(n,existence=False, check=True):
 
 
 def hadamard_matrix_www(url_file, comments=False):
-    """
+    r"""
     Pull file from Sloane's database and return the corresponding Hadamard
     matrix as a Sage matrix.
 
@@ -921,29 +1802,19 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
 
     REFERENCES:
 
-    .. [GS70s] \J.M. Goethals and J. J. Seidel,
-      *A skew Hadamard matrix of order 36*,
-      J. Aust. Math. Soc. 11(1970), 343-344
+    - [GS70s]_
 
-    .. [Wall71] \J. Wallis,
-      *A skew-Hadamard matrix of order 92*,
-      Bull. Aust. Math. Soc. 5(1971), 203-204
+    - [Wall71]_
 
-    .. [KoSt08] \C. Koukouvinos, S. Stylianou
-      *On skew-Hadamard matrices*,
-      Discrete Math. 308(2008) 2723-2731
+    - [KoSt08]_
     """
     n = len(a)
-    R = matrix(ZZ, n, n, lambda i,j: 1 if i+j==n-1 else 0)
     A,B,C,D=map(matrix.circulant, [a,b,c,d])
     if check:
         assert A*A.T+B*B.T+C*C.T+D*D.T==4*n*I(n)
         assert A+A.T==2*I(n)
 
-    M = block_matrix([[   A,    B*R,    C*R,    D*R],
-                      [-B*R,      A, -D.T*R,  C.T*R],
-                      [-C*R,  D.T*R,      A, -B.T*R],
-                      [-D*R, -C.T*R,  B.T*R,      A]])
+    M = _construction_goethals_seidel_matrix(A, B, C, D)
     if check:
         assert is_hadamard_matrix(M, normalized=False, skew=True)
     return M
@@ -1090,10 +1961,7 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
 
     REFERENCES:
 
-    .. [Ha83] \M. Hall,
-      Combinatorial Theory,
-      2nd edition,
-      Wiley, 1983
+    - [Ha83]_
     """
     if n < 1:
         raise ValueError("parameter n must be strictly positive")
@@ -1160,7 +2028,6 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
     if check:
         assert is_hadamard_matrix(M, normalized=False, skew=True)
         if skew_normalize:
-            from sage.modules.free_module_element import vector
             assert M[0]==vector([1]*n)
     _skew_had_cache[n]=True
     return M

@@ -1559,4 +1559,3 @@ def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
     m.pi = pi
     m.mixture = mixture
     return m
-

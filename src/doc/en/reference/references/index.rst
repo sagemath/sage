@@ -483,6 +483,10 @@ REFERENCES:
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
 
+.. [BH1965] \L. D. Baumert, M. Hall Jr.
+            *A new construction for Hadamard matrices*.
+            Bulletin of the American Mathematical Society 71(1):169-170, 1965.
+
 .. [BH2012] \A. Brouwer and W. Haemers,
             Spectra of graphs,
             Springer, 2012,
@@ -1765,6 +1769,11 @@ REFERENCES:
              graphs from orthogonal groups* `O^+(6,2)` *and* `O^-(6,2)`.
              :arxiv:`1609.07133`
 
+.. [CRSKKY1989] \G. Cohen, D. Rubie, J. Seberry, C. Koukouvinos, S. Kounias, M. Yamada,
+                *A survey of base sequences, disjoint complementary sequences and OD(4t;t,t,t,t)*.
+                JCMCC. The Journal of Combinatorial Mathematics and Combinatorial Computing,
+                **5** (1989), 69-104.
+
 .. [CRST2006] \M. Chudnovsky, N. Robertson, P. Seymour, R. Thomas.
               *The strong perfect graph theorem*.
               Annals of Mathematics, vol 164, number 1, pages 51--230, 2006.
@@ -1784,11 +1793,11 @@ REFERENCES:
             and groups*, 3rd. ed., Grundlehren der Mathematischen
             Wissenschaften, vol. 290, Springer-Verlag, New York, 1999.
 
-.. [CS1988] Conway, J. H., and N. J. A. Sloane. “Low-Dimensional Lattices. IV.
-            The Mass Formula.” Proceedings of the Royal Society of London.
+.. [CS1988] Conway, J. H., and N. J. A. Sloane. *Low-Dimensional Lattices. IV.
+            The Mass Formula*, Proceedings of the Royal Society of London.
             Series A, Mathematical and Physical Sciences, vol. 419, no. 1857, 1988, pp. 259-286.
 
-.. [CS2003] \John E. Cremona and Michael Stoll. On The Reduction Theory of Binary Forms.
+.. [CS2003] \John E. Cremona and Michael Stoll. *On The Reduction Theory of Binary Forms*.
             Journal für die reine und angewandte Mathematik, 565 (2003), 79-99.
 
 .. [CS2006] \J. E. Cremona, and S. Siksek, Computing a Lower Bound for the
@@ -1832,6 +1841,11 @@ REFERENCES:
 .. [CVV2020] Xavier Caruso, Tristan Vaccon and Thibaut Verron,
              *Signature-based algorithms for Gröbner bases over Tate algebras*,
              :arxiv:`2002.04491` (2020)
+
+.. [CW1972] \J. Cooper and J. Wallis.
+            *A construction for Hadamard arrays*,
+            Bulletin of the Australian Mathematical Society 7(2) (1972): 269-277.
+            :doi:`10.1017/S0004972700045019`
 
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
@@ -2779,6 +2793,10 @@ REFERENCES:
             Can. J. Math. 22 (1970) 597-614.
             :doi:`10.4153/CJM-1970-067-9`
 
+.. [GS70s] \J.M. Goethals and J. J. Seidel,
+           *A skew Hadamard matrix of order 36*,
+           J. Aust. Math. Soc. 11(1970), 343-344
+
 .. [GS1975] \J.M. Goethals, and J. J. Seidel,
             *The regular two-graph on 276 vertices*,
             Discrete Mathematics 12, no. 2 (1975): 143-158.
@@ -2835,7 +2853,12 @@ REFERENCES:
 .. [Ha2005] Gerhard Haring. [Online] Available:
             http://osdir.com/ml/python.db.pysqlite.user/2005-11/msg00047.html
 
+.. [Ha83]    \M. Hall, *Combinatorial Theory*,
+             2nd edition, Wiley, 1983
+
 .. [Hac2016] \M. Hachimori. http://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html
+
+.. [HadaWiki] Hadamard matrices on Wikipedia, :wikipedia:`Hadamard_matrix`
 
 .. [Haf2004] Paul R. Hafner. *On the Graphs of Hoffman-Singleton and Higman-Sims*.
              The Electronic Journal of Combinatorics 11 (2004), #R77.
@@ -3024,6 +3047,9 @@ REFERENCES:
 .. [HNT2005] Florent Hivert, Jean-Christophe Novelli, and Jean-Yves Thibon.
              *The algebra of binary search trees*,
              :arxiv:`math/0401089v2`.
+
+.. [Hora]    \K. J. Horadam, *Hadamard Matrices and Their Applications*,
+             Princeton University Press, 2006.
 
 .. [HP2003] \W. C. Huffman, V. Pless, Fundamentals of Error-Correcting
             Codes, Cambridge Univ. Press, 2003.
@@ -3643,6 +3669,9 @@ REFERENCES:
 .. [Kos1985] \J.-L. Koszul, *Crochet de Schouten-Nijenhuis et
              cohomologie*, in *Élie Cartan et les mathématiques
              d'aujourd'hui*, Astérisque hors série (1985), p. 257
+
+.. [KoSt08] \C. Koukouvinos, S. Stylianou, *On skew-Hadamard matrices*,
+            Discrete Math. **308** (2008) 2723-2731
 
 .. [KP2002] Volker Kaibel and Marc E. Pfetsch, "Computing the Face
             Lattice of a Polytope from its Vertex-Facet Incidences",
@@ -5211,6 +5240,11 @@ REFERENCES:
 .. [Sam2012] \P. Samanta: *Antipodal Graphs*
              :doi:`10.13140/RG.2.2.28238.46409`
 
+.. [Saw1985] \K. Sawade.
+             *A Hadamard matrix of order 268*,
+             Graphs and Combinatorics 1(1) (1985): 185-187.
+             :doi:`10.1007/BF02582942`
+
 .. [Sch1961] Craige Schensted. *Longest increasing and decreasing
              subsequences*, Canadian Journal of Mathematics, Vol 13
              (1961), pp. 179--191.
@@ -5256,6 +5290,10 @@ REFERENCES:
 .. [Sco1985] \R. Scott,
              *Wide-open encryption design offers flexible implementations*; in
              Cryptologia, (1985), pp. 75-91.
+
+.. [Seb2017] \J. Seberry,
+             *Orthogonal designs: Hadamard matrices, quadratic forms and algebras*.
+             Springer 2017. :doi:`10.1007/978-3-319-59032-5`
 
 .. [SE1962] \N. E. Steenrod and D. B. A. Epstein, Cohomology
             operations, Ann. of Math. Stud. 50 (Princeton University
@@ -5356,6 +5394,8 @@ REFERENCES:
 .. [SLB2008] Shoham, Yoav, and Kevin Leyton-Brown. *Multiagent
              systems: Algorithmic, game-theoretic, and logical
              foundations.* Cambridge University Press, 2008.
+
+.. [SloaHada] \N.J.A. Sloane's Library of Hadamard Matrices, at https://neilsloane.com/hadamard/
 
 .. [SMMK2013] \T. Suzaki, K. Minematsu, S. Morioka, and E. Kobayashi,
               *TWINE: A lightweight block cipher for multiple platforms*; in
@@ -5827,6 +5867,11 @@ REFERENCES:
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
 
+.. [Tur1974] \R. J. Turyn *Hadamard matrices, Baumert-Hall units,
+             four-symbol sequences, pulse compression, and surface wave encodings*.
+             Journal of Combinatorial Theory, Series A 16.3 (1974), pp 313–333.
+             :doi:`10.1016/0097-3165(74)90056-9`
+
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
 
@@ -6077,9 +6122,12 @@ REFERENCES:
             *Numerical modular symbols for elliptic curves*.
             Math. Comp. 87 (2018), no. 313, 2393–2423.
 
+.. [Wall71] \J. Wallis, *A skew-Hadamard matrix of order 92*,
+            Bull. Aust. Math. Soc. **5** (1971), 203-204
+
 .. [WW1972] \J. Wallis and A.L. Whiteman,
             Some classes of Hadamard matrices with constant diagonal,
-            Bull. Austral. Math. Soc. 7(1972), 233-249
+            Bull. Austral. Math. Soc. **7** (1972), 233-249
 
 .. [WW1991] Michelle Wachs and Dennis White, *p, q-Stirling numbers
             and set partition statistics*, Journal of Combinatorial

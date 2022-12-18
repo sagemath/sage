@@ -24,7 +24,6 @@ try:
 except ImportError:
     RDF = None
 
-from sage.rings.ring import CommutativeRing
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
@@ -1017,7 +1016,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                                            extended_self._internal_coerce_map_from(self).__copy__())
             return action
 
-        if op is operator.mul and isinstance(other, CommutativeRing):
+        if op is operator.mul and other in Rings().Commutative():
             ring = self._coerce_base_ring(other)
             if ring is self.base_ring():
                 return ActedUponAction(other, self, not self_is_left)

@@ -105,11 +105,11 @@ cdef class FieldConverter_class:
         sage: C = M._converter
         sage: C.fel_to_field(15)
         3*y
-        sage: F.fetch_int(15)
+        sage: F.from_integer(15)
         3*y
         sage: C.field_to_fel(y)
         5
-        sage: y.integer_representation()
+        sage: y.to_integer()
         5
     """
     def __init__(self, field):
@@ -139,7 +139,7 @@ cdef class FieldConverter_class:
             sage: C = FieldConverter_class(F)
             sage: C.fel_to_field(15)
             3*y
-            sage: F.fetch_int(15)
+            sage: F.from_integer(15)
             3*y
         """
         return self.field(FfToInt(x))
@@ -155,7 +155,7 @@ cdef class FieldConverter_class:
             sage: C = FieldConverter_class(F)
             sage: C.field_to_fel(y)
             5
-            sage: y.integer_representation()
+            sage: y.to_integer()
             5
 
         TESTS:
@@ -165,9 +165,9 @@ cdef class FieldConverter_class:
             sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'integer_representation'
+            AttributeError: 'str' object has no attribute 'to_integer'
         """
-        return FfFromInt(x.integer_representation())
+        return FfFromInt(x.to_integer())
 
 
 cdef class PrimeFieldConverter_class(FieldConverter_class):

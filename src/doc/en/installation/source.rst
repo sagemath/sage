@@ -1086,20 +1086,6 @@ Some standard environment variables which are used by Sage:
 - :envvar:`OPENBLAS_CONFIGURE` - adds additional configuration flags for
   the OpenBLAS package that gets added to the make command. (see :trac:`23272`)
 
-Sage uses the following environment variables when it runs:
-
-- :envvar:`DOT_SAGE` - this is the directory, to which the user has read and
-  write access, where Sage stores a number of files.
-  The default location is :file:`$HOME/.sage/`.
-
-- :envvar:`SAGE_STARTUP_FILE` - a file including commands to be executed every
-  time Sage starts.
-  The default value is :file:`$DOT_SAGE/init.sage`.
-
-- :envvar:`BROWSER` - on most platforms, Sage will detect the command to
-  run a web browser, but if this doesn't seem to work on your machine, set this
-  variable to the appropriate command.
-
 Variables dealing with doctesting:
 
 - :envvar:`SAGE_TIMEOUT` - used for Sage's doctesting: the number of seconds
