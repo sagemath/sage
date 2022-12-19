@@ -11,6 +11,8 @@ AUTHORS:
 
 - Peter Bruin (2021): do not require the base ring to be a field
 
+- Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`
+
 This code is partly based on Sage code by David Kohel from 2005.
 
 TESTS:
@@ -62,6 +64,7 @@ from sage.structure.element import is_RingElement
 from sage.structure.factory import UniqueFactory
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.quadratic_forms.quadratic_form import QuadraticForm
 
 from operator import itemgetter
 
@@ -1965,12 +1968,115 @@ class QuaternionOrder(Parent):
         G = tr0.intersection(S)
         B = [Q(a) for a in G.basis()]
         m = matrix(QQ, [[x.pair(y) for x in B] for y in B])
-        from sage.quadratic_forms.quadratic_form import QuadraticForm
         Q = QuadraticForm(m)
         if include_basis:
             return Q, B
         else:
             return Q
+
+    def isomorphism_to(self, other, *, conjugator=False):
+        r"""
+        Compute an isomorphism from this quaternion order `O`
+        to another order `O'` in the same quaternion algebra.
+
+        If the optional keyword argument ``conjugator`` is set
+        to ``True``, this method returns a single quaternion
+        `\gamma \in O \cap O'` of minimal norm such that
+        `O' = \gamma^{-1} O \gamma`,
+        rather than the ring isomorphism it defines.
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1, -19)
+            sage: O0 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: O1 = Quat.quaternion_order([1, 667*i, 1/2+j/2+9*i, (222075/2*i+333*j+k/2)/667])
+            sage: iso = O0.isomorphism_to(O1)
+            sage: iso
+            Ring morphism:
+              From: Order of Quaternion Algebra (-1, -19) with base ring Rational Field with basis (1, i, 1/2*i + 1/2*j, 1/2 + 1/2*k)
+              To:   Order of Quaternion Algebra (-1, -19) with base ring Rational Field with basis (1, 667*i, 1/2 + 9*i + 1/2*j, 222075/1334*i + 333/667*j + 1/1334*k)
+              Defn: i |--> 629/667*i + 36/667*j - 36/667*k
+                    j |--> 684/667*i - 648/667*j - 19/667*k
+                    k |--> -684/667*i - 19/667*j - 648/667*k
+            sage: iso(1)
+            1
+            sage: iso(i)
+            629/667*i + 36/667*j - 36/667*k
+            sage: iso(i/3)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1/3*i fails to convert into the map's domain ...
+
+        ::
+
+            sage: gamma = O0.isomorphism_to(O1, conjugator=True); gamma
+            -36*i - j + k
+            sage: gamma in O0
+            True
+            sage: gamma in O1
+            True
+            sage: O1.unit_ideal() == ~gamma * O0 * gamma
+            True
+
+        TESTS:
+
+        Some random testing::
+
+            sage: q = randrange(1,1000)
+            sage: p = randrange(1,1000)
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-q, -p)
+            sage: O0 = Quat.maximal_order()
+            sage: while True:
+            ....:     b = Quat.random_element()
+            ....:     if gcd(b.reduced_norm(), Quat.discriminant()) == 1:
+            ....:         break
+            sage: O1 = (b * O0).left_order()
+            sage: iso = O0.isomorphism_to(O1); iso
+            Ring morphism: ...
+            sage: iso.domain() == O0
+            True
+            sage: iso.codomain() == O1
+            True
+            sage: iso(O0.random_element()) in O1
+            True
+            sage: iso(1) == 1
+            True
+            sage: els = list(O0.basis())
+            sage: els += [O0.random_element() for _ in range(5)]
+            sage: {iso(g).reduced_norm() == g.reduced_norm() for g in els}
+            {True}
+            sage: {iso(g).reduced_trace() == g.reduced_trace() for g in els}
+            {True}
+            sage: {iso(g * h) == iso(g) * iso(h) for g in els for h in els}
+            {True}
+
+        ALGORITHM:
+
+        Find a generator of the principal lattice `N\cdot O\cdot O'`
+        where `N = [O : O \cap O']` by minimizing the associated
+        quadratic form.
+        An isomorphism is given by conjugation by such an element.
+        """
+        if not isinstance(other, QuaternionOrder):
+            raise TypeError('not a quaternion order')
+        Q = self.quaternion_algebra()
+        if other.quaternion_algebra() != Q:
+            raise TypeError('not an order in the same quaternion algebra')
+
+        N = self.intersection(other).free_module().index_in(self.free_module())
+        I = N * self * other
+        f = I.quadratic_form()
+        _,v = f.__pari__().qfminim(None, None, 1)
+        gamma = sum(ZZ(c)*g for c,g in zip(v, I.basis()))
+        if self*gamma != I:
+            raise ValueError('quaternion orders not isomorphic')
+        assert gamma*other == I
+
+        if conjugator:
+            return gamma
+
+        ims = [~gamma * gen * gamma for gen in Q.gens()]
+        return self.hom(ims, other, check=False)
 
 
 class QuaternionFractionalIdeal(Ideal_fractional):
@@ -2452,7 +2558,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.theta_series(10)
             1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + 24*q^6 + 24*q^7 + 36*q^8 + 36*q^9 + O(q^10)
         """
-        from sage.quadratic_forms.quadratic_form import QuadraticForm
         # first get the gram matrix
         gram_matrix = self.gram_matrix()
         # rescale so that there are no denominators
