@@ -52,7 +52,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing_extensions import final
 from sage.arith.misc import is_prime
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
