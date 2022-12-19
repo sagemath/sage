@@ -19,4 +19,4 @@ cd pkgs/sage-conf_pypi
 # Get rid of old *.egg-info/SOURCES.txt
 rm -Rf *.egg-info
 
-python3 -m build --sdist --no-isolation --outdir "$SAGE_DISTFILES"
+python3 -m build --sdist --no-isolation --skip-dependency-check --outdir "$SAGE_DISTFILES"
