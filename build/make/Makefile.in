@@ -711,6 +711,13 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
+$(1)-sdist: FORCE python_build sage_setup cython
+	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
+
 # Recursive tox invocation (note - we do not set the environment here).
 # Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini
 $(1)-tox-%: FORCE
