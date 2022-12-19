@@ -3868,6 +3868,38 @@ cdef class Matrix(Matrix1):
                 % (self.nrows(), self.ncols()), level=1, t=tm)
         return 'computed-smith-form', self.new_matrix(nrows=len(basis), ncols=self._ncols, entries=basis)
 
+    def _right_kernel_matrix_over_integer_mod_ring(self):
+        r"""
+        Returns a pair that includes a matrix of basis vectors
+        for the right kernel of ``self``.
+
+        OUTPUT:
+
+        Returns a pair. First item is the string 'computed-pari-matkermod'
+        that identifies the nature of the basis vectors.
+
+        Second item is a matrix whose rows are a basis for the right kernel,
+        over the integer modular ring, as computed by :pari:`matkermod`.
+
+        EXAMPLES::
+
+            sage: A = matrix(Zmod(24480), [[1,2,3,4,5],[7,7,7,7,7]])
+            sage: result = A._right_kernel_matrix_over_integer_mod_ring()
+            sage: result[0]
+            'computed-pari-matkermod'
+            sage: P = result[1]; P
+            [    1 24478     1     0     0]
+            [    2 24477     0     1     0]
+            [    3 24476     0     0     1]
+            sage: A*P.transpose() == 0
+            True
+        """
+        R = self.base_ring()
+        pariM = self.change_ring(ZZ).__pari__()
+        basis = list(pariM.matkermod(R.characteristic()))
+        from sage.matrix.matrix_space import MatrixSpace
+        return 'computed-pari-matkermod', MatrixSpace(R, len(basis), ncols=self._ncols)(basis)
+
     def right_kernel_matrix(self, *args, **kwds):
         r"""
         Returns a matrix whose rows form a basis
@@ -3888,10 +3920,11 @@ cdef class Matrix(Matrix1):
             over the rationals and integers
           - 'pluq' - PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` - default: 'echelon' - a keyword that describes
+        - ``basis`` - default: 'default' - a keyword that describes
           the format of the basis returned.  Allowable values are:
 
-          - 'echelon': the basis matrix is returned in echelon form
+          - 'default': uses 'echelon' over fields; 'computed' otherwise.
+          - 'echelon': the basis matrix is returned in echelon form.
           - 'pivot' : each basis vector is computed from the reduced
             row-echelon form of ``self`` by placing a single one in a
             non-pivot column and zeros in the remaining non-pivot columns.
@@ -4430,13 +4463,15 @@ cdef class Matrix(Matrix1):
         # Determine the basis format of independent spanning set to return
         basis = kwds.pop('basis', None)
         if basis is None:
-            basis = 'echelon'
-        elif basis not in ['computed', 'echelon', 'pivot', 'LLL']:
+            basis = 'default'
+        elif basis not in ['default', 'computed', 'echelon', 'pivot', 'LLL']:
             raise ValueError("matrix kernel basis format '%s' not recognized" % basis )
         elif basis == 'pivot' and R not in _Fields:
             raise ValueError('pivot basis only available over a field, not over %s' % R)
         elif basis == 'LLL' and not is_IntegerRing(R):
             raise ValueError('LLL-reduced basis only available over the integers, not over %s' % R)
+        if basis == 'default':
+            basis = 'echelon' if R in _Fields else 'computed'
 
         # Determine proof keyword for integer matrices
         proof = kwds.pop('proof', None)
@@ -4484,6 +4519,9 @@ cdef class Matrix(Matrix1):
         if M is None and R.is_integral_domain():
             format, M = self._right_kernel_matrix_over_domain()
 
+        if M is None and isinstance(R, sage.rings.abc.IntegerModRing):
+            format, M = self._right_kernel_matrix_over_integer_mod_ring()
+
         if M is None:
             raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
 
@@ -4522,6 +4560,24 @@ cdef class Matrix(Matrix1):
                 return M.LLL()
             else:
                 return M
+
+    def left_kernel_matrix(self, *args, **kwds):
+        r"""
+        Returns a matrix whose rows form a basis for the left kernel
+        of ``self``.
+
+        This method is a thin wrapper around :meth:`right_kernel_matrix`.
+        For supported parameters and input/output formats, see there.
+
+        EXAMPLES::
+
+            sage: M = matrix([[1,2],[3,4],[5,6]])
+            sage: K = M.left_kernel_matrix(); K
+            [ 1 -2  1]
+            sage: K * M
+            [0 0]
+        """
+        return self.transpose().right_kernel_matrix(*args, **kwds)
 
     def right_kernel(self, *args, **kwds):
         r"""
