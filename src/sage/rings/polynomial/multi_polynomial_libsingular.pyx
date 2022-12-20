@@ -1587,7 +1587,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             9/4
 
             sage: P.monomial_quotient(x,y) # Note the wrong result
-            x*y^65535*z^65535
+            x*y^1048575*z^1048575
 
             sage: P.monomial_quotient(x,P(1))
             x
@@ -2247,7 +2247,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             9/4*x^2 - 1/4*y^2 - y - 1
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x^2^15) * x^2^15
+            sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (...)
@@ -2371,7 +2371,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             ValueError: not a 2nd power
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x+y^2^15)^10
+            sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
             OverflowError: exponent overflow (...)
@@ -3452,16 +3452,16 @@ cdef class MPolynomial_libsingular(MPolynomial):
         We are catching overflows::
 
             sage: R.<x,y> = QQ[]
-            sage: n=100; f = x^n
+            sage: n=10000; f = x^n
             sage: try:
             ....:     f.subs(x = x^n)
             ....:     print("no overflow")
             ....: except OverflowError:
             ....:     print("overflow")
-            x^10000
+            x^100000000
             no overflow
 
-            sage: n = 1000
+            sage: n = 100000
             sage: try:
             ....:     f = x^n
             ....:     f.subs(x = x^n)
