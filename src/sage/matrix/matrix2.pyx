@@ -4405,10 +4405,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: 'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over Rational Field
-            sage: matrix(Integers(6), 2, 2).right_kernel_matrix(algorithm='generic')
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 6'.
             sage: matrix(QQ, 2, 2).right_kernel_matrix(algorithm='pluq')
             Traceback (most recent call last):
             ...
