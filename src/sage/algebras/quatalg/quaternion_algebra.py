@@ -11,7 +11,8 @@ AUTHORS:
 
 - Peter Bruin (2021): do not require the base ring to be a field
 
-- Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`
+- Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`,
+  :meth:`QuaternionFractionalIdeal_rational.minimal_element`
 
 This code is partly based on Sage code by David Kohel from 2005.
 
@@ -2053,8 +2054,8 @@ class QuaternionOrder(Parent):
         ALGORITHM:
 
         Find a generator of the principal lattice `N\cdot O\cdot O'`
-        where `N = [O : O \cap O']` by minimizing the associated
-        quadratic form.
+        where `N = [O : O cap O']` using
+        :meth:`QuaternionFractionalIdeal_rational.minimal_element()`.
         An isomorphism is given by conjugation by such an element.
         """
         if not isinstance(other, QuaternionOrder):
@@ -2065,9 +2066,7 @@ class QuaternionOrder(Parent):
 
         N = self.intersection(other).free_module().index_in(self.free_module())
         I = N * self * other
-        f = I.quadratic_form()
-        _,v = f.__pari__().qfminim(None, None, 1)
-        gamma = sum(ZZ(c)*g for c,g in zip(v, I.basis()))
+        gamma = I.minimal_element()
         if self*gamma != I:
             raise ValueError('quaternion orders not isomorphic')
         assert gamma*other == I
@@ -2568,6 +2567,32 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             gram_matrix = gram_matrix / g
         # now get the quadratic form
         return QuadraticForm(gram_matrix)
+
+    def minimal_element(self):
+        r"""
+        Return an element in this quaternion ideal of minimal norm.
+
+        If the ideal is a principal lattice, this method can be used
+        to find a generator.
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-3,-101)
+            sage: O = Quat.maximal_order(); O
+            Order of Quaternion Algebra (-3, -101) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+            sage: (O * 5).minimal_element()
+            5/2 + 5/2*i
+            sage: alpha = 1/2 + 1/6*i + j + 55/3*k
+            sage: I = O*141 + O*alpha; I.norm()
+            141
+            sage: el = I.minimal_element(); el
+            13/2 - 7/6*i + j + 2/3*k
+            sage: el.reduced_norm()
+            282
+        """
+        parif = self.quadratic_form().__pari__()
+        _,v = parif.qfminim(None, None, 1)
+        return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
         r"""
