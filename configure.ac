@@ -207,6 +207,7 @@ The Sage community would also appreciate any patches you submit]]);;
 *-*-darwin*);;
 *-*-solaris*);;
 *-*-cygwin*);;
+*-*-mingw32);;
 
 # Wildcard for other unsupported platforms
 *)
