@@ -1,24 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=all
-
-# TODO: (high):
-#
-# check whether it makes sense to keep a list of solutions, and keep
-# a global MILP up to date with this list
-
-# TODO: (medium):
-#
-# can we somehow tweak gurobi so that
-# minimal_subdistributions_iterator considers the minimal
-# subdistributions with "smallest" (e.g., in the sorting order
-# defined above) elements first?
-
-# Priorities:
-
-# 1) for an all-knowing user, code should be as fast as possible
-# 2) code should be easy to understand
-# 3) anticipate that a user computes things in a bad order
-
 r"""
 A bijectionist's toolkit
 
@@ -499,7 +479,7 @@ class Bijectionist(SageObject):
         Check that large input sets are handled well::
 
             sage: A = B = list(range(20000))
-            sage: bij = Bijectionist(A, B)
+            sage: bij = Bijectionist(A, B) # long time
         """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
@@ -515,6 +495,7 @@ class Bijectionist(SageObject):
 
         assert len(A) == len(set(A)), "A must have distinct items"
         assert len(B) == len(set(B)), "B must have distinct items"
+        self.bmilp = None
         self._A = A
         self._B = B
         self._sorter = {}
@@ -607,6 +588,7 @@ class Bijectionist(SageObject):
             MIPSolverException: ...
 
         """
+        self.bmilp = None
         self._P = DisjointSet(self._A)
         P = sorted(self._sorter["A"](p) for p in P)
         for p in P:
@@ -738,6 +720,7 @@ class Bijectionist(SageObject):
             {[]: 2, [1]: 1, [1, 2]: 0, [2, 1]: 0}
 
         """
+        self.bmilp = None
         self._n_statistics = len(alpha_beta)
         # TODO: (low) do we really want to recompute statistics every time?
         self._alpha = lambda p: tuple(arg[0](p) for arg in alpha_beta)
@@ -1018,11 +1001,7 @@ class Bijectionist(SageObject):
         empty.  In this example, the image of `\tau` under any
         legal bijection is disjoint to the specified values.
 
-        .. TODO::
-
-            we now have to call
-            :meth:`_compute_possible_block_values` for the error
-            message. Is this intended behaviour?
+        TESTS::
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1032,8 +1011,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: No possible values found for singleton block [[1, 2]]
-
-        TESTS::
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1058,6 +1035,7 @@ class Bijectionist(SageObject):
         # of _statistics_possible_values - however, we do not want to
         # insist that set_value_restrictions is called after
         # set_statistics
+        self.bmilp = None
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in a_values:
@@ -1223,6 +1201,7 @@ class Bijectionist(SageObject):
         not in `A`.
 
         """
+        self.bmilp = None
         for elements, values in elements_distributions:
             assert len(elements) == len(values), f"{elements} and {values} are not of the same size!"
             for a, z in zip(elements, values):
@@ -1318,6 +1297,7 @@ class Bijectionist(SageObject):
             []
 
         """
+        self.bmilp = None
         Pi_Rho = namedtuple("Pi_Rho", "numargs pi rho domain")
         self._pi_rho = []
 
@@ -1506,10 +1486,11 @@ class Bijectionist(SageObject):
             {{'a', 'b'}, {'c', 'd'}}
 
         """
-        bmilp = self._generate_and_solve_initial_bmilp()  # may throw Exception
+        if self.bmilp is None:
+            self.bmilp = self._generate_and_solve_initial_bmilp()  # may throw Exception
 
         # generate blockwise preimage to determine which blocks have the same image
-        solution = self._solution_by_blocks(bmilp)
+        solution = self._solution_by_blocks(self.bmilp)
         multiple_preimages = {(value,): preimages
                               for value, preimages in _invert_dict(solution).items()
                               if len(preimages) > 1}
@@ -1534,11 +1515,11 @@ class Bijectionist(SageObject):
                         # veto the two blocks having the same value
                         for z in self._possible_block_values[i]:
                             if z in self._possible_block_values[j]:  # intersection
-                                tmp_constraints.append(bmilp._x[i, z] + bmilp._x[j, z] <= 1)
-                        bmilp.solve(tmp_constraints)
+                                tmp_constraints.append(self.bmilp._x[i, z] + self.bmilp._x[j, z] <= 1)
+                        self.bmilp.solve(tmp_constraints)
 
                         # solution exists, update dictionary
-                        solution = self._solution_by_blocks(bmilp)
+                        solution = self._solution_by_blocks(self.bmilp)
                         updated_multiple_preimages = {}
                         for values in multiple_preimages:
                             for p in multiple_preimages[values]:
@@ -1564,11 +1545,6 @@ class Bijectionist(SageObject):
         r"""
         Return for each block the values of `s` compatible with the
         imposed restrictions.
-
-        .. TODO::
-
-            should this method update and return
-            ``self._possible_block_values``?
 
         INPUT:
 
@@ -1654,11 +1630,6 @@ class Bijectionist(SageObject):
             sage: bij.possible_values(p=[DyckWord([]), DyckWord([1, 0]), DyckWord([1, 0, 1, 0]), DyckWord([1, 1, 0, 0])], optimal=True)
             {[]: {0}, [1, 0]: {1}, [1, 0, 1, 0]: {1, 2}, [1, 1, 0, 0]: {1, 2}}
 
-        .. TODO::
-
-            test to show that the solution for all blocks is not more
-            expensive than using :meth:`solutions_iterator`
-
         """
         # convert input to set of block representatives
         blocks = set()
@@ -1681,8 +1652,9 @@ class Bijectionist(SageObject):
                     solutions[p].add(value)
 
             # generate initial solution, solution dict and add solution
-            bmilp = self._generate_and_solve_initial_bmilp()
-            solution = self._solution(bmilp)
+            if self.bmilp is None:
+                self.bmilp = self._generate_and_solve_initial_bmilp()
+            solution = self._solution(self.bmilp)
             solutions = {}
             add_solution(solutions, solution)
 
@@ -1690,25 +1662,23 @@ class Bijectionist(SageObject):
             for p in blocks:
                 tmp_constraints = []
                 for value in solutions[p]:
-                    tmp_constraints.append(bmilp._x[p, value] == 0)
+                    tmp_constraints.append(self.bmilp._x[p, value] == 0)
                 while True:
                     try:
                         # problem has a solution, so new value was found
-                        bmilp.solve(tmp_constraints)
-                        solution = self._solution(bmilp)
+                        self.bmilp.solve(tmp_constraints)
+                        solution = self._solution(self.bmilp)
                         add_solution(solutions, solution)
                         # veto new value and try again
-                        tmp_constraints.append(bmilp._x[p, solution[p]] == 0)
+                        tmp_constraints.append(self.bmilp._x[p, solution[p]] == 0)
                     except MIPSolverException:
                         # no solution, so all possible values have been found
                         break
 
-            # TODO: update possible block values if wanted
-
         # create dictionary to return
         possible_values = {}
         for p in blocks:
-            for a in self._P.root_to_elements_dict()[p]:  # TODO: is this the format we want to return in or possible_values[block]?
+            for a in self._P.root_to_elements_dict()[p]:
                 if optimal:
                     possible_values[a] = solutions[p]
                 else:
@@ -1716,24 +1686,13 @@ class Bijectionist(SageObject):
 
         return possible_values
 
-    def minimal_subdistributions_iterator(self, tA=None):
+    def minimal_subdistributions_iterator(self):
         r"""
-        Return all minimal subsets `\tilde A` of `A` containing `tA`
+        Return all minimal subsets `\tilde A` of `A`
         together with submultisets `\tilde Z` with `s(\tilde A) =
         \tilde Z` as multisets.
 
-        .. TODO::
-
-           should this method interact with ``self._elements_distributions``?
-
-        INPUT:
-
-        - ``tA`` (optional, default: ``None``) -- a subset of `A` TODO: add this
-
-        If ``tA`` is not ``None``, return an iterator of the
-        subdistributions containing ``tA``.
-
-        TESTS::
+        EXAMPLES::
 
             sage: A = B = [permutation for n in range(3) for permutation in Permutations(n)]
             sage: bij = Bijectionist(A, B, len)
@@ -1784,11 +1743,11 @@ class Bijectionist(SageObject):
         minimal_subdistribution.add_constraint(sum(D[a] for a in self._A) >= 1)
 
         try:
-            bmilp = self._generate_and_solve_initial_bmilp()
+            if self.bmilp is None:
+                self.bmilp = self._generate_and_solve_initial_bmilp()
         except MIPSolverException:
             return
-        s = self._solution(bmilp)
-        tmp_constraints = []
+        s = self._solution(self.bmilp)
         while True:
             for v in self._Z:
                 minimal_subdistribution.add_constraint(sum(D[a] for a in self._A if s[a] == v) == V[v])
@@ -1797,7 +1756,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D)  # a dict from A to {0, 1}
-            new_s = self._find_counter_example(bmilp, s, d)
+            new_s = self._find_counter_example(self.bmilp, s, d)
             if new_s is None:
                 values = self._sorter["Z"](s[a] for a in self._A if d[a])
                 yield ([a for a in self._A if d[a]], values)
@@ -1852,10 +1811,10 @@ class Bijectionist(SageObject):
                 pass
         return
 
-    def minimal_subdistributions_blocks_iterator(self, p=None):
+    def minimal_subdistributions_blocks_iterator(self):
         r"""
         Return all representatives of minimal subsets `\tilde P`
-        of `P` containing `p` together with submultisets `\tilde Z`
+        of `P` together with submultisets `\tilde Z`
         with `s(\tilde P) = \tilde Z` as multisets.
 
         .. WARNING::
@@ -1867,21 +1826,6 @@ class Bijectionist(SageObject):
             find all solutions, use
             :meth:`minimal_subdistributions_iterator`, which is,
             however, computationally more expensive.
-
-        .. TODO::
-
-            should this method interact with ``self._elements_distributions``?
-
-        INPUT:
-
-        - ``p`` (optional, default: ``None``) -- a subset of `P`
-
-        If ``p`` is not ``None``, return an iterator of the
-        subdistributions containing ``p``.
-
-        .. TODO::
-
-           the optional argument is not yet supported
 
         EXAMPLES::
 
@@ -2003,10 +1947,11 @@ class Bijectionist(SageObject):
                                                            if s[p] == v) == V[v])
 
         try:
-            bmilp = self._generate_and_solve_initial_bmilp()
+            if self.bmilp is None:
+                self.bmilp = self._generate_and_solve_initial_bmilp()
         except MIPSolverException:
             return
-        s = self._solution_by_blocks(bmilp)
+        s = self._solution_by_blocks(self.bmilp)
         add_counter_example_constraint(s)
         while True:
             try:
@@ -2014,7 +1959,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D)  # a dict from P to multiplicities
-            new_s = self._find_counter_example2(bmilp, P, s, d)
+            new_s = self._find_counter_example2(self.bmilp, P, s, d)
             if new_s is None:
                 yield ([p for p in P for _ in range(ZZ(d[p]))],
                        self._sorter["Z"](s[p]
@@ -2264,6 +2209,48 @@ class Bijectionist(SageObject):
 
             sage: set_verbose(2)
             sage: _ = list(bij.solutions_iterator())
+            after vetoing
+            Constraints are:
+                block []: 1 <= x_0 <= 1
+                block [1]: 1 <= x_1 <= 1
+                block [1, 2]: 1 <= x_2 + x_3 <= 1
+                block [2, 1]: 1 <= x_4 + x_5 <= 1
+                block [1, 2, 3]: 1 <= x_6 + x_7 + x_8 <= 1
+                block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
+                block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
+                statistics: 1 <= x_0 <= 1
+                statistics: 1 <= x_1 <= 1
+                statistics: 1 <= x_2 + x_4 <= 1
+                statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
+                statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
+                statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
+                veto: x_0 + x_1 + x_3 + x_4 + x_6 + x_10 + x_14 <= 6
+                veto: x_0 + x_1 + x_2 + x_5 + x_6 + x_10 + x_14 <= 6
+            after vetoing
+            Constraints are:
+                block []: 1 <= x_0 <= 1
+                block [1]: 1 <= x_1 <= 1
+                block [1, 2]: 1 <= x_2 + x_3 <= 1
+                block [2, 1]: 1 <= x_4 + x_5 <= 1
+                block [1, 2, 3]: 1 <= x_6 + x_7 + x_8 <= 1
+                block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
+                block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
+                statistics: 1 <= x_0 <= 1
+                statistics: 1 <= x_1 <= 1
+                statistics: 1 <= x_2 + x_4 <= 1
+                statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
+                statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
+                statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
+                veto: x_0 + x_1 + x_3 + x_4 + x_6 + x_10 + x_14 <= 6
+                veto: x_0 + x_1 + x_2 + x_5 + x_6 + x_10 + x_14 <= 6
+
+        Changing or re-setting problem parameters clears the internal cache and
+        prints even more information::
+
+            sage: bij.set_constant_blocks(P)
+            sage: _ = list(bij.solutions_iterator())
             Constraints are:
                 block []: 1 <= x_0 <= 1
                 block [1]: 1 <= x_1 <= 1
@@ -2343,18 +2330,147 @@ class Bijectionist(SageObject):
             sage: list(bij.solutions_iterator())
             []
 
+        Testing interactions between multiple instances using Fedor Petrov's example from https://mathoverflow.net/q/424187::
+
+            sage: A = B = ["a"+str(i) for i in range(1, 9)] + ["b"+str(i) for i in range(3, 9)] + ["d"]
+            sage: tau = {b: 0 if i < 10 else 1 for i, b in enumerate(B)}.get
+            sage: bij = Bijectionist(A, B, tau)
+            sage: bij.set_constant_blocks([["a"+str(i), "b"+str(i)] for i in range(1, 9) if "b"+str(i) in A])
+            sage: d = [0]*8+[1]*4
+            sage: bij.set_distributions((A[:8] + A[8+2:-1], d), (A[:8] + A[8:-3], d))
+            sage: iterator1 = bij.solutions_iterator()
+            sage: iterator2 = bij.solutions_iterator()
+
+        Generate a solution in iterator1, iterator2 should generate the same solution and vice versa::
+            sage: next(iterator1)
+                {'a1': 1,
+                'a2': 1,
+                'a3': 0,
+                'a4': 0,
+                'a5': 0,
+                'a6': 1,
+                'a7': 0,
+                'a8': 0,
+                'b3': 0,
+                'b4': 0,
+                'b5': 0,
+                'b6': 1,
+                'b7': 0,
+                'b8': 0,
+                'd': 1}
+
+            sage: next(iterator2)
+                {'a1': 1,
+                'a2': 1,
+                'a3': 0,
+                'a4': 0,
+                'a5': 0,
+                'a6': 1,
+                'a7': 0,
+                'a8': 0,
+                'b3': 0,
+                'b4': 0,
+                'b5': 0,
+                'b6': 1,
+                'b7': 0,
+                'b8': 0,
+                'd': 1}
+
+            sage: next(iterator2)
+                {'a1': 1,
+                'a2': 1,
+                'a3': 0,
+                'a4': 0,
+                'a5': 1,
+                'a6': 0,
+                'a7': 0,
+                'a8': 0,
+                'b3': 0,
+                'b4': 0,
+                'b5': 1,
+                'b6': 0,
+                'b7': 0,
+                'b8': 0,
+                'd': 1}
+
+            sage: next(iterator1)
+                {'a1': 1,
+                'a2': 1,
+                'a3': 0,
+                'a4': 0,
+                'a5': 1,
+                'a6': 0,
+                'a7': 0,
+                'a8': 0,
+                'b3': 0,
+                'b4': 0,
+                'b5': 1,
+                'b6': 0,
+                'b7': 0,
+                'b8': 0,
+                'd': 1}
+
+        Re-setting the distribution resets the cache, so a new iterator will generate the first solutions again,
+        but the old iterator continues::
+
+            sage: bij.set_distributions((A[:8] + A[8+2:-1], d), (A[:8] + A[8:-3], d))
+            sage: iterator3 = bij.solutions_iterator()
+
+            sage: next(iterator3)
+                {'a1': 1,
+                'a2': 1,
+                'a3': 0,
+                'a4': 0,
+                'a5': 0,
+                'a6': 1,
+                'a7': 0,
+                'a8': 0,
+                'b3': 0,
+                'b4': 0,
+                'b5': 0,
+                'b6': 1,
+                'b7': 0,
+                'b8': 0,
+                'd': 1}
+
+            sage: next(iterator1)
+                {'a1': 0,
+                'a2': 1,
+                'a3': 0,
+                'a4': 1,
+                'a5': 0,
+                'a6': 0,
+                'a7': 0,
+                'a8': 1,
+                'b3': 0,
+                'b4': 1,
+                'b5': 0,
+                'b6': 0,
+                'b7': 0,
+                'b8': 1,
+                'd': 0}
         """
+        bmilp = None
+        next_solution = None
         try:
-            self.bmilp = self._generate_and_solve_initial_bmilp()
+            if self.bmilp is None:
+                self.bmilp = self._generate_and_solve_initial_bmilp()
+            bmilp = self.bmilp
+            bmilp.solve([], 0)
+            next_solution = self._solution(bmilp)
         except MIPSolverException:
             return
+
+        solution_index = 1
         while True:
-            yield self._solution(self.bmilp)
+            yield next_solution
             if get_verbose() >= 2:
                 print("after vetoing")
-                self._show_bmilp(self.bmilp, variables=False)
+                self._show_bmilp(bmilp, variables=False)
             try:
-                self.bmilp.solve([], force_new_solution=True)
+                bmilp.solve([], solution_index)
+                next_solution = self._solution(bmilp)
+                solution_index += 1
             except MIPSolverException:
                 return
 
@@ -2466,7 +2582,6 @@ class _BijectionistMILP(SageObject):
         self._solution_cache = []
         self._last_solution = {}
         self._index_block_value_dict = None
-        self._block_value_index_dict = None# TODO: may not be needed?
         self._x = self.milp.new_variable(binary=True)  # indexed by P x Z
 
         self._bijectionist = bijectionist
@@ -2477,52 +2592,42 @@ class _BijectionistMILP(SageObject):
                                          for z in bijectionist._possible_block_values[p]) == 1,
                                      name=name[:50])
 
-    def clear_solution_cache(self):
-        self._n_variables = -1
-        self._solution_cache = []
-        self._last_solution = {}
-        self._index_block_value_dict = None
-        self._block_value_index_dict = None # TODO: may not be needed?
-
-    def solve(self, tmp_constraints, force_new_solution=False):
+    def solve(self, tmp_constraints, solution_index=0):
         if self._n_variables < 0:
             self._n_variables = self.milp.number_of_variables()
             self._index_block_value_dict = {}
-            self._block_value_index_dict = {}
             for (p, z), v in self._x.items():
                 variable_index = next(iter(v.dict().keys()))
-                self._index_block_value_dict[variable_index] = (p,z)
-                self._block_value_index_dict[(p,z)] = variable_index
-        assert self._n_variables == self.milp.number_of_variables(), "The number of variables changed." # number of variables would change with creation of constraints with new variables
+                self._index_block_value_dict[variable_index] = (p, z)
+        # number of variables would change with creation of constraints with new variables
+        assert self._n_variables == self.milp.number_of_variables(), "The number of variables changed."
 
         # check if previous solution exists with constraints
         previous_solution_exists = False
-        self.last_solution = {}
-        if not force_new_solution:
-            for solution in self._solution_cache:
-                fulfills_constraints = True
-                # loop through all constraints
-                for constraint in tmp_constraints:
-                    # check equations
-                    for linear_function, value in constraint.equations():
-                        solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
-                        if solution_value != value.dict()[-1]:
-                            fulfills_constraints = False
-                            break
-                    if not fulfills_constraints:
+        for solution in self._solution_cache[solution_index:]:
+            fulfills_constraints = True
+            # loop through all constraints
+            for constraint in tmp_constraints:
+                # check equations
+                for linear_function, value in constraint.equations():
+                    solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
+                    if solution_value != value.dict()[-1]:
+                        fulfills_constraints = False
                         break
-                    # check inequalities
-                    for linear_function, value in constraint.inequalities():
-                        solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
-                        if solution_value > value.dict()[-1]:
-                            fulfills_constraints = False
-                            break
-                    if not fulfills_constraints:
-                        break
-                if fulfills_constraints:
-                    previous_solution_exists = True
-                    self.last_solution = solution
+                if not fulfills_constraints:
                     break
+                # check inequalities
+                for linear_function, value in constraint.inequalities():
+                    solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
+                    if solution_value > value.dict()[-1]:
+                        fulfills_constraints = False
+                        break
+                if not fulfills_constraints:
+                    break
+            if fulfills_constraints:
+                previous_solution_exists = True
+                self.last_solution = solution
+                break
 
         # if no previous solution satisfies the constraints, generate a new one
         if not previous_solution_exists:
@@ -2540,15 +2645,15 @@ class _BijectionistMILP(SageObject):
 
             self.last_solution = self.milp.get_values(self._x)
             self._solution_cache.append(self.last_solution)
-
             self.veto_current_solution()
+
         return self.last_solution
 
     def _evaluate_linear_function(self, linear_function_dict, block_index_dict, values):
         return float(sum(linear_function_dict[index]*values[block_index_dict[index]] for index in linear_function_dict))
 
     def get_value(self, p, v):
-        return self.last_solution[p,v]
+        return self.last_solution[p, v]
 
     def add_alpha_beta_constraints(self):
         r"""
@@ -2702,6 +2807,7 @@ class _BijectionistMILP(SageObject):
         :meth:`MixedIntegerLinearProgram.solve()` must return a
         solution different from the current one.
 
+
         We require that the MILP currently has a solution.
 
         .. WARNING::
@@ -2801,7 +2907,7 @@ Generating a new solution that also maps `1010` to `2` fails:
     sage: permutation1010root = list(_disjoint_set_roots(bij._P))[2]
     sage: permutation1010root
     [1, 0, 1, 0]
-    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5], force_new_solution=True)
+    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5], solution_index=1)
     Traceback (most recent call last):
     ...
     MIPSolverException: GLPK: Problem has no feasible solution
