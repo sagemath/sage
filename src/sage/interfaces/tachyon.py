@@ -683,12 +683,14 @@ properly.
 #*****************************************************************************
 
 import os
+import re
 
 from sage.cpython.string import bytes_to_str
 from sage.misc.pager import pager
 from sage.misc.superseded import deprecation
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
+from sage.misc.cachefunc import cached_method
 
 
 class TachyonRT(SageObject):
@@ -799,6 +801,11 @@ class TachyonRT(SageObject):
             Parser failed due to an input file syntax error.
             Aborting render.
         """
+        if self.version() >= '0.99.2':
+            # this keyword was changed in 0.99.2
+            model = model.replace(
+                    "              focallength ",
+                    "              focaldist ")
         modelfile = tmp_filename(ext='.dat')
         with open(modelfile, 'w') as file:
             file.write(model)
@@ -850,6 +857,22 @@ class TachyonRT(SageObject):
             pager()(r)
         else:
             print(r)
+
+    @cached_method
+    def version(self):
+        """
+        Returns the version of the Tachyon raytracer being used.
+
+        TESTS::
+
+            sage: tachyon_rt.version()  # not tested
+            0.98.9
+            sage: tachyon_rt.version() >= '0.98.9'
+            True
+        """
+        with os.popen('tachyon') as f:
+            r = f.read()
+        return re.search(r"Version ([\d.]*)", r)[1]
 
     def help(self, use_pager=True):
         """
