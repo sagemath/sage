@@ -55,7 +55,7 @@ REFERENCES:
 #*****************************************************************************
 
 from urllib.request import urlopen
-from sage.combinat.designs.difference_family import skew_supplementary_difference_set
+from sage.combinat.designs.difference_family import get_fixed_relative_difference_set, relative_difference_set_from_homomorphism, skew_supplementary_difference_set
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
@@ -68,6 +68,7 @@ from sage.misc.unknown import Unknown
 from sage.cpython.string import bytes_to_str
 from sage.modules.free_module_element import vector
 from sage.combinat.t_sequences import T_sequences_smallcases
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def normalise_hadamard(H):
@@ -1919,6 +1920,92 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
         assert is_hadamard_matrix(M, normalized=False, skew=True)
     return M
 
+def skew_hadamard_matrix_spence_construction(n, check=True):
+    r"""
+    Construct skew Hadamard matrix of order `n` using Spence constrution.
+
+    This function will construct skew Hadamrd matrix of order `n=2(q+1)` where `q` is
+    a prime power with `q = 5` (mod 8). The construction is taken from [Spe1977]_, and the
+    relative difference sets are constructed using :func:`sage.combinat.designs.difference_family.relative_difference_set_from_homomorphism`.
+
+    INPUT:
+    
+    - ``n`` -- A positive integer.
+
+    - ``check`` --  boolean. If true (default), check that the resulting matrix is Hadamard
+      before returning it.
+
+    OUTPUT:
+
+    If `n` satisfies the requirements descrived above, the function return a `n\times n` Hadamard matrix.
+    Otherwise, an exception is raised.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_spence_construction
+        sage: skew_hadamard_matrix_spence_construction(28)
+        28 x 28 dense matrix over Integer Ring...
+    
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(skew_hadamard_matrix_spence_construction(12, check=False), skew=True)
+        True
+        sage: is_hadamard_matrix(skew_hadamard_matrix_spence_construction(60, check=False), skew=True)
+        True
+        sage: skew_hadamard_matrix_spence_construction(31)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 31 is not covered by the Spence construction.
+        sage: skew_hadamard_matrix_spence_construction(16)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 16 is not covered by the Spence construction.
+    """
+    q = n//2 -1
+    m = (q+1)//2
+    if n%4 != 0 or not is_prime_power(q) or q%8 != 5:
+        raise ValueError(f'The order {n} is not covered by the Spence construction.')
+   
+    D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False)
+    D_fixed = get_fixed_relative_difference_set(D)
+    D_union = D_fixed + [q+1+el for el in D_fixed]
+    D_union = list(set([el%(4*(q+1)) for el in D_union]))
+    
+    def find_a(i):
+        for a in range(8):
+            if (a*(q+1)//2+i)%8 == 0:
+                return a
+
+    ai = [find_a(0), find_a(1), find_a(2), find_a(3)]
+    P = PolynomialRing(ZZ, 'x')
+
+    Tm = 0
+    for i in range(m):
+        Tm += P.monomial(i)
+
+    Ds = [[] for i in range(4)]
+    
+    for el in D_union:
+        i = el%8
+        if i > 3:
+            continue
+        Ds[i].append(((el + ai[i] * m) // 8) % m)
+
+    psis = [0 for i in range(4)]
+    for i in range(4):
+        for el in Ds[i]:
+            psis[i] += P.monomial(el)
+
+    diffs = [(2*psis[i] - Tm).mod(P.monomial(m)-1) for i in range(4)]
+    a = [-el for el in diffs[1].coefficients()]
+    b = diffs[0].coefficients()
+    c = diffs[2].coefficients()
+    d = diffs[3].coefficients()
+
+    return williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=check)
+    
+
 def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     r"""
     Data for Williamson-Goethals-Seidel construction of skew Hadamard matrices
@@ -2102,7 +2189,10 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = hadamard_matrix_paleyI(n, normalize=False)
-
+    elif is_prime_power(n//2 -1) and (n//2 -1)%8 == 5:
+        if existence: 
+            return true()
+        M = skew_hadamard_matrix_spence_construction(n, check=False)
     elif n % 8 == 0:
         if skew_hadamard_matrix(n//2,existence=True) is True: # (Lemma 14.1.6 in [Ha83]_)
             if existence:

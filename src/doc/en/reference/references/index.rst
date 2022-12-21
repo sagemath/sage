@@ -5470,6 +5470,11 @@ REFERENCES:
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
 
+.. [Spe1977] \E. Spence.
+            *Skew-Hadamard matrices of order 2(q + 1)*,
+            Discrete Mathematics 18(1) (1977): 79-85.
+            :doi:`10.1016/0012-365X(77)90009-7`
+
 .. [Spe2013] \D. Speyer, *An infinitely generated upper cluster algebra*,
              :arxiv:`1305.6867`.
 
