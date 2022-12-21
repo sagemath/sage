@@ -10,6 +10,13 @@ elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
    CFLAGS="$CFLAGS + z"
 fi
 
+# m4ri has some existing support for Windows, but it assumes that you're
+# building for Windows using MSVC, so it uses the presence of _MSC_VER
+# to determine if compiling for Windows
+if [ -n "$MSYSTEM" ]; then
+   CFLAGS="$CFLAGS -D_MSC_VER"
+fi
+
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
    ENABLE_DEBUG="--enable-debug"
 else
@@ -18,7 +25,12 @@ fi
 
 export CFLAGS
 
-if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
+# m4ri's cpuid detection breaks on Windows because it tries to determine if we're running on Windows
+# using `sizeof(long) == 8`, but Windows sets sizeof(long) to 4 even for 64-bit
+# 
+# Work around that by disabling SSE2 (which causes the cpuid detection to get skipped) when building
+# in MSYS
+if [ "x$SAGE_FAT_BINARY" = "xyes" ] || [ -n "$MSYSTEM" ]; then
     DISABLE_SSE2="--disable-sse2"
 else
     DISABLE_SSE2=""
