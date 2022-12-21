@@ -184,9 +184,14 @@ A guided tour
         ( [  /\/\    /  \  ]  [  \    /    ] )
         ( [ /    \, /    \ ], [   o  o     ] )
 
-    TESTS:
+    The output is in a form suitable for FindStat::
 
-    The following failed before commit c6d4d2e8804aa42afa08c72c887d50c725cc1a91::
+        sage: findmap(list(bij.minimal_subdistributions_iterator())) # optional -- internet
+        0: Mp00034 (quality [100])
+        1: Mp00061oMp00023 (quality [100])
+        2: Mp00018oMp00140 (quality [100])
+
+    TESTS::
 
         sage: N=4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
         sage: theta = lambda pi: Permutation([x+1 if x != len(pi) else 1 for x in pi[-1:]+pi[:-1]])
@@ -372,11 +377,6 @@ from sage.misc.verbose import get_verbose
 # TODO: (low) we frequently need variable names for subsets of A, B,
 # Z.  In LaTeX, we mostly call them \tilde A, \tilde Z, etc. now.  It
 # would be good to have a standard name in code, too.
-
-# TODO: (medium) whenever possible, doctests of a method should only
-# test this method.  Currently we have very many system tests, which
-# is inconvenient when modifying the design substantially.
-
 
 class Bijectionist(SageObject):
     r"""
@@ -722,7 +722,7 @@ class Bijectionist(SageObject):
         """
         self.bmilp = None
         self._n_statistics = len(alpha_beta)
-        # TODO: (low) do we really want to recompute statistics every time?
+        # TODO: do we really want to recompute statistics every time?
         self._alpha = lambda p: tuple(arg[0](p) for arg in alpha_beta)
         self._beta = lambda p: tuple(arg[1](p) for arg in alpha_beta)
 
@@ -1047,6 +1047,21 @@ class Bijectionist(SageObject):
         Update the dictionary of possible values of each block.
 
         This has to be called whenever ``self._P`` was modified.
+
+        It raises a :class:`ValueError`, if the restrictions on a
+        block are contradictory.
+
+        TESTS::
+
+            sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
+            sage: tau = Permutation.longest_increasing_subsequence_length
+            sage: bij = Bijectionist(A, B, tau)
+            sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
+            sage: bij._compute_possible_block_values()
+            Traceback (most recent call last):
+            ...
+            ValueError: No possible values found for singleton block [[1, 2]]
+
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
@@ -1769,7 +1784,6 @@ class Bijectionist(SageObject):
                 # the current solution
                 minimal_subdistribution.add_constraint(sum(active_vars) <= len(active_vars) - 1,
                                                        name="veto")
-                # TODO: can we ignore that in the next step the same constraint is added again?
             else:
                 s = new_s
 
@@ -2020,13 +2034,15 @@ class Bijectionist(SageObject):
 
     def _preprocess_intertwining_relations(self):
         r"""
-
-        .. TODO::
-
-            (medium) untangle side effect and return value if possible
-
         Make `self._P` be the finest set partition coarser than `self._P`
         such that composing elements preserves blocks.
+
+        OUTPUT:
+
+        A list of triples `((\pi/\rho, p, (p_1,\dots,p_k))`, where
+        `p` is the block of `\rho(s(a_1),\dots, s(a_k))`, for any
+        `a_i\in p_i`, suitable for
+        :meth:`_BijectionistMILP.add_intertwining_relation_constraints`.
 
         Suppose that `p_1`, `p_2` are blocks of `P`, and `a_1, a'_1
         \in p_1` and `a_2, a'_2\in p_2`.  Then,
@@ -2049,6 +2065,10 @@ class Bijectionist(SageObject):
             create one test with one and one test with two
             intertwining_relations
 
+        .. TODO::
+
+            untangle side effect and return value if possible
+
         """
         images = {}  # A^k -> A, a_1,...,a_k to pi(a_1,...,a_k), for all pi
         origins_by_elements = []  # (pi/rho, pi(a_1,...,a_k), a_1,...,a_k)
@@ -2060,9 +2080,9 @@ class Bijectionist(SageObject):
                 if a in self._A:
                     if a in images:
                         # this happens if there are several pi's of the same arity
-                        images[a_tuple].add(a)  # TODO: (low) wouldn't self._P.find(a) be more efficient here?
+                        images[a_tuple].add(a)  # TODO: wouldn't self._P.find(a) be more efficient here?
                     else:
-                        images[a_tuple] = set((a,))  # TODO: (low) wouldn't self._P.find(a) be more efficient here?
+                        images[a_tuple] = set((a,))  # TODO: wouldn't self._P.find(a) be more efficient here?
                     origins_by_elements.append((composition_index, a, a_tuple))
 
         # merge blocks
@@ -2483,7 +2503,7 @@ class Bijectionist(SageObject):
         map = {}  # A -> Z, a +-> s(a)
         for p, block in self._P.root_to_elements_dict().items():
             for z in self._possible_block_values[p]:
-                if bmilp.get_value(p, z) == 1:
+                if bmilp.has_value(p, z):
                     for a in block:
                         map[a] = z
                     break
@@ -2498,7 +2518,7 @@ class Bijectionist(SageObject):
         map = {}  # P -> Z, a +-> s(a)
         for p in _disjoint_set_roots(self._P):
             for z in self._possible_block_values[p]:
-                if bmilp.get_value(p, z) == 1:
+                if bmilp.has_value(p, z):
                     map[p] = z
                     break
         return map
@@ -2547,8 +2567,8 @@ class Bijectionist(SageObject):
 
     def _generate_and_solve_initial_bmilp(self):
         r"""
-        Generate a ``_BijectionistMILP``, add all relevant constraints
-        and call ``MILP.solve()``.
+        Generate a :class:`_BijectionistMILP`, add all relevant constraints
+        and call :meth:`_BijectionistMILP.solve`.
         """
         preimage_blocks = self._preprocess_intertwining_relations()
         self._compute_possible_block_values()
@@ -2557,7 +2577,7 @@ class Bijectionist(SageObject):
         n = bmilp.milp.number_of_variables()
         bmilp.add_alpha_beta_constraints()
         bmilp.add_distribution_constraints()
-        bmilp.add_interwining_relation_constraints(preimage_blocks)
+        bmilp.add_intertwining_relation_constraints(preimage_blocks)
         if get_verbose() >= 2:
             self._show_bmilp(bmilp)
         assert n == bmilp.milp.number_of_variables(), "The number of variables increased."
@@ -2565,14 +2585,28 @@ class Bijectionist(SageObject):
         return bmilp
 
 
-class _BijectionistMILP(SageObject):
+class _BijectionistMILP():
     r"""
-    Wrapper class for the MixedIntegerLinearProgram (MILP).  This class is used to manage the MILP,
-    add constraints, solve the problem and check for uniqueness of solution values.
+    Wrapper class for the MixedIntegerLinearProgram (MILP).  This
+    class is used to manage the MILP, add constraints, solve the
+    problem and check for uniqueness of solution values.
+
     """
     def __init__(self, bijectionist: Bijectionist):
-        # TODO: it would be cleaner not to pass the full bijectionist
-        # instance, but only those attributes we actually use:
+        r"""
+        Initialize the mixed integer linear program.
+
+        INPUT:
+
+        - ``bijectionist`` -- an instance of :class:`Bijectionist`.
+
+        .. TODO::
+
+            it might be cleaner not to pass the full bijectionist
+            instance, but only those attributes we actually use
+
+        """
+        # the attributes of the bijectionist class we actually use:
         # _possible_block_values
         # _elements_distributions
         # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho
@@ -2592,68 +2626,91 @@ class _BijectionistMILP(SageObject):
                                          for z in bijectionist._possible_block_values[p]) == 1,
                                      name=name[:50])
 
-    def solve(self, tmp_constraints, solution_index=0):
+    def solve(self, additional_constraints, solution_index=0):
+        r"""
+        Return a solution satisfying the given additional constraints.
+
+        INPUT:
+
+        - ``additional_constraints`` -- a list of constraints for the
+          underlying MILP
+
+        - ``solution_index`` (optional, default: ``0``) -- an index
+          specifying how many of the solutions in the cache should be
+          ignored.
+
+        """
         if self._n_variables < 0:
+            # initialize at first call
             self._n_variables = self.milp.number_of_variables()
             self._index_block_value_dict = {}
             for (p, z), v in self._x.items():
                 variable_index = next(iter(v.dict().keys()))
                 self._index_block_value_dict[variable_index] = (p, z)
-        # number of variables would change with creation of constraints with new variables
+        # number of variables would change with creation of
+        # constraints with new variables
         assert self._n_variables == self.milp.number_of_variables(), "The number of variables changed."
 
-        # check if previous solution exists with constraints
-        previous_solution_exists = False
+        # check if there is a solution satisfying the constraints in
+        # the cache
         for solution in self._solution_cache[solution_index:]:
-            fulfills_constraints = True
-            # loop through all constraints
-            for constraint in tmp_constraints:
-                # check equations
-                for linear_function, value in constraint.equations():
-                    solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
-                    if solution_value != value.dict()[-1]:
-                        fulfills_constraints = False
-                        break
-                if not fulfills_constraints:
-                    break
-                # check inequalities
-                for linear_function, value in constraint.inequalities():
-                    solution_value = self._evaluate_linear_function(linear_function.dict(), self._index_block_value_dict, solution)
-                    if solution_value > value.dict()[-1]:
-                        fulfills_constraints = False
-                        break
-                if not fulfills_constraints:
-                    break
-            if fulfills_constraints:
-                previous_solution_exists = True
+            if all(all(self._evaluate_linear_function(linear_function,
+                                                      solution) == value.dict()[-1]
+                       for linear_function, value in constraint.equations())
+                   and all(self._evaluate_linear_function(linear_function,
+                                                          solution) <= value.dict()[-1]
+                           for linear_function, value in constraint.inequalities())
+                   for constraint in additional_constraints):
                 self.last_solution = solution
-                break
+                return self.last_solution
 
-        # if no previous solution satisfies the constraints, generate a new one
-        if not previous_solution_exists:
-            try:
-                n_constraints = self.milp.number_of_constraints()
-                for constraint in tmp_constraints:
-                    self.milp.add_constraint(constraint)
-                self.milp.solve()
-                for _ in range(self.milp.number_of_constraints()-n_constraints):
-                    self.milp.remove_constraint(n_constraints)
-            except MIPSolverException as error:
-                for _ in range(self.milp.number_of_constraints()-n_constraints):
-                    self.milp.remove_constraint(n_constraints)
-                raise error
+        # otherwise generate a new one
+        try:
+            # TODO: wouldn't it be safer to copy the milp?
+            n_constraints = self.milp.number_of_constraints()
+            for constraint in additional_constraints:
+                self.milp.add_constraint(constraint)
+            self.milp.solve()
+            for _ in range(self.milp.number_of_constraints()-n_constraints):
+                self.milp.remove_constraint(n_constraints)
+        except MIPSolverException as error:
+            for _ in range(self.milp.number_of_constraints()-n_constraints):
+                self.milp.remove_constraint(n_constraints)
+            raise error
 
-            self.last_solution = self.milp.get_values(self._x)
-            self._solution_cache.append(self.last_solution)
-            self.veto_current_solution()
-
+        self.last_solution = self.milp.get_values(self._x)
+        self._solution_cache.append(self.last_solution)
+        self._veto_current_solution()
         return self.last_solution
 
-    def _evaluate_linear_function(self, linear_function_dict, block_index_dict, values):
-        return float(sum(linear_function_dict[index]*values[block_index_dict[index]] for index in linear_function_dict))
+    def _evaluate_linear_function(self, linear_function, values):
+        r"""
+        Evaluate the given function at the given values.
 
-    def get_value(self, p, v):
-        return self.last_solution[p, v]
+        INPUT:
+
+        - ``linear_function``, a
+          :class:`sage.numerical.linear_functions.LinearFunction`.
+
+        - ``values``, a candidate for a solution of the MILP as a
+          dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,
+          specifying whether `a` is mapped to `z`.
+
+        """
+        return float(sum(value * values[self._index_block_value_dict[index]]
+                         for index, value in linear_function.dict().items()))
+
+    def has_value(self, p, v):
+        r"""
+        Return whether a block is mapped to a value in the last solution
+        computed.
+
+        INPUT:
+
+        - ``p``, the representative of a block
+        - ``v``, a value in `Z`
+        """
+        return self.last_solution[p, v] == 1
 
     def add_alpha_beta_constraints(self):
         r"""
@@ -2690,8 +2747,8 @@ class _BijectionistMILP(SageObject):
             z_index = Z_dict[self._bijectionist._tau[b]]
             B_matrix[z_index][w_index] += 1
 
-        # TODO: (low) I am not sure that this is the best way to
-        # filter out empty conditions
+        # TODO: not sure that this is the best way to filter out
+        # empty conditions
         for w in range(len(W)):
             for z in range(len(Z)):
                 c = AZ_matrix[z][w] - B_matrix[z][w]
@@ -2704,7 +2761,7 @@ class _BijectionistMILP(SageObject):
     def add_distribution_constraints(self):
         r"""
         Add constraints so the distributions given by
-        :meth:`~Bijectionist.set_distributions` are fulfilled.
+        :meth:`set_distributions` are fulfilled.
 
         To accomplish this we add
 
@@ -2728,8 +2785,8 @@ class _BijectionistMILP(SageObject):
             for z in values:
                 values_sum[Z_dict[z]] += 1
 
-            # TODO: (low) I am not sure that this is the best way to
-            # filter out empty conditions
+            # TODO: not sure that this is the best way to filter out
+            # empty conditions
             for element, value in zip(elements_sum, values_sum):
                 c = element - value
                 if c.is_zero():
@@ -2738,13 +2795,19 @@ class _BijectionistMILP(SageObject):
                     raise MIPSolverException
                 self.milp.add_constraint(c == 0, name=f"d: {element} == {value}")
 
-    def add_interwining_relation_constraints(self, origins):
+    def add_intertwining_relation_constraints(self, origins):
         r"""
         Add constraints corresponding to the given intertwining
         relations.
 
+        INPUT:
+
+        - origins, a list of triples `((\pi/\rho, p,
+          (p_1,\dots,p_k))`, where `p` is the block of
+          `\rho(s(a_1),\dots, s(a_k))`, for any `a_i\in p_i`.
+
         This adds the constraints imposed by
-        :meth:`~Bijectionist.set_intertwining_relations`.
+        :meth:`set_intertwining_relations`,
 
         .. MATH::
 
@@ -2771,15 +2834,8 @@ class _BijectionistMILP(SageObject):
 
             x_{p, z}\geq 1 - k + \sum_{i=1}^k x_{p_i, z_i}.
 
-        Not that `z` must be a possible value of `p` and each `z_i`
+        Note that `z` must be a possible value of `p` and each `z_i`
         must be a possible value of `p_i`.
-
-        INPUT:
-
-        - origins, a list of triples `((\pi/\rho, p,
-          (p_1,\dots,p_k))`, where `p` is the block of
-          `\rho(s(a_1),\dots, s(a_k))`, for any `a_i\in p_i`.
-
         """
         for composition_index, image_block, preimage_blocks in origins:
             pi_rho = self._bijectionist._pi_rho[composition_index]
@@ -2799,14 +2855,13 @@ class _BijectionistMILP(SageObject):
                     self.milp.add_constraint(rhs <= 0,
                                              name=f"pi/rho({composition_index})")
 
-    def veto_current_solution(self):
+    def _veto_current_solution(self):
         r"""
         Add a constraint vetoing the current solution.
 
         This adds a constraint such that the next call to
-        :meth:`MixedIntegerLinearProgram.solve()` must return a
-        solution different from the current one.
-
+        :meth:`solve` must return a solution different from the
+        current one.
 
         We require that the MILP currently has a solution.
 
@@ -2837,6 +2892,19 @@ def _invert_dict(d):
     """
     Return the dictionary whose keys are the values of the input and
     whose values are the lists of preimages.
+
+    INPUT:
+
+    - ``d``, a ``dict``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.bijectionist import _invert_dict
+        sage: _invert_dict({1: "a", 2: "a", 3:"b"})
+        {'a': [1, 2], 'b': [3]}
+
+        sage: _invert_dict({})
+        {}
     """
     preimages = {}
     for k, v in d.items():
@@ -2847,6 +2915,20 @@ def _invert_dict(d):
 def _disjoint_set_roots(d):
     """
     Return the representatives of the blocks of the disjoint set.
+
+    INPUT:
+
+    - ``d``, a ``sage.sets.disjoint_set.DisjointSet_of_hashables``
+
+    EXAMPLES::
+
+        sage: from sage.combinat.bijectionist import _disjoint_set_roots
+        sage: d = DisjointSet('abcde')
+        sage: d.union("a", "b")
+        sage: d.union("a", "c")
+        sage: d.union("e", "d")
+        sage: _disjoint_set_roots(d)
+        dict_keys(['a', 'e'])
     """
     return d.root_to_elements_dict().keys()
 
