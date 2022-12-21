@@ -23,6 +23,16 @@ fi
 sdh_configure $GF2X_CONFIGURE
 sdh_make
 
+# The gf2x tuning code gets thrown off when building on Windows by the fact that executables
+# have an exe extension (instead of having no extension like on other platforms) because it tries
+# to find the source file corresponding to a binary by appending ".c" to the file name of the executable
+# (so it ends up looking for filename.exe.c instead of filename.c)
+# Avoid that by just disabling tuning on MSYS
+if [ -n "$MSYSTEM" ]; then
+    echo "Disabling tuning gf2x on MSYS"
+    SAGE_TUNE_GF2X="no"
+fi
+
 case "$SAGE_TUNE_GF2X" in
     "full")
         echo "Complete tuning of gf2x."
