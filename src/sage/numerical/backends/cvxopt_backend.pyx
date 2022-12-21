@@ -1002,4 +1002,3 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.param[name]
         else:
             self.param[name] = value
-

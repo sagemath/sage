@@ -1293,4 +1293,3 @@ cdef class BaseRingFloorDivAction(Action):
         P = self.US()
         g = P.base_ring()(g)
         return type(x)(P, elt.__f // g, prec=prec, check=False)
-

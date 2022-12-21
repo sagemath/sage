@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-Finite field of characteristic 2 elements
+Elements of finite fields of characteristic 2
 
 This implementation uses NTL's GF2E class to perform the arithmetic
 and is the standard implementation for ``GF(2^n)`` for ``n >= 16``.
@@ -872,8 +872,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             rx = GF2X_deg(GF2E_rep((<FiniteField_ntl_gf2eElement>right).x))
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
-            li = left.integer_representation()
-            ri = right.integer_representation()
+            li = left._integer_representation()
+            ri = right._integer_representation()
             return richcmp(li, ri, op)
 
     def _integer_(FiniteField_ntl_gf2eElement self, Integer):
@@ -930,7 +930,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         else:
             raise TypeError("Cannot coerce element to an integer.")
 
-    def integer_representation(FiniteField_ntl_gf2eElement self):
+    def _integer_representation(FiniteField_ntl_gf2eElement self):
         r"""
         Return the int representation of ``self``.  When ``self`` is in the
         prime subfield, the integer returned is equal to ``self`` and not
@@ -940,15 +940,19 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         for `e \in \GF{p}[x]` with `e = a_0 + a_1 x + a_2 x^2 + \cdots`,
         `e` is represented as: `n = a_0 + a_1  p + a_2  p^2 + \cdots`.
 
+        .. SEEALSO::
+
+            :meth:`sage.rings.finite_rings.element_base.FinitePolyExtElement.to_integer`
+
         EXAMPLES::
 
             sage: k.<a> = GF(2^20)
-            sage: a.integer_representation()
+            sage: a._integer_representation()
             2
-            sage: (a^2 + 1).integer_representation()
+            sage: (a^2 + 1)._integer_representation()
             5
             sage: k.<a> = GF(2^70)
-            sage: (a^65 + a^64 + 1).integer_representation()
+            sage: (a^65 + a^64 + 1)._integer_representation()
             55340232221128654849
         """
         cdef unsigned int i = 0
@@ -1199,7 +1203,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: {a:1,a:0} # indirect doctest
             {a: 0}
         """
-        return hash(self.integer_representation()) # todo, come up with a faster version
+        return hash(self._integer_representation())  # todo, come up with a faster version
 
     def _vector_(FiniteField_ntl_gf2eElement self, reverse=False):
         r"""
@@ -1256,7 +1260,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         INPUT:
 
-        - ``base`` -- finite-field element.
+        - ``base`` -- finite field element
 
         OUTPUT:
 

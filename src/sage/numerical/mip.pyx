@@ -3576,7 +3576,7 @@ cdef class MIPVariable(SageObject):
         """
         Implement the action of a matrix multiplying from the left.
         """
-        result = dict()
+        result = {}
         for i, col in enumerate(m.columns()):
             x = self[i]
             x_index, = x.dict().keys()
@@ -3585,4 +3585,3 @@ cdef class MIPVariable(SageObject):
         V = FreeModule(self._p.base_ring(), m.nrows())
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
-

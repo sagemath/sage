@@ -1536,10 +1536,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = vector(QQ['x,y'], [1..5]); v.change_ring(GF(3))
             (1, 2, 0, 1, 2)
+
+        TESTS:
+
+        Check for :trac:`29630`::
+
+            sage: v = vector(QQ, 4, {0:1}, sparse=True)
+            sage: v.change_ring(AA).is_sparse()
+            True
         """
         if self.base_ring() is R:
             return self
         M = self._parent.change_ring(R)
+        if M.is_sparse():
+            return M(self.dict(), coerce=True)
         return M(self.list(), coerce=True)
 
     def coordinate_ring(self):

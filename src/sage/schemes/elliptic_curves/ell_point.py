@@ -118,8 +118,6 @@ AUTHORS:
 
 import math
 
-import sage.plot.all as plot
-
 from sage.rings.padics.factory import Qp
 from sage.rings.padics.precision_error import PrecisionError
 
@@ -597,10 +595,13 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.plot(pointsize=30, rgbcolor=(1,0,0))
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.point import point
+        from sage.plot.text import text
+
         if self.is_zero():
-            return plot.text("$\\infty$", (-3, 3), **args)
+            return text("$\\infty$", (-3, 3), **args)
         else:
-            return plot.point((self[0], self[1]), **args)
+            return point((self[0], self[1]), **args)
 
     def _add_(self, right):
         """

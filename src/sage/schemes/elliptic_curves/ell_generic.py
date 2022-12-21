@@ -61,9 +61,6 @@ from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuo
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
-import sage.plot.all as plot
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.plot", "generate_plot_points")
 
 from sage.arith.all import lcm
 import sage.rings.all as rings
@@ -2432,6 +2429,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         Return the set of isomorphisms from self to itself (as a list).
 
+        The identity and negation morphisms are guaranteed to appear
+        as the first and second entry of the returned list.
+
         INPUT:
 
         - ``field`` (default ``None``) -- a field into which the
@@ -2440,39 +2440,65 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (list) A list of ``WeierstrassIsomorphism`` objects
+        (list) A list of :class:`~wm.WeierstrassIsomorphism` objects
         consisting of all the isomorphisms from the curve ``self`` to
         itself defined over ``field``.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve_from_j(QQ(0)) # a curve with j=0 over QQ
-            sage: E.automorphisms();
+            sage: E = EllipticCurve_from_j(QQ(0))  # a curve with j=0 over QQ
+            sage: E.automorphisms()
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
-            Via:  (u,r,s,t) = (-1, 0, 0, -1), Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
-            Via:  (u,r,s,t) = (1, 0, 0, 0)]
+               Via:  (u,r,s,t) = (1, 0, 0, 0),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
+               Via:  (u,r,s,t) = (-1, 0, 0, -1)]
 
         We can also find automorphisms defined over extension fields::
 
-            sage: K.<a> = NumberField(x^2+3) # adjoin roots of unity
+            sage: K.<a> = NumberField(x^2+3)  # adjoin roots of unity
             sage: E.automorphisms(K)
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
-            Via:  (u,r,s,t) = (-1, 0, 0, -1),
-            ...
-            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
-            Via:  (u,r,s,t) = (1, 0, 0, 0)]
+               Via:  (u,r,s,t) = (1, 0, 0, 0),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+               Via:  (u,r,s,t) = (-1, 0, 0, -1),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+               Via:  (u,r,s,t) = (-1/2*a - 1/2, 0, 0, 0),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+               Via:  (u,r,s,t) = (1/2*a + 1/2, 0, 0, -1),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+               Via:  (u,r,s,t) = (1/2*a - 1/2, 0, 0, 0),
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+               Via:  (u,r,s,t) = (-1/2*a + 1/2, 0, 0, -1)]
 
         ::
 
-            sage: [ len(EllipticCurve_from_j(GF(q,'a')(0)).automorphisms()) for q in [2,4,3,9,5,25,7,49]]
+            sage: [len(EllipticCurve_from_j(GF(q,'a')(0)).automorphisms()) for q in [2,4,3,9,5,25,7,49]]
             [2, 24, 2, 12, 2, 6, 6, 6]
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(100)
+            sage: k = randrange(1,30)
+            sage: F.<t> = GF((p,k))
+            sage: while True:
+            ....:     try:
+            ....:         E = EllipticCurve(list((F^5).random_element()))
+            ....:     except ArithmeticError:
+            ....:         continue
+            ....:     break
+            sage: Aut = E.automorphisms()
+            sage: Aut[0] == E.multiplication_by_m_isogeny(1)
+            True
+            sage: Aut[1] == E.multiplication_by_m_isogeny(-1)
+            True
+            sage: sorted(Aut) == Aut
+            True
         """
-        if field is None:
-            return [wm.WeierstrassIsomorphism(self, urst, self)
-                    for urst in wm.isomorphisms(self, self)]
-        E = self.change_ring(field)
-        return [wm.WeierstrassIsomorphism(E, urst, E)
-                for urst in wm.isomorphisms(E, E)]
+        if field is not None:
+            self = self.change_ring(field)
+        return self.isomorphisms(self)
 
     def isomorphisms(self, other, field=None):
         """
@@ -2488,7 +2514,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (list) A list of ``WeierstrassIsomorphism`` objects consisting of all
+        (list) A list of :class:`~wm.WeierstrassIsomorphism` objects consisting of all
         the isomorphisms from the curve ``self`` to the curve
         ``other`` defined over ``field``.
 
@@ -2496,11 +2522,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve_from_j(QQ(0)) # a curve with j=0 over QQ
             sage: F = EllipticCurve('27a3') # should be the same one
-            sage: E.isomorphisms(F);
+            sage: E.isomorphisms(F)
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
-              Via:  (u,r,s,t) = (-1, 0, 0, -1),
+               Via:  (u,r,s,t) = (1, 0, 0, 0),
              Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
-              Via:  (u,r,s,t) = (1, 0, 0, 0)]
+               Via:  (u,r,s,t) = (-1, 0, 0, -1)]
 
         We can also find isomorphisms defined over extension fields::
 
@@ -2517,13 +2543,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             To:   Elliptic Curve defined by y^2 = x^3 + x + 6 over Finite Field in a of size 7^2
             Via:  (u,r,s,t) = (6*a + 4, 0, 0, 0)]
         """
-        if field is None:
-            return [wm.WeierstrassIsomorphism(self, urst, other)
-                    for urst in wm.isomorphisms(self, other)]
-        E = self.change_ring(field)
-        F = other.change_ring(field)
-        return [wm.WeierstrassIsomorphism(E, urst, F)
-                for urst in wm.isomorphisms(E, F)]
+        if field is not None:
+            self = self.change_ring(field)
+            other = other.change_ring(field)
+        return sorted(wm.WeierstrassIsomorphism(self, urst, other)
+                      for urst in wm._isomorphisms(self, other))
 
     def is_isomorphic(self, other, field=None):
         """
@@ -2557,17 +2581,16 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if field is None:
             if self.base_ring() != other.base_ring():
                 return False
-            elif self.j_invariant() != other.j_invariant():  # easy check
-                return False
-            else:
-                return wm.isomorphisms(self, other, True) is not None
         else:
-            E = self.base_extend(field)
-            F = other.base_extend(field)
-            if E.j_invariant() != F.j_invariant():  # easy check
-                return False
-            else:
-                return wm.isomorphisms(E, other, F) is not None
+            self = self.base_extend(field)
+            other = other.base_extend(field)
+        if self.j_invariant() != other.j_invariant():  # easy check
+            return False
+        try:
+            next(wm._isomorphisms(self, other))
+        except StopIteration:
+            return False
+        return True
 
     def change_weierstrass_model(self, *urst):
         r"""
@@ -3067,24 +3090,28 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             else:
                 I.append((xmin, xmax, '='))
 
-        g = plot.Graphics()
+        from sage.plot.graphics import Graphics
+        from sage.plot.line import line
+        from sage.plot.plot import generate_plot_points
+
+        g = Graphics()
         plot_points = int(args.pop('plot_points',200))
         adaptive_tolerance = args.pop('adaptive_tolerance',0.01)
         adaptive_recursion = args.pop('adaptive_recursion',5)
         randomize = args.pop('randomize',True)
         for j in range(len(I)):
-            a,b,shape = I[j]
+            a, b, shape = I[j]
             v = generate_plot_points(f1, (a, b), plot_points, adaptive_tolerance, adaptive_recursion, randomize)
             w = generate_plot_points(f2, (a, b), plot_points, adaptive_tolerance, adaptive_recursion, randomize)
             if shape == 'o':
-                g += plot.line(v + list(reversed(w)) + [v[0]], **args)
+                g += line(v + list(reversed(w)) + [v[0]], **args)
             elif shape == '<':
-                g += plot.line(list(reversed(v)) + w, **args)
+                g += line(list(reversed(v)) + w, **args)
             elif shape == '>':
-                g += plot.line(v + list(reversed(w)), **args)
+                g += line(v + list(reversed(w)), **args)
             else:
-                g += plot.line(v, **args)
-                g += plot.line(w, **args)
+                g += line(v, **args)
+                g += line(w, **args)
         return g
 
     @cached_method

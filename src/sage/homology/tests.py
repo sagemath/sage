@@ -47,9 +47,9 @@ def random_chain_complex(level=1):
 
         sage: from sage.homology.tests import random_chain_complex
         sage: C = random_chain_complex()
-        sage: C
+        sage: C  # random
         Chain complex with at most ... nonzero terms over Integer Ring
-        sage: len(C.nonzero_degrees()) in [1, 2]
+        sage: len(C.nonzero_degrees()) in [0, 1, 2]
         True
         sage: C.degree_of_differential() in [-1, 1]
         True
