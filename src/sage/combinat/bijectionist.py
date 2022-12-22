@@ -121,7 +121,7 @@ A guided tour
     There is no rotation invariant statistic on non crossing set partitions which is equidistributed
     with the Strahler number on ordered trees::
 
-        sage: N=8; As = [[SetPartition(d.to_noncrossing_partition()) for d in DyckWords(n)] for n in range(N)]
+        sage: N = 8; As = [[SetPartition(d.to_noncrossing_partition()) for d in DyckWords(n)] for n in range(N)]
         sage: A = sum(As, [])
         sage: B = sum([list(OrderedTrees(n)) for n in range(1, N+1)], [])
         sage: theta = lambda m: SetPartition([[i % m.size() + 1 for i in b] for b in m])
@@ -186,14 +186,14 @@ A guided tour
 
     The output is in a form suitable for FindStat::
 
-        sage: findmap(list(bij.minimal_subdistributions_iterator())) # optional -- internet
+        sage: findmap(list(bij.minimal_subdistributions_iterator()))            # optional -- internet
         0: Mp00034 (quality [100])
         1: Mp00061oMp00023 (quality [100])
         2: Mp00018oMp00140 (quality [100])
 
     TESTS::
 
-        sage: N=4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
+        sage: N = 4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
         sage: theta = lambda pi: Permutation([x+1 if x != len(pi) else 1 for x in pi[-1:]+pi[:-1]])
         sage: def tau(pi):
         ....:    n = len(pi)
@@ -479,7 +479,7 @@ class Bijectionist(SageObject):
         Check that large input sets are handled well::
 
             sage: A = B = list(range(20000))
-            sage: bij = Bijectionist(A, B) # long time
+            sage: bij = Bijectionist(A, B)                                      # long time
         """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
@@ -1471,8 +1471,6 @@ class Bijectionist(SageObject):
             sage: all(s[Permutation([2, 1])] == s[Permutation([1, 4, 2, 3])] for s in bij.solutions_iterator())
             False
 
-
-
             sage: A = B = ["a", "b", "c", "d", "e", "f"]
             sage: tau = {"a": 1, "b": 1, "c": 3, "d": 4, "e": 5, "f": 6}.get
             sage: bij = Bijectionist(A, B, tau)
@@ -1502,7 +1500,8 @@ class Bijectionist(SageObject):
 
         """
         if self.bmilp is None:
-            self.bmilp = self._generate_and_solve_initial_bmilp()  # may throw Exception
+            self.bmilp = self._initialize_new_bmilp()
+            self.bmilp.solve([])
 
         # generate blockwise preimage to determine which blocks have the same image
         solution = self._solution_by_blocks(self.bmilp)
@@ -1668,7 +1667,9 @@ class Bijectionist(SageObject):
 
             # generate initial solution, solution dict and add solution
             if self.bmilp is None:
-                self.bmilp = self._generate_and_solve_initial_bmilp()
+                self.bmilp = self._initialize_new_bmilp()
+                self.bmilp.solve([])
+
             solution = self._solution(self.bmilp)
             solutions = {}
             add_solution(solutions, solution)
@@ -1759,7 +1760,8 @@ class Bijectionist(SageObject):
 
         try:
             if self.bmilp is None:
-                self.bmilp = self._generate_and_solve_initial_bmilp()
+                self.bmilp = self._initialize_new_bmilp()
+                self.bmilp.solve([])
         except MIPSolverException:
             return
         s = self._solution(self.bmilp)
@@ -1960,11 +1962,12 @@ class Bijectionist(SageObject):
                 minimal_subdistribution.add_constraint(sum(D[p] for p in P
                                                            if s[p] == v) == V[v])
 
-        try:
-            if self.bmilp is None:
-                self.bmilp = self._generate_and_solve_initial_bmilp()
-        except MIPSolverException:
-            return
+        if self.bmilp is None:
+            try:
+                self.bmilp = self._initialize_new_bmilp()
+                self.bmilp.solve([])
+            except MIPSolverException:
+                return
         s = self._solution_by_blocks(self.bmilp)
         add_counter_example_constraint(s)
         while True:
@@ -2362,6 +2365,7 @@ class Bijectionist(SageObject):
             sage: iterator2 = bij.solutions_iterator()
 
         Generate a solution in iterator1, iterator2 should generate the same solution and vice versa::
+
             sage: next(iterator1)
                 {'a1': 1,
                 'a2': 1,
@@ -2470,29 +2474,24 @@ class Bijectionist(SageObject):
                 'b8': 1,
                 'd': 0}
         """
-        bmilp = None
         next_solution = None
-        try:
-            if self.bmilp is None:
-                self.bmilp = self._generate_and_solve_initial_bmilp()
-            bmilp = self.bmilp
-            bmilp.solve([], 0)
-            next_solution = self._solution(bmilp)
-        except MIPSolverException:
-            return
-
-        solution_index = 1
+        if self.bmilp is None:
+            try:
+                self.bmilp = self._initialize_new_bmilp()
+            except MIPSolverException:
+                return
+        bmilp = self.bmilp
+        solution_index = 0
         while True:
-            yield next_solution
+            try:
+                bmilp.solve([], solution_index)
+            except MIPSolverException:
+                return
+            yield self._solution(bmilp)
+            solution_index += 1
             if get_verbose() >= 2:
                 print("after vetoing")
                 self._show_bmilp(bmilp, variables=False)
-            try:
-                bmilp.solve([], solution_index)
-                next_solution = self._solution(bmilp)
-                solution_index += 1
-            except MIPSolverException:
-                return
 
     def _solution(self, bmilp):
         """
@@ -2565,10 +2564,9 @@ class Bijectionist(SageObject):
                 print(f"    {v}: " + "".join([f"s({a}) = "
                                               for a in self._P.root_to_elements_dict()[p]]) + f"{z}")
 
-    def _generate_and_solve_initial_bmilp(self):
+    def _initialize_new_bmilp(self):
         r"""
-        Generate a :class:`_BijectionistMILP`, add all relevant constraints
-        and call :meth:`_BijectionistMILP.solve`.
+        Initialize a :class:`_BijectionistMILP` and add the current constraints.
         """
         preimage_blocks = self._preprocess_intertwining_relations()
         self._compute_possible_block_values()
@@ -2581,7 +2579,6 @@ class Bijectionist(SageObject):
         if get_verbose() >= 2:
             self._show_bmilp(bmilp)
         assert n == bmilp.milp.number_of_variables(), "The number of variables increased."
-        bmilp.solve([])
         return bmilp
 
 
@@ -2605,6 +2602,13 @@ class _BijectionistMILP():
             it might be cleaner not to pass the full bijectionist
             instance, but only those attributes we actually use
 
+        TESTS::
+
+            sage: A = B = ["a", "b", "c", "d"]
+            sage: bij = Bijectionist(A, B)
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: _BijectionistMILP(bij)
+            <sage.combinat.bijectionist._BijectionistMILP object at ...>
         """
         # the attributes of the bijectionist class we actually use:
         # _possible_block_values
@@ -2639,7 +2643,72 @@ class _BijectionistMILP():
           specifying how many of the solutions in the cache should be
           ignored.
 
+        TESTS::
+
+            sage: A = B = ["a", "b"]
+            sage: bij = Bijectionist(A, B)
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: len(bmilp._solution_cache)
+            0
+
+        Without any constraints, we do not require that the solution is a bijection::
+
+            sage: bmilp.solve([bmilp._x["a", "a"] == 1, bmilp._x["b", "a"] == 1])
+            {('a', 'a'): 1.0, ('a', 'b'): 0.0, ('b', 'a'): 1.0, ('b', 'b'): 0.0}
+            sage: len(bmilp._solution_cache)
+            1
+            sage: bmilp.solve([bmilp._x["a", "b"] == 1, bmilp._x["b", "b"] == 1])
+            {('a', 'a'): 0.0, ('a', 'b'): 1.0, ('b', 'a'): 0.0, ('b', 'b'): 1.0}
+            sage: len(bmilp._solution_cache)
+            2
+
+        A more elaborate test::
+
+            sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
+            sage: tau = lambda D: D.number_of_touch_points()
+            sage: bij = Bijectionist(A, B, tau)
+            sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
+            sage: bmilp = bij._initialize_new_bmilp()
+
+        Generate a solution::
+
+            sage: bmilp.solve([])
+            {([], 0): 1.0,
+             ([1, 0], 1): 1.0,
+             ([1, 0, 1, 0], 1): 0.0,
+             ([1, 0, 1, 0], 2): 1.0,
+             ([1, 1, 0, 0], 1): 1.0,
+             ([1, 1, 0, 0], 2): 0.0}
+
+        Generating a new solution that also maps `1010` to `2` fails:
+
+            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5], solution_index=1)
+            Traceback (most recent call last):
+            ...
+            MIPSolverException: GLPK: Problem has no feasible solution
+
+        However, searching for a cached solution succeeds, for inequalities and equalities::
+
+            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5])
+            {([], 0): 1.0,
+             ([1, 0], 1): 1.0,
+             ([1, 0, 1, 0], 1): 0.0,
+             ([1, 0, 1, 0], 2): 1.0,
+             ([1, 1, 0, 0], 1): 1.0,
+             ([1, 1, 0, 0], 2): 0.0}
+
+            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] == 0])
+            {([], 0): 1.0,
+             ([1, 0], 1): 1.0,
+             ([1, 0, 1, 0], 1): 0.0,
+             ([1, 0, 1, 0], 2): 1.0,
+             ([1, 1, 0, 0], 1): 1.0,
+             ([1, 1, 0, 0], 2): 0.0}
+
         """
+        assert 0 <= solution_index <= len(self._solution_cache), "the index of the desired solution must not be larger than the number of known solutions"
+
         if self._n_variables < 0:
             # initialize at first call
             self._n_variables = self.milp.number_of_variables()
@@ -2964,55 +3033,6 @@ def _non_copying_intersection(sets):
 """
 TESTS::
 
-    #####################
-    # caching base test #
-    #####################
-    sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
-    sage: tau = lambda D: D.number_of_touch_points()
-    sage: bij = Bijectionist(A, B, tau)
-    sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
-    sage: bmilp = bij._generate_and_solve_initial_bmilp()
-
-Print the generated solution::
-
-    sage: bmilp.milp.get_values(bmilp._x)
-    {([], 0): 1.0,
-     ([1, 0], 1): 1.0,
-     ([1, 0, 1, 0], 1): 0.0,
-     ([1, 0, 1, 0], 2): 1.0,
-     ([1, 1, 0, 0], 1): 1.0,
-     ([1, 1, 0, 0], 2): 0.0}
-
-Generating a new solution that also maps `1010` to `2` fails:
-
-    sage: from sage.combinat.bijectionist import _disjoint_set_roots
-    sage: permutation1010root = list(_disjoint_set_roots(bij._P))[2]
-    sage: permutation1010root
-    [1, 0, 1, 0]
-    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5], solution_index=1)
-    Traceback (most recent call last):
-    ...
-    MIPSolverException: GLPK: Problem has no feasible solution
-
-However, searching for a cached solution succeeds, for inequalities and equalities::
-
-    sage: bmilp.solve([bmilp._x[permutation1010root, 1] <= 0.5])
-    {([], 0): 1.0,
-     ([1, 0], 1): 1.0,
-     ([1, 0, 1, 0], 1): 0.0,
-     ([1, 0, 1, 0], 2): 1.0,
-     ([1, 1, 0, 0], 1): 1.0,
-     ([1, 1, 0, 0], 2): 0.0}
-
-    sage: bmilp.solve([bmilp._x[permutation1010root, 1] == 0])
-    {([], 0): 1.0,
-     ([1, 0], 1): 1.0,
-     ([1, 0, 1, 0], 1): 0.0,
-     ([1, 0, 1, 0], 2): 1.0,
-     ([1, 1, 0, 0], 1): 1.0,
-     ([1, 1, 0, 0], 2): 0.0}
-
-
     sage: As = Bs = [[],
     ....:            [(1,i,j) for i in [-1,0,1] for j in [-1,1]],
     ....:            [(2,i,j) for i in [-1,0,1] for j in [-1,1]],
@@ -3027,7 +3047,7 @@ it take (seemingly) forever.::
     sage: bij = Bijectionist(sum(As, []), sum(Bs, []))
     sage: bij.set_statistics((lambda x: x[0], lambda x: x[0]))
     sage: bij.set_intertwining_relations((2, c1, c1), (1, c2, c2))
-    sage: l = list(bij.solutions_iterator()); len(l)
+    sage: l = list(bij.solutions_iterator()); len(l)                            # long time
     64
 
 A brute force check would be difficult::
@@ -3055,8 +3075,8 @@ Let us try a smaller example::
     sage: A = sum(As, [])
     sage: respects_c1 = lambda s: all(c1(a1, a2) not in A or s[c1(a1, a2)] == c1(s[a1], s[a2]) for a1 in A for a2 in A)
     sage: respects_c2 = lambda s: all(c2(a1) not in A or s[c2(a1)] == c2(s[a1]) for a1 in A)
-    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]
-    sage: sorted(l1, key=lambda s: tuple(s.items())) == l2
+    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]             # long time
+    sage: sorted(l1, key=lambda s: tuple(s.items())) == l2                      # long time
     True
 
 Our benchmark example::
@@ -3071,7 +3091,7 @@ Our benchmark example::
     ....:    cycle = Permutation(tuple(range(1, len(p)+1)))
     ....:    return Permutation([cycle.inverse()(p(cycle(i))) for i in range(1, len(p)+1)])
 
-    sage: N=5
+    sage: N = 5
     sage: As = [list(Permutations(n)) for n in range(N+1)]
     sage: A = B = sum(As, [])
     sage: bij = Bijectionist(A, B, gamma)
@@ -3103,9 +3123,9 @@ Our benchmark example::
     ([[2, 1, 5, 3, 4], [2, 5, 1, 3, 4], [3, 1, 5, 2, 4], [3, 5, 1, 2, 4]], [3, 3, 4, 4])
     ([[1, 3, 2, 5, 4], [1, 3, 5, 2, 4], [1, 4, 2, 5, 3], [1, 4, 5, 2, 3], [1, 4, 5, 3, 2], [1, 5, 4, 2, 3], [1, 5, 4, 3, 2]], [2, 2, 3, 3, 3, 3, 3])
 
-    sage: l = list(bij.solutions_iterator()); len(l)  # long time
+    sage: l = list(bij.solutions_iterator()); len(l)                            # long time
     504
 
-    sage: for a, d in bij.minimal_subdistributions_iterator():  # long time
+    sage: for a, d in bij.minimal_subdistributions_iterator():                  # long time
     ....:     print(sorted(a), sorted(d))
 """
