@@ -5,7 +5,7 @@ A bijectionist's toolkit
 AUTHORS:
 
 - Alexander Grosz, Tobias Kietreiber, Stephan Pfannerer and Martin
-  Rubey (2020): Initial version
+  Rubey (2020-2022): Initial version
 
 Quick reference
 ===============
@@ -1504,26 +1504,29 @@ class Bijectionist(SageObject):
             self.bmilp.solve([])
 
         # generate blockwise preimage to determine which blocks have the same image
-        solution = self._solution_by_blocks(self.bmilp)
+        solution = self._solution(self.bmilp, True)
         multiple_preimages = {(value,): preimages
                               for value, preimages in _invert_dict(solution).items()
                               if len(preimages) > 1}
 
-        # check for each pair of blocks if a solution with different values on these block exists
-        #     if yes, use the new solution to update the multiple_preimages dictionary, restart the check
+        # check for each pair of blocks if a solution with different
+        # values on these block exists
+
+        #     if yes, use the new solution to update the
+        #             multiple_preimages dictionary, restart the check
         #     if no, the two blocks can be joined
 
         # _P has to be copied to not mess with the solution-process
-        # since we do not want to regenerate the bmilp in each step, so blocks
-        # have to stay consistent during the whole process
+        # since we do not want to regenerate the bmilp in each step,
+        # so blocks have to stay consistent during the whole process
         tmp_P = deepcopy(self._P)
         updated_preimages = True
         while updated_preimages:
             updated_preimages = False
-            for values in copy(multiple_preimages):  # copy to be able to modify dict
+            for values in copy(multiple_preimages):
                 if updated_preimages:
                     break
-                for i, j in itertools.combinations(copy(multiple_preimages[values]), r=2):  # copy to be able to modify list
+                for i, j in itertools.combinations(copy(multiple_preimages[values]), r=2):
                     tmp_constraints = []
                     try:
                         # veto the two blocks having the same value
@@ -1533,11 +1536,11 @@ class Bijectionist(SageObject):
                         self.bmilp.solve(tmp_constraints)
 
                         # solution exists, update dictionary
-                        solution = self._solution_by_blocks(self.bmilp)
+                        solution = self._solution(self.bmilp, True)
                         updated_multiple_preimages = {}
                         for values in multiple_preimages:
                             for p in multiple_preimages[values]:
-                                solution_tuple = (*values, solution[p])  # tuple so actual solutions were equal in lookup
+                                solution_tuple = (*values, solution[p])
                                 if solution_tuple not in updated_multiple_preimages:
                                     updated_multiple_preimages[solution_tuple] = []
                                 updated_multiple_preimages[solution_tuple].append(p)
@@ -1547,7 +1550,8 @@ class Bijectionist(SageObject):
                     except MIPSolverException:
                         # no solution exists, join blocks
                         tmp_P.union(i, j)
-                        if i in multiple_preimages[values] and j in multiple_preimages[values]:  # only one of the joined blocks should remain in the list
+                        if i in multiple_preimages[values] and j in multiple_preimages[values]:
+                            # only one of the joined blocks should remain in the list
                             multiple_preimages[values].remove(j)
                     if len(multiple_preimages[values]) == 1:
                         del multiple_preimages[values]
@@ -1773,7 +1777,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D)  # a dict from A to {0, 1}
-            new_s = self._find_counter_example(self.bmilp, s, d)
+            new_s = self._find_counter_example(self._A, s, d, False)
             if new_s is None:
                 values = self._sorter["Z"](s[a] for a in self._A if d[a])
                 yield ([a for a in self._A if d[a]], values)
@@ -1789,31 +1793,35 @@ class Bijectionist(SageObject):
             else:
                 s = new_s
 
-    def _find_counter_example(self, bmilp, s0, d):
+    def _find_counter_example(self, P, s0, d, on_blocks):
         r"""
         Return a solution `s` such that ``d`` is not a subdistribution of
         `s0`.
 
-        TODO: better name
-
         INPUT:
 
-        - ``bmilp``, the mixed linear integer program
+        - ``P``, the representatives of the blocks, or `A` if
+          ``on_blocks`` is ``False``.
 
-        - ``s0``, a solution
+        - ``s0``, a solution.
 
-        - ``d``, a subset of `A`, in the form of a dict from `A` to `\{0, 1\}`
+        - ``d``, a subset of `A`, in the form of a dict from `A` to `\{0, 1\}`.
+
+        - ``on_blocks``, whether to return the counter example on
+          blocks or on elements.
+
         """
+        bmilp = self.bmilp
         for v in self._Z:
-            v_in_d_count = sum(d[a] for a in self._A if s0[a] == v)
+            v_in_d_count = sum(d[p] for p in P if s0[p] == v)
             if not v_in_d_count:
                 continue
 
             # try to find a solution which has a different
             # subdistribution on d than s0
-            v_in_d = sum(d[a] * bmilp._x[self._P.find(a), v]
-                         for a in self._A
-                         if v in self._possible_block_values[self._P.find(a)])
+            v_in_d = sum(d[p] * bmilp._x[self._P.find(p), v]
+                         for p in P
+                         if v in self._possible_block_values[self._P.find(p)])
 
             # it is sufficient to require that v occurs less often as
             # a value among {a | d[a] == 1} than it does in
@@ -1822,10 +1830,11 @@ class Bijectionist(SageObject):
             tmp_constraints = [v_in_d <= v_in_d_count - 1]
             try:
                 bmilp.solve(tmp_constraints)
-                return self._solution(bmilp)
+                return self._solution(bmilp, on_blocks)
             except MIPSolverException:
                 pass
         return
+
 
     def minimal_subdistributions_blocks_iterator(self):
         r"""
@@ -1968,7 +1977,7 @@ class Bijectionist(SageObject):
                 self.bmilp.solve([])
             except MIPSolverException:
                 return
-        s = self._solution_by_blocks(self.bmilp)
+        s = self._solution(self.bmilp, True)
         add_counter_example_constraint(s)
         while True:
             try:
@@ -1976,7 +1985,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D)  # a dict from P to multiplicities
-            new_s = self._find_counter_example2(self.bmilp, P, s, d)
+            new_s = self._find_counter_example(P, s, d, True)
             if new_s is None:
                 yield ([p for p in P for _ in range(ZZ(d[p]))],
                        self._sorter["Z"](s[p]
@@ -1990,50 +1999,6 @@ class Bijectionist(SageObject):
             else:
                 s = new_s
                 add_counter_example_constraint(s)
-
-    def _find_counter_example2(self, bmilp, P, s0, d):
-        r"""
-        Return a solution `s` such that ``d`` is not a subdistribution of
-        `s0`.
-
-        .. TODO::
-
-            find a better name - possibly not relevant if we
-            implement the cache of solutions
-
-        INPUT:
-
-        - ``bmilp``, the mixed linear integer program
-
-        - ``P``, the representatives of the blocks
-
-        - ``s0``, a solution
-
-        - ``d``, a subset of `A`, in the form of a dict from `A` to `\{0, 1\}`
-
-        """
-        for v in self._Z:
-            v_in_d_count = sum(d[p] for p in P if s0[p] == v)
-            if not v_in_d_count:
-                continue
-
-            # try to find a solution which has a different
-            # subdistribution on d than s0
-            v_in_d = sum(d[p] * bmilp._x[p, v]
-                         for p in P
-                         if v in self._possible_block_values[p])
-
-            # it is sufficient to require that v occurs less often as
-            # a value among {a | d[a] == 1} than it does in
-            # v_in_d_count, because, if the distributions are
-            # different, one such v must exist
-            tmp_constraints = [v_in_d <= v_in_d_count - 1]
-            try:
-                bmilp.solve(tmp_constraints)
-                return self._solution_by_blocks(bmilp)
-            except MIPSolverException:
-                pass
-        return
 
     def _preprocess_intertwining_relations(self):
         r"""
@@ -2493,34 +2458,30 @@ class Bijectionist(SageObject):
                 print("after vetoing")
                 self._show_bmilp(bmilp, variables=False)
 
-    def _solution(self, bmilp):
-        """
-        Return the bmilp solution as a dictionary from `A` to
-        `Z`.
+    def _solution(self, bmilp, on_blocks=False):
+        r"""
+        Return the current solution as a dictionary from `A` (or
+        `P`) to `Z`.
+
+        INPUT:
+
+        - ``bmilp``, a :class:`_BijectionistMILP`.
+
+        - ``on_blocks``, whether to return the solution on blocks or
+          on all elements
 
         """
-        map = {}  # A -> Z, a +-> s(a)
+        mapping = {}  # A -> Z or P -> Z, a +-> s(a)
         for p, block in self._P.root_to_elements_dict().items():
             for z in self._possible_block_values[p]:
                 if bmilp.has_value(p, z):
-                    for a in block:
-                        map[a] = z
+                    if on_blocks:
+                        mapping[p] = z
+                    else:
+                        for a in block:
+                            mapping[a] = z
                     break
-        return map
-
-    def _solution_by_blocks(self, bmilp):
-        """
-        Return the bmilp solution as a dictionary from block
-        representatives of `P` to `Z`.
-
-        """
-        map = {}  # P -> Z, a +-> s(a)
-        for p in _disjoint_set_roots(self._P):
-            for z in self._possible_block_values[p]:
-                if bmilp.has_value(p, z):
-                    map[p] = z
-                    break
-        return map
+        return mapping
 
     def _show_bmilp(self, bmilp, variables=True):
         """
@@ -2740,10 +2701,10 @@ class _BijectionistMILP():
             for constraint in additional_constraints:
                 self.milp.add_constraint(constraint)
             self.milp.solve()
-            for _ in range(self.milp.number_of_constraints()-n_constraints):
+            for _ in range(self.milp.number_of_constraints() - n_constraints):
                 self.milp.remove_constraint(n_constraints)
         except MIPSolverException as error:
-            for _ in range(self.milp.number_of_constraints()-n_constraints):
+            for _ in range(self.milp.number_of_constraints() - n_constraints):
                 self.milp.remove_constraint(n_constraints)
             raise error
 
@@ -2765,9 +2726,54 @@ class _BijectionistMILP():
           dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,
           specifying whether `a` is mapped to `z`.
 
+        EXAMPLES::
+
+            sage: A = B = ["a", "b"]
+            sage: bij = Bijectionist(A, B)
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: _ = bmilp.solve([])
+            sage: bmilp._index_block_value_dict                                 # random
+            {0: ('a', 'a'), 1: ('a', 'b'), 2: ('b', 'a'), 3: ('b', 'b')}
+            sage: f = bmilp._x["a", "a"] + bmilp._x["b", "a"]
+            sage: v = {('a', 'a'): 1.0, ('a', 'b'): 0.0, ('b', 'a'): 1.0, ('b', 'b'): 0.0}
+            sage: bmilp._evaluate_linear_function(f, v)
+            2.0
         """
         return float(sum(value * values[self._index_block_value_dict[index]]
                          for index, value in linear_function.dict().items()))
+
+    def _veto_current_solution(self):
+        r"""
+        Add a constraint vetoing the current solution.
+
+        This adds a constraint such that the next call to
+        :meth:`solve` must return a solution different from the
+        current one.
+
+        We require that the MILP currently has a solution.
+
+        .. WARNING::
+
+            The underlying MILP will be modified!
+
+        ALGORITHM:
+
+        We add the constraint `\sum_{x\in V} x < |V|`` where `V` is
+        the set of variables `x_{p, z}` with value 1, that is, the
+        set of variables indicating the current solution.
+
+        """
+        # get all variables with value 1
+        active_vars = [self._x[p, z]
+                       for p in _disjoint_set_roots(self._bijectionist._P)
+                       for z in self._bijectionist._possible_block_values[p]
+                       if self.milp.get_values(self._x[p, z])]
+
+        # add constraint that not all of these can be 1, thus vetoing
+        # the current solution
+        self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
+                                 name="veto")
 
     def has_value(self, p, v):
         r"""
@@ -2778,6 +2784,16 @@ class _BijectionistMILP():
 
         - ``p``, the representative of a block
         - ``v``, a value in `Z`
+
+        EXAMPLES::
+
+            sage: A = B = ["a", "b"]
+            sage: bij = Bijectionist(A, B)
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: _ = bmilp.solve([bmilp._x["a", "b"] == 1])
+            sage: bmilp.has_value("a", "b")
+            True
         """
         return self.last_solution[p, v] == 1
 
@@ -2923,38 +2939,6 @@ class _BijectionistMILP():
                 else:
                     self.milp.add_constraint(rhs <= 0,
                                              name=f"pi/rho({composition_index})")
-
-    def _veto_current_solution(self):
-        r"""
-        Add a constraint vetoing the current solution.
-
-        This adds a constraint such that the next call to
-        :meth:`solve` must return a solution different from the
-        current one.
-
-        We require that the MILP currently has a solution.
-
-        .. WARNING::
-
-            The underlying MILP will be modified!
-
-        ALGORITHM:
-
-        We add the constraint `\sum_{x\in V} x < |V|`` where `V` is
-        the set of variables `x_{p, z}` with value 1, that is, the
-        set of variables indicating the current solution.
-
-        """
-        # get all variables with value 1
-        active_vars = [self._x[p, z]
-                       for p in _disjoint_set_roots(self._bijectionist._P)
-                       for z in self._bijectionist._possible_block_values[p]
-                       if self.milp.get_values(self._x[p, z])]
-
-        # add constraint that not all of these can be 1, thus vetoing
-        # the current solution
-        self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                 name="veto")
 
 
 def _invert_dict(d):
