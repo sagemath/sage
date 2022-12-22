@@ -2825,6 +2825,17 @@ class _BijectionistMILP():
 
         as a matrix equation.
 
+        EXAMPLES::
+
+            sage: A = B = [permutation for n in range(3) for permutation in Permutations(n)]
+            sage: bij = Bijectionist(A, B, len)
+            sage: bij.set_statistics((len, len))
+            sage: bij._compute_possible_block_values()
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: bmilp.add_alpha_beta_constraints()
+            sage: bmilp.solve([])
+            {([], 0): 1.0, ([1], 1): 1.0, ([1, 2], 2): 1.0, ([2, 1], 2): 1.0}
         """
         W = self._bijectionist._W
         Z = self._bijectionist._Z
@@ -2870,6 +2881,25 @@ class _BijectionistMILP():
 
         where `p(a)` is the block containing `a`, for each given
         distribution as a vector equation.
+
+        EXAMPLES::
+
+            sage: A = B = Permutations(3)
+            sage: tau = Permutation.longest_increasing_subsequence_length
+            sage: bij = Bijectionist(A, B, tau)
+            sage: bij.set_distributions(([Permutation([1, 2, 3]), Permutation([1, 3, 2])], [1, 3]))
+            sage: bij._compute_possible_block_values()
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: bmilp.add_distribution_constraints()
+            sage: _ = bmilp.solve([])
+            sage: bij._solution(bmilp)
+            {[1, 2, 3]: 3,
+             [1, 3, 2]: 1,
+             [2, 1, 3]: 3,
+             [2, 3, 1]: 3,
+             [3, 1, 2]: 3,
+             [3, 2, 1]: 3}
 
         """
         Z = self._bijectionist._Z
@@ -2935,6 +2965,22 @@ class _BijectionistMILP():
 
         Note that `z` must be a possible value of `p` and each `z_i`
         must be a possible value of `p_i`.
+
+        EXAMPLES::
+
+            sage: A = B = list('abcd')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
+            sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
+            sage: rho = lambda s1, s2: (s1 + s2) % 2
+            sage: bij.set_intertwining_relations((2, pi, rho))
+            sage: preimage_blocks = bij._preprocess_intertwining_relations()
+            sage: bij._compute_possible_block_values()
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: bmilp = _BijectionistMILP(bij)
+            sage: bmilp.add_intertwining_relation_constraints(preimage_blocks)
+            sage: _ = bmilp.solve([])
+            sage: bij._solution(bmilp)
+            {'a': 0, 'b': 1, 'c': 0, 'd': 1}
         """
         for composition_index, image_block, preimage_blocks in origins:
             pi_rho = self._bijectionist._pi_rho[composition_index]
