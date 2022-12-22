@@ -1259,19 +1259,19 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
             (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
-        L=[]
+        L = []
         for x in iters:
-            L.append(next(x)) # put at zero
-        yield(self(L))
+            L.append(next(x))  # put at zero
+        yield self(L)
         j = 0
         while j < self.num_components():
             try:
                 L[j] = next(iters[j])
-                yield(self(L))
+                yield self(L)
                 j = 0
             except StopIteration:
                 iters[j] = iter(self[j])  # reset
-                L[j] = next(iters[j]) # put at zero
+                L[j] = next(iters[j])  # put at zero
                 j += 1
 
     def rational_points(self, F=None):

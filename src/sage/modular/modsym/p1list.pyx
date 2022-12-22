@@ -1,4 +1,4 @@
-# distutils: libraries = gmp zn_poly
+# distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 
 r"""

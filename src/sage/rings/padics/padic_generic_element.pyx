@@ -2004,7 +2004,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``self`` -- a p-adic element
         - ``p`` -- a prime (default: None). If specified, will make sure that p==self.parent().prime()
 
-        NOTE: The optional argument p is used for consistency with the valuation methods on integer and rational.
+        .. NOTE::
+
+            The optional argument p is used for consistency with the valuation
+            methods on integer and rational.
 
         OUTPUT:
 
@@ -2126,8 +2129,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``self`` -- a p-adic element
         - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()``
 
-        NOTE: The optional argument p is used for consistency with the valuation methods on integer and rational.
+        .. NOTE::
 
+            The optional argument p is used for consistency with the valuation
+            methods on integer and rational.
 
         OUTPUT:
 
@@ -2456,7 +2461,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
           this valuation (and beyond) to see if they can contribute to the
           series.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             1 in the residue field. If this assumption is not fulfilled

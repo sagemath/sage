@@ -1,5 +1,5 @@
 r"""
-Noncommutative Polynomials via libSINGULAR/Plural
+Noncommutative polynomials via libSINGULAR/Plural
 
 This module provides specialized and optimized implementations for
 noncommutative multivariate polynomials over many coefficient rings, via the

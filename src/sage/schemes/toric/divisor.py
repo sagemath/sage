@@ -1402,7 +1402,7 @@ class ToricDivisor_generic(Divisor_generic):
             degree = h[0] + 1
             cohomology_dim = h[1].dimension()
             if degree > d or degree < 0:
-                assert(cohomology_dim == 0)
+                assert cohomology_dim == 0
                 continue
             HH_list[degree] = cohomology_dim
 

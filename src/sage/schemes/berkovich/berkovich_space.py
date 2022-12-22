@@ -258,7 +258,7 @@ class Berkovich_Cp(Berkovich):
             sage: B != C
             False
         """
-        return not(self == right)
+        return not (self == right)
 
     def __hash__(self):
         """

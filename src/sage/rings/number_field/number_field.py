@@ -159,6 +159,8 @@ from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
+from sage.interfaces.abc import GapElement
+
 _NumberFields = NumberFields()
 
 
@@ -1819,7 +1821,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 raise TypeError("%s has unsupported PARI type %s" % (x, x.type()))
             x = self.absolute_polynomial().parent()(x)
             return self._element_class(self, x)
-        elif sage.interfaces.gap.is_GapElement(x):
+        elif isinstance(x, GapElement):
             s = x._sage_repr()
             if self.variable_name() in s:
                 return self._convert_from_str(s)
@@ -11153,8 +11155,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 return NumberField_absolute._element_constructor_(self, x)
         elif isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif (sage.interfaces.gap.is_GapElement(x) or
-              isinstance(x, sage.libs.gap.element.GapElement)):
+        elif isinstance(x, (sage.libs.gap.element.GapElement, GapElement)):
             return self._coerce_from_gap(x)
         elif isinstance(x, str):
             return self._convert_from_str(x)

@@ -1,15 +1,12 @@
 """
 Root system data for type A infinity
 """
-
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2016 Andrew Mathas <Andrew dot Mathas at Sydney dot edu dot au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from .cartan_type import CartanType_standard, CartanType_simple
 from sage.rings.integer_ring import ZZ
 
@@ -57,7 +54,7 @@ class CartanType(CartanType_standard, CartanType_simple):
 
             sage: TestSuite(ct).run()
         """
-        super(CartanType, self).__init__()
+        super().__init__()
         self.letter = 'A'
         self.n = index_set
 
@@ -106,11 +103,11 @@ class CartanType(CartanType_standard, CartanType_simple):
             node = self._ascii_art_node
 
         if self.n == ZZ:
-            ret  = '..---'+'---'.join(node(label(i)) for i in range(7))+'---..\n'
-            ret += '  '+''.join("{:4}".format(label(i)) for i in range(-3,4))
+            ret = '..---' + '---'.join(node(label(i)) for i in range(7)) + '---..\n'
+            ret += '  ' + ''.join("{:4}".format(label(i)) for i in range(-3, 4))
         else:
-            ret  = '---'.join(node(label(i)) for i in range(7))+'---..\n'
-            ret += '0'+''.join("{:4}".format(label(i)) for i in range(1,7))
+            ret = '---'.join(node(label(i)) for i in range(7)) + '---..\n'
+            ret += '0' + ''.join("{:4}".format(label(i)) for i in range(1, 7))
 
         return ret
 

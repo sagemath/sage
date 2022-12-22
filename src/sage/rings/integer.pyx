@@ -632,11 +632,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if isinstance(x, Integer):
                 set_from_Integer(self, <Integer>x)
 
-            elif isinstance(x, long):
-                mpz_set_pylong(self.value, x)
-
             elif isinstance(x, int):
-                mpz_set_si(self.value, PyInt_AS_LONG(x))
+                mpz_set_pylong(self.value, x)
 
             elif isinstance(x, float):
                 n = long(x)
@@ -683,7 +680,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     if b == 2: # we use a faster method
                         for j from 0 <= j < len(x):
                             otmp = x[j]
-                            if isinstance(otmp, (int, long)):
+                            if isinstance(otmp, int):
                                 if (<long> otmp) == 1:
                                     mpz_setbit(self.value, j)
                                 if (<long> otmp) != 0:
@@ -707,7 +704,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 elif is_numpy_type(type(x)):
                     import numpy
                     if isinstance(x, numpy.integer):
-                        mpz_set_pylong(self.value, long(x))
+                        mpz_set_pylong(self.value, int(x))
                         return
 
                 elif type(x) is gmpy2.mpz:

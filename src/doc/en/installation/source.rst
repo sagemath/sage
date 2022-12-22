@@ -453,7 +453,7 @@ Additional software
 -------------------
 
 Recommended programs
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 The following programs are recommended.
 They are not strictly required at build time or at run time,
@@ -506,7 +506,7 @@ On Debian/Ubuntu, the following system packages are recommended.
 - ``libavdevice-dev`` (to produce animations)
 
 Tcl/Tk
-~~~~~~
+^^^^^^
 
 If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
 you need to install the Tcl/Tk and its development headers before building
@@ -546,7 +546,7 @@ Step-by-step installation procedure
 -----------------------------------
 
 General procedure
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.

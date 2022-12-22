@@ -484,8 +484,13 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: E(0).order() == 1
             True
         """
+        try:
+            return self._order
+        except AttributeError:
+            pass
         if self.is_zero():
-            return Integer(1)
+            self._order = Integer(1)
+            return self._order
         raise NotImplementedError("Computation of order of a point "
                                   "not implemented over general fields.")
 
@@ -1173,7 +1178,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             pts = Q.division_points(p)
         return (Q, k)
 
-    def set_order(self, value):
+    def set_order(self, value, *, check=True):
         r"""
         Set the value of self._order to value.
 
@@ -1194,7 +1199,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
             sage: G = E(5, 0)
             sage: G.set_order(2)
             sage: 2*G
@@ -1222,7 +1227,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         It is an error to pass a `value` equal to `0`::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
             sage: G = E.random_point()
             sage: G.set_order(0)
             Traceback (most recent call last):
@@ -1237,7 +1242,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         order of this point. How unlikely is determined by the factorization of
         the actual order, and the actual group structure::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
             sage: G = E(5, 0)   # G has order 2
             sage: G.set_order(11)
             Traceback (most recent call last):
@@ -1248,7 +1253,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         of interest". For instance, the order can be set to a multiple the
         actual order::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
             sage: G = E(5, 0)   # G has order 2
             sage: G.set_order(8)
             sage: G.order()
@@ -1260,15 +1265,16 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         value = Integer(value)
 
-        E = self.curve()
-        q = E.base_ring().order()
-        if value <= 0:
-            raise ValueError('Value %s illegal for point order' % value)
-        low, hi = Hasse_bounds(q)
-        if value > hi:
-            raise ValueError('Value %s illegal: outside max Hasse bound' % value)
-        if value * self != E(0):
-            raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
+        if check:
+            if value <= 0:
+                raise ValueError('Value %s illegal for point order' % value)
+            E = self.curve()
+            q = E.base_ring().cardinality()
+            low, hi = Hasse_bounds(q)
+            if value > hi:
+                raise ValueError('Value %s illegal: outside max Hasse bound' % value)
+            if value * self != E(0):
+                raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
         self._order = value
 
     # #############################  end  ################################
@@ -3560,7 +3566,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         - Otherwise (if this test is inconclusive), check that the Weil
           pairing of `P` and `Q` is trivial.
 
-        For anomalous curves with `\#E = p`, the 
+        For anomalous curves with `\#E = p`, the
         :meth:`padic_elliptic_logarithm` function is called.
 
         INPUT:
