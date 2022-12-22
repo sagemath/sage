@@ -955,25 +955,27 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         if len(gens) == 2:
 
             P, Q = gens
-            n = self.cardinality()      # cached
-            n1 = P.order()              # cached
+            n = self.cardinality()              # cached
+            n1 = P.order()                      # cached
             n2 = n//n1
-            assert not n1 * Q           # PARI should guarantee this
+            assert not n1 * Q                   # PARI should guarantee this
 
             k = n1.prime_to_m_part(n2)
-            Q *= k                      # don't need; kill that part
+            Q *= k                              # don't need; kill that part
             nQ = n2 * generic.order_from_multiple(n2*Q, n1//k//n2)
 
             S = n//nQ * P
             T = n2 * Q
-            S.set_order(nQ//n2)         # for .discrete_log()
+            S.set_order(nQ//n2, check=False)    # for .discrete_log()
             x = S.discrete_log(T)
             Q -= x * n1//nQ * P
 
-            Q.set_order(n2)             # verifies n2*Q == 0
+            assert not n2 * Q                   # by construction
+            Q.set_order(n2, check=False)
+
             gens = P, Q
 
-        orders = [T.order() for T in gens]  # cached
+        orders = [T.order() for T in gens]      # cached
 
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
@@ -1155,7 +1157,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def set_order(self, value, num_checks=8):
+    def set_order(self, value, *, check=True, num_checks=8):
         r"""
         Set the value of self._order to value.
 
@@ -1167,9 +1169,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         - ``value`` -- integer in the Hasse-Weil range for this
           curve.
 
-        - ``num_checks`` (integer, default: 8) -- number of times to
-          check whether value*(a random point on this curve) is
-          equal to the identity.
+        - ``check`` (boolean, default: ``True``) -- whether or
+          not to run sanity checks on the input.
+
+        - ``num_checks`` (integer, default: 8) -- if ``check`` is
+          ``True``, the number of times to check whether ``value``
+          times a random point on this curve equals the identity.
 
         OUTPUT:
 
@@ -1267,16 +1272,17 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         """
         value = Integer(value)
 
-        # Is value in the Hasse range?
-        q = self.base_field().order()
-        a,b = Hasse_bounds(q,1)
-        if not a <= value <= b:
-            raise ValueError('Value %s illegal (not an integer in the Hasse range)' % value)
-        # Is value*random == identity?
-        for i in range(num_checks):
-            G = self.random_point()
-            if value * G != self(0):
-                raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
+        if check:
+            # Is value in the Hasse range?
+            q = self.base_field().order()
+            a,b = Hasse_bounds(q,1)
+            if not a <= value <= b:
+                raise ValueError('Value %s illegal (not an integer in the Hasse range)' % value)
+            # Is value*random == identity?
+            for i in range(num_checks):
+                G = self.random_point()
+                if value * G != self(0):
+                    raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
 
         # TODO: It might help some of PARI's algorithms if we
         # could copy this over to the .pari_curve() as well.

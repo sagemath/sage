@@ -397,7 +397,7 @@ class OperationTable(SageObject):
         # Note: there exist listable infinite objects (like ZZ)
         if (elements is None):
             if hasattr(S, 'is_finite'):
-                if not(S.is_finite()):
+                if not S.is_finite():
                     raise ValueError('%s is infinite' % S)
             try:
                 try:
@@ -411,7 +411,7 @@ class OperationTable(SageObject):
             try:
                 for e in elements:
                     coerced = S(e)
-                    if not(coerced in elems):
+                    if coerced not in elems:
                         elems.append(coerced)
             except Exception:
                 raise TypeError('unable to coerce %s into %s' % (e, S))

@@ -982,7 +982,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not(is_RationalField(K) or is_FiniteField(K)):
+        if not (is_RationalField(K) or is_FiniteField(K)):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()
@@ -1163,19 +1163,19 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: C.multiplicity(Q)
             8
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("subscheme must be defined over a field")
 
         # check whether P is a point on this subscheme
         try:
             P = self(P)
         except TypeError:
-            raise TypeError("(=%s) is not a point on (=%s)"%(P,self))
+            raise TypeError("(=%s) is not a point on (=%s)" % (P,self))
 
         # find an affine chart of the ambient space of self that contains P
         i = 0
-        while(P[i] == 0):
-            i = i + 1
+        while P[i] == 0:
+            i += 1
         X = self.affine_patch(i)
         return X.multiplicity(X(P.dehomogenize(i)))
 

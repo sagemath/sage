@@ -409,7 +409,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zn_poly/
+│       └── zlib/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
@@ -456,7 +456,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zn_poly-0.9.2.log
+│       └── zlib-1.2.11.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -470,7 +470,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zn_poly-0.9.2.tar.gz
+│   └── zlib-1.2.11.tar.gz
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```

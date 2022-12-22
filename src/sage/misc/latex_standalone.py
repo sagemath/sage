@@ -346,7 +346,7 @@ class Standalone(SageObject):
 
         It contains the first few and last few lines of the content.
 
-        NOTE::
+        .. NOTE::
 
             Use ``print(t)`` or ``str(t)`` to show or get the full content.
 

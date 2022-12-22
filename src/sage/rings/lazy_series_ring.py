@@ -1543,6 +1543,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         from sage.arith.misc import binomial
         qP = q.parent()
         one = qP.one()
+
         def coeff(n):
             return (-1)**n * q**binomial(n, 2) / qP.prod(one - q**i for i in range(1, n+1))
         return self(coefficients=coeff, valuation=0)

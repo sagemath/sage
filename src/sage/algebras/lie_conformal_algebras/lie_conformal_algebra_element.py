@@ -14,7 +14,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.arith.all import factorial
 from sage.misc.misc_c import prod
 from sage.misc.repr import repr_lincomb
@@ -27,7 +26,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
     The element class of a Lie conformal algebra with a
     preferred set of generators.
     """
-    def T(self,n=1):
+    def T(self, n=1):
         r"""
         The n-th derivative of this element.
 
@@ -135,7 +134,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
                     /factorial(m+k+j-l)/factorial(l-k-j)/factorial(j)*\
                     mbr[j].T(m+k+j-l) for j in mbr if j >= l-m-k and\
                     j <= l-k) for l in range(m+k+pole+1)}
-            return {k:v for k,v in ret.items() if v}
+            return {k: v for k, v in ret.items() if v}
 
         diclist = [i._bracket_(j) for i in self.terms() for
                    j in right.terms()]
@@ -143,8 +142,8 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         pz = p.zero()
         for d in diclist:
             for k in d:
-                ret[k] = ret.get(k,pz) + d[k]
-        return {k:v for k,v in ret.items() if v}
+                ret[k] = ret.get(k, pz) + d[k]
+        return {k: v for k, v in ret.items() if v}
 
     def _repr_(self):
         r"""
@@ -172,17 +171,15 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             return "0"
         p = self.parent()
         if p._names:
-            terms = [("T^({0}){1}".format(k[1],
-                        p._names[p._index_to_pos[k[0]]]),v) if k[1] > 1 \
-                    else("T{}".format(p._names[p._index_to_pos[k[0]]]),v) \
-                    if k[1] == 1 \
-                    else ("{}".format(p._names[p._index_to_pos[k[0]]]),v)\
-                        for k,v in self.monomial_coefficients().items()]
+            terms = [("T^({}){}".format(k1, p._names[p._index_to_pos[k0]]), v) if k1 > 1
+                     else ("T{}".format(p._names[p._index_to_pos[k0]]), v) if k1 == 1
+                     else ("{}".format(p._names[p._index_to_pos[k0]]), v)
+                     for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^({0}){1}".format(k[1], p._repr_generator(k[0])),v)\
-                      if k[1] > 1 else("T{}".format(p._repr_generator(k[0])),v)\
-                      if k[1] == 1 else ("{}".format(p._repr_generator(k[0])),
-                      v) for k,v in self.monomial_coefficients().items()]
+            terms = [("T^({}){}".format(k1, p._repr_generator(k0)), v) if k1 > 1
+                     else ("T{}".format(p._repr_generator(k0)), v) if k1 == 1
+                     else ("{}".format(p._repr_generator(k0)), v)
+                     for (k0, k1), v in self.monomial_coefficients().items()]
 
         return repr_lincomb(terms, strip_one=True)
 
@@ -222,16 +219,14 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         except ValueError:
             names = None
         if names:
-            terms = [("T^{{({0})}}{1}".format(k[1],
-                        names[p._index_to_pos[k[0]]]),v) if k[1] > 1 \
-                else("T{}".format(names[p._index_to_pos[k[0]]]),v)\
-                if k[1] == 1\
-                else ("{}".format(names[p._index_to_pos[k[0]]]),v)\
-                        for k, v in self.monomial_coefficients().items()]
+            terms = [("T^{{({0})}}{1}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
+                     else ("T{}".format(names[p._index_to_pos[k0]]), v) if k1 == 1
+                     else ("{}".format(names[p._index_to_pos[k0]]), v)
+                     for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^{{({0})}}{1}".format(k[1], latex(k[0])),v) if k[1] > 1 \
-                      else("T{}".format(latex(k[0])),v) if k[1] == 1 \
-                        else ("{}".format(latex(k[0])),v)\
-                        for k, v in self.monomial_coefficients().items()]
+            terms = [("T^{{({0})}}{1}".format(k1, latex(k0)), v) if k1 > 1
+                     else ("T{}".format(latex(k0)), v) if k1 == 1
+                     else ("{}".format(latex(k0)), v)
+                     for (k0, k1), v in self.monomial_coefficients().items()]
 
         return repr_lincomb(terms, is_latex=True, strip_one=True)

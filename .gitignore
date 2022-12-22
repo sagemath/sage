@@ -157,7 +157,6 @@ __pycache__/
 !/src/sage/rings/polynomial/weil/power_sums.c
 !/src/sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp
 !/src/sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
-!/src/sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.cpp
 !/src/sage/stats/distributions/dgs_bern.c
 !/src/sage/stats/distributions/dgs_gauss_dp.c
 !/src/sage/stats/distributions/dgs_gauss_mp.c
