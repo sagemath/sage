@@ -217,7 +217,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
     @staticmethod
     def __classcall__(cls, domain, prefix=None):
-        return super(WeylGroup_gens, cls).__classcall__(cls, domain, prefix)
+        return super().__classcall__(cls, domain, prefix)
 
     def __init__(self, domain, prefix):
         """
@@ -1016,7 +1016,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             sage: W1 is W2
             True
         """
-        return super(WeylGroup_permutation, cls).__classcall__(cls, CartanType(cartan_type), prefix)
+        return super().__classcall__(cls, CartanType(cartan_type), prefix)
 
     def __init__(self, cartan_type, prefix):
         """

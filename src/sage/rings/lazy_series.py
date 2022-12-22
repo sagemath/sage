@@ -3048,6 +3048,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         R = P._internal_poly_ring
         if (isinstance(left, Stream_exact)
             and isinstance(right, Stream_exact)
+            and hasattr(R.base_ring(), "fraction_field")
             and hasattr(R, "_gcd_univariate_polynomial")):
             z = R.gen()
             num = left._polynomial_part(R) * (1-z) + left._constant * z**left._degree
@@ -3068,12 +3069,12 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 # dividing by z^k
                 d = den[exponents[0]]
                 v = num.valuation()
-                initial_coefficients = [num[i] / d for i in range(v, num.degree() + 1)]
+                initial_coefficients = [num[i] / d
+                                        for i in range(v, num.degree() + 1)]
                 order = v - den.valuation()
                 return P.element_class(P, Stream_exact(initial_coefficients,
                                                        order=order,
                                                        constant=0))
-
             if (len(exponents) == 2
                 and exponents[0] + 1 == exponents[1]
                 and den[exponents[0]] == -den[exponents[1]]):

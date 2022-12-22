@@ -1,18 +1,19 @@
 """
 Weight lattices and weight spaces
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
 from .weight_lattice_realizations import WeightLatticeRealizations
 import functools
+
 
 class WeightSpace(CombinatorialFreeModule):
     r"""
@@ -152,8 +153,7 @@ class WeightSpace(CombinatorialFreeModule):
             sage: WeightSpace(R, QQ) is WeightSpace(R, QQ, False)
             True
         """
-        return super(WeightSpace, cls).__classcall__(cls, root_system, base_ring, extended)
-
+        return super().__classcall__(cls, root_system, base_ring, extended)
 
     def __init__(self, root_system, base_ring, extended):
         """
@@ -383,8 +383,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         if m == "delta":
             return "deltacheck" if self.root_system.dual_side else "delta"
-        else:
-            return super(WeightSpace, self)._repr_term(m)
+        return super()._repr_term(m)
 
     def _latex_term(self, m):
         r"""
@@ -402,8 +401,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         if m == "delta":
             return "\\delta^\\vee" if self.root_system.dual_side else "\\delta"
-        else:
-            return super(WeightSpace, self)._latex_term(m)
+        return super()._latex_term(m)
 
     @cached_method
     def _to_classical_on_basis(self, i):

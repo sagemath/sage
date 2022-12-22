@@ -10,7 +10,7 @@ AUTHORS:
 - Nicolas M. Thiery (2012): initial version
 - Mark Shimozono (2013): twisted affine root systems, multiple realizations, GL_n
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Daniel Bump <bump at match.stanford.edu>,
 #                     2012 Daniel Orr <danorr at live.unc.edu>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -23,8 +23,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.categories.groups import Groups

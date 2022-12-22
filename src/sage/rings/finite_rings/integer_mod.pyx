@@ -98,7 +98,7 @@ cimport sage.rings.integer
 from sage.rings.integer cimport Integer
 
 from sage.structure.coerce cimport py_scalar_to_element
-from sage.structure.richcmp import rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop

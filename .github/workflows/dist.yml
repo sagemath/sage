@@ -18,8 +18,9 @@ jobs:
 
   release_dist:
 
-    # This job, in contrast to "dist" in tox.yml,
-    # does not use "configure --enable-download-from-upstream-url".
+    # This job, in contrast to "dist" in ci-macos.yml,
+    # does not use "configure --enable-download-from-upstream-url"
+    # (the default since #32390).
     #
     # In this way, we check that all necessary package tarballs
     # have already been uploaded to the Sage server at the time
@@ -38,7 +39,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: make dist
         run: |
-          ./bootstrap -D && ./configure && make dist
+          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
       - uses: actions/upload-artifact@v3
         with:
           path: "dist/*.tar.gz"

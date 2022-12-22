@@ -8,7 +8,7 @@ is known to be modular.  The space is two-dimensional and contains a
 subspace on which complex conjugation acts as multiplication by `+1`
 and one on which it acts by `-1`.
 
-There are three implementations of modular symbols, two within 
+There are three implementations of modular symbols, two within
 ``Sage`` and one in Cremona's ``eclib`` library.
 One can choose here which one is used.
 

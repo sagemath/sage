@@ -1865,7 +1865,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.contained_simplex()
             (P(-1, -1), P(1, 1), P(0, 1))
             sage: pc.contained_simplex(point_order = [pc[1],pc[3],pc[4],pc[2],pc[0]])
-            (P(0, 1), P(1, 1), P(-1, -1)) 
+            (P(0, 1), P(1, 1), P(-1, -1))
 
         Lower-dimensional example::
 

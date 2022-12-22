@@ -5192,7 +5192,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     number_field = True
                 if K in FiniteFields():
                     finite_field = True
-                if not(number_field or finite_field):
+                if not (number_field or finite_field):
                     raise NotImplementedError('Only implemented for number fields, QQbar, finite fields, and algebraic closures of finite fields')
                 Kbar = K.algebraic_closure()
                 if Kbar.has_coerce_map_from(K):

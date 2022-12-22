@@ -22,6 +22,8 @@ Symmetric functions, with their multiple realizations
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.combinat.partition import Partitions
@@ -70,6 +72,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         sage: Sym.category()
         Join of Category of hopf algebras over Rational Field
+            and Category of unique factorization domains
             and Category of graded algebras over Rational Field
             and Category of commutative algebras over Rational Field
             and Category of monoids with realizations
@@ -864,6 +867,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
+        if R in PrincipalIdealDomains():
+            cat &= UniqueFactorizationDomains()
         Parent.__init__(self, category=cat.WithRealizations())
 
     def a_realization(self):

@@ -82,7 +82,7 @@ class CartanType(cartan_type.CartanType_decorator):
         if any(node not in ct.index_set() for node in marked_nodes):
             raise ValueError("invalid marked node")
         marked_nodes = tuple(sorted(marked_nodes))
-        return super(CartanType, cls).__classcall__(cls, ct, marked_nodes)
+        return super().__classcall__(cls, ct, marked_nodes)
 
     def __init__(self, ct, marked_nodes):
         """

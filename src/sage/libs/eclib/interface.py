@@ -731,9 +731,9 @@ class mwrank_MordellWeil(SageObject):
         Reducing saturation bound from given value 20 to computed index bound 3
         Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
-        Checking 2-saturation 
+        Checking 2-saturation
         Points were proved 2-saturated (max q used = 7)
-        Checking 3-saturation 
+        Checking 3-saturation
         Points were proved 3-saturated (max q used = 7)
         done
         P2 = [-2:3:1]     is generator number 2
@@ -741,10 +741,10 @@ class mwrank_MordellWeil(SageObject):
         Reducing saturation bound from given value 20 to computed index bound 4
         Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
-        Checking 2-saturation 
+        Checking 2-saturation
         possible kernel vector = [1,1]
         This point may be in 2E(Q): [14:-52:1]
-        ...and it is! 
+        ...and it is!
         Replacing old generator #1 with new generator [1:-1:1]
         Reducing index bound from 4 to 2
         Points have successfully been 2-saturated (max q used = 7)
@@ -756,9 +756,9 @@ class mwrank_MordellWeil(SageObject):
         Reducing saturation bound from given value 20 to computed index bound 3
         Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
-        Checking 2-saturation 
+        Checking 2-saturation
         Points were proved 2-saturated (max q used = 11)
-        Checking 3-saturation 
+        Checking 3-saturation
         Points were proved 3-saturated (max q used = 13)
         done, index = 1.
         P4 = [-1:3:1]    = -1*P1 + -1*P2 + -1*P3 (mod torsion)
@@ -911,10 +911,10 @@ class mwrank_MordellWeil(SageObject):
             The resulting points may not be p-saturated for p between this and the computed index bound 93
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             possible kernel vector = [1,0,0]
             This point may be in 2E(Q): [1547:-2967:343]
-            ...and it is! 
+            ...and it is!
             Replacing old generator #1 with new generator [-2:3:1]
             Reducing index bound from 93 to 46
             Points have successfully been 2-saturated (max q used = 11)
@@ -933,12 +933,12 @@ class mwrank_MordellWeil(SageObject):
             The resulting points may not be p-saturated for p between this and the computed index bound 46
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
-            Checking 3-saturation 
+            Checking 3-saturation
             possible kernel vector = [0,1,0]
             This point may be in 3E(Q): [2707496766203306:864581029138191:2969715140223272]
-            ...and it is! 
+            ...and it is!
             Replacing old generator #2 with new generator [-14:25:8]
             Reducing index bound from 46 to 15
             Points have successfully been 3-saturated (max q used = 13)
@@ -957,14 +957,14 @@ class mwrank_MordellWeil(SageObject):
             The resulting points may not be p-saturated for p between this and the computed index bound 15
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 5 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 13)
-            Checking 5-saturation 
+            Checking 5-saturation
             possible kernel vector = [0,0,1]
             This point may be in 5E(Q): [-13422227300:-49322830557:12167000000]
-            ...and it is! 
+            ...and it is!
             Replacing old generator #3 with new generator [1:-1:1]
             Reducing index bound from 15 to 3
             Points have successfully been 5-saturated (max q used = 71)
@@ -981,9 +981,9 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 3
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 13)
             done
             (True, 1, '[ ]')
@@ -1329,6 +1329,5 @@ class mwrank_MordellWeil(SageObject):
             P4 = [12:35:27]      = 1*P1 + -1*P2 + -1*P3 (mod torsion)
             sage: EQ.points()
             [[1, -1, 1], [-2, 3, 1], [-14, 25, 8]]
-
         """
         return self.__mw.getbasis()

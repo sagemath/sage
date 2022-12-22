@@ -1,5 +1,5 @@
 r"""
-Univariate Ore Polynomials
+Univariate Ore polynomials
 
 This module provides the
 :class:`~sage.rings.polynomial.skew_polynomial_element.OrePolynomial`,
