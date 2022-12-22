@@ -15,20 +15,20 @@ Quick reference
     :widths: 30, 70
     :delim: |
 
-    :meth:`~Bijectionist.set_intertwining_relations` | Set
-    :meth:`~Bijectionist.set_constant_blocks` | Set
-    :meth:`~Bijectionist.set_statistics` | Set
-    :meth:`~Bijectionist.set_value_restrictions` | Set
-    :meth:`~Bijectionist.set_distributions` | Set
+    :meth:`~Bijectionist.set_intertwining_relations` | Declare that the statistic intertwines with other maps.
+    :meth:`~Bijectionist.set_constant_blocks` | Declare that the statistic is constant on some sets.
+    :meth:`~Bijectionist.set_statistics` | Declare statistics that are preserved by the bijection.
+    :meth:`~Bijectionist.set_value_restrictions` | Restrict the values of the statistic on an element.
+    :meth:`~Bijectionist.set_distributions` | Restrict the distribution of values of the statistic on some elements.
 
-    :meth:`~Bijectionist.statistics_table` | Return
-    :meth:`~Bijectionist.statistics_fibers` | Return
+    :meth:`~Bijectionist.statistics_table` | Print a table collecting information on the given statistics.
+    :meth:`~Bijectionist.statistics_fibers` | Collect elements with the same statistics.
 
-    :meth:`~Bijectionist.constant_blocks` | Return
-    :meth:`~Bijectionist.solutions_iterator` | Return
-    :meth:`~Bijectionist.possible_values` | Return
-    :meth:`~Bijectionist.minimal_subdistributions_iterator` | Return
-    :meth:`~Bijectionist.minimal_subdistributions_blocks_iterator` | Return
+    :meth:`~Bijectionist.constant_blocks` | Return the blocks on which the statistic is constant.
+    :meth:`~Bijectionist.solutions_iterator` | Iterate over all possible solutions.
+    :meth:`~Bijectionist.possible_values` | Return all possible values for a given element.
+    :meth:`~Bijectionist.minimal_subdistributions_iterator` | Iterate over the minimal subdistributions.
+    :meth:`~Bijectionist.minimal_subdistributions_blocks_iterator` | Iterate over the minimal subdistributions.
 
 A guided tour
 =============
