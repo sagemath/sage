@@ -1810,6 +1810,20 @@ class Bijectionist(SageObject):
         - ``on_blocks``, whether to return the counter example on
           blocks or on elements.
 
+        EXAMPLES::
+
+            sage: A = B = ["a", "b", "c", "d", "e"]
+            sage: tau = {"a": 1, "b": 1, "c": 2, "d": 2, "e": 3}.get
+            sage: bij = Bijectionist(A, B, tau)
+            sage: bij.set_constant_blocks([["a", "b"]])
+            sage: bij.set_value_restrictions(("a", [1, 2]))
+            sage: next(bij.solutions_iterator())
+            {'a': 1, 'b': 1, 'c': 2, 'd': 3, 'e': 2}
+
+            sage: s0 = {'a': 1, 'b': 1, 'c': 2, 'd': 3, 'e': 2}
+            sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
+            sage: bij._find_counter_example(bij._A, s0, d, False)
+            {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
         """
         bmilp = self.bmilp
         for v in self._Z:
@@ -3107,9 +3121,9 @@ Our benchmark example::
     ([[2, 1, 5, 3, 4], [2, 5, 1, 3, 4], [3, 1, 5, 2, 4], [3, 5, 1, 2, 4]], [3, 3, 4, 4])
     ([[1, 3, 2, 5, 4], [1, 3, 5, 2, 4], [1, 4, 2, 5, 3], [1, 4, 5, 2, 3], [1, 4, 5, 3, 2], [1, 5, 4, 2, 3], [1, 5, 4, 3, 2]], [2, 2, 3, 3, 3, 3, 3])
 
-    sage: l = list(bij.solutions_iterator()); len(l)                            # long time
+    sage: l = list(bij.solutions_iterator()); len(l)                            # not tested
     504
 
-    sage: for a, d in bij.minimal_subdistributions_iterator():                  # long time
+    sage: for a, d in bij.minimal_subdistributions_iterator():                  # not tested
     ....:     print(sorted(a), sorted(d))
 """
