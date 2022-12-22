@@ -495,7 +495,7 @@ class Bijectionist(SageObject):
 
         assert len(A) == len(set(A)), "A must have distinct items"
         assert len(B) == len(set(B)), "B must have distinct items"
-        self.bmilp = None
+        self._bmilp = None
         self._A = A
         self._B = B
         self._sorter = {}
@@ -588,7 +588,7 @@ class Bijectionist(SageObject):
             MIPSolverException: ...
 
         """
-        self.bmilp = None
+        self._bmilp = None
         self._P = DisjointSet(self._A)
         P = sorted(self._sorter["A"](p) for p in P)
         for p in P:
@@ -720,7 +720,7 @@ class Bijectionist(SageObject):
             {[]: 2, [1]: 1, [1, 2]: 0, [2, 1]: 0}
 
         """
-        self.bmilp = None
+        self._bmilp = None
         self._n_statistics = len(alpha_beta)
         # TODO: do we really want to recompute statistics every time?
         self._alpha = lambda p: tuple(arg[0](p) for arg in alpha_beta)
@@ -1035,7 +1035,7 @@ class Bijectionist(SageObject):
         # of _statistics_possible_values - however, we do not want to
         # insist that set_value_restrictions is called after
         # set_statistics
-        self.bmilp = None
+        self._bmilp = None
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in a_values:
@@ -1216,7 +1216,7 @@ class Bijectionist(SageObject):
         not in `A`.
 
         """
-        self.bmilp = None
+        self._bmilp = None
         for elements, values in elements_distributions:
             assert len(elements) == len(values), f"{elements} and {values} are not of the same size!"
             for a, z in zip(elements, values):
@@ -1312,7 +1312,7 @@ class Bijectionist(SageObject):
             []
 
         """
-        self.bmilp = None
+        self._bmilp = None
         Pi_Rho = namedtuple("Pi_Rho", "numargs pi rho domain")
         self._pi_rho = []
 
@@ -1354,7 +1354,7 @@ class Bijectionist(SageObject):
             sage: bij = Bijectionist(A, B, lambda x: 0)
             sage: bij.constant_blocks()
             {}
-            sage: bij.constant_blocks(optimal=True)
+            sage: bij.constant_blocks(optimal=True)                             # indirect doctest
             {{[], [1], [1, 2], [2, 1]}}
 
         In this other example we look at permutations with length 2 and 3::
@@ -1499,12 +1499,12 @@ class Bijectionist(SageObject):
             {{'a', 'b'}, {'c', 'd'}}
 
         """
-        if self.bmilp is None:
-            self.bmilp = self._initialize_new_bmilp()
-            self.bmilp.solve([])
+        if self._bmilp is None:
+            self._bmilp = self._initialize_new_bmilp()
+            self._bmilp.solve([])
 
         # generate blockwise preimage to determine which blocks have the same image
-        solution = self._solution(self.bmilp, True)
+        solution = self._solution(self._bmilp, True)
         multiple_preimages = {(value,): preimages
                               for value, preimages in _invert_dict(solution).items()
                               if len(preimages) > 1}
@@ -1532,11 +1532,11 @@ class Bijectionist(SageObject):
                         # veto the two blocks having the same value
                         for z in self._possible_block_values[i]:
                             if z in self._possible_block_values[j]:  # intersection
-                                tmp_constraints.append(self.bmilp._x[i, z] + self.bmilp._x[j, z] <= 1)
-                        self.bmilp.solve(tmp_constraints)
+                                tmp_constraints.append(self._bmilp._x[i, z] + self._bmilp._x[j, z] <= 1)
+                        self._bmilp.solve(tmp_constraints)
 
                         # solution exists, update dictionary
-                        solution = self._solution(self.bmilp, True)
+                        solution = self._solution(self._bmilp, True)
                         updated_multiple_preimages = {}
                         for values in multiple_preimages:
                             for p in multiple_preimages[values]:
@@ -1670,11 +1670,11 @@ class Bijectionist(SageObject):
                     solutions[p].add(value)
 
             # generate initial solution, solution dict and add solution
-            if self.bmilp is None:
-                self.bmilp = self._initialize_new_bmilp()
-                self.bmilp.solve([])
+            if self._bmilp is None:
+                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp.solve([])
 
-            solution = self._solution(self.bmilp)
+            solution = self._solution(self._bmilp)
             solutions = {}
             add_solution(solutions, solution)
 
@@ -1682,15 +1682,15 @@ class Bijectionist(SageObject):
             for p in blocks:
                 tmp_constraints = []
                 for value in solutions[p]:
-                    tmp_constraints.append(self.bmilp._x[p, value] == 0)
+                    tmp_constraints.append(self._bmilp._x[p, value] == 0)
                 while True:
                     try:
                         # problem has a solution, so new value was found
-                        self.bmilp.solve(tmp_constraints)
-                        solution = self._solution(self.bmilp)
+                        self._bmilp.solve(tmp_constraints)
+                        solution = self._solution(self._bmilp)
                         add_solution(solutions, solution)
                         # veto new value and try again
-                        tmp_constraints.append(self.bmilp._x[p, solution[p]] == 0)
+                        tmp_constraints.append(self._bmilp._x[p, solution[p]] == 0)
                     except MIPSolverException:
                         # no solution, so all possible values have been found
                         break
@@ -1763,12 +1763,12 @@ class Bijectionist(SageObject):
         minimal_subdistribution.add_constraint(sum(D[a] for a in self._A) >= 1)
 
         try:
-            if self.bmilp is None:
-                self.bmilp = self._initialize_new_bmilp()
-                self.bmilp.solve([])
+            if self._bmilp is None:
+                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp.solve([])
         except MIPSolverException:
             return
-        s = self._solution(self.bmilp)
+        s = self._solution(self._bmilp)
         while True:
             for v in self._Z:
                 minimal_subdistribution.add_constraint(sum(D[a] for a in self._A if s[a] == v) == V[v])
@@ -1825,7 +1825,7 @@ class Bijectionist(SageObject):
             sage: bij._find_counter_example(bij._A, s0, d, False)
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
         """
-        bmilp = self.bmilp
+        bmilp = self._bmilp
         for v in self._Z:
             v_in_d_count = sum(d[p] for p in P if s0[p] == v)
             if not v_in_d_count:
@@ -1985,13 +1985,13 @@ class Bijectionist(SageObject):
                 minimal_subdistribution.add_constraint(sum(D[p] for p in P
                                                            if s[p] == v) == V[v])
 
-        if self.bmilp is None:
+        if self._bmilp is None:
             try:
-                self.bmilp = self._initialize_new_bmilp()
-                self.bmilp.solve([])
+                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp.solve([])
             except MIPSolverException:
                 return
-        s = self._solution(self.bmilp, True)
+        s = self._solution(self._bmilp, True)
         add_counter_example_constraint(s)
         while True:
             try:
@@ -2051,6 +2051,24 @@ class Bijectionist(SageObject):
 
             untangle side effect and return value if possible
 
+        EXAMPLES::
+
+            sage: A = B = list('abcd')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
+            sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
+            sage: rho = lambda s1, s2: (s1 + s2) % 2
+            sage: bij.set_intertwining_relations((2, pi, rho))
+            sage: bij._preprocess_intertwining_relations()
+            {(0, 'a', ('a', 'a')),
+             (0, 'b', ('a', 'b')),
+             (0, 'b', ('b', 'a')),
+             (0, 'c', ('a', 'c')),
+             (0, 'c', ('b', 'b')),
+             (0, 'c', ('c', 'a')),
+             (0, 'd', ('a', 'd')),
+             (0, 'd', ('b', 'c')),
+             (0, 'd', ('c', 'b')),
+             (0, 'd', ('d', 'a'))}
         """
         images = {}  # A^k -> A, a_1,...,a_k to pi(a_1,...,a_k), for all pi
         origins_by_elements = []  # (pi/rho, pi(a_1,...,a_k), a_1,...,a_k)
@@ -2454,12 +2472,12 @@ class Bijectionist(SageObject):
                 'd': 0}
         """
         next_solution = None
-        if self.bmilp is None:
+        if self._bmilp is None:
             try:
-                self.bmilp = self._initialize_new_bmilp()
+                self._bmilp = self._initialize_new_bmilp()
             except MIPSolverException:
                 return
-        bmilp = self.bmilp
+        bmilp = self._bmilp
         solution_index = 0
         while True:
             try:
@@ -2484,6 +2502,16 @@ class Bijectionist(SageObject):
         - ``on_blocks``, whether to return the solution on blocks or
           on all elements
 
+        EXAMPLES::
+
+            sage: A = B = ["a", "b", "c"]
+            sage: bij = Bijectionist(A, B, lambda x: 0)
+            sage: bij.set_constant_blocks([["a", "b"]])
+            sage: next(bij.solutions_iterator())
+            {'a': 0, 'b': 0, 'c': 0}
+            sage: bij._solution(bij._bmilp, True)
+            {'a': 0, 'c': 0}
+
         """
         mapping = {}  # A -> Z or P -> Z, a +-> s(a)
         for p, block in self._P.root_to_elements_dict().items():
@@ -2502,6 +2530,26 @@ class Bijectionist(SageObject):
         Print the constraints and variables of the current MILP
         together with some explanations.
 
+
+        EXAMPLES::
+
+            sage: A = B = ["a", "b", "c"]
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
+            sage: bij.set_constant_blocks([["a", "b"]])
+            sage: next(bij.solutions_iterator())
+            {'a': 0, 'b': 0, 'c': 1}
+            sage: bij._show_bmilp(bij._bmilp)
+            Constraints are:
+                block a: 1 <= x_0 + x_1 <= 1
+                block c: 1 <= x_2 + x_3 <= 1
+                statistics: 2 <= 2 x_0 + x_2 <= 2
+                statistics: 1 <= 2 x_1 + x_3 <= 1
+                veto: x_0 + x_3 <= 1
+            Variables are:
+                x_0: s(a) = s(b) = 0
+                x_1: s(a) = s(b) = 1
+                x_2: s(c) = 0
+                x_3: s(c) = 1
         """
         print("Constraints are:")
         b = bmilp.milp.get_backend()
@@ -2542,6 +2590,16 @@ class Bijectionist(SageObject):
     def _initialize_new_bmilp(self):
         r"""
         Initialize a :class:`_BijectionistMILP` and add the current constraints.
+
+        EXAMPLES::
+
+            sage: A = B = list('abcd')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
+            sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
+            sage: rho = lambda s1, s2: (s1 + s2) % 2
+            sage: bij.set_intertwining_relations((2, pi, rho))
+            sage: bij._initialize_new_bmilp()
+            <sage.combinat.bijectionist._BijectionistMILP object at ...>
         """
         preimage_blocks = self._preprocess_intertwining_relations()
         self._compute_possible_block_values()
@@ -2777,6 +2835,26 @@ class _BijectionistMILP():
         the set of variables `x_{p, z}` with value 1, that is, the
         set of variables indicating the current solution.
 
+        EXAMPLES::
+
+            sage: A = B = ["a", "b", "c"]
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
+            sage: bij.set_constant_blocks([["a", "b"]])
+            sage: iter = bij.solutions_iterator()
+            sage: next(iter)                                                    # indirect doctest
+            {'a': 0, 'b': 0, 'c': 1}
+            sage: bij._show_bmilp(bij._bmilp)
+            Constraints are:
+                block a: 1 <= x_0 + x_1 <= 1
+                block c: 1 <= x_2 + x_3 <= 1
+                statistics: 2 <= 2 x_0 + x_2 <= 2
+                statistics: 1 <= 2 x_1 + x_3 <= 1
+                veto: x_0 + x_3 <= 1
+            Variables are:
+                x_0: s(a) = s(b) = 0
+                x_1: s(a) = s(b) = 1
+                x_2: s(c) = 0
+                x_3: s(c) = 1
         """
         # get all variables with value 1
         active_vars = [self._x[p, z]
