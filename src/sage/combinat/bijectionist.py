@@ -2707,11 +2707,11 @@ class _BijectionistMILP():
             n = tmp_milp.number_of_constraints() - 1
             try:
                 tmp_milp.solve()
+                self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp))
             finally:
                 for i in range(len(additional_constraints)):
                     tmp_milp.remove_constraint(n - i)
 
-        self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp))
         self._solution_cache.append(self.last_solution)
         self._veto_current_solution()
         return self.last_solution
@@ -3100,7 +3100,7 @@ it take (seemingly) forever.::
     sage: bij = Bijectionist(sum(As, []), sum(Bs, []))
     sage: bij.set_statistics((lambda x: x[0], lambda x: x[0]))
     sage: bij.set_intertwining_relations((2, c1, c1), (1, c2, c2))
-    sage: l = list(bij.solutions_iterator()); len(l)                            # long time
+    sage: l = list(bij.solutions_iterator()); len(l)                            # long time -- (2.7 seconds with SCIP on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
     64
 
 A brute force check would be difficult::
@@ -3128,7 +3128,7 @@ Let us try a smaller example::
     sage: A = sum(As, [])
     sage: respects_c1 = lambda s: all(c1(a1, a2) not in A or s[c1(a1, a2)] == c1(s[a1], s[a2]) for a1 in A for a2 in A)
     sage: respects_c2 = lambda s: all(c2(a1) not in A or s[c2(a1)] == c2(s[a1]) for a1 in A)
-    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]             # long time
+    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]             # long time -- (17 seconds with SCIP on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
     sage: sorted(l1, key=lambda s: tuple(s.items())) == l2                      # long time
     True
 
@@ -3176,7 +3176,7 @@ Our benchmark example::
     ([[2, 1, 5, 3, 4], [2, 5, 1, 3, 4], [3, 1, 5, 2, 4], [3, 5, 1, 2, 4]], [3, 3, 4, 4])
     ([[1, 3, 2, 5, 4], [1, 3, 5, 2, 4], [1, 4, 2, 5, 3], [1, 4, 5, 2, 3], [1, 4, 5, 3, 2], [1, 5, 4, 2, 3], [1, 5, 4, 3, 2]], [2, 2, 3, 3, 3, 3, 3])
 
-    sage: l = list(bij.solutions_iterator()); len(l)                            # not tested
+    sage: l = list(bij.solutions_iterator()); len(l)                            # not tested -- (17 seconds with SCIP on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
     504
 
     sage: for a, d in bij.minimal_subdistributions_iterator():                  # not tested
