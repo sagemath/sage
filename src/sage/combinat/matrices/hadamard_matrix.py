@@ -2014,7 +2014,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     Namely, it needs 4 circulant matrices with extra properties, as described in
     :func:`sage.combinat.matrices.hadamard_matrix.williamson_goethals_seidel_skew_hadamard_matrix`
     Matrices for `n=36` and `52` are given in [GS70s]_. Matrices for `n=92` are given
-    in [Wall71]_. Matrices for `n=188` are given in [Djo2008]_
+    in [Wall71]_. Matrices for `n=188` are given in [Djo2008a]_.
     
     Additional data is obtained from skew supplementary difference sets contained in 
     :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the 

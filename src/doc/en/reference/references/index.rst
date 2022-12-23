@@ -2050,10 +2050,15 @@ REFERENCES:
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
 
-.. [Djo2008] \D. Đoković.
+.. [Djo2008a] \D. Đoković.
             *Skew-Hadamard matrices of orders 188 and 388 exist*,
             International Mathematical Forum 3 no.22 (2008): 1063-1068.
             :arxiv:`0704.0640`
+
+.. [Djo2008b] \D. Đoković.
+            *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
+            Journal of Combinatorial Designs 16 (2008): 493-498.
+            :arxiv:`0706.1973`
 
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
