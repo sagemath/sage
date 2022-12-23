@@ -329,10 +329,12 @@ A guided tour
         {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 0}
 
     Value restrictions::
+
         sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
         sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: bij = Bijectionist(A, B, tau, alpha_beta=((len, len),), a_values=((Permutation([1, 2]), [1]),
-        ....:                            (Permutation([3, 2, 1]), [2, 3, 4]),))
+        sage: alpha_beta = [(len, len)]
+        sage: value_restrictions = [(Permutation([1, 2]), [1]), (Permutation([3, 2, 1]), [2, 3, 4])]
+        sage: bij = Bijectionist(A, B, tau, alpha_beta=alpha_beta, value_restrictions=value_restrictions)
         sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
         ....:     print(sol)
         {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 3}
@@ -341,7 +343,7 @@ A guided tour
 
         sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
         sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: bij = Bijectionist(A, B, tau, a_values=((Permutation([1, 2]), [4, 5]),))
+        sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
         Traceback (most recent call last):
         ...
         ValueError: No possible values found for singleton block [[1, 2]]
@@ -380,8 +382,8 @@ from sage.misc.verbose import get_verbose
 
 class Bijectionist(SageObject):
     r"""
-    A toolbox to list all possible bijections between two finite sets
-    under various constraints.
+    A toolbox to list all possible bijections between two finite
+    sets under various constraints.
 
     INPUT:
 
@@ -391,19 +393,28 @@ class Bijectionist(SageObject):
       to ``Z``, in case of ``None``, the identity map ``lambda x: x``
       is used
 
-    - ``alpha`` (optional) -- a statistic from ``A`` to ``W``
-
-    - ``beta`` (optional) -- a statistic from ``B`` to ``W``
+    - ``alpha_beta`` (optional) -- a list of pairs of statistics
+      ``alpha`` from ``A`` to ``W`` and ``beta`` from ``B`` to ``W``
 
     - ``P`` (optional) -- a partition of ``A``
 
-    - ``pi_rho`` (optional) -- a triple ``(k, pi, rho)`` where
+    - ``pi_rho`` (optional) -- a list of triples ``(k, pi, rho)``
+      where
 
         - ``pi`` is a ``k``-ary operation composing objects in ``A``
           and
 
         - ``rho`` is a ``k``-ary function composing statistic values
           in `Z`
+
+    - ``elements_distributions`` (optional) -- a list of pairs ``(tA,
+      tZ)``, specifying the distributions of ``tA``
+
+    - ``value_restrictions`` (optional) -- a list of pairs ``(a,
+      tZ)``, restricting the possible values of ``a``
+
+    - ``solver`` (optional) -- the backend used to solve the mixed
+      integer linear programs
 
     ``W`` and ``Z`` can be arbitrary sets.  As a natural example we
     may think of the natural numbers or tuples of integers.
@@ -470,7 +481,9 @@ class Bijectionist(SageObject):
         specification.
 
     """
-    def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[], pi_rho=tuple(), elements_distributions=tuple(), a_values=tuple(), solver=None, key=None):
+    def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[],
+                 pi_rho=tuple(), elements_distributions=tuple(),
+                 value_restrictions=tuple(), solver=None, key=None):
         """
         Initialize the bijectionist.
 
@@ -521,7 +534,7 @@ class Bijectionist(SageObject):
 
         # set optional inputs
         self.set_statistics(*alpha_beta)
-        self.set_value_restrictions(*a_values)
+        self.set_value_restrictions(*value_restrictions)
         self.set_distributions(*elements_distributions)
         self.set_intertwining_relations(*pi_rho)
         self.set_constant_blocks(P)
@@ -940,7 +953,7 @@ class Bijectionist(SageObject):
 
         return output_alphas, output_tau_betas
 
-    def set_value_restrictions(self, *a_values):
+    def set_value_restrictions(self, *value_restrictions):
         r"""
         Restrict the set of possible values `s(a)` for a given element
         `a`.
@@ -952,7 +965,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``a_values`` -- one or more pairs `(a\in A, \tilde
+        - ``value_restrictions`` -- one or more pairs `(a\in A, \tilde
           Z\subseteq Z)`
 
         EXAMPLES:
@@ -1038,7 +1051,7 @@ class Bijectionist(SageObject):
         self._bmilp = None
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
-        for a, values in a_values:
+        for a, values in value_restrictions:
             assert a in self._A, f"Element {a} was not found in A"
             self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)
 
