@@ -156,7 +156,7 @@ A guided tour
         sage: bij = Bijectionist(A, B)
         sage: bij.set_intertwining_relations((2, concat_path, concat_tree))
         sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.node_number()))
-        sage: for D in bij.minimal_subdistributions_iterator():
+        sage: for D in sorted(bij.minimal_subdistributions_iterator(), key=lambda x: (len(x[0][0]), x)):
         ....:     ascii_art(D)
         ( [ /\ ], [ o ] )
         (           [ o   ] )
@@ -376,9 +376,6 @@ from sage.structure.sage_object import SageObject
 from copy import copy, deepcopy
 from sage.misc.verbose import get_verbose
 
-# TODO: (low) we frequently need variable names for subsets of A, B,
-# Z.  In LaTeX, we mostly call them \tilde A, \tilde Z, etc. now.  It
-# would be good to have a standard name in code, too.
 
 class Bijectionist(SageObject):
     r"""
@@ -496,8 +493,8 @@ class Bijectionist(SageObject):
         """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
-        # ???? tilde_A, tilde_Z, ..., subsets?
         # P ... set partition of A
+        # tA, tB, tZ, tP ... subsets
         # a in A, b in B, p in P
         # S: A -> B
         # alpha: A -> W, beta: B -> W
@@ -505,7 +502,6 @@ class Bijectionist(SageObject):
         # k arity of pi and rho
         # pi: A^k -> A, rho: Z^k -> Z
         # a_tuple in A^k
-
         assert len(A) == len(set(A)), "A must have distinct items"
         assert len(B) == len(set(B)), "B must have distinct items"
         self._bmilp = None
@@ -1230,14 +1226,14 @@ class Bijectionist(SageObject):
 
         """
         self._bmilp = None
-        for elements, values in elements_distributions:
-            assert len(elements) == len(values), f"{elements} and {values} are not of the same size!"
-            for a, z in zip(elements, values):
+        for tA, tZ in elements_distributions:
+            assert len(tA) == len(tZ), f"{elements} and {values} are not of the same size!"
+            for a, z in zip(tA, tZ):
                 if a not in self._A:
                     raise ValueError(f"Element {a} was not found in A!")
                 if z not in self._Z:
                     raise ValueError(f"Value {z} was not found in tau(A)!")
-        self._elements_distributions = elements_distributions
+        self._elements_distributions = tuple(elements_distributions)
 
     def set_intertwining_relations(self, *pi_rho):
         r"""
@@ -1861,7 +1857,6 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 pass
         return
-
 
     def minimal_subdistributions_blocks_iterator(self):
         r"""
@@ -2547,7 +2542,7 @@ class Bijectionist(SageObject):
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver="GLPK")
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 0, 'c': 1}
@@ -2732,7 +2727,7 @@ class _BijectionistMILP():
             sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5], solution_index=1)
             Traceback (most recent call last):
             ...
-            MIPSolverException: GLPK: Problem has no feasible solution
+            MIPSolverException: ... no feasible solution
 
         However, searching for a cached solution succeeds, for inequalities and equalities::
 
@@ -2780,20 +2775,11 @@ class _BijectionistMILP():
                 return self.last_solution
 
         # otherwise generate a new one
-        try:
-            # TODO: wouldn't it be safer to copy the milp?
-            n_constraints = self.milp.number_of_constraints()
-            for constraint in additional_constraints:
-                self.milp.add_constraint(constraint)
-            self.milp.solve()
-            for _ in range(self.milp.number_of_constraints() - n_constraints):
-                self.milp.remove_constraint(n_constraints)
-        except MIPSolverException as error:
-            for _ in range(self.milp.number_of_constraints() - n_constraints):
-                self.milp.remove_constraint(n_constraints)
-            raise error
-
-        self.last_solution = self.milp.get_values(self._x)
+        tmp_milp = deepcopy(self.milp)
+        for constraint in additional_constraints:
+            tmp_milp.add_constraint(constraint)
+        tmp_milp.solve()
+        self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp))
         self._solution_cache.append(self.last_solution)
         self._veto_current_solution()
         return self.last_solution
@@ -2873,7 +2859,7 @@ class _BijectionistMILP():
         active_vars = [self._x[p, z]
                        for p in _disjoint_set_roots(self._bijectionist._P)
                        for z in self._bijectionist._possible_block_values[p]
-                       if self.milp.get_values(self._x[p, z])]
+                       if self.last_solution[(p, z)]]
 
         # add constraint that not all of these can be 1, thus vetoing
         # the current solution
