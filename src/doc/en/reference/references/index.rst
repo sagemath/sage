@@ -2042,6 +2042,10 @@ REFERENCES:
              Journal of Combinatorial Theory, Series A 61(2) (1992): 319-321.
              :doi:`10.1016/0097-3165(92)90029-T`
 
+.. [Djo1992c] \D. Đoković.
+             *Ten New Orders for Hadamard Matrices of Skew Type*,
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+
 .. [Djo1994] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
