@@ -1936,9 +1936,18 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     These sets are constructed from available data, as described in [Djo1994]_. The set `S_1 \subset G` is
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus\{0\}`.
 
+<<<<<<< HEAD
     The data for `n = 103, 151` is taken from [Djo1994]_ and the data for `n = 67, 113, 127, 157, 163, 181, 241`
     is taken from [Djo1992]_.
 
+=======
+    The data is taken from:
+    
+    * `n = 103, 151`: [Djo1994]_
+    * `n = 67, 113, 127, 157, 163, 181, 241`: [Djo1992a]_
+    * `n = 37, 43`: [Djo1992b]_
+    
+>>>>>>> b6f7d9e7fe (Add skew SDS of size 37 and 43)
     INPUT:
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
@@ -1991,8 +2000,15 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         True
     """
 
+<<<<<<< HEAD
 
+=======
+    # If -1 is present in an index set, it means that {0} should be added to that set
+>>>>>>> b6f7d9e7fe (Add skew SDS of size 37 and 43)
     indices = {
+        37: [[0, 3, 5, 7, 9, 10], [0, 5, 6, 7, 8],
+             [1, 2, 6, 7, 9], [2, 6, 8, 9, 10]],
+        43: [[1, 2, 4], [1, 2, 4], [0, 2, 3], [3, 4, -1]],
         67:  [[0,3,5,6,9,10,13,14,17,18,20],
               [0,2,4,9,11,12,13,16,19,21],
               [1,3,6,10,11,13,14,16,20,21],
@@ -2032,6 +2048,8 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     }
 
     cosets_gens = {
+        37: [1, 2, 3, 5, 6, 9],
+        43: [1, 3, 7],
         67: [1,2,3,4,5,6,8,10,12,15,17],
         103: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 15, 17, 19, 21, 23, 30],
         113: [1, 2, 3, 5, 6, 9, 10, 13],
@@ -2044,6 +2062,8 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     }
 
     H_db = {
+        37: [1, 10, -11],
+        43: [1, 4, 11, 16, 21, -2, -8],
         67: [1, 29, 37],
         103: [1, 46, 56],
         113: [1,16,28,30,49,106,109],
@@ -2058,7 +2078,10 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     def generate_set(index_set, cosets):
         S = []
         for idx in index_set:
-            S += cosets[idx]
+            if idx == -1:
+                S.append(0)
+            else:
+                S += cosets[idx]
         return S
 
 

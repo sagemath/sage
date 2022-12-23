@@ -2032,10 +2032,15 @@ REFERENCES:
              and some constructions of de Luca and Rauzy*,
              Theoret. Comput. Sci.  255 (2001) 539--553.
 
-.. [Djo1992] \D. Đoković.
+.. [Djo1992a] \D. Đoković.
              *Construction of some new Hadamard matrices*,
              Bulletin of the Australian Mathematical Society 45(2) (1992): 327-332.
              :doi:`10.1017/S0004972700030185`
+
+.. [Djo1992b] \D. Đoković.
+             *Skew Hadamard matrices of order 4 x 37 and 4 x 43*,
+             Journal of Combinatorial Theory, Series A 61(2) (1992): 319-321.
+             :doi:`10.1016/0097-3165(92)90029-T`
 
 .. [Djo1994] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
