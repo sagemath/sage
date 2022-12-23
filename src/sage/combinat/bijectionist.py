@@ -1950,7 +1950,7 @@ class Bijectionist(SageObject):
              [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
              [1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1]]
 
-            sage: sorted(bij.minimal_subdistributions_blocks_iterator())
+            sage: sorted(bij.minimal_subdistributions_blocks_iterator())        # random
             [(['a1', 'a2', 'a3', 'a4', 'a5', 'a5', 'a6', 'a6', 'a7', 'a7', 'a8', 'a8'],
               [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]),
              (['a3', 'a4', 'd'], [0, 0, 1]),
@@ -2371,113 +2371,30 @@ class Bijectionist(SageObject):
 
         Generate a solution in iterator1, iterator2 should generate the same solution and vice versa::
 
-            sage: next(iterator1)
-                {'a1': 1,
-                'a2': 1,
-                'a3': 0,
-                'a4': 0,
-                'a5': 0,
-                'a6': 1,
-                'a7': 0,
-                'a8': 0,
-                'b3': 0,
-                'b4': 0,
-                'b5': 0,
-                'b6': 1,
-                'b7': 0,
-                'b8': 0,
-                'd': 1}
+            sage: s1_1 = next(iterator1)
+            sage: s2_1 = next(iterator2)
+            sage: s1_1 == s2_1
+            True
+            sage: s2_2 = next(iterator2)
+            sage: s1_2 = next(iterator1)
+            sage: s1_2 == s2_2
+            True
 
-            sage: next(iterator2)
-                {'a1': 1,
-                'a2': 1,
-                'a3': 0,
-                'a4': 0,
-                'a5': 0,
-                'a6': 1,
-                'a7': 0,
-                'a8': 0,
-                'b3': 0,
-                'b4': 0,
-                'b5': 0,
-                'b6': 1,
-                'b7': 0,
-                'b8': 0,
-                'd': 1}
-
-            sage: next(iterator2)
-                {'a1': 1,
-                'a2': 1,
-                'a3': 0,
-                'a4': 0,
-                'a5': 1,
-                'a6': 0,
-                'a7': 0,
-                'a8': 0,
-                'b3': 0,
-                'b4': 0,
-                'b5': 1,
-                'b6': 0,
-                'b7': 0,
-                'b8': 0,
-                'd': 1}
-
-            sage: next(iterator1)
-                {'a1': 1,
-                'a2': 1,
-                'a3': 0,
-                'a4': 0,
-                'a5': 1,
-                'a6': 0,
-                'a7': 0,
-                'a8': 0,
-                'b3': 0,
-                'b4': 0,
-                'b5': 1,
-                'b6': 0,
-                'b7': 0,
-                'b8': 0,
-                'd': 1}
-
-        Re-setting the distribution resets the cache, so a new iterator will generate the first solutions again,
-        but the old iterator continues::
+        Re-setting the distribution resets the cache, so a new
+        iterator will generate the first solutions again, but the old
+        iterator continues::
 
             sage: bij.set_distributions((A[:8] + A[8+2:-1], d), (A[:8] + A[8:-3], d))
             sage: iterator3 = bij.solutions_iterator()
 
-            sage: next(iterator3)
-                {'a1': 1,
-                'a2': 1,
-                'a3': 0,
-                'a4': 0,
-                'a5': 0,
-                'a6': 1,
-                'a7': 0,
-                'a8': 0,
-                'b3': 0,
-                'b4': 0,
-                'b5': 0,
-                'b6': 1,
-                'b7': 0,
-                'b8': 0,
-                'd': 1}
+            sage: s3_1 = next(iterator3)
+            sage: s1_1 == s3_1
+            True
 
-            sage: next(iterator1)
-                {'a1': 0,
-                'a2': 1,
-                'a3': 0,
-                'a4': 1,
-                'a5': 0,
-                'a6': 0,
-                'a7': 0,
-                'a8': 1,
-                'b3': 0,
-                'b4': 1,
-                'b5': 0,
-                'b6': 0,
-                'b7': 0,
-                'b8': 1,
-                'd': 0}
+            sage: s1_3 = next(iterator1)
+            sage: len(set([tuple(sorted(s.items())) for s in [s1_1, s1_2, s1_3]]))
+            3
+
         """
         next_solution = None
         if self._bmilp is None:
