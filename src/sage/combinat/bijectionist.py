@@ -1227,7 +1227,7 @@ class Bijectionist(SageObject):
         """
         self._bmilp = None
         for tA, tZ in elements_distributions:
-            assert len(tA) == len(tZ), f"{elements} and {values} are not of the same size!"
+            assert len(tA) == len(tZ), f"{tA} and {tZ} are not of the same size!"
             for a, z in zip(tA, tZ):
                 if a not in self._A:
                     raise ValueError(f"Element {a} was not found in A!")
@@ -2396,7 +2396,6 @@ class Bijectionist(SageObject):
             3
 
         """
-        next_solution = None
         if self._bmilp is None:
             try:
                 self._bmilp = self._initialize_new_bmilp()
