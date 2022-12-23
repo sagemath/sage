@@ -2050,28 +2050,18 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     def pmtoZ(s):
         return [1 if x == '+' else -1 for x in s]
+    
+    db = {
+        36: ['+++-+-+--', '+-++--++-', '--++++++-', '+++-++-++'],
+        52: ['++++-++--+---', '-+-++----++-+', '--+-+++++-+++', '--+-+++++-+++'],
+        92: ['+-------++-+-+--+++++++', '++--+--++++--++++--+--+', '++---+-+-+-++-+-+-+---+', '+----+--+--++--+--+----']
+    }
 
     if existence:
-        return n in [36, 52, 92] or skew_supplementary_difference_set(n//4, existence=True)
+        return n in db or skew_supplementary_difference_set(n//4, existence=True)
 
-    if n == 36:
-        a = [ 1,  1, 1, -1,  1, -1,  1, -1, -1]
-        b = [ 1, -1, 1,  1, -1, -1,  1,  1, -1]
-        c = [-1, -1]+[1]*6+[-1]
-        d = [ 1,  1, 1, -1,  1,  1, -1,  1,  1]
-        return WGS(a, b, c, d, check=check)
-
-    if n == 52:
-        a = pmtoZ('++++-++--+---')
-        b = pmtoZ('-+-++----++-+')
-        c = pmtoZ('--+-+++++-+++')
-        return WGS(a, b, c, c, check=check)
-
-    if n == 92:
-        a = [1,-1,-1,-1,-1,-1,-1,-1, 1, 1,-1, 1,-1, 1,-1,-1, 1, 1, 1, 1, 1, 1, 1]
-        b = [1, 1,-1,-1, 1,-1,-1, 1, 1, 1, 1,-1,-1, 1, 1, 1, 1,-1,-1, 1,-1,-1, 1]
-        c = [1, 1,-1,-1,-1, 1,-1, 1,-1, 1,-1, 1, 1,-1, 1,-1, 1,-1, 1,-1,-1,-1, 1]
-        d = [1,-1,-1,-1,-1, 1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,-1,-1, 1,-1,-1,-1,-1]
+    if n in db:
+        a, b, c, d = map(pmtoZ, db[n])
         return WGS(a, b, c, d, check=check)
 
     if skew_supplementary_difference_set(n//4, existence=True):
