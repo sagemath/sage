@@ -1785,7 +1785,7 @@ class Bijectionist(SageObject):
                 minimal_subdistribution.solve()
             except MIPSolverException:
                 return
-            d = minimal_subdistribution.get_values(D)  # a dict from A to {0, 1}
+            d = minimal_subdistribution.get_values(D, convert=bool, tolerance=0.1)  # a dict from A to {0, 1}
             new_s = self._find_counter_example(self._A, s, d, False)
             if new_s is None:
                 values = self._sorter["Z"](s[a] for a in self._A if d[a])
@@ -1793,7 +1793,7 @@ class Bijectionist(SageObject):
 
                 # get all variables with value 1
                 active_vars = [D[a] for a in self._A
-                               if minimal_subdistribution.get_values(D[a])]
+                               if minimal_subdistribution.get_values(D[a], convert=bool, tolerance=0.1)]
 
                 # add constraint that not all of these can be 1, thus vetoing
                 # the current solution
@@ -2006,7 +2006,7 @@ class Bijectionist(SageObject):
                 minimal_subdistribution.solve()
             except MIPSolverException:
                 return
-            d = minimal_subdistribution.get_values(D)  # a dict from P to multiplicities
+            d = minimal_subdistribution.get_values(D, convert=ZZ, tolerance=0.1)  # a dict from P to multiplicities
             new_s = self._find_counter_example(P, s, d, True)
             if new_s is None:
                 yield ([p for p in P for _ in range(ZZ(d[p]))],
@@ -2612,11 +2612,11 @@ class _BijectionistMILP():
         Without any constraints, we do not require that the solution is a bijection::
 
             sage: bmilp.solve([bmilp._x["a", "a"] == 1, bmilp._x["b", "a"] == 1])
-            {('a', 'a'): 1.0, ('a', 'b'): 0.0, ('b', 'a'): 1.0, ('b', 'b'): 0.0}
+            {('a', 'a'): True, ('a', 'b'): False, ('b', 'a'): True, ('b', 'b'): False}
             sage: len(bmilp._solution_cache)
             1
             sage: bmilp.solve([bmilp._x["a", "b"] == 1, bmilp._x["b", "b"] == 1])
-            {('a', 'a'): 0.0, ('a', 'b'): 1.0, ('b', 'a'): 0.0, ('b', 'b'): 1.0}
+            {('a', 'a'): False, ('a', 'b'): True, ('b', 'a'): False, ('b', 'b'): True}
             sage: len(bmilp._solution_cache)
             2
 
@@ -2631,12 +2631,12 @@ class _BijectionistMILP():
         Generate a solution::
 
             sage: bmilp.solve([])
-            {([], 0): 1.0,
-             ([1, 0], 1): 1.0,
-             ([1, 0, 1, 0], 1): 0.0,
-             ([1, 0, 1, 0], 2): 1.0,
-             ([1, 1, 0, 0], 1): 1.0,
-             ([1, 1, 0, 0], 2): 0.0}
+            {([], 0): True,
+             ([1, 0], 1): True,
+             ([1, 0, 1, 0], 1): False,
+             ([1, 0, 1, 0], 2): True,
+             ([1, 1, 0, 0], 1): True,
+             ([1, 1, 0, 0], 2): False}
 
         Generating a new solution that also maps `1010` to `2` fails:
 
@@ -2648,20 +2648,20 @@ class _BijectionistMILP():
         However, searching for a cached solution succeeds, for inequalities and equalities::
 
             sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5])
-            {([], 0): 1.0,
-             ([1, 0], 1): 1.0,
-             ([1, 0, 1, 0], 1): 0.0,
-             ([1, 0, 1, 0], 2): 1.0,
-             ([1, 1, 0, 0], 1): 1.0,
-             ([1, 1, 0, 0], 2): 0.0}
+            {([], 0): True,
+             ([1, 0], 1): True,
+             ([1, 0, 1, 0], 1): False,
+             ([1, 0, 1, 0], 2): True,
+             ([1, 1, 0, 0], 1): True,
+             ([1, 1, 0, 0], 2): False}
 
             sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] == 0])
-            {([], 0): 1.0,
-             ([1, 0], 1): 1.0,
-             ([1, 0, 1, 0], 1): 0.0,
-             ([1, 0, 1, 0], 2): 1.0,
-             ([1, 1, 0, 0], 1): 1.0,
-             ([1, 1, 0, 0], 2): 0.0}
+            {([], 0): True,
+             ([1, 0], 1): True,
+             ([1, 0, 1, 0], 1): False,
+             ([1, 0, 1, 0], 2): True,
+             ([1, 1, 0, 0], 1): True,
+             ([1, 1, 0, 0], 2): False}
 
         """
         assert 0 <= solution_index <= len(self._solution_cache), "the index of the desired solution must not be larger than the number of known solutions"
@@ -2707,7 +2707,8 @@ class _BijectionistMILP():
             n = tmp_milp.number_of_constraints() - 1
             try:
                 tmp_milp.solve()
-                self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp))
+                self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp),
+                                                         convert=bool, tolerance=0.1)
             finally:
                 for i in range(len(additional_constraints)):
                     tmp_milp.remove_constraint(n - i)
@@ -2844,7 +2845,7 @@ class _BijectionistMILP():
             sage: bmilp = _BijectionistMILP(bij)
             sage: bmilp.add_alpha_beta_constraints()
             sage: bmilp.solve([])
-            {([], 0): 1.0, ([1], 1): 1.0, ([1, 2], 2): 1.0, ([2, 1], 2): 1.0}
+            {([], 0): True, ([1], 1): True, ([1, 2], 2): True, ([2, 1], 2): True}
         """
         W = self._bijectionist._W
         Z = self._bijectionist._Z
