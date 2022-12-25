@@ -2762,7 +2762,7 @@ class _BijectionistMILP():
             n = tmp_milp.number_of_constraints() - 1
             try:
                 tmp_milp.solve()
-                self.last_solution = tmp_milp.get_values(self._x.copy_for_mip(tmp_milp),
+                self.last_solution = tmp_milp.get_values(self._x,
                                                          convert=bool, tolerance=0.1)
             finally:
                 for i in range(len(additional_constraints)):
