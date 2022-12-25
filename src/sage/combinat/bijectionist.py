@@ -660,6 +660,17 @@ class Bijectionist(SageObject):
         If the statistics `\alpha` and `\beta` are not
         equidistributed, an error is raised.
 
+        ALGORITHM:
+
+        We add
+
+        .. MATH::
+
+            \sum_{a\in A, z\in Z} x_{p(a), z} s^z t^{\alpha(a)}
+            = \sum_{b\in B} s^{\tau(b)} t(\beta(b))
+
+        as a matrix equation to the MILP.
+
         EXAMPLES:
 
         We look for bijections `S` on permutations such that the
@@ -1094,15 +1105,27 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - one or more pairs of `(\tilde A\subseteq A, \tilde Z)`,
-          where `\tilde Z` is a list of values in `Z` of the same
-          size as `\tilde A`
+        - one or more pairs of `(\tilde A, \tilde Z)`, where `\tilde
+          A\subseteq A` and `\tilde Z` is a list of values in `Z` of
+          the same size as `\tilde A`
 
         This method specifies that `\{s(a) | a\in\tilde A\}` equals
-        ``\tilde Z`` as a multiset for each of the pairs.
+        `\tilde Z` as a multiset for each of the pairs.
 
         When specifying several distributions, the subsets of `A` do
         not have to be disjoint.
+
+        ALGORITHM:
+
+        We add
+
+        .. MATH::
+
+            \sum_{a\in\tilde A} x_{p(a), z}t^z = \sum_{z\in\tilde Z} t^z,
+
+        where `p(a)` is the block containing `a`, for each given
+        distribution as a vector equation to the MILP.
+
 
         EXAMPLES::
 
@@ -1248,13 +1271,45 @@ class Bijectionist(SageObject):
         INPUT:
 
         - ``pi_rho`` -- one or more tuples `(k, \pi: A^k\to A, \rho:
-          Z^k\to Z, \tilde A)` where `\tilde A` (optional) is an
-          `k`-ary function that returns true if and only if an
+          Z^k\to Z, \tilde A)` where `\tilde A` (optional) is a
+          `k`-ary function that returns true if and only if a
           `k`-tuple of objects in `A` is in the domain of `\pi`
+
+        ALGORITHM:
+
+        The relation
+
+        .. MATH::
+
+            s(\pi(a_1,\dots, a_k)) = \rho(s(a_1),\dots, s(a_k))
+
+        for each pair `(\pi, \rho)` implies immediately that
+        `s(\pi(a_1,\dots, a_k))` only depends on the blocks of
+        `a_1,\dots, a_k`.
+
+        The MILP formulation is as follows.  Let `a_1,\dots,a_k \in
+        A` and let `a = \pi(a_1,\dots,a_k)`.  Let `z_1,\dots,z_k \in
+        Z` and let `z = \rho(z_1,\dots,z_k)`.  Suppose that `a_i\in
+        p_i` for all `i` and that `a\in p`.
+
+        We then want to model the implication
+
+        .. MATH::
+
+           x_{p_1, z_1} = 1,\dots, x_{p_k, z_k} = 1 \Rightarrow x_{p, z} = 1.
+
+        We achieve this by requiring
+
+        .. MATH::
+
+            x_{p, z}\geq 1 - k + \sum_{i=1}^k x_{p_i, z_i}.
+
+        Note that `z` must be a possible value of `p` and each `z_i`
+        must be a possible value of `p_i`.
 
         EXAMPLES:
 
-        We can concatenate two permutations, by increasing the values
+        We can concatenate two permutations by increasing the values
         of the second permutation by the length of the first
         permutation::
 
@@ -2184,10 +2239,10 @@ class Bijectionist(SageObject):
             x_{p, z} \geq 1-k + \sum_{i=1}^k x_{p_i, z_i}.
 
         * for each distribution restriction, i.e. a set of elements
-          `e` and a distribution of values given by integers `d_z`
-          representing the multiplicity of each `z \in Z`, and `r_p =
-          |p \cap e|` indicating the relative size of block `p` in
-          the set of elements of the distribution,
+          `\tilde A` and a distribution of values given by integers
+          `d_z` representing the multiplicity of each `z \in Z`, and
+          `r_p = |p \cap\tilde A|` indicating the relative size of
+          block `p` in the set of elements of the distribution,
 
         .. MATH::
 
@@ -2887,7 +2942,7 @@ class _BijectionistMILP():
 
         .. MATH::
 
-            \sum_{a\in elements} x_{p(a), z}t^z = \sum_{z\in values} t^z,
+            \sum_{a\in\tilde A} x_{p(a), z}t^z = \sum_{z\in\tilde Z} t^z,
 
         where `p(a)` is the block containing `a`, for each given
         distribution as a vector equation.
@@ -2950,7 +3005,7 @@ class _BijectionistMILP():
 
         .. MATH::
 
-            s(\pi(a_1,\dots, a_k)) = \rho(s(a_1),\dots, s(a_k))`
+            s(\pi(a_1,\dots, a_k)) = \rho(s(a_1),\dots, s(a_k))
 
         for each pair `(\pi, \rho)`.  The relation implies
         immediately that `s(\pi(a_1,\dots, a_k))` only depends on the
