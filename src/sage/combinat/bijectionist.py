@@ -1399,7 +1399,7 @@ class Bijectionist(SageObject):
         INPUT:
 
         - ``phi_psi`` (optional) -- a list of pairs `(\phi, \rho)`
-        where `\phi: A\to Z` and `\psi: Z\to A`
+          where `\phi: A\to Z` and `\psi: Z\to A`
 
         ALGORITHM:
 
@@ -3150,7 +3150,7 @@ class _BijectionistMILP():
              ( [           /\   ]                     ) ]
              ( [  /\/\    /  \  ]  [            /\  ] ) ]
              ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
-            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))
+            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))   # indirect doctest
             sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
