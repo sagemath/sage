@@ -479,7 +479,8 @@ class Bijectionist(SageObject):
 
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[],
-                 pi_rho=tuple(), elements_distributions=tuple(),
+                 pi_rho=tuple(), phi_psi=tuple(),
+                 elements_distributions=tuple(),
                  value_restrictions=tuple(), solver=None, key=None):
         """
         Initialize the bijectionist.
@@ -532,6 +533,7 @@ class Bijectionist(SageObject):
         self.set_statistics(*alpha_beta)
         self.set_value_restrictions(*value_restrictions)
         self.set_distributions(*elements_distributions)
+        self.set_pseudo_inverse_relation(*phi_psi)
         self.set_intertwining_relations(*pi_rho)
         self.set_constant_blocks(P)
 
@@ -1126,7 +1128,6 @@ class Bijectionist(SageObject):
         where `p(a)` is the block containing `a`, for each given
         distribution as a vector equation to the MILP.
 
-
         EXAMPLES::
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
@@ -1388,6 +1389,61 @@ class Bijectionist(SageObject):
                 k, pi, rho, domain = pi_rho_tuple
 
             self._pi_rho.append(Pi_Rho(numargs=k, pi=pi, rho=rho, domain=domain))
+
+    set_semi_conjugacy = set_intertwining_relations
+
+    def set_pseudo_inverse_relation(self, *phi_psi):
+        r"""
+        Add restrictions of the form `s\circ\psi\circ s = \phi`.
+
+        INPUT:
+
+        - ``phi_psi`` (optional) -- a list of pairs `(\phi, \rho)`
+        where `\phi: A\to Z` and `\psi: Z\to A`
+
+        ALGORITHM:
+
+        We add
+
+        .. MATH::
+
+            x_{p(a), z} = x_{p(\psi(z)), \phi(a)}
+
+        for `a\in A` and `z\in Z` to the MILP, where `\phi:A\to Z`
+        and `\psi:Z\to A`.  Note that, in particular, `\phi` must be
+        constant on blocks.
+
+
+        EXAMPLES::
+
+            sage: A = B = DyckWords(3)
+            sage: bij = Bijectionist(A, B)
+            sage: bij.set_statistics((lambda D: D.number_of_touch_points(), lambda D: D.number_of_initial_rises()))
+            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            [ (             [   /\   ] )
+            [ (             [  /  \  ] )  ( [    /\    /\    ]  [  /\      /\/\  ] )
+            [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \, /  \/\ ], [ /  \/\, /    \ ] ),
+            <BLANKLINE>
+             ( [           /\   ]                     ) ]
+             ( [  /\/\    /  \  ]  [            /\  ] ) ]
+             ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
+            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))
+            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            [ (             [   /\   ] )
+            [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
+            [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \ ], [ /    \ ] ),
+            <BLANKLINE>
+            <BLANKLINE>
+             ( [  /\    ]  [  /\    ] )  ( [  /\/\  ]  [    /\  ] )
+             ( [ /  \/\ ], [ /  \/\ ] ), ( [ /    \ ], [ /\/  \ ] ),
+            <BLANKLINE>
+             ( [   /\   ]             ) ]
+             ( [  /  \  ]             ) ]
+             ( [ /    \ ], [ /\/\/\ ] ) ]
+
+        """
+        self._bmilp = None
+        self._phi_psi = phi_psi
 
     def _forced_constant_blocks(self):
         r"""
@@ -1717,7 +1773,7 @@ class Bijectionist(SageObject):
         blocks = set()
         if p in self._A:
             blocks.add(self._P.find(p))
-        elif type(p) is list:
+        elif type(p) is list:  # TODO: this looks very brittle
             for p1 in p:
                 if p1 in self._A:
                     blocks.add(self._P.find(p1))
@@ -1890,22 +1946,22 @@ class Bijectionist(SageObject):
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
         """
         bmilp = self._bmilp
-        for v in self._Z:
-            v_in_d_count = sum(d[p] for p in P if s0[p] == v)
-            if not v_in_d_count:
+        for z in self._Z:
+            z_in_d_count = sum(d[p] for p in P if s0[p] == z)
+            if not z_in_d_count:
                 continue
 
             # try to find a solution which has a different
             # subdistribution on d than s0
-            v_in_d = sum(d[p] * bmilp._x[self._P.find(p), v]
+            z_in_d = sum(d[p] * bmilp._x[self._P.find(p), z]
                          for p in P
-                         if v in self._possible_block_values[self._P.find(p)])
+                         if z in self._possible_block_values[self._P.find(p)])
 
-            # it is sufficient to require that v occurs less often as
+            # it is sufficient to require that z occurs less often as
             # a value among {a | d[a] == 1} than it does in
-            # v_in_d_count, because, if the distributions are
-            # different, one such v must exist
-            tmp_constraints = [v_in_d <= v_in_d_count - 1]
+            # z_in_d_count, because, if the distributions are
+            # different, one such z must exist
+            tmp_constraints = [z_in_d <= z_in_d_count - 1]
             try:
                 bmilp.solve(tmp_constraints)
                 return self._solution(bmilp, on_blocks)
@@ -2587,6 +2643,7 @@ class Bijectionist(SageObject):
         n = bmilp.milp.number_of_variables()
         bmilp.add_alpha_beta_constraints()
         bmilp.add_distribution_constraints()
+        bmilp.add_pseudo_inverse_relation_constraints()
         bmilp.add_intertwining_relation_constraints(preimage_blocks)
         if get_verbose() >= 2:
             self._show_bmilp(bmilp)
@@ -2969,25 +3026,25 @@ class _BijectionistMILP():
         """
         Z = self._bijectionist._Z
         Z_dict = {z: i for i, z in enumerate(Z)}
-        for elements, values in self._bijectionist._elements_distributions:
-            elements_sum = [ZZ(0)]*len(Z_dict)
-            values_sum = [ZZ(0)]*len(Z_dict)
-            for a in elements:
+        for tA, tZ in self._bijectionist._elements_distributions:
+            tA_sum = [ZZ(0)]*len(Z_dict)
+            tZ_sum = [ZZ(0)]*len(Z_dict)
+            for a in tA:
                 p = self._bijectionist._P.find(a)
                 for z in self._bijectionist._possible_block_values[p]:
-                    elements_sum[Z_dict[z]] += self._x[p, z]
-            for z in values:
-                values_sum[Z_dict[z]] += 1
+                    tA_sum[Z_dict[z]] += self._x[p, z]
+            for z in tZ:
+                tZ_sum[Z_dict[z]] += 1
 
             # TODO: not sure that this is the best way to filter out
             # empty conditions
-            for element, value in zip(elements_sum, values_sum):
-                c = element - value
+            for a, z in zip(tA_sum, tZ_sum):
+                c = a - z
                 if c.is_zero():
                     continue
                 if c in ZZ:
                     raise MIPSolverException
-                self.milp.add_constraint(c == 0, name=f"d: {element} == {value}")
+                self.milp.add_constraint(c == 0, name=f"d: {a} == {z}")
 
     def add_intertwining_relation_constraints(self, origins):
         r"""
@@ -3065,6 +3122,63 @@ class _BijectionistMILP():
                     self.milp.add_constraint(rhs <= 0,
                                              name=f"pi/rho({composition_index})")
 
+    def add_pseudo_inverse_relation_constraints(self):
+        r"""
+        Add constraints enforcing that `s\circ\phi\circ s =
+        \psi`.
+
+        We do this by adding
+
+        .. MATH::
+
+            x_{p(a), z} = x_{p(\psi(z)), \phi(a)}
+
+        for `a\in A` and `z\in Z`, where `\phi:A\to Z` and `\psi:Z\to
+        A`.  Note that, in particular, `\phi` must be constant on
+        blocks.
+
+        EXAMPLES::
+
+            sage: A = B = DyckWords(3)
+            sage: bij = Bijectionist(A, B)
+            sage: bij.set_statistics((lambda D: D.number_of_touch_points(), lambda D: D.number_of_initial_rises()))
+            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            [ (             [   /\   ] )
+            [ (             [  /  \  ] )  ( [    /\    /\    ]  [  /\      /\/\  ] )
+            [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \, /  \/\ ], [ /  \/\, /    \ ] ),
+            <BLANKLINE>
+             ( [           /\   ]                     ) ]
+             ( [  /\/\    /  \  ]  [            /\  ] ) ]
+             ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
+            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))
+            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            [ (             [   /\   ] )
+            [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
+            [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \ ], [ /    \ ] ),
+            <BLANKLINE>
+            <BLANKLINE>
+             ( [  /\    ]  [  /\    ] )  ( [  /\/\  ]  [    /\  ] )
+             ( [ /  \/\ ], [ /  \/\ ] ), ( [ /    \ ], [ /\/  \ ] ),
+            <BLANKLINE>
+             ( [   /\   ]             ) ]
+             ( [  /  \  ]             ) ]
+             ( [ /    \ ], [ /\/\/\ ] ) ]
+
+        """
+        P = self._bijectionist._P
+        for phi, psi in self._bijectionist._phi_psi:
+            for p, block in P.root_to_elements_dict().items():
+                z0 = phi(p)
+                assert all(phi(a) == z0 for a in block), "phi must be constant on the block %s" % block
+                for z in self._bijectionist._possible_block_values[p]:
+                    p0 = P.find(psi(z))
+                    if z0 in self._bijectionist._possible_block_values[p0]:
+                        c = self._x[p, z] - self._x[p0, z0]
+                        if c.is_zero():
+                            continue
+                        self.milp.add_constraint(c == 0, name=f"i: s({p})={z}<->s(psi({z})=phi({p})")
+                    else:
+                        self.milp.add_constraint(self._x[p, z] == 0, name=f"i: s({p})!={z}")
 
 def _invert_dict(d):
     """
