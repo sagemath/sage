@@ -1,3 +1,12 @@
+# gf2x builds fine without symlinks enabled, but enabling them confuses the mingw gcc
+# (gf2x turns some of its headers into symlinks to other headers, which works
+# fine when `ln -s` just copies the file to the new destination, but fails when it creates
+# a symlink that is only understandable to MSYS-build software, which the compiler
+# intentionally isn't)
+
+# Unset MSYS to turn off symlinks so we don't run into that problem
+unset MSYS
+
 echo "Deleting old gf2x files."
 rm -f "$SAGE_LOCAL"/lib/libgf2x*
 rm -rf "$SAGE_LOCAL"/include/gf2x*
