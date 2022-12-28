@@ -7,6 +7,12 @@
 # See below for targets to build the documentation in other formats,
 # to run various types of test suites, and to remove parts of the build etc.
 
+# Enable symlinks on MSYS so that any build scripts expecting symlinks to work
+# don't break
+# TODO: Is it better to enable symlinks where necessary and leave it disabled by
+# default instead of enabling it everywhere by default?
+export MSYS=winsymlinks
+
 default: all
 
 all: base-toolchain
