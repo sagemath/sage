@@ -10,13 +10,6 @@ elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
    CFLAGS="$CFLAGS + z"
 fi
 
-# m4ri has some existing support for Windows, but it assumes that you're
-# building for Windows using MSVC, so it uses the presence of _MSC_VER
-# to determine if compiling for Windows
-if [ -n "$MSYSTEM" ]; then
-   CFLAGS="$CFLAGS -D_MSC_VER"
-fi
-
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
    ENABLE_DEBUG="--enable-debug"
 else
