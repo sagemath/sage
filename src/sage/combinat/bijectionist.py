@@ -2548,7 +2548,7 @@ class Bijectionist(SageObject):
             solution_index += 1
             if get_verbose() >= 2:
                 print("after vetoing")
-                self._show_bmilp(bmilp, variables=False)
+                bmilp.show(variables=False)
 
     def _solution(self, bmilp, on_blocks=False):
         r"""
@@ -2585,68 +2585,6 @@ class Bijectionist(SageObject):
                     break
         return mapping
 
-    def _show_bmilp(self, bmilp, variables=True):
-        """
-        Print the constraints and variables of the current MILP
-        together with some explanations.
-
-
-        EXAMPLES::
-
-            sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver="GLPK")
-            sage: bij.set_constant_blocks([["a", "b"]])
-            sage: next(bij.solutions_iterator())
-            {'a': 0, 'b': 0, 'c': 1}
-            sage: bij._show_bmilp(bij._bmilp)
-            Constraints are:
-                block a: 1 <= x_0 + x_1 <= 1
-                block c: 1 <= x_2 + x_3 <= 1
-                statistics: 2 <= 2 x_0 + x_2 <= 2
-                statistics: 1 <= 2 x_1 + x_3 <= 1
-                veto: x_0 + x_3 <= 1
-            Variables are:
-                x_0: s(a) = s(b) = 0
-                x_1: s(a) = s(b) = 1
-                x_2: s(c) = 0
-                x_3: s(c) = 1
-        """
-        print("Constraints are:")
-        b = bmilp.milp.get_backend()
-        varid_name = {}
-        for i in range(b.ncols()):
-            s = b.col_name(i)
-            default_name = str(bmilp.milp.linear_functions_parent()({i: 1}))
-            if s and s != default_name:
-                varid_name[i] = s
-            else:
-                varid_name[i] = default_name
-        for i, (lb, (indices, values), ub) in enumerate(bmilp.milp.constraints()):
-            if b.row_name(i):
-                print("    "+b.row_name(i)+":", end=" ")
-            if lb is not None:
-                print(str(ZZ(lb))+" <=", end=" ")
-            first = True
-            for j, c in sorted(zip(indices, values)):
-                c = ZZ(c)
-                if c == 0:
-                    continue
-                print((("+ " if (not first and c > 0) else "") +
-                       ("" if c == 1 else
-                        ("- " if c == -1 else
-                         (str(c) + " " if first and c < 0 else
-                          ("- " + str(abs(c)) + " " if c < 0 else str(c) + " "))))
-                       + varid_name[j]), end=" ")
-                first = False
-            # Upper bound
-            print("<= "+str(ZZ(ub)) if ub is not None else "")
-
-        if variables:
-            print("Variables are:")
-            for (p, z), v in bmilp._x.items():
-                print(f"    {v}: " + "".join([f"s({a}) = "
-                                              for a in self._P.root_to_elements_dict()[p]]) + f"{z}")
-
     def _initialize_new_bmilp(self):
         r"""
         Initialize a :class:`_BijectionistMILP` and add the current constraints.
@@ -2670,7 +2608,7 @@ class Bijectionist(SageObject):
         bmilp.add_pseudo_inverse_relation_constraints()
         bmilp.add_intertwining_relation_constraints(preimage_blocks)
         if get_verbose() >= 2:
-            self._show_bmilp(bmilp)
+            bmilp.show()
         return bmilp
 
 
@@ -2720,6 +2658,69 @@ class _BijectionistMILP():
             self.milp.add_constraint(sum(self._x[p, z]
                                          for z in bijectionist._possible_block_values[p]) == 1,
                                      name=f"block {p}"[:50])
+
+    def show(self, variables=True):
+        r"""
+        Print the constraints and variables of the MILP together
+        with some explanations.
+
+        EXAMPLES::
+
+            sage: A = B = ["a", "b", "c"]
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver="GLPK")
+            sage: bij.set_constant_blocks([["a", "b"]])
+            sage: next(bij.solutions_iterator())
+            {'a': 0, 'b': 0, 'c': 1}
+            sage: bij._bmilp.show()
+            Constraints are:
+                block a: 1 <= x_0 + x_1 <= 1
+                block c: 1 <= x_2 + x_3 <= 1
+                statistics: 2 <= 2 x_0 + x_2 <= 2
+                statistics: 1 <= 2 x_1 + x_3 <= 1
+                veto: x_0 + x_3 <= 1
+            Variables are:
+                x_0: s(a) = s(b) = 0
+                x_1: s(a) = s(b) = 1
+                x_2: s(c) = 0
+                x_3: s(c) = 1
+
+        """
+        print("Constraints are:")
+        b = self.milp.get_backend()
+        varid_name = {}
+        for i in range(b.ncols()):
+            s = b.col_name(i)
+            default_name = str(self.milp.linear_functions_parent()({i: 1}))
+            if s and s != default_name:
+                varid_name[i] = s
+            else:
+                varid_name[i] = default_name
+        for i, (lb, (indices, values), ub) in enumerate(self.milp.constraints()):
+            if b.row_name(i):
+                print("    "+b.row_name(i)+":", end=" ")
+            if lb is not None:
+                print(str(ZZ(lb))+" <=", end=" ")
+            first = True
+            for j, c in sorted(zip(indices, values)):
+                c = ZZ(c)
+                if c == 0:
+                    continue
+                print((("+ " if (not first and c > 0) else "") +
+                       ("" if c == 1 else
+                        ("- " if c == -1 else
+                         (str(c) + " " if first and c < 0 else
+                          ("- " + str(abs(c)) + " " if c < 0 else str(c) + " "))))
+                       + varid_name[j]), end=" ")
+                first = False
+            # Upper bound
+            print("<= "+str(ZZ(ub)) if ub is not None else "")
+
+        if variables:
+            print("Variables are:")
+            P = self._bijectionist._P.root_to_elements_dict()
+            for (p, z), v in self._x.items():
+                print(f"    {v}: " + "".join([f"s({a}) = "
+                                              for a in P[p]]) + f"{z}")
 
     def solve(self, additional_constraints, solution_index=0):
         r"""
@@ -2896,7 +2897,7 @@ class _BijectionistMILP():
             sage: iter = bij.solutions_iterator()
             sage: next(iter)                                                    # indirect doctest
             {'a': 0, 'b': 0, 'c': 1}
-            sage: bij._show_bmilp(bij._bmilp)
+            sage: bij._bmilp.show()
             Constraints are:
                 block a: 1 <= x_0 + x_1 <= 1
                 block c: 1 <= x_2 + x_3 <= 1
