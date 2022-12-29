@@ -2358,9 +2358,14 @@ class Bijectionist(SageObject):
                 block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
                 block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
                 statistics: 1 <= x_0 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_1 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_2 + x_4 <= 1
                 statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
                 statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
                 statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
@@ -2376,9 +2381,14 @@ class Bijectionist(SageObject):
                 block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
                 block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
                 statistics: 1 <= x_0 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_1 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_2 + x_4 <= 1
                 statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
                 statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
                 statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
@@ -2399,9 +2409,14 @@ class Bijectionist(SageObject):
                 block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
                 block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
                 statistics: 1 <= x_0 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_1 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_2 + x_4 <= 1
                 statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
                 statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
                 statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
@@ -2431,9 +2446,14 @@ class Bijectionist(SageObject):
                 block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
                 block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
                 statistics: 1 <= x_0 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_1 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_2 + x_4 <= 1
                 statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
                 statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
                 statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
@@ -2448,9 +2468,14 @@ class Bijectionist(SageObject):
                 block [1, 3, 2]: 1 <= x_9 + x_10 + x_11 <= 1
                 block [2, 3, 1]: 1 <= x_12 + x_13 + x_14 <= 1
                 statistics: 1 <= x_0 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_1 <= 1
+                statistics: 0 <= <= 0
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_2 + x_4 <= 1
                 statistics: 1 <= x_3 + x_5 <= 1
+                statistics: 0 <= <= 0
                 statistics: 1 <= x_6 + 3 x_9 + 2 x_12 <= 1
                 statistics: 3 <= x_7 + 3 x_10 + 2 x_13 <= 3
                 statistics: 2 <= x_8 + 3 x_11 + 2 x_14 <= 2
@@ -2640,14 +2665,12 @@ class Bijectionist(SageObject):
         self._compute_possible_block_values()
 
         bmilp = _BijectionistMILP(self)
-        n = bmilp.milp.number_of_variables()
         bmilp.add_alpha_beta_constraints()
         bmilp.add_distribution_constraints()
         bmilp.add_pseudo_inverse_relation_constraints()
         bmilp.add_intertwining_relation_constraints(preimage_blocks)
         if get_verbose() >= 2:
             self._show_bmilp(bmilp)
-        assert n == bmilp.milp.number_of_variables(), "The number of variables increased."
         return bmilp
 
 
@@ -2682,22 +2705,21 @@ class _BijectionistMILP():
         # the attributes of the bijectionist class we actually use:
         # _possible_block_values
         # _elements_distributions
-        # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho
+        # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho, _phi_psi
+        self._bijectionist = bijectionist
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
         self.milp.set_objective(None)
-        self._n_variables = -1
+        indices = [(p, z)
+                   for p, tZ in bijectionist._possible_block_values.items()
+                   for z in tZ]
+        self._x = self.milp.new_variable(binary=True, indices=indices)
         self._solution_cache = []
         self._last_solution = {}
-        self._index_block_value_dict = None
-        self._x = self.milp.new_variable(binary=True)  # indexed by P x Z
-
-        self._bijectionist = bijectionist
 
         for p in _disjoint_set_roots(bijectionist._P):
-            name = f"block {p}"
             self.milp.add_constraint(sum(self._x[p, z]
                                          for z in bijectionist._possible_block_values[p]) == 1,
-                                     name=name[:50])
+                                     name=f"block {p}"[:50])
 
     def solve(self, additional_constraints, solution_index=0):
         r"""
@@ -2777,20 +2799,8 @@ class _BijectionistMILP():
 
         """
         assert 0 <= solution_index <= len(self._solution_cache), "the index of the desired solution must not be larger than the number of known solutions"
-
-        if self._n_variables < 0:
-            # initialize at first call
-            self._n_variables = self.milp.number_of_variables()
-            self._index_block_value_dict = {}
-            for (p, z), v in self._x.items():
-                variable_index = next(iter(v.dict().keys()))
-                self._index_block_value_dict[variable_index] = (p, z)
-        # number of variables would change with creation of
-        # constraints with new variables
-        assert self._n_variables == self.milp.number_of_variables(), "The number of variables changed."
-
-        # check if there is a solution satisfying the constraints in
-        # the cache
+        # check whether there is a solution in the cache satisfying
+        # the additional constraints
         for solution in self._solution_cache[solution_index:]:
             if all(all(self._evaluate_linear_function(linear_function,
                                                       solution) == value.dict()[-1]
@@ -2807,23 +2817,19 @@ class _BijectionistMILP():
         copy = False
         if copy:
             tmp_milp = deepcopy(self.milp)
-        else:
-            tmp_milp = self.milp
-
-        for constraint in additional_constraints:
-            tmp_milp.add_constraint(constraint)
-
-        if copy:
+            for constraint in additional_constraints:
+                tmp_milp.add_constraint(constraint, return_indices=True)
             tmp_milp.solve()
         else:
-            n = tmp_milp.number_of_constraints() - 1
+            new_indices = []
+            for constraint in additional_constraints:
+                new_indices.extend(self.milp.add_constraint(constraint, return_indices=True))
             try:
-                tmp_milp.solve()
-                self.last_solution = tmp_milp.get_values(self._x,
-                                                         convert=bool, tolerance=0.1)
+                self.milp.solve()
+                self.last_solution = self.milp.get_values(self._x,
+                                                          convert=bool, tolerance=0.1)
             finally:
-                for i in range(len(additional_constraints)):
-                    tmp_milp.remove_constraint(n - i)
+                self.milp.remove_constraints(new_indices)
 
         self._solution_cache.append(self.last_solution)
         self._veto_current_solution()
@@ -2849,13 +2855,16 @@ class _BijectionistMILP():
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: _ = bmilp.solve([])
-            sage: bmilp._index_block_value_dict                                 # random
-            {0: ('a', 'a'), 1: ('a', 'b'), 2: ('b', 'a'), 3: ('b', 'b')}
             sage: f = bmilp._x["a", "a"] + bmilp._x["b", "a"]
             sage: v = {('a', 'a'): 1.0, ('a', 'b'): 0.0, ('b', 'a'): 1.0, ('b', 'b'): 0.0}
             sage: bmilp._evaluate_linear_function(f, v)
             2.0
         """
+        self._index_block_value_dict = {}
+        for (p, z), v in self._x.items():
+            variable_index = next(iter(v.dict().keys()))
+            self._index_block_value_dict[variable_index] = (p, z)
+
         return float(sum(value * values[self._index_block_value_dict[index]]
                          for index, value in linear_function.dict().items()))
 
@@ -2961,8 +2970,9 @@ class _BijectionistMILP():
         """
         W = self._bijectionist._W
         Z = self._bijectionist._Z
-        AZ_matrix = [[ZZ(0)]*len(W) for _ in range(len(Z))]
-        B_matrix = [[ZZ(0)]*len(W) for _ in range(len(Z))]
+        zero = self.milp.linear_functions_parent().zero()
+        AZ_matrix = [[zero]*len(W) for _ in range(len(Z))]
+        B_matrix = [[zero]*len(W) for _ in range(len(Z))]
 
         W_dict = {w: i for i, w in enumerate(W)}
         Z_dict = {z: i for i, z in enumerate(Z)}
@@ -2979,16 +2989,10 @@ class _BijectionistMILP():
             z_index = Z_dict[self._bijectionist._tau[b]]
             B_matrix[z_index][w_index] += 1
 
-        # TODO: not sure that this is the best way to filter out
-        # empty conditions
         for w in range(len(W)):
             for z in range(len(Z)):
-                c = AZ_matrix[z][w] - B_matrix[z][w]
-                if c.is_zero():
-                    continue
-                if c in ZZ:
-                    raise MIPSolverException
-                self.milp.add_constraint(c == 0, name="statistics")
+                self.milp.add_constraint(AZ_matrix[z][w] == B_matrix[z][w],
+                                         name="statistics")
 
     def add_distribution_constraints(self):
         r"""
@@ -3026,9 +3030,10 @@ class _BijectionistMILP():
         """
         Z = self._bijectionist._Z
         Z_dict = {z: i for i, z in enumerate(Z)}
+        zero = self.milp.linear_functions_parent().zero()
         for tA, tZ in self._bijectionist._elements_distributions:
-            tA_sum = [ZZ(0)]*len(Z_dict)
-            tZ_sum = [ZZ(0)]*len(Z_dict)
+            tA_sum = [zero]*len(Z_dict)
+            tZ_sum = [zero]*len(Z_dict)
             for a in tA:
                 p = self._bijectionist._P.find(a)
                 for z in self._bijectionist._possible_block_values[p]:
@@ -3036,15 +3041,8 @@ class _BijectionistMILP():
             for z in tZ:
                 tZ_sum[Z_dict[z]] += 1
 
-            # TODO: not sure that this is the best way to filter out
-            # empty conditions
             for a, z in zip(tA_sum, tZ_sum):
-                c = a - z
-                if c.is_zero():
-                    continue
-                if c in ZZ:
-                    raise MIPSolverException
-                self.milp.add_constraint(c == 0, name=f"d: {a} == {z}")
+                self.milp.add_constraint(a == z, name=f"d: {a} == {z}")
 
     def add_intertwining_relation_constraints(self, origins):
         r"""
@@ -3180,6 +3178,7 @@ class _BijectionistMILP():
                     else:
                         self.milp.add_constraint(self._x[p, z] == 0, name=f"i: s({p})!={z}")
 
+
 def _invert_dict(d):
     """
     Return the dictionary whose keys are the values of the input and
@@ -3298,7 +3297,7 @@ Let us try a smaller example::
     sage: A = sum(As, [])
     sage: respects_c1 = lambda s: all(c1(a1, a2) not in A or s[c1(a1, a2)] == c1(s[a1], s[a2]) for a1 in A for a2 in A)
     sage: respects_c2 = lambda s: all(c2(a1) not in A or s[c2(a1)] == c2(s[a1]) for a1 in A)
-    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]             # long time -- (17 seconds with SCIP on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
+    sage: l2 = [s for s in it if respects_c1(s) and respects_c2(s)]             # long time -- (17 seconds on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
     sage: sorted(l1, key=lambda s: tuple(s.items())) == l2                      # long time
     True
 
