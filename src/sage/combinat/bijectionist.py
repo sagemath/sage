@@ -367,13 +367,13 @@ A guided tour
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 import itertools
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 from sage.rings.integer_ring import ZZ
 from sage.combinat.set_partition import SetPartition
 from sage.sets.disjoint_set import DisjointSet
 from sage.structure.sage_object import SageObject
-from copy import copy, deepcopy
+from copy import deepcopy
 from sage.misc.verbose import get_verbose
 
 
@@ -1419,7 +1419,7 @@ class Bijectionist(SageObject):
             sage: A = B = DyckWords(3)
             sage: bij = Bijectionist(A, B)
             sage: bij.set_statistics((lambda D: D.number_of_touch_points(), lambda D: D.number_of_initial_rises()))
-            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\    /\    ]  [  /\      /\/\  ] )
             [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \, /  \/\ ], [ /  \/\, /    \ ] ),
@@ -1428,7 +1428,7 @@ class Bijectionist(SageObject):
              ( [  /\/\    /  \  ]  [            /\  ] ) ]
              ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
             sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))
-            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
             [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \ ], [ /    \ ] ),
@@ -1623,61 +1623,59 @@ class Bijectionist(SageObject):
             self._bmilp = _BijectionistMILP(self)
             self._bmilp.solve([])
 
-        # generate blockwise preimage to determine which blocks have the same image
         solution = self._bmilp.solution(True)
+        # multiple_preimages[tZ] are the blocks p which have the same
+        # value tZ[i] in the i-th known solution
         multiple_preimages = {(z,): tP
                               for z, tP in _invert_dict(solution).items()
                               if len(tP) > 1}
-
-        # check for each pair of blocks if a solution with different
-        # values on these block exists
-
-        #     if yes, use the new solution to update the
-        #             multiple_preimages dictionary, restart the check
-        #     if no, the two blocks can be joined
 
         # _P has to be copied to not mess with the solution process
         # since we do not want to regenerate the bmilp in each step,
         # so blocks have to stay consistent during the whole process
         tmp_P = deepcopy(self._P)
-        updated_preimages = True
-        while updated_preimages:
-            updated_preimages = False
-            for tZ in copy(multiple_preimages):
-                if updated_preimages:
-                    break
-                for i, j in itertools.combinations(copy(multiple_preimages[tZ]), r=2):
-                    # veto two blocks having the same value
-                    tmp_constraints = []
-                    for z in self._possible_block_values[i]:
-                        if z in self._possible_block_values[j]:  # intersection
-                            tmp_constraints.append(self._bmilp._x[i, z] + self._bmilp._x[j, z] <= 1)
-                    try:
-                        self._bmilp.solve(tmp_constraints)
-                    except MIPSolverException:
-                        # no solution exists, join blocks
-                        tmp_P.union(i, j)
-                        if i in multiple_preimages[tZ] and j in multiple_preimages[tZ]:
-                            # only one of the joined blocks should remain in the list
-                            multiple_preimages[tZ].remove(j)
-                        if len(multiple_preimages[tZ]) == 1:
-                            del multiple_preimages[tZ]
-                            break
-                    else:
-                        # solution exists, update dictionary
-                        solution = self._bmilp.solution(True)
-                        updated_multiple_preimages = {}
-                        for values in multiple_preimages:
-                            for p in multiple_preimages[values]:
-                                solution_tuple = (*values, solution[p])
-                                if solution_tuple not in updated_multiple_preimages:
-                                    updated_multiple_preimages[solution_tuple] = []
-                                updated_multiple_preimages[solution_tuple].append(p)
-                        updated_preimages = True
-                        multiple_preimages = updated_multiple_preimages
-                        break
 
-        self.set_constant_blocks(tmp_P)
+        # check whether blocks p1 and p2 can have different values,
+        # if so return such a solution
+        def different_values(p1, p2):
+            tmp_constraints = [self._bmilp._x[p1, z] + self._bmilp._x[p2, z] <= 1
+                               for z in self._possible_block_values[p1]
+                               if z in self._possible_block_values[p2]]
+            try:
+                self._bmilp.solve(tmp_constraints)
+                return self._bmilp.solution(True)
+            except MIPSolverException:
+                pass
+
+        # try to find a pair of blocks having the same value on all
+        # known solutions, and a solution such that the values are
+        # different on this solution
+        def merge_until_split():
+            for tZ in list(multiple_preimages):
+                tP = multiple_preimages[tZ]
+                for i2 in range(len(tP)-1, -1, -1):
+                    for i1 in range(i2):
+                        solution = different_values(tP[i1], tP[i2])
+                        if solution is None:
+                            tmp_P.union(tP[i1], tP[i2])
+                            if len(multiple_preimages[tZ]) == 2:
+                                del multiple_preimages[tZ]
+                            else:
+                                tP.remove(tP[i2])
+                            break  # skip all pairs (i, j) containing i2
+                        return solution
+
+        while True:
+            solution = merge_until_split()
+            if solution is None:
+                self.set_constant_blocks(tmp_P)
+                return
+
+            updated_multiple_preimages = defaultdict(list)
+            for tZ, tP in multiple_preimages.items():
+                for p in tP:
+                    updated_multiple_preimages[tZ + (solution[p],)].append(p)
+            multiple_preimages = updated_multiple_preimages
 
     def possible_values(self, p=None, optimal=False):
         r"""
@@ -1782,38 +1780,34 @@ class Bijectionist(SageObject):
                         blocks.add(self._P.find(p2))
 
         if optimal:
-            # function adding a solution to dict of solutions
-            def add_solution(solutions, solution):
-                for p, value in solution.items():
-                    if p not in solutions:
-                        solutions[p] = set()
-                    solutions[p].add(value)
-
             # generate initial solution, solution dict and add solution
             if self._bmilp is None:
                 self._bmilp = _BijectionistMILP(self)
                 self._bmilp.solve([])
 
+            solutions = defaultdict(set)
             solution = self._bmilp.solution(False)
-            solutions = {}
-            add_solution(solutions, solution)
+            for p, z in solution.items():
+                solutions[p].add(z)
 
             # iterate through blocks and generate all values
             for p in blocks:
                 tmp_constraints = []
-                for value in solutions[p]:
-                    tmp_constraints.append(self._bmilp._x[p, value] == 0)
+                for z in solutions[p]:
+                    tmp_constraints.append(self._bmilp._x[p, z] == 0)
                 while True:
                     try:
                         # problem has a solution, so new value was found
                         self._bmilp.solve(tmp_constraints)
-                        solution = self._bmilp.solution(False)
-                        add_solution(solutions, solution)
-                        # veto new value and try again
-                        tmp_constraints.append(self._bmilp._x[p, solution[p]] == 0)
                     except MIPSolverException:
                         # no solution, so all possible values have been found
                         break
+                    solution = self._bmilp.solution(False)
+                    for p, z in solution.items():
+                        solutions[p].add(z)
+                    # veto new value and try again
+                    tmp_constraints.append(self._bmilp._x[p, solution[p]] == 0)
+
 
         # create dictionary to return
         possible_values = {}
@@ -2210,13 +2204,10 @@ class Bijectionist(SageObject):
             something_changed = False
             # collect (preimage, image) pairs by (representatives) of
             # the blocks of the elements of the preimage
-            updated_images = {}  # (p_1,...,p_k) to {a_1,....}
+            updated_images = defaultdict(set)  # (p_1,...,p_k) to {a_1,....}
             for a_tuple, image_set in images.items():
                 representatives = tuple(self._P.find(a) for a in a_tuple)
-                if representatives in updated_images:
-                    updated_images[representatives].update(image_set)
-                else:
-                    updated_images[representatives] = image_set
+                updated_images[representatives].update(image_set)
 
             # merge blocks
             for a_tuple, image_set in updated_images.items():
@@ -2670,7 +2661,9 @@ class _BijectionistMILP():
 
     def solve(self, additional_constraints, solution_index=0):
         r"""
-        Return a solution satisfying the given additional constraints.
+        Find a solution satisfying the given additional constraints.
+
+        The solution can then be retrieved using :meth:`solution`.
 
         INPUT:
 
@@ -2693,12 +2686,8 @@ class _BijectionistMILP():
         Generate a solution::
 
             sage: bmilp.solve([])
-            {([], 0): True,
-             ([1, 0], 1): True,
-             ([1, 0, 1, 0], 1): False,
-             ([1, 0, 1, 0], 2): True,
-             ([1, 1, 0, 0], 1): True,
-             ([1, 1, 0, 0], 2): False}
+            sage: bmilp.solution(False)
+            {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
         Generating a new solution that also maps `1010` to `2` fails:
 
@@ -2710,20 +2699,12 @@ class _BijectionistMILP():
         However, searching for a cached solution succeeds, for inequalities and equalities::
 
             sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 2] >= 1])
-            {([], 0): True,
-             ([1, 0], 1): True,
-             ([1, 0, 1, 0], 1): False,
-             ([1, 0, 1, 0], 2): True,
-             ([1, 1, 0, 0], 1): True,
-             ([1, 1, 0, 0], 2): False}
+            sage: bmilp.solution(False)
+            {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
             sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] == 0])
-            {([], 0): True,
-             ([1, 0], 1): True,
-             ([1, 0, 1, 0], 1): False,
-             ([1, 0, 1, 0], 2): True,
-             ([1, 1, 0, 0], 1): True,
-             ([1, 1, 0, 0], 2): False}
+            sage: bmilp.solution(False)
+            {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
             sage: len(bmilp._solution_cache)
             1
@@ -2736,17 +2717,23 @@ class _BijectionistMILP():
             if all(self._is_solution(constraint, solution)
                    for constraint in additional_constraints):
                 self.last_solution = solution
-                return self.last_solution
+                return
 
         # otherwise generate a new one
         new_indices = []
         for constraint in additional_constraints:
-            new_indices.extend(self.milp.add_constraint(constraint, return_indices=True))
+            new_indices.extend(self.milp.add_constraint(constraint,
+                                                        return_indices=True))
         try:
             self.milp.solve()
             self.last_solution = self.milp.get_values(self._x,
                                                       convert=bool, tolerance=0.1)
         finally:
+            b = self.milp.get_backend()
+            if hasattr(b, "_get_model"):
+                m = b._get_model()
+                if m.getStatus() != 'unknown':
+                    m.freeTransform()
             self.milp.remove_constraints(new_indices)
 
         # veto the solution, by requiring that not all variables with
@@ -2759,7 +2746,6 @@ class _BijectionistMILP():
                                  name="veto")
 
         self._solution_cache.append(self.last_solution)
-        return self.last_solution
 
     def _is_solution(self, constraint, values):
         r"""
@@ -2863,7 +2849,8 @@ class _BijectionistMILP():
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)                                # indirect doctest
             sage: bmilp.solve([])
-            {([], 0): True, ([1], 1): True, ([1, 2], 2): True, ([2, 1], 2): True}
+            sage: bmilp.solution(False)
+            {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 2}
         """
         W = self._bijectionist._W
         Z = self._bijectionist._Z
@@ -3032,7 +3019,7 @@ class _BijectionistMILP():
             sage: A = B = DyckWords(3)
             sage: bij = Bijectionist(A, B)
             sage: bij.set_statistics((lambda D: D.number_of_touch_points(), lambda D: D.number_of_initial_rises()))
-            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\    /\    ]  [  /\      /\/\  ] )
             [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \, /  \/\ ], [ /  \/\, /    \ ] ),
@@ -3041,7 +3028,7 @@ class _BijectionistMILP():
              ( [  /\/\    /  \  ]  [            /\  ] ) ]
              ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
             sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))   # indirect doctest
-            sage: ascii_art(list(bij.minimal_subdistributions_iterator()))
+            sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
             [ ( [ /\/\/\ ], [ /    \ ] ), ( [ /\/  \ ], [ /    \ ] ),
