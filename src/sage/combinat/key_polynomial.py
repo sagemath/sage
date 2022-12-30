@@ -384,6 +384,15 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         self._repr_option_bracket = False
         self._k = k
 
+        if self._k:
+            def build_index(m):
+                return self._indices(m)
+        else:
+            def build_index(m):
+                return self._indices(reversed(m)).trim()
+
+        self._build_index = build_index
+
         if R:
             if poly_ring:
                 raise ValueError("Specify only one of base_ring or poly_ring (not both)")
@@ -537,30 +546,16 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         out = self.zero()
         counter = 0
 
-        if self._k:
-            while f:
-                M = f.monomials()[0]
-                c = f.monomial_coefficient(M)
-                m = list(f.exponents()[0])
+        while f:
+            M = f.monomials()[0]
+            c = f.monomial_coefficient(M)
 
-                new_term = self._from_dict({self._indices(m): c})
+            new_term = self._from_dict({self._build_index(*M.exponents()): c})
 
-                f -= new_term.expand()
-                out += new_term
+            f -= new_term.expand()
+            out += new_term
 
-            return out
-        else:
-            while f:
-                M = f.monomials()[0]
-                c = f.monomial_coefficient(M)
-                m = list(reversed(f.exponents()[0]))
-
-                new_term = self._from_dict({self._indices(m).trim(): c})
-
-                f -= new_term.expand()
-                out += new_term
-
-            return out
+        return out
 
     def product(self, a, b):
         r"""
