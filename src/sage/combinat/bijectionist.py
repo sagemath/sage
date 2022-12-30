@@ -2814,23 +2814,15 @@ class _BijectionistMILP():
                 return self.last_solution
 
         # otherwise generate a new one
-        # set copy = True if the solver requires us to copy the program and throw it away again
-        copy = False
-        if copy:
-            tmp_milp = deepcopy(self.milp)
-            for constraint in additional_constraints:
-                tmp_milp.add_constraint(constraint, return_indices=True)
-            tmp_milp.solve()
-        else:
-            new_indices = []
-            for constraint in additional_constraints:
-                new_indices.extend(self.milp.add_constraint(constraint, return_indices=True))
-            try:
-                self.milp.solve()
-                self.last_solution = self.milp.get_values(self._x,
-                                                          convert=bool, tolerance=0.1)
-            finally:
-                self.milp.remove_constraints(new_indices)
+        new_indices = []
+        for constraint in additional_constraints:
+            new_indices.extend(self.milp.add_constraint(constraint, return_indices=True))
+        try:
+            self.milp.solve()
+            self.last_solution = self.milp.get_values(self._x,
+                                                      convert=bool, tolerance=0.1)
+        finally:
+            self.milp.remove_constraints(new_indices)
 
         self._solution_cache.append(self.last_solution)
         self._veto_current_solution()
