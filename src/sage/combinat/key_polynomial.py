@@ -86,7 +86,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         """
         R = self.parent()._polynomial_ring
         out = R.zero()
-        z = self.parent().poly_gen()
+        z = self.parent().poly_gens()
 
         for m, c in self.monomial_coefficients().items():
             # get the partition itself
@@ -483,7 +483,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         """
         return self._polynomial_ring
 
-    def poly_gen(self):
+    def poly_gens(self):
         r"""
         Return the polynomial generators for the polynomial ring
         associated to ``self``.
@@ -492,11 +492,11 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ)
-            sage: k.poly_gen()
+            sage: k.poly_gens()
             z_*
 
             sage: k = KeyPolynomialBasis(QQ, 4)
-            sage: k.poly_gen()
+            sage: k.poly_gens()
             (z_0, z_1, z_2, z_3)
         """
         if self._k:
@@ -511,7 +511,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ)
-            sage: z = k.poly_gen(); z
+            sage: z = k.poly_gens(); z
             z_*
             sage: p = z[0]^4*z[1]^2*z[2]*z[3] + z[0]^4*z[1]*z[2]^2*z[3]
             sage: k.from_polynomial(p)
@@ -538,7 +538,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         counter = 0
 
         if self._k:
-            while f.monomials():
+            while f:
                 M = f.monomials()[0]
                 c = f.monomial_coefficient(M)
                 m = list(f.exponents()[0])
@@ -550,7 +550,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
             return out
         else:
-            while f.monomials():
+            while f:
                 M = f.monomials()[0]
                 c = f.monomial_coefficient(M)
                 m = list(reversed(f.exponents()[0]))
@@ -588,13 +588,13 @@ def _divided_difference(P, i, f):
 
         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis, _divided_difference
         sage: k = KeyPolynomialBasis(QQ)
-        sage: z = k.poly_gen()
+        sage: z = k.poly_gens()
         sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
         sage: _divided_difference(k, 2, f)
         z_3^2*z_1 + z_3*z_2*z_1 + z_2^2*z_1
 
         sage: k = KeyPolynomialBasis(QQ, 4)
-        sage: z = k.poly_gen()
+        sage: z = k.poly_gens()
         sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
         sage: _divided_difference(k, 2, f)
         z_1*z_2^2 + z_1*z_2*z_3 + z_1*z_3^2
@@ -624,52 +624,11 @@ def _divided_difference(P, i, f):
         -z_1*z_2
     """
     R = P.polynomial_ring()
-    z = P.poly_gen()
+    z = P.poly_gens()
 
-    if P._k:
-        si_f = f.subs({z[i+1]:z[i], z[i]:z[i+1]})
-    else:
-        si_f = f ** _Swapper(i, i+1)
+    si_f = f.subs({z[i+1]:z[i], z[i]:z[i+1]})
 
     return (si_f - f)//(z[i+1] - z[i])
-
-
-def _Swapper(i, j):
-    r"""
-    Return a function which swaps ``i`` and ``j``.
-
-    When working with an element of InfinitePolynomialRing, raising
-    the element ``f`` to a power of a callable object applies that
-    call to the indices. The prototypical use of this is when applying
-    a ``Permutation``. However, in applying the divided difference
-    operator, we often want to swap `(0, 1)`. ``Permutation`` doesn't
-    like this as an input and throws a ``ValueError``.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.key_polynomial import _Swapper
-        sage: s = _Swapper(1,2)
-        sage: [s(i) for i in range(4)]
-        [0, 2, 1, 3]
-
-        sage: R.<z> = InfinitePolynomialRing(QQ)
-        sage: f = z[0] + z[1]*z[2] + z[0]*z[3]
-        sage: f^_Swapper(0, 1)
-        z_3*z_1 + z_2*z_0 + z_1
-        sage: f^_Swapper(1, 2)
-        z_3*z_0 + z_2*z_1 + z_0
-        sage: f^_Swapper(2, 3)
-        z_3*z_1 + z_2*z_0 + z_0
-        sage: f^_Swapper(3, 4)
-        z_4*z_0 + z_2*z_1 + z_0
-    """
-    def swap_fcn(n):
-        if n == i:
-            return j
-        elif n == j:
-            return i
-        return n
-    return swap_fcn
 
 def _pi(P, w, f):
     r"""
@@ -713,7 +672,7 @@ def _pi_i(P, i, f):
 
         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis, _pi_i
         sage: k = KeyPolynomialBasis(QQ)
-        sage: z = k.poly_gen()
+        sage: z = k.poly_gens()
         sage: _pi_i(k, 3, z[1]^4*z[2]^2*z[4])
         0
 
@@ -721,7 +680,7 @@ def _pi_i(P, i, f):
         z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
     """
     R = P.polynomial_ring()
-    z = P.poly_gen()
+    z = P.poly_gens()
     return _divided_difference(P, i, z[i] * f)
 
 def _sorting_word(alpha):
