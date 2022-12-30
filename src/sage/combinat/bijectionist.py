@@ -1624,10 +1624,10 @@ class Bijectionist(SageObject):
             self._bmilp.solve([])
 
         # generate blockwise preimage to determine which blocks have the same image
-        solution = self._solution(self._bmilp, True)
-        multiple_preimages = {(value,): preimages
-                              for value, preimages in _invert_dict(solution).items()
-                              if len(preimages) > 1}
+        solution = self._bmilp.solution(True)
+        multiple_preimages = {(z,): tP
+                              for z, tP in _invert_dict(solution).items()
+                              if len(tP) > 1}
 
         # check for each pair of blocks if a solution with different
         # values on these block exists
@@ -1636,27 +1636,36 @@ class Bijectionist(SageObject):
         #             multiple_preimages dictionary, restart the check
         #     if no, the two blocks can be joined
 
-        # _P has to be copied to not mess with the solution-process
+        # _P has to be copied to not mess with the solution process
         # since we do not want to regenerate the bmilp in each step,
         # so blocks have to stay consistent during the whole process
         tmp_P = deepcopy(self._P)
         updated_preimages = True
         while updated_preimages:
             updated_preimages = False
-            for values in copy(multiple_preimages):
+            for tZ in copy(multiple_preimages):
                 if updated_preimages:
                     break
-                for i, j in itertools.combinations(copy(multiple_preimages[values]), r=2):
+                for i, j in itertools.combinations(copy(multiple_preimages[tZ]), r=2):
+                    # veto two blocks having the same value
                     tmp_constraints = []
+                    for z in self._possible_block_values[i]:
+                        if z in self._possible_block_values[j]:  # intersection
+                            tmp_constraints.append(self._bmilp._x[i, z] + self._bmilp._x[j, z] <= 1)
                     try:
-                        # veto the two blocks having the same value
-                        for z in self._possible_block_values[i]:
-                            if z in self._possible_block_values[j]:  # intersection
-                                tmp_constraints.append(self._bmilp._x[i, z] + self._bmilp._x[j, z] <= 1)
                         self._bmilp.solve(tmp_constraints)
-
+                    except MIPSolverException:
+                        # no solution exists, join blocks
+                        tmp_P.union(i, j)
+                        if i in multiple_preimages[tZ] and j in multiple_preimages[tZ]:
+                            # only one of the joined blocks should remain in the list
+                            multiple_preimages[tZ].remove(j)
+                        if len(multiple_preimages[tZ]) == 1:
+                            del multiple_preimages[tZ]
+                            break
+                    else:
                         # solution exists, update dictionary
-                        solution = self._solution(self._bmilp, True)
+                        solution = self._bmilp.solution(True)
                         updated_multiple_preimages = {}
                         for values in multiple_preimages:
                             for p in multiple_preimages[values]:
@@ -1666,15 +1675,6 @@ class Bijectionist(SageObject):
                                 updated_multiple_preimages[solution_tuple].append(p)
                         updated_preimages = True
                         multiple_preimages = updated_multiple_preimages
-                        break
-                    except MIPSolverException:
-                        # no solution exists, join blocks
-                        tmp_P.union(i, j)
-                        if i in multiple_preimages[values] and j in multiple_preimages[values]:
-                            # only one of the joined blocks should remain in the list
-                            multiple_preimages[values].remove(j)
-                    if len(multiple_preimages[values]) == 1:
-                        del multiple_preimages[values]
                         break
 
         self.set_constant_blocks(tmp_P)
@@ -1794,7 +1794,7 @@ class Bijectionist(SageObject):
                 self._bmilp = self._initialize_new_bmilp()
                 self._bmilp.solve([])
 
-            solution = self._solution(self._bmilp)
+            solution = self._bmilp.solution(False)
             solutions = {}
             add_solution(solutions, solution)
 
@@ -1807,7 +1807,7 @@ class Bijectionist(SageObject):
                     try:
                         # problem has a solution, so new value was found
                         self._bmilp.solve(tmp_constraints)
-                        solution = self._solution(self._bmilp)
+                        solution = self._bmilp.solution(False)
                         add_solution(solutions, solution)
                         # veto new value and try again
                         tmp_constraints.append(self._bmilp._x[p, solution[p]] == 0)
@@ -1888,7 +1888,7 @@ class Bijectionist(SageObject):
                 self._bmilp.solve([])
         except MIPSolverException:
             return
-        s = self._solution(self._bmilp)
+        s = self._bmilp.solution(False)
         while True:
             for v in self._Z:
                 minimal_subdistribution.add_constraint(sum(D[a] for a in self._A if s[a] == v) == V[v])
@@ -1964,7 +1964,7 @@ class Bijectionist(SageObject):
             tmp_constraints = [z_in_d <= z_in_d_count - 1]
             try:
                 bmilp.solve(tmp_constraints)
-                return self._solution(bmilp, on_blocks)
+                return bmilp.solution(on_blocks)
             except MIPSolverException:
                 pass
         return
@@ -2110,7 +2110,7 @@ class Bijectionist(SageObject):
                 self._bmilp.solve([])
             except MIPSolverException:
                 return
-        s = self._solution(self._bmilp, True)
+        s = self._bmilp.solution(True)
         add_counter_example_constraint(s)
         while True:
             try:
@@ -2544,46 +2544,11 @@ class Bijectionist(SageObject):
                 bmilp.solve([], solution_index)
             except MIPSolverException:
                 return
-            yield self._solution(bmilp)
+            yield bmilp.solution(False)
             solution_index += 1
             if get_verbose() >= 2:
                 print("after vetoing")
                 bmilp.show(variables=False)
-
-    def _solution(self, bmilp, on_blocks=False):
-        r"""
-        Return the current solution as a dictionary from `A` (or
-        `P`) to `Z`.
-
-        INPUT:
-
-        - ``bmilp``, a :class:`_BijectionistMILP`.
-
-        - ``on_blocks``, whether to return the solution on blocks or
-          on all elements
-
-        EXAMPLES::
-
-            sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: 0)
-            sage: bij.set_constant_blocks([["a", "b"]])
-            sage: next(bij.solutions_iterator())
-            {'a': 0, 'b': 0, 'c': 0}
-            sage: bij._solution(bij._bmilp, True)
-            {'a': 0, 'c': 0}
-
-        """
-        mapping = {}  # A -> Z or P -> Z, a +-> s(a)
-        for p, block in self._P.root_to_elements_dict().items():
-            for z in self._possible_block_values[p]:
-                if bmilp.has_value(p, z):
-                    if on_blocks:
-                        mapping[p] = z
-                    else:
-                        for a in block:
-                            mapping[a] = z
-                    break
-        return mapping
 
     def _initialize_new_bmilp(self):
         r"""
@@ -2652,7 +2617,6 @@ class _BijectionistMILP():
                    for z in tZ]
         self._x = self.milp.new_variable(binary=True, indices=indices)
         self._solution_cache = []
-        self._last_solution = {}
 
         for p in _disjoint_set_roots(bijectionist._P):
             self.milp.add_constraint(sum(self._x[p, z]
@@ -2803,12 +2767,7 @@ class _BijectionistMILP():
         # check whether there is a solution in the cache satisfying
         # the additional constraints
         for solution in self._solution_cache[solution_index:]:
-            if all(all(self._evaluate_linear_function(linear_function,
-                                                      solution) == value.dict()[-1]
-                       for linear_function, value in constraint.equations())
-                   and all(self._evaluate_linear_function(linear_function,
-                                                          solution) <= value.dict()[-1]
-                           for linear_function, value in constraint.inequalities())
+            if all(self._is_solution(constraint, solution)
                    for constraint in additional_constraints):
                 self.last_solution = solution
                 return self.last_solution
@@ -2824,18 +2783,26 @@ class _BijectionistMILP():
         finally:
             self.milp.remove_constraints(new_indices)
 
+        # veto the solution, by requiring that not all variables with
+        # value 1 have value 1 in the new MILP
+        active_vars = [self._x[p, z]
+                       for p in _disjoint_set_roots(self._bijectionist._P)
+                       for z in self._bijectionist._possible_block_values[p]
+                       if self.last_solution[(p, z)]]
+        self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
+                                 name="veto")
+
         self._solution_cache.append(self.last_solution)
-        self._veto_current_solution()
         return self.last_solution
 
-    def _evaluate_linear_function(self, linear_function, values):
+    def _is_solution(self, constraint, values):
         r"""
         Evaluate the given function at the given values.
 
         INPUT:
 
-        - ``linear_function``, a
-          :class:`sage.numerical.linear_functions.LinearFunction`.
+        - ``constraint``, a
+          :class:`sage.numerical.linear_functions.LinearConstraint`.
 
         - ``values``, a candidate for a solution of the MILP as a
           dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,
@@ -2848,92 +2815,65 @@ class _BijectionistMILP():
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: _ = bmilp.solve([])
-            sage: f = bmilp._x["a", "a"] + bmilp._x["b", "a"]
-            sage: v = {('a', 'a'): 1.0, ('a', 'b'): 0.0, ('b', 'a'): 1.0, ('b', 'b'): 0.0}
-            sage: bmilp._evaluate_linear_function(f, v)
-            2.0
+            sage: f = bmilp._x["a", "a"] + bmilp._x["b", "a"] >= bmilp._x["b", "b"] + 1
+            sage: v = {('a', 'a'): 1, ('a', 'b'): 0, ('b', 'a'): 1, ('b', 'b'): 1}
+            sage: bmilp._is_solution(f, v)
+            True
+            sage: v = {('a', 'a'): 0, ('a', 'b'): 0, ('b', 'a'): 1, ('b', 'b'): 1}
+            sage: bmilp._is_solution(f, v)
+            False
         """
-        self._index_block_value_dict = {}
+        index_block_value_dict = {}
         for (p, z), v in self._x.items():
             variable_index = next(iter(v.dict().keys()))
-            self._index_block_value_dict[variable_index] = (p, z)
+            index_block_value_dict[variable_index] = (p, z)
 
-        return float(sum(value * values[self._index_block_value_dict[index]]
-                         for index, value in linear_function.dict().items()))
+        evaluate = lambda f: sum(coeff if index == -1 else
+                                 coeff * values[index_block_value_dict[index]]
+                                 for index, coeff in f.dict().items())
 
-    def _veto_current_solution(self):
+        for lhs, rhs in constraint.equations():
+            if evaluate(lhs - rhs):
+                return False
+        for lhs, rhs in constraint.inequalities():
+            if evaluate(lhs - rhs) > 0:
+                return False
+        return True
+
+    def solution(self, on_blocks):
         r"""
-        Add a constraint vetoing the current solution.
+        Return the current solution as a dictionary from `A` (or
+        `P`) to `Z`.
 
-        This adds a constraint such that the next call to
-        :meth:`solve` must return a solution different from the
-        current one.
+        INPUT:
 
-        We require that the MILP currently has a solution.
+        - ``bmilp``, a :class:`_BijectionistMILP`.
 
-        .. WARNING::
-
-            The underlying MILP will be modified!
-
-        ALGORITHM:
-
-        We add the constraint `\sum_{x\in V} x < |V|`` where `V` is
-        the set of variables `x_{p, z}` with value 1, that is, the
-        set of variables indicating the current solution.
+        - ``on_blocks``, whether to return the solution on blocks or
+          on all elements
 
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
+            sage: bij = Bijectionist(A, B, lambda x: 0)
             sage: bij.set_constant_blocks([["a", "b"]])
-            sage: iter = bij.solutions_iterator()
-            sage: next(iter)                                                    # indirect doctest
-            {'a': 0, 'b': 0, 'c': 1}
-            sage: bij._bmilp.show()
-            Constraints are:
-                block a: 1 <= x_0 + x_1 <= 1
-                block c: 1 <= x_2 + x_3 <= 1
-                statistics: 2 <= 2 x_0 + x_2 <= 2
-                statistics: 1 <= 2 x_1 + x_3 <= 1
-                veto: x_0 + x_3 <= 1
-            Variables are:
-                x_0: s(a) = s(b) = 0
-                x_1: s(a) = s(b) = 1
-                x_2: s(c) = 0
-                x_3: s(c) = 1
+            sage: next(bij.solutions_iterator())
+            {'a': 0, 'b': 0, 'c': 0}
+            sage: bij._bmilp.solution(True)
+            {'a': 0, 'c': 0}
+
         """
-        # get all variables with value 1
-        active_vars = [self._x[p, z]
-                       for p in _disjoint_set_roots(self._bijectionist._P)
-                       for z in self._bijectionist._possible_block_values[p]
-                       if self.last_solution[(p, z)]]
-
-        # add constraint that not all of these can be 1, thus vetoing
-        # the current solution
-        self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                 name="veto")
-
-    def has_value(self, p, v):
-        r"""
-        Return whether a block is mapped to a value in the last solution
-        computed.
-
-        INPUT:
-
-        - ``p``, the representative of a block
-        - ``v``, a value in `Z`
-
-        EXAMPLES::
-
-            sage: A = B = ["a", "b"]
-            sage: bij = Bijectionist(A, B)
-            sage: from sage.combinat.bijectionist import _BijectionistMILP
-            sage: bmilp = _BijectionistMILP(bij)
-            sage: _ = bmilp.solve([bmilp._x["a", "b"] == 1])
-            sage: bmilp.has_value("a", "b")
-            True
-        """
-        return self.last_solution[p, v] == 1
+        mapping = {}  # A -> Z or P -> Z, a +-> s(a)
+        for p, block in self._bijectionist._P.root_to_elements_dict().items():
+            for z in self._bijectionist._possible_block_values[p]:
+                if self.last_solution[p, z] == 1:
+                    if on_blocks:
+                        mapping[p] = z
+                    else:
+                        for a in block:
+                            mapping[a] = z
+                    break
+        return mapping
 
     def add_alpha_beta_constraints(self):
         r"""
@@ -3012,7 +2952,7 @@ class _BijectionistMILP():
             sage: bmilp = _BijectionistMILP(bij)
             sage: bmilp.add_distribution_constraints()
             sage: _ = bmilp.solve([])
-            sage: bij._solution(bmilp)
+            sage: bmilp.solution(False)
             {[1, 2, 3]: 3,
              [1, 3, 2]: 1,
              [2, 1, 3]: 3,
@@ -3092,7 +3032,7 @@ class _BijectionistMILP():
             sage: bmilp = _BijectionistMILP(bij)
             sage: bmilp.add_intertwining_relation_constraints(preimage_blocks)
             sage: _ = bmilp.solve([])
-            sage: bij._solution(bmilp)
+            sage: bmilp.solution(False)
             {'a': 0, 'b': 1, 'c': 0, 'd': 1}
         """
         for composition_index, image_block, preimage_blocks in origins:
