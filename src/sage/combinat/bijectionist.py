@@ -1643,9 +1643,9 @@ class Bijectionist(SageObject):
                                if z in self._possible_block_values[p2]]
             try:
                 self._bmilp.solve(tmp_constraints)
-                return self._bmilp.solution(True)
             except MIPSolverException:
-                pass
+                return
+            return self._bmilp.solution(True)
 
         # try to find a pair of blocks having the same value on all
         # known solutions, and a solution such that the values are
@@ -1792,9 +1792,8 @@ class Bijectionist(SageObject):
 
             # iterate through blocks and generate all values
             for p in blocks:
-                tmp_constraints = []
-                for z in solutions[p]:
-                    tmp_constraints.append(self._bmilp._x[p, z] == 0)
+                tmp_constraints = [self._bmilp._x[p, z] == 0
+                                   for z in solutions[p]]
                 while True:
                     try:
                         # problem has a solution, so new value was found
@@ -1803,11 +1802,10 @@ class Bijectionist(SageObject):
                         # no solution, so all possible values have been found
                         break
                     solution = self._bmilp.solution(False)
-                    for p, z in solution.items():
-                        solutions[p].add(z)
+                    for p0, z in solution.items():
+                        solutions[p0].add(z)
                     # veto new value and try again
                     tmp_constraints.append(self._bmilp._x[p, solution[p]] == 0)
-
 
         # create dictionary to return
         possible_values = {}
