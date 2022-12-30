@@ -1620,7 +1620,7 @@ class Bijectionist(SageObject):
 
         """
         if self._bmilp is None:
-            self._bmilp = self._initialize_new_bmilp()
+            self._bmilp = _BijectionistMILP(self)
             self._bmilp.solve([])
 
         # generate blockwise preimage to determine which blocks have the same image
@@ -1791,7 +1791,7 @@ class Bijectionist(SageObject):
 
             # generate initial solution, solution dict and add solution
             if self._bmilp is None:
-                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp = _BijectionistMILP(self)
                 self._bmilp.solve([])
 
             solution = self._bmilp.solution(False)
@@ -1884,7 +1884,7 @@ class Bijectionist(SageObject):
 
         try:
             if self._bmilp is None:
-                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp = _BijectionistMILP(self)
                 self._bmilp.solve([])
         except MIPSolverException:
             return
@@ -2106,7 +2106,7 @@ class Bijectionist(SageObject):
 
         if self._bmilp is None:
             try:
-                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp = _BijectionistMILP(self)
                 self._bmilp.solve([])
             except MIPSolverException:
                 return
@@ -2534,7 +2534,7 @@ class Bijectionist(SageObject):
         """
         if self._bmilp is None:
             try:
-                self._bmilp = self._initialize_new_bmilp()
+                self._bmilp = _BijectionistMILP(self)
             except MIPSolverException:
                 return
         bmilp = self._bmilp
@@ -2549,32 +2549,6 @@ class Bijectionist(SageObject):
             if get_verbose() >= 2:
                 print("after vetoing")
                 bmilp.show(variables=False)
-
-    def _initialize_new_bmilp(self):
-        r"""
-        Initialize a :class:`_BijectionistMILP` and add the current constraints.
-
-        EXAMPLES::
-
-            sage: A = B = list('abcd')
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
-            sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
-            sage: rho = lambda s1, s2: (s1 + s2) % 2
-            sage: bij.set_intertwining_relations((2, pi, rho))
-            sage: bij._initialize_new_bmilp()
-            <sage.combinat.bijectionist._BijectionistMILP object at ...>
-        """
-        preimage_blocks = self._preprocess_intertwining_relations()
-        self._compute_possible_block_values()
-
-        bmilp = _BijectionistMILP(self)
-        bmilp.add_alpha_beta_constraints()
-        bmilp.add_distribution_constraints()
-        bmilp.add_pseudo_inverse_relation_constraints()
-        bmilp.add_intertwining_relation_constraints(preimage_blocks)
-        if get_verbose() >= 2:
-            bmilp.show()
-        return bmilp
 
 
 class _BijectionistMILP():
@@ -2610,18 +2584,26 @@ class _BijectionistMILP():
         # _elements_distributions
         # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho, _phi_psi
         self._bijectionist = bijectionist
+        preimage_blocks = bijectionist._preprocess_intertwining_relations()
+        bijectionist._compute_possible_block_values()
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
         self.milp.set_objective(None)
+        self._solution_cache = []
         indices = [(p, z)
                    for p, tZ in bijectionist._possible_block_values.items()
                    for z in tZ]
         self._x = self.milp.new_variable(binary=True, indices=indices)
-        self._solution_cache = []
 
         for p in _disjoint_set_roots(bijectionist._P):
             self.milp.add_constraint(sum(self._x[p, z]
                                          for z in bijectionist._possible_block_values[p]) == 1,
                                      name=f"block {p}"[:50])
+        self.add_alpha_beta_constraints()
+        self.add_distribution_constraints()
+        self.add_pseudo_inverse_relation_constraints()
+        self.add_intertwining_relation_constraints(preimage_blocks)
+        if get_verbose() >= 2:
+            self.show()
 
     def show(self, variables=True):
         r"""
@@ -2701,31 +2683,12 @@ class _BijectionistMILP():
 
         TESTS::
 
-            sage: A = B = ["a", "b"]
-            sage: bij = Bijectionist(A, B)
             sage: from sage.combinat.bijectionist import _BijectionistMILP
-            sage: bmilp = _BijectionistMILP(bij)
-            sage: len(bmilp._solution_cache)
-            0
-
-        Without any constraints, we do not require that the solution is a bijection::
-
-            sage: bmilp.solve([bmilp._x["a", "a"] == 1, bmilp._x["b", "a"] == 1])
-            {('a', 'a'): True, ('a', 'b'): False, ('b', 'a'): True, ('b', 'b'): False}
-            sage: len(bmilp._solution_cache)
-            1
-            sage: bmilp.solve([bmilp._x["a", "b"] == 1, bmilp._x["b", "b"] == 1])
-            {('a', 'a'): False, ('a', 'b'): True, ('b', 'a'): False, ('b', 'b'): True}
-            sage: len(bmilp._solution_cache)
-            2
-
-        A more elaborate test::
-
             sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
             sage: tau = lambda D: D.number_of_touch_points()
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
-            sage: bmilp = bij._initialize_new_bmilp()
+            sage: bmilp = _BijectionistMILP(bij)
 
         Generate a solution::
 
@@ -2739,14 +2702,14 @@ class _BijectionistMILP():
 
         Generating a new solution that also maps `1010` to `2` fails:
 
-            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5], solution_index=1)
+            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 2] == 1], solution_index=1)
             Traceback (most recent call last):
             ...
             MIPSolverException: ... no feasible solution
 
         However, searching for a cached solution succeeds, for inequalities and equalities::
 
-            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 1] <= 0.5])
+            sage: bmilp.solve([bmilp._x[DyckWord([1,0,1,0]), 2] >= 1])
             {([], 0): True,
              ([1, 0], 1): True,
              ([1, 0, 1, 0], 1): False,
@@ -2761,6 +2724,9 @@ class _BijectionistMILP():
              ([1, 0, 1, 0], 2): True,
              ([1, 1, 0, 0], 1): True,
              ([1, 1, 0, 0], 2): False}
+
+            sage: len(bmilp._solution_cache)
+            1
 
         """
         assert 0 <= solution_index <= len(self._solution_cache), "the index of the desired solution must not be larger than the number of known solutions"
@@ -2894,10 +2860,8 @@ class _BijectionistMILP():
             sage: A = B = [permutation for n in range(3) for permutation in Permutations(n)]
             sage: bij = Bijectionist(A, B, len)
             sage: bij.set_statistics((len, len))
-            sage: bij._compute_possible_block_values()
             sage: from sage.combinat.bijectionist import _BijectionistMILP
-            sage: bmilp = _BijectionistMILP(bij)
-            sage: bmilp.add_alpha_beta_constraints()
+            sage: bmilp = _BijectionistMILP(bij)                                # indirect doctest
             sage: bmilp.solve([])
             {([], 0): True, ([1], 1): True, ([1, 2], 2): True, ([2, 1], 2): True}
         """
@@ -2947,18 +2911,16 @@ class _BijectionistMILP():
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_distributions(([Permutation([1, 2, 3]), Permutation([1, 3, 2])], [1, 3]))
-            sage: bij._compute_possible_block_values()
             sage: from sage.combinat.bijectionist import _BijectionistMILP
-            sage: bmilp = _BijectionistMILP(bij)
-            sage: bmilp.add_distribution_constraints()
+            sage: bmilp = _BijectionistMILP(bij)                                # indirect doctest
             sage: _ = bmilp.solve([])
             sage: bmilp.solution(False)
             {[1, 2, 3]: 3,
              [1, 3, 2]: 1,
-             [2, 1, 3]: 3,
-             [2, 3, 1]: 3,
-             [3, 1, 2]: 3,
-             [3, 2, 1]: 3}
+             [2, 1, 3]: 2,
+             [2, 3, 1]: 2,
+             [3, 1, 2]: 2,
+             [3, 2, 1]: 2}
 
         """
         Z = self._bijectionist._Z
@@ -3026,11 +2988,8 @@ class _BijectionistMILP():
             sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
             sage: rho = lambda s1, s2: (s1 + s2) % 2
             sage: bij.set_intertwining_relations((2, pi, rho))
-            sage: preimage_blocks = bij._preprocess_intertwining_relations()
-            sage: bij._compute_possible_block_values()
             sage: from sage.combinat.bijectionist import _BijectionistMILP
-            sage: bmilp = _BijectionistMILP(bij)
-            sage: bmilp.add_intertwining_relation_constraints(preimage_blocks)
+            sage: bmilp = _BijectionistMILP(bij)                                # indirect doctest
             sage: _ = bmilp.solve([])
             sage: bmilp.solution(False)
             {'a': 0, 'b': 1, 'c': 0, 'd': 1}
