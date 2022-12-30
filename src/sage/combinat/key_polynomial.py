@@ -65,6 +65,22 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         sage: f in k
         True
     """
+    def _mul_(self, other):
+        r"""
+        Multiply the elements ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ)
+            sage: k([4,3,2]) * k([1,1,1])
+            k[5, 4, 3]
+
+            sage: k = KeyPolynomialBasis(QQ, 4)
+            sage: k([4,3,2,0]) * k([1,1,1,0])
+            k[5, 4, 3, 0]
+        """
+        return self.parent().from_polynomial(self.expand() * other.expand())
 
     def expand(self):
         r"""
@@ -556,23 +572,6 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             out += new_term
 
         return out
-
-    def product(self, a, b):
-        r"""
-        Multiply the elements ``a`` and ``b``.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(QQ)
-            sage: k([4,3,2]) * k([1,1,1])
-            k[5, 4, 3]
-
-            sage: k = KeyPolynomialBasis(QQ, 4)
-            sage: k([4,3,2,0]) * k([1,1,1,0])
-            k[5, 4, 3, 0]
-        """
-        return self.from_polynomial(a.expand() * b.expand())
 
 
 def _divided_difference(P, i, f):
