@@ -207,6 +207,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             f = _divided_difference(P, wi, f)
         return P.from_polynomial(f)
 
+
 class KeyPolynomialBasis(CombinatorialFreeModule):
     r"""
     The key polynomial basis for a polynomial ring.
@@ -289,14 +290,14 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         sage: f = T.demazure_character([3,2,1])
         sage: k.from_polynomial(f)
         k[1, 0, 0, 2]
-    
+
     The default behavior is to work in a polynomial ring with infinitely many
     variables. One can work in a specicfied number of variables::
 
         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
         sage: k = KeyPolynomialBasis(QQ, 4)
         sage: k([3,0,1,2]).expand()
-        z_0^3*z_1^2*z_2 + z_0^3*z_1*z_2^2 + z_0^3*z_1^2*z_3 
+        z_0^3*z_1^2*z_2 + z_0^3*z_1*z_2^2 + z_0^3*z_1^2*z_3
          + 2*z_0^3*z_1*z_2*z_3 + z_0^3*z_2^2*z_3 + z_0^3*z_1*z_3^2 + z_0^3*z_2*z_3^2
 
         sage: k([0,0,2,0]).expand()
@@ -352,10 +353,10 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
             sage: KeyPolynomialBasis(QQ['t0','t1','t2','t3'])
             Key polynomial basis over Rational Field
-            
+
             sage: KeyPolynomialBasis(QQ['t'])
             Key polynomial basis over Rational Field
-            
+
             sage: KeyPolynomialBasis(InfinitePolynomialRing(QQ['t'], 'z'))
             Key polynomial basis over Univariate Polynomial Ring in t over Rational Field
 
@@ -366,7 +367,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             Key polynomial basis over Rational Field
         """
 
-        poly_type = (PolynomialRing_commutative, 
+        poly_type = (PolynomialRing_commutative,
                      MPolynomialRing_base,
                      InfinitePolynomialRing_sparse)
 
@@ -440,9 +441,9 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
     def _coerce_map_from_(self, R):
         r"""
         EXAMPLES::
-            
+
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(QQ) 
+            sage: k = KeyPolynomialBasis(QQ)
             sage: m1 = k([3,2,4,0]); m1
             k[3, 2, 4]
             sage: m2 = k(Composition([3, 2, 4])); m2
@@ -460,7 +461,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if R is P:
             return CallableConvertMap(R, self, self.from_polynomial)
         phi = P.coerce_map_from(R)
-        if phi is not None: 
+        if phi is not None:
             return self.coerce_map_from(P) * phi
         return None
 
@@ -494,7 +495,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ, 4)
             sage: k.one_basis()
-            [0, 0, 0, 0]            
+            [0, 0, 0, 0]
         """
         if self._k:
             return self._indices([0] * self._k)
@@ -629,9 +630,10 @@ def _divided_difference(P, i, f):
     R = P.polynomial_ring()
     z = P.poly_gens()
 
-    si_f = f.subs({z[i+1]:z[i], z[i]:z[i+1]})
+    si_f = f.subs({z[i+1]: z[i], z[i]: z[i+1]})
 
     return (si_f - f)//(z[i+1] - z[i])
+
 
 def _pi(P, w, f):
     r"""
@@ -641,7 +643,7 @@ def _pi(P, w, f):
 
     .. WARNING::
 
-        The simple transpositions should be applied from left to right. 
+        The simple transpositions should be applied from left to right.
 
     EXAMPLES::
 
@@ -667,6 +669,7 @@ def _pi(P, w, f):
         f = _pi_i(P, i, f)
     return f
 
+
 def _pi_i(P, i, f):
     r"""
     Apply `\pi_i` for a single simple transposition `s_i = (i, i+1)`.
@@ -686,10 +689,11 @@ def _pi_i(P, i, f):
     z = P.poly_gens()
     return _divided_difference(P, i, z[i] * f)
 
+
 def _sorting_word(alpha):
     r"""
     Get a reduced word for the permutation which sorts ``alpha``
-    into a partition. 
+    into a partition.
 
     The result is a list ``l = [i0, i1, i2, ...]`` where each ``ij``
     is a nonnegative integer such that it applies the simple
