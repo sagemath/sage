@@ -220,8 +220,17 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         sage: k = KeyPolynomialBasis(QQ)
         sage: k([3,0,1,2])
         k[3, 0, 1, 2]
+        sage: k([3,0,1,2])/2
+        1/2*k[3, 0, 1, 2]
         sage: R = k.polynomial_ring(); R
         Infinite polynomial ring in z over Rational Field
+
+        sage: K = KeyPolynomialBasis(GF(5)); K
+        Key polynomial basis over Finite Field of size 5
+        sage: 2*K([3,0,1,2])
+        2*k[3, 0, 1, 2]
+        sage: 5*(K([3,0,1,2]) + K([3,1,1]))
+        0
 
     We can expand them in the standard monomial basis::
 
