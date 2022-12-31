@@ -2181,7 +2181,7 @@ class Bijectionist(SageObject):
              (0, 'd', ('c', 'b')),
              (0, 'd', ('d', 'a'))}
         """
-        images = {}  # A^k -> A, a_1,...,a_k to pi(a_1,...,a_k), for all pi
+        images = defaultdict(set)  # A^k -> A, a_1,...,a_k +-> {pi(a_1,...,a_k) for all pi}
         origins_by_elements = []  # (pi/rho, pi(a_1,...,a_k), a_1,...,a_k)
         for composition_index, pi_rho in enumerate(self._pi_rho):
             for a_tuple in itertools.product(*([self._A]*pi_rho.numargs)):
@@ -2189,11 +2189,7 @@ class Bijectionist(SageObject):
                     continue
                 a = pi_rho.pi(*a_tuple)
                 if a in self._A:
-                    if a in images:
-                        # this happens if there are several pi's of the same arity
-                        images[a_tuple].add(a)  # TODO: wouldn't self._P.find(a) be more efficient here?
-                    else:
-                        images[a_tuple] = set((a,))  # TODO: wouldn't self._P.find(a) be more efficient here?
+                    images[a_tuple].add(a)
                     origins_by_elements.append((composition_index, a, a_tuple))
 
         # merge blocks
