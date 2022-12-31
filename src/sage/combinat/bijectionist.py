@@ -3111,19 +3111,20 @@ def _non_copying_intersection(sets):
         sage: _non_copying_intersection([A, B]) is A
         True
 
+        sage: A = set([1,2]); B = set([2,3])
+        sage: _non_copying_intersection([A, B])
+        {2}
+
     """
     sets = sorted(sets, key=len)
     result = set.intersection(*sets)
     n = len(result)
-    if n < len(sets[0]):
-        return result
     for s in sets:
         N = len(s)
-        if N > n:
+        if n < N:
             return result
         if s == result:
             return s
-
 
 """
 TESTS::
