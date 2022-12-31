@@ -2569,8 +2569,13 @@ class _BijectionistMILP():
         # _elements_distributions
         # _W, _Z, _A, _B, _P, _alpha, _beta, _tau, _pi_rho, _phi_psi
         self._bijectionist = bijectionist
+        # the variables of the MILP are indexed by pairs (p, z), for
+        # p in _P and z an element of _posible_block_values[p].
+        # Thus, _P and _posible_block_values have to be fixed before
+        # creating the MILP.
         preimage_blocks = bijectionist._preprocess_intertwining_relations()
         bijectionist._compute_possible_block_values()
+
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
         self.milp.set_objective(None)
         self._solution_cache = []
