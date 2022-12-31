@@ -373,7 +373,7 @@ from sage.rings.integer_ring import ZZ
 from sage.combinat.set_partition import SetPartition
 from sage.sets.disjoint_set import DisjointSet
 from sage.structure.sage_object import SageObject
-from copy import deepcopy
+from copy import copy
 from sage.misc.verbose import get_verbose
 
 
@@ -1633,7 +1633,7 @@ class Bijectionist(SageObject):
         # _P has to be copied to not mess with the solution process
         # since we do not want to regenerate the bmilp in each step,
         # so blocks have to stay consistent during the whole process
-        tmp_P = deepcopy(self._P)
+        tmp_P = copy(self._P)
 
         # check whether blocks p1 and p2 can have different values,
         # if so return such a solution
