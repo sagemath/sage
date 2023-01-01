@@ -366,6 +366,219 @@ class SimplicialSets(Category_singleton):
                 else:
                     return FG.quotient(rels)
 
+            def universal_cover_map(self):
+                r"""
+                Return the universal covering map of the simplicial set.
+
+                It requires the fundamental group to be finite.
+
+                EXAMPLES::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: phi = RP2.universal_cover_map()
+                    sage: phi
+                    Simplicial set morphism:
+                      From: Simplicial set with 6 non-degenerate simplices
+                      To:   RP^2
+                      Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)] --> [1, 1, f, f, f * f, f * f]
+                    sage: phi.domain().face_data()
+                    {(f, 1): ((1, e), (1, 1)),
+                     (f, e): ((1, 1), (1, e)),
+                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
+                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
+                     (1, e): None,
+                     (1, 1): None}
+
+                """
+                from sage.groups.free_group import FreeGroup
+                skel = self.n_skeleton(2)
+                graph = skel.graph()
+                if not skel.is_connected():
+                    graph = graph.subgraph(skel.base_point())
+                edges = [e[2] for e in graph.edges(sort=False)]
+                spanning_tree = [e[2] for e in graph.min_spanning_tree()]
+                gens = [e for e in edges if e not in spanning_tree]
+
+                if not gens:
+                    return self
+
+                gens_dict = dict(zip(gens, range(len(gens))))
+                FG = FreeGroup(len(gens), 'e')
+                rels = []
+
+                for f in skel.n_cells(2):
+                    z = dict()
+                    for i, sigma in enumerate(skel.faces(f)):
+                        if sigma in spanning_tree:
+                            z[i] = FG.one()
+                        elif sigma.is_degenerate():
+                            z[i] = FG.one()
+                        elif sigma in edges:
+                            z[i] = FG.gen(gens_dict[sigma])
+                        else:
+                            # sigma is not in the correct connected component.
+                            z[i] = FG.one()
+                    rels.append(z[0]*z[1].inverse()*z[2])
+                G = FG.quotient(rels)
+                char = {g : G.gen(i) for i,g in enumerate(gens)}
+                for e in edges:
+                    if not e in gens:
+                        char[e] = G.one()
+                return self.covering_map(char)
+
+            def covering_map(self, character):
+                r"""
+                Return the covering map associated to a character.
+
+                The character is represented by a dictionary, that assigns an
+                element of a finite group to each nondegenerate 1-dimensional
+                cell. It should correspond to an epimorphism from the fundamental
+                group.
+
+                INPUT:
+
+                - ``character`` -- a dictionary
+
+
+                EXAMPLES::
+
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: C = W.covering_map({a : G.gen(0), b : G.one()})
+                    sage: C
+                    Simplicial set morphism:
+                      From: Simplicial set with 9 non-degenerate simplices
+                      To:   Wedge: (S^1 v S^1)
+                      Defn: [(*, ()), (*, (1,2,3)), (*, (1,3,2)), (sigma_1, ()), (sigma_1, ()), (sigma_1, (1,2,3)), (sigma_1, (1,2,3)), (sigma_1, (1,3,2)), (sigma_1, (1,3,2))] --> [*, *, *, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1]
+                    sage: C.domain()
+                    Simplicial set with 9 non-degenerate simplices
+                    sage: C.domain().face_data()
+                    {(sigma_1, ()): ((*, ()), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2))),
+                     (sigma_1, ()): ((*, ()), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2))),
+                     (*, ()): None,
+                     (*, (1,3,2)): None,
+                     (*, (1,2,3)): None}
+
+                """
+                from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
+                from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
+                char = {a : b for (a,b) in character.items()}
+                G = list(char.values())[0].parent()
+                if not G.is_finite():
+                    raise NotImplementedError("can only compute universal covers of spaces with finite fundamental group")
+                cells_dict = {}
+                faces_dict = {}
+
+                for s in self.n_cells(0):
+                    for g in G:
+                        cell =  AbstractSimplex(0,name="({}, {})".format(s, g))
+                        cells_dict[(s,g)] = cell
+                        char[s] = G.one()
+
+                for d in range(1, self.dimension() + 1):
+                    for s in self.n_cells(d):
+                        if not s in char.keys():
+                            if d==1 and  s.is_degenerate():
+                                char[s] = G.one()
+                            elif s.is_degenerate():
+                                if 0 in s.degeneracies():
+                                    char[s] = G.one()
+                                else:
+                                    char[s] = char[s.nondegenerate()]
+                            else:
+                                char[s] = char[self.face(s, d)]
+                        if s.is_nondegenerate():
+                            for g in G:
+                                cell =  AbstractSimplex(d,name="({}, {})".format(s, g))
+                                cells_dict[(s,g)] = cell
+                                fd = []
+                                faces = self.faces(s)
+                                f0 = faces[0]
+                                for h in G:
+                                    if h == g*char[s]:
+                                        lifted = h
+                                        break
+                                grelems = [cells_dict[(f0.nondegenerate(), lifted)].apply_degeneracies(*f0.degeneracies())]
+                                for f in faces[1:]:
+                                    grelems.append(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()))
+                                faces_dict[cell] = grelems
+                cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
+                cover_map_data = {c : s[0] for (s,c) in cells_dict.items()}
+                return SimplicialSetMorphism(data = cover_map_data, domain = cover, codomain = self)
+
+            def cover(self, character):
+                r"""
+                Return the cover of the simplicial set associated to a character
+                of the fundamental group.
+
+                The character is represented by a dictionary, that assigns an
+                element of a finite group to each nondegenerate 1-dimensional
+                cell. It should correspond to an epimorphism from the fundamental
+                group.
+
+                INPUT:
+
+                - ``character`` -- a dictionary
+
+                EXAMPLES::
+
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: (a, b) = W.n_cells(1)
+                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2}).domain()
+                    sage: C.face_data()
+                    {(sigma_1, ()): ((*, (1,2,3)), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
+                     (sigma_1, ()): ((*, (1,3,2)), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, ()), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, (1,2,3)), (*, (1,3,2))),
+                     (*, (1,2,3)): None,
+                     (*, ()): None,
+                     (*, (1,3,2)): None}
+                    sage: C.homology(1)
+                    Z x Z x Z x Z
+                    sage: C.fundamental_group()
+                    Finitely presented group < e0, e1, e2, e3 |  >
+
+                """
+                return self.covering_map(character).domain()
+
+            def universal_cover(self):
+                r"""
+                Return the universal cover of the simplicial set.
+                The fundamental group must be finite in order to ensure that the
+                universal cover is a simplicial set of finite type.
+
+                EXAMPLES::
+
+                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
+                    sage: C = RP3.universal_cover()
+                    sage: C
+                    Simplicial set with 8 non-degenerate simplices
+                    sage: C.face_data()
+                    {(f, 1): ((1, e), (1, 1)),
+                     (f, e): ((1, 1), (1, e)),
+                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
+                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
+                     (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
+                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e)),
+                     (1, e): None,
+                     (1, 1): None}
+                    sage: C.fundamental_group()
+                    Finitely presented group <  |  >
+
+
+                """
+                return self.universal_cover_map().domain()
+
+
             def is_simply_connected(self):
                 """
                 Return ``True`` if this pointed simplicial set is simply connected.
