@@ -7,6 +7,7 @@ class CorrelationGraph(Graph):
     TODO: docstring
     EXAMPLES:
 
+        sage: from sage.graphs.correlation_graph import CorrelationGraph
         sage: data=[[1,2,3],[4,5,6],[7,8,9999]]
         sage: CG = CorrelationGraph(data, 0.9)
         sage: CG
