@@ -15,11 +15,14 @@ Quick reference
     :widths: 30, 70
     :delim: |
 
-    :meth:`~Bijectionist.set_intertwining_relations` | Declare that the statistic intertwines with other maps.
-    :meth:`~Bijectionist.set_constant_blocks` | Declare that the statistic is constant on some sets.
     :meth:`~Bijectionist.set_statistics` | Declare statistics that are preserved by the bijection.
     :meth:`~Bijectionist.set_value_restrictions` | Restrict the values of the statistic on an element.
+    :meth:`~Bijectionist.set_constant_blocks` | Declare that the statistic is constant on some sets.
     :meth:`~Bijectionist.set_distributions` | Restrict the distribution of values of the statistic on some elements.
+    :meth:`~Bijectionist.set_intertwining_relations` | Declare that the statistic intertwines with other maps.
+    :meth:`~Bijectionist.set_pseudo_inverse_relation` | Declare that the statistic satisfies a certain relation.
+    :meth:`~Bijectionist.set_homomesic` | Declare that the statistic is homomesic with respect to a given set partition.
+
 
     :meth:`~Bijectionist.statistics_table` | Print a table collecting information on the given statistics.
     :meth:`~Bijectionist.statistics_fibers` | Collect elements with the same statistics.
@@ -1168,7 +1171,7 @@ class Bijectionist(SageObject):
             [([[]], [0]),
              ([[1]], [1]),
              ([[1, 2, 3]], [3]),
-             ([[2, 1, 3]], [2]),
+             ([[2, 3, 1]], [2]),
              ([[1, 2], [2, 1]], [1, 2])]
 
         TESTS:
@@ -1694,7 +1697,10 @@ class Bijectionist(SageObject):
         while True:
             solution = merge_until_split()
             if solution is None:
-                self.set_constant_blocks(tmp_P)
+                self._P = tmp_P
+                # recreate the MILP
+                self._bmilp = _BijectionistMILP(self,
+                                                self._bmilp._solution_cache)
                 return
 
             updated_multiple_preimages = defaultdict(list)
@@ -2040,7 +2046,7 @@ class Bijectionist(SageObject):
             sage: bij.constant_blocks(optimal=True)
             {{'a', 'b'}}
             sage: list(bij.minimal_subdistributions_blocks_iterator())
-            [(['a', 'a', 'c', 'd', 'e'], [1, 1, 2, 2, 3])]
+            [(['b', 'b', 'c', 'd', 'e'], [1, 1, 2, 2, 3])]
 
         An example with overlapping minimal subdistributions::
 
@@ -2561,13 +2567,18 @@ class _BijectionistMILP():
     problem and check for uniqueness of solution values.
 
     """
-    def __init__(self, bijectionist: Bijectionist):
+    def __init__(self, bijectionist: Bijectionist, solutions=None):
         r"""
         Initialize the mixed integer linear program.
 
         INPUT:
 
         - ``bijectionist`` -- an instance of :class:`Bijectionist`.
+
+        - ``solutions`` (optional, default: ``None``) -- a list of
+          solutions of the problem, each provided as a dictionary
+          mapping `(a, z)` to a Boolean, such that at least one
+          element from each block of `P` appears as `a`.
 
         .. TODO::
 
@@ -2581,6 +2592,7 @@ class _BijectionistMILP():
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: _BijectionistMILP(bij)
             <sage.combinat.bijectionist._BijectionistMILP object at ...>
+
         """
         # the attributes of the bijectionist class we actually use:
         # _possible_block_values
@@ -2596,15 +2608,15 @@ class _BijectionistMILP():
 
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
         self.milp.set_objective(None)
-        self._solution_cache = []
         indices = [(p, z)
                    for p, tZ in bijectionist._possible_block_values.items()
                    for z in tZ]
         self._x = self.milp.new_variable(binary=True, indices=indices)
 
-        for p in _disjoint_set_roots(bijectionist._P):
-            self.milp.add_constraint(sum(self._x[p, z]
-                                         for z in bijectionist._possible_block_values[p]) == 1,
+        tZ = bijectionist._possible_block_values
+        P = bijectionist._P
+        for p in _disjoint_set_roots(P):
+            self.milp.add_constraint(sum(self._x[p, z] for z in tZ[p]) == 1,
                                      name=f"block {p}"[:50])
         self.add_alpha_beta_constraints()
         self.add_distribution_constraints()
@@ -2613,6 +2625,12 @@ class _BijectionistMILP():
         self.add_intertwining_relation_constraints()
         if get_verbose() >= 2:
             self.show()
+
+        self._solution_cache = []
+        if solutions is not None:
+            for solution in solutions:
+                self._add_solution({(P.find(a), z): value
+                                    for (a, z), value in solution.items()})
 
     def show(self, variables=True):
         r"""
@@ -2744,8 +2762,9 @@ class _BijectionistMILP():
                                                         return_indices=True))
         try:
             self.milp.solve()
-            self.last_solution = self.milp.get_values(self._x,
-                                                      convert=bool, tolerance=0.1)
+            # moving this out of the try...finally block breaks SCIP
+            solution = self.milp.get_values(self._x,
+                                            convert=bool, tolerance=0.1)
         finally:
             b = self.milp.get_backend()
             if hasattr(b, "_get_model"):
@@ -2754,16 +2773,23 @@ class _BijectionistMILP():
                     m.freeTransform()
             self.milp.remove_constraints(new_indices)
 
-        # veto the solution, by requiring that not all variables with
-        # value 1 have value 1 in the new MILP
+        self._add_solution(solution)
+
+    def _add_solution(self, solution):
+        r"""
+        Add the ``last_solution`` to the cache and an
+        appropriate constraint to the MILP.
+
+        """
         active_vars = [self._x[p, z]
                        for p in _disjoint_set_roots(self._bijectionist._P)
                        for z in self._bijectionist._possible_block_values[p]
-                       if self.last_solution[(p, z)]]
+                       if solution[(p, z)]]
         self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
                                  name="veto")
+        self._solution_cache.append(solution)
+        self.last_solution = solution
 
-        self._solution_cache.append(self.last_solution)
 
     def _is_solution(self, constraint, values):
         r"""
@@ -2833,9 +2859,11 @@ class _BijectionistMILP():
             {'a': 0, 'c': 0}
 
         """
+        P = self._bijectionist._P
+        tZ = self._bijectionist._possible_block_values
         mapping = {}  # A -> Z or P -> Z, a +-> s(a)
-        for p, block in self._bijectionist._P.root_to_elements_dict().items():
-            for z in self._bijectionist._possible_block_values[p]:
+        for p, block in P.root_to_elements_dict().items():
+            for z in tZ[p]:
                 if self.last_solution[p, z] == 1:
                     if on_blocks:
                         mapping[p] = z
@@ -3285,9 +3313,9 @@ Our benchmark example::
     ([[3, 1, 2]], [3])
     ([[4, 1, 2, 3]], [4])
     ([[5, 1, 2, 3, 4]], [5])
-    ([[2, 1, 4, 5, 3], [2, 3, 5, 1, 4], [2, 4, 1, 5, 3], [2, 4, 5, 1, 3]], [2, 3, 3, 3])
-    ([[2, 1, 5, 3, 4], [2, 5, 1, 3, 4], [3, 1, 5, 2, 4], [3, 5, 1, 2, 4]], [3, 3, 4, 4])
-    ([[1, 3, 2, 5, 4], [1, 3, 5, 2, 4], [1, 4, 2, 5, 3], [1, 4, 5, 2, 3], [1, 4, 5, 3, 2], [1, 5, 4, 2, 3], [1, 5, 4, 3, 2]], [2, 2, 3, 3, 3, 3, 3])
+    ([[2, 3, 1, 5, 4], [2, 4, 5, 3, 1], [2, 5, 4, 1, 3], [3, 4, 1, 5, 2]], [2, 3, 3, 3])
+    ([[3, 1, 2, 5, 4], [4, 1, 2, 5, 3], [3, 5, 2, 1, 4], [4, 1, 5, 2, 3]], [3, 3, 4, 4])
+    ([[2, 1, 3, 5, 4], [2, 4, 1, 3, 5], [2, 5, 3, 1, 4], [3, 4, 1, 2, 5], [3, 1, 5, 4, 2], [2, 5, 1, 4, 3], [2, 1, 5, 4, 3]], [2, 2, 3, 3, 3, 3, 3])
 
     sage: l = list(bij.solutions_iterator()); len(l)                            # not tested -- (17 seconds with SCIP on AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx)
     504
