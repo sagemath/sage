@@ -370,7 +370,7 @@ import itertools
 from collections import namedtuple, defaultdict
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 from sage.rings.integer_ring import ZZ
-from sage.combinat.set_partition import SetPartition
+from sage.combinat.set_partition import SetPartition, SetPartitions
 from sage.sets.disjoint_set import DisjointSet
 from sage.structure.sage_object import SageObject
 from copy import copy
@@ -534,6 +534,7 @@ class Bijectionist(SageObject):
         self.set_value_restrictions(*value_restrictions)
         self.set_distributions(*elements_distributions)
         self.set_pseudo_inverse_relation(*phi_psi)
+        self.set_homomesic(Q)
         self.set_intertwining_relations(*pi_rho)
         self.set_constant_blocks(P)
 
@@ -1444,6 +1445,31 @@ class Bijectionist(SageObject):
         """
         self._bmilp = None
         self._phi_psi = phi_psi
+
+    def set_homomesic(self, Q):
+        """
+        Assert that the average of `s` on each block of `Q` is
+        constant.
+
+        INPUT:
+
+        - ``Q``, a set partition of ``A``.
+
+        EXAMPLES::
+
+            sage: A = B = [1,2,3]
+            sage: bij = Bijectionist(A, B, lambda b: b % 3)
+            sage: bij.set_homomesic([[1,2], [3]])
+            sage: list(bij.solutions_iterator())
+            [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
+
+        """
+        self._bmilp = None
+        if Q is None:
+            self._Q = None
+        else:
+            self._Q = SetPartition(Q)
+            assert self._Q in SetPartitions(self._A), f"{Q} must be a set partition of A"
 
     def _forced_constant_blocks(self):
         r"""
@@ -2583,6 +2609,7 @@ class _BijectionistMILP():
         self.add_alpha_beta_constraints()
         self.add_distribution_constraints()
         self.add_pseudo_inverse_relation_constraints()
+        self.add_homomesic_constraints()
         self.add_intertwining_relation_constraints()
         if get_verbose() >= 2:
             self.show()
@@ -3059,6 +3086,41 @@ class _BijectionistMILP():
                     else:
                         self.milp.add_constraint(self._x[p, z] == 0, name=f"i: s({p})!={z}")
 
+    def add_homomesic_constraints(self):
+        r"""
+        Add constraints enforcing that `s` has constant average
+        on the blocks of `Q`.
+
+        We do this by adding
+
+        .. MATH::
+
+            \frac{1}{|q|}\sum_{a\in q} \sum_z z x_{p(a), z} =
+            \frac{1}{|q_0|}\sum_{a\in q_0} \sum_z z x_{p(a), z},
+
+        for `q\in Q`, where `q_0` is some fixed block of `Q`.
+
+        EXAMPLES::
+
+            sage: A = B = [1,2,3]
+            sage: bij = Bijectionist(A, B, lambda b: b % 3)
+            sage: bij.set_homomesic([[1,2], [3]])                               # indirect doctest
+            sage: list(bij.solutions_iterator())
+            [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
+        """
+        Q = self._bijectionist._Q
+        if Q is None:
+            return
+        P = self._bijectionist._P
+        tZ = self._bijectionist._possible_block_values
+
+        def sum_q(q):
+            return sum(sum(z*self._x[P.find(a), z] for z in tZ[P.find(a)])
+                       for a in q)
+        q0 = Q[0]
+        v0 = sum_q(q0)
+        for q in Q[1:]:
+            self.milp.add_constraint(len(q0)*sum_q(q) == len(q)*v0, name=f"h: ({q})~({q0})")
 
 def _invert_dict(d):
     """
