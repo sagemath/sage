@@ -2366,11 +2366,20 @@ cdef class MixedIntegerLinearProgram(SageObject):
             ....:     p.add_constraint(x - y, max=10)
             sage: p.number_of_constraints()
             3
+
+        TESTS:
+
+        Removing no constraints does not make Sage crash, see
+        :trac:`34881`::
+
+             sage: MixedIntegerLinearProgram().remove_constraints([])
+
         """
         if self._check_redundant:
             for i in sorted(constraints, reverse=True):
                 self._constraints.pop(i)
-        self._backend.remove_constraints(constraints)
+        if constraints:
+            self._backend.remove_constraints(constraints)
 
     def set_binary(self, ee):
         r"""
