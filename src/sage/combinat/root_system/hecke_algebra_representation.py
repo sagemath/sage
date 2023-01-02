@@ -1,13 +1,13 @@
 r"""
 Hecke algebra representations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 import functools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -18,6 +18,7 @@ from sage.sets.family import Family
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""

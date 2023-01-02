@@ -11,7 +11,7 @@ AUTHORS:
 - Christian Stump (initial version 2011--2015)
 - Travis Scrimshaw (14-03-2017): moved element code
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011-2016 Christian Stump <christian.stump at gmail.com>
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
@@ -19,8 +19,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute

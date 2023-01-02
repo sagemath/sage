@@ -1715,9 +1715,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
           the precision at which the result is computed, if ``None``,
           the result is truncated according to the cap of the parent
 
-        NOTE:
+        .. NOTE::
 
-        The ``n``-th root is computed as `\exp(\frac 1 n \log(f))`.
+            The ``n``-th root is computed as `\exp(\frac 1 n \log(f))`.
 
         EXAMPLES::
 
@@ -3318,7 +3318,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         - ``divisors`` -- a series, or a list of series
 
-        NOTE::
+        NOTE:
 
         The condition on the remainder is that it has
 

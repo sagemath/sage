@@ -105,7 +105,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
         - ``mat`` -- a matrix
 
-        - ``dom`` -- (unused) needed for consistent function call with projective 
+        - ``dom`` -- (unused) needed for consistent function call with projective
 
         OUTPUT: a scheme point given by ``mat*self``
 

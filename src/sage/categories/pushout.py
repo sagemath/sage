@@ -1349,7 +1349,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             sage: F != sage.categories.pushout.InfinitePolynomialFunctor(['a','b','x'],'deglex','sparse')
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     __hash__ = ConstructionFunctor.__hash__
 

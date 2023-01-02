@@ -1989,4 +1989,3 @@ class SkewPartitions_rowlengths(SkewPartitions):
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)
-
