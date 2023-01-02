@@ -479,7 +479,7 @@ class Bijectionist(SageObject):
 
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[],
-                 pi_rho=tuple(), phi_psi=tuple(),
+                 pi_rho=tuple(), phi_psi=tuple(), Q=None,
                  elements_distributions=tuple(),
                  value_restrictions=tuple(), solver=None, key=None):
         """
@@ -503,11 +503,11 @@ class Bijectionist(SageObject):
         # k arity of pi and rho
         # pi: A^k -> A, rho: Z^k -> Z
         # a_tuple in A^k
-        assert len(A) == len(set(A)), "A must have distinct items"
-        assert len(B) == len(set(B)), "B must have distinct items"
+        self._A = list(A)
+        self._B = list(B)
+        assert len(self._A) == len(set(self._A)), "A must have distinct items"
+        assert len(self._B) == len(set(self._B)), "B must have distinct items"
         self._bmilp = None
-        self._A = A
-        self._B = B
         self._sorter = {}
         self._sorter["A"] = lambda x: sorted(x, key=self._A.index)
         self._sorter["B"] = lambda x: sorted(x, key=self._B.index)
@@ -2127,15 +2127,9 @@ class Bijectionist(SageObject):
 
     def _preprocess_intertwining_relations(self):
         r"""
-        Make `self._P` be the finest set partition coarser than `self._P`
-        such that composing elements preserves blocks.
-
-        OUTPUT:
-
-        A list of triples `((\pi/\rho, p, (p_1,\dots,p_k))`, where
-        `p` is the block of `\rho(s(a_1),\dots, s(a_k))`, for any
-        `a_i\in p_i`, suitable for
-        :meth:`_BijectionistMILP.add_intertwining_relation_constraints`.
+        Make ``self._P`` be the finest set partition coarser
+        than ``self._P`` such that composing elements preserves
+        blocks.
 
         Suppose that `p_1`, `p_2` are blocks of `P`, and `a_1, a'_1
         \in p_1` and `a_2, a'_2\in p_2`.  Then,
@@ -2153,14 +2147,17 @@ class Bijectionist(SageObject):
         In other words, `s(\pi(a_1,\dots,a_k))` only depends on the
         blocks of `a_1,\dots,a_k`.
 
+        In particular, if `P` consists only if singletons, this
+        method has no effect.
+
         .. TODO::
 
             create one test with one and one test with two
-            intertwining_relations
+            intertwining relations
 
         .. TODO::
 
-            untangle side effect and return value if possible
+            it is not clear, whether this method makes sense
 
         EXAMPLES::
 
@@ -2170,27 +2167,29 @@ class Bijectionist(SageObject):
             sage: rho = lambda s1, s2: (s1 + s2) % 2
             sage: bij.set_intertwining_relations((2, pi, rho))
             sage: bij._preprocess_intertwining_relations()
-            {(0, 'a', ('a', 'a')),
-             (0, 'b', ('a', 'b')),
-             (0, 'b', ('b', 'a')),
-             (0, 'c', ('a', 'c')),
-             (0, 'c', ('b', 'b')),
-             (0, 'c', ('c', 'a')),
-             (0, 'd', ('a', 'd')),
-             (0, 'd', ('b', 'c')),
-             (0, 'd', ('c', 'b')),
-             (0, 'd', ('d', 'a'))}
+            sage: bij._P
+            {{'a'}, {'b'}, {'c'}, {'d'}}
+
+        Let a group act on permutations::
+
+            sage: A = B = Permutations(3)
+            sage: bij = Bijectionist(A, B, lambda x: x[0])
+            sage: bij.set_intertwining_relations((1, lambda pi: pi.reverse(), lambda z: z))
+            sage: bij._preprocess_intertwining_relations()
+            sage: bij._P
+            {{[1, 2, 3]}, {[1, 3, 2]}, {[2, 1, 3]}, {[2, 3, 1]}, {[3, 1, 2]}, {[3, 2, 1]}}
+
         """
+        A = self._A
+        P = self._P
         images = defaultdict(set)  # A^k -> A, a_1,...,a_k +-> {pi(a_1,...,a_k) for all pi}
-        origins_by_elements = []  # (pi/rho, pi(a_1,...,a_k), a_1,...,a_k)
         for composition_index, pi_rho in enumerate(self._pi_rho):
-            for a_tuple in itertools.product(*([self._A]*pi_rho.numargs)):
+            for a_tuple in itertools.product(*([A]*pi_rho.numargs)):
                 if pi_rho.domain is not None and not pi_rho.domain(*a_tuple):
                     continue
                 a = pi_rho.pi(*a_tuple)
-                if a in self._A:
+                if a in A:
                     images[a_tuple].add(a)
-                    origins_by_elements.append((composition_index, a, a_tuple))
 
         # merge blocks
         something_changed = True
@@ -2200,26 +2199,19 @@ class Bijectionist(SageObject):
             # the blocks of the elements of the preimage
             updated_images = defaultdict(set)  # (p_1,...,p_k) to {a_1,....}
             for a_tuple, image_set in images.items():
-                representatives = tuple(self._P.find(a) for a in a_tuple)
+                representatives = tuple(P.find(a) for a in a_tuple)
                 updated_images[representatives].update(image_set)
 
             # merge blocks
             for a_tuple, image_set in updated_images.items():
                 image = image_set.pop()
                 while image_set:
-                    self._P.union(image, image_set.pop())
+                    P.union(image, image_set.pop())
                     something_changed = True
                 # we keep a representative
                 image_set.add(image)
 
             images = updated_images
-
-        origins = set()
-        for composition_index, image, preimage in origins_by_elements:
-            origins.add((composition_index,
-                         self._P.find(image),
-                         tuple(self._P.find(a) for a in preimage)))
-        return origins
 
     def solutions_iterator(self):
         r"""
@@ -2573,7 +2565,7 @@ class _BijectionistMILP():
         # p in _P and z an element of _posible_block_values[p].
         # Thus, _P and _posible_block_values have to be fixed before
         # creating the MILP.
-        preimage_blocks = bijectionist._preprocess_intertwining_relations()
+        bijectionist._preprocess_intertwining_relations()
         bijectionist._compute_possible_block_values()
 
         self.milp = MixedIntegerLinearProgram(solver=bijectionist._solver)
@@ -2591,7 +2583,7 @@ class _BijectionistMILP():
         self.add_alpha_beta_constraints()
         self.add_distribution_constraints()
         self.add_pseudo_inverse_relation_constraints()
-        self.add_intertwining_relation_constraints(preimage_blocks)
+        self.add_intertwining_relation_constraints()
         if get_verbose() >= 2:
             self.show()
 
@@ -2925,7 +2917,7 @@ class _BijectionistMILP():
             for a, z in zip(tA_sum, tZ_sum):
                 self.milp.add_constraint(a == z, name=f"d: {a} == {z}")
 
-    def add_intertwining_relation_constraints(self, origins):
+    def add_intertwining_relation_constraints(self):
         r"""
         Add constraints corresponding to the given intertwining
         relations.
@@ -2980,23 +2972,34 @@ class _BijectionistMILP():
             sage: bmilp.solution(False)
             {'a': 0, 'b': 1, 'c': 0, 'd': 1}
         """
-        for composition_index, image_block, preimage_blocks in origins:
-            pi_rho = self._bijectionist._pi_rho[composition_index]
-            # iterate over all possible value combinations of the origin blocks
-            for z_tuple in itertools.product(*[self._bijectionist._possible_block_values[p]
-                                               for p in preimage_blocks]):
-                rhs = 1 - pi_rho.numargs + sum(self._x[p_i, z_i]
-                                               for p_i, z_i in zip(preimage_blocks, z_tuple))
-                z = pi_rho.rho(*z_tuple)
-                if z in self._bijectionist._possible_block_values[image_block]:
-                    c = self._x[image_block, z] - rhs
-                    if c.is_zero():
-                        continue
-                    self.milp.add_constraint(c >= 0,
-                                             name=f"pi/rho({composition_index})")
-                else:
-                    self.milp.add_constraint(rhs <= 0,
-                                             name=f"pi/rho({composition_index})")
+        A = self._bijectionist._A
+        tZ = self._bijectionist._possible_block_values
+        P = self._bijectionist._P
+        for composition_index, pi_rho in enumerate(self._bijectionist._pi_rho):
+            pi_blocks = set()
+            for a_tuple in itertools.product(*([A]*pi_rho.numargs)):
+                if pi_rho.domain is not None and not pi_rho.domain(*a_tuple):
+                    continue
+                a = pi_rho.pi(*a_tuple)
+                if a in A:
+                    p_tuple = tuple(P.find(a) for a in a_tuple)
+                    p = P.find(a)
+                    if (p_tuple, p) not in pi_blocks:
+                        pi_blocks.add((p_tuple, p))
+                        for z_tuple in itertools.product(*[tZ[p] for p in p_tuple]):
+                            rhs = (1 - pi_rho.numargs
+                                   + sum(self._x[p_i, z_i]
+                                         for p_i, z_i in zip(p_tuple, z_tuple)))
+                            z = pi_rho.rho(*z_tuple)
+                            if z in tZ[p]:
+                                c = self._x[p, z] - rhs
+                                if c.is_zero():
+                                    continue
+                                self.milp.add_constraint(c >= 0,
+                                                         name=f"pi/rho({composition_index})")
+                            else:
+                                self.milp.add_constraint(rhs <= 0,
+                                                         name=f"pi/rho({composition_index})")
 
     def add_pseudo_inverse_relation_constraints(self):
         r"""
