@@ -42,8 +42,7 @@ A guided tour
     `(s, wex, fix) \sim (llis, des, adj)`::
 
         sage: N = 3
-        sage: As = [list(Permutations(n)) for n in range(N+1)]
-        sage: A = B = sum(As, [])
+        sage: A = B = [pi for n in range(N+1) for pi in Permutations(n)]
         sage: alpha1 = lambda p: len(p.weak_excedences())
         sage: alpha2 = lambda p: len(p.fixed_points())
         sage: beta1 = lambda p: len(p.descents(final_descent=True)) if p else 0
@@ -106,7 +105,7 @@ A guided tour
         +-----------+---+--------+--------+--------+
 
         sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
-        sage: bij.set_constant_blocks(sum([orbit_decomposition(A, rotate_permutation) for A in As], []))
+        sage: bij.set_constant_blocks(orbit_decomposition(A, rotate_permutation))
         sage: bij.constant_blocks()
         {{[1, 3, 2], [2, 1, 3], [3, 2, 1]}}
         sage: next(bij.solutions_iterator())
@@ -124,9 +123,9 @@ A guided tour
     There is no rotation invariant statistic on non crossing set partitions which is equidistributed
     with the Strahler number on ordered trees::
 
-        sage: N = 8; As = [[SetPartition(d.to_noncrossing_partition()) for d in DyckWords(n)] for n in range(N)]
-        sage: A = sum(As, [])
-        sage: B = sum([list(OrderedTrees(n)) for n in range(1, N+1)], [])
+        sage: N = 8;
+        sage: A = [SetPartition(d.to_noncrossing_partition()) for n in range(N) for d in DyckWords(n)]
+        sage: B = [t for n in range(1, N+1) for t in OrderedTrees(n)]
         sage: theta = lambda m: SetPartition([[i % m.size() + 1 for i in b] for b in m])
 
     The following code is equivalent to ``tau = findstat(397)``::
@@ -144,7 +143,7 @@ A guided tour
         sage: bij = Bijectionist(A, B, tau)
         sage: bij.set_statistics((lambda a: a.size(), lambda b: b.node_number()-1))
         sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
-        sage: bij.set_constant_blocks(sum([orbit_decomposition(A_n, theta) for A_n in As], []))
+        sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
         sage: list(bij.solutions_iterator())
         []
 
@@ -279,7 +278,7 @@ A guided tour
 
     Constant blocks::
 
-        sage: A = B = list('abcd')
+        sage: A = B = 'abcd'
         sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
         sage: rho = lambda s1, s2: (s1 + s2) % 2
         sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, P=[['a', 'c']], pi_rho=((2, pi, rho),))
@@ -492,7 +491,7 @@ class Bijectionist(SageObject):
 
         Check that large input sets are handled well::
 
-            sage: A = B = list(range(20000))
+            sage: A = B = range(20000)
             sage: bij = Bijectionist(A, B)                                      # long time
         """
         # glossary of standard letters:
@@ -569,7 +568,7 @@ class Bijectionist(SageObject):
         current partition can be reviewed using
         :meth:`constant_blocks`::
 
-            sage: A = B = list('abcd')
+            sage: A = B = 'abcd'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: bij.constant_blocks()
             {}
@@ -1766,7 +1765,7 @@ class Bijectionist(SageObject):
 
         Test an unfeasible problem::
 
-            sage: A = B = list('ab')
+            sage: A = B = 'ab'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: bij.set_constant_blocks([['a', 'b']])
             sage: bij.possible_values(p="a")
@@ -2147,11 +2146,11 @@ class Bijectionist(SageObject):
 
         .. TODO::
 
-            it is not clear, whether this method makes sense
+            it is not clear whether this method makes sense
 
         EXAMPLES::
 
-            sage: A = B = list('abcd')
+            sage: A = B = 'abcd'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
             sage: rho = lambda s1, s2: (s1 + s2) % 2
@@ -2273,7 +2272,7 @@ class Bijectionist(SageObject):
 
         EXAMPLES::
 
-            sage: A = B = list('abc')
+            sage: A = B = 'abc'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 1, 'c': 0}
@@ -2362,8 +2361,7 @@ class Bijectionist(SageObject):
                 veto: x_0 + x_1 + x_3 + x_4 + x_6 + x_10 + x_14 <= 6
                 veto: x_0 + x_1 + x_2 + x_5 + x_6 + x_10 + x_14 <= 6
 
-        Changing or re-setting problem parameters clears the internal cache and
-        prints even more information::
+        Changing or re-setting problem parameters clears the internal cache::
 
             sage: bij.set_constant_blocks(P)
             sage: _ = list(bij.solutions_iterator())
@@ -2519,7 +2517,6 @@ class _BijectionistMILP():
     Wrapper class for the MixedIntegerLinearProgram (MILP).  This
     class is used to manage the MILP, add constraints, solve the
     problem and check for uniqueness of solution values.
-
     """
     def __init__(self, bijectionist: Bijectionist, solutions=None):
         r"""
@@ -2987,7 +2984,7 @@ class _BijectionistMILP():
 
         EXAMPLES::
 
-            sage: A = B = list('abcd')
+            sage: A = B = 'abcd'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
             sage: rho = lambda s1, s2: (s1 + s2) % 2
