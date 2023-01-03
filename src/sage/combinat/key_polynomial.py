@@ -32,17 +32,13 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.combinat.composition import Composition
-from sage.combinat.integer_vector import IntegerVector, IntegerVectors
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing, InfinitePolynomialRing_sparse
-from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_sparse
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-from sage.rings.rational_field import QQ
-from sage.structure.element import parent
 
 from collections.abc import Collection
 
@@ -377,7 +373,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             if isinstance(R, poly_type[0:2]):
                 k = R.ngens()
             if isinstance(R, InfinitePolynomialRing_sparse) and R.ngens() > 1:
-                raise ValueError(f"Polynomial ring has too many generators")
+                raise ValueError("Polynomial ring has too many generators")
             if isinstance(R.base_ring(), poly_type[0:2]):
                 # if R is of the form K[t_1, ..., t_n][z_*]
                 # or K[t_1, ..., t_n][z_1, ..., z_k]
@@ -432,7 +428,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             R = poly_ring.base_ring()
             self._polynomial_ring = poly_ring
 
-        self._name = f"Key polynomial basis"
+        self._name = "Key polynomial basis"
 
         CombinatorialFreeModule.__init__(self, R, IntegerVectors(k=k),
                                          category=GradedAlgebrasWithBasis(R),
@@ -570,7 +566,6 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 raise ValueError(f"f must be an element of {self._polynomial_ring}")
 
         out = self.zero()
-        counter = 0
 
         while f:
             M = f.monomials()[0]
@@ -627,7 +622,6 @@ def _divided_difference(P, i, f):
         sage: _divided_difference(k, 3, z[1]*z[2]*z[4])
         -z_1*z_2
     """
-    R = P.polynomial_ring()
     z = P.poly_gens()
 
     si_f = f.subs({z[i+1]: z[i], z[i]: z[i+1]})
@@ -685,7 +679,6 @@ def _pi_i(P, i, f):
         sage: _pi_i(k, 2, z[1]^4*z[2]^2*z[3]*z[4])
         z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
     """
-    R = P.polynomial_ring()
     z = P.poly_gens()
     return _divided_difference(P, i, z[i] * f)
 
