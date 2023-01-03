@@ -2499,17 +2499,7 @@ class Bijectionist(SageObject):
         """
         if self._bmilp is None:
             self._bmilp = _BijectionistMILP(self)
-        bmilp = self._bmilp
-        index = 0
-        while True:
-            solution = bmilp.solution(False, [], index)
-            if solution is None:
-                return
-            index += 1
-            yield solution
-            if get_verbose() >= 2:
-                print("after vetoing")
-                bmilp.show(variables=False)
+        yield from self._bmilp
 
 
 class _BijectionistMILP():
@@ -2842,6 +2832,32 @@ class _BijectionistMILP():
                             mapping[a] = z
                     break
         return mapping
+
+    def __iter__(self):
+        r"""
+        Iterate over all solutions of the MILP.
+
+        EXAMPLES::
+
+            sage: A = B = 'abc'
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
+            sage: from sage.combinat.bijectionist import _BijectionistMILP
+            sage: list(_BijectionistMILP(bij))
+            [{'a': 0, 'b': 1, 'c': 0},
+             {'a': 1, 'b': 0, 'c': 0},
+             {'a': 0, 'b': 0, 'c': 1}]
+
+        """
+        index = 0
+        while True:
+            solution = self.solution(False, [], index)
+            if solution is None:
+                return
+            index += 1
+            yield solution
+            if get_verbose() >= 2:
+                print("after vetoing")
+                self.show(variables=False)
 
     def add_alpha_beta_constraints(self):
         r"""
