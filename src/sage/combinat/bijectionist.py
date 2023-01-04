@@ -2456,6 +2456,7 @@ class Bijectionist(SageObject):
             self._bmilp = _BijectionistMILP(self)
         yield from self._bmilp.solutions_iterator(False, [])
 
+
 class _BijectionistMILP():
     r"""
     Wrapper class for the MixedIntegerLinearProgram (MILP).  This
@@ -2589,7 +2590,6 @@ class _BijectionistMILP():
             for (p, z), v in self._x.items():
                 print(f"    {v}: " + "".join([f"s({a}) = "
                                               for a in P[p]]) + f"{z}")
-
 
     def _prepare_solution(self, on_blocks, solution):
         r"""
@@ -2766,9 +2766,10 @@ class _BijectionistMILP():
             variable_index = next(iter(v.dict().keys()))
             index_block_value_dict[variable_index] = (p, z)
 
-        evaluate = lambda f: sum(coeff if index == -1 else
-                                 coeff * values[index_block_value_dict[index]]
-                                 for index, coeff in f.dict().items())
+        def evaluate(f):
+            return sum(coeff if index == -1 else
+                       coeff * values[index_block_value_dict[index]]
+                       for index, coeff in f.dict().items())
 
         for lhs, rhs in constraint.equations():
             if evaluate(lhs - rhs):
@@ -3052,6 +3053,7 @@ class _BijectionistMILP():
         for q in Q[1:]:
             self.milp.add_constraint(len(q0)*sum_q(q) == len(q)*v0, name=f"h: ({q})~({q0})")
 
+
 def _invert_dict(d):
     """
     Return the dictionary whose keys are the values of the input and
@@ -3125,6 +3127,7 @@ def _non_copying_intersection(sets):
             return result
         if s == result:
             return s
+
 
 """
 TESTS::
