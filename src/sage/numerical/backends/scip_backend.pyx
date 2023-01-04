@@ -369,6 +369,38 @@ cdef class SCIPBackend(GenericBackend):
         self.model.delCons(self.get_constraints()[i])
         self.constraints = None
 
+    cpdef remove_constraints(self, constraints):
+        r"""
+        Remove several constraints.
+
+        INPUT:
+
+        - ``constraints`` -- an iterable containing the indices of the rows to remove.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='SCIP')
+            sage: p.add_variables(2)
+            1
+            sage: p.add_linear_constraint([(0, 2), (1, 3)], None, 6)
+            sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6)
+            sage: p.remove_constraints([0, 1])
+        """
+        if isinstance(constraints, int):
+            self.remove_constraint(constraints)
+            return
+
+        if self.model.getStatus() != 'unknown':
+            self.model.freeTransform()
+            self.constraints = None
+
+        all_constraints = self.get_constraints()
+        to_remove = [all_constraints[i] for i in constraints]
+        for constraint in to_remove:
+            self.model.delCons(constraint)
+        self.constraints = None
+
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
         Add a linear constraint.
