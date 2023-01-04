@@ -270,6 +270,17 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
         ....:     assert check_long_py(int(v)) == v
+        sage: check_long_py(int(2^60))
+        1152921504606846976                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^61))
+        2305843009213693952                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^62))
+        4611686018427387904                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^63))
+        'Overflow (...)'
         sage: check_long_py(int(2^100))
         'Overflow (...)'
         sage: check_long_py(int(long_max() + 1))
@@ -310,6 +321,9 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
     cdef long lead
     cdef long lead_2_overflow = (<long>1) << (BITS_IN_LONG - PyLong_SHIFT)
     cdef long lead_3_overflow = (<long>1) << (BITS_IN_LONG - 2 * PyLong_SHIFT)
+    if BITS_IN_LONG < 2 * PyLong_SHIFT:
+        # in this case 3 digit is always overflow
+        lead_3_overflow = 0
     if size == 0:
         value[0] = 0
         err[0] = 0
