@@ -812,6 +812,8 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.nrows()
             2
         """
+        if self.constraints is None:
+            return self.model.getNConss()
         return len(self.get_constraints())
 
     cpdef col_name(self, int index):
