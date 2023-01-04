@@ -6,5 +6,5 @@ cdef class AbstractFamily(Parent):
 
 
 cdef class FiniteFamily(AbstractFamily):
-    cdef dict _dictionary
-    cdef object _keys
+    cdef public dict _dictionary
+    cdef public object _keys
