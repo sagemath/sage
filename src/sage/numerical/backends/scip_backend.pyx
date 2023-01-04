@@ -1189,7 +1189,7 @@ cdef class SCIPBackend(GenericBackend):
             6.0
         """
         cdef SCIPBackend cp = type(self)(maximization=self.is_maximization())
-        cp.model = Model(sourceModel=self.model)
+        cp.model = Model(sourceModel=self.model, origcopy=True)
         cp.problem_name(self.problem_name())
         cp.obj_constant_term = self.obj_constant_term
         cp.variables = cp.model.getVars()
