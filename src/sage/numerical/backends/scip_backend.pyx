@@ -1155,27 +1155,10 @@ cdef class SCIPBackend(GenericBackend):
             6.0
         """
         cdef SCIPBackend cp = type(self)(maximization=self.is_maximization())
+        cp.model = Model(sourceModel=self.model)
         cp.problem_name(self.problem_name())
-        for i, v in enumerate(self.variables):
-            vtype = v.vtype()
-            cp.add_variable(self.variable_lower_bound(i),
-                            self.variable_upper_bound(i),
-                            binary=vtype == 'BINARY',
-                            continuous=vtype == 'CONTINUOUS',
-                            integer=vtype == 'INTEGER',
-                            obj=self.objective_coefficient(i),
-                            name=self.col_name(i))
-        assert self.ncols() == cp.ncols()
-
-        for i in range(self.nrows()):
-            coefficients = zip(*self.row(i))
-            lower_bound, upper_bound = self.row_bounds(i)
-            name = self.row_name(i)
-            cp.add_linear_constraint(coefficients,
-                                     lower_bound,
-                                     upper_bound,
-                                     name=name)
-        assert self.nrows() == cp.nrows()
+        cp.obj_constant_term = self.obj_constant_term
+        cp.variables = cp.model.getVars()
         return cp
 
     cpdef solver_parameter(self, name, value=None):
