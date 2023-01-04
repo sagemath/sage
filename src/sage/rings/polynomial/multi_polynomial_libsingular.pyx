@@ -4635,7 +4635,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
             sage: f = 3*x
             sage: f.reduce([2*x,y])
-            3*x
+            x
 
         The reduction is not canonical when ``I`` is not a Groebner
         basis::
