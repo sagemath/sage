@@ -801,6 +801,10 @@ def PresentationComplex(G):
     Return a simplicial set constructed from a group presentation.
     The result is a subdivision of the presentation complex.
 
+    The presentation complex has one vertex and one edge for
+    each generator. Then triangles (and eventually new edges
+    to glue them) are added to realize the relations.
+
     INPUT:
 
     - "G" -- a finitely presented group
