@@ -173,7 +173,7 @@ any simplicial set::
     sage: Sigma3 = groups.permutation.Symmetric(3)
     sage: BSigma3 = Sigma3.nerve()
     sage: pi = BSigma3.fundamental_group(); pi
-    Finitely presented group < e0, e1 | e0^2, e1^3, (e0*e1^-1)^2 >
+    Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
     sage: pi.order()
     6
     sage: pi.is_abelian()

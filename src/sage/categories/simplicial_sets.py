@@ -317,7 +317,7 @@ class SimplicialSets(Category_singleton):
                     sage: Sigma3 = groups.permutation.Symmetric(3)
                     sage: BSigma3 = Sigma3.nerve()
                     sage: pi = BSigma3.fundamental_group(); pi
-                    Finitely presented group < e0, e1 | e0^2, e1^3, (e0*e1^-1)^2 >
+                    Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
                     sage: pi.order()
                     6
                     sage: pi.is_abelian()
@@ -331,64 +331,18 @@ class SimplicialSets(Category_singleton):
                 """
                 # Import this here to prevent importing libgap upon startup.
                 from sage.groups.free_group import FreeGroup
-                skel = self.n_skeleton(2)
-
-                graph = skel.graph()
-                if not skel.is_connected():
-                    graph = graph.subgraph(skel.base_point())
-
-                edges = [e[2] for e in graph.edges(sort=True)]
-                spanning_tree = [e[2] for e in graph.min_spanning_tree()]
-                gens = [e for e in edges if e not in spanning_tree]
-
-                if not gens:
+                if not self.n_cells(1):
                     return FreeGroup([]).quotient([])
-
-                gens_dict = dict(zip(gens, range(len(gens))))
-                FG = FreeGroup(len(gens), 'e')
-                rels = []
-
-                for f in skel.n_cells(2):
-                    z = dict()
-                    for i, sigma in enumerate(skel.faces(f)):
-                        if sigma in spanning_tree:
-                            z[i] = FG.one()
-                        elif sigma.is_degenerate():
-                            z[i] = FG.one()
-                        elif sigma in edges:
-                            z[i] = FG.gen(gens_dict[sigma])
-                        else:
-                            # sigma is not in the correct connected component.
-                            z[i] = FG.one()
-                    rels.append(z[0]*z[1].inverse()*z[2])
+                FG = self._universal_cover_dict()[0]
                 if simplify:
-                    return FG.quotient(rels).simplified()
+                    return FG.simplified()
                 else:
-                    return FG.quotient(rels)
+                    return FG
 
-            def universal_cover_map(self):
+            def _universal_cover_dict(self):
                 r"""
-                Return the universal covering map of the simplicial set.
-
-                It requires the fundamental group to be finite.
-
-                EXAMPLES::
-
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
-                    sage: phi = RP2.universal_cover_map()
-                    sage: phi
-                    Simplicial set morphism:
-                      From: Simplicial set with 6 non-degenerate simplices
-                      To:   RP^2
-                      Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)] --> [1, 1, f, f, f * f, f * f]
-                    sage: phi.domain().face_data()
-                    {(f, 1): ((1, e), (1, 1)),
-                     (f, e): ((1, 1), (1, e)),
-                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
-                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
-                     (1, e): None,
-                     (1, 1): None}
-
+                Return the fundamental group and dictionary sending each edge to
+                the corresponding group element
                 """
                 from sage.groups.free_group import FreeGroup
                 skel = self.n_skeleton(2)
@@ -398,10 +352,6 @@ class SimplicialSets(Category_singleton):
                 edges = [e[2] for e in graph.edges(sort=False)]
                 spanning_tree = [e[2] for e in graph.min_spanning_tree()]
                 gens = [e for e in edges if e not in spanning_tree]
-
-                if not gens:
-                    return self
-
                 gens_dict = dict(zip(gens, range(len(gens))))
                 FG = FreeGroup(len(gens), 'e')
                 rels = []
@@ -424,6 +374,37 @@ class SimplicialSets(Category_singleton):
                 for e in edges:
                     if not e in gens:
                         char[e] = G.one()
+                return (G, char)
+
+
+            def universal_cover_map(self):
+                r"""
+                Return the universal covering map of the simplicial set.
+
+                It requires the fundamental group to be finite.
+
+                EXAMPLES::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: phi = RP2.universal_cover_map()
+                    sage: phi
+                    Simplicial set morphism:
+                      From: Simplicial set with 6 non-degenerate simplices
+                      To:   RP^2
+                      Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)] --> [1, 1, f, f, f * f, f * f]
+                    sage: phi.domain().face_data()
+                        {(1, 1): None,
+                         (1, e): None,
+                         (f, 1): ((1, e), (1, 1)),
+                         (f, e): ((1, 1), (1, e)),
+                         (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
+                         (f * f, e): ((f, 1), s_0 (1, e), (f, e))}
+
+                """
+                edges = self.n_cells(1)
+                if not edges:
+                    return self.identity()
+                G, char = self._universal_cover_dict()
                 return self.covering_map(char)
 
             def covering_map(self, character):
@@ -445,6 +426,7 @@ class SimplicialSets(Category_singleton):
                     sage: S1 = simplicial_sets.Sphere(1)
                     sage: W = S1.wedge(S1)
                     sage: G = CyclicPermutationGroup(3)
+                    sage: a, b = W.n_cells(1)
                     sage: C = W.covering_map({a : G.gen(0), b : G.one()})
                     sage: C
                     Simplicial set morphism:
@@ -454,15 +436,15 @@ class SimplicialSets(Category_singleton):
                     sage: C.domain()
                     Simplicial set with 9 non-degenerate simplices
                     sage: C.domain().face_data()
-                    {(sigma_1, ()): ((*, ()), (*, ())),
-                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
-                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2))),
-                     (sigma_1, ()): ((*, ()), (*, ())),
-                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
-                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2))),
-                     (*, ()): None,
+                    {(*, ()): None,
+                     (*, (1,2,3)): None,
                      (*, (1,3,2)): None,
-                     (*, (1,2,3)): None}
+                     (sigma_1, ()): ((*, (1,2,3)), (*, ())),
+                     (sigma_1, ()): ((*, ()), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
+                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
+                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2)))}
 
                 """
                 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
@@ -531,17 +513,17 @@ class SimplicialSets(Category_singleton):
                     sage: W = S1.wedge(S1)
                     sage: G = CyclicPermutationGroup(3)
                     sage: (a, b) = W.n_cells(1)
-                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2}).domain()
+                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
                     sage: C.face_data()
-                    {(sigma_1, ()): ((*, (1,2,3)), (*, ())),
-                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
-                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
-                     (sigma_1, ()): ((*, (1,3,2)), (*, ())),
-                     (sigma_1, (1,2,3)): ((*, ()), (*, (1,2,3))),
-                     (sigma_1, (1,3,2)): ((*, (1,2,3)), (*, (1,3,2))),
+                    {(*, ()): None,
                      (*, (1,2,3)): None,
-                     (*, ()): None,
-                     (*, (1,3,2)): None}
+                     (*, (1,3,2)): None,
+                     (sigma_1, ()): ((*, (1,2,3)), (*, ())),
+                     (sigma_1, ()): ((*, (1,3,2)), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
+                     (sigma_1, (1,2,3)): ((*, ()), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
+                     (sigma_1, (1,3,2)): ((*, (1,2,3)), (*, (1,3,2)))}
                     sage: C.homology(1)
                     Z x Z x Z x Z
                     sage: C.fundamental_group()
@@ -563,14 +545,14 @@ class SimplicialSets(Category_singleton):
                     sage: C
                     Simplicial set with 8 non-degenerate simplices
                     sage: C.face_data()
-                    {(f, 1): ((1, e), (1, 1)),
+                    {(1, 1): None,
+                     (1, e): None,
+                     (f, 1): ((1, e), (1, 1)),
                      (f, e): ((1, 1), (1, e)),
                      (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
                      (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
                      (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
-                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e)),
-                     (1, e): None,
-                     (1, 1): None}
+                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
 
