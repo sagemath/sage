@@ -86,6 +86,7 @@ from sage.rings.polynomial.multi_polynomial import is_MPolynomial
 
 import sage.libs.symmetrica.all as symmetrica
 
+
 def SchubertPolynomialRing(R):
     """
     Return the Schubert polynomial ring over ``R`` on the X basis.
@@ -458,7 +459,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             R = x.polynomial().parent()
             # massage the term order to be what symmetrica expects
             S = PolynomialRing(R.base_ring(),
-                               names=list(map(repr,reversed(R.gens()))))
+                               names=list(map(repr, reversed(R.gens()))))
             return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
         elif isinstance(x, KeyPolynomial):
             return self(x.expand())
