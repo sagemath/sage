@@ -2023,7 +2023,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.green_function(P([2, 1]), K.ideal(7), N=7)
             0.48647753726382832627633818586
             sage: f.green_function(P([w, 1]), K.ideal(17), error_bound=0.001)
-            -0.70761163353747779889947530309
+            -0.70813041039490996737374178059
 
         ::
 
@@ -2233,7 +2233,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([1000*x^2-29*y^2, 1000*y^2])
             sage: Q = P(-1/4, 1)
             sage: f.canonical_height(Q, error_bound=0.01)
-            3.7979215342343045582800170705
+            3.7996079979254623065837411853
 
         ::
 
@@ -2434,7 +2434,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([5*x^2 + 3*x*y , y^2 + 3*x^2])
             sage: f.height_difference_bound(prec=100)
-            3.5835189384561100016249547168
+            5.3375380797013179737224159274
         """
         FF = FractionField(self.domain().base_ring()) #lift will only work over fields, so coercing into FF
         if FF not in NumberFields():
