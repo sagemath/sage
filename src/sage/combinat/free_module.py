@@ -832,12 +832,16 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: CF2(3*c)
             B[1]
         """
-        if (isinstance(R, CombinatorialFreeModule)
-                and R._indices == self._indices
-                and self.base_ring().has_coerce_map_from(R.base_ring())):
-            return lambda parent, x: self._from_dict(x._monomial_coefficients,
-                                                     coerce=True, remove_zeros=True)
-        return super(CombinatorialFreeModule, self)._coerce_map_from_(R)
+        if isinstance(R, CombinatorialFreeModule):
+            try:
+                CR = R.base_extend(self.base_ring())
+            except (NotImplementedError, TypeError):
+                pass
+            else:
+                if CR == self:
+                    return lambda parent, x: self._from_dict(x._monomial_coefficients,
+                                                             coerce=True, remove_zeros=True)
+        return super()._coerce_map_from_(R)
 
     def dimension(self):
         """
