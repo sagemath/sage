@@ -482,6 +482,21 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         return VectorFunctor(None, True, None, with_basis='standard',
                              basis_keys=self.basis().keys()), self.base_ring()
 
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        """
+        if R is self.base_ring():
+            return self
+        construction = self.construction()
+        if construction is not None:
+            functor, arg = construction
+            from sage.categories.pushout import VectorFunctor
+            if isinstance(functor, VectorFunctor):
+                return functor(R)
+        raise NotImplementedError('the method change_ring() has not yet been implemented')
+
     # For backwards compatibility
     _repr_term = IndexedGenerators._repr_generator
     _latex_term = IndexedGenerators._latex_generator
