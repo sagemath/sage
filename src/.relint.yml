@@ -41,7 +41,7 @@
     in mathematics it should be "homogeneous"
   pattern: 'homogenous'
 
-# Modularization anti-patterns
+# Modularization anti-patterns (note: a tool to replace such 'from sage.all import' statements is given in SAGE_ROOT/src/sage/misc/replace_dot_all.py)
 
 - name: 'namespace_pkg_all_import: import from .all of a namespace package'
   hint: |
