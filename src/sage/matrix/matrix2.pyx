@@ -5213,11 +5213,6 @@ cdef class Matrix(Matrix1):
 
             sage: image(B) == B.row_module()
             True
-
-        ::
-
-           sage: image(B) = B.column_module()
-           True
         """
         return self.row_module()
 
