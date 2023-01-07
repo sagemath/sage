@@ -4312,6 +4312,23 @@ cdef class CommutativePolynomial(CommutativeAlgebraElement):
 cdef class Polynomial(CommutativePolynomial):
     r"""
     Abstract base class for :class:`~sage.rings.polynomial.polynomial_element.Polynomial`
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: R1.<x> = QQ[]
+        sage: isinstance(x, sage.structure.element.Polynomial)
+        True
+        sage: R2.<y,z> = QQ[]
+        sage: isinstance(y, sage.structure.element.Polynomial)
+        False
+
+    By design, there is a unique direct subclass::
+
+        sage: len(sage.structure.element.Polynomial.__subclasses__()) <= 1
+        True
     """
 
     pass
@@ -4321,6 +4338,23 @@ cdef class Polynomial(CommutativePolynomial):
 cdef class MPolynomial(CommutativePolynomial):
     r"""
     Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial.MPolynomial`
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: R1.<x> = QQ[]
+        sage: isinstance(x, sage.structure.element.MPolynomial)
+        False
+        sage: R2.<y,z> = QQ[]
+        sage: isinstance(y, sage.structure.element.MPolynomial)
+        True
+
+    By design, there is a unique direct subclass::
+
+        sage: len(sage.structure.element.MPolynomial.__subclasses__()) <= 1
+        True
     """
 
     pass
