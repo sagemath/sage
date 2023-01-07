@@ -31,7 +31,6 @@ include sage/rings/padics/transcendantal.c
 include sage/rings/polynomial/weil/power_sums.c
 include sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp
 include sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
-include sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.cpp
 include sage/stats/distributions/dgs_bern.c
 include sage/stats/distributions/dgs_gauss_dp.c
 include sage/stats/distributions/dgs_gauss_mp.c

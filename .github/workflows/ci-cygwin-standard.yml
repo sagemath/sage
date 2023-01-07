@@ -61,11 +61,13 @@ jobs:
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
   cygwin-stage-ii-e:
-    uses: ./.github/workflows/cygwin.yml
-    with:
-      stage: ii-e
-      previous_stages: i-*
-      targets: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs zn_poly sympow
+    env:
+      STAGE: ii-e
+      PREVIOUS_STAGES: i-*
+      TARGETS: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs sympow
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
 ############################################## stage-iii ##########################################

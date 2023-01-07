@@ -103,10 +103,10 @@ class WeylCharacterRing(CombinatorialFreeModule):
         ct = CartanType(ct)
         if prefix is None:
             if ct.is_atomic():
-                prefix = ct[0]+str(ct[1])
+                prefix = ct[0] + str(ct[1])
             else:
                 prefix = repr(ct)
-        return super(WeylCharacterRing, cls).__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
+        return super().__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
 
     def __init__(self, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
@@ -174,7 +174,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 self._m_g = 2
             else:
                 self._m_g = 3
-            if ct[0] in ['B','F']:
+            if ct[0] in ['B', 'F']:
                 self._nf = 2
             else:
                 self._nf = 1
@@ -455,7 +455,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeylCharacterRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """
@@ -1740,7 +1740,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: a3.cartan_type(), a3.base_ring(), a3.parent()
             (['A', 3], Integer Ring, The Weyl Character Ring of Type A3 with Integer Ring coefficients)
         """
-        return super(WeightRing, cls).__classcall__(cls, parent, prefix=prefix)
+        return super().__classcall__(cls, parent, prefix=prefix)
 
     def __init__(self, parent, prefix):
         """
@@ -1825,7 +1825,7 @@ class WeightRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeightRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """

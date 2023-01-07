@@ -23,12 +23,12 @@ def normalize_input(a):
 
     INPUT:
 
-     - ``a`` -- object
+    - ``a`` -- object
 
     OUTPUT:
 
-     - ``args`` -- tuple
-     - ``kwds`` -- dictionary
+    - ``args`` -- tuple
+    - ``kwds`` -- dictionary
 
     EXAMPLES::
 
@@ -41,7 +41,7 @@ def normalize_input(a):
         sage: sage.parallel.decorate.normalize_input( 5 )
         ((5,), {})
     """
-    if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0],tuple) and isinstance(a[1],dict):
+    if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0], tuple) and isinstance(a[1], dict):
         return a
     elif isinstance(a, tuple):
         return (a, {})
@@ -97,11 +97,11 @@ class Parallel():
 
         INPUT:
 
-         - ``f`` -- Python callable object or function
+        - ``f`` -- Python callable object or function
 
         OUTPUT:
 
-         - Decorated version of ``f``
+        - Decorated version of ``f``
 
         EXAMPLES::
 
@@ -131,8 +131,8 @@ class ParallelFunction():
         """
         .. note::
 
-           This is typically accessed indirectly through
-           :meth:`Parallel.__call__`.
+            This is typically accessed indirectly through
+            :meth:`Parallel.__call__`.
 
         INPUT:
 
@@ -159,13 +159,11 @@ class ParallelFunction():
             4
             sage: sorted(pf([2,3]))
             [(((2,), {}), 4), (((3,), {}), 9)]
-            """
-        if len(args) > 0 and isinstance(args[0], (list,
-types.GeneratorType)):
+        """
+        if len(args) > 0 and isinstance(args[0], (list, types.GeneratorType)):
             return self.parallel.p_iter(self.func, (normalize_input(a)
-for a in args[0]))
-        else:
-            return self.func(*args, **kwds)
+                                                    for a in args[0]))
+        return self.func(*args, **kwds)
 
     def __get__(self, instance, owner):
         """
@@ -174,7 +172,7 @@ for a in args[0]))
 
         .. note::
 
-           This is the key to fixing :trac:`11461`.
+            This is the key to fixing :trac:`11461`.
 
         EXAMPLES:
 
@@ -217,14 +215,14 @@ for a in args[0]))
             [(((2,), {}), 4), (((3,), {}), 9)]
         """
         try:
-            #If this ParallelFunction object is accessed as an
-            #attribute of a class or instance, the underlying function
-            #should be "accessed" in the same way.
+            # If this ParallelFunction object is accessed as an
+            # attribute of a class or instance, the underlying function
+            # should be "accessed" in the same way.
             new_func = self.func.__get__(instance, owner)
         except AttributeError:
-            #This will happen if a non-function attribute is
-            #decorated.  For example, an expression that's an
-            #attribute of a class.
+            # This will happen if a non-function attribute is
+            # decorated.  For example, an expression that's an
+            # attribute of a class.
             new_func = self.func
         return ParallelFunction(self.parallel, new_func)
 
@@ -413,8 +411,6 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     return Parallel(p_iter, ncpus, **kwds)
 
 
-
-
 ###################################################################
 # The @fork decorator -- evaluate a function with no side effects
 # in memory, so the only side effects (if any) are on disk.
@@ -437,10 +433,10 @@ class Fork():
         """
         INPUT:
 
-         - ``timeout`` -- (default: 0) kill the subprocess after it has run this
-           many seconds (wall time), or if ``timeout`` is zero, do not kill it.
-         - ``verbose`` -- (default: ``False``) whether to print anything about
-           what the decorator does (e.g., killing the subprocess)
+        - ``timeout`` -- (default: 0) kill the subprocess after it has run this
+          many seconds (wall time), or if ``timeout`` is zero, do not kill it.
+        - ``verbose`` -- (default: ``False``) whether to print anything about
+          what the decorator does (e.g., killing the subprocess)
 
         EXAMPLES::
 
@@ -456,11 +452,11 @@ class Fork():
         """
         INPUT:
 
-         - ``f`` -- a function
+        - ``f`` -- a function
 
         OUTPUT:
 
-         - A decorated function.
+        - A decorated function.
 
         EXAMPLES::
 
@@ -481,18 +477,18 @@ class Fork():
 
 def fork(f=None, timeout=0, verbose=False):
     """
-    Decorate a function so that when called it runs in a forked
-    subprocess.  This means that it won't have any in-memory
-    side effects on the parent Sage process.  The pexpect interfaces
-    are all reset.
+    Decorate a function so that when called it runs in a forked subprocess.
+
+    This means that it will not have any in-memory side effects on the
+    parent Sage process. The pexpect interfaces are all reset.
 
     INPUT:
 
-      - ``f`` -- a function
-      - ``timeout`` -- (default: 0) if positive, kill the subprocess after
-        this many seconds (wall time)
-      - ``verbose`` -- (default: ``False``) whether to print anything
-        about what the decorator does (e.g., killing the subprocess)
+    - ``f`` -- a function
+    - ``timeout`` -- (default: 0) if positive, kill the subprocess after
+      this many seconds (wall time)
+    - ``verbose`` -- (default: ``False``) whether to print anything
+      about what the decorator does (e.g., killing the subprocess)
 
     .. warning::
 

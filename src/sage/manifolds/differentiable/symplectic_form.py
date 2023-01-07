@@ -498,7 +498,7 @@ class SymplecticForm(DiffForm):
 
     def volume_form(self, contra: int = 0) -> TensorField:
         r"""
-        Liouville volume form `\frac{1}{n!}\omega^n` associated with the 
+        Liouville volume form `\frac{1}{n!}\omega^n` associated with the
         symplectic form `\omega`, where `2n` is the dimension of the manifold.
 
         INPUT:

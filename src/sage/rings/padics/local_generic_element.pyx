@@ -737,10 +737,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         The square root or the list of all square roots of this element.
 
-        NOTE:
+        .. NOTE::
 
-        The square root is chosen (resp. the square roots are ordered) in
-        a deterministic way, which is compatible with change of precision.
+            The square root is chosen (resp. the square roots are ordered) in
+            a deterministic way, which is compatible with change of precision.
 
         EXAMPLES::
 

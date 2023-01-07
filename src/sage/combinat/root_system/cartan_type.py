@@ -465,7 +465,7 @@ this data.
 
 .. TODO:: Should those indexes come before the introduction?
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
@@ -473,8 +473,8 @@ this data.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
@@ -1875,7 +1875,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         if (label == self.special_node()
                 and self.options('mark_special_node') in ['printing', 'both']):
             return self.options('special_node_str')
-        return super(CartanType_affine, self)._ascii_art_node(label)
+        return super()._ascii_art_node(label)
 
     def _latex_draw_node(self, x, y, label, position="below=4pt"):
         r"""
@@ -1896,7 +1896,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             fill = 'black'
         else:
             fill = 'white'
-        return super(CartanType_affine, self)._latex_draw_node(x, y, label, position, fill)
+        return super()._latex_draw_node(x, y, label, position, fill)
 
     def is_finite(self):
         """

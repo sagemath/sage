@@ -441,8 +441,9 @@ AC_ARG_ENABLE([experimental-packages],
   [AS_HELP_STRING([--enable-experimental-packages],
     [allow installing experimental packages (default: no = ask for user confirmation for each package)])])
 AC_ARG_ENABLE([download-from-upstream-url],
-  [AS_HELP_STRING([--enable-download-from-upstream-url],
-    [allow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])])
+  [AS_HELP_STRING([--disable-download-from-upstream-url],
+    [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
+    [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
 SAGE_SPKG_OPTIONS=""
 AS_IF([test "x$enable_experimental_packages" = "xyes"], [

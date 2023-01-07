@@ -2457,4 +2457,3 @@ class FMatrix(SageObject):
                 print("Something went wrong. Pentagons remain.")
         self._fvars = fvars_copy
         return pe
-

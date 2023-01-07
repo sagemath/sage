@@ -2467,39 +2467,39 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     # Check that the empty 0x0 matrix is it's own inverse with det=1.
     ms00 = MatrixSpace(ring, 0, 0, sparse=sparse)
     m00 = ms00(0)
-    assert(m00.determinant() == ring(1))
-    assert(m00.is_invertible())
-    assert(m00.inverse() == m00)
+    assert m00.determinant() == ring(1)
+    assert m00.is_invertible()
+    assert m00.inverse() == m00
     if checkrank:
-        assert(m00.rank() == 0)
+        assert m00.rank() == 0
 
     # Check that the empty 0x3 and 3x0 matrices are not invertible and that
     # computing the determinant raise the proper exception.
     for ms0 in [MatrixSpace(ring, 0, 3, sparse=sparse),
                 MatrixSpace(ring, 3, 0, sparse=sparse)]:
         mn0 = ms0(0)
-        assert(not mn0.is_invertible())
+        assert not mn0.is_invertible()
         try:
             d = mn0.determinant()
             print(d)
             res = False
         except ValueError:
             res = True
-        assert(res)
+        assert res
         try:
             mn0.inverse()
             res = False
         except ArithmeticError:
             res = True
-        assert(res)
+        assert res
         if checkrank:
-            assert(mn0.rank() == 0)
+            assert mn0.rank() == 0
 
     # Check that the null 1x1 matrix is not invertible and that det=0
     ms1 = MatrixSpace(ring, 1, 1, sparse=sparse)
     m0 = ms1(0)
-    assert(not m0.is_invertible())
-    assert(m0.determinant() == ring(0))
+    assert not m0.is_invertible()
+    assert m0.determinant() == ring(0)
     try:
         m0.inverse()
         res = False
@@ -2507,18 +2507,18 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
         # FIXME: Make pynac throw a ZeroDivisionError on division by
         # zero instead of a runtime Error
         res = True
-    assert(res)
+    assert res
     if checkrank:
-        assert(m0.rank() == 0)
+        assert m0.rank() == 0
 
     # Check that the identity 1x1 matrix is its own inverse with det=1
     m1 = ms1(1)
-    assert(m1.is_invertible())
-    assert(m1.determinant() == ring(1))
+    assert m1.is_invertible()
+    assert m1.determinant() == ring(1)
     inv = m1.inverse()
-    assert(inv == m1)
+    assert inv == m1
     if checkrank:
-        assert(m1.rank() == 1)
+        assert m1.rank() == 1
 
 
 test_trivial_matrices_inverse = deprecated_function_alias(33612, _test_trivial_matrices_inverse)

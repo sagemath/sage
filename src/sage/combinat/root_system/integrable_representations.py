@@ -1,16 +1,14 @@
 """
 Integrable Representations of Affine Lie Algebras
 """
-
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2014, 2105 Daniel Bump <bump at match.stanford.edu>
 #                           Travis Scrimshaw <tscrim at ucdavis.edu>
 #                           Valentin Buciumas <buciumas at stanford.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import CategoryObject
 from sage.categories.modules import Modules
@@ -19,6 +17,7 @@ from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import Matrix
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.weyl_characters import WeylCharacterRing
+
 
 # TODO: Make this a proper parent and implement actions
 class IntegrableRepresentation(UniqueRepresentation, CategoryObject):

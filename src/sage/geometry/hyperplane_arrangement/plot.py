@@ -103,9 +103,9 @@ EXAMPLES::
     sage: a.plot(hyperplane_labels=True,label_colors=['red','green','black'])  # optional - sage.plot
     Graphics3d Object
 """
-
 from copy import copy
 from colorsys import hsv_to_rgb
+
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.plot3d.parametric_plot3d", "parametric_plot3d")
 lazy_import("sage.plot.plot3d.shapes2", "text3d")
@@ -119,7 +119,7 @@ from sage.symbolic.ring import SR
 
 def plot(hyperplane_arrangement, **kwds):
     r"""
-    Return a plot of the hyperplane arrangement.  
+    Return a plot of the hyperplane arrangement.
 
     If the arrangement is in 4 dimensions but inessential, a plot of
     the essentialization is returned.
