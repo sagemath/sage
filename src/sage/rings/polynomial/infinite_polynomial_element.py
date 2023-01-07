@@ -91,10 +91,9 @@ finite polynomial rings are merged with infinite polynomial rings::
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import MPolynomial
+from sage.structure.element import RingElement, MPolynomial, InfinitePolynomial as InfinitePolynomial_base
 import copy
 
 
@@ -206,7 +205,7 @@ def InfinitePolynomial(A, p):
     return InfinitePolynomial_sparse(A, p)
 
 
-class InfinitePolynomial_sparse(RingElement):
+class InfinitePolynomial_sparse(InfinitePolynomial_base):
     """
     Element of a sparse Polynomial Ring with a Countably Infinite Number of Variables.
 
