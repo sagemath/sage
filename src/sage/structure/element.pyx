@@ -47,6 +47,10 @@ abstract base classes.
                                     EuclideanDomainElement
                         FieldElement
                         CommutativeAlgebraElement
+                            CommutativePolynomial
+                                Polynomial
+                                MPolynomial
+                                InfinitePolynomial
                         Expression
                     AlgebraElement
                         Matrix
