@@ -4293,7 +4293,16 @@ cdef class CommutativeAlgebraElement(CommutativeRingElement):
 
     ##############################################
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class CommutativePolynomial(CommutativeAlgebraElement):
+    r"""
+    Abstract base class, common base for :class:`Polynomial` and :class:`MPolynomial`
+    """
+
+    pass
+
+    ##############################################
+
+cdef class Polynomial(CommutativePolynomial):
     r"""
     Abstract base class for :class:`~sage.rings.polynomial.polynomial_element.Polynomial`
     """
@@ -4302,7 +4311,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
     ##############################################
 
-cdef class MPolynomial(CommutativeAlgebraElement):
+cdef class MPolynomial(CommutativePolynomial):
     r"""
     Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial.MPolynomial`
     """

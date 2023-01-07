@@ -239,10 +239,13 @@ cdef class CommutativeAlgebraElement(CommutativeRingElement):
 cdef class Expression(CommutativeRingElement):
     pass
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class CommutativePolynomial(CommutativeAlgebraElement):
     pass
 
-cdef class MPolynomial(CommutativeAlgebraElement):
+cdef class Polynomial(CommutativePolynomial):
+    pass
+
+cdef class MPolynomial(CommutativePolynomial):
     pass
 
 cdef class InfinityElement(RingElement):
