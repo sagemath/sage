@@ -1225,7 +1225,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:                 # make a graph with old_immutable, old_hash_labels
             ....:                 G = Graph({0: {1: 'edge label A'}}, immutable=old_immutable, hash_labels=old_hash_labels)
             ....:                 old_immutable=G.is_immutable()
-            ....:                 old_hash_labels=G.hash_labels
+            ....:                 old_hash_labels=G._hash_labels
             ....:
             ....:                 # copy the graph, passing the overrides
             ....:                 G2 = G.copy(immutable=new_immutable, hash_labels=new_hash_labels)
@@ -1239,10 +1239,10 @@ class GenericGraph(GenericGraph_pyx):
             ....:
             ....:                 if new_hash_labels is None:
             ....:                     # make sure hash_labels is preserved if we don't update it
-            ....:                     assert G2.hash_labels == old_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+            ....:                     assert G2._hash_labels == old_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
             ....:                 else:
             ....:                     # make sure updating hash labels works
-            ....:                     assert G2.hash_labels == new_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
+            ....:                     assert G2._hash_labels == new_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
                         
         """
 

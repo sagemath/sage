@@ -45,6 +45,7 @@ from .generic_graph import GenericGraph
 from .graph import Graph
 from sage.rings.integer import Integer
 from sage.misc.decorators import rename_keyword
+from sage.misc.cachefunc import cached_method
 
 
 class BipartiteGraph(Graph):
@@ -399,6 +400,7 @@ class BipartiteGraph(Graph):
             Graph.__init__(self, **kwds)
             self.left = set()
             self.right = set()
+            self._hash_labels = hash_labels
             return
 
         # need to turn off partition checking for Graph.__init__() adding
@@ -410,8 +412,6 @@ class BipartiteGraph(Graph):
         self.add_edge = MethodType(Graph.add_edge, self)
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
-
-        self._hash_labels = hash_labels
 
         from sage.structure.element import is_Matrix
         if isinstance(data, BipartiteGraph):
@@ -548,6 +548,8 @@ class BipartiteGraph(Graph):
             if alist_file:
                 self.load_afile(data)
 
+        self._hash_labels = hash_labels
+
         return
 
     @cached_method
@@ -557,22 +559,22 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True)
-            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True)
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True)
             sage: A.__hash__() == B.__hash__()
             True
-            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True, hash_labels=True)
-            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True, hash_labels=True)
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True, hash_labels=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True, hash_labels=True)
             sage: A.__hash__() == B.__hash__()
             False
-            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True, weighted=True)
-            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True, weighted=True)
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True, weighted=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True, weighted=True)
             sage: A.__hash__() == B.__hash__()
             False
 
         TESTS::
 
-            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=False)
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=False)
             sage: A.__hash__()
             Traceback (most recent call last):
             ...
@@ -580,7 +582,7 @@ class BipartiteGraph(Graph):
         """
         if self.is_immutable():
             # Determine whether to hash edge labels
-            use_labels = self._use_hash_labels()
+            use_labels = self._use_labels_for_hash()
             edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
                 from collections import Counter  
