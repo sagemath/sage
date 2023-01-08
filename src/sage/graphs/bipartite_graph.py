@@ -94,9 +94,9 @@ class BipartiteGraph(Graph):
     - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
       itself as weighted or not. See ``self.weighted()``
 
-    - ``hash_labels`` - boolean (default: ``False``); whether to include labels
-      / weights during hashing. Will raise a warning when __hash__ is invoked
-      and default to true.
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the graph is
+      weighted. This parameter is ignored if the graph is mutable.
 
     .. NOTE::
 
@@ -411,7 +411,7 @@ class BipartiteGraph(Graph):
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
 
-        self.hash_labels=hash_labels
+        self._hash_labels = hash_labels
 
         from sage.structure.element import is_Matrix
         if isinstance(data, BipartiteGraph):
@@ -550,30 +550,45 @@ class BipartiteGraph(Graph):
 
         return
 
+    @cached_method
     def __hash__(self):
-
         """
         Compute a hash for ``self``, if ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True)
+            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True)
+            sage: A.__hash__() == B.__hash__()
+            True
+            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True, hash_labels=True)
+            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True, hash_labels=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=True, weighted=True)
+            sage: B = BipartiteGraph([(0, 1, 1), (1, 2, 33)], immutable=True, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+
+        TESTS::
+
+            sage: A = BipartiteGraph([(0, 1, 1), (1, 2, 1)], immutable=False)
+            sage: A.__hash__()
+            Traceback (most recent call last):
+            ...
+            TypeError: This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`
         """
         if self.is_immutable():
-
-            # determine whether to hash labels
-            # warn user if not manually specified
-            use_labels=self._use_hash_labels()
-
-
-            
-            edge_iter = self.edge_iterator(labels=use_labels)
-            
+            # Determine whether to hash edge labels
+            use_labels = self._use_hash_labels()
+            edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
-                from collections import Counter                
-                edge_items = Counter(edge_iter).items()
-            else:
-                edge_items = edge_iter
+                from collections import Counter  
+                edge_items = Counter(edge_items).items()
+            return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))
 
-            return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))        
-        else:
-            raise TypeError("This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`")
+        raise TypeError("This graph is mutable, and thus not hashable. "
+                        "Create an immutable copy by `g.copy(immutable=True)`")
 
     def _upgrade_from_graph(self):
         """

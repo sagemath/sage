@@ -570,6 +570,10 @@ class Graph(GenericGraph):
       immutable graph. Note that ``immutable=True`` is actually a shortcut for
       ``data_structure='static_sparse'``. Set to ``False`` by default.
 
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the graph is
+      weighted. This parameter is ignored if the graph is mutable.
+
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
       is the number of vertices.
@@ -1266,7 +1270,7 @@ class Graph(GenericGraph):
             self._backend = ib
             self._immutable = True
 
-        self.hash_labels = hash_labels
+        self._hash_labels = hash_labels
 
     # Formats
 

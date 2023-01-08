@@ -615,12 +615,39 @@ class GenericGraph(GenericGraph_pyx):
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
-    # check if specified by the user, if not then fallback
+
     def _use_labels_for_hash(self):
-        if not hasattr(self, "hash_labels") or self.hash_labels is None:
-            fallback=self.weighted()
-            self.hash_labels=fallback
-        return self.hash_labels
+        r"""
+        Helper method for method ``__hash__``.
+
+        This method checks whether parameter ``hash_labels`` has been specified
+        by the user. Otherwise, defaults to the value of parameter ``weigthed``.
+
+        TESTS::
+
+            sage: G = Graph()
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(hash_labels=True)
+            sage: G._use_labels_for_hash()
+            True
+            sage: G = Graph(hash_labels=False)
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(weighted=True)
+            sage: G._use_labels_for_hash()
+            True
+            sage: G = Graph(weighted=False)
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(hash_labels=False, weighted=True)
+            sage: G._use_labels_for_hash()
+            False
+        """
+        if not hasattr(self, "_hash_labels") or self._hash_labels is None:
+            self._hash_labels = self.weighted()
+        return self._hash_labels
+
 
     @cached_method
     def __hash__(self):
@@ -692,12 +719,28 @@ class GenericGraph(GenericGraph_pyx):
             sage: G1.__hash__() == G2.__hash__()
             True
 
-        Make sure hash_labels parameter behaves as expected:
+        Make sure ``hash_labels`` parameter behaves as expected
+        (:trac:`33255`)::
 
-
+            sage: A = Graph([(1, 2, 1)], immutable=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True)
+            sage: A.__hash__() == B.__hash__()
+            True
+            sage: A = Graph([(1, 2, 1)], immutable=True, hash_labels=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, hash_labels=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = Graph([(1, 2, 1)], immutable=True, weighted=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = Graph([(1, 2, 1)], immutable=True, hash_labels=False, weighted=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, hash_labels=False, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            True
         """
         if self.is_immutable():
-            use_labels=self._use_labels_for_hash()
+            use_labels = self._use_labels_for_hash()
             edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
                 from collections import Counter
@@ -996,6 +1039,10 @@ class GenericGraph(GenericGraph_pyx):
             used to copy an immutable graph, the data structure used is
             ``"sparse"`` unless anything else is specified.
 
+        - ``hash_labels`` -- boolean (default: ``None``); whether to include
+          edge labels during hashing. This parameter defaults to ``True`` if the
+          graph is weighted. This parameter is ignored if the graph is mutable.
+
         .. NOTE::
 
             If the graph uses
@@ -1229,7 +1276,7 @@ class GenericGraph(GenericGraph_pyx):
             desired_immutable = self.is_immutable() if immutable is None else immutable
             forced_mutable_copy = self.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=False)
             fresh_copy = forced_mutable_copy.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=desired_immutable)
-            fresh_copy.hash_labels=hash_labels
+            fresh_copy._hash_labels = hash_labels
             return fresh_copy
 
         # Which data structure should be used ?
@@ -1273,10 +1320,10 @@ class GenericGraph(GenericGraph_pyx):
                 data_structure = "sparse"
         
         G = self.__class__(self, name=self.name(), pos=copy(self._pos),
-                weighted=weighted,
-                data_structure=data_structure)
+                           weighted=weighted,
+                           data_structure=data_structure)
 
-        attributes_to_copy = ('_assoc', '_embedding', 'hash_labels')
+        attributes_to_copy = ('_assoc', '_embedding', '_hash_labels')
         for attr in attributes_to_copy:
             if hasattr(self, attr):
                 copy_attr = {}
