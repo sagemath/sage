@@ -94,6 +94,10 @@ class BipartiteGraph(Graph):
     - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
       itself as weighted or not. See ``self.weighted()``
 
+    - ``hash_labels`` - boolean (default: ``False``); whether to include labels
+      / weights during hashing. Will raise a warning when __hash__ is invoked
+      and default to true.
+
     .. NOTE::
 
         All remaining arguments are passed to the ``Graph`` constructor
@@ -345,7 +349,7 @@ class BipartiteGraph(Graph):
 
     """
 
-    def __init__(self, data=None, partition=None, check=True, *args, **kwds):
+    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
         """
         Create a bipartite graph.
 
@@ -406,6 +410,8 @@ class BipartiteGraph(Graph):
         self.add_edge = MethodType(Graph.add_edge, self)
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
+
+        self.hash_labels=hash_labels
 
         from sage.structure.element import is_Matrix
         if isinstance(data, BipartiteGraph):
@@ -543,6 +549,31 @@ class BipartiteGraph(Graph):
                 self.load_afile(data)
 
         return
+
+    def __hash__(self):
+
+        """
+        Compute a hash for ``self``, if ``self`` is immutable.
+        """
+        if self.is_immutable():
+
+            # determine whether to hash labels
+            # warn user if not manually specified
+            use_labels=self._use_hash_labels()
+
+
+            
+            edge_iter = self.edge_iterator(labels=use_labels)
+            
+            if self.allows_multiple_edges():
+                from collections import Counter                
+                edge_items = Counter(edge_iter).items()
+            else:
+                edge_items = edge_iter
+
+            return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))        
+        else:
+            raise TypeError("This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`")
 
     def _upgrade_from_graph(self):
         """

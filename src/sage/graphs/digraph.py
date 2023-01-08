@@ -517,7 +517,7 @@ class DiGraph(GenericGraph):
                  weighted=None, data_structure="sparse",
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False):
+                 sparse=True, immutable=False, hash_labels=None):
         """
         TESTS::
 
@@ -854,6 +854,8 @@ class DiGraph(GenericGraph):
                                      multiedges=self.allows_multiple_edges())
             self._backend = ib
             self._immutable = True
+
+        self.hash_labels=hash_labels
 
     # Formats
     def dig6_string(self):
