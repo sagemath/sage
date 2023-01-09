@@ -412,10 +412,11 @@ def choices(population, weights=None, *, cum_weights=None, k=1):
 
     EXAMPLES::
 
-        sage: data = [41, 50, 29, 37, 81, 30, 73, 63, 20, 35, 68, 22, 60, 31, 95]
-        sage: choices(data, k=5)
+        sage: data = [41, 50, 29, 37, 81, 30, 73, 63, 20, 35, 68, 22, 60, 31, 95]; data #random
+        [41, 50, 29, 37, 81, 30, 73, 63, 20, 35, 68, 22, 60, 31, 95]
+        sage: choices(data, k=5) #random
         [68, 63, 41, 73, 68]
-        sage: choices((2,3,4), cum_weights=(0.2, 0.7, 1.0), k=10)
+        sage: choices((2,3,4), cum_weights=(0.2, 0.7, 1.0), k=10) #random
         [4, 2, 3, 2, 3, 3, 2, 4, 3, 3]
     """
     return _pyrand().choices(population, weights=weights, cum_weights=cum_weights, k=k)
@@ -425,7 +426,9 @@ def randbytes(n):
     Generate n random bytes
     
     EXAMPLES::
-    
+
+        sage: randbytes(10) #random
+        b'we\xeb\xd3\x98w!\xa9\xcd\xbb'
     """
     return _pyrand().randbytes(n)
 
@@ -437,6 +440,10 @@ def triangular(low=0.0, high=1.0, mode=None):
     and having a given mode value in-between.
         
     EXAMPLES::
-        
+
+        sage:  sample = [triangular(1.0, 5.0, 2.0) for i in range(1, 5)]; sample #random
+        [3.33587269330505, 3.79190861193461, 3.90533363147488, 3.16611819302868]
+        sage: all(s >= 1.0 for s in sample) #random
+        True
     """
     return _pyrand().triangular(low, high, mode)
