@@ -397,3 +397,46 @@ def weibullvariate(alpha, beta):
         True
     """
     return _pyrand().weibullvariate(alpha, beta)
+
+def choices(population, weights=None, *, cum_weights=None, k=1):
+    r"""
+    Return a k sized list of elements chosen from the population with
+    replacement.
+
+    If a weights sequence is specified, selections are made according
+    to the relative weights. Alternatively, if a cum_weights sequence
+    is given, the selections are made according to the cumulative weights.
+    If neither weights nor cum_weights are specified, selections are made
+    with equal probability. If a weights sequence is supplied, it must be
+    the same length as the population sequence.
+
+    EXAMPLES::
+
+        sage: data = [41, 50, 29, 37, 81, 30, 73, 63, 20, 35, 68, 22, 60, 31, 95]
+        sage: choices(data, k=5)
+        [68, 63, 41, 73, 68]
+        sage: choices((2,3,4), cum_weights=(0.2, 0.7, 1.0), k=10)
+        [4, 2, 3, 2, 3, 3, 2, 4, 3, 3]
+    """
+    return _pyrand().choices(population, weights=weights, cum_weights=cum_weights, k=k)
+    
+def randbytes(n):
+    r"""
+    Generate n random bytes
+    
+    EXAMPLES::
+    
+    """
+    return _pyrand().randbytes(n)
+
+def triangular(low=0.0, high=1.0, mode=None):
+    r"""
+    Triangular distribution.
+
+    Continuous distribution bounded by given lower and upper limits,
+    and having a given mode value in-between.
+        
+    EXAMPLES::
+        
+    """
+    return _pyrand().triangular(low, high, mode)
