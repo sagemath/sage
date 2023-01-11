@@ -2073,6 +2073,59 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     return None
 
+def skew_hadamard_matrix_324():
+    r"""
+    Construct a skew Hadamard matrix of order 324.
+
+    The construction is taken from [Djo1994]_. It uses four supplementary difference sets `S_1, S_2, S_3, S_4`,
+    with `S_1` of skew type. These are then used to generate four matrices of order `81`, which are
+    inserted into the Goethals-Seidel array.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_324
+        sage: skew_hadamard_matrix_324()
+        324 x 324 dense matrix over Integer Ring...
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(skew_hadamard_matrix_324(), skew=True)
+        True
+    """
+    from sage.symbolic.ring import SymbolicRing
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
+
+    R = SymbolicRing()
+    x = R.var('x')
+    Z3 = Zmod(3)
+    F = Z3.extension(x**4 - x**3 - 1)
+    H = [(F.gen()**16)**i for i in range(10)]
+
+    cosets = []
+    for i in range(8):
+        cosets.append([F.gen()**i * el for el in H])
+        cosets.append([-F.gen()**i * el for el in H])
+    
+    def generate_set(index_set, cosets):
+        S = []
+        for idx in index_set:
+            S += cosets[idx]
+        return S
+
+    S1 = generate_set([1, 2, 4, 6, 8, 10, 12, 14], cosets)
+    S2 = generate_set([1, 2, 3, 4, 10, 11, 13], cosets)
+    S3 = generate_set([4, 5, 6, 8, 12, 13, 14], cosets)
+    S4 = generate_set([2, 4, 5, 6, 7, 11, 12, 13, 15], cosets)
+
+    A = matrix([[-1 if y-x in S1 else +1 for y in F] for x in F])
+    B = matrix([[-1 if y-x in S2 else +1 for y in F] for x in F])
+    C = matrix([[-1 if y-x in S3 else +1 for y in F] for x in F])
+    D = matrix([[-1 if y-x in S4 else +1 for y in F] for x in F])
+
+    return _construction_goethals_seidel_matrix(A, B, C, D)
+
+
 _skew_had_cache={}
 
 def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
