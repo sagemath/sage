@@ -2233,6 +2233,10 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = matrix([1])
+    elif n == 324:
+        if existence:
+            return true()
+        M = skew_hadamard_matrix_324()
     elif is_prime_power(n - 1) and ((n - 1) % 4 == 3):
         if existence:
             return true()
