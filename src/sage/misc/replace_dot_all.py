@@ -104,9 +104,9 @@ ImportError: cannot import name 'LCM' from 'sage.arith.functions' (sage.env.SAGE
 * The issue is that the name was originally LCM and we want to preserve that so LCM can still be called in the given file. But somehow you can import LCM from
 * sage.arith.all but not from sage.arith.functions
 * we need to call from sage.arith.functions import lcm as LCM so instead of replacing
-change_to_temp = change_to_temp.replace(new_mod_as_string,original_mod_string)
+new_import_statement = new_import_statement.replace(new_mod_as_string,original_mod_string)
 we should do
-change_to_temp = change_to_temp.replace(new_mod_as_string,new_mod_as_string + ' as ' + original_mod_string) # originally thought it would be best to make these replacements but it causes strange issues
+new_import_statement = new_import_statement.replace(new_mod_as_string,new_mod_as_string + ' as ' + original_mod_string) # originally thought it would be best to make these replacements but it causes strange issues
 
 
 PROBLEM: for example in ell_rational_field.py we are now getting
@@ -128,9 +128,10 @@ import re
 
 examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
 interesting_examples = dict(zip(examples, [0]*len(examples)))
-number_examples_to_print = 3
+log_messages = ''
+number_examples_to_print = 100  # controls how many examples we print out to the console
 numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced = 0, 0, 0, 0  # to print report on number of files changed
-
+replacement_log = ''  # to print report on changes made or not made
 # Functions
 
 
@@ -168,6 +169,7 @@ def find_replacements(location, regex, verbose=False):
 
     pattern = re.compile(regex)
     replacements = []
+    global log_messages, interesting_examples
     with open(location, "r+") as fp:
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
@@ -175,13 +177,13 @@ def find_replacements(location, regex, verbose=False):
             if pattern.search(row):  # (match the regex also do not want to mess with documentation)
                 prefix = ''
                 if '*' in row or 'SAGE_ROOT' in row:
-                    if verbose:
-                        print(
-                            f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.')
+                    if verbose and interesting_examples['J'] < number_examples_to_print:
+                        interesting_examples['J'] += 1
+                        log_messages += f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.\n'
                     continue
                 elif not (row.lstrip()[0:4] == 'from'):
                     if '"' not in row and "'" not in row:
-                        print(f'H. Interesting example (line with import statement does not start with "from") at {location} line number {row_index + 1}.')
+                        log_messages += f'H. Interesting example (line with import statement does not start with "from") at {location} line number {row_index + 1}.\n'
                         leading_space = 0
                         while len(row) > 0 and row[leading_space] == ' ' and leading_space < len(row)-1:
                             leading_space += 1
@@ -191,8 +193,7 @@ def find_replacements(location, regex, verbose=False):
                         prefix = row[leading_space:prefix_space]
                         row = row[prefix_space:]
                     else:
-                        print(
-                            f'I. Interesting example (import statement does not start with "from") at {location} line number {row_index + 1}. Not yet implemented...')
+                        log_messages += f'I. Interesting example (import statement does not start with "from") at {location} line number {row_index + 1}. Not yet implemented...\n'
                         continue
                 # find() method returns -1 if the value is not found, or if found it returns index of the first occurrence of the substring
                 import_index = row.find('import ')
@@ -210,10 +211,10 @@ def find_replacements(location, regex, verbose=False):
                         to_eval_raw += lines[row_index + span].strip()
                     if span > 0 and verbose:  # useful to see these multiline examples for debugging
                         if " as " in to_eval_raw and interesting_examples['D'] < number_examples_to_print:
-                            print(f'D. Interesting example (spans multiple lines and has " as ") at {location} line number {row_index + 1}')
+                            log_messages += f'D. Interesting example (spans multiple lines and has " as ") at {location} line number {row_index + 1}\n'
                             interesting_examples['D'] += 1
                         elif interesting_examples['B'] < number_examples_to_print:
-                            print(f'B. Interesting example (spans multiple lines) at {location} line number {row_index + 1}')
+                            log_messages += f'B. Interesting example (spans multiple lines) at {location} line number {row_index + 1}\n'
                             interesting_examples['B'] += 1
 
                 # if there is an "as" statement inside to_eval, we want to keep only the new name for the module e.g. "(aa as a, bb, cc as c)" becomes "(a,bb,c)"
@@ -228,7 +229,6 @@ def find_replacements(location, regex, verbose=False):
                     to_exec = to_exec.replace("'", '').replace('"', '')
                     if (to_exec[-1] == ','):
                         to_exec = to_exec[:-1]
-                        print(f'printing to_exec: {to_exec}')
                     exec(to_exec)
                 except ModuleNotFoundError as err:
                     print(f'ModuleNotFoundError: {err} found when trying to execute {to_exec}')
@@ -258,14 +258,13 @@ def find_replacements(location, regex, verbose=False):
                     # saves the callable name of module in variable postfix (e.g. for module "b" called by "bb as b" we set postfix = " as b")
                     if " as " in to_eval_list_raw[to_eval_list_index]:
                         if verbose and interesting_examples['C'] < number_examples_to_print:
-                            print(f'C. Interesting example (" as " in tuple import) at {location} at line number {row_index + 1}')
+                            log_messages += f'C. Interesting example (" as " in tuple import) at {location} at line number {row_index + 1}\n'
                             interesting_examples['C'] += 1
                         as_index = to_eval_list_raw[to_eval_list_index].index(" as ")
                         postfix = to_eval_list_raw[to_eval_list_index][as_index:]
-                        print(f'postfix at {location} at line number {row_index + 1}: {postfix}')
-                    change_to_temp = import_statements(mod, answer_as_str=True, verbose=False)  # import statement for the current mod in the list module
-                    import_index = change_to_temp.find('import')
-                    new_mod_as_string = change_to_temp[import_index + 7:].strip()  # the name for the module given by the function import_statements
+                    new_import_statement = import_statements(mod, answer_as_str=True, verbose=False)  # import statement for the current mod in the list module
+                    import_index = new_import_statement.find('import')
+                    new_mod_as_string = new_import_statement[import_index + 7:].strip()  # the name for the module given by the function import_statements
                     if as_index >= 0:
                         # the name for the module as originally called in the document (when there is an " as " statement)
                         original_mod_string = to_eval_list_raw[to_eval_list_index].strip()[:as_index]
@@ -273,29 +272,19 @@ def find_replacements(location, regex, verbose=False):
                         original_mod_string = to_eval_list[to_eval_list_index].strip()  # the name for the module as originally called in the document
                     if original_mod_string != new_mod_as_string:  # if the names differ, we use the original name as it was called in the document
                         if verbose and interesting_examples['A'] < number_examples_to_print:
-                            print(
-                                f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.')
+                            log_messages += f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.\n'
                             interesting_examples['A'] += 1
-                        rep = new_mod_as_string + ' as ' + original_mod_string
-                        print(f'changing {new_mod_as_string} to {rep} in {change_to_temp} at {location} at line number {row_index + 1}')
-                        change_to_temp = change_to_temp.replace(' '+new_mod_as_string, ' '+new_mod_as_string + ' as ' + original_mod_string)
-                        print(f'the result is {change_to_temp}')
-                        # change_to_temp = change_to_temp.replace(new_mod_as_string,original_mod_string) # originally this was the replacement but changed to the above to fix issues
+                        new_import_statement = new_import_statement.replace(' ' + new_mod_as_string, ' ' + new_mod_as_string + ' as ' + original_mod_string)
                         if " as " in postfix and interesting_examples['G'] < number_examples_to_print:
-                            print(
-                                f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.')
+                            log_messages += f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.\n'
                             interesting_examples['G'] += 1
                     if len(postfix.strip()) > 0:  # if module was called with " as " statement, we put that back in by adding the string "postfix"
-                        # if " as " in change_to_temp locate the index of " as ", remove the end after this, and add the postfix there
-                        if " as " in change_to_temp:
-                            if verbose:
-                                print(f'adding postfix {postfix} to {change_to_temp} after stripping existing "as" statement')
-                            change_to_temp = change_to_temp[:change_to_temp.index(" as ")] + ' ' + postfix.strip()
+                        # if " as " in new_import_statement locate the index of " as ", remove the end after this, and add the postfix there
+                        if " as " in new_import_statement:
+                            new_import_statement = new_import_statement[:new_import_statement.index(" as ")] + ' ' + postfix.strip()
                         else:
-                            if verbose:
-                                print(f'adding postfix {postfix} to {change_to_temp}')
-                            change_to_temp += (' ' + postfix.strip())
-                    change_to += (prefix + change_to_temp + '\n')
+                            new_import_statement += (' ' + postfix.strip())
+                    change_to += (prefix + new_import_statement + '\n')
                     to_eval_list_index += 1
                 # [:-1] on change_to gets rid of the last '\n' we added which adds an unnecessary new line
                 replacement = [row_index, import_index, change_to[:-1]].copy()
@@ -354,6 +343,7 @@ def process_line(location, line, replacements, import_index, verbose=False):
 
     line = line.rstrip()  # stripping line break
     new_line = ''
+    global log_messages, interesting_examples
     if len(replacements) == 0:
         return line, replacements
     if import_index == replacements[0][0]:  # if line marked as containing .all
@@ -366,10 +356,10 @@ def process_line(location, line, replacements, import_index, verbose=False):
         # new_line = replacement[2].replace('from ',' '*leading_space + 'from ') # adds correct amount of indentation to the replacement at each line
         if verbose and leading_space > 0:
             if len(replacement) == 4 and interesting_examples['F'] < number_examples_to_print:
-                print(f'F. Interesting example (has leading space and multiline) at {location} row number {replacement[0] + 1}')
+                log_messages += f'F. Interesting example (has leading space and multiline) at {location} row number {replacement[0] + 1}\n'
                 interesting_examples['F'] += 1
             elif interesting_examples['E'] < number_examples_to_print:
-                print(f'E. Interesting example (has leading space) at {location} row number {replacement[0] + 1}')
+                log_messages += f'E. Interesting example (has leading space) at {location} row number {replacement[0] + 1}\n'
                 interesting_examples['E'] += 1
 
     else:  # if line does not contain .all
@@ -444,9 +434,20 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
             if pattern.search(name):
                 numberFilesMatchingRegex += 1
                 location = os.path.join(root, name)[1:]
-                make_replacements_in_file(dir + location, regex, verbose)
+                if location.find('replace_dot_all') == -1:  # to avoid chaning anything in this file itself
+                    make_replacements_in_file(dir + location, regex, verbose)
     report = f'REPORT:\nNumber of files checked: {numberFiles}\nNumber of files matching regex: {numberFilesMatchingRegex}\nNumber of files changed: {numberFilesChanged}\nNumber of import statements replaced: {numberStatementsReplaced}'
     print('*'*100 + '\n' + report + '\n' + '*'*100)
+
+
+def sort_log_messages():
+    global log_messages
+    # split the log messages into a list of strings (each string is a line separated by a newline character)
+    log_messages = log_messages.split('\n')
+    # sort the list of strings
+    log_messages.sort()
+    # join the list of strings into a single string separated by newline characters
+    log_messages = '\n'.join(log_messages)
 
 
 # ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
@@ -455,7 +456,10 @@ if __name__ == "__main__":
     fileRegex = r'.*[.](py|pyx|pxi)$'
     regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
     os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
-    os.chdir(sage.env.SAGE_SRC + '/sage/coding')  # change to a more specific sage directory if desired
+    # os.chdir(sage.env.SAGE_SRC + '/sage/coding')  # change to a more specific directory if desired
     dir = os.getcwd()  # Get the current working directory
     walkdir_replace_dot_all(dir, fileRegex, regex, verbose=True)
+    # sort lines of log_messages by first character of each line (lines are separated by \n)
+    sort_log_messages()
+    print(log_messages)
 # ************************************************************************************************************************************************************************
