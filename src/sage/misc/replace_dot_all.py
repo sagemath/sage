@@ -74,7 +74,7 @@ sage.env.SAGE_SRC/sage/env.py line number 14.
 *   sage: cmd = "from sage.all import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
 
 
-PROBLEM: *  from sage.arith.all import LCM       is valid but this gets replaced to   from sage.arith.functions import lcm      which I decided to replace by    from sage.arith.functions import LCM
+PROBLEM: *  from sage.arith.all import LCM       is valid but this gets replaced to   from sage.arith.functions import lcm      which span decided to replace by    from sage.arith.functions import LCM
 * since in this file, they will be calling the function by the name LCM, the way they imported it. However, the statement     from sage.arith.functions import LCM      is not valid.
 We get the error:
 
@@ -126,7 +126,7 @@ import re
 
 # Global variables
 
-examples = list('ABCDEFGHI')  # controls how we print out interesting examples to the console
+examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
 interesting_examples = dict(zip(examples, [0]*len(examples)))
 number_examples_to_print = 3
 numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced = 0, 0, 0, 0  # to print report on number of files changed
@@ -147,14 +147,14 @@ def find_replacements(location, regex, verbose=False):
 
     OUTPUT:
 
-    an array [row_index,line_index,replaced_commands,lines_spanned (optional)] with entries
+    an array [row_index,import_index,replaced_commands,lines_spanned (optional)] with entries
 
     - ``row_index`` -- the row index (zero indexed) in the file which needs replacing
-    - ``line_index`` -- the index of row row_index which start of the portion which needs to be changed
+    - ``import_index`` -- the index of row row_index which marks the beginning of the word 'import' in the line
     - ``replaced_commands`` -- the string which will replace the current line
     - ``lines_spanned`` -- the number of lines the original statement spans
 
-    this output is specifically designed to be fed into the function process_line(location,line,replacements,line_index) and
+    this output is specifically designed to be fed into the function process_line(location,line,replacements,import_index) and
     called inside of the function "make_replacements_in_file(location)" to populate the variable "replacements"
 
     EXAMPLES::
@@ -175,13 +175,13 @@ def find_replacements(location, regex, verbose=False):
             if pattern.search(row):  # (match the regex also do not want to mess with documentation)
                 prefix = ''
                 if '*' in row or 'SAGE_ROOT' in row:
-                    # if verbose:
-                    #    print(f'I. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.')
+                    if verbose:
+                        print(
+                            f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.')
                     continue
                 elif not (row.lstrip()[0:4] == 'from'):
-                    print(f'line number {row_index + 1}')
                     if '"' not in row and "'" not in row:
-                        print(f'H. Interesting example (import statement does not start with "from") at {location} line number {row_index + 1}.')
+                        print(f'H. Interesting example (line with import statement does not start with "from") at {location} line number {row_index + 1}.')
                         leading_space = 0
                         while len(row) > 0 and row[leading_space] == ' ' and leading_space < len(row)-1:
                             leading_space += 1
@@ -194,22 +194,21 @@ def find_replacements(location, regex, verbose=False):
                         print(
                             f'I. Interesting example (import statement does not start with "from") at {location} line number {row_index + 1}. Not yet implemented...')
                         continue
-                    # continue #going to try and implement this case
                 # find() method returns -1 if the value is not found, or if found it returns index of the first occurrence of the substring
-                line_index = row.find('import ')
+                import_index = row.find('import ')
                 modules = ''
                 to_exec = row.strip()  # the import statement itself which we will clean and call to import modules e.g. "import (aa as a, bb, cc as c)"
-                to_eval = row[line_index + 7:-1].strip()  # tuple of modules in import statement but e.g. "(aa as a, bb, cc as c)" is saved as "(a,bb,c)"
-                to_eval_raw = row[line_index + 7:-1].strip()  # same as to_eval but we don't get rid of " as " parts e.g. "(aa as a, bb, cc as c)"
-                i = 0  # keeps track of how many lines the import statement spans
+                to_eval = row[import_index + 7:-1].strip()  # tuple of modules in import statement but e.g. "(aa as a, bb, cc as c)" is saved as "(a,bb,c)"
+                to_eval_raw = row[import_index + 7:-1].strip()  # same as to_eval but we don't get rid of " as " parts e.g. "(aa as a, bb, cc as c)"
+                span = 0  # keeps track of how many lines the import statement spans
 
                 if '(' in row:  # for examples where we import a tuple of modules and the statement spans several lines
-                    while ')' not in lines[row_index + i]:  # finding the line which closes the import statement
-                        i += 1
-                        to_exec += lines[row_index + i].strip()
-                        to_eval += lines[row_index + i].strip()
-                        to_eval_raw += lines[row_index + i].strip()
-                    if i > 0 and verbose:  # useful to see these multiline examples for debugging
+                    while ')' not in lines[row_index + span]:  # finding the line which closes the import statement
+                        span += 1
+                        to_exec += lines[row_index + span].strip()
+                        to_eval += lines[row_index + span].strip()
+                        to_eval_raw += lines[row_index + span].strip()
+                    if span > 0 and verbose:  # useful to see these multiline examples for debugging
                         if " as " in to_eval_raw and interesting_examples['D'] < number_examples_to_print:
                             print(f'D. Interesting example (spans multiple lines and has " as ") at {location} line number {row_index + 1}')
                             interesting_examples['D'] += 1
@@ -263,6 +262,7 @@ def find_replacements(location, regex, verbose=False):
                             interesting_examples['C'] += 1
                         as_index = to_eval_list_raw[to_eval_list_index].index(" as ")
                         postfix = to_eval_list_raw[to_eval_list_index][as_index:]
+                        print(f'postfix at {location} at line number {row_index + 1}: {postfix}')
                     change_to_temp = import_statements(mod, answer_as_str=True, verbose=False)  # import statement for the current mod in the list module
                     import_index = change_to_temp.find('import')
                     new_mod_as_string = change_to_temp[import_index + 7:].strip()  # the name for the module given by the function import_statements
@@ -276,20 +276,31 @@ def find_replacements(location, regex, verbose=False):
                             print(
                                 f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.')
                             interesting_examples['A'] += 1
-                        change_to_temp = change_to_temp.replace(new_mod_as_string, new_mod_as_string + ' as ' + original_mod_string)
+                        rep = new_mod_as_string + ' as ' + original_mod_string
+                        print(f'changing {new_mod_as_string} to {rep} in {change_to_temp} at {location} at line number {row_index + 1}')
+                        change_to_temp = change_to_temp.replace(' '+new_mod_as_string, ' '+new_mod_as_string + ' as ' + original_mod_string)
+                        print(f'the result is {change_to_temp}')
                         # change_to_temp = change_to_temp.replace(new_mod_as_string,original_mod_string) # originally this was the replacement but changed to the above to fix issues
                         if " as " in postfix and interesting_examples['G'] < number_examples_to_print:
                             print(
                                 f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.')
                             interesting_examples['G'] += 1
                     if len(postfix.strip()) > 0:  # if module was called with " as " statement, we put that back in by adding the string "postfix"
-                        change_to_temp += (' ' + postfix.strip())
+                        # if " as " in change_to_temp locate the index of " as ", remove the end after this, and add the postfix there
+                        if " as " in change_to_temp:
+                            if verbose:
+                                print(f'adding postfix {postfix} to {change_to_temp} after stripping existing "as" statement')
+                            change_to_temp = change_to_temp[:change_to_temp.index(" as ")] + ' ' + postfix.strip()
+                        else:
+                            if verbose:
+                                print(f'adding postfix {postfix} to {change_to_temp}')
+                            change_to_temp += (' ' + postfix.strip())
                     change_to += (prefix + change_to_temp + '\n')
                     to_eval_list_index += 1
                 # [:-1] on change_to gets rid of the last '\n' we added which adds an unnecessary new line
-                replacement = [row_index, line_index, change_to[:-1]].copy()
-                if i > 0:  # if original statement spanned multiple lines, we store that information to signal that we need to skip lines as we read the document in the function make_replacements_in_file
-                    replacement.append(i)
+                replacement = [row_index, import_index, change_to[:-1]].copy()
+                if span > 0:  # if original statement spanned multiple lines, we store that information to signal that we need to skip lines as we read the document in the function make_replacements_in_file
+                    replacement.append(span)
                 replacements.append(replacement)
             row_index += 1
     # to print a statement referencing each file which a change was made to
@@ -303,7 +314,7 @@ def find_replacements(location, regex, verbose=False):
     return replacements
 
 
-def process_line(location, line, replacements, line_index, verbose=False):
+def process_line(location, line, replacements, import_index, verbose=False):
     r"""
     Designed specifically to be called inside of the function make_replacements_in_file(location) to process a single line while iterating over lines in a file
 
@@ -313,7 +324,7 @@ def process_line(location, line, replacements, line_index, verbose=False):
                                     location = cwd + file_to_change
     - ``line`` -- a line in a file
     - ``replacements`` -- the array output from find_replacements(location)
-    - ``line_index`` -- the index in the line which locates 'import'
+    - ``import_index`` -- the index in the line which locates 'import'
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     OUTPUT:
@@ -334,7 +345,7 @@ def process_line(location, line, replacements, line_index, verbose=False):
         python3: replacements = find_replacements(location)
         python3: file = open(location, "r")
         python3: lines = file.readlines()
-        python3: row_index,line_index = replacements[0],replacements[1]
+        python3: row_index,import_index = replacements[0],replacements[1]
         python3: line = lines[row_index]
         python3: print(f'old line, old reps: {line,replacements}')
         python3: new_line,replacements = process_line(location,line,replacements,row_index)
@@ -345,7 +356,7 @@ def process_line(location, line, replacements, line_index, verbose=False):
     new_line = ''
     if len(replacements) == 0:
         return line, replacements
-    if line_index == replacements[0][0]:  # if line marked as containing .all
+    if import_index == replacements[0][0]:  # if line marked as containing .all
         replacement = replacements.pop(0)
         leading_space = 0
         while len(line) > 0 and line[leading_space] == ' ' and leading_space < len(line)-1:
@@ -390,17 +401,17 @@ def make_replacements_in_file(location, regex, verbose=False):
     replacements = find_replacements(location, regex, verbose)
     file = open(location, "r")
     replaced_content = ""
-    line_index = 0
+    row_index = 0  # keeps track of the line number
     lines = file.readlines()
-    while line_index < len(lines):  # looping through the file
-        line = lines[line_index]
+    while row_index < len(lines):  # looping through the file
+        line = lines[row_index]
         span = 0  # keeps track of number of lines import statement spans
-        if len(replacements) > 0 and line_index == replacements[0][0] and len(replacements[0]) == 4:
-            span = replacements[0][3]  # if import statement spans i lines
+        if len(replacements) > 0 and row_index == replacements[0][0] and len(replacements[0]) == 4:
+            span = replacements[0][3]  # if import statement spans span lines
         # returns the line if no replacements are needed and returns the processed line otherwise
-        new_line, replacements = process_line(location, line, replacements, line_index, verbose=verbose)
+        new_line, replacements = process_line(location, line, replacements, row_index, verbose=verbose)
         replaced_content += new_line + "\n"  # concatenate the new string and add an end-line break
-        line_index += 1 + span
+        row_index += 1 + span
     file.close()  # close the file
     write_file = open(location, "w")  # Open file in write mode
     write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
@@ -409,7 +420,7 @@ def make_replacements_in_file(location, regex, verbose=False):
 # to iterate over all files in src/sage matching the given regular expression
 
 
-def walkdir_replace_dot_all(fileRegex, regex, verbose=False):
+def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
     r"""
     Writes over the files in src/sage matching the regex pattern fileRegex making replacements to all lines in such files
     which match the regex pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
@@ -433,7 +444,7 @@ def walkdir_replace_dot_all(fileRegex, regex, verbose=False):
             if pattern.search(name):
                 numberFilesMatchingRegex += 1
                 location = os.path.join(root, name)[1:]
-                make_replacements_in_file(cwd+location, regex, verbose)
+                make_replacements_in_file(dir + location, regex, verbose)
     report = f'REPORT:\nNumber of files checked: {numberFiles}\nNumber of files matching regex: {numberFilesMatchingRegex}\nNumber of files changed: {numberFilesChanged}\nNumber of import statements replaced: {numberStatementsReplaced}'
     print('*'*100 + '\n' + report + '\n' + '*'*100)
 
@@ -444,6 +455,7 @@ if __name__ == "__main__":
     fileRegex = r'.*[.](py|pyx|pxi)$'
     regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
     os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
-    cwd = os.getcwd()  # Get the current working directory
-    walkdir_replace_dot_all(fileRegex, regex, verbose=True)
+    os.chdir(sage.env.SAGE_SRC + '/sage/coding')  # change to a more specific sage directory if desired
+    dir = os.getcwd()  # Get the current working directory
+    walkdir_replace_dot_all(dir, fileRegex, regex, verbose=True)
 # ************************************************************************************************************************************************************************
