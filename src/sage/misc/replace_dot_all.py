@@ -20,118 +20,68 @@ INSTRUCTIONS:
 To fix the above issue for all .py, .pyx, and .pxi files in the src/sage directory,
 run the following from a terminal in SAGE_ROOT ::
 
-    ./sage src/sage/misc/replace_dot_all.py
+    ./sage -python src/sage/misc/replace_dot_all.py
 
 Running replace_dot_all.py will call the function walkdir_replace_dot_all() which walks through all files in
 src/sage matching the filePattern above and replaces certain 'from module.all import something' (those matching the pattern above)
 with the correct import statement by applying the function import_statements from src/sage/misc/dev_tools.py.
 
-ISSUES: (Note: In order to show examples of bad import statements and have them not be overwritten by this script, just include a * somewhere in the same line. Any lines with * are automatically skipped.)
+The user can also pass arguments -l to specify a subdirectory of src/sage or even a specific file to fix. The root location is
+automatically set to src/sage so you need only specify the path from there. For example ::
 
-- PROBLEM (fixed!): for import statements on multiple lines we need to preserve the original indentation after making changes with import_statements
+    ./sage -python src/sage/misc/replace_dot_all.py -l arith
 
-- PROBLEM (fixed!): * from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor)
-We need to deal with these separately i.e. rewrite this as a list of single string imports
+will fix all files in src/sage/arith and ::
 
--PROBLEM (fixed!): need to handle statements which import a module as a certain name
+    ./sage -python src/sage/misc/replace_dot_all.py -l arith/functions.py
 
--PROBLEM (fixed!): combining the two above problems but multiline
-e.g. * from sage.arith.all import (hilbert_conductor_inverse,
-                                                  hilbert_conductor.
-                                                      infinity as oo)
+will fix the file src/sage/arith/functions.py. The file extension is necessary in the case of a specific file. The user can also
+pass the verbose flag -v to print out the files being fixed. For example ::
 
--PROBLEM (fixed!): Statements like
-    from sage.rings.rational_field import QQ
-can get replaced to
-    from sage.rings.rational_field import Q
-but then we have files calling QQ when it was imported as Q. This is an issue anytime an object has multiple names. We should have a
-way of referencing the original way the object was called and replace it in the statement given from the function import_statements by hand.
+    ./sage -python src/sage/misc/replace_dot_all.py -l arith -v
 
--PROBLEM (fixed!): need to handle exceptions better in find_replacements
+will fix all files in src/sage/arith and print out the unusual examples of import statements it finds.
 
--PROBLEM: We currently only fix these issues in locations where 'from' are the first four characters of the line after any whitespace.
-this excludes lines in documentation where an example is given of the form "sage: from module.submod.all import something". Current examples:
-
-sage.env.SAGE_SRC/sage/categories/category.py line number 156.
-*       sage: from sage.categories.all import Category
-sage.env.SAGE_SRC/sage/categories/category.py line number 203.
-*       sage: from sage.categories.all import Category
-sage.env.SAGE_SRC/sage/misc/cachefunc.pyx line number 72.
-*           ....: 'from sage.all import cached_method',
-sage.env.SAGE_SRC/sage/misc/cachefunc.pyx line number 109.
-*   sage: cython_code = ["from sage.all import cached_method, cached_in_parent_method, Category, Objects",
-sage.env.SAGE_SRC/sage/misc/lazy_import.pyx line number 1043.
-*       Importing my_Qp from here is deprecated; please use "from sage.all import Qp as my_Qp" instead.
-sage.env.SAGE_SRC/sage/numerical/linear_functions.pyx line number 1067.
-*           sage: from sage.rings.all import AA
-sage.env.SAGE_SRC/sage/structure/element.pyx line number 2230.
-*       sage: cython_code = ["from sage.all import cached_method, cached_in_parent_method, Category, Objects",
-sage.env.SAGE_SRC/sage/structure/element.pyx line number 2328.
-*            ....: from sage.all import cached_method, lazy_attribute, Category, Objects
-sage.env.SAGE_SRC/sage/tests/books/computational-mathematics-with-sagemath/premierspas_doctest.py line number 120.
-*  sage: from sage.all import pi
-sage.env.SAGE_SRC/sage/env.py line number 14.
-*   sage: cmd = "from sage.all import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
-
-
-PROBLEM: *  from sage.arith.all import LCM       is valid but this gets replaced to   from sage.arith.functions import lcm      which span decided to replace by    from sage.arith.functions import LCM
-* since in this file, they will be calling the function by the name LCM, the way they imported it. However, the statement     from sage.arith.functions import LCM      is not valid.
-We get the error:
-
-Traceback (most recent call last):
-  File "sage.env.SAGE_SRC/sage/misc/replace_dot_all.py", line 89, in <module>
-    from sage.all import * # which one is better to use?
-  File "sage.env.SAGE_SRC/sage/all.py", line 135, in <module>
-    from sage.rings.all      import *
-  File "sage.env.SAGE_SRC/sage/rings/all.py", line 79, in <module>
-    from .number_field.all import *
-  File "sage.env.SAGE_SRC/sage/rings/number_field/all.py", line 2, in <module>
-    from .number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
-  File "sage.env.SAGE_SRC/sage/rings/number_field/number_field.py", line 137, in <module>
-    from .unit_group import UnitGroup
-  File "sage.env.SAGE_SRC/sage/rings/number_field/unit_group.py", line 163, in <module>
-    from sage.groups.abelian_gps.values import AbelianGroupWithValues_class
-  File "sage.env.SAGE_SRC/sage/groups/abelian_gps/values.py", line 76, in <module>
-    from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, _normalize
-  File "sage.env.SAGE_SRC/sage/groups/abelian_gps/abelian_group.py", line 213, in <module>
-    from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
-  File "sage.env.SAGE_SRC/sage/groups/abelian_gps/abelian_group_element.py", line 47, in <module>
-    from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
-  File "sage.env.SAGE_SRC/sage/groups/abelian_gps/element_base.py", line 24, in <module>
-    from sage.arith.functions import LCM
-ImportError: cannot import name 'LCM' from 'sage.arith.functions' (sage.env.SAGE_SRC/sage/arith/functions.cpython-310-x86_64-linux-gnu.so)
-
-* The issue is that the name was originally LCM and we want to preserve that so LCM can still be called in the given file. But somehow you can import LCM from
-* sage.arith.all but not from sage.arith.functions
-* we need to call from sage.arith.functions import lcm as LCM so instead of replacing
-new_import_statement = new_import_statement.replace(new_mod_as_string,original_mod_string)
-we should do
-new_import_statement = new_import_statement.replace(new_mod_as_string,new_mod_as_string + ' as ' + original_mod_string) # originally thought it would be best to make these replacements but it causes strange issues
-
-
-PROBLEM: for example in ell_rational_field.py we are now getting
-
-from sage.rings.infinity import Infinity as infinity as oo
-
-because we have two different cases where we use the as statement and in this case we are doing both.
+In some rare cases, such as import statments appearing in doctests, the program will not be able to fix the import statement. The program will
+print out the location of the file and the line number of the exceptional import statement. The user can then manually fix the import statement.
+The program will also (usually) print out the suggested replacement for the import statement. The user can then copy and paste this replacement
+into the file. In the cases a suggested replacement is not printed out, the user should use the function import_statements()
+from src/sage/misc/dev_tools.py to find the correct import statement.
 """
 
 # Importing packages
 
 from sage.misc.dev_tools import import_statements
 # import sage.all
-from sage.all import *  # which one is better to use?
+from sage.all import *
 import os
 import re
+import argparse
+
+
+# to parse arguments passed to the script
+
+def parseArguments():
+    # Create argument parser
+    parser = argparse.ArgumentParser()
+    # Optional arguments
+    parser.add_argument(
+        "-l", "--location", help="Location of directory or file (root set at src/sage so input path from here). If no argument given, walks through all files in src/sage.", type=str)
+    parser.add_argument("-v", "--verbose", help="Increase output verbosity. Shows locations of any unusual cases of import statements and the corresponding changes.",
+                        action="store_true")    # Parse arguments
+    args = parser.parse_args()
+    return args
+
 
 # Global variables
-
+optional_arguments = sys.argv
 examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
 interesting_examples = dict(zip(examples, [0]*len(examples)))
 log_messages = ''
-number_examples_to_print = 100  # controls how many examples we print out to the console
+number_examples_to_print = 100  # controls how many examples we print out to the console (100 effectively allows all unusual examples to be printed)
 numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced = 0, 0, 0, 0  # to print report on number of files changed
-replacement_log = ''  # to print report on changes made or not made
+
+
 # Functions
 
 
@@ -171,6 +121,7 @@ def find_replacements(location, regex, verbose=False):
     replacements = []
     global log_messages, interesting_examples
     with open(location, "r+") as fp:
+        skip_line = False
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
         for row in lines:  # iterate over all lines of python file
@@ -182,8 +133,10 @@ def find_replacements(location, regex, verbose=False):
                         log_messages += f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.\n'
                     continue
                 elif not (row.lstrip()[0:4] == 'from'):
+                    skip_line = True
                     if '"' not in row and "'" not in row:
-                        log_messages += f'H. Interesting example (line with import statement does not start with "from") at {location} line number {row_index + 1}.\n'
+                        print(
+                            f'\nNEED TO CHANGE MANUALLY \n  Issue: line with import statement does not start with "from" \n  Location: at {location} \n  Line number: {row_index + 1}. \n  Giving correct import statements:\n')
                         leading_space = 0
                         while len(row) > 0 and row[leading_space] == ' ' and leading_space < len(row)-1:
                             leading_space += 1
@@ -193,7 +146,8 @@ def find_replacements(location, regex, verbose=False):
                         prefix = row[leading_space:prefix_space]
                         row = row[prefix_space:]
                     else:
-                        log_messages += f'I. Interesting example (import statement does not start with "from") at {location} line number {row_index + 1}. Not yet implemented...\n'
+                        print(
+                            f'\nNEED TO CHANGE MANUALLY \n  Issue: import statement does not start with "from" and contains quotation marks \n  Location: at {location} \n  Line number: {row_index + 1}. \n  Not able to suggest correct import statements. User must use the function import_statements().')
                         continue
                 # find() method returns -1 if the value is not found, or if found it returns index of the first occurrence of the substring
                 import_index = row.find('import ')
@@ -290,12 +244,13 @@ def find_replacements(location, regex, verbose=False):
                 replacement = [row_index, import_index, change_to[:-1]].copy()
                 if span > 0:  # if original statement spanned multiple lines, we store that information to signal that we need to skip lines as we read the document in the function make_replacements_in_file
                     replacement.append(span)
-                replacements.append(replacement)
+                if skip_line is False:
+                    replacements.append(replacement)
+                else:
+                    print(replacement[2])
             row_index += 1
-    # to print a statement referencing each file which a change was made to
-    # line_numbers = [replacement[0] for replacement in replacements]
-    # if len(line_numbers)>0:
-        # print(f'file {location} contains .all statements at lines {line_numbers}')
+            skip_line = False
+    # keeping track of the numbers of files changed and statements replaced
     global numberStatementsReplaced, numberFilesChanged
     numberStatementsReplaced += len(replacements)
     if len(replacements) > 0:
@@ -426,7 +381,7 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
         python3: cwd = os.getcwd() # Get the current working directory
         python3: walkdir_replace_dot_all()
     """
-    global numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced
+    global numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced, log_messages
     pattern = re.compile(fileRegex)
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
@@ -436,6 +391,10 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
                 location = os.path.join(root, name)[1:]
                 if location.find('replace_dot_all') == -1:  # to avoid chaning anything in this file itself
                     make_replacements_in_file(dir + location, regex, verbose)
+    # sort lines of log_messages by first character of each line(lines are separated by \n)
+    sort_log_messages()
+    if verbosity:
+        print(log_messages)
     report = f'REPORT:\nNumber of files checked: {numberFiles}\nNumber of files matching regex: {numberFilesMatchingRegex}\nNumber of files changed: {numberFilesChanged}\nNumber of import statements replaced: {numberStatementsReplaced}'
     print('*'*100 + '\n' + report + '\n' + '*'*100)
 
@@ -446,20 +405,36 @@ def sort_log_messages():
     log_messages = log_messages.split('\n')
     # sort the list of strings
     log_messages.sort()
+    # add index to each line
+    for i in range(len(log_messages)):
+        log_messages[i] = f'{i}. {log_messages[i]}'
     # join the list of strings into a single string separated by newline characters
-    log_messages = '\n'.join(log_messages)
+    log_messages = '\n'.join(log_messages)[2:]
 
 
 # ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
 # this executes the main function in this file which writes over all import statements matching regex in files in src/sage matching fileRegex:
 if __name__ == "__main__":
+    # Parse the arguments
+    args = parseArguments()
+    verbosity = args.verbose
+    # Print arguments
+    print("Executing replace_dot_all.py with arguments:")
+    for a in args.__dict__:
+        print('    ' + str(a) + ": " + str(args.__dict__[a]))
+    # Declare regular expressions
     fileRegex = r'.*[.](py|pyx|pxi)$'
     regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
-    os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
-    # os.chdir(sage.env.SAGE_SRC + '/sage/coding')  # change to a more specific directory if desired
-    dir = os.getcwd()  # Get the current working directory
-    walkdir_replace_dot_all(dir, fileRegex, regex, verbose=True)
-    # sort lines of log_messages by first character of each line (lines are separated by \n)
-    sort_log_messages()
-    print(log_messages)
+    # Execute the main function based on the specified location and verbosity
+    if args.location is None:
+        os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
+        dir = os.getcwd()  # Get the current working directory
+        walkdir_replace_dot_all(dir, fileRegex, regex, verbose=verbosity)
+    elif args.location.find('.py') == -1 and args.location.find('.pxi') == -1:
+        os.chdir(sage.env.SAGE_SRC + '/sage/' + args.location)  # change to directory specified by location argument
+        dir = os.getcwd()  # Get the current working directory
+        walkdir_replace_dot_all(dir, fileRegex, regex, verbose=verbosity)
+    elif args.location.find('.py') != -1 or args.location.find('.pxi') != -1:
+        # make replacements in file specified by location argument
+        make_replacements_in_file(sage.env.SAGE_SRC + '/sage/' + args.location, regex, verbose=verbosity)
 # ************************************************************************************************************************************************************************
