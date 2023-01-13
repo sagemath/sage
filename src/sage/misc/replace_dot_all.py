@@ -110,11 +110,13 @@ def find_replacements(location, regex, verbose=False):
 
     EXAMPLES::
 
-        python3: os.chdir('sage.env.SAGE_SRC/sage') # change to sage directory
-        python3: cwd = os.getcwd() # Get the current working directory
-        python3: file_to_change = 'structure/element.pyx'
-        python3: location = cwd + file_to_change
-        python3: replacements = find_replacements(location)
+        sage: from sage.misc.replace_dot_all import *
+        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
+        sage: cwd = os.getcwd() # Get the current working directory
+        sage: file_to_change = 'structure/element.pyx'
+        sage: location = cwd + file_to_change
+        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
+        sage: replacements = find_replacements(location, regex, verbose=True)
     """
 
     pattern = re.compile(regex)
@@ -282,18 +284,20 @@ def process_line(location, line, replacements, import_index, verbose=False):
 
     - to replace the first line which needs a replacement at the file with filepath #'structure/element.pyx'::
 
-        python3: os.chdir('sage.env.SAGE_SRC/sage') # change to sage directory
-        python3: cwd = os.getcwd() # Get the current working directory
-        python3: file_to_change = 'structure/element.pyx'
-        python3: location = cwd + file_to_change
-        python3: replacements = find_replacements(location)
-        python3: file = open(location, "r")
-        python3: lines = file.readlines()
-        python3: row_index,import_index = replacements[0],replacements[1]
-        python3: line = lines[row_index]
-        python3: print(f'old line, old reps: {line,replacements}')
-        python3: new_line,replacements = process_line(location,line,replacements,row_index)
-        python3: print(f'new line, new reps: {new_line,replacements}')
+        sage: from sage.misc.replace_dot_all import *
+        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
+        sage: cwd = os.getcwd() # Get the current working directory
+        sage: file_to_change = 'structure/element.pyx'
+        sage: location = cwd + file_to_change
+        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
+        sage: replacements = find_replacements(location, regex, verbose=True)
+        sage: file = open(location, "r")
+        sage: lines = file.readlines()
+        sage: row_index,import_index = replacements[0],replacements[1]
+        sage: line = lines[row_index]
+        sage: print(f'old line, old reps: {line,replacements}')
+        sage: new_line,replacements = process_line(location,line,replacements,import_index)
+        sage: print(f'new line, new reps: {new_line,replacements}')
     """
 
     line = line.rstrip()  # stripping line break
@@ -336,11 +340,13 @@ def make_replacements_in_file(location, regex, verbose=False):
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     EXAMPLES::
-        python3: os.chdir('sage.env.SAGE_SRC/sage') # change to sage directory
-        python3: cwd = os.getcwd() # Get the current working directory
-        python3: file_to_change = 'structure/element.pyx'
-        python3: location = cwd + file_to_change
-        python3: make_replacements_in_file(location)
+        sage: from sage.misc.replace_dot_all import *
+        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
+        sage: cwd = os.getcwd() # Get the current working directory
+        sage: file_to_change = 'structure/element.pyx'
+        sage: location = cwd + file_to_change
+        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
+        sage: make_replacements_in_file(location, regex)
     """
 
     replacements = find_replacements(location, regex, verbose)
@@ -377,9 +383,13 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     EXAMPLES::
-        python3: os.chdir('sage.env.SAGE_SRC/sage') # change to sage directory
-        python3: cwd = os.getcwd() # Get the current working directory
-        python3: walkdir_replace_dot_all()
+
+        sage: from sage.misc.replace_dot_all import *
+        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
+        sage: dir = os.getcwd() # Get the current working directory
+        sage: fileRegex = r'.*[.](py|pyx|pxi)$'
+        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
+        sage: walkdir_replace_dot_all(dir, fileRegex, regex)
     """
     global numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced, log_messages
     pattern = re.compile(fileRegex)
@@ -400,6 +410,10 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
 
 
 def sort_log_messages():
+    r"""
+    If the user executes the function walkdir_replace_dot_all with the verbose parameter set to True, then the global variable log_messages will be a string containing all the log messages.
+    This function sorts the lines of log_messages by the first character of each line(lines are separated by \n). This function is called at the end of walkdir_replace_dot_all.
+    """
     global log_messages
     # split the log messages into a list of strings (each string is a line separated by a newline character)
     log_messages = log_messages.split('\n')
@@ -413,7 +427,7 @@ def sort_log_messages():
 
 
 # ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
-# this executes the main function in this file which writes over all import statements matching regex in files in src/sage matching fileRegex:
+# this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
 if __name__ == "__main__":
     # Parse the arguments
     args = parseArguments()
