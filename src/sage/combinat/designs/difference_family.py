@@ -1994,7 +1994,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
 
     .. NOTE::
 
-        The data for `n=247` in [Djo2008b]_ contains a typo: the set`\alpha_2` should contain `223` instead of `233`.
+        The data for `n=247` in [Djo2008b]_ contains a typo: the set `\alpha_2` should contain `223` instead of `233`.
         This can be verified by checking the resulting sets, which are given explicitly in the paper.
     """
 
