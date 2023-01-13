@@ -5843,6 +5843,10 @@ REFERENCES:
             Hall-Littlewood vertex operators and generalized Kostka polynomials.
             Adv. Math. 158 (2001), no. 1, 66-85.
 
+.. [Sze1988] \G. Szekeres.
+            *A note on skew type orthogonal ±1 matrices*,
+            Combinatorics, Colloquia Mathematica Societatis, Janos Bolyai, 52 (1988): 489-498.
+
 .. _ref-T:
 
 **T**

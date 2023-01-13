@@ -1059,7 +1059,7 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 
     - ``existence`` -- boolean (default False): if True, only check if matrix exists.
 
-    - ``check`` -- bolean: if True (default), check the the matrix is an Hadamard matrix before returning.
+    - ``check`` -- boolean: if True (default), check the the matrix is an Hadamard matrix before returning.
 
     EXAMPLES::
 
@@ -2124,6 +2124,84 @@ def skew_hadamard_matrix_324():
     D = matrix([[-1 if y-x in S4 else +1 for y in F] for x in F])
 
     return _construction_goethals_seidel_matrix(A, B, C, D)
+
+def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
+    r"""
+    Construct skew Hadamard matrix from good matrices.
+
+    Given good matrices `A`, `B`, `C`, `D` (`A` circulant, `B, C, D` back-circulant) they can be used to construct
+    a skew Hadamard matrix using the following block matrix (as described in [Sze1988]_):
+
+    .. MATH::
+
+        \left(\begin{array}{rrrr}
+        A & B & C & D \\
+        -B & A & D & -C \\
+        -C & -D & A & B \\
+        -D & C & -B & A
+        \end{array}\right)
+
+    INPUT:
+
+    - ``a`` -- (1,-1) list specifying the 1st row of `A`.
+
+    - ``b`` -- (1,-1) list specifying the 1st row of `B`.
+
+    - ``d`` -- (1,-1) list specifying the 1st row of `C`.
+
+    - ``c`` -- (1,-1) list specifying the 1st row of `D`.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is an Hadamard matrix before returning it.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_from_good_matrices
+        sage: a, b, c, d = ([1, 1, 1, -1, -1], [1, -1, 1, 1, -1], [1, -1, -1, -1, -1], [1, -1, -1, -1, -1])
+        sage: skew_hadamard_matrix_from_good_matrices(a, b, c, d)
+        20 x 20 dense matrix over Integer Ring...
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: a, b, c, d = ([1, 1, 1, -1, -1], [1, -1, 1, 1, -1], [1, -1, -1, -1, -1], [1, -1, -1, -1, -1])
+        sage: is_hadamard_matrix(skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=False), skew=True)
+        True
+        sage: a, b, c, d = ([1, 1, 1, -1, -1], [1, -1, 1, 1, -1], [1, -1, -1, -1, -1], [1, -1, -1, -1, 1])
+        sage: skew_hadamard_matrix_from_good_matrices(a, b, c, d)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: a, b, c, d = ([1, 1, 1], [1, -1, 1, 1, -1], [1, -1, -1, -1, -1], [1, -1, -1, -1, -1])
+        sage: skew_hadamard_matrix_from_good_matrices(a, b, c, d)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    n = len(a)
+    m = (n-1) // 2
+
+    assert len(a) == len(b) == len(c) == len(d)
+    assert a[0] == 1 and b[0] == 1 and c[0] == 1 and d[0] == 1
+    for i in range(1, m+1):
+        assert a[i] == -a[n-i] and b[i] == b[n-i] and c[i] == c[n-i] and d[i] == d[n-i]
+
+    def back_circulant(row):
+        length = len(row)
+        return matrix([[row[(j+i) % length] for j in range(length)] for i in range(length)])
+    
+    A = matrix.circulant(a)
+    B = back_circulant(b)
+    C = back_circulant(c)
+    D = back_circulant(d)
+
+    H = block_matrix([[ A,  B,  C,  D],
+                      [-B,  A,  D, -C],
+                      [-C, -D,  A,  B],
+                      [-D,  C, -B,  A]])
+
+    if check:
+        assert is_hadamard_matrix(H, skew=True)
+    return H
 
 
 _skew_had_cache={}
