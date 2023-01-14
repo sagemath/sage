@@ -318,6 +318,7 @@ class DiGraph(GenericGraph):
     - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
       labels during hashing. This parameter defaults to ``True`` if the digraph
       is weighted. This parameter is ignored if the digraph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
 
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
@@ -846,6 +847,10 @@ class DiGraph(GenericGraph):
         # weighted, multiedges, loops, verts and num_verts should now be set
         self._weighted = weighted
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
+
         self._pos = copy(pos)
 
         if format != 'DiGraph' or name is not None:
@@ -858,8 +863,6 @@ class DiGraph(GenericGraph):
                                      multiedges=self.allows_multiple_edges())
             self._backend = ib
             self._immutable = True
-
-        self._hash_labels = hash_labels
 
     # Formats
 

@@ -98,6 +98,7 @@ class BipartiteGraph(Graph):
     - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
       labels during hashing. This parameter defaults to ``True`` if the graph is
       weighted. This parameter is ignored if the graph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
 
     .. NOTE::
 
@@ -548,6 +549,8 @@ class BipartiteGraph(Graph):
             if alist_file:
                 self.load_afile(data)
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
         self._hash_labels = hash_labels
 
         return
@@ -579,6 +582,11 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             TypeError: This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`
+            sage: B = BipartiteGraph([(1, 2, {'length': 3})], immutable=True, hash_labels=True)
+            sage: B.__hash__()
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'dict'
         """
         if self.is_immutable():
             # Determine whether to hash edge labels

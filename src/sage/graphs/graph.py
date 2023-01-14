@@ -573,6 +573,7 @@ class Graph(GenericGraph):
     - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
       labels during hashing. This parameter defaults to ``True`` if the graph is
       weighted. This parameter is ignored if the graph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
 
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
@@ -1257,6 +1258,10 @@ class Graph(GenericGraph):
             weighted = False
         self._weighted = getattr(self, '_weighted', weighted)
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
+
         self._pos = copy(pos)
 
         if format != 'Graph' or name is not None:
@@ -1269,8 +1274,6 @@ class Graph(GenericGraph):
                                      multiedges=self.allows_multiple_edges())
             self._backend = ib
             self._immutable = True
-
-        self._hash_labels = hash_labels
 
     # Formats
 

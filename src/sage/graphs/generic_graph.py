@@ -1040,8 +1040,10 @@ class GenericGraph(GenericGraph_pyx):
             ``"sparse"`` unless anything else is specified.
 
         - ``hash_labels`` -- boolean (default: ``None``); whether to include
-          edge labels during hashing. This parameter defaults to ``True`` if the
-          graph is weighted. This parameter is ignored if the graph is mutable.
+          edge labels during hashing of the copy. This parameter defaults to
+          ``True`` if the graph is weighted. This parameter is ignored when
+          parameter ``immutable`` is not ``True``.
+          Beware that trying to hash unhashable labels will raise an error.
 
         .. NOTE::
 
@@ -1200,85 +1202,43 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.copy()._backend
             <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
 
-        Copying and changing hash_labels parameter::
+        Copying and changing ``hash_labels`` parameter::
 
-            sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
-            sage: G1c = G1.copy(hash_labels=True, immutable=True)
-            sage: hash(G1)==hash(G1c)
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: hash(G.copy(hash_labels=True, immutable=True)) == hash(G)
             False
-
+            sage: hash(G.copy(hash_labels=False, immutable=True)) == hash(G)
+            True
+            sage: hash(G.copy(hash_labels=None, immutable=True)) == hash(G)
+            True
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=True)
+            sage: hash(G.copy(hash_labels=True, immutable=True)) == hash(G)
+            True
+            sage: hash(G.copy(hash_labels=False, immutable=True)) == hash(G)
+            False
+            sage: hash(G.copy(hash_labels=None, immutable=True)) == hash(G)
+            True
             sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
             sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True, hash_labels=False)
-            sage: hash(G1)==hash(G2)
+            sage: hash(G1) == hash(G2)
             True
-            sage: G1c = G1.copy(hash_labels=True)
-            sage: G2c = G2.copy(hash_labels=True)
-            sage: hash(G1c)==hash(G2c)
+            sage: G1c = G1.copy(hash_labels=True, immutable=True)
+            sage: G2c = G2.copy(hash_labels=True, immutable=True)
+            sage: hash(G1c) == hash(G2c)
             False
-
-        Making sure the .copy behaviour works correctly with hash_labels and immutable in all 54 cases::
-            sage: for old_immutable in [True, False]:
-            ....:     for new_immutable in [True, False, None]:
-            ....:         for old_hash_labels in [True, False, None]:
-            ....:             for new_hash_labels in [True, False, None]:
-            ....:
-            ....:                 # make a graph with old_immutable, old_hash_labels
-            ....:                 G = Graph({0: {1: 'edge label A'}}, immutable=old_immutable, hash_labels=old_hash_labels)
-            ....:                 old_immutable=G.is_immutable()
-            ....:                 old_hash_labels=G._hash_labels
-            ....:
-            ....:                 # copy the graph, passing the overrides
-            ....:                 G2 = G.copy(immutable=new_immutable, hash_labels=new_hash_labels)
-            ....:
-            ....:                 if new_immutable is None:
-            ....:                     # make sure immutability is preserved if we don't update it
-            ....:                     assert G2.is_immutable() == old_immutable, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
-            ....:                 else:
-            ....:                     # make sure that updating immutability works
-            ....:                     assert G2.is_immutable() == new_immutable, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
-            ....:
-            ....:                 if new_hash_labels is None:
-            ....:                     # make sure hash_labels is preserved if we don't update it
-            ....:                     assert G2._hash_labels == old_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
-            ....:                 else:
-            ....:                     # make sure updating hash labels works
-            ....:                     assert G2._hash_labels == new_hash_labels, [old_immutable, new_immutable, old_hash_labels, new_hash_labels]
-                        
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: H = G.copy(hash_labels=True)
+            sage: H.is_immutable()
+            False
+            sage: H._hash_labels
+            True
+            sage: I = H.copy(immutable=True)
+            sage: hash(G) == hash(I)
+            False
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=True)
+            sage: hash(G) == hash(I)
+            True
         """
-
-        # This is an ugly hack but it works.
-        # This function contains some fairly complex logic
-        # There is a comment further down that says
-
-        ### Immutable copy of an immutable graph ? return self !
-
-        # The issue being that if we want to change the hash_labels behaviour, then
-        # returning self is no longer a good option. I'd argue that a copy function
-        # returning self is always bad behaviour, but that's out of the scope for this ticket.
-        # Trying to weaken the if statement to include something like
-        
-        ### and (hash_labels is None or (hash_labels==self._use_labels_for_hash()))
-
-        # doesn't work, since there is no fallback logic for making
-        # an immutable copy of an immutable graph, and my attempts at
-        # implementing one caused other tests to break in different
-        # bits of the code
-
-        # the hack I've used creates a mutable copy of the graph
-        # and then makes an immutable copy of that one. I think this is a fairly
-        # inobtrusive implementation, since the function still runs as normally,
-        # assuming that they pass nothing into hash_labels, and seems to behave
-        # correctly otherwise.
-
-        # However, this is obviously not optimal, and could definitely be improved upon
-        # by someone who understands the logic better.        
-        if hash_labels is not None:
-            desired_immutable = self.is_immutable() if immutable is None else immutable
-            forced_mutable_copy = self.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=False)
-            fresh_copy = forced_mutable_copy.copy(weighted=weighted, data_structure=data_structure, sparse=sparse, immutable=desired_immutable)
-            fresh_copy._hash_labels = hash_labels
-            return fresh_copy
-
         # Which data structure should be used ?
         if data_structure is not None:
             # data_structure is already defined so there is nothing left to do
@@ -1306,7 +1266,8 @@ class GenericGraph(GenericGraph_pyx):
         # Immutable copy of an immutable graph ? return self !
         # (if okay for weightedness)
         if (self.is_immutable() and
-                (weighted is None or self._weighted == weighted)):
+                (weighted is None or self._weighted == weighted) and
+                (hash_labels is None or self._hash_labels == hash_labels)):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             if (isinstance(self._backend, StaticSparseBackend) and
                     (data_structure == 'static_sparse' or data_structure is None)):
@@ -1320,10 +1281,10 @@ class GenericGraph(GenericGraph_pyx):
                 data_structure = "sparse"
         
         G = self.__class__(self, name=self.name(), pos=copy(self._pos),
-                           weighted=weighted,
+                           weighted=weighted, hash_labels=hash_labels,
                            data_structure=data_structure)
 
-        attributes_to_copy = ('_assoc', '_embedding', '_hash_labels')
+        attributes_to_copy = ('_assoc', '_embedding')
         for attr in attributes_to_copy:
             if hasattr(self, attr):
                 copy_attr = {}
