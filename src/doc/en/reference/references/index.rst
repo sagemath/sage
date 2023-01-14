@@ -2402,6 +2402,11 @@ REFERENCES:
             code, by I.A.Faradjev (with contributions by A.E.Brouwer,
             D.V.Pasechnik). https://github.com/dimpase/coco
 
+.. [FKS2004] \R. J. Fletcher, C. Koukouvinos and J. Seberry.
+            *New skew-Hadamard matrices of order 4·59 and new D-optimal designs of order 2·59*,
+            Discrete Mathematics 286(3) (2004): 251-253.
+            :doi:`10.1016/j.disc.2004.05.009`
+
 .. [FL2001] David Forge and Michel Las Vergnas.
             *Orlik-Solomon type algebras*. European J. Combin.
             **22** (5), (2001). pp. 699-704.
