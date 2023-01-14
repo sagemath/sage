@@ -42,6 +42,13 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple far_face_tuple(self)
     cdef int _algorithm_to_dual(self, algorithm) except -2
 
+    # Methods to initialize the combinatorial polyhedron.
+    cdef _init_from_incidence_matrix(self, data)
+    cdef _init_from_list_of_facets(self, data)
+    cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep)
+    cdef _initialize_far_face(self)
+    cdef _init_as_trivial_polyhedron(self, int dimension)
+
     # Methods to obtain a different combinatorial polyhedron.
     cpdef CombinatorialPolyhedron dual(self)
     cpdef CombinatorialPolyhedron pyramid(self, new_vertex=*, new_facet=*)
