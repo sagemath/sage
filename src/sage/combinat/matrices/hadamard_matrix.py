@@ -2383,11 +2383,11 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         92 x 92 dense matrix over Integer Ring...
         sage: skew_hadamard_matrix(816)     # long time
         816 x 816 dense matrix over Integer Ring...
-        sage: skew_hadamard_matrix(100)
+        sage: skew_hadamard_matrix(276)
         Traceback (most recent call last):
         ...
-        ValueError: A skew Hadamard matrix of order 100 is not yet implemented.
-        sage: skew_hadamard_matrix(100,existence=True)
+        ValueError: A skew Hadamard matrix of order 276 is not yet implemented.
+        sage: skew_hadamard_matrix(276,existence=True)
         Unknown
 
     Check that :trac:`28526` is fixed::
@@ -2426,6 +2426,10 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = skew_hadamard_matrix_324()
+    elif skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=True):
+        if existence:
+            return true()
+        M = skew_hadamard_matrix_from_good_matrices_smallcases(n, check=False)
     elif is_prime_power(n - 1) and ((n - 1) % 4 == 3):
         if existence:
             return true()
