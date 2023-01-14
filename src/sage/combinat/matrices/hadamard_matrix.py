@@ -2203,6 +2203,117 @@ def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
         assert is_hadamard_matrix(H, skew=True)
     return H
 
+def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check=True):
+    r"""
+    Construct skew Hadamard matrices from good matrices for some small values of `n`.
+
+    The function stores good matrices of odd orders `\le 31`, taken from [Sze1988]_.
+    These are used to create skew Hadamard matrices of order `4n`, `1 \le n \le 31`, using the function
+    :func:`skew_hadamard_matrix_from_good_matrices`.
+
+    ALGORITHM:
+
+    Given four sequences (stored in ``E_sequences``) of length `m`, they can be used to construct four `E-sequences`
+    of length `n=2m+1`, as follows:
+
+    .. MATH::
+
+        \begin{aligned}
+        a &= 1, a_0, a_1, ..., a_m, -a_m, -a_{m-1}, ..., -a_0 \\
+        b &= 1, b_0, b_1, ..., b_m, b_m, b_{m-1}, ..., b_0 \\
+        c &= 1, c_0, c_1, ..., c_m, c_m, c_{m-1}, ..., c_0 \\
+        d &= 1, d_0, d_1, ..., d_m, d_m, d_{m-1}, ..., d_0 \\
+        \end{aligned}
+
+    These E-sequences will be the first rows of the four good matrices needed to construct a skew Hadamard matrix
+    of order `4n`.
+
+    INPUT:
+
+    - ``n`` -- the order of the skew Hadamard matrix to be constructed.
+
+    - ``existence`` -- boolean (default False). If True, only return whether the Hadamard matrix can be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is an Hadamard matrix before returning it.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if no data
+    is available to construct the matrix of the given order.
+    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_from_good_matrices_smallcases
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(20)
+        20 x 20 dense matrix over Integer Ring...
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(24, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(skew_hadamard_matrix_from_good_matrices_smallcases(16, check=False), skew=True)
+        True
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(140)
+        Traceback (most recent call last):
+        ...
+        ValueError: The Good matrices of order 35 are not yet implemented.
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: The skew Hadamard matrix of order 14 does not exist
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(140, existence=True)
+        False
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(14, existence=True)
+        False
+    """
+    E_sequences = {
+        0: ['', '', '', ''],
+        1: ['+', '-', '-', '+'],
+        2: ['++', '-+', '--', '--'],
+        3: ['++-', '++-', '+-+', '-++'],
+        4: ['+++-', '+-+-', '---+', '++-+'],
+        5: ['+-+--', '+++--', '-+++-', '---+-'],
+        6: ['+-+---', '---+++', '+-+--+', '----+-'],
+        7: ['+++++--', '-++--++', '----+-+', '-+---+-'],
+        8: ['+--++-+-', '+--+----', '++----+-', '+---+-+-'],
+        9: ['-+-----++', '+-+++++--', '-+----++-', '--+-+-++-'],
+        10: ['+--+++++++', '++--++++-+', '--++-+-+-+', '---+++-+-+'],
+        11: ['++-+-------', '+----+--+--', '+-+--++---+', '--++-+-+-++'],
+        12: ['+-----+-+---', '+-++++-+-++-', '---+--++++--', '--+-+++--+--'],
+        13: ['+---+-+--++-+', '+++---++-++-+', '+++-+++-++---', '+---++++-+-+-'],
+        14: ['+--+----+-+-++', '+---++++-++--+', '+-+----++-+--+', '++++++---+-+-+'],
+        15: ['+--++----+---+-', '-++-+---+-+++--', '++---+--+--+++-', '-++++++++--+-+-']
+    }
+
+    def pm_to_good_matrix(s, sign=1):
+        e1 =  [1 if x == '+' else -1 for x in s]
+        e2 =  [sign * (1 if x == '+' else -1) for x in s]
+        e2.reverse()
+        return [1] + e1 + e2
+    
+    if not(n % 4 == 0) and (n > 2):
+        if existence:
+            return False
+        raise ValueError("The skew Hadamard matrix of order %s does not exist" % n)
+
+    m = n//4
+    l = (m-1) // 2
+
+    if existence:
+        return l in E_sequences
+    
+    if l not in E_sequences:
+        raise ValueError("The Good matrices of order %s are not yet implemented." % m) 
+    
+    e1, e2, e3, e4 = E_sequences[l]
+    a = pm_to_good_matrix(e1, sign=-1)
+    b = pm_to_good_matrix(e2)
+    c = pm_to_good_matrix(e3)
+    d = pm_to_good_matrix(e4)
+    return skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=check)
+
 
 _skew_had_cache={}
 
