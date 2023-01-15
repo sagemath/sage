@@ -2013,9 +2013,12 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     Here we keep the data for this construction.
     Namely, it needs 4 circulant matrices with extra properties, as described in
     :func:`sage.combinat.matrices.hadamard_matrix.williamson_goethals_seidel_skew_hadamard_matrix`
-    Matrices for `n=36` and `52` are given in [GS70s]_. Matrices for `n=92` are given
-    in [Wall71]_. Matrices for `n=188` are given in [Djo2008a]_, and matrices for `n=236` are 
-    found in [FKS2004]_.
+    Matrices are taken from:
+    * `n=36, 52`: [GS70s]_
+    * `n=92`: [Wall71]_
+    * `n=188`: [Djo2008a]_
+    * `n=236`: [FKS2004]_
+    * `n=276`: [Djo2023]_
     
     Additional data is obtained from skew supplementary difference sets contained in 
     :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the 
@@ -2057,7 +2060,11 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         236: ['+-+---+-+-++-++---+----++-----+++++--++++-+++--+--+-+-+++-+',
               '+-+---+-+-++-++---+----++-----+++++--++++-+++--+--+-+-+++-+',
               '+++-++----+++-+-+++--+--++------+---+-----+--+-+--+---+----',
-              '++++++--+++--+---++-+-+-+---+-+----++++-++-+--++-+--+------']
+              '++++++--+++--+---++-+-+-+---+-+----++++-++-+--++-+--+------'],
+        276: ['+--+++--+-+++--+---++-+++++-+++-++-+--+---+-----+--+++-++---+-++---++',
+              '+-++--+-+----++-+---++++-+---+-++++++++-+---+-++++---+-++----+-+--++-',
+              '--+--+-++---+--++--+-+-+++-+--++---++++-+-+-+--+-++-+++++++--+--+++++',
+              '-+---+++-----++---+++-+++--+++++--+---+-+-++++-++++-++-++-+-+++++++++']
     }
 
     if existence:

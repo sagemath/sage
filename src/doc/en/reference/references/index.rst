@@ -2060,6 +2060,10 @@ REFERENCES:
             Journal of Combinatorial Designs 16 (2008): 493-498.
             :arxiv:`0706.1973`
 
+.. [Djo2023]  \D. Đoković.
+            *Skew-Hadamard matrices of order 276*.
+            :arxiv:`10.48550/ARXIV.2301.02751`
+
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
 
