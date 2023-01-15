@@ -1937,7 +1937,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
 
     OUTPUT:
 
-    If `n` satisfies the requirements descrived above, the function return a `n\times n` Hadamard matrix.
+    If `n` satisfies the requirements described above, the function returns a `n\times n` Hadamard matrix.
     Otherwise, an exception is raised.
 
     EXAMPLES::
@@ -2084,6 +2084,99 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         return WGS(a, b, c, d, check=check)
 
     return None
+
+def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
+    r"""
+    Construct a skew Hadamard matrix of order `n=2(q+1)` where `q=p^t` is a prime power with `p \cong 5 \mod 8` and `t \cong 2 \mod 4`.
+
+    Assuming `n` satisfies the conditions above, it is possible to construct two supplementary difference sets
+    `A, B` (see [Whi1971]_), and these can be used to construct a skew Hadamard matrix, as described in [BS1969]_.
+
+    INPUT:
+
+    - ``n`` -- A positive integer, the order of the matrix to be constructed.
+
+    - ``existence`` -- boolean (default False). If True, only return whether the Hadamard matrix can be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the result is a skew Hadamard matrix 
+      before returning it.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if `n` does 
+    not satisfy the required conditions.
+    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_whiteman_construction
+        sage: skew_hadamard_matrix_whiteman_construction(52)
+        52 x 52 dense matrix over Integer Ring...
+        sage: skew_hadamard_matrix_whiteman_construction(52, existence=True)
+        True 
+    
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(skew_hadamard_matrix_whiteman_construction(52, check=False), skew=True)
+        True
+        sage: is_hadamard_matrix(skew_hadamard_matrix_whiteman_construction(340, check=False), skew=True)
+        True
+        sage: skew_hadamard_matrix_whiteman_construction(31)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 31 is not covered by the Whiteman construction.
+        sage: skew_hadamard_matrix_whiteman_construction(100)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 100 is not covered by the Whiteman construction.
+        sage: skew_hadamard_matrix_whiteman_construction(100, existence=True)
+        False
+    """
+    
+    q = n // 2 - 1
+    p, t = is_prime_power(q, get_data=True)
+
+    is_order_valid = n % 4 == 0 and t > 0 and p % 8 == 5 and t % 4 == 2
+    if existence:
+        return is_order_valid
+    
+    if not is_order_valid:
+        raise ValueError(f'The order {n} is not covered by the Whiteman construction.')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    G = GF(q)
+    f = (q-1) // 8
+    Cs = { i: [G.gen()**(8*s+i) for s in range(f)] for i in [0, 1, 2, 3, 6, 7] }
+    A = Cs[0] + Cs[1] + Cs[2] + Cs[3]
+    B = Cs[0] + Cs[1] + Cs[6] + Cs[7]
+
+    m = n//4 - 1
+    Glist = list(G)
+
+    S = [[0 for i in range(n)] for j in range(n)]
+    for i in range(2*m + 1):
+        for j in range(2*m + 1):
+            S[2*m + 1 + i][2*m + 1 + j] = -1 if Glist[j] - Glist[i] in A else 1
+            S[i][j] = -S[2*m + 1 + i][2*m + 1 + j]
+            S[2*m + 1 + j][i] = -1 if Glist[j] - Glist[i] in B else 1
+            S[i][2*m + 1 + j] = -S[2*m + 1 + j][i]
+        S[4*m + 2][i] = -1
+        S[4*m + 2][2*m + 1 + i] = 1
+        S[i][4*m + 2] = 1
+        S[i + 2*m + 1][4*m + 2] = -1
+    for i in range(4*m + 3):
+        S[4*m + 3][i] = 1
+        S[i][4*m + 3] = -1
+    for i in range(4*m + 4):
+        S[i][i] = 1
+
+    H = matrix(S)
+
+    if check:
+        assert is_hadamard_matrix(H, skew=True)
+    return H
+    
 
 def skew_hadamard_matrix_324():
     r"""
@@ -2395,11 +2488,11 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         92 x 92 dense matrix over Integer Ring...
         sage: skew_hadamard_matrix(816)     # long time
         816 x 816 dense matrix over Integer Ring...
-        sage: skew_hadamard_matrix(276)
+        sage: skew_hadamard_matrix(356)
         Traceback (most recent call last):
         ...
-        ValueError: A skew Hadamard matrix of order 276 is not yet implemented.
-        sage: skew_hadamard_matrix(276,existence=True)
+        ValueError: A skew Hadamard matrix of order 356 is not yet implemented.
+        sage: skew_hadamard_matrix(356,existence=True)
         Unknown
 
     Check that :trac:`28526` is fixed::
@@ -2450,6 +2543,10 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         if existence: 
             return true()
         M = skew_hadamard_matrix_spence_construction(n, check=False)
+    elif skew_hadamard_matrix_whiteman_construction(n, existence=True):
+        if existence: 
+            return true()
+        M = skew_hadamard_matrix_whiteman_construction(n, check=False)
     elif n % 8 == 0:
         if skew_hadamard_matrix(n//2,existence=True) is True: # (Lemma 14.1.6 in [Ha83]_)
             if existence:
