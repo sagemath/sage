@@ -69,6 +69,7 @@ __append_to_doc(
      "CompleteBipartiteGraph",
      "CompleteGraph",
      "CompleteMultipartiteGraph",
+     "CorrelationGraph",
      "DiamondGraph",
      "GemGraph",
      "DartGraph",
@@ -2355,6 +2356,7 @@ class GraphGenerators():
     CompleteGraph = staticmethod(basic.CompleteGraph)
     CompleteBipartiteGraph = staticmethod(basic.CompleteBipartiteGraph)
     CompleteMultipartiteGraph = staticmethod(basic.CompleteMultipartiteGraph)
+    CorrelationGraph = staticmethod(basic.CorrelationGraph)
     DiamondGraph = staticmethod(basic.DiamondGraph)
     GemGraph = staticmethod(basic.GemGraph)
     DartGraph = staticmethod(basic.DartGraph)
