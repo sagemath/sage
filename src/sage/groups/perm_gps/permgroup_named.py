@@ -331,6 +331,39 @@ class SymmetricGroup(PermutationGroup_symalt):
         """
         return "Symmetric group of order {}! as a permutation group".format(self.degree())
 
+    def _coerce_map_from_(self, G):
+        """
+        Return if there is a coercion map from ``G`` into ``self``.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: S5 = SymmetricGroup(5)
+            sage: S5._coerce_map_from_(J3)
+            True
+            sage: S2 = SymmetricGroup(2)
+            sage: S2._coerce_map_from_(J3)
+            False
+        """
+        from sage.groups.cactus_group import CactusGroup
+        if isinstance(G, CactusGroup) and G._n <= self._deg:
+            return self._from_cactus_group_element
+        return super()._coerce_map_from_(G)
+
+    def _from_cactus_group_element(self, x):
+        """
+        Return an element of ``self`` from a cactus group element.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: s12,s13,s23 = J3.gens()
+            sage: elt = s12*s23*s13
+            sage: S5 = SymmetricGroup(5)
+            sage: S5._from_cactus_group_element(elt)
+        """
+        return self(x.to_permutation())
+
     def cartan_type(self):
         r"""
         Return the Cartan type of ``self``

@@ -560,3 +560,35 @@ def BinaryDihedralPresentation(n):
     x,y,z = F.gens()
     rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
     return FinitelyPresentedGroup(F, rls)
+
+def CactusPresentation(n):
+    r"""
+    Build the `n`-fruit cactus group as a finitely presented group.
+
+    OUTPUT:
+
+    Cactus group `J_n` as a finitely presented group.
+
+    EXAMPLES::
+
+        sage: J3 = groups.presentation.Cactus(3); J3
+        Finitely presented group < s12, s13, s23 |
+         s12^2, s13^2, s23^2, s13*s12*s13^-1*s23^-1, s13*s23*s13^-1*s12^-1 >
+    """
+    from sage.groups.cactus_group import CactusGroup
+    G = CactusGroup(n)
+    F = FreeGroup(G.variable_names())
+    gens = F.gens()
+    rls = [g**2 for g in gens]
+    K = G.group_generators().keys()
+    for i,key in enumerate(K):
+        for j,key2 in enumerate(K):
+            if i == j:
+                continue
+            x,y = G._product_on_gens(key, key2)
+            if key == x and key2 == y:
+                continue
+            elt = gens[i] * gens[j] * ~gens[K.index(y)] * ~gens[K.index(x)]
+            rls.append(elt)
+    return FinitelyPresentedGroup(F, tuple(rls))
+
