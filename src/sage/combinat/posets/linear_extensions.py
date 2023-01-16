@@ -40,7 +40,7 @@ from sage.matrix.constructor import matrix
 
 
 class LinearExtensionOfPoset(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                             metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A linear extension of a finite poset `P` of size `n` is a total
     ordering `\pi := \pi_0 \pi_1 \ldots \pi_{n-1}` of its elements
@@ -250,6 +250,45 @@ class LinearExtensionOfPoset(ClonableArray,
                 for u in P.upper_covers(self[i]):
                     if all(l in self[:i + 1] for l in P.lower_covers(u)):
                         return False
+        return True
+
+    def is_supergreedy(self):
+        r""""
+        Return ``True`` if the linear extension is supergreedy.
+
+        A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
+        for every i, either `e_i+1` cover `e_i` otherwise on backtracking
+        from `e_i` to `e_1`, either `e_i+1` should be in the upper cover of 
+        the first element having a non-empty upper cover or should include 
+        only the next element.
+
+        EXAMPLES::
+
+            sage: Q = posets.PentagonPoset()
+            sage: for l in Q.linear_extensions():
+            ....:     if not l.is_supergreedy():
+            ....:         print(l)
+            [0, 1, 2, 3, 4]
+            [0, 2, 3, 1, 4]
+            [0, 2, 1, 3, 4]
+
+        TESTS::
+
+            sage: T = Poset()
+            sage: T.linear_extensions()[0].is_supergreedy()
+            True
+        """
+        P = self.poset()
+        for i in range(len(self) - 1):
+            if not P.covers(self[i], self[i + 1]):
+                for u in range(i, -1, -1):
+                    if len(P.upper_covers(self[u])) != 0:
+                        if (self[i+1] in P.upper_covers(self[u])):
+                            break
+                        elif (self[u+1] in P.upper_covers(self[u])):
+                            continue
+                        else:
+                            return False
         return True
 
     def tau(self, i):
@@ -855,6 +894,7 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
     Linear extensions such that the poset has well-defined
     hook lengths (i.e., d-complete).
     """
+
     def cardinality(self):
         r"""
         Count the number of linear extensions using a hook-length formula.
@@ -879,6 +919,7 @@ class LinearExtensionsOfForest(LinearExtensionsOfPoset):
     r"""
     Linear extensions such that the poset is a forest.
     """
+
     def cardinality(self):
         r"""
         Use Atkinson's algorithm to compute the number of linear extensions.
@@ -902,6 +943,7 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
     r"""
     Linear extensions for a mobile poset.
     """
+
     def cardinality(self):
         r"""
         Return the number of linear extensions by using the determinant
