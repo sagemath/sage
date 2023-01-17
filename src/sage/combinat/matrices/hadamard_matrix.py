@@ -2352,13 +2352,13 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
         sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_from_good_matrices_smallcases
         sage: skew_hadamard_matrix_from_good_matrices_smallcases(20)
         20 x 20 dense matrix over Integer Ring...
-        sage: skew_hadamard_matrix_from_good_matrices_smallcases(24, existence=True)
+        sage: skew_hadamard_matrix_from_good_matrices_smallcases(20, existence=True)
         True
 
     TESTS::
 
         sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
-        sage: is_hadamard_matrix(skew_hadamard_matrix_from_good_matrices_smallcases(16, check=False), skew=True)
+        sage: is_hadamard_matrix(skew_hadamard_matrix_from_good_matrices_smallcases(28, check=False), skew=True)
         True
         sage: skew_hadamard_matrix_from_good_matrices_smallcases(140)
         Traceback (most recent call last):
@@ -2367,7 +2367,7 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
         sage: skew_hadamard_matrix_from_good_matrices_smallcases(14)
         Traceback (most recent call last):
         ...
-        ValueError: The skew Hadamard matrix of order 14 does not exist
+        ValueError: The skew Hadamard matrix of order 14 from good matrices does not exist.
         sage: skew_hadamard_matrix_from_good_matrices_smallcases(140, existence=True)
         False
         sage: skew_hadamard_matrix_from_good_matrices_smallcases(14, existence=True)
