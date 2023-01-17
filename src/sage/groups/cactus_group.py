@@ -928,11 +928,18 @@ class PureCactusGroup(KernelSubgroup):
         Return the ``i``-th generator of ``self``.
 
         EXAMPLES::
+
+            sage: PJ3 = groups.misc.PureCactus(3)
+            sage: PJ3.gen(0)
+            s[2,3]*s[1,2]*s[2,3]*s[1,3]
+            sage: PJ3.gen(1)
+            s[1,2]*s[2,3]*s[1,2]*s[1,3]
+            sage: PJ3.gen(5)
+            Traceback (most recent call last):
+            ...
+            IndexError: tuple index out of range
         """
-        gens = self.gens()
-        if i >= len(gens) or i < 0:
-            raise ValueError("invalid generator")
-        return gens[i]
+        return self.gens()[i]
 
     @cached_method
     def gens(self):
