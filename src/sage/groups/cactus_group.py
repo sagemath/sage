@@ -109,9 +109,10 @@ class CactusGroup(UniqueRepresentation, Group):
 
     @lazy_attribute
     def _WG(self):
-        """
+        r"""
         Get the graph for the right-angled Coxeter group that ``self``
-        embeds into and set the ``_subsets`` and ``_subsets_inv`` attributes.
+        embeds into (set theoretically) and set the ``_subsets`` and
+        ``_subsets_inv`` attributes.
 
         We do this initialization lazily in order to make the creation of
         the parent quick. However, this is used to normalize the product
@@ -120,10 +121,6 @@ class CactusGroup(UniqueRepresentation, Group):
         EXAMPLES::
 
             sage: J4 = groups.misc.Cactus(4)
-            sage: J4._subsets
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'CactusGroup_with_category' object has no attribute '_subsets'
             sage: J4._WG
             Graph on 11 vertices
             sage: J4._subsets
@@ -144,12 +141,15 @@ class CactusGroup(UniqueRepresentation, Group):
 
     def right_angled_coxeter_group(self):
         r"""
-        Return the right-angled Coxeter group that ``self`` embeds into.
+        Return the right-angled Coxeter group that ``self``
+        (set-theoretically) embeds into.
 
         This is defined following [Most2019]_, where it was called the
         diagram group. It has generators (of order `2`) indexed by subsets
         of `\{1, \ldots, n\}` that commute if and only if one subset is
-        contained in the other or they are disjoint.
+        contained in the other or they are disjoint. For the pure cactus
+        group, this is also a group homomorphism, otherwise it is a
+        group 1-cocycle [BCL2022]_.
 
         EXAMPLES::
 
@@ -164,7 +164,7 @@ class CactusGroup(UniqueRepresentation, Group):
         from sage.rings.rational_field import QQ
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
-        return CoxeterGroup(CoxeterMatrix(G), base_ring=QQ)
+        return CoxeterGroup(CoxeterMatrix(self._WG), base_ring=QQ)
 
     def _repr_(self):
         """
@@ -232,6 +232,26 @@ class CactusGroup(UniqueRepresentation, Group):
     def gen(self, i, j=None):
         r"""
         Return the `i`-th generator of ``self`` or the generator `s_{ij}`.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: J3.gen(1)
+            s[1,3]
+            sage: J3.gen(1,2)
+            s[1,2]
+            sage: J3.gen(0,2)
+            Traceback (most recent call last):
+            ...
+            ValueError: s[0,2] is not a valid generator
+            sage: J3.gen(1,4)
+            Traceback (most recent call last):
+            ...
+            ValueError: s[1,4] is not a valid generator
+            sage: J3.gen(2,1)
+            Traceback (most recent call last):
+            ...
+            ValueError: s[2,1] is not a valid generator
         """
         if j is None:
             return self.gens()[i]
@@ -241,7 +261,7 @@ class CactusGroup(UniqueRepresentation, Group):
 
     @cached_method
     def one(self):
-        """
+        r"""
         Return the identity element in ``self``.
 
         EXAMPLES::
@@ -253,7 +273,7 @@ class CactusGroup(UniqueRepresentation, Group):
         return self.element_class(self, [])
 
     def _coerce_map_from_(self, G):
-        """
+        r"""
         Return if there is a coerce map from ``G``.
 
         EXAMPLES::
@@ -476,6 +496,7 @@ class CactusGroup(UniqueRepresentation, Group):
             sage: visited = set([J3.one()])
             sage: cur = set([(J3.one(), J3.one().to_matrix())])
             sage: mats = set([J3.one().to_matrix()])
+            sage: RG = list(J3.geometric_representation_generators())
             sage: count = 0
             sage: max_tests = 1000
             sage: while cur:
@@ -483,7 +504,7 @@ class CactusGroup(UniqueRepresentation, Group):
             ....:     if count >= max_tests:
             ....:         break
             ....:     elt, mat = cur.pop()
-            ....:     for g,r in zip(G, RG):
+            ....:     for g,r in zip(J3, RG):
             ....:         val = elt * g
             ....:         if val in visited:
             ....:             continue
@@ -577,7 +598,6 @@ class CactusGroup(UniqueRepresentation, Group):
 
             EXAMPLES::
 
-
                 sage: J4 = groups.misc.Cactus(4)
                 sage: s12,s13,s14,s23,s24,s34 = J4.gens()
                 sage: unicode_art(s12 * s23 * s13)
@@ -598,7 +618,7 @@ class CactusGroup(UniqueRepresentation, Group):
             return unicode_art(' '.join('s{},{}'.format(unicode_subscript(p), unicode_subscript(q)) for p,q in self._data))
 
         def __hash__(self):
-            """
+            r"""
             Return the hash of ``self``.
 
             EXAMPLES::
@@ -611,7 +631,7 @@ class CactusGroup(UniqueRepresentation, Group):
             return hash(self._data)
 
         def _richcmp_(self, other, op):
-            """
+            r"""
             Compare ``self`` and ``other``.
 
             EXAMPLES::
@@ -629,7 +649,7 @@ class CactusGroup(UniqueRepresentation, Group):
             return richcmp(self._data, other._data, op)
 
         def _mul_(self, other):
-            """
+            r"""
             Return the product of ``self`` and ``other``.
 
             EXAMPLES::
@@ -650,7 +670,7 @@ class CactusGroup(UniqueRepresentation, Group):
             return ret
 
         def __invert__(self):
-            """
+            r"""
             Return the inverse of ``self``.
 
             EXAMPLES::
@@ -668,8 +688,9 @@ class CactusGroup(UniqueRepresentation, Group):
             return ret
 
         def to_permutation(self):
-            """
-            Return ``self`` as a permutation.
+            r"""
+            Return the image of ``self`` under the canonical projection
+            to the permutation group.
 
             EXAMPLES::
 
@@ -711,7 +732,7 @@ class CactusGroup(UniqueRepresentation, Group):
             return ret
 
         def _matrix_(self):
-            """
+            r"""
             Return ``self`` as a matrix.
 
             The resulting matrix is the :meth:`geometric representation
@@ -752,13 +773,18 @@ class CactusGroup(UniqueRepresentation, Group):
         to_matrix = _matrix_
 
         def _normalize(self):
-            """
+            r"""
             Return the word for ``self`` in normalized form.
+
+            ALGORITHM:
 
             We perform the normalization by using the lexicographically
             minimum reduced word for the corresponding right-angled Coxeter
-            group element under the extended embedding of the pure cactus
-            group descripbed by [Most2019]_ and [Yu2022]_.
+            group (RACG) element under the (set-theoretic) embedding
+            introduced by [Most2019]_. This embedding is a group 1-cocycle
+            and also realizes the cactus group as a subgroup of `W \rtimes S_n`,
+            where `W` is the RACG (see also [Yu2022]_). See Section 2
+            of [BCL2022]_ for precise statements.
 
             TESTS::
 
@@ -896,4 +922,72 @@ class PureCactusGroup(KernelSubgroup):
             3
         """
         return self.ambient().n()
+
+    def gen(self, i):
+        r"""
+        Return the ``i``-th generator of ``self``.
+
+        EXAMPLES::
+        """
+        gens = self.gens()
+        if i >= len(gens) or i < 0:
+            raise ValueError("invalid generator")
+        return gens[i]
+
+    @cached_method
+    def gens(self):
+        r"""
+        Return the generators of ``self``.
+
+        ALGORITHM:
+
+        We use :wikipedia:`Schreier's_lemma` and compute the traversal
+        using the lex minimum elements (defined by the order of the
+        generators of the ambient cactus group).
+
+        EXAMPLES:
+
+        We verify Corollary A.2 of [BCL2022]_::
+
+            sage: PJ3 = groups.misc.PureCactus(3)
+            sage: PJ3.gens()
+            (s[2,3]*s[1,2]*s[2,3]*s[1,3], s[1,2]*s[2,3]*s[1,2]*s[1,3])
+            sage: a, b = PJ3.gens()
+            sage: a * b  # they are inverses of each other
+            1
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: gen = (J3.gen(1,2)*J3.gen(1,3))^3
+            sage: gen
+            s[1,2]*s[2,3]*s[1,2]*s[1,3]
+            sage: gen == b
+            True
+        """
+        from sage.functions.other import factorial
+        J = self.ambient()
+        G = J.gens()
+        one = J.one()
+        n = self.n()
+        nfac = factorial(n)
+        reprs = {one.to_permutation(): one}
+        next_level = [one]
+        while len(reprs) < nfac:
+            cur = next_level
+            next_level = []
+            for val in cur:
+                for g in G:
+                    temp = val * g
+                    p = temp.to_permutation()
+                    if p in reprs:
+                        continue
+                    reprs[p] = temp
+                    next_level.append(temp)
+        gens = []
+        for s in reprs.values():
+            for g in G:
+                val = s * g * ~(reprs[(s*g).to_permutation()])
+                if val == one or val in gens:
+                    continue
+                gens.append(val)
+        return tuple([self(g) for g in gens])
 
