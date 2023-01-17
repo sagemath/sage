@@ -2310,10 +2310,10 @@ def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
 
 def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check=True):
     r"""
-    Construct skew Hadamard matrices from good matrices for some small values of `n`.
+    Construct skew Hadamard matrices from good matrices for some small values of `n=4m`, with `m` odd.
 
     The function stores good matrices of odd orders `\le 31`, taken from [Sze1988]_.
-    These are used to create skew Hadamard matrices of order `4n`, `1 \le n \le 31`, using the function
+    These are used to create skew Hadamard matrices of order `4m`, `1 \le m \le 31` (`m` odd), using the function
     :func:`skew_hadamard_matrix_from_good_matrices`.
 
     ALGORITHM:
@@ -2398,10 +2398,10 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
         e2.reverse()
         return [1] + e1 + e2
     
-    if not(n % 4 == 0) and (n > 2):
+    if not (n % 4 == 0 and (n//4) % 2 == 1):
         if existence:
             return False
-        raise ValueError("The skew Hadamard matrix of order %s does not exist" % n)
+        raise ValueError("The skew Hadamard matrix of order %s from good matrices does not exist." % n)
 
     m = n//4
     l = (m-1) // 2
