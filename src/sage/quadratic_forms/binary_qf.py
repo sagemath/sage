@@ -130,7 +130,7 @@ class BinaryQF(SageObject):
             sage: BinaryQF(0)
             0
         """
-        from sage.structure.element import MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if b is None and c is None:
             if (isinstance(a, (list, tuple))
                 and len(a) == 3):

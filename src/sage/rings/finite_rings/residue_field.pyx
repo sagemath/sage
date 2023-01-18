@@ -170,7 +170,7 @@ from sage.rings.fraction_field import is_FractionField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport parent

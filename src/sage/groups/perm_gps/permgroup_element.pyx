@@ -114,8 +114,8 @@ from cypari2.gen cimport Gen
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.rings.all      import ZZ, Integer
-from sage.structure.element import Polynomial
-from sage.structure.element import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.structure.element import is_Matrix
 from sage.matrix.all     import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet

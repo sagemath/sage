@@ -35,7 +35,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,

@@ -20,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
 from sage.structure.sage_object import SageObject

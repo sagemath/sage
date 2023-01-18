@@ -78,7 +78,7 @@ from sage.categories.all import GradedAlgebrasWithBasis
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.element import MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.combinat.permutation import Permutations, Permutation
 import sage.libs.symmetrica.all as symmetrica
 from sage.misc.cachefunc import cached_method

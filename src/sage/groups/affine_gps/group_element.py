@@ -414,12 +414,12 @@ class AffineGroupElement(MultiplicativeGroupElement):
         if v in parent.vector_space():
             return self._A*v + self._b
 
-        from sage.structure.element import Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         if isinstance(v, Polynomial) and parent.degree() == 1:
             ring = v.parent()
             return ring([self._A[0,0], self._b[0]])
 
-        from sage.structure.element import MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if isinstance(v, MPolynomial) and parent.degree() == v.parent().ngens():
             ring = v.parent()
             from sage.modules.free_module_element import vector

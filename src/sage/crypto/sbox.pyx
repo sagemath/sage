@@ -173,7 +173,7 @@ cdef class SBox(SageObject):
             sage: S.output_size()
             3
         """
-        from sage.structure.element import Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
 
         if "S" in kwargs:
             args = kwargs["S"]

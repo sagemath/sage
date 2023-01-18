@@ -94,11 +94,13 @@ from sage.rings.integer import Integer
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.element import RingElement, MPolynomial, InfinitePolynomial as InfinitePolynomial_base
+from sage.structure.element import RingElement
+from .commutative_polynomial import CommutativePolynomial
+from .multi_polynomial import MPolynomial
 import copy
 
 
-class InfinitePolynomial(InfinitePolynomial_base, metaclass=InheritComparisonClasscallMetaclass):
+class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClasscallMetaclass):
     """
     Create an element of a Polynomial Ring with a Countably Infinite Number of Variables.
 

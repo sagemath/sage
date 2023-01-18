@@ -83,7 +83,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             Type I point centered at 4 + O(5^20)
         """
         from sage.rings.function_field.element import is_FunctionFieldElement
-        from sage.structure.element import Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.fraction_field_element import FractionFieldElement_1poly_field
         self._type = None
 
@@ -109,7 +109,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         # is_FunctionFieldElement calls .parent
         elif hasattr(center, "parent") and hasattr(radius, 'parent'):
-            from sage.structure.element import MPolynomial
+            from sage.rings.polynomial.multi_polynomial import MPolynomial
             if isinstance(center, MPolynomial):
                 try:
                     center = center.univariate_polynomial()

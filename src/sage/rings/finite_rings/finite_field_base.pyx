@@ -1521,7 +1521,7 @@ cdef class FiniteField(Field):
             True
         """
         from .finite_field_constructor import GF
-        from sage.structure.element import Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         if name is None and names is not None:
             name = names

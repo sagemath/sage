@@ -36,7 +36,7 @@ AUTHORS:
 
 from sage.categories.fields import Fields
 
-from sage.structure.element import MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 

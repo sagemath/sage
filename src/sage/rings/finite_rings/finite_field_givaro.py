@@ -137,7 +137,7 @@ class FiniteField_givaro(FiniteField):
         from .finite_field_constructor import GF
         FiniteField.__init__(self, GF(p), name, normalize=False)
 
-        from sage.structure.element import Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 

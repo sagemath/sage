@@ -40,7 +40,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.misc.superseded import deprecated_function_alias
 

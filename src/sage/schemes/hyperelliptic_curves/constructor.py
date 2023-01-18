@@ -25,7 +25,7 @@ from .hyperelliptic_g2 import HyperellipticCurve_g2
 import sage.rings.abc
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.dynamic_class import dynamic_class
 

@@ -18,7 +18,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 

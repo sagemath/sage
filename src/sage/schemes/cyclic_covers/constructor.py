@@ -8,7 +8,7 @@ Cyclic cover curve constructor
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.schemes.affine.affine_space import AffineSpace
 from .cycliccover_generic import CyclicCover_generic

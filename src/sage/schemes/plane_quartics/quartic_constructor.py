@@ -9,7 +9,7 @@ Quartic curve constructor
 #*****************************************************************************
 
 from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
-from sage.structure.element import MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic
 

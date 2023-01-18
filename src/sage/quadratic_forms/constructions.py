@@ -6,7 +6,7 @@ Some Extras
 ##
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 

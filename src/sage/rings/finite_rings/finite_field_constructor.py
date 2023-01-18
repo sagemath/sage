@@ -173,7 +173,7 @@ AUTHORS:
 
 from collections import defaultdict
 from sage.structure.category_object import normalize_names
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
 # the import below is just a redirection

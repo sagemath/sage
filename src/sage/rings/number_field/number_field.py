@@ -114,7 +114,7 @@ import sage.libs.ntl.all as ntl
 import sage.interfaces.gap
 
 import sage.rings.complex_mpfr
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
 import sage.rings.real_mpfi
 import sage.rings.complex_double

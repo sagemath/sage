@@ -47,10 +47,6 @@ abstract base classes.
                                     EuclideanDomainElement
                         FieldElement
                         CommutativeAlgebraElement
-                            CommutativePolynomial
-                                Polynomial
-                                MPolynomial
-                                InfinitePolynomial
                         Expression
                     AlgebraElement
                         Matrix
@@ -4306,93 +4302,6 @@ def is_CommutativeAlgebraElement(x):
     return isinstance(x, CommutativeAlgebraElement)
 
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
-    pass
-
-    ##############################################
-
-cdef class CommutativePolynomial(CommutativeAlgebraElement):
-    r"""
-    Abstract base class for commutative polynomials in any number of variables
-
-    It is a common base for :class:`Polynomial`, :class:`MPolynomial`, and
-    :class:`InfinitePolynomial`.
-    """
-
-    pass
-
-    ##############################################
-
-cdef class Polynomial(CommutativePolynomial):
-    r"""
-    Abstract base class for :class:`~sage.rings.polynomial.polynomial_element.Polynomial`
-
-    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: R1.<x> = QQ[]
-        sage: isinstance(x, sage.structure.element.Polynomial)
-        True
-        sage: R2.<y,z> = QQ[]
-        sage: isinstance(y, sage.structure.element.Polynomial)
-        False
-
-    By design, there is a unique direct subclass::
-
-        sage: len(sage.structure.element.Polynomial.__subclasses__()) <= 1
-        True
-    """
-
-    pass
-
-    ##############################################
-
-cdef class MPolynomial(CommutativePolynomial):
-    r"""
-    Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial.MPolynomial`
-
-    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: R1.<x> = QQ[]
-        sage: isinstance(x, sage.structure.element.MPolynomial)
-        False
-        sage: R2.<y,z> = QQ[]
-        sage: isinstance(y, sage.structure.element.MPolynomial)
-        True
-
-    By design, there is a unique direct subclass::
-
-        sage: len(sage.structure.element.MPolynomial.__subclasses__()) <= 1
-        True
-    """
-
-    pass
-
-    ##############################################
-
-cdef class InfinitePolynomial(CommutativePolynomial):
-    r"""
-    Abstract base class for :class:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial`
-
-    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: X.<x> = InfinitePolynomialRing(QQ)
-        sage: isinstance(x[0], sage.structure.element.InfinitePolynomial)
-        True
-
-    By design, there is a unique direct subclass::
-
-        sage: len(sage.structure.element.InfinitePolynomial.__subclasses__()) <= 1
-        True
-    """
-
     pass
 
     ##############################################

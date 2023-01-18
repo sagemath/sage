@@ -189,7 +189,7 @@ from .polynomial_compiled cimport CompiledPolynomialFunction
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-cdef class Polynomial(Polynomial_base):
+cdef class Polynomial(CommutativePolynomial):
     """
     A polynomial.
 

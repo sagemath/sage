@@ -290,7 +290,7 @@ from .affine_connection import AffineConnection
 from .bundle_connection import BundleConnection
 from .levi_civita_connection import LeviCivitaConnection
 from sage.symbolic.expression import Expression
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 

@@ -86,7 +86,7 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.structure.element import Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
 
 from sage.schemes.elliptic_curves.all import EllipticCurve

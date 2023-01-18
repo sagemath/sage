@@ -36,7 +36,8 @@ from sage.rings.infinity import infinity
 from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
-from sage.structure.element import canonical_coercion, Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import canonical_coercion
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
