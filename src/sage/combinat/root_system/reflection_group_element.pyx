@@ -84,6 +84,12 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         return hash(self._parent) | super().__hash__()
 
+    cpdef test_hash(self):
+        cdef int i
+        cdef int l = self.parent()._length_of_permutation_representation
+        cdef tuple perm = tuple([self.perm[i] for i in range(l)])
+        return hash(self._parent) | hash(perm)
+
     def reduced_word(self):
         r"""
         Return a word in the simple reflections to obtain ``self``.
