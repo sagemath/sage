@@ -258,9 +258,9 @@ class LinearExtensionOfPoset(ClonableArray,
 
         A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
         for every i, either `e_i+1` cover `e_i` otherwise on backtracking
-        from `e_i` to `e_1`, either `e_i+1` should be in the upper cover of 
-        the first element having a non-empty upper cover or should include 
-        only the next element.
+        through the list of elements previosly choosen, either `e_i+1` 
+        should be in the upper cover of the first element having a non-empty
+        upper cover or should include only the prviosly choosen elements.
 
         EXAMPLES::
 
@@ -279,16 +279,38 @@ class LinearExtensionOfPoset(ClonableArray,
             True
         """
         P = self.poset()
+        Q = set()
         for i in range(len(self) - 1):
+            Q.add(self[i])
             if not P.covers(self[i], self[i + 1]):
-                for u in range(i, -1, -1):
-                    if len(P.upper_covers(self[u])) != 0:
-                        if (self[i+1] in P.upper_covers(self[u])):
-                            break
-                        elif (self[u+1] in P.upper_covers(self[u])):
-                            continue
+                if len(P.upper_covers(self[i])) != 0:
+                    return False
+                R = True
+                S = [self[i]]
+                while(R):
+                    for t in S:
+                        for u in P.lower_covers(t):
+                            if len(P.upper_covers(u)) == 0:
+                                S = P.lower_covers(t)
+                                break
+                            else :
+                                for v in P.upper_covers(u):
+                                    if v != self[i+1] and v not in Q:
+                                        return False
+                                    elif v == self[i+1] :
+                                        R=False
+                                        break
+                                    else :
+                                        continue
+                                else :
+                                    if P.lower_covers(t) == 0 :
+                                        return False
+                                    S = P.lower_covers(t)
+                                    continue
+                                break
                         else:
-                            return False
+                            continue
+                        break
         return True
 
     def tau(self, i):
