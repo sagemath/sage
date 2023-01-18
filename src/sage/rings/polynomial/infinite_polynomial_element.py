@@ -58,8 +58,9 @@ callable object that accepts non-negative integers as input and
 returns non-negative integers, then ``c^P`` means to apply ``P`` to
 the variable indices occurring in ``c``.
 
-If you want to substitute variables more generally, use the ``.subs``
-method::
+If you want to substitute variables you can use the standard polynomial
+methods, such as
+:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse.subs`::
 
     sage: R.<x,y> = InfinitePolynomialRing(QQ)
     sage: f = x[1] + x[1]*x[2]*x[3]
@@ -450,24 +451,29 @@ class InfinitePolynomial_sparse(RingElement):
 
     def subs(self, fixed=None, **kwargs):
         """
-        Substitute variables in an infinite polynomial.
+        Substitute variables in ``self``.
 
         INPUT:
 
-        - ``fixed`` - (optional) dict with variable:value pairs
-        - ``**kwargs`` - names parameters
+        - ``fixed`` -- (optional) ``dict`` with ``{variable:value}`` pairs
+        - ``**kwargs`` -- named parameters
 
         OUTPUT:
-            a new polynomial
+
+        the resulting substitution
 
         EXAMPLES::
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ)
             sage: f = x[1] + x[1]*x[2]*x[3]
 
-        Passing ``fixed={x[1]: x[0]}``. Note that the keys::
+        Passing ``fixed={x[1]: x[0]}``. Note that the keys may be given
+        using the generators of the infinite polynomial ring
+        or as a string::
 
             sage: f.subs({x[1]: x[0]})
+            x_3*x_2*x_0 + x_0
+            sage: f.subs({'x_1': x[0]})
             x_3*x_2*x_0 + x_0
 
         Passing the variables as names parameters::
@@ -484,9 +490,7 @@ class InfinitePolynomial_sparse(RingElement):
             sage: g.subs({y[0]: x[0]})
             x_1 + x_0
 
-        The substitution can also handle matrices. It will
-        return a matrix whose entries are polynomials in countably
-        many variables::
+        The substitution can also handle matrices::
 
             sage: M = matrix([[1,0],[0,2]])
             sage: N = matrix([[0,3],[4,0]])
@@ -498,16 +502,17 @@ class InfinitePolynomial_sparse(RingElement):
             [ 1  9]
             [12  4]
 
-        You can only pass one of ``fixed`` or ``kwargs`` at a time::
+        If you pass both ``fixed`` and ``kwargs``, any conflicts
+        will defer to ``fixed``::
 
-            sage: g.subs(fixed={x[0]: M}, x_1=N)
-            Traceback (most recent call last):
-            ...
-            ValueError: pass only one of fixed or kwargs
-            sage: g.subs({x[0]: M}, x_1=N)
-            Traceback (most recent call last):
-            ...
-            ValueError: pass only one of fixed or kwargs
+            sage: R.<x,y> = InfinitePolynomialRing(QQ)
+            sage: f = x[0]
+            sage: f.subs({x[0]:1})
+            1
+            sage: f.subs(x_0=5)
+            5
+            sage: f.subs({x[0]:1}, x_0=5)
+            1
 
         TESTS::
 
@@ -519,9 +524,7 @@ class InfinitePolynomial_sparse(RingElement):
         if fixed:
             if not isinstance(fixed, dict):
                 raise ValueError('fixed must be a dict')
-            if kwargs:
-                raise ValueError('pass only one of fixed or kwargs')
-            kwargs = fixed
+            kwargs.update(fixed)
         try:
             return self(**kwargs)
         except TypeError:
