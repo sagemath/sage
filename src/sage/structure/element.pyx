@@ -4376,7 +4376,21 @@ cdef class MPolynomial(CommutativePolynomial):
 
 cdef class InfinitePolynomial(CommutativePolynomial):
     r"""
-    Abstract base class for :class:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse`
+    Abstract base class for :class:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial`
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: X.<x> = InfinitePolynomialRing(QQ)
+        sage: isinstance(x[0], sage.structure.element.InfinitePolynomial)
+        True
+
+    By design, there is a unique direct subclass::
+
+        sage: len(sage.structure.element.InfinitePolynomial.__subclasses__()) <= 1
+        True
     """
 
     pass
