@@ -494,6 +494,7 @@ class IntegerVector(ClonableArray):
             [4, 3, 3]
             sage: IV([0,0,0]).trim()
             []
+
             sage: IV = IntegerVectors(k=4)
             sage: v = IV([4,3,2,0]).trim(); v
             [4, 3, 2]
@@ -507,7 +508,6 @@ class IntegerVector(ClonableArray):
         while not v[-1]:
             v = v[:-1]
         return P.element_class(P, v, check=False)
-
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
