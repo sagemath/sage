@@ -239,14 +239,14 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
                 try:
                     dynamical_system = DynamicalSystem_affine(dynamical_system)
                 except (TypeError, ValueError):
-                    raise TypeError('domain was affine Berkovich space, but dynamical_system did not ' + \
+                    raise TypeError('domain was affine Berkovich space, but dynamical_system did not '
                         'convert to an affine dynamical system')
         if isinstance(domain, Berkovich_Cp_Projective):
             if not isinstance(dynamical_system, DynamicalSystem_projective):
                 try:
                     dynamical_system = DynamicalSystem_projective(dynamical_system)
                 except (TypeError, ValueError):
-                    raise TypeError('domain was projective Berkovich space, but dynamical_system did not convert ' + \
+                    raise TypeError('domain was projective Berkovich space, but dynamical_system did not convert '
                         'to a projective dynamical system')
 
         if not isinstance(dynamical_system, DynamicalSystem):
@@ -268,7 +268,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
                         if ideal != domain.ideal():
                             raise ValueError('conflicting inputs for ideal and domain')
             else:
-                raise ValueError('base ring of domain of dynamical_system must be p-adic or a number field ' + \
+                raise ValueError('base ring of domain of dynamical_system must be p-adic or a number field '
                     'not %s' %morphism_domain.base_ring())
 
         if is_AffineSpace(morphism_domain):
@@ -446,6 +446,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         return "Dynamical system of " + domain_str + " induced by the map" + \
             "\n  Defn: %s"%('\n        '.join(self._system._repr_defn().split('\n')))
 
+
 class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
     r"""
     A dynamical system on projective Berkovich space over `\CC_p`.
@@ -528,13 +529,13 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             raise ValueError('domain was not relative dimension 1')
         if not isinstance(R, pAdicBaseGeneric):
             if domain is None:
-                raise TypeError('dynamical system defined over %s, not p-adic, ' %morphism_domain.base_ring() + \
+                raise TypeError('dynamical system defined over %s, not p-adic, ' %morphism_domain.base_ring() +
                     'and domain is None')
             if not isinstance(domain, Berkovich_Cp_Projective):
                 raise TypeError('domain was %s, not a projective Berkovich space over Cp' %domain)
             if domain.base() != morphism_domain:
-                raise ValueError('base of domain was %s, with coordinate ring %s ' %(domain.base(), \
-                    domain.base().coordinate_ring())+ 'while dynamical_system acts on %s, ' %morphism_domain + \
+                raise ValueError('base of domain was %s, with coordinate ring %s ' %(domain.base(),
+                    domain.base().coordinate_ring())+ 'while dynamical_system acts on %s, ' %morphism_domain +
                         'with coordinate ring %s' %morphism_domain.coordinate_ring())
         else:
             domain = Berkovich_Cp_Projective(morphism_domain)
@@ -1007,7 +1008,7 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
             raise ValueError('domain not relative dimension 1')
         if not isinstance(R, pAdicBaseGeneric):
             if domain is None:
-                raise TypeError('dynamical system defined over %s, not padic, ' %morphism_domain.base_ring() + \
+                raise TypeError('dynamical system defined over %s, not padic, ' %morphism_domain.base_ring() +
                     'and domain was not specified')
             if not isinstance(domain, Berkovich_Cp_Affine):
                 raise TypeError('domain was %s, not an affine Berkovich space over Cp' %domain)

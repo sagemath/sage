@@ -85,12 +85,11 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             a2*a1
         """
         W = self.weyl_group()
-        assert(w in W)
+        assert w in W
         word = w.reduced_word()
-        if all( self.has_no_braid_relation(W.from_reduced_word(word[:i]), word[i]) for i in range(len(word)) ):
+        if all(self.has_no_braid_relation(W.from_reduced_word(word[:i]), word[i]) for i in range(len(word))):
             return self.monomial(w)
-        else:
-            return self.zero()
+        return self.zero()
 
     @cached_method
     def one_basis(self):
@@ -203,7 +202,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             ...
             AssertionError
         """
-        assert(self(w) != self.zero())
+        assert self(w) != self.zero()
         for i in w1.reduced_word():
             if self.has_no_braid_relation(w, i):
                 w = w.apply_simple_reflection(i)

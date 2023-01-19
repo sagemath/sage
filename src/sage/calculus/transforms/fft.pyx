@@ -22,10 +22,10 @@ AUTHORS:
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-import sage.plot.all
 import sage.libs.pari.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
+
 
 def FastFourierTransform(size, base_ring=None):
     """
@@ -247,10 +247,11 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             Graphics object consisting of 2 graphics primitives
 
         """
+        from sage.plot.point import point
+
         cdef int i
         v = []
 
-        point = sage.plot.all.point
         pi    = sage.symbolic.constants.pi.n()
         I     = sage.symbolic.constants.I.n()
         s = 1/(3*pi)   # so arg gets scaled between -1/3 and 1/3.

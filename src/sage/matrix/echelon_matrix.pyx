@@ -151,4 +151,3 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
                 yield m
             del v   # hack: Python itertools reuses the tuple if nobody else uses it
         del pivots  # hack: Python itertools reuses the tuple if nobody else uses it
-

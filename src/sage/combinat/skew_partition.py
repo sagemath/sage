@@ -126,6 +126,7 @@ AUTHORS:
 
 - Mike Hansen: Initial version
 - Travis Scrimshaw (2013-02-11): Factored out ``CombinatorialClass``
+- Trevor K. Karn (2022-08-03): Add ``outside_corners``
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -267,8 +268,16 @@ class SkewPartition(CombinatorialElement):
             &\lr{\ast}&\lr{\ast}\\\cline{2-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_diagram())
+            {\emptyset}
+
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         char = self.parent().options.latex_diagram_str
@@ -294,8 +303,15 @@ class SkewPartition(CombinatorialElement):
             &\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{2-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_young_diagram())
+            {\emptyset}
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         from sage.combinat.output import tex_from_array
@@ -319,8 +335,15 @@ class SkewPartition(CombinatorialElement):
             \lr{X}&\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_marked())
+            {\emptyset}
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         from sage.combinat.output import tex_from_array
@@ -740,6 +763,22 @@ class SkewPartition(CombinatorialElement):
     def outer_corners(self):
         """
         Return a list of the outer corners of ``self``.
+
+        These are corners that are contained inside of the shape.
+        For the corners which are outside of the shape,
+        use :meth:`outside_corners`.
+
+        .. WARNING::
+
+            In the case that ``self`` is an honest (rather than skew) partition,
+            these are the :meth:`~sage.combinat.partition.Partition.corners`
+            of the outer partition. In the language of [Sag2001]_ these would
+            be the "inner corners" of the outer partition.
+
+        .. SEEALSO::
+
+            - :meth:`sage.combinat.skew_partition.SkewPartition.outside_corners`
+            - :meth:`sage.combinat.partition.Partition.outside_corners`
 
         EXAMPLES::
 
@@ -1208,6 +1247,32 @@ class SkewPartition(CombinatorialElement):
                     row.append(h([v]))
             m.append(row)
         return H(m)
+
+    def outside_corners(self):
+        r"""
+        Return the outside corners of ``self``.
+
+        The outside corners are corners which are outside of the shape. This
+        should not be confused with :meth:`outer_corners` which consists of
+        corners inside the shape. It returns a result analogous to the
+        ``.outside_corners()`` method on (non-skew) ``Partitions``.
+
+        .. SEEALSO::
+
+            - :meth:`sage.combinat.skew_partition.SkewPartition.outer_corners`
+            - :meth:`sage.combinat.partition.Partition.outside_corners`
+
+        EXAMPLES::
+
+            sage: mu = SkewPartition([[3,2,1],[2,1]])
+            sage: mu.pp()
+              *
+             *
+            *
+            sage: mu.outside_corners()
+            [(0, 3), (1, 2), (2, 1), (3, 0)]
+        """
+        return self.outer().outside_corners()
 
 def row_lengths_aux(skp):
     """

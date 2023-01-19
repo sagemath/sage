@@ -8,6 +8,13 @@
 *                  http://www.gnu.org/licenses/
 *****************************************************************************/
 
+/* Compatibility for python 3.8, can be removed later */
+#if PY_VERSION_HEX < 0x030900A4 && !defined(Py_SET_TYPE)
+static inline void _Py_SET_TYPE(PyObject *ob, PyTypeObject *type)
+{ ob->ob_type = type; }
+#define Py_SET_TYPE(ob, type) _Py_SET_TYPE((PyObject*)(ob), type)
+#endif
+
 /* Tuple (None, None, None), initialized as needed */
 static PyObject* NoneNoneNone;
 
@@ -66,7 +73,7 @@ static CYTHON_INLINE int Sage_PyType_Ready(PyTypeObject* t)
         }
 
         /* Now, set t.__class__ to metaclass */
-        Py_TYPE(t) = metaclass;
+        Py_SET_TYPE(t, metaclass);
         PyType_Modified(t);
     }
     else

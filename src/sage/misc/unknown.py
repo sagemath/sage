@@ -143,8 +143,6 @@ class UnknownClass(UniqueRepresentation):
         """
         raise UnknownError('Unknown does not evaluate in boolean context')
 
-    
-
     def __and__(self, other):
         """
         The ``&`` logical operation.

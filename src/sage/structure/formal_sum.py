@@ -85,13 +85,14 @@ class FormalSum(ModuleElement):
     def __init__(self, x, parent=None, check=True, reduce=True):
         """
         INPUT:
-            - ``x`` -- object
-            - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-            - ``check`` -- bool (default: True) if False, might not coerce
-                           coefficients into base ring, which can speed
-                           up constructing a formal sum.
-            - ``reduce`` -- reduce (default: True) if False, do not
-                            combine common terms
+
+        - ``x`` -- object
+        - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
+        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
+          coefficients into base ring, which can speed
+          up constructing a formal sum.
+        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+          combine common terms
 
         EXAMPLES::
 

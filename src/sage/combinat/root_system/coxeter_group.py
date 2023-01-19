@@ -1,17 +1,18 @@
 """
 Coxeter Groups
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Nicolas Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 from sage.combinat.root_system.cartan_type import CartanType
+
 
 def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=None):
     """

@@ -1714,7 +1714,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: float(5)^(0.5 + 14.1347251*I)
             -1.62414637645790 - 1.53692828324508*I
         """
-        if isinstance(right, (int, long, Integer)):
+        if isinstance(right, (int, Integer)):
             return RingElement.__pow__(self, right)
 
         try:

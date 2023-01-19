@@ -632,11 +632,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if isinstance(x, Integer):
                 set_from_Integer(self, <Integer>x)
 
-            elif isinstance(x, long):
-                mpz_set_pylong(self.value, x)
-
             elif isinstance(x, int):
-                mpz_set_si(self.value, PyInt_AS_LONG(x))
+                mpz_set_pylong(self.value, x)
 
             elif isinstance(x, float):
                 n = long(x)
@@ -683,7 +680,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     if b == 2: # we use a faster method
                         for j from 0 <= j < len(x):
                             otmp = x[j]
-                            if isinstance(otmp, (int, long)):
+                            if isinstance(otmp, int):
                                 if (<long> otmp) == 1:
                                     mpz_setbit(self.value, j)
                                 if (<long> otmp) != 0:
@@ -707,7 +704,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 elif is_numpy_type(type(x)):
                     import numpy
                     if isinstance(x, numpy.integer):
-                        mpz_set_pylong(self.value, long(x))
+                        mpz_set_pylong(self.value, int(x))
                         return
 
                 elif type(x) is gmpy2.mpz:
@@ -1184,7 +1181,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0x' is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important
@@ -1208,7 +1205,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
            '0' (or '0o') is *not* prepended to the result like is done by the
-           corresponding Python function on ``int`` or ``long``. This is for
+           corresponding Python function on ``int``. This is for
            efficiency sake--adding and stripping the string wastes
            time; since this function is used for conversions from
            integers to other C-library structures, it is important

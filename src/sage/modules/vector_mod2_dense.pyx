@@ -200,7 +200,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
                 raise TypeError("x must be a list of the right length")
             for i in range(len(x)):
                 xi = x[i]
-                if isinstance(xi, (IntegerMod_int, int, long, Integer)):
+                if isinstance(xi, (IntegerMod_int, int, Integer)):
                     # the if/else statement is because in some compilers, (-1)%2 is -1
                     mzd_write_bit(self._entries, 0, i, 1 if xi%2 else 0)
                 elif isinstance(xi, Rational):

@@ -7,6 +7,7 @@ AUTHORS:
 - Mike Hansen: Initial version
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
+- Trevor K. Karn (2022-08-03): added `backward_slide`
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -906,6 +907,140 @@ class SkewTableau(ClonableList,
         if return_vacated:
             return (SkewTableau(new_st), (spotl, spotc))
         return SkewTableau(new_st)
+
+    def backward_slide(self, corner=None):
+        r"""
+        Apply a backward jeu de taquin slide on the specified outside
+        ``corner`` of ``self``.
+
+        Backward jeu de taquin slides are defined in Section 3.7 of
+        [Sag2001]_.
+
+        .. WARNING::
+
+            The :meth:`inner_corners` and :meth:`outer_corners` are the
+            :meth:`sage.combinat.partition.Partition.corners` of the inner and
+            outer partitions of the skew shape. They are different from the
+            inner/outer corners defined in [Sag2001]_.
+
+            The "inner corners" of [Sag2001]_ may be found by calling
+            :meth:`outer_corners`. The "outer corners" of [Sag2001]_ may be
+            found by calling ``self.outer_shape().outside_corners()``.
+
+        EXAMPLES::
+
+            sage: T = SkewTableaux()([[2, 2], [4, 4], [5]])
+            sage: Tableaux.options.display='array'
+            sage: Q = T.backward_slide(); Q
+            . 2 2
+            4 4
+            5
+            sage: Q.backward_slide((1, 2))
+            . 2 2
+            . 4 4
+            5
+            sage: Q.reverse_slide((1, 2)) == Q.backward_slide((1, 2))
+            True
+
+            sage: T = SkewTableaux()([[1, 3],[3],[5]]); T
+            1 3
+            3
+            5
+            sage: T.reverse_slide((1,1))
+            . 1
+            3 3
+            5
+
+        TESTS::
+
+            sage: T = SkewTableaux()([[2, 2], [4, 4], [5]])
+            sage: Q = T.backward_slide((0, 2))
+            sage: Q.backward_slide((2,1))
+            . 2 2
+            . 4
+            4 5
+            sage: Q.backward_slide((3,0))
+            . 2 2
+            . 4
+            4
+            5
+            sage: Q = T.backward_slide((2,1)); Q
+            . 2
+            2 4
+            4 5
+            sage: Q.backward_slide((3,0))
+            . 2
+            . 4
+            2 5
+            4
+            sage: Q = T.backward_slide((3,0)); Q
+            . 2
+            2 4
+            4
+            5
+            sage: Q.backward_slide((4,0))
+            . 2
+            . 4
+            2
+            4
+            5
+            sage: Tableaux.options.display='list'
+        """
+        new_st = self.to_list()
+        inner_outside_corners = self.inner_shape().outside_corners()
+        outer_outisde_corners = self.outer_shape().outside_corners()
+        if corner is not None:
+            if tuple(corner) not in outer_outisde_corners:
+                raise ValueError("corner must be an outside corner"
+                                 " of the outer shape")
+        else:
+            if not outer_outisde_corners:
+                return self
+            else:
+                corner = outer_outisde_corners[0]
+
+        i, j = corner
+
+        # add the empty cell
+        # the column only matters if it is zeroth column, in which
+        # case we need to add a new row.
+        if not j:
+            new_st.append(list())
+        new_st[i].append(None)
+
+        while (i, j) not in inner_outside_corners:
+            # get the value of the cell above the temporarily empty cell (if
+            # it exists)
+            if i > 0:
+                P_up = new_st[i-1][j]
+            else:
+                P_up = -1  # a dummy value less than all positive numbers
+
+            # get the value of the cell to the left of the temp. empty cell
+            # (if it exists)
+            if j > 0:
+                P_left = new_st[i][j-1]
+            else:
+                P_left = -1  # a dummy value less than all positive numbers
+
+            # get the next cell
+            # p_left will always be positive, but if P_left
+            # and P_up are both None, then it will return
+            # -1, which doesn't trigger the conditional
+            if P_left > P_up:
+                new_st[i][j] = P_left
+                i, j = (i, j - 1)
+            else:  # if they are equal, we slide up
+                new_st[i][j] = P_up
+                i, j = (i - 1, j)
+        # We don't need to reset the intermediate cells inside the loop
+        # because the conditional above will continue to overwrite it until
+        # the while loop terminates. We do need to reset it at the end.
+        new_st[i][j] = None
+
+        return SkewTableaux()(new_st)
+
+    reverse_slide = backward_slide
 
     def rectify(self, algorithm=None):
         """

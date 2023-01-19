@@ -1,13 +1,13 @@
 r"""
 Ambient lattices and ambient spaces
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from .weight_lattice_realizations import WeightLatticeRealizations
@@ -487,7 +487,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         v0 = self.parent()._v0
         v1 = self.parent()._v1
         x = x - (x.inner_product(v0)/2)*v0
-        return  x - (x.inner_product(v1)/6)*v1
+        return x - (x.inner_product(v1)/6)*v1
 
     def to_ambient(self):
         r"""

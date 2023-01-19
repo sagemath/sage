@@ -1595,7 +1595,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
     m = e * f
     u = 1
     while True:
-        if  prec <= u + c8:
+        if prec <= u + c8:
             return 0, True
 
         # We construct the matrix A as a block matrix

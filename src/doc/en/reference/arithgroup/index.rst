@@ -5,7 +5,7 @@ This chapter describes the basic functionality for finite index subgroups of
 the modular group `\SL_2(\ZZ)`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/arithgroup/arithgroup_generic
    sage/modular/arithgroup/arithgroup_perm

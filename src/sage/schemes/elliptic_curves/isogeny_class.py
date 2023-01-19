@@ -1207,7 +1207,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # Collect possible primes.  First put in 2, and also 3 for
     # discriminant -3 (special case because of units):
 
-    L = Set([ZZ(2), ZZ(3)]) if d==-3 else  Set([ZZ(2)])
+    L = Set([ZZ(2), ZZ(3)]) if d==-3 else Set([ZZ(2)])
     if verbose:
         print("initial primes: %s" % L)
 

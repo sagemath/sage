@@ -7,7 +7,7 @@ special linear group. That is, we are dealing with polynomials of
 degree `d` in `n` variables. The special linear group `SL(n,\CC)` acts
 on the variables `(x_1,\dots, x_n)` linearly,
 
-. MATH::
+.. MATH::
 
     (x_1,\dots, x_n)^t \to A (x_1,\dots, x_n)^t
     ,\qquad

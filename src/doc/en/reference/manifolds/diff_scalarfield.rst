@@ -2,7 +2,7 @@ Scalar Fields
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/scalarfield_algebra
 

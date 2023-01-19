@@ -78,7 +78,7 @@ cdef class ntl_mat_GF2E():
             [0x0 0x0 0x0 0x0 0x0]
             [0x0 0x0 0x0 0x0 0x0]
             ]
-            sage: A= matrix(k,5,5,[k.fetch_int(_%(2^4)) for _ in range(25)])
+            sage: A = matrix(k, 5, 5, [k.from_integer(i % 2^4) for i in range(25)])
             sage: ntl.mat_GF2E(ctx, A)
             [[0x0 0x1 0x2 0x3 0x4]
             [0x5 0x6 0x7 0x8 0x9]

@@ -307,7 +307,7 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.arith.all import factorial, gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
@@ -3952,6 +3952,10 @@ class Partition(CombinatorialElement):
         where `i` and `j` are the coordinates of the respective corner.
         The coordinates are counted from `0`.
 
+        .. NOTE::
+
+            This is referred to as an "inner corner" in [Sag2001]_.
+
         EXAMPLES::
 
             sage: Partition([3,2,1]).corners()
@@ -4023,6 +4027,10 @@ class Partition(CombinatorialElement):
         The entries of the list returned are pairs of the form `(i,j)`,
         where `i` and `j` are the coordinates of the respective corner.
         The coordinates are counted from `0`.
+
+        .. NOTE::
+
+            These are called "outer corners" in [Sag2001]_.
 
         EXAMPLES::
 
@@ -4785,7 +4793,6 @@ class Partition(CombinatorialElement):
             return []
 
         shelf = []
-        res = []
         i = 0
         ell = len(self._list)
         while i < ell:
@@ -4842,7 +4849,6 @@ class Partition(CombinatorialElement):
             return list()
 
         L = self._list
-        res = []
         shelf = [k]  # the number of boxes which will fit in a row
         mapping = [0]  # a record of the rows
         for i in range(len(L)-1):
@@ -5806,26 +5812,7 @@ class Partitions(UniqueRepresentation, Parent):
         """
         if n == infinity:
             raise ValueError("n cannot be infinite")
-        if n is None or n is NN or n is NonNegativeIntegers():
-            if len(kwargs) > 0:
-                if len(kwargs) == 1:
-                    if 'max_part' in kwargs:
-                        return Partitions_all_bounded(kwargs['max_part'])
-                    if 'regular' in kwargs:
-                        return RegularPartitions_all(kwargs['regular'])
-                    if 'restricted' in kwargs:
-                        return RestrictedPartitions_all(kwargs['restricted'])
-                elif len(kwargs) == 2:
-                    if 'regular' in kwargs:
-                        if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
-                            raise ValueError("the regularity must be a positive integer")
-                        if 'max_part' in kwargs:
-                            return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
-                        if 'max_length' in kwargs:
-                            return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
-                raise ValueError("the size must be specified with any keyword argument")
-            return Partitions_all()
-        elif isinstance(n, (int,Integer)):
+        if isinstance(n, (int,Integer)):
             if len(kwargs) == 0:
                 return Partitions_n(n)
 
@@ -5879,6 +5866,25 @@ class Partitions(UniqueRepresentation, Parent):
                                            kwargs.get('min_length',0))
                 del kwargs['inner']
             return Partitions_with_constraints(n, **kwargs)
+        elif n is None or n is NN or n is NonNegativeIntegers():
+            if len(kwargs) > 0:
+                if len(kwargs) == 1:
+                    if 'max_part' in kwargs:
+                        return Partitions_all_bounded(kwargs['max_part'])
+                    if 'regular' in kwargs:
+                        return RegularPartitions_all(kwargs['regular'])
+                    if 'restricted' in kwargs:
+                        return RestrictedPartitions_all(kwargs['restricted'])
+                elif len(kwargs) == 2:
+                    if 'regular' in kwargs:
+                        if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
+                            raise ValueError("the regularity must be a positive integer")
+                        if 'max_part' in kwargs:
+                            return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
+                        if 'max_length' in kwargs:
+                            return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
+                raise ValueError("the size must be specified with any keyword argument")
+            return Partitions_all()
 
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")

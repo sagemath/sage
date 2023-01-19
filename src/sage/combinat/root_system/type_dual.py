@@ -675,20 +675,20 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         letter = self._type.type()
-        if letter == 'BC': # A_{2n}^{(2)\dagger}
+        if letter == 'BC':  # A_{2n}^{(2)\dagger}
             n = self._type.classical().rank()
             return CartanTypeFolded(self, ['A', 2*n - 1, 1],
                 [[0]] + [[i, 2*n-i] for i in range(1, n)] + [[n]])
-        if letter == 'B': # A_{2n-1}^{(2)}
+        if letter == 'B':  # A_{2n-1}^{(2)}
             n = self._type.classical().rank()
             return CartanTypeFolded(self, ['D', n + 1, 1],
                 [[i] for i in range(n)] + [[n, n+1]])
-        if letter == 'C': # D_{n+1}^{(2)}
+        if letter == 'C':  # D_{n+1}^{(2)}
             n = self._type.classical().rank()
             return CartanTypeFolded(self, ['A', 2*n-1, 1],
                 [[0]] + [[i, 2*n-i] for i in range(1, n)] + [[n]])
-        if letter == 'F': # E_6^{(2)}
+        if letter == 'F':  # E_6^{(2)}
             return CartanTypeFolded(self, ['E', 6, 1], [[0], [2], [4], [3, 5], [1, 6]])
-        if letter == 'G': # D_4^{(3)}
+        if letter == 'G':  # D_4^{(3)}
             return CartanTypeFolded(self, ['D', 4, 1], [[0], [1, 3, 4], [2]])
-        return super(CartanType, self)._default_folded_cartan_type()
+        return super()._default_folded_cartan_type()

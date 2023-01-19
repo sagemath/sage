@@ -1,5 +1,5 @@
 r"""
-Univariate Dense Skew Polynomials over a field equipped with a finite order automorphism
+Univariate dense skew polynomials over a field with a finite order automorphism
 
 AUTHOR::
 
@@ -190,13 +190,13 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         By default, the name of the central variable is usually ``z`` (see
         :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
-        for more details about this). 
-        However, the user can specify a different variable name if desired:: 
+        for more details about this).
+        However, the user can specify a different variable name if desired::
 
             sage: a.reduced_trace(var='u')
             3*u + 4
 
-        When passing in ``var=False``, a tuple of coefficients (instead of 
+        When passing in ``var=False``, a tuple of coefficients (instead of
         an actual polynomial) is returned::
 
             sage: a.reduced_trace(var=False)
@@ -265,20 +265,20 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         By default, the name of the central variable is usually ``z`` (see
         :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
-        for more details about this). 
+        for more details about this).
         However, the user can specify a different variable name if desired::
 
             sage: a.reduced_norm(var='u')
             u^3 + 4*u^2 + 4
 
-        When passing in ``var=False``, a tuple of coefficients (instead of 
+        When passing in ``var=False``, a tuple of coefficients (instead of
         an actual polynomial) is returned::
 
             sage: a.reduced_norm(var=False)
             (4, 0, 4, 1)
 
         TESTS:
-    
+
         We check that `N` is a multiple of `a`::
 
             sage: S(N).is_right_divisible_by(a)
@@ -320,7 +320,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         """
         if self._norm is None:
             if self.is_zero():
-                self._norm = 0 
+                self._norm = 0
             else:
                 parent = self._parent
                 section = parent._embed_constants.section()
@@ -387,7 +387,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         By default, the name of the variable of the reduced characteristic
         polynomial is ``x`` and the name of central variable is usually ``z``
         (see :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
-        for more details about this). 
+        for more details about this).
         The user can speciify different names if desired::
 
             sage: a.reduced_charpoly(var='T')  # variable name for the caracteristic polynomial
@@ -572,8 +572,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
                 self._optbound = [section(x) for x in bound.list()]
         return center(self._optbound)
 
-
      # TODO:
      # fast multiplication
      # reduced characteristic polynomial
-

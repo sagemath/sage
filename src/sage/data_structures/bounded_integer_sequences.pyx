@@ -77,7 +77,7 @@ cimported in Cython modules:
 
 - ``cdef size_t biseq_getitem_py(biseq_t S, mp_size_t index)``
 
-  Return ``S[index]`` as Python ``int`` or ``long``, without checking margins.
+  Return ``S[index]`` as Python ``int``, without checking margins.
 
 - ``cdef biseq_inititem(biseq_t S, mp_size_t index, size_t item)``
 
@@ -291,7 +291,7 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
 
 cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     """
-    Get item ``S[index]`` as a Python ``int`` or ``long``, without
+    Get item ``S[index]`` as a Python ``int``, without
     checking margins.
 
     """

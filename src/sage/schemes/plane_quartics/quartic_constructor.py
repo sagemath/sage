@@ -51,12 +51,12 @@ def QuarticCurve(F, PP=None, check=False):
 
     """
     if not is_MPolynomial(F):
-        raise ValueError("Argument F (=%s) must be a multivariate polynomial"%F)
+        raise ValueError(f"Argument F (={F}) must be a multivariate polynomial")
     P = F.parent()
     if not P.ngens() == 3:
-        raise ValueError("Argument F (=%s) must be a polynomial in 3 variables"%F)
-    if not(F.is_homogeneous() and F.degree()==4):
-        raise ValueError("Argument F (=%s) must be a homogeneous polynomial of degree 4"%F)
+        raise ValueError("Argument F (=%s) must be a polynomial in 3 variables" % F)
+    if not (F.is_homogeneous() and F.degree() == 4):
+        raise ValueError("Argument F (=%s) must be a homogeneous polynomial of degree 4" % F)
 
     if PP is not None:
         if not is_ProjectiveSpace(PP) and PP.dimension == 2:

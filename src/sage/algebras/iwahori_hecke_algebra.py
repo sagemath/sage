@@ -2282,9 +2282,14 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 {(1,): -1, (1, 2, 1): 1}
                 sage: Cp._decompose_into_generators(W([1,2,3,1,2]))      # optional - coxeter3
                 {(1,): 1, (1, 2, 1): -1, (1, 2, 1, 3, 2): 1, (1, 3, 2): -1}
+
+            TESTS::
+
+                sage: Cp._decompose_into_generators(W([]))               # optional - coxeter3
+                {(): 1}
             """
             # l(y) = 0 or 1
-            if not u:
+            if not len(u):
                 return {(): 1}
             if len(u) == 1:
                 return {(u[0],): 1}

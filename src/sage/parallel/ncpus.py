@@ -33,6 +33,7 @@ CPU Detection
 import os
 import subprocess
 
+
 def ncpus():
     """
     Detects the number of effective CPUs in the system.
@@ -52,22 +53,25 @@ def ncpus():
     else:
         return int(n)
 
-    #for Linux, Unix and MacOS
+    # for Linux, Unix and MacOS
     if hasattr(os, "sysconf"):
         if "SC_NPROCESSORS_ONLN" in os.sysconf_names:
-            #Linux and Unix
+            # Linux and Unix
             ncpus = os.sysconf("SC_NPROCESSORS_ONLN")
             if isinstance(ncpus, int) and ncpus > 0:
                 return ncpus
         else:
-            #MacOS X
-            #deprecated: return int(os.popen2("sysctl -n hw.ncpu")[1].read())
-            process = subprocess.Popen("sysctl -n hw.ncpu", shell=True, stdin=subprocess.PIPE, stdout = subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+            # MacOS X
+            # deprecated: return int(os.popen2("sysctl -n hw.ncpu")[1].read())
+            process = subprocess.Popen("sysctl -n hw.ncpu", shell=True,
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, close_fds=True)
             return int(process.stdout.read())
-    #for Windows
+    # for Windows
     if "NUMBER_OF_PROCESSORS" in os.environ:
         ncpus = int(os.environ["NUMBER_OF_PROCESSORS"])
         if ncpus > 0:
             return ncpus
-    #return the default value
+    # return the default value
     return 1
