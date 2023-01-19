@@ -234,20 +234,6 @@ class OrderedSetPartition(ClonableArray,
         par = parent(self)
         assert self in par, "%s not in %s" % (self, par)
 
-    def _hash_(self):
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: OS = OrderedSetPartitions(4)
-            sage: s = OS([[1, 3], [2, 4]])
-            sage: OSP = OrderedSetPartitions()
-            sage: hash(s) == hash(OSP(s))
-            True
-        """
-        return hash(tuple(self))
-
     def base_set(self):
         """
         Return the base set of ``self``.

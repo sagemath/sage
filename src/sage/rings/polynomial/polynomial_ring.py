@@ -177,7 +177,7 @@ _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
 from . import cyclotomic
 
-from sage.interfaces.singular import SingularElement
+import sage.interfaces.abc
 
 
 def is_PolynomialRing(x):
@@ -435,13 +435,13 @@ class PolynomialRing_general(ring.Algebra):
             elif P == self.base_ring():
                 return C(self, [x], check=True, is_gen=False,
                          construct=construct)
-        if isinstance(x, SingularElement) and self._has_singular:
+        if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
             except Exception:
                 raise TypeError("Unable to coerce singular object")
-        elif isinstance(x , str):
+        elif isinstance(x, str):
             try:
                 from sage.misc.parser import Parser, LookupNameMaker
                 R = self.base_ring()
@@ -619,6 +619,9 @@ class PolynomialRing_general(ring.Algebra):
             return IdentityMorphism(self)
 
     def construction(self):
+        """
+        Return the construction functor.
+        """
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.__is_sparse), self.base_ring()
 
     def completion(self, p, prec=20, extras=None):
@@ -1951,6 +1954,38 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         s = PolynomialRing_commutative._repr_(self)
         return s + self._implementation_repr
 
+    def construction(self):
+        """
+        Return the construction functor.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_integral_domain as PRing
+            sage: R = PRing(ZZ, 'x'); R
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: functor, arg = R.construction(); functor, arg
+            (Poly[x], Integer Ring)
+            sage: functor.implementation is None
+            True
+
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            Univariate Polynomial Ring in x over Integer Ring (using NTL)
+            sage: functor, arg = R.construction(); functor, arg
+            (Poly[x], Integer Ring)
+            sage: functor.implementation
+            'NTL'
+        """
+        implementation = None
+        # NOTE: This is obviously not a complete solution. The parents
+        # don't keep track in a clean way what the implementation is.
+        # Trac #31852 is the task of finding a general solution for
+        # construction functors of parents with multiple
+        # implementations, such as MatrixSpace, Polyhedron, and
+        # PolynomialRing.
+        if 'NTL' in self._implementation_repr:
+            implementation = 'NTL'
+        return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.is_sparse(),
+                                                    implementation=implementation), self.base_ring()
 
 class PolynomialRing_field(PolynomialRing_integral_domain,
                            ring.PrincipalIdealDomain):

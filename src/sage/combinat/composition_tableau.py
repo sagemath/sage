@@ -5,7 +5,6 @@ AUTHORS:
 
 - Chris Berg, Jeff Ferreira (2012-9): Initial version
 """
-
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
@@ -101,12 +100,12 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
         # Verify rows weakly decrease from left to right
         for row in t:
-            if any(row[i] < row[i+1] for i in range(len(row)-1)):
+            if any(row[i] < row[i + 1] for i in range(len(row) - 1)):
                 raise ValueError("rows must weakly decrease from left to right")
 
         # Verify leftmost column strictly increases from top to bottom
-        first_col = [row[0] for row in t if t!=[[]]]
-        if any(first_col[i] >= first_col[i+1] for i in range(len(t)-1)):
+        first_col = [row[0] for row in t if t != [[]]]
+        if any(first_col[i] >= first_col[i + 1] for i in range(len(t) - 1)):
             raise ValueError("leftmost column must strictly increase from top to bottom")
 
         # Verify triple condition
@@ -114,8 +113,8 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         m = max([len(r) for r in t] + [0])
         TT = [row+[0]*(m-len(row)) for row in t]
         for i in range(l):
-            for j in range(i+1,l):
-                for k in range(1,m):
+            for j in range(i+1, l):
+                for k in range(1, m):
                     if TT[j][k] and TT[i][k] <= TT[j][k] <= TT[i][k-1]:
                         raise ValueError("triple condition must be satisfied")
 
@@ -214,10 +213,9 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         """
         cols = {}
         for row in self:
-            for (col,i) in enumerate(row):
+            for col, i in enumerate(row):
                 cols[i] = col
-        des_set = sorted([i for i in cols if i+1 in cols and cols[i+1] >= cols[i]])
-        return des_set
+        return sorted(i for i in cols if i + 1 in cols and cols[i + 1] >= cols[i])
 
     def descent_composition(self):
         r"""
@@ -256,7 +254,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[2,1],[3],[4]]).shape_partition()
             [2, 1, 1]
         """
-        return Partition(sorted([len(row) for row in self], reverse=True))
+        return Partition(sorted((len(row) for row in self), reverse=True))
 
     def is_standard(self):
         r"""
@@ -270,8 +268,9 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[2,1],[3],[4]]).is_standard()
             True
         """
-        entries = sum(self,[])
+        entries = sum(self, [])
         return sorted(entries) == list(range(1, self.size() + 1))
+
 
 class CompositionTableaux(UniqueRepresentation, Parent):
     r"""
@@ -513,11 +512,12 @@ class CompositionTableaux(UniqueRepresentation, Parent):
         m = max([len(r) for r in T] + [0])
         TT = [row+[0]*(m-len(row)) for row in T]
         for i in range(l):
-            for j in range(i+1,l):
-                for k in range(1,m):
+            for j in range(i+1, l):
+                for k in range(1, m):
                     if TT[j][k] != 0 and TT[j][k] >= TT[i][k] and TT[j][k] <= TT[i][k-1]:
                         return False
         return True
+
 
 class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
     r"""
@@ -535,8 +535,8 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
         self.max_entry = max_entry
         CT_n = lambda n: CompositionTableaux_size(n, max_entry)
         DisjointUnionEnumeratedSets.__init__(self,
-                    Family(NonNegativeIntegers(), CT_n),
-                    facade=True, keepkey = False)
+            Family(NonNegativeIntegers(), CT_n),
+            facade=True, keepkey=False)
 
     def _repr_(self):
         r"""
@@ -549,7 +549,7 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
             Composition Tableaux
         """
         if self.max_entry is not None:
-            return "Composition tableaux with maximum entry %s"%str(self.max_entry)
+            return f"Composition tableaux with maximum entry {self.max_entry}"
         return "Composition Tableaux"
 
     def an_element(self):
@@ -563,6 +563,7 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
             [[1, 1], [2]]
         """
         return self.element_class(self, [[1, 1], [2]])
+
 
 class CompositionTableaux_size(CompositionTableaux):
     r"""
@@ -601,7 +602,7 @@ class CompositionTableaux_size(CompositionTableaux):
             sage: [[1],[2,2]] in CompositionTableaux(4)
             False
         """
-        return CompositionTableaux.__contains__(self, x) and sum(map(len,x)) == self.size
+        return CompositionTableaux.__contains__(self, x) and sum(map(len, x)) == self.size
 
     def __iter__(self):
         r"""
@@ -632,7 +633,7 @@ class CompositionTableaux_size(CompositionTableaux):
             True
         """
         for comp in Compositions(self.size):
-            for T in CompositionTableaux_shape(comp,self.max_entry):
+            for T in CompositionTableaux_shape(comp, self.max_entry):
                 yield self.element_class(self, T)
 
     def _repr_(self):
@@ -661,9 +662,9 @@ class CompositionTableaux_size(CompositionTableaux):
         if self.size == 0:
             return self.element_class(self, [])
         if self.size == 1:
-            return self.element_class(self,[[1]])
+            return self.element_class(self, [[1]])
+        return self.element_class(self, [[1] * (self.size - 1), [2]])
 
-        return self.element_class(self, [[1]*(self.size-1),[2]])
 
 class CompositionTableaux_shape(CompositionTableaux):
     r"""
@@ -675,7 +676,7 @@ class CompositionTableaux_shape(CompositionTableaux):
     - ``max_entry`` -- a nonnegative integer. This keyword argument defaults
       to the size of ``comp``.
     """
-    def  __init__(self, comp, max_entry=None):
+    def __init__(self, comp, max_entry=None):
         """
         Initialize ``self``.
 
@@ -753,7 +754,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         if self.shape == []:
             return self.element_class(self, [])
-        t = [[i]*len for (i,len) in enumerate(self.shape,start=1)]
+        t = [[i] * len for i, len in enumerate(self.shape, start=1)]
         return self.element_class(self, t)
 
 
@@ -774,14 +775,14 @@ class CompositionTableauxBacktracker(GenericBacktracker):
         """
         self._shape = shape
         self._n = sum(shape)
-        self._initial_data = [ [None]*s for s in shape ]
+        self._initial_data = [[None] * s for s in shape]
         if max_entry is None:
-            max_entry=sum(shape)
-        self.max_entry=max_entry
+            max_entry = sum(shape)
+        self.max_entry = max_entry
 
         # The ending position will be at the lowest box which is farthest right
-        ending_row = len(shape)-1
-        ending_col = shape[-1]-1
+        ending_row = len(shape) - 1
+        ending_col = shape[-1] - 1
         self._ending_position = (ending_row, ending_col)
 
         # Get the highest box that is farthest left
@@ -819,26 +820,27 @@ class CompositionTableauxBacktracker(GenericBacktracker):
         new_state = self.get_next_pos(i, j)
         yld = bool(new_state is None)
 
-        for k in range(1,self.max_entry +1):
-            #We check to make sure that k does not violate the rule weak decrease in rows
-            if j!=0 and obj[i][j-1] < k:
+        for k in range(1, self.max_entry + 1):
+            # We check to make sure that k does not violate the rule weak decrease in rows
+            if j != 0 and obj[i][j - 1] < k:
                 continue
 
-            #We check to make sure that k does not violate strict increase in first column
-            if j == 0 and i != 0 and k <= obj[i-1][j]:
+            # We check to make sure that k does not violate strict increase in first column
+            if j == 0 and i != 0 and k <= obj[i - 1][j]:
                 continue
 
-            #We check to make sure that k does not violate the Triple Rule
+            # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j-1] for m in range(i)):
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+                                         for m in range(i)):
                 continue
 
-            #Fill in the in the i,j box with k
+            # Fill in the in the i,j box with k
             obj[i][j] = k
             obj_copy[i][j] = k
 
-            #Yield the object
+            # Yield the object
             yield copy.deepcopy(obj), new_state, yld
 
     def get_next_pos(self, ii, jj):
@@ -854,8 +856,8 @@ class CompositionTableauxBacktracker(GenericBacktracker):
         if (ii, jj) == self._ending_position:
             return None
 
-        for j in range(jj+1, self._shape[ii]):
+        for j in range(jj + 1, self._shape[ii]):
             if self._shape[ii] >= j:
                 return ii, j
 
-        return ii+1, 0
+        return ii + 1, 0

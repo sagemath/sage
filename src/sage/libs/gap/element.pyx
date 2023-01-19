@@ -1847,7 +1847,7 @@ cdef class GapElement_FiniteField(GapElement):
         if ring is None:
             from sage.rings.finite_rings.finite_field_constructor import GF
             ring = GF(char**deg, name=var)
-        elif not (ring.is_field() and ring.is_finite() and \
+        elif not (ring.is_field() and ring.is_finite() and
                   ring.characteristic() == char and ring.degree() % deg == 0):
             raise ValueError(('the given ring is incompatible (must be a '
                               'finite field of characteristic {} and degree '

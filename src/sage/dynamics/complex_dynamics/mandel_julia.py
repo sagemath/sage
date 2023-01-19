@@ -283,9 +283,10 @@ def mandelbrot_plot(f=None, **kwds):
                     max_iteration = 50
 
                 # Mandelbrot of General Polynomial Map
-                return polynomial_mandelbrot(f, parameter, x_center, y_center, \
-                 image_width, max_iteration, pixel_count, level_sep, \
+                return polynomial_mandelbrot(f, parameter, x_center, y_center,
+                 image_width, max_iteration, pixel_count, level_sep,
                  number_of_colors, base_color)
+
 
 def external_ray(theta, **kwds):
     r"""

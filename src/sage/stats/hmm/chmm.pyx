@@ -1109,8 +1109,9 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         if self.N*self.N != len(self.A):
             raise ValueError("number of entries of transition matrix A must be the square of the number of entries of pi")
 
-        self.mixture = [b if isinstance(b, GaussianMixtureDistribution) else \
-                            GaussianMixtureDistribution([flatten(x) for x in b]) for b in B]
+        self.mixture = [b if isinstance(b, GaussianMixtureDistribution) else
+                        GaussianMixtureDistribution([flatten(x) for x in b])
+                        for b in B]
         if len(self.mixture) != self.N:
             raise ValueError("number of GaussianMixtures must be the same as number of entries of pi")
 

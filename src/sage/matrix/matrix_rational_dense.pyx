@@ -2210,7 +2210,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         mpq_clear(tmp2)
         return QA
 
-    def randomize(self, density=1, num_bound=2, den_bound=2, \
+    def randomize(self, density=1, num_bound=2, den_bound=2,
                   distribution=None, nonzero=False):
         """
         Randomize ``density`` proportion of the entries of this matrix, leaving

@@ -701,7 +701,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Qz != Qx
             False
         """
-        return  not (self == other)
+        return not (self == other)
 
     def __hash__(self):
         """
