@@ -829,28 +829,27 @@ class CartanTypeFactory(SageObject):
              ['B', 5, 1]^*, ['C', 4, 1]^*, ['F', 4, 1]^*, ['G', 2, 1]^*, ['BC', 1, 2]^*, ['BC', 5, 2]^*]
         """
         finite_crystallographic = \
-            [CartanType (t)       for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
-                                            ['C', 1], ['C', 5], ['D', 2], ['D', 3], ['D', 5],
-                                            ["E", 6], ["E", 7], ["E", 8],
-                                            ["F", 4],
-                                            ["G", 2]]]
+            [CartanType(t) for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
+                                     ['C', 1], ['C', 5], ['D', 2], ['D', 3], ['D', 5],
+                                     ["E", 6], ["E", 7], ["E", 8],
+                                     ["F", 4], ["G", 2]]]
 
         # Support for hand constructed Dynkin diagrams as Cartan types is not yet ready enough for including an example here.
         # from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
         # g = DynkinDiagram_class.an_instance()
         return finite_crystallographic + \
-            [CartanType(t)        for t in [["I", 5], ["H", 3], ["H", 4]]] + \
-            [t.affine()           for t in finite_crystallographic if t.is_irreducible()] + \
-            [CartanType(t)        for t in [["BC", 1, 2], ["BC", 5, 2]]] + \
+            [CartanType(t) for t in [["I", 5], ["H", 3], ["H", 4]]] + \
+            [t.affine() for t in finite_crystallographic if t.is_irreducible()] + \
+            [CartanType(t) for t in [["BC", 1, 2], ["BC", 5, 2]]] + \
             [CartanType(t).dual() for t in [["B", 5, 1], ["C", 4, 1], ["F", 4, 1], ["G", 2, 1],["BC", 1, 2], ["BC", 5, 2]]] #+ \
             # [ g ]
 
-    _colors = {1: 'blue',    -1: 'blue',
-               2: 'red',     -2: 'red',
-               3: 'green',   -3: 'green',
-               4: 'cyan',    -4: 'cyan',
+    _colors = {1: 'blue', -1: 'blue',
+               2: 'red', -2: 'red',
+               3: 'green', -3: 'green',
+               4: 'cyan', -4: 'cyan',
                5: 'magenta', -5: 'magenta',
-               6: 'yellow',  -6: 'yellow'}
+               6: 'yellow', -6: 'yellow'}
 
     @classmethod
     def color(cls, i):

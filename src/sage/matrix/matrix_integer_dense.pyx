@@ -3416,7 +3416,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         from .misc import matrix_integer_dense_rational_reconstruction
         return matrix_integer_dense_rational_reconstruction(self, N)
 
-    def randomize(self, density=1, x=None, y=None, distribution=None, \
+    def randomize(self, density=1, x=None, y=None, distribution=None,
                   nonzero=False):
         """
         Randomize ``density`` proportion of the entries of this matrix,
@@ -3487,8 +3487,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if density == 1:
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < self._ncols:
-                        the_integer_ring._randomize_mpz(tmp, x, y, \
-                                                    distribution)
+                        the_integer_ring._randomize_mpz(tmp, x, y,
+                                                        distribution)
                         self.set_unsafe_mpz(i,j,tmp)
             else:
                 nc = self._ncols
@@ -3496,7 +3496,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < num_per_row:
                         k = rstate.c_random()%nc
-                        the_integer_ring._randomize_mpz(tmp, \
+                        the_integer_ring._randomize_mpz(tmp,
                                                         x, y, distribution)
                         self.set_unsafe_mpz(i,k,tmp)
             sig_off()
@@ -3509,7 +3509,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < self._ncols:
                         while fmpz_sgn(fmpz_mat_entry(self._matrix,i,j)) == 0:
-                            the_integer_ring._randomize_mpz(tmp, \
+                            the_integer_ring._randomize_mpz(tmp,
                                 x, y, distribution)
                             self.set_unsafe_mpz(i,j,tmp)
             else:
@@ -3519,7 +3519,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                     for j from 0 <= j < num_per_row:
                         k = rstate.c_random() % nc
                         while fmpz_sgn(fmpz_mat_entry(self._matrix,i,k)) == 0:
-                            the_integer_ring._randomize_mpz(tmp,\
+                            the_integer_ring._randomize_mpz(tmp,
                                                             x, y, distribution)
                             self.set_unsafe_mpz(i,k,tmp)
 

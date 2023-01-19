@@ -35,7 +35,7 @@ jobs:
     - name: Install relint
       run: pip install tox relint
     - name: Lint using relint
-      run: tox -e relint src/sage/
+      run: tox -e relint -- src/sage/
   lint-rst:
     name: Validate docstring markup as RST
     runs-on: ubuntu-latest

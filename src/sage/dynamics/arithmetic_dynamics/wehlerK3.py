@@ -113,7 +113,6 @@ def random_WehlerK3Surface(PP):
 
 class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     r"""
-
     A K3 surface in `\mathbb{P}^2 \times \mathbb{P}^2` defined as the
     intersection of a bilinear and biquadratic form. [Weh1998]_
 
@@ -807,7 +806,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         vars = list(PSX.gens())
         K = FractionField(PSX.base_ring())
         R0 = PolynomialRing(K, 3, vars)
-        I = R.ideal(self.Gpoly(1, 0), self.Gpoly(1, 1), self.Gpoly(1, 2), self.Hpoly(1, 0,1 ), \
+        I = R.ideal(self.Gpoly(1, 0), self.Gpoly(1, 1), self.Gpoly(1, 2), self.Hpoly(1, 0,1 ),
                     self.Hpoly(1, 0, 2), self.Hpoly(1, 1, 2))
         phi = R.hom(vars + [0, 0, 0], R0)
         I = phi(I)
@@ -838,7 +837,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         vars = list(PSY.gens())
         K = FractionField(PSY.base_ring())
         R0 = PolynomialRing(K, 3, vars)
-        I = R.ideal(self.Gpoly(0, 0), self.Gpoly(0, 1), self.Gpoly(0, 2), self.Hpoly(0, 0, 1), \
+        I = R.ideal(self.Gpoly(0, 0), self.Gpoly(0, 1), self.Gpoly(0, 2), self.Hpoly(0, 0, 1),
                     self.Hpoly(0, 0, 2), self.Hpoly(0, 1, 2))
         phi = PP.coordinate_ring().hom([0, 0, 0] + vars, R0)
         I = phi(I)
@@ -1108,16 +1107,16 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
         pt = list(P[0]) + [0, 0, 0]
         if P[1][0] != 0:
-            [a,b,c] = [P[1][0]*self.Gpoly(1, 0)(*pt),\
-                       -1*P[1][0]*self.Hpoly(1, 0, 1)(*pt) - P[1][1]*self.Gpoly(1, 0)(*pt),\
+            [a,b,c] = [P[1][0]*self.Gpoly(1, 0)(*pt),
+                       -1*P[1][0]*self.Hpoly(1, 0, 1)(*pt) - P[1][1]*self.Gpoly(1, 0)(*pt),
                        -P[1][0]*self.Hpoly(1, 0, 2)(*pt) - P[1][2]*self.Gpoly(1, 0)(*pt)]
         elif P[1][1] != 0:
-            [a,b,c] = [-1*P[1][1]*self.Hpoly(1, 0, 1)(*pt)-P[1][0]*self.Gpoly(1, 1)(*pt),\
-                        P[1][1]*self.Gpoly(1, 1)(*pt),\
+            [a,b,c] = [-1*P[1][1]*self.Hpoly(1, 0, 1)(*pt)-P[1][0]*self.Gpoly(1, 1)(*pt),
+                        P[1][1]*self.Gpoly(1, 1)(*pt),
                        -P[1][1]*self.Hpoly(1, 1, 2)(*pt)-P[1][2]*self.Gpoly(1, 1)(*pt)]
         else:
-            [a,b,c] = [-1*P[1][2]*self.Hpoly(1, 0, 2)(*pt) - P[1][0]*self.Gpoly(1, 2)(*pt),\
-                       -P[1][2]*self.Hpoly(1, 1, 2)(*pt) - P[1][1]*self.Gpoly(1, 2)(*pt),\
+            [a,b,c] = [-1*P[1][2]*self.Hpoly(1, 0, 2)(*pt) - P[1][0]*self.Gpoly(1, 2)(*pt),
+                       -P[1][2]*self.Hpoly(1, 1, 2)(*pt) - P[1][1]*self.Gpoly(1, 2)(*pt),
                        P[1][2]*self.Gpoly(1, 2)(*pt)]
         Point = [P[0][0], P[0][1], P[0][2], a, b, c]
 
@@ -1148,13 +1147,13 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             t = w1 - t1
             phi = R.hom([s1*(t) + s0*P[0][0]/P[0][2], s0*w1, s0, z0, z1, z2], S)
 
-        #Blow-up the fiber
-        T = [phi(self.L),phi(self.Q),\
-             phi(self.Gpoly(1, 0)),\
-             phi(self.Gpoly(1, 1)),\
-             phi(self.Gpoly(1, 2)),\
-            -phi(self.Hpoly(1, 0, 1)),\
-            -phi(self.Hpoly(1, 0, 2)),\
+        # Blow-up the fiber
+        T = [phi(self.L),phi(self.Q),
+             phi(self.Gpoly(1, 0)),
+             phi(self.Gpoly(1, 1)),
+             phi(self.Gpoly(1, 2)),
+            -phi(self.Hpoly(1, 0, 1)),
+            -phi(self.Hpoly(1, 0, 2)),
             -phi(self.Hpoly(1, 1, 2))]
         maxexp = []
 
@@ -1182,11 +1181,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         #on the fiber
         RR = PolynomialRing(BR, 5,'s0, s1, z0, z1, z2',order = 'lex')
         s0, s1, z0, z1, z2 = RR.gens()
-        I = RR.ideal([RR(T[0]), \
-                      RR(T[1]), \
-                      RR(T[2]) - P[1][0]*z0, RR(T[3]) - P[1][1]*z1, RR(T[4])-P[1][2]*z2, \
-                      RR(T[5]) - (P[1][0]*z1 + P[1][1]*z0), \
-                      RR(T[6]) - (P[1][0]*z2 + P[1][2]*z0), \
+        I = RR.ideal([RR(T[0]),
+                      RR(T[1]),
+                      RR(T[2]) - P[1][0]*z0, RR(T[3]) - P[1][1]*z1, RR(T[4])-P[1][2]*z2,
+                      RR(T[5]) - (P[1][0]*z1 + P[1][1]*z0),
+                      RR(T[6]) - (P[1][0]*z2 + P[1][2]*z0),
                       RR(T[7]) - (P[1][1]*z2 + P[1][2]*z1)])
 
         #Find the points
@@ -1225,13 +1224,13 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             for i in range(2,len(T)):
                 newT[i] = newT[i]/s**e
             #Create the new ideal
-            II = SS.ideal([SS(newT[0]), \
-                           SS(newT[1]), \
-                           SS(newT[2]) - P[1][0]*z0, \
-                           SS(newT[3]) - P[1][1]*z1, \
-                           SS(newT[4]) - P[1][2]*z2, \
-                           SS(newT[5]) - (P[1][0]*z1 + P[1][1]*z0), \
-                           SS(newT[6]) - (P[1][0]*z2 + P[1][2]*z0), \
+            II = SS.ideal([SS(newT[0]),
+                           SS(newT[1]),
+                           SS(newT[2]) - P[1][0]*z0,
+                           SS(newT[3]) - P[1][1]*z1,
+                           SS(newT[4]) - P[1][2]*z2,
+                           SS(newT[5]) - (P[1][0]*z1 + P[1][1]*z0),
+                           SS(newT[6]) - (P[1][0]*z2 + P[1][2]*z0),
                            SS(newT[7]) - (P[1][1]*z2 + P[1][2]*z1)])
 
             #Find the points
@@ -1350,16 +1349,16 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
         pt = [0, 0, 0] + list(P[1])
         if P[0][0] != 0:
-            [a, b, c] = [P[0][0]*self.Gpoly(0, 0)(*pt), \
-                      -1*P[0][0]*self.Hpoly(0, 0, 1)(*pt) - P[0][1]*self.Gpoly(0, 0)(*pt), \
+            [a, b, c] = [P[0][0]*self.Gpoly(0, 0)(*pt),
+                      -1*P[0][0]*self.Hpoly(0, 0, 1)(*pt) - P[0][1]*self.Gpoly(0, 0)(*pt),
                       -P[0][0]*self.Hpoly(0, 0, 2)(*pt) - P[0][2]*self.Gpoly(0, 0)(*pt)]
         elif P[0][1] != 0:
-            [a, b, c] = [-1*P[0][1]*self.Hpoly(0, 0, 1)(*pt) - P[0][0]*self.Gpoly(0, 1)(*pt),\
-                       P[0][1]*self.Gpoly(0, 1)(*pt), \
+            [a, b, c] = [-1*P[0][1]*self.Hpoly(0, 0, 1)(*pt) - P[0][0]*self.Gpoly(0, 1)(*pt),
+                       P[0][1]*self.Gpoly(0, 1)(*pt),
                        -P[0][1]*self.Hpoly(0, 1, 2)(*pt) - P[0][2]*self.Gpoly(0, 1)(*pt)]
         else:
-            [a, b, c] = [-1*P[0][2]*self.Hpoly(0, 0, 2)(*pt) - P[0][0]*self.Gpoly(0, 2)(*pt), \
-                       - P[0][2]*self.Hpoly(0, 1, 2)(*pt) - P[0][1]*self.Gpoly(0, 2)(*pt), \
+            [a, b, c] = [-1*P[0][2]*self.Hpoly(0, 0, 2)(*pt) - P[0][0]*self.Gpoly(0, 2)(*pt),
+                       - P[0][2]*self.Hpoly(0, 1, 2)(*pt) - P[0][1]*self.Gpoly(0, 2)(*pt),
                        P[0][2]*self.Gpoly(0, 2)(*pt)]
         Point = [a, b, c, P[1][0], P[1][1], P[1][2]]
         if [a, b, c] != [0, 0, 0]:
@@ -1391,13 +1390,13 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             phi = R.hom([z0, z1, z2, s1*(t) + s0*P[1][0]/P[1][2], s0*w1, s0], S)
 
         #Blow-up the fiber
-        T = [phi(self.L),\
-         phi(self.Q),\
-         phi(self.Gpoly(0, 0)), \
-         phi(self.Gpoly(0, 1)), \
-         phi(self.Gpoly(0, 2)), \
-        -phi(self.Hpoly(0, 0, 1)), \
-        -phi(self.Hpoly(0, 0, 2)), \
+        T = [phi(self.L),
+         phi(self.Q),
+         phi(self.Gpoly(0, 0)),
+         phi(self.Gpoly(0, 1)),
+         phi(self.Gpoly(0, 2)),
+        -phi(self.Hpoly(0, 0, 1)),
+        -phi(self.Hpoly(0, 0, 2)),
         -phi(self.Hpoly(0, 1, 2))]
         maxexp = []
 
@@ -1422,13 +1421,13 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         # on the fiber
         RR = PolynomialRing(BR, 5, 's0, s1, z0, z1, z2', order='lex')
         s0, s1, z0, z1, z2 = RR.gens()
-        I = RR.ideal([RR(T[0]), \
-                      RR(T[1]), \
-                      RR(T[2]) - P[0][0]*z0, \
-                      RR(T[3]) - P[0][1]*z1, \
-                      RR(T[4]) - P[0][2]*z2, \
-                      RR(T[5]) - (P[0][0]*z1 + P[0][1]*z0), \
-                      RR(T[6]) - (P[0][0]*z2 + P[0][2]*z0), \
+        I = RR.ideal([RR(T[0]),
+                      RR(T[1]),
+                      RR(T[2]) - P[0][0]*z0,
+                      RR(T[3]) - P[0][1]*z1,
+                      RR(T[4]) - P[0][2]*z2,
+                      RR(T[5]) - (P[0][0]*z1 + P[0][1]*z0),
+                      RR(T[6]) - (P[0][0]*z2 + P[0][2]*z0),
                       RR(T[7]) - (P[0][1]*z2 + P[0][2]*z1)])
         #Find the points
         SS = PolynomialRing(BR, 4, 's, z0, z1, z2', order = 'lex')
@@ -1465,14 +1464,14 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             for i in range(2,len(T)):
                 newT[i] = newT[i]/s**e
             #Create the new ideal
-            II = SS.ideal([SS(newT[0]), \
-                           SS(newT[1]), \
-                           SS(newT[2]) - P[0][0]*z0, \
-                            SS(newT[3]) - P[0][1]*z1, \
-                            SS(newT[4]) - P[0][2]*z2, \
-                            SS(newT[5]) - (P[0][0]*z1 + P[0][1]*z0), \
-                            SS(newT[6]) - (P[0][0]*z2 + P[0][2]*z0), \
-                            SS(newT[7]) - (P[0][1]*z2 + P[0][2]*z1)])
+            II = SS.ideal([SS(newT[0]),
+                           SS(newT[1]),
+                           SS(newT[2]) - P[0][0]*z0,
+                           SS(newT[3]) - P[0][1]*z1,
+                           SS(newT[4]) - P[0][2]*z2,
+                           SS(newT[5]) - (P[0][0]*z1 + P[0][1]*z0),
+                           SS(newT[6]) - (P[0][0]*z2 + P[0][2]*z0),
+                           SS(newT[7]) - (P[0][1]*z2 + P[0][2]*z1)])
             # Find the points
             SSS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
             z0, z1, z2 = SSS.gens()
@@ -1633,11 +1632,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             K = Qp(v, prec)
         PK = P.change_ring(K)
         W = self.change_ring(K)
-        Rx = W.ambient_space().coordinate_ring().hom(\
-             list(W.ambient_space()[0].coordinate_ring().gens())+[0, 0, 0], \
+        Rx = W.ambient_space().coordinate_ring().hom(
+             list(W.ambient_space()[0].coordinate_ring().gens()) + [0, 0, 0],
              W.ambient_space()[0].coordinate_ring())
-        Ry = W.ambient_space().coordinate_ring().hom(\
-             [0, 0, 0] + list(W.ambient_space()[1].coordinate_ring().gens()), \
+        Ry = W.ambient_space().coordinate_ring().hom(
+             [0, 0, 0] + list(W.ambient_space()[1].coordinate_ring().gens()),
              W.ambient_space()[1].coordinate_ring())
         beta = R(2 + sqrt(3))
         L = [x.abs() for x in list(PK[0])]
@@ -1730,10 +1729,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             K = Qp(v, prec)
         PK = P.change_ring(K)
         W = self.change_ring(K)
-        Rx = W.ambient_space().coordinate_ring().hom(list(W.ambient_space()[0].coordinate_ring().gens())\
-            +[0, 0, 0],W.ambient_space()[0].coordinate_ring())
-        Ry = W.ambient_space().coordinate_ring().hom([0, 0, 0] + \
-                list(W.ambient_space()[1].coordinate_ring().gens()), \
+        Rx = W.ambient_space().coordinate_ring().hom(list(W.ambient_space()[0].coordinate_ring().gens())
+            + [0, 0, 0], W.ambient_space()[0].coordinate_ring())
+        Ry = W.ambient_space().coordinate_ring().hom([0, 0, 0] +
+                list(W.ambient_space()[1].coordinate_ring().gens()),
                 W.ambient_space()[1].coordinate_ring())
         beta = R(2 + sqrt(3))
         L = [x.abs() for x in list(PK[0])]

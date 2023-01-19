@@ -2285,7 +2285,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             x = variable
         p = self.polynomial(x)
         q = other.polynomial(x)
-        return [R(f) for f in  p.subresultants(q)]
+        return [R(f) for f in p.subresultants(q)]
 
     def reduce(self, I):
         """

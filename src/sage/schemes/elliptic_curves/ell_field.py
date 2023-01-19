@@ -414,7 +414,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant():
+        if j != F.j_invariant():
             return zero
 
         if E.is_isomorphic(F):
@@ -440,7 +440,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 um = c6E/c6F
                 x=rings.polygen(K)
                 ulist=(x**3-um).roots(multiplicities=False)
-                if  not ulist:
+                if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -513,7 +513,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or j!=K(1728):
+        if j != F.j_invariant() or j!=K(1728):
             return zero
 
         if E.is_isomorphic(F):
@@ -582,7 +582,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or not j.is_zero():
+        if j != F.j_invariant() or not j.is_zero():
             return zero
 
         if E.is_isomorphic(F):

@@ -680,9 +680,11 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         We should return ``NotImplemented`` when passed a combination of
         elliptic-curve morphism types that we don't handle here::
 
-            sage: E = EllipticCurve([1,0])
-            sage: phi = E.isogeny(E(0,0))
-            sage: w1._composition_impl(phi.dual(), phi)
+            sage: E1 = EllipticCurve([1,0])
+            sage: phi = E1.isogeny(E1(0,0))
+            sage: E2 = phi.codomain()
+            sage: psi = E2.isogeny(E2(0,0))
+            sage: w1._composition_impl(psi, phi)
             NotImplemented
         """
         if isinstance(left, WeierstrassIsomorphism) and isinstance(right, WeierstrassIsomorphism):
@@ -807,6 +809,21 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return self._poly_ring(1)
 
+    def is_separable(self):
+        r"""
+        Determine whether or not this isogeny is separable.
+
+        Since :class:`WeierstrassIsomorphism` only implements
+        isomorphisms, this method always returns ``True``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(31337), [0,1])
+            sage: {f.is_separable() for f in E.automorphisms()}
+            {True}
+        """
+        return True
+
     def dual(self):
         """
         Return the dual isogeny of this isomorphism.
@@ -864,10 +881,10 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         ::
 
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
             sage: E = EllipticCurve(QuadraticField(-1), [1,0])
             sage: t = WeierstrassIsomorphism(E, (i,0,0,0))
-            sage: -t^2 == WeierstrassIsomorphism(E, (1,0,0,0))
+            sage: -t^2 == identity_morphism(E)
             True
         """
         a1,_,a3,_,_ = self._domain.a_invariants()
@@ -896,3 +913,37 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         the tuple `(u,r,s,t)` defining the isomorphism.
         """
         return self.u
+
+
+def identity_morphism(E):
+    r"""
+    Given an elliptic curve `E`, return the identity morphism
+    on `E` as a :class:`WeierstrassIsomorphism`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
+        sage: E = EllipticCurve([5,6,7,8,9])
+        sage: id_ = identity_morphism(E)
+        sage: id_.rational_maps()
+        (x, y)
+    """
+    R = E.base_ring()
+    zero = R.zero()
+    return WeierstrassIsomorphism(E, (R.one(), zero, zero, zero))
+
+def negation_morphism(E):
+    r"""
+    Given an elliptic curve `E`, return the negation endomorphism
+    `[-1]` of `E` as a :class:`WeierstrassIsomorphism`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.weierstrass_morphism import negation_morphism
+        sage: E = EllipticCurve([5,6,7,8,9])
+        sage: neg = negation_morphism(E)
+        sage: neg.rational_maps()
+        (x, -5*x - y - 7)
+    """
+    R = E.base_ring()
+    return WeierstrassIsomorphism(E, (-R.one(), R.zero(), -E.a1(), -E.a3()))

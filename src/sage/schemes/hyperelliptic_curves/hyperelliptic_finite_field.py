@@ -1365,7 +1365,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         # We may:
         # - check for actual field of definition of the curve (up to isomorphism)
-        if e == 1 and h == 0  and f.degree() % 2 == 1:
+        if e == 1 and h == 0 and f.degree() % 2 == 1:
             N1 = self._frobenius_coefficient_bound_traces(n)
             N2 = self._frobenius_coefficient_bound_charpoly()
             if n < g and q > (2*g+1)*(2*N1-1):
