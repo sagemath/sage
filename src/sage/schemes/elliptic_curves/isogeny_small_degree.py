@@ -1873,7 +1873,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
         sage: [(p,len(isogenies_prime_degree_genus_plus_0_j1728(Emin,p))) for p in [17, 29, 41]]
         [(17, 2), (29, 2), (41, 2)]
     """
-    if l not in  hyperelliptic_primes:
+    if l not in hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
     F = E.base_ring()
     if E.j_invariant() != 1728:
@@ -1896,7 +1896,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
     c4, b2 = E.c4(), E.b2()
     kernels = []
 
-    if l % 4 == 1 and  F(-1).is_square():
+    if l % 4 == 1 and F(-1).is_square():
         i = F(-1).sqrt()
         endo = Fxuv(data['endo'])
         kernels += [endo(36*X+3*b2,i,-27*c4).monic(), endo(36*X+3*b2,-i,-27*c4).monic()]

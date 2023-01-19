@@ -1252,9 +1252,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
             Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
-            sage: phi.dual() * phi == phi.domain().multiplication_by_m_isogeny(11)
+            sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
-            sage: phi * phi.dual() == phi.codomain().multiplication_by_m_isogeny(11)
+            sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
             True
         """
         # FIXME: This code fails if the degree is divisible by the characteristic.
@@ -1363,6 +1363,22 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             True
         """
         return self._pre_iso.scaling_factor() * self._post_iso.scaling_factor()
+
+    def is_separable(self):
+        r"""
+        Determine whether or not this isogeny is separable.
+
+        Since :class:`EllipticCurveHom_velusqrt` only implements
+        separable isogenies, this method always returns ``True``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
+            sage: phi.is_separable()
+            True
+        """
+        return True
 
 
 def _random_example_for_testing():

@@ -4104,7 +4104,7 @@ cdef class BinaryCodeClassifier:
 
                     m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
                     from sage.arith.all import factorial
-                    if True:#size*factorial(n-B.ncols) == m_size:
+                    if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
                             aut_m = PermutationGroup([()])
@@ -4116,8 +4116,8 @@ cdef class BinaryCodeClassifier:
                         else:
                             aut_B_aug = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens])
                         H = aut_m._gap_(gap).Intersection2(aut_B_aug._gap_(gap))
-                        rt_transversal = list(gap('List(RightTransversal( %s,%s ));'\
-                          %(str(aut_B_aug.__interface[gap]),str(H))))
+                        rt_transversal = list(gap('List(RightTransversal( %s,%s ));'
+                          % (str(aut_B_aug.__interface[gap]), str(H))))
                         rt_transversal = [PermutationGroupElement(g) for g in rt_transversal if str(g) != '()']
                         rt_transversal = [[a-1 for a in g.domain()] for g in rt_transversal]
                         rt_transversal = [g + list(xrange(len(g), n))

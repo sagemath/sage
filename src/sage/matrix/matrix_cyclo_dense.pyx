@@ -1058,7 +1058,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         mpq_clear(tmp)
         sig_off()
 
-    def randomize(self, density=1, num_bound=2, den_bound=2, \
+    def randomize(self, density=1, num_bound=2, den_bound=2,
                   distribution=None, nonzero=False, *args, **kwds):
         r"""
         Randomize the entries of ``self``.
@@ -1118,7 +1118,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                 for col in range(self._matrix._ncols):
                     col_is_zero = True
                     while col_is_zero:
-                        self._randomize_rational_column_unsafe(col, B.value, \
+                        self._randomize_rational_column_unsafe(col, B.value,
                             C.value, distribution)
                         # Check whether the new column is non-zero
                         for i in range(self._degree):
@@ -1131,7 +1131,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                     col = rstate.c_random() % self._matrix._ncols
                     col_is_zero = True
                     while col_is_zero:
-                        self._randomize_rational_column_unsafe(col, B.value, \
+                        self._randomize_rational_column_unsafe(col, B.value,
                             C.value, distribution)
                         # Check whether the new column is non-zero
                         for i in range(self._degree):
@@ -1141,25 +1141,27 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         else:
             if density >= 1:
                 for col in range(self._matrix._ncols):
-                    self._randomize_rational_column_unsafe(col, B.value, \
+                    self._randomize_rational_column_unsafe(col, B.value,
                         C.value, distribution)
             else:
                 num = int(self._nrows * self._ncols * density)
                 for k in range(num):
                     col = rstate.c_random() % self._matrix._ncols
-                    self._randomize_rational_column_unsafe(col, B.value, \
+                    self._randomize_rational_column_unsafe(col, B.value,
                         C.value, distribution)
 
     def _charpoly_bound(self):
         """
         Determine a bound for the coefficients of the characteristic
-        polynomial of self. We use the bound in Lemma 2.2 of:
+        polynomial of ``self``.
+
+        We use the bound in Lemma 2.2 of:
 
           Dumas, J-G. "Bounds on the coefficients of characteristic
           and minimal polynomials." J. Inequal. Pure Appl. Math. 8
           (2007), no. 2.
 
-        This bound only applies for `self._nrows >= 4`, so in all
+        This bound only applies for ``self._nrows >= 4``, so in all
         smaller cases, we just use a naive bound.
 
         EXAMPLES::

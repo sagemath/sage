@@ -1299,6 +1299,27 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         return self(dict(zip(M, C)))
 
+    def some_elements(self):
+        r"""
+        Return a list of polynomials.
+
+        This is typically used for running generic tests.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: R.some_elements()
+            [x, y, x + y, x^2 + x*y, 0, 1]
+
+        """
+        R = self.base_ring()
+        L = list(self.gens())
+        if L:
+            L.append(L[0] + L[-1])
+            L.append(L[0] * L[-1])
+        L.extend([self.zero(), self.one()])
+        return L
+
     def change_ring(self, base_ring=None, names=None, order=None):
         """
         Return a new multivariate polynomial ring which isomorphic to

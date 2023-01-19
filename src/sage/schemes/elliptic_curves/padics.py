@@ -1478,7 +1478,7 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
     if self.conductor() % p == 0:
         if not self.conductor() % (p**2) == 0:
             eq = self.tate_curve(p)
-            return  eq.E2(prec=prec)
+            return eq.E2(prec=prec)
 
     X = self.minimal_model().short_weierstrass_model()
     frob_p = X.matrix_of_frobenius(p, prec, check, check_hypotheses, algorithm).change_ring(Integers(p**prec))

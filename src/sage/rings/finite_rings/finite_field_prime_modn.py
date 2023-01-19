@@ -221,7 +221,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             name = self.variable_name()
         try:
             return self.__polynomial[name]
-        except  AttributeError:
+        except AttributeError:
             f = self[name]([0, 1])
             try:
                 self.__polynomial[name] = f

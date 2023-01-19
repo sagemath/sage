@@ -911,7 +911,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         a = self.prod([Pq[i]**ZZ(l[i]) for i in range(l.degree())])
         if check:
             assert phi(a) == v, "oops"
-        return  a
+        return a
 
     def gens(self):
         r"""

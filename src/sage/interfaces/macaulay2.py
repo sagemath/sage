@@ -120,6 +120,8 @@ AUTHORS:
 import os
 import re
 
+import sage.interfaces.abc
+
 from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
                                     FunctionElement)
 from sage.interfaces.interface import AsciiArtString
@@ -237,7 +239,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: rlm2, t = macaulay2.__reduce__()
+            sage: rlm2, t = Macaulay2().__reduce__()
             sage: rlm2(*t)
             Macaulay2
         """
@@ -867,7 +869,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class Macaulay2Element(ExtraTabCompletion, ExpectElement):
+class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Macaulay2Element):
     """
     Instances of this class represent objects in Macaulay2.
 
@@ -1832,14 +1834,24 @@ class Macaulay2FunctionElement(FunctionElement):
 
 def is_Macaulay2Element(x):
     """
+    Return True if ``x`` is a :class:`Macaulay2Element`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.Macaulay2Element`) instead.
+
     EXAMPLES::
 
         sage: from sage.interfaces.macaulay2 import is_Macaulay2Element
         sage: is_Macaulay2Element(2)              # optional - macaulay2
+        doctest:...: DeprecationWarning: the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.MacaulayElement) instead
+        See https://trac.sagemath.org/34823 for details.
         False
         sage: is_Macaulay2Element(macaulay2(2))   # optional - macaulay2
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.Macaulay2Element) instead")
+
     return isinstance(x, Macaulay2Element)
 
 # An instance
