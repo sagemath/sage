@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
-r"""
-Elliptic curves over number fields
+r"""Elliptic curves over number fields
 
 An elliptic curve `E` over a number field `K` can be given
 by a Weierstrass equation whose coefficients lie in `K` or by
 using ``base_extend`` on an elliptic curve defined over a subfield.
 
-One major difference to elliptic curves over `\QQ` is that there
-might not exist a global minimal equation over `K`, when `K` does
-not have class number one.
-Another difference is the lack of understanding of modularity for
-general elliptic curves over general number fields.
+One major difference to elliptic curves over `\QQ` is that there might
+not exist a global minimal equation over `K`, when `K` does not have
+class number one.  When a minimal model does exist the method
+:meth:`global_minimal_model()` will compute it, and otherwise compute
+a model which is miniaml at all primes except one.  Another difference
+is the relative lack of understanding of modularity for elliptic
+curves over general number fields; the method :meth:`is_modular()`
+does implement recent methods to prove modularity of elliptic curves,
+over totally real fields only.
 
-Currently Sage can obtain local information about `E/K_v` for finite places
-`v`, it has an interface to Denis Simon's script for 2-descent, it can compute
-the torsion subgroup of the Mordell-Weil group `E(K)`, and it can work with
-isogenies defined over `K`.
+Currently Sage can obtain local information about `E/K_v` for finite
+places `v`, it has an interface to Denis Simon's script for 2-descent,
+it can compute the torsion subgroup of the Mordell-Weil group `E(K)`,
+and it can work with isogenies defined over `K`, including the
+determination of the complete isogeny class of any curve.
 
 EXAMPLES::
 
@@ -72,6 +76,7 @@ REFERENCE:
 
 - [Sil2] Silverman, Joseph H. Advanced topics in the arithmetic of elliptic curves. Graduate Texts in
   Mathematics, 151. Springer, 1994.
+
 """
 
 # ****************************************************************************
@@ -4062,3 +4067,212 @@ class EllipticCurve_number_field(EllipticCurve_field):
             E = E.change_ring(kwds['F'])
 
         return [E(pt) for pt in Curve(self).rational_points(**kwds)]
+
+    def is_modular(self, verbose=False):
+        r"""Returns `True` if the base field is totally real and modularity of
+        this curve can be proved, otherwise `False`.
+
+        INPUT:
+
+        - ``verbose`` (bool, default ``False``) -- if True, outputs a reason for the conclusion.
+
+        .. NOTE::
+
+            When `False` is returned, it does not mean that the curve
+            is not modular!  Only that modularity cannot be proved
+            with current knowledge and implemented methods.  It is
+            expected that the return value will be `True` for all
+            curves defined over totally real fields; any curve defined
+            over such fields for which the return value is `False` is
+            of great interest, as its mod `p` Galois representations
+            for the primes 3, 5 and 7 are simultaneously nonmaximal.
+
+            There are currently no theoretical results which allow
+            modularity to be proved over fields other than totally
+            real fields, with the exception of imaginary quadratic
+            fields, where it is currently possible to prove modularity
+            in individual cases by cmputing suitable spaces of Bianchi
+            modular forms, but this is not implemented.
+
+        ALGORITHM:
+
+        This is based on code provided by S. Siksek and relies on
+        theorems in the following papers:
+
+        [Chen] Imin Chen, The Jacobian of Modular Curves Associated to Cartan
+        Subgroups, Oxford DPhil thesis, 1996.
+
+        [FLS] Nuno Freitas, Bao Le Hung, and S. Siksek, Elliptic curves over
+        Real Quadratic Fields are Modular, Invent. math. (2015) 201,
+        pp. 159--206.
+
+        [Thorne] Jack Thorne, Automorphy of some residually dihedral Galois
+        representations.  Mathematische Annalen 364 (2016), No. 1--2,
+        pp. 589--648
+
+        EXAMPLES.  Set ``verbose=True`` to see a reason for the conclusion::
+
+            sage: E = EllipticCurve('11a1')
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over QQ are modular (Wiles et al)
+            True
+            sage: K.<a> = QuadraticField(5)
+            sage: E = EllipticCurve([0,1,0,a,0])
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)
+            True
+            sage: E = EllipticCurve([0,0,0,a,0])
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)
+            True
+            sage: K.<a> = QuadraticField(-5)
+            sage: E = EllipticCurve([0,1,0,a,0])
+            sage: E.is_modular(verbose=True)
+            Unable to determine modularity except over totally real fields
+            False
+
+        Some examples from the LMFDB.  Over a totally real cubic field::
+
+            sage: R.<x> = PolynomialRing(QQ);  K.<a> = NumberField(R([-3, -7, -1, 1]))
+            sage: E = EllipticCurve([K([-4,-1,1]),K([-4,-2,1]),K([-4,-1,1]),K([-2807,-660,446]),K([5874,1376,-933])])
+            sage: E.is_modular(verbose=True)
+            Modularity implied by the mod 3 Galois image being neither reducible nor split
+            True
+
+        Over a field which is not totally real, no conclusion is currently possible::
+
+            sage: R.<x> = PolynomialRing(QQ);  K.<a> = NumberField(R([1, 0, -1, 1]))
+            sage: K.is_totally_real()
+            False
+            sage: E = EllipticCurve([K([0,0,1]),K([1,0,0]),K([0,0,1]),K([0,0,0]),K([0,0,0])])
+            sage: E.is_modular(verbose=True)
+            Unable to determine modularity except over totally real fields
+            False
+
+        """
+        def not_from(group, p, j):
+            return len(_modular_polynomial(group, p, j).roots()) == 0
+
+        K = self.base_field()
+        if K is QQ:
+            if verbose:
+                print("All elliptic curves over QQ are modular (Wiles et al)")
+            return True
+        if not K.is_totally_real():
+            if verbose:
+                print("Unable to determine modularity except over totally real fields")
+            return False # meaning unknown
+        if K.degree() == 2:
+            if verbose:
+                print("All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)")
+            return True
+        if self.has_cm():
+            if verbose:
+                print("All CM elliptic curves over totally real fields are modular")
+            return True
+
+        j = self.j_invariant()
+
+        if not_from("borel", 3, j) and not_from("split", 3, j):
+            if verbose:
+                print("Modularity implied by the mod 3 Galois image being neither reducible nor split")
+            return True
+
+        if not_from("borel", 5, j):
+            if not K(5).is_square():
+                if verbose:
+                    print("Modularity implied by the mod 5 Galois image being irreducible and 5 not square")
+                return True
+            if not_from("split", 5, j) and not_from("nonsplit", 5, j):
+                if verbose:
+                    print("Modularity implied by the mod 5 Galois image not being reducible, split, or nonsplit")
+                return True
+
+        if not_from("borel", 7, j) and not_from("split", 7, j) and not_from("nonsplit", 7, j):
+            if verbose:
+                print("Modularity implied by the mod 7 Galois image not being reducible, split, or nonsplit")
+            return True
+
+        if verbose:
+            print("Modularity not established: this curve has small image at 3, 5 and 7!")
+
+        return False # We've run out of tricks!
+
+def _modular_polynomial(group, p, j):
+    r"""Helper function for the method :meth:`is_modular`.
+
+    INPUT:
+
+    - ``group`` (string) -- one of 'borel', 'split', 'nonsplit'.
+
+    - ``p`` (int) -- a prime number, either 3 or 5 or 7.
+
+    - ``j`` -- an(algebraic number, the `j`-invariant of an elliptic curve.
+
+    OUTPUT:
+
+    A polynomial in one variable `x` with coefficients in the parent
+    field of ``j`` which has a root if and only if the mod-`p`
+    representation of elliptic curves with `j`-invariant ``j`` has
+    image contained in a Borel subgroup, the normaliser of a split
+    Cartan subgroup, or the normaliser of a non-split Cartan subgroup
+    respectively (depending on the ``group`` parameter).
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_number_field import _modular_polynomial
+        sage: E = EllipticCurve('11a1').change_ring(QuadraticField(5, 'a'))
+        sage: j = E.j_invariant()
+        sage: _modular_polynomial('borel', 3, j)
+        x^4 + 36*x^3 + 270*x^2 + 243778492/161051*x + 729
+        sage: _modular_polynomial('split', 3, j)
+        x^6 - 18*x^5 + 27*x^4 + 243778492/161051*x^3 - 729*x^2 - 13122*x - 19683
+        sage: _modular_polynomial('borel', 5, j)
+        x^6 + 30*x^5 + 315*x^4 + 1300*x^3 + 1575*x^2 + 242812186/161051*x + 125
+        sage: _modular_polynomial('split', 5, j)
+        x^15 + 30*x^14 + 390*x^13 + 2800*x^12 + 11175*x^11 + 2658577186/161051*x^10 - 8545073600/161051*x^9 - 3318236600/14641*x^8 + 79768901125/161051*x^7 + 950952612750/161051*x^6 + 3261066516250/161051*x^5 + 5917349970000/161051*x^4 + 5381326371875/161051*x^3 + 45039331250/14641*x^2 - 3377861937500/161051*x - 2135097075000/161051
+        sage: _modular_polynomial('nonsplit', 5, j)
+        43605793936/161051*x^10 + 609382899680/161051*x^9 + 3805439994680/161051*x^8 + 13957069930640/161051*x^7 + 33226111304085/161051*x^6 + 4866186482686/14641*x^5 + 58961494233415/161051*x^4 + 43734191948140/161051*x^3 + 20843516212195/161051*x^2 + 5741876955930/161051*x + 690283481689/161051
+        sage: _modular_polynomial('borel', 7, j)
+        x^8 + 28*x^7 + 322*x^6 + 1904*x^5 + 5915*x^4 + 8624*x^3 + 4018*x^2 + 242490084/161051*x + 49
+        sage: _modular_polynomial('split', 7, j)
+        x^28 - 42*x^27 + 819*x^26 - 9842*x^25 + 81543*x^24 - 493416*x^23 + 2251424*x^22 - 1268191320692/161051*x^21 + 3410611518671/161051*x^20 - 6947130862854/161051*x^19 + 10098387132407/161051*x^18 - 8011521604618/161051*x^17 - 509395128662/14641*x^16 + 32582181402218/161051*x^15 - 62691210143713/161051*x^14 + 73259301822126/161051*x^13 - 46379791168053/161051*x^12 - 6277600417172/161051*x^11 + 46742832789352/161051*x^10 - 49641085864608/161051*x^9 + 2343504014803/14641*x^8 - 861578737314/161051*x^7 - 12167703919007/161051*x^6 + 14278547318070/161051*x^5 - 9423834664881/161051*x^4 + 3112085963896/161051*x^3 - 457632005824/161051*x^2 + 30845635072/161051*x + 122023936/161051
+        sage: _modular_polynomial('nonsplit', 7, j)
+        400320064/161051*x^21 + 13029623152/161051*x^20 + 228088753900/161051*x^19 + 2408913460821/161051*x^18 + 16642817648786/161051*x^17 + 80889087315407/161051*x^16 + 291040779803200/161051*x^15 + 801917686416123/161051*x^14 + 1729396406547138/161051*x^13 + 2959141014912537/161051*x^12 + 4049663724749832/161051*x^11 + 4450611572214360/161051*x^10 + 3931865527421272/161051*x^9 + 2786855392905248/161051*x^8 + 1576387623537152/161051*x^7 + 704811439294144/161051*x^6 + 22297037611520/14641*x^5 + 5896572491264/14641*x^4 + 12558313746944/161051*x^3 + 152158103552/14641*x^2 + 136821293056/161051*x + 5155295232/161051
+
+    TESTS::
+
+        sage: _modular_polynomial('banana', 7, j)
+        Traceback (most recent call last):
+        ...
+        ValueError: (group, p) must be one of ...
+        sage: _modular_polynomial('borel', 101, j)
+        Traceback (most recent call last):
+        ...
+        ValueError: (group, p) must be one of ...
+    """
+    valid_parameters = [("borel", 3), ("borel", 5), ("borel", 7),
+                       ("split", 3), ("split", 5), ("split", 7),
+                       ("nonsplit", 5), ("nonsplit", 7)]
+    if (group, p) not in valid_parameters:
+        raise ValueError("(group, p) must be one of {}".format(valid_parameters))
+
+    from sage.rings.polynomial.polynomial_ring import polygen
+    x = polygen(j.parent())
+    if group == "borel":
+        from sage.schemes.elliptic_curves.isogeny_small_degree import Fricke_polynomial
+        return Fricke_polynomial(p)(x)-j*x
+    if group == "split":
+        if p == 3:
+            return (x-9)**3*(x+3)**3-j*x**3
+        if p == 5:
+            return ((x**2-5)*(x**2+5*x+10)*(x+5))**3-j*(x**2+5*x+5)**5
+        if p == 7:
+            return ((x**2-5*x+8)*(x**2-5*x+1)*(x**4-5*x**3+8*x**2-7*x+7)*(x+1))**3*x-j*(x**3-4*x**2+3*x+1)**7
+    if group == "nonsplit":
+        if p == 5:
+            return 5**4*(2*x+1)*(x+1)**3*(6*x**2+21*x+19)**3-j*(x**2+x-1)**5
+        if p == 7:
+            return ((4*x**2+5*x+2)*(x**2+3*x+4)*(x**2+10*x+4)*(3*x+1))**3-j*(x**3+x**2-2*x-1)**7
+
+    raise RuntimeError # cannot happen -- the assertion would have failed.
