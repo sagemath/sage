@@ -20,7 +20,7 @@ Quick reference
     :meth:`~Bijectionist.set_constant_blocks` | Declare that the statistic is constant on some sets.
     :meth:`~Bijectionist.set_distributions` | Restrict the distribution of values of the statistic on some elements.
     :meth:`~Bijectionist.set_intertwining_relations` | Declare that the statistic intertwines with other maps.
-    :meth:`~Bijectionist.set_pseudo_inverse_relation` | Declare that the statistic satisfies a certain relation.
+    :meth:`~Bijectionist.set_quadratic_relation` | Declare that the statistic satisfies a certain relation.
     :meth:`~Bijectionist.set_homomesic` | Declare that the statistic is homomesic with respect to a given set partition.
 
 
@@ -535,7 +535,7 @@ class Bijectionist(SageObject):
         self.set_statistics(*alpha_beta)
         self.set_value_restrictions(*value_restrictions)
         self.set_distributions(*elements_distributions)
-        self.set_pseudo_inverse_relation(*phi_psi)
+        self.set_quadratic_relation(*phi_psi)
         self.set_homomesic(Q)
         self.set_intertwining_relations(*pi_rho)
         self.set_constant_blocks(P)
@@ -1395,7 +1395,7 @@ class Bijectionist(SageObject):
 
     set_semi_conjugacy = set_intertwining_relations
 
-    def set_pseudo_inverse_relation(self, *phi_psi):
+    def set_quadratic_relation(self, *phi_psi):
         r"""
         Add restrictions of the form `s\circ\psi\circ s = \phi`.
 
@@ -1430,7 +1430,7 @@ class Bijectionist(SageObject):
              ( [           /\   ]                     ) ]
              ( [  /\/\    /  \  ]  [            /\  ] ) ]
              ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
-            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))
+            sage: bij.set_quadratic_relation((lambda D: D, lambda D: D))
             sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
@@ -2516,7 +2516,7 @@ class _BijectionistMILP():
                                      name=f"block {p}"[:50])
         self.add_alpha_beta_constraints()
         self.add_distribution_constraints()
-        self.add_pseudo_inverse_relation_constraints()
+        self.add_quadratic_relation_constraints()
         self.add_homomesic_constraints()
         self.add_intertwining_relation_constraints()
         if get_verbose() >= 2:
@@ -2959,7 +2959,7 @@ class _BijectionistMILP():
                                 self.milp.add_constraint(rhs <= 0,
                                                          name=f"pi/rho({composition_index})")
 
-    def add_pseudo_inverse_relation_constraints(self):
+    def add_quadratic_relation_constraints(self):
         r"""
         Add constraints enforcing that `s\circ\phi\circ s =
         \psi`.
@@ -2987,7 +2987,7 @@ class _BijectionistMILP():
              ( [           /\   ]                     ) ]
              ( [  /\/\    /  \  ]  [            /\  ] ) ]
              ( [ /    \, /    \ ], [ /\/\/\, /\/  \ ] ) ]
-            sage: bij.set_pseudo_inverse_relation((lambda D: D, lambda D: D))   # indirect doctest
+            sage: bij.set_quadratic_relation((lambda D: D, lambda D: D))   # indirect doctest
             sage: ascii_art(sorted(bij.minimal_subdistributions_iterator()))
             [ (             [   /\   ] )
             [ (             [  /  \  ] )  ( [    /\  ]  [  /\/\  ] )
