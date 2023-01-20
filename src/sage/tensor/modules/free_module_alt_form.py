@@ -428,7 +428,7 @@ class FreeModuleAltForm(FreeModuleTensor):
                     if is_atomic(coef_latex):
                         terms_latex.append(coef_latex + basis_term_latex)
                     else:
-                        terms_latex.append(r'\left(' + coef_latex + \
+                        terms_latex.append(r'\left(' + coef_latex +
                                            r'\right)' + basis_term_latex)
         if not terms_txt:
             expansion_txt = '0'

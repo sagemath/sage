@@ -487,7 +487,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         v0 = self.parent()._v0
         v1 = self.parent()._v1
         x = x - (x.inner_product(v0)/2)*v0
-        return  x - (x.inner_product(v1)/6)*v1
+        return x - (x.inner_product(v1)/6)*v1
 
     def to_ambient(self):
         r"""

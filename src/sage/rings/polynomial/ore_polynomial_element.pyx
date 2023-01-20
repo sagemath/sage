@@ -300,10 +300,8 @@ cdef class OrePolynomial(AlgebraElement):
               To:   Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
         """
         if a:
-            n = self._new_c([a],P,check)
-        else:
-            n = self._new_c([],P)
-        return n
+            return self._new_c([a], P, check)
+        return self._new_c([], P)
 
     def __setitem__(self, n, value):
         r"""
@@ -527,9 +525,7 @@ cdef class OrePolynomial(AlgebraElement):
         cdef Morphism m = self._parent.twisting_morphism(-self.degree())
         if m is None:
             return self * a
-        else:
-            return self * m(a)
-        return r
+        return self * m(a)
 
     def right_monic(self):
         r"""
@@ -578,8 +574,7 @@ cdef class OrePolynomial(AlgebraElement):
             a = self.base_ring()(~self.leading_coefficient())
         except (ZeroDivisionError, TypeError):
             raise NotImplementedError("the leading coefficient is not a unit")
-        r = a * self
-        return r
+        return a * self
 
     cpdef _mod_(self, other):
         r"""
@@ -625,9 +620,8 @@ cdef class OrePolynomial(AlgebraElement):
             Traceback (most recent call last):
             ...
             NotImplementedError: the leading coefficient of the divisor is not invertible
-
         """
-        q,_ = self.right_quo_rem(right)
+        q, _ = self.right_quo_rem(right)
         return q
 
     cpdef _div_(self, right):
@@ -918,13 +912,13 @@ cdef class OrePolynomial(AlgebraElement):
             V1 = self._parent.zero()
             V3 = other
             while V3:
-                Q,R = G._left_quo_rem(V3)
-                T = U - V1*Q
+                Q, R = G._left_quo_rem(V3)
+                T = U - V1 * Q
                 U = V1
                 G = V3
                 V1 = T
                 V3 = R
-            V = G - self*U
+            V = G - self * U
             V, _ = V._left_quo_rem(other)
         if monic:
             lc = ~G.leading_coefficient()
@@ -934,7 +928,7 @@ cdef class OrePolynomial(AlgebraElement):
             G = G * lc
             U = U * lc
             V = V * lc
-        return G,U,V
+        return G, U, V
 
     cdef _left_quo_rem(self, OrePolynomial other):
         r"""
@@ -1137,19 +1131,19 @@ cdef class OrePolynomial(AlgebraElement):
             V3 = other
             while not V3.is_zero():
                 Q, R = G._right_quo_rem(V3)
-                T = U - Q*V1
+                T = U - Q * V1
                 U = V1
                 G = V3
                 V1 = T
                 V3 = R
-            V = G - U*self
-            V,_ = V._right_quo_rem(other)
+            V = G - U * self
+            V, _ = V._right_quo_rem(other)
         if monic:
             lc = ~G.leading_coefficient()
             G = lc * G
             U = lc * U
             V = lc * V
-        return G,U,V
+        return G, U, V
 
     @coerce_binop
     def right_gcd(self, other, monic=True):
@@ -1330,7 +1324,7 @@ cdef class OrePolynomial(AlgebraElement):
         cdef OrePolynomial V = <OrePolynomial>self._parent.zero()
         while other:
             Q, R = self._right_quo_rem(other)
-            T = U - Q*V
+            T = U - Q * V
             U = V
             V = T
             self = other
@@ -1407,7 +1401,7 @@ cdef class OrePolynomial(AlgebraElement):
         cdef OrePolynomial V = <OrePolynomial>self._parent.zero()
         while other:
             Q, R = self._left_quo_rem(other)
-            T = U - V*Q
+            T = U - V * Q
             U = V
             V = T
             self = other
@@ -1459,7 +1453,6 @@ cdef class OrePolynomial(AlgebraElement):
             V1 = V1 * s
         W1, _ = L._left_quo_rem(other)
         return L, V1, W1
-
 
     @coerce_binop
     def left_lcm(self, other, monic=True):
@@ -1648,14 +1641,14 @@ cdef class OrePolynomial(AlgebraElement):
                 if y.find("-") == 0:
                     y = y[1:]
                 if not atomic_repr and n > 0 and (y.find("+") != -1 or y.find("-") != -1):
-                    x = "(%s)"%x
+                    x = "(%s)" % x
                 if n > 1:
-                    var = "*%s^%s"%(name,n)
-                elif n==1:
-                    var = "*%s"%name
+                    var = "*%s^%s" % (name, n)
+                elif n == 1:
+                    var = "*%s" % name
                 else:
                     var = ""
-                s += "%s%s"%(x,var)
+                s += "%s%s" % (x, var)
         s = s.replace(" + -", " - ")
         s = re.sub(r' 1(\.0+)?\*', ' ', s)
         s = re.sub(r' -1(\.0+)?\*', ' -', s)
@@ -1693,16 +1686,16 @@ cdef class OrePolynomial(AlgebraElement):
             x = self[n]
             x = y = x._latex_()
             if x != '0':
-                if n != m-1:
+                if n != m - 1:
                     s += " + "
                 if y.find("-") == 0:
                     y = y[1:]
                 if not atomic_repr and n > 0 and (y.find("+") != -1 or y.find("-") != -1):
-                    x = "\\left(%s\\right)"%x
+                    x = "\\left(%s\\right)" % x
                 if n > 1:
-                    var = "|%s^{%s}"%(name,n)
-                elif n==1:
-                    var = "|%s"%name
+                    var = "|%s^{%s}" % (name, n)
+                elif n == 1:
+                    var = "|%s" % name
                 else:
                     var = ""
                 s += "%s %s" % (x, var)
@@ -1798,7 +1791,7 @@ cdef class OrePolynomial(AlgebraElement):
         if n == 0 or self.degree() < 0:
             return self
         if n > 0:
-            return self._parent(n*[self.base_ring().zero()] + self.list(), check=False)
+            return self._parent(n * [self.base_ring().zero()] + self.list(), check=False)
         if n < 0:
             if n > self.degree():
                 return self._parent([])
@@ -2097,7 +2090,7 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.exponents()
             [0, 2, 4]
         """
-        return [i for i in range(self.degree()+1) if bool(self[i])]
+        return [i for i in range(self.degree() + 1) if bool(self[i])]
 
     def prec(self):
         r"""
@@ -2157,9 +2150,8 @@ cdef class OrePolynomial(AlgebraElement):
             raise ValueError("n must be at least 0")
         if len(v) < n:
             z = self._parent.base_ring().zero()
-            return v + [z]*(n - len(v))
-        else:
-            return v[:int(n)]
+            return v + [z] * (n - len(v))
+        return v[:int(n)]
 
     def variable_name(self):
         r"""
@@ -2195,13 +2187,14 @@ cdef void lmul_gen(list A, Morphism m, d):
     """
     if m is None:
         A.append(A[-1])
-        for j in range(len(A)-2, 0, -1):
-            A[j] = d(A[j]) + A[j-1]
+        for j in range(len(A) - 2, 0, -1):
+            A[j] = d(A[j]) + A[j - 1]
     else:
         A.append(m(A[-1]))
-        for j in range(len(A)-2, 0, -1):
-            A[j] = d(A[j]) + m(A[j-1])
+        for j in range(len(A) - 2, 0, -1):
+            A[j] = d(A[j]) + m(A[j - 1])
     A[0] = d(A[0])
+
 
 cdef class OrePolynomial_generic_dense(OrePolynomial):
     r"""
@@ -2317,8 +2310,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
             This is an internal method. Use :meth:`__hash__` instead.
         """
-        #todo - come up with a way to create hashes of zero that
-        #       that do not incorrectly indicate that the element is 0.
+        # todo - come up with a way to create hashes of zero that
+        # that do not incorrectly indicate that the element is 0.
         cdef long result = 0
         cdef long result_mon
         cdef long c_hash
@@ -2577,11 +2570,11 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef Py_ssize_t dx = len(x), dy = len(y)
         cdef RingElement c
         if dx > dy:
-            r = self._new_c([x[i] - y[i] for i from 0 <= i < dy] + x[dy:], self._parent, 0)
+            r = self._new_c([x[i] - y[i] for i in range(dy)] + x[dy:], self._parent, 0)
         elif dx < dy:
-            r = self._new_c([x[i] - y[i] for i from 0 <= i < dx] + [ -c for c in y[dx:] ], self._parent, 0)
+            r = self._new_c([x[i] - y[i] for i in range(dx)] + [-c for c in y[dx:]], self._parent, 0)
         else:
-            r = self._new_c([x[i] - y[i] for i from 0 <= i < dx], self._parent, 1)
+            r = self._new_c([x[i] - y[i] for i in range(dx)], self._parent, 1)
         return r
 
     cpdef _neg_(self):
@@ -2654,7 +2647,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         This is an helper function.
         """
-        cdef list BA = [ self.base_ring().zero() ] * (len(self._coeffs) + len(A) - 1)
+        cdef list BA = [self.base_ring().zero()] * (len(self._coeffs) + len(A) - 1)
         cdef Morphism m = self._parent._morphism
         cdef d = self._parent._derivation
         cdef coeff
@@ -2713,7 +2706,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: f.degree()
             -1
         """
-        return self._new_c([ s*c for c in self._coeffs ], self._parent, 1)
+        return self._new_c([s * c for c in self._coeffs], self._parent, 1)
 
     cpdef _mul_(self, other):
         r"""
@@ -2766,19 +2759,19 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef RingElement s, inv = other.leading_coefficient()
         cdef Py_ssize_t nb = len(A) - degB
         cdef list L
-        cdef list quo = [ ]
+        cdef list quo = []
         if not inv.is_unit():
             raise ValueError("the leading coefficient of the divisor in not a unit")
         inv = inv.inverse_of_unit()
-        for i in range(nb-1, -1, -1):
-            s = A[i+degB]
+        for i in range(nb - 1, -1, -1):
+            s = A[i + degB]
             if s:
                 s = s * inv
                 if m is not None:
                     s = m(s)
                 L = (<OrePolynomial_generic_dense>other)._mul_list([s])
-                for j in range(len(L)-1):
-                    A[i+j] -= L[j]
+                for j in range(len(L) - 1):
+                    A[i + j] -= L[j]
             quo.append(s)
         quo.reverse()
         return self._new_c(quo, self._parent), self._new_c(A[:degB], self._parent, 1)
@@ -2797,8 +2790,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef d = self._parent._derivation
         cdef RingElement s, inv = other.leading_coefficient()
         cdef list XnB = (<OrePolynomial_generic_dense>other)._coeffs
-        cdef list XnBs = [ ]
-        cdef list quo = [ ]
+        cdef list XnBs = []
+        cdef list quo = []
         if not inv.is_unit():
             raise ValueError("the leading coefficient of the divisor in not a unit")
         inv = inv.inverse_of_unit()
@@ -2807,20 +2800,19 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 XnB = list(XnB)
                 lmul_gen(XnB, m, d)
             XnBs.append(XnB)
-        for i in range(nb-1, -1, -1):
-            s = A[i+degB]
+        for i in range(nb - 1, -1, -1):
+            s = A[i + degB]
             if s:
                 if m:
                     s *= self._parent.twisting_morphism(i)(inv)
                 else:
                     s *= inv
                 XnB = XnBs[i]
-                for j in range(len(XnB)-1):
+                for j in range(len(XnB) - 1):
                     A[j] -= s * XnB[j]
             quo.append(s)
         quo.reverse()
         return self._new_c(quo, self._parent), self._new_c(A[:degB], self._parent, 1)
-
 
     cpdef list coefficients(self, sparse=True):
         r"""
@@ -2930,7 +2922,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         X = S.gen() + s
         Xi = S.one()
         ans = S(self[0])
-        for i in range(1, self.degree()+1):
+        for i in range(1, self.degree() + 1):
             Xi = X * Xi
             ans += self[i] * Xi
         return ans
@@ -3039,7 +3031,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
         """
         assert codomain.base_ring() is domain, \
             "the domain of the injection must be the base ring of the Ore polynomial ring"
-        Morphism.__init__(self, Hom(domain,codomain))
+        Morphism.__init__(self, Hom(domain, codomain))
         self._an_element = codomain.gen()
         self._repr_type_str = "Ore Polynomial base injection"
         self._new_constant_poly_ = self._an_element._new_constant_poly

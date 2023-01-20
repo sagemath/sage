@@ -2214,7 +2214,7 @@ class NumberField_relative(NumberField_generic):
         """
         I = self.absolute_different()
         J = self.ideal(self.base_field().absolute_different().gens())
-        return  I/J
+        return I/J
 
     def different(self):
         """

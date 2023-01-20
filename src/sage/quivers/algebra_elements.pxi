@@ -219,7 +219,7 @@ cdef int negdeglex(path_mon_t M1, path_mon_t M2) except -2:
         if M1.s_len < M2.s_len:
             return -1
         return 1
-    for index from 0 <= index < M1.path.length:
+    for index in range(M1.path.length):
         item1 = biseq_getitem(M1.path, index)
         item2 = biseq_getitem(M2.path, index)
         sig_check()
@@ -256,7 +256,7 @@ cdef int deglex(path_mon_t M1, path_mon_t M2) except -2:
         if M1.s_len < M2.s_len:
             return 1
         return -1
-    for index from 0 <= index < M1.path.length:
+    for index in range(M1.path.length):
         item1 = biseq_getitem(M1.path, index)
         item2 = biseq_getitem(M2.path, index)
         sig_check()

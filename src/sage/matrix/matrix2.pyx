@@ -8695,8 +8695,8 @@ cdef class Matrix(Matrix1):
             nrows = self._nrows - row
         if ncols == -1:
             ncols = self._ncols - col
-        if check and (row < 0 or col < 0 or row + nrows > self._nrows or \
-           col + ncols > self._ncols):
+        if check and (row < 0 or col < 0 or row + nrows > self._nrows or
+                      col + ncols > self._ncols):
             raise IndexError("matrix window index out of range")
         return matrix_window.MatrixWindow(self, row, col, nrows, ncols)
 
@@ -9270,7 +9270,7 @@ cdef class Matrix(Matrix1):
             if density >= 1:
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < self._ncols:
-                        self.set_unsafe(i, j, R._random_nonzero_element(*args,\
+                        self.set_unsafe(i, j, R._random_nonzero_element(*args,
                             **kwds))
             else:
                 num = int(self._nrows * self._ncols * density)
@@ -11262,16 +11262,17 @@ cdef class Matrix(Matrix1):
                 while ranks[i] > ranks[i+1] and ranks[i+1] > n-mult:
                     C = B*C
                     ranks.append(C.rank())
-                    i = i+1
+                    i += 1
                 diagram = [ranks[i]-ranks[i+1] for i in xrange(len(ranks)-1)]
-                blocks.extend([(eval, i) \
-                    for i in Partition(diagram).conjugate()])
+                blocks.extend([(eval, i)
+                               for i in Partition(diagram).conjugate()])
 
         # ``J`` is the matrix in Jordan canonical form.  Note that the blocks
         # are ordered firstly by the eigenvalues, in the same order as obeyed
         # by ``.roots()``, and secondly by size from greatest to smallest.
-        J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse) \
-            for (eval, size) in blocks], subdivide=subdivide)
+        J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse)
+                                   for (eval, size) in blocks],
+                                  subdivide=subdivide)
 
         if transformation:
             from itertools import groupby
@@ -11287,15 +11288,15 @@ cdef class Matrix(Matrix1):
                 # Let B be the matrix `A - eval Id`.
                 B = A - eval
 
-                block_sizes = [size for e,size in blocks if e == eval]
-                block_size_pairs = [(val,len(list(c))) \
-                    for val,c in groupby(block_sizes)]
+                block_sizes = [size for e, size in blocks if e == eval]
+                block_size_pairs = [(val, len(list(c)))
+                                    for val, c in groupby(block_sizes)]
 
                 # Y is a list of vectors, spanning everything that we have
                 # covered by the Jordan chains we developed so far.
                 Y = []
 
-                for l,count in block_size_pairs:
+                for l, count in block_size_pairs:
 
                     # There are ``count`` Jordan blocks of size ``l``
                     # associated to this eigenvalue.

@@ -1670,7 +1670,7 @@ def repr_pretty(coefficients, type, prefix='x', indices=None,
     - ``type`` -- either ``0`` (``PolyhedronRepresentation.INEQUALITY``)
       or ``1`` (``PolyhedronRepresentation.EQUATION``)
 
-    - ``prefix`` -- a string
+    - ``prefix`` -- a string (default: ``x``)
 
     - ``indices`` -- a tuple or other iterable
 
@@ -1705,9 +1705,9 @@ def repr_pretty(coefficients, type, prefix='x', indices=None,
         indices = range(len(coeffs)-1)
     vars = [1]
     if latex:
-        vars += ['x_{{{}}}'.format(i) for i in indices]
+        vars += [f'{prefix}_{{{i}}}' for i in indices]
     else:
-        vars += ['x{}'.format(i) for i in indices]
+        vars += [f'{prefix}{i}' for i in indices]
     if type == PolyhedronRepresentation.EQUATION:
         rel = '=' if latex else '=='
     elif type == PolyhedronRepresentation.INEQUALITY:

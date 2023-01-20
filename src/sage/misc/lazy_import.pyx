@@ -351,7 +351,9 @@ cdef class LazyImport():
             sage: from sage.misc.lazy_import import LazyImport
             sage: rm = LazyImport('sage.all', 'random_matrix')
             sage: rm._sage_argspec_()
-            ArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'], varargs='args', keywords='kwds', defaults=(None, 'randomize', None))
+            FullArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'],
+                        varargs='args', varkw='kwds', defaults=(None, 'randomize', None),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         return sageinspect.sage_getargspec(self.get_object())
 
@@ -1162,6 +1164,78 @@ def get_star_imports(module_name):
             all = [key for key in dir(module) if key[0] != "_"]
         star_imports[module_name] = all
         return all
+
+
+def attributes(a):
+    """
+    Return the private attributes of a :class:`LazyImport` object in a dictionary.
+
+    This is for debugging and doctesting purposes only.
+
+    EXAMPLES::
+
+        sage: from sage.misc.lazy_import import attributes
+        sage: lazy_import("sage.all", "foo")
+        sage: attributes(foo)['_namespace'] is globals()
+        True
+        sage: D = attributes(foo)
+        sage: del D['_namespace']
+        sage: D
+        {'_as_name': 'foo',
+         '_at_startup': False,
+         '_deprecation': None,
+         '_module': 'sage.all',
+         '_name': 'foo',
+         '_object': None}
+    """
+    cdef LazyImport b
+    b = a
+    return {"_object": b._object,
+            "_module": b._module,
+            "_name": b._name,
+            "_as_name": b._as_name,
+            "_namespace": b._namespace,
+            "_at_startup": b._at_startup,
+            "_deprecation": b._deprecation}
+
+
+def clean_namespace(namespace=None):
+    """
+    Adjust :class:`LazyImport` bindings in given namespace to refer to this actual namespace.
+
+    When :class:`LazyImport` objects are imported into other namespaces via normal ``import``
+    instructions, the data stored on a :class:`LazyImport` object that helps it to adjust the
+    binding in the namespace to the actual imported object upon access is not adjusted.
+    This routine fixes that.
+
+    INPUT:
+
+    - ``namespace`` -- the namespace where importing the names; by default,
+      import the names to current namespace
+
+    EXAMPLES::
+
+        sage: from sage.misc.lazy_import import attributes, clean_namespace
+        sage: from sage.calculus.calculus import maxima as C
+        sage: attributes(C)['_as_name']
+        'maxima'
+        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__
+        True
+        sage: clean_namespace(globals())
+        sage: attributes(C)['_as_name']
+        'C'
+        sage: attributes(C)['_namespace'] is globals()
+        True
+    """
+    cdef LazyImport w
+    if namespace is None:
+        namespace = inspect.currentframe().f_locals
+    for k, v in namespace.items():
+        if type(v) is LazyImport:
+            w = v
+            if w._namespace is not None and (w._namespace is not namespace or w._as_name != k):
+                namespace[k] = LazyImport(w._module, w._name, as_name=k, at_startup=w._at_startup,
+                                          namespace=namespace, deprecation=w._deprecation)
 
 
 # Add support for _instancedoc_
