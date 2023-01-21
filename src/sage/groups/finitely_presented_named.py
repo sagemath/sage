@@ -12,6 +12,9 @@ Groups available as finite presentations:
 - Alternating group, `A_n` of order `n!/2` --
   :func:`groups.presentation.Alternating <sage.groups.finitely_presented_named.AlternatingPresentation>`
 
+- Cactus group, `J_n` --
+  :func:`groups.presentation.Cactus <sage.groups.finitely_presented_named.CactusPresentation>`
+
 - Cyclic group, `C_n` of order `n` --
   :func:`groups.presentation.Cyclic <sage.groups.finitely_presented_named.CyclicPresentation>`
 
@@ -580,12 +583,13 @@ def CactusPresentation(n):
     F = FreeGroup(G.variable_names())
     gens = F.gens()
     rls = [g**2 for g in gens]
-    K = G.group_generators().keys()
+    Gg = G.group_generators()
+    K = Gg.keys()
     for i,key in enumerate(K):
         for j,key2 in enumerate(K):
             if i == j:
                 continue
-            x,y = G._product_on_gens(key, key2)
+            x,y = (Gg[key] * Gg[key2])._data
             if key == x and key2 == y:
                 continue
             elt = gens[i] * gens[j] * ~gens[K.index(y)] * ~gens[K.index(x)]

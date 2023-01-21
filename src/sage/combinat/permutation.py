@@ -6844,9 +6844,10 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             sage: J3 = groups.misc.Cactus(3)
             sage: s12,s13,s23 = J3.gens()
-            sage: elt = s12*s23*s13
+            sage: elt = s12 * s23 * s13
             sage: P5 = Permutations(5)
             sage: P5._from_cactus_group_element(elt)
+            [1, 3, 2, 4, 5]
         """
         return self(x.to_permutation())
 

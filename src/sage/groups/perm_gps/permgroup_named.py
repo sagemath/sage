@@ -339,11 +339,13 @@ class SymmetricGroup(PermutationGroup_symalt):
 
             sage: J3 = groups.misc.Cactus(3)
             sage: S5 = SymmetricGroup(5)
-            sage: S5._coerce_map_from_(J3)
-            True
+            sage: S5.coerce_map_from(J3)
+            Conversion via _from_cactus_group_element map:
+              From: Cactus Group with 3 fruit
+              To:   Symmetric group of order 5! as a permutation group
             sage: S2 = SymmetricGroup(2)
-            sage: S2._coerce_map_from_(J3)
-            False
+            sage: S2._coerce_map_from_(J3) is None
+            True
         """
         from sage.groups.cactus_group import CactusGroup
         if isinstance(G, CactusGroup) and G._n <= self._deg:
@@ -361,6 +363,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: elt = s12*s23*s13
             sage: S5 = SymmetricGroup(5)
             sage: S5._from_cactus_group_element(elt)
+            (2,3)
         """
         return self(x.to_permutation())
 
