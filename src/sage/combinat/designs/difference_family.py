@@ -1562,7 +1562,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     """
     m, n, k, d = params
     if G.order() != m * n:
-        if verbose: 
+        if verbose:
             print('Incorrect order of G:', G.order())
         return False
 
@@ -1659,7 +1659,7 @@ def supplementary_difference_set(q, existence=False, check=True):
     an odd prime power.
 
     Note that the construction from [Spe1975]_ states that the resulting sets are `4-\{2v; v+1, v, v, v; 2v\}`
-    supplementary difference sets. However, the implementation of that construction returns 
+    supplementary difference sets. However, the implementation of that construction returns
     `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets. This is not important, since the supplementary
     difference sets are not ordered.
 
@@ -1843,7 +1843,7 @@ def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(5, 2)
         sage: get_fixed_relative_difference_set(s1) #random
-        [2, 10, 19, 23, 0] 
+        [2, 10, 19, 23, 0]
 
     If ``as_elements`` is true, the reuslt will contain elements of the group::
 
