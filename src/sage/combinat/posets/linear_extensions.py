@@ -279,14 +279,51 @@ class LinearExtensionOfPoset(ClonableArray,
             True
         """
         P = self.poset()
+        Q = []
+        N = []
+        S = []
+        T = []
+        if not self:
+            return True
+        N.append(self[0])
+        for i in range(len(self)-1):
+            if P.compare_elements(self[0],self[i+1]) is not None :
+                N.append(self[i+1])
+            else:
+                S.append(self[i+1])
+        Q.append(N.copy())
+        N.clear()
+        while(S):
+            N.append(S[0])
+            for i in range(len(S)-1):
+                if P.compare_elements(S[0],S[i+1]) is not None :
+                    N.append(S[i+1])
+                else:
+                    T.append(S[i+1])
+            Q.append(N.copy())
+            S.clear()
+            S = T.copy()
+            T.clear()
+            N.clear()
+        for l in Q:
+            if not self.complete_supergreedy(P, l):
+                return False
+        else:
+            return True
+
+    def complete_supergreedy(self, P, L):
+        r"""
+        Return ``True`` if the linear extension is supergreedy and any one 
+        element is comparable to all the elements
+        """
         Q = set()
-        for i in range(len(self) - 1):
-            Q.add(self[i])
-            if not P.covers(self[i], self[i + 1]):
-                if len(P.upper_covers(self[i])) != 0:
+        for i in range(len(L) - 1):
+            Q.add(L[i])
+            if not P.covers(L[i], L[i + 1]):
+                if len(P.upper_covers(L[i])) != 0:
                     return False
                 R = True
-                S = [self[i]]
+                S = [L[i]]
                 while(R):
                     for t in S:
                         for u in P.lower_covers(t):
@@ -295,9 +332,9 @@ class LinearExtensionOfPoset(ClonableArray,
                                 break
                             else :
                                 for v in P.upper_covers(u):
-                                    if v != self[i+1] and v not in Q:
+                                    if v != L[i+1] and v not in Q:
                                         return False
-                                    elif v == self[i+1] :
+                                    elif v == L[i+1] :
                                         R=False
                                         break
                                     else :
@@ -312,7 +349,7 @@ class LinearExtensionOfPoset(ClonableArray,
                             continue
                         break
         return True
-
+    
     def tau(self, i):
         r"""
         Return the operator `\tau_i` on linear extensions ``self`` of a poset.
