@@ -2708,7 +2708,7 @@ cdef class RingElement(ModuleElement):
             sage: (x^123456)^654321
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (80779853376)
+            OverflowError: exponent overflow (...)
         """
         return arith_generic_power(self, n)
 

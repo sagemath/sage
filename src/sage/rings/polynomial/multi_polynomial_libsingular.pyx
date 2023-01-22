@@ -1587,7 +1587,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             9/4
 
             sage: P.monomial_quotient(x,y) # Note the wrong result
-            x*y^1048575*z^1048575
+            x*y^65535*z^65535      # 32-bit
+            x*y^1048575*z^1048575  # 64-bit
 
             sage: P.monomial_quotient(x,P(1))
             x
@@ -2250,7 +2251,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2374,7 +2376,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
 
         Test fractional powers (:trac:`22329`)::
 
@@ -3452,13 +3455,13 @@ cdef class MPolynomial_libsingular(MPolynomial):
         We are catching overflows::
 
             sage: R.<x,y> = QQ[]
-            sage: n=10000; f = x^n
+            sage: n=100; f = x^n
             sage: try:
             ....:     f.subs(x = x^n)
             ....:     print("no overflow")
             ....: except OverflowError:
             ....:     print("overflow")
-            x^100000000
+            x^10000
             no overflow
 
             sage: n = 100000
