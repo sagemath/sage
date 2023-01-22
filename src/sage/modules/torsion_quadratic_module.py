@@ -144,7 +144,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             1/4
         """
         value_module = self.parent().value_module()
-        return value_module( self.lift().inner_product(other.lift()) )
+        return value_module(self.lift().inner_product(other.lift()))
 
     inner_product = _mul_
     b = _mul_
@@ -296,7 +296,6 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         self._modulus = modulus
         self._modulus_qf = modulus_qf
 
-
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -313,10 +312,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [0 0 0]
             [0 0 0]
         """
-        return ( "Finite quadratic module over %s with invariants %s\n"
-                 % (self.base_ring(), self.invariants()) +
-                 "Gram matrix of the quadratic form with values in %r:\n%r"
-                 % (self.value_module_qf(), self.gram_matrix_quadratic()))
+        return ("Finite quadratic module over %s with invariants %s\n"
+                % (self.base_ring(), self.invariants()) +
+                "Gram matrix of the quadratic form with values in %r:\n%r"
+                % (self.value_module_qf(), self.gram_matrix_quadratic()))
 
     def _module_constructor(self, V, W, check=False):
         r"""
