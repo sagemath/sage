@@ -1819,4 +1819,3 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
-
