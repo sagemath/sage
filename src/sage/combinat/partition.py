@@ -5483,6 +5483,26 @@ class Partition(CombinatorialElement):
                               immutable=True, multiedges=True)
         return self.dual_equivalence_graph(directed, coloring)
 
+    def specht_module(self, BR=None):
+        """
+        Return the Specht module corresponding to ``self``.
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if BR is None:
+            from sage.rings.rational_field import QQ
+            BR = QQ
+        R = SymmetricGroupAlgebra(BR, sum(self))
+        return SpechtModule(R, self.cells())
+
+    def specht_module_dimension(self):
+        """
+        Return the dimension of the Specht module corresponding to ``self``.
+        
+        This is equal to the number of standard tableaux of shape ``self``.
+        """
+        from sage.combinat.tableau import StandardTableaux
+        return StandardTableaux(self).cardinality()
 
 ##############
 # Partitions #

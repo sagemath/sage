@@ -1275,6 +1275,57 @@ class SkewPartition(CombinatorialElement):
         """
         return self.outer().outside_corners()
 
+    def specht_module(self, BR=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+        
+        EXAMPLES::
+        
+            sage: mu = SkewPartition([[3,2,1], [2]])
+            sage: SM = mu.specht_module(QQ)
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 1, 1] + s[2, 2] + s[3, 1] 
+            
+        We verify that the Frobenius image is the corresponding
+        skew Schur function::
+            
+            sage: s[3,2,1].skew_by(s[2])
+            s[2, 1, 1] + s[2, 2] + s[3, 1]
+            
+        ::
+            
+            sage: mu = SkewPartition([[4,2,1], [2,1]])
+            sage: SM = mu.specht_module(QQ)
+            sage: s(SM.frobenius_image())
+            s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4] 
+            sage: s(mu)
+            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + s[4, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if BR is None:
+            from sage.rings.rational_field import QQ
+            BR = QQ
+        R = SymmetricGroupAlgebra(BR, self.size())
+        return SpechtModule(R, self.cells())
+
+    def specht_module_dimension(self):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+        
+        This is equal to the number of standard (skew) tableaux of
+        shape ``self``.
+        
+        EXAMPLES::
+        
+            sage: mu = SkewPartition([[3,2,1], [2]])
+            sage: SM = mu.specht_module_dimension(QQ)
+            8
+        """
+        from sage.combinat.skew_tableau import StandardSkewTableaux
+        return StandardSkewTableaux(self).cardinality()
+
 
 def row_lengths_aux(skp):
     """

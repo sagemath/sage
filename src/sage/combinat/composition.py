@@ -1386,6 +1386,32 @@ class Composition(CombinatorialElement):
         """
         return sum(i == n for i in self)
 
+    def specht_module(self, BR=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if BR is None:
+            from sage.rings.rational_field import QQ
+            BR = QQ
+        R = SymmetricGroupAlgebra(BR, sum(self))
+        cells = []
+        for i, row in enumerate(self):
+            for j in range(row):
+                cells.append((i, j))
+        return SpechtModule(R, cells)
+
+    def specht_module_dimension(self):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        cells = []
+        for i, row in enumerate(self):
+            for j in range(row):
+                cells.append((i, j))
+        return specht_module_rank(cells)
 
 Sequence.register(Composition)
 ##############################################################
