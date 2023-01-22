@@ -2020,8 +2020,8 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     * `n=236`: [FKS2004]_
     * `n=276`: [Djo2023]_
     
-    Additional data is obtained from skew supplementary difference sets contained in 
-    :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the 
+    Additional data is obtained from skew supplementary difference sets contained in
+    :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the
     construction described in [Djo1992a]_.
 >>>>>>> b6f7d9e7fe (Add skew SDS of size 37 and 43)
 
@@ -2098,12 +2098,12 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
 
     - ``existence`` -- boolean (default False). If True, only return whether the Hadamard matrix can be constructed.
 
-    - ``check`` -- boolean: if True (default), check the the result is a skew Hadamard matrix 
+    - ``check`` -- boolean: if True (default), check the the result is a skew Hadamard matrix
       before returning it.
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if `n` does 
+    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if `n` does
     not satisfy the required conditions.
     If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
 
@@ -2113,8 +2113,8 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
         sage: skew_hadamard_matrix_whiteman_construction(52)
         52 x 52 dense matrix over Integer Ring...
         sage: skew_hadamard_matrix_whiteman_construction(52, existence=True)
-        True 
-    
+        True
+
     TESTS::
 
         sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
@@ -2133,14 +2133,14 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
         sage: skew_hadamard_matrix_whiteman_construction(100, existence=True)
         False
     """
-    
+
     q = n // 2 - 1
     p, t = is_prime_power(q, get_data=True)
 
     is_order_valid = n % 4 == 0 and t > 0 and p % 8 == 5 and t % 4 == 2
     if existence:
         return is_order_valid
-    
+
     if not is_order_valid:
         raise ValueError(f'The order {n} is not covered by the Whiteman construction.')
 
@@ -2176,7 +2176,7 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
     if check:
         assert is_hadamard_matrix(H, skew=True)
     return H
-    
+
 
 def skew_hadamard_matrix_324():
     r"""
@@ -2408,10 +2408,10 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
 
     if existence:
         return l in E_sequences
-    
+
     if l not in E_sequences:
-        raise ValueError("The Good matrices of order %s are not yet implemented." % m) 
-    
+        raise ValueError("The Good matrices of order %s are not yet implemented." % m)
+
     e1, e2, e3, e4 = E_sequences[l]
     a = pm_to_good_matrix(e1, sign=-1)
     b = pm_to_good_matrix(e2)
@@ -2540,11 +2540,11 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
             return true()
         M = hadamard_matrix_paleyI(n, normalize=False)
     elif is_prime_power(n//2 -1) and (n//2 -1)%8 == 5:
-        if existence: 
+        if existence:
             return true()
         M = skew_hadamard_matrix_spence_construction(n, check=False)
     elif skew_hadamard_matrix_whiteman_construction(n, existence=True):
-        if existence: 
+        if existence:
             return true()
         M = skew_hadamard_matrix_whiteman_construction(n, check=False)
     elif n % 8 == 0:
