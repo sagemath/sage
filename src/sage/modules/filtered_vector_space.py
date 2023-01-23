@@ -377,7 +377,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
     for deg, gens in filtration.items():
         deg = normalize_degree(deg)
         gens = tuple(sorted(ZZ(i) for i in gens))
-        if gens[0] < 0 or gens[-1] >= len(generators):
+        if gens and (gens[0] < 0 or gens[-1] >= len(generators)):
             raise ValueError('generator index out of bounds')
         normalized[deg] = gens
     try:
