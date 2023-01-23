@@ -51,8 +51,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer_ring cimport IntegerRing_class
 ZZ_sage = IntegerRing()
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 
 from sage.rings.integer_ring import ZZ
@@ -757,7 +755,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: g // f
             x - 6
         """
-        if is_Polynomial(right) and right.is_constant() and right[0] in ZZ:
+        if isinstance(right, Polynomial) and right.is_constant() and right[0] in ZZ:
             d = ZZ(right[0])
             return self.parent()([c // d for c in self.list()], construct=True)
         elif (right in self.parent().base_ring()):

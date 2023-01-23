@@ -86,7 +86,7 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
 
 from sage.schemes.elliptic_curves.all import EllipticCurve
@@ -159,7 +159,7 @@ def _isogeny_determine_algorithm(E, kernel):
         kernel = [kernel]
         kernel_is_list = True
 
-    if is_Polynomial(kernel) or (kernel_is_list and kernel[0] in E.base_ring()):
+    if isinstance(kernel, Polynomial) or (kernel_is_list and kernel[0] in E.base_ring()):
         return "kohel"
 
     if kernel_is_list and kernel[0] in E:
