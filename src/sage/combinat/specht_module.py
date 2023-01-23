@@ -51,6 +51,11 @@ class SpechtModule(SubmoduleWithBasis):
 
     - ``SGA`` -- a symmetric group algebra
     - ``D`` -- a diagram
+
+    .. SEEALSO::
+
+        :class:`~sage.combinat.symmetric_group_representations.SpechtRepresentation`
+        for an implementation of the representation by matrices.
     """
     @staticmethod
     def __classcall_private__(cls, SGA, D):
@@ -73,8 +78,8 @@ class SpechtModule(SubmoduleWithBasis):
             ...
             the rank (=3) does not match the size (=2) of the diagram
         """
-        if not isinstance(D, Diagram):
-            D = Diagram(D)
+        D = _to_diagram(D)
+        D = Diagram(D)
         n = len(D)
         if SGA.group().rank() != n - 1:
             rk = SGA.group().rank()
@@ -104,6 +109,11 @@ class SpechtModule(SubmoduleWithBasis):
         r"""
         Return the matrix corresponding to the left action of the symmetric
         group (algebra) element ``elt`` on ``self``.
+
+
+        .. SEEALSO::
+
+            :class:`~sage.combinat.symmetric_group_representations.SpechtRepresentation`
 
         EXAMPLES::
 
@@ -192,6 +202,27 @@ class SpechtModule(SubmoduleWithBasis):
                     return P.retract(P._ambient(x) * self.lift())
             return super()._acted_upon_(self, x, self_on_left)
 
+def _to_diagram(D):
+    r"""
+    Convert ``D`` to a list of cells representing a diagram.
+    """
+    from sage.combinat.integer_vector import IntegerVectors
+    from sage.combinat.skew_partition import SkewPartitions
+    from sage.combinat.partition import _Partitions
+    if isinstance(D, Diagram):
+        return D
+    if D in _Partitions:
+        D = _Partitions(D).cells()
+    elif D in SkewPartitions():
+        D = SkewPartitions()(D).cells()
+    elif D in IntegerVectors():
+        cells = []
+        for i, row in enumerate(D):
+            for j in range(row):
+                cells.append((i, j))
+        D = cells
+    return D
+
 def specht_module_spanning_set(D, SGA=None):
     r"""
     Return a spanning set of the Specht module of diagram ``D``.
@@ -214,8 +245,6 @@ def specht_module_spanning_set(D, SGA=None):
         (() - (2,3), -(1,2) + (1,3,2), (1,2,3) - (1,3),
          -() + (2,3), -(1,2,3) + (1,3), (1,2) - (1,3,2))
     """
-    if not isinstance(D, Diagram):
-        D = Diagram(D)
     n = len(D)
     if SGA is None:
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -247,7 +276,7 @@ def specht_module_spanning_set(D, SGA=None):
     gen = col_stab * row_stab
     return tuple([b * gen for b in B])
 
-def specht_module_rank(D):
+def specht_module_rank(D, BR=None):
     r"""
     Return the rank of the Specht module of diagram ``D``.
 
@@ -257,5 +286,9 @@ def specht_module_rank(D):
         sage: specht_module_rank([(0,0), (1,1), (2,2)])
         6
     """
+    D = _to_diagram(D)
     span_set = specht_module_spanning_set(D)
-    return matrix(QQ, [v.to_vector() for v in span_set]).rank()
+    if BR is None:
+        BR = QQ
+    return matrix(BR, [v.to_vector() for v in span_set]).rank()
+

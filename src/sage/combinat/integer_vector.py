@@ -530,22 +530,25 @@ class IntegerVector(ClonableArray):
             from sage.rings.rational_field import QQ
             BR = QQ
         R = SymmetricGroupAlgebra(BR, sum(self))
-        cells = []
-        for i, row in enumerate(self):
-            for j in range(row):
-                cells.append((i, j))
-        return SpechtModule(R, cells)
+        return SpechtModule(R, self)
 
-    def specht_module_dimension(self):
+    def specht_module_dimension(self, BR=None):
         r"""
         Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+        
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()
+            5
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))
+            5
         """
         from sage.combinat.specht_module import specht_module_rank
-        cells = []
-        for i, row in enumerate(self):
-            for j in range(row):
-                cells.append((i, j))
-        return specht_module_rank(cells)
+        return specht_module_rank(self, BR)
 
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):

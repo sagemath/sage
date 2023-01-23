@@ -1544,6 +1544,22 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         return self.sum_of_monomials([self._indices(P(list(q) + complement(q)))
                                       for q in itertools.combinations(range(1, n + 1), int(k))])
 
+    def specht_module(self, D):
+        r"""
+        Return the Specht module of ``self`` indexed by the diagram ``D``.
+        """
+        from sage.combinat.specht_module import SpechtModule
+        return SpechtModule(self, D)
+
+    def specht_module_dimension(self, D):
+        r"""
+        Return the dimension of the Specht module of ``self`` indexed by ``D``.
+        """
+        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        D = _to_diagram(D)
+        span_set = specht_module_spanning_set(D, self)
+        return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
+
     def jucys_murphy(self, k):
         r"""
         Return the Jucys-Murphy element `J_k` (also known as a

@@ -1323,8 +1323,12 @@ class SkewPartition(CombinatorialElement):
             sage: SM = mu.specht_module_dimension(QQ)
             8
         """
-        from sage.combinat.skew_tableau import StandardSkewTableaux
-        return StandardSkewTableaux(self).cardinality()
+        from sage.categories.fields import Fields
+        if BR is None or (BR in Fields() and BR.characteristic() == 0):
+            from sage.combinat.skew_tableau import StandardSkewTableaux
+            return StandardSkewTableaux(self).cardinality()
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, BR)
 
 
 def row_lengths_aux(skp):

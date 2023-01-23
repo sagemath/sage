@@ -511,12 +511,23 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         R = SymmetricGroupAlgebra(BR, len(self))
         return SpechtModule(R, self)
 
-    def specht_module_dimension(self):
-        """
+    def specht_module_dimension(self, BR=None):
+        r"""
         Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: from sage.combinat.diagram import Diagram
+            sage: D = Diagram([(0,0), (1,1), (2,2), (2,3)])
+            sage: D.specht_module_dimension()
+            sage: D.specht_module(QQ).dimension()
         """
         from sage.combinat.specht_module import specht_module_rank
-        return specht_module_rank(self)
+        return specht_module_rank(self, BR)
 
 class Diagrams(UniqueRepresentation, Parent):
     r"""
