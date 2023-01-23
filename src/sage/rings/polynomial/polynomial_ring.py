@@ -158,7 +158,7 @@ from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import NumberField
 
 try:
-    from cypari2.gen import Gen as pari_gen
+    from sage.libs.pari.all import pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -173,11 +173,7 @@ import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
 
-try:
-    from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
-except ImportError:
-    Polynomial_integer_dense_flint = ()
-
+from .polynomial_element import PolynomialBaseringInjection
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -828,6 +824,10 @@ class PolynomialRing_general(ring.Algebra):
                 elif base_ring is ZZ:
                     # Over ZZ, only allow coercion from any ZZ['x']
                     # implementation to the default FLINT implementation
+                    try:
+                        from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
+                    except ImportError:
+                        return None
                     if self.element_class is not Polynomial_integer_dense_flint:
                         return None
                 # Other rings: always allow coercion
@@ -1208,8 +1208,8 @@ class PolynomialRing_general(ring.Algebra):
         elif n == 1:
             return self.gen() - 1
         else:
-            from . import cyclotomic
-            return self(cyclotomic.cyclotomic_coeffs(n), check=True)
+            from .cyclotomic import cyclotomic_coeffs
+            return self(cyclotomic_coeffs(n), check=True)
 
     @cached_method
     def gen(self, n=0):

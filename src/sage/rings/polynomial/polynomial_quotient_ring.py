@@ -39,7 +39,6 @@ TESTS::
 
 from . import polynomial_element
 import sage.rings.rational_field
-import sage.rings.complex_mpfr
 
 from sage.rings.ring import Field, IntegralDomain, CommutativeRing
 
@@ -2424,6 +2423,7 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
              0.92103906697304693634806949137 - 3.0755331188457794473265418086*I,
              0.92103906697304693634806949137 + 3.0755331188457794473265418086*I]
         """
-        CC = sage.rings.complex_mpfr.ComplexField(prec)
+        from sage.rings.complex_mpfr import ComplexField
+        CC = ComplexField(prec)
         v = self.modulus().roots(multiplicities=False, ring=CC)
         return [self.hom([a], check=False) for a in v]

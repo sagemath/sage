@@ -27,10 +27,7 @@ def is_MPolynomial(x):
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
-from sage.modules.free_module_element import vector
 from sage.rings.rational_field import QQ
-from sage.rings.complex_interval_field import ComplexIntervalField
-from sage.rings.real_mpfr import RealField
 
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial
@@ -2447,6 +2444,9 @@ cdef class MPolynomial(CommutativePolynomial):
             )
         """
         from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+        from sage.rings.complex_interval_field import ComplexIntervalField
+        from sage.rings.real_mpfr import RealField
 
         if self.parent().ngens() != 2:
             raise ValueError("(=%s) must have two variables"%self)

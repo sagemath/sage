@@ -3,8 +3,6 @@ Base class for multivariate polynomial rings
 """
 import itertools
 from collections.abc import Iterable
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 
 import sage.misc.latex
 from sage.misc.cachefunc import cached_method
@@ -22,12 +20,10 @@ _CommutativeRings = CommutativeRings()
 
 from sage.arith.misc import binomial
 
-from sage.combinat.integer_vector import IntegerVectors
-
 from sage.rings.integer_ring import ZZ
 
-from . import (multi_polynomial_ideal,
-               polynomial_ring)
+from .polydict import PolyDict
+from . import polynomial_ring
 from .term_order import TermOrder
 from .polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
@@ -454,6 +450,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
             :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
         """
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+
         # get ring and number of variables
         R = self.base_ring()
         n = self.ngens()
@@ -706,7 +705,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return "%s[%s]" % (sage.misc.latex.latex(self.base_ring()), vars)
 
     def _ideal_class_(self, n=0):
-        return multi_polynomial_ideal.MPolynomialIdeal
+        from .multi_polynomial_ideal import MPolynomialIdeal
+        return MPolynomialIdeal
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -1500,6 +1500,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             Polynomial Ring in u0, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10,
             u11 over Integer Ring)
         """
+        from sage.combinat.integer_vector import IntegerVectors
+
         n = len(dlist) - 1
         number_of_coeffs = sum([binomial(n + di, di) for di in dlist])
         U = PolynomialRing(ZZ, 'u', number_of_coeffs)
@@ -1671,6 +1673,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         from sage.matrix.constructor import matrix
         from sage.matrix.constructor import zero_matrix
+        from sage.combinat.integer_vector import IntegerVectors
 
         if len(args) == 1 and isinstance(args[0], list):
             flist = args[0]

@@ -63,8 +63,6 @@ TESTS::
 from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
 
-import sage.rings.polynomial.multi_polynomial_ideal as multi_polynomial_ideal
-
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
@@ -72,7 +70,10 @@ from sage.rings.polynomial.term_order import TermOrder
 
 import sage.interfaces.abc
 
-from sage.libs.pari.all import pari_gen
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
 
 from sage.structure.element import Element
 
@@ -950,6 +951,9 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         if not self._has_singular:
             # pass through
             MPolynomialRing_base.ideal(self, gens, **kwds)
+
+        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+
         if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
             gens = list(gens)
             do_coerce = True
@@ -957,4 +961,4 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
             gens = [gens]
         if ('coerce' in kwds and kwds['coerce']) or do_coerce:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return multi_polynomial_ideal.MPolynomialIdeal(self, gens, **kwds)
+        return MPolynomialIdeal(self, gens, **kwds)
