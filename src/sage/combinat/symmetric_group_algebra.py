@@ -1547,6 +1547,22 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
     def specht_module(self, D):
         r"""
         Return the Specht module of ``self`` indexed by the diagram ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module(Partition([3,1,1]))
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[3, 1, 1]
+
+            sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            sage: SM
+            Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
         """
         from sage.combinat.specht_module import SpechtModule
         return SpechtModule(self, D)
@@ -1554,6 +1570,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
     def specht_module_dimension(self, D):
         r"""
         Return the dimension of the Specht module of ``self`` indexed by ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SGA.specht_module_dimension(Partition([3,1,1]))
+            6
+            sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            16
         """
         from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
         D = _to_diagram(D)
