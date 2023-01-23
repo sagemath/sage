@@ -12,7 +12,7 @@ Groups available as finite presentations:
 - Alternating group, `A_n` of order `n!/2` --
   :func:`groups.presentation.Alternating <sage.groups.finitely_presented_named.AlternatingPresentation>`
 
-- Cactus group, `J_n` --
+- the `n`-fruit Cactus group, a standard notation for which is `J_n` --
   :func:`groups.presentation.Cactus <sage.groups.finitely_presented_named.CactusPresentation>`
 
 - Cyclic group, `C_n` of order `n` --
