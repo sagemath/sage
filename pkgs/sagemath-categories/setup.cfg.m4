@@ -34,3 +34,6 @@ install_requires =
 
 [options.extras_require]
 test = sagemath-repl
+
+[options.package_data]
+sage.rings.finite_rings = integer_mod_limits.h
