@@ -22,7 +22,7 @@ from . import classical
 import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.combinat.partition import Partition, _Partitions
+from sage.combinat.partition import _Partitions
 from sage.arith.misc import multinomial, factorial, binomial
 
 
@@ -189,7 +189,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``p`` -- a multivariate polynomial over the same base ring as ``self``
+        - ``p`` -- a polynomial over the same base ring as ``self``
 
         OUTPUT:
 
@@ -228,8 +228,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             :func:`Partition`, :meth:`Partition.to_exp`
         """
         assert self.base_ring() == p.parent().base_ring()
-        return self.sum_of_terms((Partition(exp=monomial), coeff)
-                                 for monomial, coeff in p.dict().items())
+        from sage.combinat.sf.sfa import _from_polynomial
+        return _from_polynomial(p, self)
 
     def antipode_by_coercion(self, element):
         r"""

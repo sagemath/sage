@@ -5635,8 +5635,7 @@ class A090012(SloaneSequence):
         """
         if n == 1:
             return ZZ(3)
-        else:
-            return  sloane.A000153(n+1) + sloane.A000153(n)
+        return sloane.A000153(n+1) + sloane.A000153(n)
 
 
 class A090013(SloaneSequence):
@@ -5709,8 +5708,7 @@ class A090013(SloaneSequence):
         """
         if n == 1:
             return ZZ(4)
-        else:
-            return  sloane.A000261(n+2) + sloane.A000261(n+1)
+        return sloane.A000261(n+2) + sloane.A000261(n+1)
 
 
 class A090014(SloaneSequence):
@@ -5783,8 +5781,7 @@ class A090014(SloaneSequence):
         """
         if n == 1:
             return ZZ(5)
-        else:
-            return  sloane.A001909(n+3) + sloane.A001909(n+2)
+        return sloane.A001909(n+3) + sloane.A001909(n+2)
 
 
 class A090015(SloaneSequence):
@@ -5857,8 +5854,7 @@ class A090015(SloaneSequence):
         """
         if n == 1:
             return ZZ(6)
-        else:
-            return  sloane.A001910(n+4) + sloane.A001910(n+3)
+        return sloane.A001910(n+4) + sloane.A001910(n+3)
 
 
 class A090016(SloaneSequence):
@@ -5934,8 +5930,7 @@ class A090016(SloaneSequence):
         """
         if n == 1:
             return ZZ(7)
-        else:
-            return  sloane.A090010(n-1) + sloane.A090010(n)
+        return sloane.A090010(n-1) + sloane.A090010(n)
 
 
 class A000166(SloaneSequence):
@@ -6114,7 +6109,7 @@ class A001157(SloaneSequence):
             sage: [sloane.A001157._eval(n) for n in range(1,11)]
             [1, 5, 10, 21, 26, 50, 50, 85, 91, 130]
         """
-        return  arith.sigma(n, 2)
+        return arith.sigma(n, 2)
 
 
 class A008683(SloaneSequence):
@@ -6167,7 +6162,7 @@ class A008683(SloaneSequence):
             sage: [sloane.A008683._eval(n) for n in range(1,11)]
             [1, -1, -1, 0, -1, 1, -1, 0, 0, 1]
         """
-        return  arith.moebius(n)
+        return arith.moebius(n)
 
 
 class A000204(SloaneSequence):
@@ -6231,8 +6226,7 @@ class A000204(SloaneSequence):
             return ZZ.one()
         elif n == 2:
             return 3
-        else:
-            return sloane.A000045(n+1) + sloane.A000045(n-1)
+        return sloane.A000045(n+1) + sloane.A000045(n-1)
 
 
 class A000217(SloaneSequence):

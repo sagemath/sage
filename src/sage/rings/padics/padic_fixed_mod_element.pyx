@@ -389,7 +389,7 @@ cdef class pAdicFixedModElement(FMElement):
           this valuation (and beyond) to see if they can contribute to the
           series.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             1 in the residue field. If this assumption is not fulfilled
@@ -459,7 +459,7 @@ cdef class pAdicFixedModElement(FMElement):
         - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -523,7 +523,7 @@ cdef class pAdicFixedModElement(FMElement):
           method. See :meth:`log` for more details about the possible
           algorithms.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not

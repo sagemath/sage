@@ -505,7 +505,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             std_generic = generic
         if p != 2:
             std_generic = True
-        if not(std_generic is True or std_generic is False):
+        if not (std_generic is True or std_generic is False):
             raise ValueError("option 'generic' is not a boolean")
 
         std_basis = get_basis_name(basis, p, generic=std_generic)

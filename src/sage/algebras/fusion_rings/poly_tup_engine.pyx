@@ -316,7 +316,7 @@ cpdef tuple apply_coeff_map(tuple eq_tup, coeff_map):
     cdef ETuple exp
     cdef list new_tup = []
     for exp, coeff in eq_tup:
-      new_tup.append((exp, coeff_map(coeff)))
+        new_tup.append((exp, coeff_map(coeff)))
     return tuple(new_tup)
 
 # cpdef inline bint tup_fixes_sq(tuple eq_tup):
@@ -368,7 +368,7 @@ cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
                 coeff *= pow(known_sq.get(idx), power // 2)
                 # New power is 1 if power is odd
                 if power & True:
-                  new_e[idx] = 1
+                    new_e[idx] = 1
             else:
                 new_e[idx] = power
         exp = ETuple(new_e, len(exp))
@@ -567,13 +567,13 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
     cdef int i, l, nnz
     cdef list key = []
     for exp, c in eq_tup:
-       # Compare by term degree
-       key.append(exp.unweighted_degree())
-       # Next compare by term w.r.t. lex order
-       for i in range(exp._nonzero):
-           # key.append(exp._length-1-exp._data[2*(nnz-i-1)])
-           # key.append(-exp._data[2*(nnz-i-1)+1])
-           key.append(-exp._data[2*i])
-           key.append(exp._data[2*i+1])
+        # Compare by term degree
+        key.append(exp.unweighted_degree())
+        # Next compare by term w.r.t. lex order
+        for i in range(exp._nonzero):
+            # key.append(exp._length-1-exp._data[2*(nnz-i-1)])
+            # key.append(-exp._data[2*(nnz-i-1)+1])
+            key.append(-exp._data[2*i])
+            key.append(exp._data[2*i+1])
     return tuple(key)
 

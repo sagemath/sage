@@ -228,16 +228,37 @@ in the Installation Guide.
     (If the bootstrapping prerequisites are not installed, this command will
     download a package providing pre-built bootstrap output instead.)
 
-6.  [macOS with homebrew] Set required environment variables for the build:
+6.  Sanitize the build environment. Use the command
 
-        $ source ./.homebrew-build-env
+        $ env
 
-    This is to make some of Homebrew's packages (so-called keg-only packages)
-    available for the build. Run it once to apply the suggestions for the current
-    terminal session. You may need to repeat this command before you rebuild Sage
-    from a new terminal session, or after installing additional homebrew packages.
-    (You can also add it to your shell profile so that it gets run automatically
-    in all future sessions.)
+    to inspect the current environment variables, in particular `PATH`,
+    `PKG_CONFIG_PATH`, `LD_LIBRARY_PATH`, `CFLAGS`, `CPPFLAGS`, `CXXFLAGS`,
+    and `LDFLAGS` (if set).
+
+    Remove items from these (colon-separated) environment variables
+    that Sage should not use for its own build. In particular, remove
+    items if they refer to a previous Sage installation.
+
+    - [WSL] In particular, WSL imports many items from the Windows
+      `PATH` variable into the Linux environment, which can lead to
+      confusing build errors. These items typically start with `/mnt/c`.
+      It is best to remove all of them from the environment variables.
+      For example, you can set `PATH` using the command:
+
+            $ export PATH=/usr/sbin/:/sbin/:/bin/:/usr/lib/wsl/lib/
+
+    - [macOS with homebrew] Set required environment variables for the build:
+
+            $ source ./.homebrew-build-env
+
+      This is to make some of Homebrew's packages (so-called keg-only
+      packages) available for the build. Run it once to apply the
+      suggestions for the current terminal session. You may need to
+      repeat this command before you rebuild Sage from a new terminal
+      session, or after installing additional homebrew packages.  (You
+      can also add it to your shell profile so that it gets run
+      automatically in all future sessions.)
 
 7.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
 
@@ -409,7 +430,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zn_poly/
+│       └── zlib/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
@@ -456,7 +477,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zn_poly-0.9.2.log
+│       └── zlib-1.2.11.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -470,7 +491,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zn_poly-0.9.2.tar.gz
+│   └── zlib-1.2.11.tar.gz
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```

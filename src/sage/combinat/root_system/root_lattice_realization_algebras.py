@@ -202,9 +202,8 @@ class Algebras(AlgebrasCategory):
                 raise ValueError("the weight does not have an integral scalar product with the coroot")
             alphai = P.simple_root(i)
             if n >= 0:
-                return  self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
-            else:
-                return -self.sum_of_monomials(weight-j*alphai for j in range(n+1,0))
+                return self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
+            return -self.sum_of_monomials(weight-j*alphai for j in range(n + 1, 0))
 
         def demazure_operators(self):
             r"""

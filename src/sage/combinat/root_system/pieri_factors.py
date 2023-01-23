@@ -7,8 +7,8 @@ Pieri Factors
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
@@ -325,7 +325,7 @@ class PieriFactors_finite_type(PieriFactors):
 
         ct_aff = ct.dual().affine()
 
-        max_elts_affine =  WeylGroup(ct_aff).pieri_factors().maximal_elements()
+        max_elts_affine = WeylGroup(ct_aff).pieri_factors().maximal_elements()
 
         for w in max_elts_affine:
             if 0 not in w.reduced_word():
@@ -542,7 +542,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             max_support = frozenset(max_support)
         min_length = max(min_length, len(min_support))
         max_length = min(len(max_support), max_length, len(W.index_set()) - 1)
-        return super(PieriFactors_type_A_affine, cls).__classcall__(cls, W, min_length, max_length, min_support, max_support)
+        return super().__classcall__(cls, W, min_length, max_length, min_support, max_support)
 
     def __init__(self, W, min_length, max_length, min_support, max_support):
         r"""
@@ -656,7 +656,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if self._min_length > 0 or self._max_length < len(self.W.index_set())-1 or self._max_support != frozenset(index_set):
             tester.info("\n  Strict subset of the Pieri factors; skipping test")
             return
-        return super(PieriFactors_type_A_affine, self)._test_maximal_elements(**options)
+        return super()._test_maximal_elements(**options)
 
     def __contains__(self, w):
         r"""

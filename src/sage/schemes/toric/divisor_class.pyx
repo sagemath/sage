@@ -329,7 +329,7 @@ def _ToricRationalDivisorClass_unpickle_v1(parent, entries,
     v._init(degree, parent)
     cdef Rational z
     cdef Py_ssize_t i
-    for i from 0 <= i < degree:
+    for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
     v._is_immutable = not is_mutable

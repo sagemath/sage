@@ -11,14 +11,14 @@ AUTHORS:
 
 - Christian Stump
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011-2012 Christian Stump <christian.stump@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_QQ_ppl
 from sage.geometry.polyhedron.backend_normaliz import Polyhedron_QQ_normaliz
 from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd

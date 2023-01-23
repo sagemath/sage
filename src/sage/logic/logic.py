@@ -318,7 +318,7 @@ class SymbolicLogic:
               'CPAREN',
               'CPAREN'],
              {'a': 'False', 'b': 'False'},
-             ['a', 'b', 'b']]       
+             ['a', 'b', 'b']]
         """
         toks = ['OPAREN'] + statement1[0] + ['OR'] + statement2[0] + ['CPAREN']
         variables = dict(statement1[1])

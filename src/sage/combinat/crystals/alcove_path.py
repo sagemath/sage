@@ -560,7 +560,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             sage: C([1,2])._latex_()
             [(\alpha_{1} + \alpha_{2}, 0), (\alpha_{1}, 0)]
         """
-        return [ (latex(i.root),i.height) for i in self.value ]
+        return [(latex(i.root), i.height) for i in self.value]
 
     @cached_in_parent_method
     def integer_sequence(self):
@@ -830,13 +830,12 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         else:
             # NOTE: we assume J is sorted by order on Element of RootsWithHeight
 
-            for k in  range(max_height_Beta):
+            for k in range(max_height_Beta):
                 x = R(Beta, k)
                 if x <= J[0]:
                     signs[x] = self._sign(Beta)
 
-            for j in range( len(J)  ):
-
+            for j in range(len(J)):
                 Beta = Beta.reflection(J[j].root)
                 sign_Beta = self._sign(Beta)
                 max_height_Beta = weight.scalar(
@@ -914,12 +913,11 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         if ( (not finite_cartan_type or i!=0) and m_index < len(gi)-1  # alpha_i is a simple root
             ) or KR_test:
 
-
             J.remove(positions[m_index])
             if m_index+1 < len(positions): # if m_index+1 != 'infinity'
                                            # i.e. positions[m_index+1] makes sense
-                J.append(positions[m_index+1])
-            return_value = Parent ( tuple( sorted(J) ) )
+                J.append(positions[m_index + 1])
+            return_value = Parent(tuple(sorted(J)))
 
             # we attach to each admissible sequence a list
             # which encodes a path (via root operators) from the () generator
@@ -927,9 +925,9 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             # this is useful for investing the crystal
 
             try:
-                return_value.i_string = self.i_string + [['e',i]]
+                return_value.i_string = self.i_string + [['e', i]]
             except AttributeError:
-                return_value.i_string = [['e',i]]
+                return_value.i_string = [['e', i]]
 
             return return_value
         else:
@@ -1053,9 +1051,9 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             # which encodes a path (via root operators) from the generator ()
 
             try:
-                return_value.i_string = self.i_string + [['f',i]]
+                return_value.i_string = self.i_string + [['f', i]]
             except AttributeError:
-                return_value.i_string = [['f',i]]
+                return_value.i_string = [['f', i]]
 
             return return_value
         else:

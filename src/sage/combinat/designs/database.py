@@ -2445,7 +2445,7 @@ def QDM_57_9_1_1_8():
     M = [[B[x] for x in R] for R in M] # replacing [0,..,8] by the elements of B
     M.append([0]*9)
 
-    return  G(57), M
+    return G(57), M
 
 # Quasi-difference matrices
 #

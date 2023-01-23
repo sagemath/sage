@@ -123,7 +123,7 @@ def _explain_constructor(cl):
         reqs = "The constructor requires the arguments {}.".format(args)
     else:
         reqs = "The constructor requires no arguments."
-    if argspec.varargs or argspec.keywords:
+    if argspec.varargs or argspec.varkw:
         var = "It accepts unspecified arguments as well.\n"
     else:
         var = ""

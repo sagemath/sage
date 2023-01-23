@@ -758,7 +758,7 @@ class PolynomialSequence_generic(Sequence_generic):
             for y in poly.monomials():
                 A[ x , v[y] ] = poly.monomial_coefficient(y)
 
-        return  A, Matrix(R,nm,1,m)
+        return A, Matrix(R,nm,1,m)
 
     def subs(self, *args, **kwargs):
         """

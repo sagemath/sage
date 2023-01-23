@@ -10,16 +10,15 @@ AUTHOR:
 
 - Robert Bradshaw 2008-04 (initial version)
 """
-
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from libc.string cimport strchr
 from cpython.bytes cimport PyBytes_FromStringAndSize
@@ -27,7 +26,6 @@ from cpython.list cimport PyList_Append
 
 import math
 
-from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 def foo(*args, **kwds):
     """
