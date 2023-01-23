@@ -695,7 +695,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             l = len(self.parent()._names)
             # get the pairs (shift,exponent) of the leading monomial, indexed by the variable names
             Vars = self._p.parent().variable_names()
-            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomial_libsingular
+            from sage.rings.polynomial.multi_polynomial import MPolynomial_libsingular
             if isinstance(self._p, MPolynomial_libsingular):
                 L = [(Vars[i].split('_'), e) for i, e in enumerate(self._p.lm().exponents(as_ETuples=False)[0]) if e]
             elif hasattr(self._p, 'lm'):
