@@ -30,6 +30,9 @@ exclude sage/categories/subobjects.*
 exclude sage/categories/subquotients.*
 exclude sage/categories/with_realizations.*
 
+include sage/interfaces/abc.p*
+
+
 include sage/rings/ideal.*
 include sage/rings/ring.*
 graft sage/typeset                     # dep of sage.categories.tensor
@@ -52,6 +55,9 @@ include sage/misc/latex*.*
 include sage/misc/html.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
+include sage/misc/binary_tree.p*
+include sage/misc/derivative.p*
+include sage/misc/mrange.p*
 
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
@@ -67,13 +73,33 @@ include sage/rings/real_double.p*
 
 include sage/rings/fraction_field.p*
 include sage/rings/fraction_field_element.p*
+include sage/rings/qqbar_decorators.p*
+
+include sage/rings/padics/padic_generic.p*
+include sage/rings/padics/local_generic.p*
+include sage/rings/padics/local_generic_element.p*
+include sage/rings/padics/precision_error.p*
+include sage/rings/padics/misc.p*
 
 include sage/rings/polynomial/polynomial_ring.p*
 include sage/rings/polynomial/polynomial_ring_constructor.p*
+include sage/rings/polynomial/polynomial_quotient_ring.p*
 include sage/rings/polynomial/polynomial_singular_interface.p*
-# include sage/rings/integer*.*     # depends on cypari, flint - https://trac.sagemath.org/ticket/30022
-# include sage/rings/rational*.*
-# include sage/rings/infinity.*
+include sage/rings/polynomial/multi_polynomial_ring.p*
+include sage/rings/polynomial/multi_polynomial_ring_base.p*
+include sage/rings/polynomial/multi_polynomial_sequence.p*
+include sage/rings/polynomial/multi_polynomial_ideal.p*
+include sage/rings/polynomial/infinite_polynomial_ring.p*
+include sage/rings/polynomial/commutative_polynomial.p*
+include sage/rings/polynomial/polynomial_compiled.p*
+include sage/rings/polynomial/polynomial_element.p*
+include sage/rings/polynomial/polynomial_element_generic.p*
+include sage/rings/polynomial/polynomial_fateman.p*
+include sage/rings/polynomial/polynomial_quotient_ring_element.p*
+include sage/rings/polynomial/multi_polynomial.p*
+include sage/rings/polynomial/multi_polynomial_element.p*
+include sage/rings/polynomial/polydict.p*
+include sage/rings/polynomial/term_order.p*
 
 global-exclude *.c
 global-exclude *.cpp

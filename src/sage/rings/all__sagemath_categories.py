@@ -33,6 +33,10 @@ from .real_double import RealDoubleField, RDF, RealDoubleElement
 from .ideal import Ideal
 ideal = Ideal
 
+from .finite_rings.all__sagemath_categories import *
+from .number_field.all__sagemath_categories import *
+from .padics.all__sagemath_categories import *
+from .polynomial.all__sagemath_categories import *
 
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.

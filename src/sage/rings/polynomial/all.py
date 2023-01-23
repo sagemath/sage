@@ -19,14 +19,7 @@ Polynomials
 
 from sage.misc.lazy_import import lazy_import
 
-# Quotient of polynomial ring
-from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing
-from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-
-# Univariate Polynomial Rings
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygen, polygens
-from sage.rings.polynomial.polynomial_element import Polynomial
+from .all__sagemath_categories import *
 
 # Multivariate Polynomial Rings
 from sage.rings.polynomial.term_order import TermOrder

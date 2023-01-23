@@ -72,7 +72,6 @@ import sage.rings.integer
 from . import polynomial_ring
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.finite_rings.integer_mod_ring
 import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
 from sage.misc.sage_eval import sage_eval
@@ -86,16 +85,18 @@ from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
-from sage.libs.pari.all import pari, pari_gen, PariError
+try:
+    from sage.libs.pari.all import pari, pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    pari = None
+
+    class PariError(Exception):
+        pass
 
 cimport sage.rings.abc
-from sage.rings.real_mpfr import RealField, RR
-
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.cc import CC
 
 from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
 import sage.rings.abc
 
 import sage.interfaces.abc
@@ -134,9 +135,6 @@ from sage.categories.morphism cimport Morphism
 
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.categories.number_fields import NumberFields
 
 
 cpdef is_Polynomial(f):
@@ -5827,8 +5825,11 @@ cdef class Polynomial(CommutativePolynomial):
             prec = 53
 
         if self.is_zero():
+            from sage.rings.real_mpfr import RealField
             return RealField(prec).zero()
 
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         K = self.base_ring()
@@ -5884,6 +5885,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height(2, prec=2)
             0.75
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -5932,6 +5936,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height_arch(0, prec=2)
             1.0
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -8182,6 +8189,8 @@ cdef class Polynomial(CommutativePolynomial):
 
                 import numpy
                 from numpy.linalg.linalg import LinAlgError
+                from sage.rings.complex_double import CDF
+
                 numpy_dtype = ('complex' if input_complex else 'double')
                 ty = (complex if input_complex else float)
                 coeffs = self.list()
@@ -8201,6 +8210,8 @@ cdef class Polynomial(CommutativePolynomial):
 
             if algorithm == 'pari':
                 if not input_arbprec:
+                    from sage.rings.real_mpfr import RR
+                    from sage.rings.cc import CC
                     self = self.change_ring(CC if input_complex else RR)
                 ext_rts = self.__pari__().polroots(precision=L.prec())
 
@@ -8312,6 +8323,7 @@ cdef class Polynomial(CommutativePolynomial):
                 if isinstance(L, sage.rings.abc.ComplexDoubleField):
                     real_field = RDF
                 else:
+                    from sage.rings.real_mpfr import RealField
                     real_field = RealField(L.prec())
 
                 return self.change_ring(real_field).roots(ring=L, multiplicities=multiplicities, algorithm=algorithm)
@@ -8520,12 +8532,14 @@ cdef class Polynomial(CommutativePolynomial):
         """
         K = self.base_ring()
         if isinstance(K, sage.rings.abc.RealField):
+            from sage.rings.complex_mpfr import ComplexField
             return self.roots(ring=ComplexField(K.prec()), multiplicities=False)
         if isinstance(K, sage.rings.abc.RealDoubleField):
+            from sage.rings.complex_double import CDF
             return self.roots(ring=CDF, multiplicities=False)
         if isinstance(K, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField)):
             return self.roots(multiplicities=False)
-
+        from sage.rings.cc import CC
         return self.roots(ring=CC, multiplicities=False)
 
     def number_of_roots_in_interval(self, a=None, b=None):
