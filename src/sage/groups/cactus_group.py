@@ -455,7 +455,7 @@ class CactusGroup(UniqueRepresentation, Group):
         r"""
         Return the matrices corresponding to the generators of ``self``.
 
-        We construct a representation over `R = ZZ(t)` of `J_n` as follows.
+        We construct a representation over `R = \ZZ[t]` of `J_n` as follows.
         Let `E` be the vector space over `R` spanned by `\{\epsilon_v\}_v`,
         where `v` is a generator of `J_n`. Fix some generator `v`, and
         let `E_v` denote the span of `\epsilon_u - \epsilon_{u'}`,
@@ -467,7 +467,7 @@ class CactusGroup(UniqueRepresentation, Group):
 
         .. MATH::
 
-            \rho(v) = -I |_{R\espilon_v \oplus E_v} \oplus I |_{F_v}.
+            \rho(v) = -I |_{R\epsilon_v \oplus E_v} \oplus I |_{F_v}.
 
         By Theorem 6.2.3 of [DJS2003]_, this defines a representation of `J_n`.
         It is expected that this is a faithful representation (see

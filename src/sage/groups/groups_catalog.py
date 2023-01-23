@@ -68,6 +68,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
     - :func:`groups.misc.Braid <sage.groups.braid.BraidGroup>`
     - :func:`groups.misc.Cactus <sage.groups.cactus_group.CactusGroup>`
     - :func:`groups.misc.CoxeterGroup <sage.combinat.root_system.coxeter_group.CoxeterGroup>`
+    - :func:`groups.misc.PureCactus <sage.groups.cactus_group.PureCactusGroup>`
     - :func:`groups.misc.ReflectionGroup <sage.combinat.root_system.reflection_group_real.ReflectionGroup>`
     - :class:`groups.misc.RightAngledArtin <sage.groups.raag.RightAngledArtinGroup>`
     - :func:`groups.misc.WeylGroup <sage.combinat.root_system.weyl_group.WeylGroup>`
