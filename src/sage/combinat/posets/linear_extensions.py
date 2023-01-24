@@ -257,12 +257,18 @@ class LinearExtensionOfPoset(ClonableArray,
         Return ``True`` if the linear extension is supergreedy.
 
         A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
-        for every i, either if there is a minimal element `e_i+1` in 
-        `[e_i+1, \ldots, e_n]` which is in the upper cover of `e_j` in
+        for every `i`, either if there is a minimal element `e_{i+1}` in 
+        `[e_{i+1}, \ldots, e_n]` which is in the upper cover of `e_j` in
         `[e_1, \ldots, e_i]` for which j is maximum or if no such element
-        exist `e_i+1` is the any of the minimal element in `[e_i+1,\dots, e_n]`.
+        exist `e_{i+1}` is the any of the minimal element in
+        `[e_i+1,\dots, e_n]`.
+
+        Informally said a linear extension is supergreedy if it "always 
+        goes up and receedes the least" loosely speaking, supergreedy
+        linear extensions are depth-first linear extensions.
 
         EXAMPLES::
+        
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
             sage: P = Poset((X,Y), cover_relations = True, facade=False)
