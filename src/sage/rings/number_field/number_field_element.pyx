@@ -190,7 +190,7 @@ def _inverse_mod_generic(elt, I):
     return I.small_residue(y)
 
 
-cdef class NumberFieldElement(FieldElement):
+cdef class NumberFieldElement(NumberFieldElement_base):
     """
     An element of a number field.
 
