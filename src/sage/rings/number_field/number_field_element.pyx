@@ -113,6 +113,10 @@ def is_NumberFieldElement(x):
         sage: is_NumberFieldElement(a+1)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34931,
+                'is_NumberFieldElement is deprecated; '
+                'use isinstance(..., sage.structure.element.NumberFieldElement) instead')
     return isinstance(x, NumberFieldElement)
 
 
@@ -3855,7 +3859,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         from .number_field_ideal import is_NumberFieldIdeal
         if not is_NumberFieldIdeal(P):
-            if is_NumberFieldElement(P):
+            if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
                 raise TypeError("P must be an ideal")

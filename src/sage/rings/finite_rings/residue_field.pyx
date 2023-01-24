@@ -160,9 +160,8 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 from sage.rings.ideal import is_Ideal
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, NumberFieldElement
 
-from sage.rings.number_field.number_field_element import is_NumberFieldElement
 from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
 
 from sage.modules.free_module_element import FreeModuleElement
@@ -295,7 +294,7 @@ class ResidueFieldFactory(UniqueFactory):
             if not is_Ideal(p):
                 if isinstance(p, (int, Integer, Rational)):
                     p = ZZ.ideal(p)
-                elif is_NumberFieldElement(p):
+                elif isinstance(p, NumberFieldElement):
                     if p.parent().is_field():
                         p = p.parent().ring_of_integers().ideal(p)
                     else:
