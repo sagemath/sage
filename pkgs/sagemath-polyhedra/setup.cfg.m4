@@ -21,11 +21,12 @@ classifiers =
     Programming Language :: Python :: 3.8
     Programming Language :: Python :: 3.9
     Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.11
     Programming Language :: Python :: Implementation :: CPython
     Topic :: Scientific/Engineering :: Mathematics
 
 [options]
-python_requires = >=3.8, <3.11
+python_requires = >=3.8, <3.12
 install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         gmpy2          \
