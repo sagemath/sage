@@ -167,7 +167,8 @@ from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import FieldElement, parent
+from sage.structure.element import FieldElement, parent, NumberFieldElement
+
 from sage.structure.coerce import py_scalar_to_element
 from sage.categories.morphism import Morphism
 from sage.rings.ring import Field
@@ -1537,7 +1538,6 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         import sage.rings.abc
         P = parent(elt)
         if isinstance(P, sage.rings.abc.NumberField_cyclotomic):
-            from sage.rings.number_field.number_field_element import NumberFieldElement
             if isinstance(elt, NumberFieldElement):
                 from sage.rings.number_field.number_field import CyclotomicField
                 n = P.gen().multiplicative_order()

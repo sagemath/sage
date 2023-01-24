@@ -42,6 +42,8 @@ from sage.rings.all import (Integer,
                             PolynomialRing)
 
 from sage.misc.cachefunc import cached_function
+from sage.structure.element import NumberFieldElement
+
 
 @cached_function
 def hilbert_class_polynomial(D, algorithm=None):
@@ -623,7 +625,6 @@ def is_cm_j_invariant(j, method='new'):
         True
     """
     # First we check that j is an algebraic number:
-    from sage.rings.all import NumberFieldElement, NumberField
     if not isinstance(j, NumberFieldElement) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
@@ -670,6 +671,8 @@ def is_cm_j_invariant(j, method='new'):
 
     K = j.parent()
     if h < K.absolute_degree():
+        from sage.rings.number_field.number_field import NumberField
+
         K = NumberField(jpol, 'j')
         j = K.gen()
 

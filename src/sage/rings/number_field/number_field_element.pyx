@@ -108,6 +108,10 @@ def is_NumberFieldElement(x):
 
         sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
         sage: is_NumberFieldElement(2)
+        doctest:warning...
+        DeprecationWarning: is_NumberFieldElement is deprecated;
+        use isinstance(..., sage.structure.element.NumberFieldElement) instead
+        See https://trac.sagemath.org/34931 for details.
         False
         sage: k.<a> = NumberField(x^7 + 17*x + 1)
         sage: is_NumberFieldElement(a+1)
