@@ -60,6 +60,7 @@ from sage.categories.basic import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
+from sage.structure.element import NumberFieldElement
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool
@@ -414,7 +415,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         if x in self:
             return self
 
-        from sage.rings.number_field.number_field_element import NumberFieldElement
         if isinstance(x, NumberFieldElement):
             K, from_K = parent(x).subfield(x)
             return K.order(K.gen())
