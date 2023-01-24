@@ -3,5 +3,5 @@ from .all__sagemath_objects import *
 from sage.categories.all import *
 
 from sage.rings.all__sagemath_categories import *
-
+from sage.sets.all__sagemath_categories import *
 from sage.interfaces.all__sagemath_categories import *

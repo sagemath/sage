@@ -101,6 +101,24 @@ include sage/rings/polynomial/multi_polynomial_element.p*
 include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
 
+include sage/sets/
+
+include sage/sets/cartesian_product.py
+include sage/sets/condition_set.py
+include sage/sets/disjoint_union_enumerated_sets.py
+include sage/sets/family.py
+include sage/sets/finite_enumerated_set.py
+include sage/sets/finite_set_map*.p*
+include sage/sets/image_set.py
+include sage/sets/integer_range.py
+include sage/sets/non_negative_integers.py
+include sage/sets/positive_integers.py
+include sage/sets/primes.py
+include sage/sets/recursively_enumerated_set.p*
+include sage/sets/set.py
+include sage/sets/set_from_iterator.py
+include sage/sets/totally_ordered_finite_set.py
+
 global-exclude *.c
 global-exclude *.cpp
 
