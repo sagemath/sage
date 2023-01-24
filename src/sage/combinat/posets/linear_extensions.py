@@ -257,12 +257,21 @@ class LinearExtensionOfPoset(ClonableArray,
         Return ``True`` if the linear extension is supergreedy.
 
         A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
-        for every i, either `e_i+1` cover `e_i` otherwise on backtracking
-        through the list of elements previosly choosen, either `e_i+1` 
-        should be in the upper cover of the first element having a non-empty
-        upper cover or should include only the prviosly choosen elements.
+        for every i, either if there is a minimal element `e_i+1` in 
+        `[e_i+1, \ldots, e_n]` which is in the upper cover of `e_j` in
+        `[e_1, \ldots, e_i]` for which j is maximum or if no such element
+        exist `e_i+1` is the any of the minimal element in `[e_i+1,\dots, e_n]`.
 
         EXAMPLES::
+            sage: X = [0,1,2,3,4,5,6]
+            sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
+            sage: P = Poset((X,Y), cover_relations = True, facade=False)
+            sage: for l in P.linear_extensions():
+            ....:     if l.is_supergreedy():
+            ....:         print(l)
+            [1, 4, 3, 0, 5, 6, 2]
+            [0, 1, 4, 3, 5, 6, 2]
+            [0, 1, 5, 4, 3, 6, 2]
 
             sage: Q = posets.PentagonPoset()
             sage: for l in Q.linear_extensions():
@@ -279,76 +288,31 @@ class LinearExtensionOfPoset(ClonableArray,
             True
         """
         P = self.poset()
-        Q = []
-        N = []
-        S = []
-        T = []
+        H = P.hasse_diagram()
+
+        def next_elements(H, linext):
+            k = len(linext)
+            S = []
+            while not S:
+                if not k:
+                    S = [x for x in H.sources() if x not in linext]
+                else:
+                    S = [x for x in H.neighbor_out_iterator(linext[k-1]) if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x))]
+                    k -= 1
+            return S
+
         if not self:
             return True
-        N.append(self[0])
-        for i in range(len(self)-1):
-            if P.compare_elements(self[0],self[i+1]) is not None :
-                N.append(self[i+1])
+        if self[0] not in H.sources():
+            return False
+        for i in range(len(self)-2):
+            X = next_elements(H,self[:i+1])
+            if self[i+1] in X:
+                continue
             else:
-                S.append(self[i+1])
-        Q.append(N.copy())
-        N.clear()
-        while(S):
-            N.append(S[0])
-            for i in range(len(S)-1):
-                if P.compare_elements(S[0],S[i+1]) is not None :
-                    N.append(S[i+1])
-                else:
-                    T.append(S[i+1])
-            Q.append(N.copy())
-            S.clear()
-            S = T.copy()
-            T.clear()
-            N.clear()
-        for l in Q:
-            if not self.complete_supergreedy(P, l):
                 return False
-        else:
-            return True
-
-    def complete_supergreedy(self, P, L):
-        r"""
-        Return ``True`` if the linear extension is supergreedy and any one 
-        element is comparable to all the elements
-        """
-        Q = set()
-        for i in range(len(L) - 1):
-            Q.add(L[i])
-            if not P.covers(L[i], L[i + 1]):
-                if len(P.upper_covers(L[i])) != 0:
-                    return False
-                R = True
-                S = [L[i]]
-                while(R):
-                    for t in S:
-                        for u in P.lower_covers(t):
-                            if len(P.upper_covers(u)) == 0:
-                                S = P.lower_covers(t)
-                                break
-                            else :
-                                for v in P.upper_covers(u):
-                                    if v != L[i+1] and v not in Q:
-                                        return False
-                                    elif v == L[i+1] :
-                                        R=False
-                                        break
-                                    else :
-                                        continue
-                                else :
-                                    if P.lower_covers(t) == 0 :
-                                        return False
-                                    S = P.lower_covers(t)
-                                    continue
-                                break
-                        else:
-                            continue
-                        break
         return True
+    
     
     def tau(self, i):
         r"""
