@@ -379,6 +379,7 @@ def specht_module_spanning_set(D, SGA=None):
     INPUT:
 
     - ``D`` -- a list of cells ``(r,c)`` for row ``r`` and column ``c``
+    - ``SGA`` -- optional; a symmetric group algebra
 
     EXAMPLES::
 
@@ -425,7 +426,7 @@ def specht_module_spanning_set(D, SGA=None):
     gen = col_stab * row_stab
     return tuple([b * gen for b in B])
 
-def specht_module_rank(D, BR=None):
+def specht_module_rank(D, base_ring=None):
     r"""
     Return the rank of the Specht module of diagram ``D``.
 
@@ -437,7 +438,7 @@ def specht_module_rank(D, BR=None):
     """
     D = _to_diagram(D)
     span_set = specht_module_spanning_set(D)
-    if BR is None:
-        BR = QQ
-    return matrix(BR, [v.to_vector() for v in span_set]).rank()
+    if base_ring is None:
+        base_ring = QQ
+    return matrix(base_ring, [v.to_vector() for v in span_set]).rank()
 

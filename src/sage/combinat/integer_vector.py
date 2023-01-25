@@ -511,7 +511,7 @@ class IntegerVector(ClonableArray):
             v = v[:-1]
         return P.element_class(P, v, check=False)
 
-    def specht_module(self, BR=None):
+    def specht_module(self, base_ring=None):
         r"""
         Return the Specht module corresponding to ``self``.
 
@@ -526,13 +526,13 @@ class IntegerVector(ClonableArray):
         """
         from sage.combinat.specht_module import SpechtModule
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-        if BR is None:
+        if base_ring is None:
             from sage.rings.rational_field import QQ
-            BR = QQ
-        R = SymmetricGroupAlgebra(BR, sum(self))
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
         return SpechtModule(R, self)
 
-    def specht_module_dimension(self, BR=None):
+    def specht_module_dimension(self, base_ring=None):
         r"""
         Return the dimension of the Specht module corresponding to ``self``.
 
@@ -548,7 +548,7 @@ class IntegerVector(ClonableArray):
             5
         """
         from sage.combinat.specht_module import specht_module_rank
-        return specht_module_rank(self, BR)
+        return specht_module_rank(self, base_ring)
 
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):

@@ -5483,7 +5483,7 @@ class Partition(CombinatorialElement):
                               immutable=True, multiedges=True)
         return self.dual_equivalence_graph(directed, coloring)
 
-    def specht_module(self, BR=None):
+    def specht_module(self, base_ring=None):
         r"""
         Return the Specht module corresponding to ``self``.
 
@@ -5498,13 +5498,13 @@ class Partition(CombinatorialElement):
         """
         from sage.combinat.specht_module import SpechtModule
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-        if BR is None:
+        if base_ring is None:
             from sage.rings.rational_field import QQ
-            BR = QQ
-        R = SymmetricGroupAlgebra(BR, sum(self))
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
         return SpechtModule(R, self)
 
-    def specht_module_dimension(self, BR=None):
+    def specht_module_dimension(self, base_ring=None):
         r"""
         Return the dimension of the Specht module corresponding to ``self``.
 
@@ -5523,11 +5523,11 @@ class Partition(CombinatorialElement):
             5
         """
         from sage.categories.fields import Fields
-        if BR is None or (BR in Fields() and BR.characteristic() == 0):
+        if base_ring is None or (base_ring in Fields() and base_ring.characteristic() == 0):
             from sage.combinat.tableau import StandardTableaux
             return StandardTableaux(self).cardinality()
         from sage.combinat.specht_module import specht_module_rank
-        return specht_module_rank(self, BR)
+        return specht_module_rank(self, base_ring)
 
 
 ##############

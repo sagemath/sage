@@ -1275,7 +1275,7 @@ class SkewPartition(CombinatorialElement):
         """
         return self.outer().outside_corners()
 
-    def specht_module(self, BR=None):
+    def specht_module(self, base_ring=None):
         r"""
         Return the Specht module corresponding to ``self``.
 
@@ -1304,13 +1304,13 @@ class SkewPartition(CombinatorialElement):
         """
         from sage.combinat.specht_module import SpechtModule
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-        if BR is None:
+        if base_ring is None:
             from sage.rings.rational_field import QQ
-            BR = QQ
-        R = SymmetricGroupAlgebra(BR, self.size())
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, self.size())
         return SpechtModule(R, self.cells())
 
-    def specht_module_dimension(self, BR=None):
+    def specht_module_dimension(self, base_ring=None):
         r"""
         Return the dimension of the Specht module corresponding to ``self``.
 
@@ -1326,11 +1326,11 @@ class SkewPartition(CombinatorialElement):
             8
         """
         from sage.categories.fields import Fields
-        if BR is None or (BR in Fields() and BR.characteristic() == 0):
+        if base_ring is None or (base_ring in Fields() and base_ring.characteristic() == 0):
             from sage.combinat.skew_tableau import StandardSkewTableaux
             return StandardSkewTableaux(self).cardinality()
         from sage.combinat.specht_module import specht_module_rank
-        return specht_module_rank(self, BR)
+        return specht_module_rank(self, base_ring)
 
 
 def row_lengths_aux(skp):
