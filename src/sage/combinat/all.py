@@ -55,6 +55,8 @@ del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
+from .all__sagemath_polyhedra import *
+
 from .combinat import (CombinatorialClass, CombinatorialObject,
                        MapCombinatorialClass,
                        bell_number, bell_polynomial, bernoulli_polynomial,
@@ -83,7 +85,6 @@ from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 from sage.combinat.designs.all import *
 
 # Free modules and friends
-from .free_module import CombinatorialFreeModule
 from .debruijn_sequence import DeBruijnSequences
 
 from .schubert_polynomial import SchubertPolynomialRing
@@ -238,8 +239,6 @@ from .posets.all import *
 
 # Cluster Algebras and Quivers
 from .cluster_algebra_quiver.all import *
-
-from . import ranker
 
 from .integer_vector import IntegerVectors
 from .integer_vector_weighted import WeightedIntegerVectors
