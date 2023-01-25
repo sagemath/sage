@@ -480,6 +480,28 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         return max([Integer(str(X).split('_')[1]) for X in self.variables()]+[-1])
 
+    def _rmul_(self, left):
+        """
+        TESTS::
+
+            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
+            sage: R.from_base_ring(4)   # indirect doctest
+            4
+
+        """
+        return type(self)(self.parent(), left * self._p)
+
+    def _lmul_(self, right):
+        """
+        TESTS::
+
+            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
+            sage: alpha[3]*4   # indirect doctest
+            4*alpha_3
+
+        """
+        return type(self)(self.parent(), self._p * right)
+
     def _div_(self, x):
         r"""
         Division of Infinite Polynomials.
@@ -1201,28 +1223,6 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             R = self._p.base_ring()
         return InfinitePolynomial_sparse(self.parent(), R(self._p) * R(x._p))
 
-    def _rmul_(self, left):
-        """
-        TESTS::
-
-            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
-            sage: R.from_base_ring(4)   # indirect doctest
-            4
-
-        """
-        return InfinitePolynomial_sparse(self.parent(), left * self._p)
-
-    def _lmul_(self, right):
-        """
-        TESTS::
-
-            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
-            sage: alpha[3]*4   # indirect doctest
-            4*alpha_3
-
-        """
-        return InfinitePolynomial_sparse(self.parent(), self._p * right)
-
     def _sub_(self, x):
         """
         EXAMPLES::
@@ -1507,28 +1507,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         self._p = P._P(self._p)
         x._p = P._P(x._p)
         return InfinitePolynomial_dense(self.parent(), self._p * x._p)
-
-    def _rmul_(self, left):
-        """
-        TESTS::
-
-            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ)
-            sage: R.from_base_ring(4)   # indirect doctest
-            4
-
-        """
-        return InfinitePolynomial_dense(self.parent(), left*self._p)
-
-    def _lmul_(self, right):
-        """
-        TESTS::
-
-            sage: R.<alpha,beta> = InfinitePolynomialRing(QQ)
-            sage: alpha[3]*4   # indirect doctest
-            4*alpha_3
-
-        """
-        return InfinitePolynomial_dense(self.parent(), self._p*right)
 
     def _sub_(self, x):
         """
