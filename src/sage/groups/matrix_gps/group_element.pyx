@@ -82,6 +82,8 @@ from sage.libs.gap.element cimport GapElement, GapElement_List
 from sage.groups.libgap_wrapper cimport ElementLibGAP
 
 from sage.structure.element import is_Matrix
+from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomial_libsingular
+from sage.all import PolynomialRing, Matrix as MatrixConstructor
 from sage.structure.factorization import Factorization
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
@@ -488,6 +490,18 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             -181258980            # 32-bit
         """
         return hash(self.matrix())
+
+    def __call__(self, other): 
+        r"""
+        """
+        if type(other)==MPolynomial_libsingular:
+            assert self.base_ring()==other.base_ring()
+            mRingPoly=other
+            polynomial_vars=mRingPoly.variables()
+            varsToSubstituteModuleContext=self*MatrixConstructor(polynomial_vars).transpose()
+            varsToSubstituteRingContext=map(PolynomialRing(self.base_ring(), other.variables()), varsToSubstituteModuleContext)
+            substitutionDict={v:s for v,s in zip(polynomial_vars, varsToSubstituteRingContext)}
+            return mRingPoly.subs(substitutionDict)
 
     def _repr_(self):
         r"""
