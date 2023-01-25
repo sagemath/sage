@@ -1804,16 +1804,24 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         """
         self._implementation_repr = ''
         if element_class is None:
-            implementation = self._implementation_names(implementation, base_ring, sparse)[0]
-            if base_ring is ZZ:
-                if implementation == 'NTL':
-                    from sage.rings.polynomial.polynomial_integer_dense_ntl \
-                        import Polynomial_integer_dense_ntl as element_class
-                    self._implementation_repr = ' (using NTL)'
-                elif implementation == 'FLINT':
-                    element_class = Polynomial_integer_dense_flint
+            for implementation in self._implementation_names(implementation, base_ring, sparse):
+                if base_ring is ZZ:
+                    if implementation == 'NTL':
+                        try:
+                            from sage.rings.polynomial.polynomial_integer_dense_ntl \
+                                import Polynomial_integer_dense_ntl as element_class
+                        except ImportError:
+                            continue
+                        self._implementation_repr = ' (using NTL)'
+                    elif implementation == 'FLINT':
+                        try:
+                            from .polynomial_integer_dense_flint \
+                                import Polynomial_integer_dense_flint as element_class
+                        except ImportError:
+                            continue
+                break
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
-                sparse=sparse, element_class=element_class, category=category)
+                                            sparse=sparse, element_class=element_class, category=category)
         self._has_singular = can_convert_to_singular(self)
 
     @cached_method(key=lambda self, d, q, sign, lead: (d, q, sign, tuple([x if isinstance(x, (tuple, list)) else (x, 0) for x in lead]) if isinstance(lead, (tuple, list)) else ((lead, 0))))
@@ -2013,30 +2021,42 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: x^(10^20) # this should be fast
             x^100000000000000000000
         """
-        import sage.rings.complex_arb
-
-        if not element_class:
+        def _element_class():
+            if element_class:
+                return element_class
             if sparse:
-                element_class = polynomial_element_generic.Polynomial_generic_sparse_field
-            elif isinstance(base_ring, rational_field.RationalField):
-                from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
-                element_class = Polynomial_rational_flint
+                from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse_field
+                return Polynomial_generic_sparse_field
+            if isinstance(base_ring, rational_field.RationalField):
+                try:
+                    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+                    return Polynomial_rational_flint
+                except ImportError:
+                    pass
             elif is_NumberField(base_ring):
                 if base_ring.is_absolute():
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_absolute_number_field_dense
-                    element_class = Polynomial_absolute_number_field_dense
+                    return Polynomial_absolute_number_field_dense
                 else:
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
-                    element_class = Polynomial_relative_number_field_dense
+                    return Polynomial_relative_number_field_dense
             elif isinstance(base_ring, sage.rings.abc.RealField):
-                element_class = PolynomialRealDense
+                try:
+                    from .polynomial_real_mpfr_dense import PolynomialRealDense
+                    return PolynomialRealDense
+                except ImportError:
+                    pass
             elif isinstance(base_ring, sage.rings.abc.ComplexBallField):
-                from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
-                element_class = Polynomial_complex_arb
-            else:
-                element_class = polynomial_element_generic.Polynomial_generic_dense_field
+                try:
+                    from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
+                    return Polynomial_complex_arb
+                except ImportError:
+                    pass
+            from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
+            return Polynomial_generic_dense_field
 
-        PolynomialRing_integral_domain.__init__(self, base_ring, name=name, sparse=sparse, element_class=element_class, category=category)
+        PolynomialRing_integral_domain.__init__(self, base_ring, name=name, sparse=sparse,
+                                                element_class=_element_class(), category=category)
 
     def _ideal_class_(self, n=0):
         """

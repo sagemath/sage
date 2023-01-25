@@ -819,10 +819,10 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
     implementation_names = set([implementation])
 
     if implementation is None or implementation == "singular":
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
         try:
+            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
             R = MPolynomialRing_libsingular(base_ring, n, names, order)
-        except (TypeError, NotImplementedError):
+        except (ImportError, TypeError, NotImplementedError):
             if implementation is not None:
                 raise
         else:
