@@ -169,6 +169,28 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     @staticmethod
     def __classcall_private__(cls, A, p):
+        r"""
+        TESTS::
+
+            sage: from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
+            sage: X.<x,y> = InfinitePolynomialRing(ZZ, implementation='sparse')
+            sage: xy = (x[0] + y[0]).polynomial()
+            sage: xy.parent()
+            Multivariate Polynomial Ring in x_1, x_0, y_1, y_0 over Integer Ring
+            sage: sparse_xy = InfinitePolynomial(X, xy); sparse_xy
+            x_0 + y_0
+            sage: isinstance(sparse_xy, InfinitePolynomial)
+            True
+            sage: type(sparse_xy)
+            <class 'sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse'>
+            sage: X.<x,y> = InfinitePolynomialRing(ZZ, implementation='dense')
+            sage: dense_xy = InfinitePolynomial(X, xy); dense_xy
+            x_0 + y_0
+            sage: isinstance(dense_xy, InfinitePolynomial)
+            True
+            sage: type(dense_xy)
+            <class 'sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_dense'>
+        """
         from sage.structure.element import parent
         if hasattr(A, '_P'):
             if parent(p) is A._P or (A._P.base_ring().has_coerce_map_from(parent(p))):
