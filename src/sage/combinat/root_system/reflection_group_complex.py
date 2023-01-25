@@ -371,10 +371,11 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
     def iteration_tracking_words(self):
         r"""
-        Return an iterator going through all elements in ``self`` which tracks the reduced expressions.
+        Return an iterator going through all elements in ``self`` that
+        tracks the reduced expressions.
 
-        This is much slower than using the iteration as a permutation group with strong
-        generating set.
+        This can be much slower than using the iteration as a permutation
+        group with strong generating set.
 
         EXAMPLES::
 
