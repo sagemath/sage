@@ -299,8 +299,6 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                                           canonicalize=False,
                                           category=category)
 
-        self._length_of_permutation_representation = len(Permutation(self.gens()[0]))
-
         l_set = list(range(1, len(self.gens()) + 1))
         if self._index_set is None:
             self._index_set = tuple(l_set)
