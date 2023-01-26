@@ -758,6 +758,138 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.geometry.polyhedron.constructor import Polyhedron
             return Polyhedron(vertices=vertices, base_ring=base_ring)
 
+        def coxeter_poset(self):
+            r"""
+            Return the Coxeter poset of ``self``.
+
+            Let `W` be a Coxeter group. The *Coxeter poset* is defined as
+            the set of (right) standard cosets `gW_J`, where `J` is a
+            subset of the index set `I` of `W`, ordered by reverse inclusion.
+
+            This is equal to the face poset of the :meth:`Coxeter complex
+            <coxeter_complex()>`.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 3])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 75 elements
+                sage: P.rank()
+                3
+
+                sage: W = WeylGroup(['B', 3])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 147 elements
+                sage: P.rank()
+                3
+
+                sage: W = CoxeterGroup(['I', 7])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 29 elements
+                sage: P.rank()
+                2
+
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 363 elements
+                sage: P.rank()
+                3
+            """
+            I = self.index_set()
+            data = {}
+            next_level = set((g, ()) for g in self)
+            while next_level:
+                cur = next_level
+                next_level = set()
+                for Y in cur:
+                    g, J = Y
+                    for i in I:
+                        if i in J:
+                            continue
+                        Jp = tuple(sorted(J + (i,)))
+                        gp = g.coset_representative(Jp, side='right')
+                        X = (gp, Jp)
+                        if X in data:
+                            data[X].append(Y)
+                        else:
+                            data[X] = [Y]
+                        next_level.add(X)
+            from sage.combinat.posets.lattices import MeetSemilattice
+            return MeetSemilattice(data)
+
+        def coxeter_complex(self):
+            r"""
+            Return the Coxeter complex of ``self``.
+
+            Let `W` be a Coxeter group, and let `X` be the corresponding Tits
+            cone, which is constructed as the `W` orbit of the fundamental
+            chamber in the reflection representation. The *Coxeter complex*
+            of `W` is the simplicial complex `(X \setminus \{0\}) / \RR_{>0}`.
+            The face poset of this simplicial complex is given by the
+            :meth:`coxeter_poset()`. When `W` is a finite group, then the
+            Coxeter complex is homeomorphic to an `(n-1)`-dimensional sphere,
+            where `n` is the rank of `W`.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 3])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 14 vertices and 24 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: W = WeylGroup(['B', 3])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 26 vertices and 48 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: W = CoxeterGroup(['I', 7])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 14 vertices and 14 facets
+                sage: C.homology()
+                {0: 0, 1: Z}
+
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 62 vertices and 120 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+            """
+            I = self.index_set()
+            facets = {}
+            for g in self:
+                V = []
+                for i in I:
+                    gp = g
+                    D = gp.descents(side='right')
+                    if D and D[0] == i:
+                        D.pop(0)
+                    while D:
+                        gp = gp.apply_simple_reflection(D[0])
+                        D = gp.descents(side='right')
+                        if D and D[0] == i:
+                            D.pop(0)
+                    Ip = list(I)
+                    Ip.remove(i)
+                    V.append((gp, tuple(Ip)))
+                facets[g] = V
+            verts = set()
+            for F in facets.values():
+                verts.update(F)
+            labels = {x: i for i,x in enumerate(verts)}
+            result = [[labels[v] for v in F] for F in facets.values()]
+            from sage.topology.simplicial_complex import SimplicialComplex
+            return SimplicialComplex(result)
+
     class ElementMethods:
 
         @cached_in_parent_method
