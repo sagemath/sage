@@ -33,7 +33,7 @@ automatically set to src/sage so you need only specify the path from there. For 
 
 will fix all files in src/sage/arith and ::
 
-    ./sage -python src/sage/misc/replace_dot_all.py -l arith/functions.py
+    ./sage -python src/sage/misc/replace_dot_all.py -l arith/functions.pyx
 
 will fix the file src/sage/arith/functions.py. The file extension is necessary in the case of a specific file. The user can also
 pass the verbose flag -v to print out the files being fixed. For example ::
