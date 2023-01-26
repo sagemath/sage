@@ -1940,6 +1940,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     * `n = 39, 49, 65, 93, 121, 129, 133, 217, 219, 267`: [Djo1992c]_
     * `n = 97`: [Djo2008a]_
     * `n = 109, 145, 247`: [Djo2008b]_
+    * `n = 73`: [Djo2023b]_
     
     INPUT:
 

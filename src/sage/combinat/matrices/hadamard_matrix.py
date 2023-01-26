@@ -2032,7 +2032,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     * `n=92`: [Wall71]_
     * `n=188`: [Djo2008a]_
     * `n=236`: [FKS2004]_
-    * `n=276`: [Djo2023]_
+    * `n=276`: [Djo2023a]_
 
     Additional data is obtained from skew supplementary difference sets contained in
     :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the
