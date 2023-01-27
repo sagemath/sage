@@ -1325,6 +1325,40 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
     return True
 
 
+def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
+    r"""
+    Test if `M` is a skew Hadamard matrix.
+
+    this is a wrapper around the function :func:`is_hadamard_matrix`
+
+    INPUT:
+
+    - ``M`` -- a matrix
+
+    - ``normalized`` (boolean) -- whether to test if ``M`` is a normalized
+      Hadamard matrix, i.e. has its first row/column filled with +1.
+
+    - ``verbose`` (boolean) -- whether to be verbose when the matrix is not
+      Hadamard.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_skew_hadamard_matrix, skew_hadamard_matrix
+        sage: h = matrix.hadamard(12)
+        sage: is_skew_hadamard_matrix(h, verbose=True)
+        The matrix is not skew
+        False
+        sage: h = skew_hadamard_matrix(12)
+        sage: is_skew_hadamard_matrix(h)
+        True
+        sage: from sage.combinat.matrices.hadamard_matrix import normalise_hadamard
+        sage: h = normalise_hadamard(skew_hadamard_matrix(12), skew=True)
+        sage: is_skew_hadamard_matrix(h, verbose=True, normalized=True)
+        True
+    """
+    return is_hadamard_matrix(M, skew=True, normalized=normalized, verbose=verbose)
+
+
 @matrix_method
 def hadamard_matrix(n, existence=False, check=True):
     r"""
