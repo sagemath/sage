@@ -8062,7 +8062,7 @@ class NumberField_absolute(NumberField_generic):
             sage: L(a)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert a to Number Field in b with defining polynomial x^3 - 4*x + 1 with b = 1.860805853111704? (using the specified embeddings)
+            ValueError: cannot convert a to Number Field in b with defining polynomial x^3 - 4*x + 1 with b = 1.860805853111704? (using the specified embeddings)
 
         Subfields automatically come with an embedding::
 
@@ -8155,7 +8155,7 @@ class NumberField_absolute(NumberField_generic):
         f = x.minpoly()
         ys = f.roots(ring=K, multiplicities=False)
         if not ys:
-            raise ValueError("Cannot convert %s to %s (regardless of embeddings)" % (x, K))
+            raise ValueError("cannot convert %s to %s (regardless of embeddings)" % (x, K))
 
         # Define a function are_roots_equal to determine whether two
         # roots of f are equal.  A simple a == b does not suffice for
@@ -8212,7 +8212,7 @@ class NumberField_absolute(NumberField_generic):
             emb_y = y.polynomial()(Kgen)
             if are_roots_equal(emb_x, emb_y):
                 return y
-        raise ValueError("Cannot convert %s to %s (using the specified embeddings)" % (x, K))
+        raise ValueError("cannot convert %s to %s (using the specified embeddings)" % (x, K))
 
     def _coerce_map_from_(self, R):
         """
@@ -11219,7 +11219,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                     if z == x:
                         return self.zeta(m)**(r+1)
                     z *= y
-            raise TypeError("Cannot coerce %s into %s" % (x, self))
+            raise TypeError("cannot coerce %s into %s" % (x, self))
         return self._element_class(self, x)
 
     def _coerce_from_gap(self, x):

@@ -1208,11 +1208,11 @@ cdef class BoundedIntegerSequence:
             sage: T+list(S)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert list to sage.data_structures.bounded_integer_sequences.BoundedIntegerSequence
+            TypeError: cannot convert list to sage.data_structures.bounded_integer_sequences.BoundedIntegerSequence
             sage: T+None
             Traceback (most recent call last):
             ...
-            TypeError: Cannot concatenate bounded integer sequence and None
+            TypeError: cannot concatenate bounded integer sequence and None
 
         TESTS:
 
@@ -1228,7 +1228,7 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence myself, right, out
         if other is None or self is None:
-            raise TypeError('Cannot concatenate bounded integer sequence and None')
+            raise TypeError('cannot concatenate bounded integer sequence and None')
         myself = self  # may result in a type error
         right = other  #  --"--
         if right.data.itembitsize != myself.data.itembitsize:

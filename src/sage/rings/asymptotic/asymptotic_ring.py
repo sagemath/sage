@@ -4158,9 +4158,9 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
 
         elif is_PowerSeriesRing(P):
             raise NotImplementedError(
-                'Cannot convert %s from the %s to an asymptotic expansion '
+                'cannot convert %s from the %s to an asymptotic expansion '
                 'in %s, since growths at other points than +oo are not yet '
-                'supported.' % (data, P, self))
+                'supported' % (data, P, self))
             # Delete lines above as soon as we can deal with growths
             # other than the that at going to +oo.
             from sage.rings.infinity import PlusInfinity

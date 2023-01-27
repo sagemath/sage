@@ -424,7 +424,7 @@ cdef class Element(SageObject):
             sage: q._set_parent(float)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert type to sage.structure.parent.Parent
+            TypeError: cannot convert type to sage.structure.parent.Parent
         """
         self._parent = <Parent?>parent
 

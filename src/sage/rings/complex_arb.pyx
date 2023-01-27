@@ -947,7 +947,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF._sum_of_products([["a"]])
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert str to sage.rings.complex_arb.ComplexBall
+            TypeError: cannot convert str to sage.rings.complex_arb.ComplexBall
         """
         cdef ComplexBall res = ComplexBall.__new__(ComplexBall)
         cdef ComplexBall factor

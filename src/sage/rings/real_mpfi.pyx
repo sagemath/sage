@@ -1177,11 +1177,11 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RealIntervalFieldElement.__new__(RealIntervalFieldElement, None)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert NoneType to sage.rings.real_mpfi.RealIntervalField_class
+            TypeError: cannot convert NoneType to sage.rings.real_mpfi.RealIntervalField_class
             sage: RealIntervalFieldElement.__new__(RealIntervalFieldElement, ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfi.RealIntervalField_class
+            TypeError: cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfi.RealIntervalField_class
             sage: RealIntervalFieldElement.__new__(RealIntervalFieldElement, RIF)
             [.. NaN ..]
 

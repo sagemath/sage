@@ -1337,11 +1337,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealNumber.__new__(RealNumber, None)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert NoneType to sage.rings.real_mpfr.RealField_class
+            TypeError: cannot convert NoneType to sage.rings.real_mpfr.RealField_class
             sage: RealNumber.__new__(RealNumber, ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfr.RealField_class
+            TypeError: cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfr.RealField_class
             sage: RealNumber.__new__(RealNumber, RR)
             NaN
         """
@@ -2247,7 +2247,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             100000000000000000
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Sage Integer')
+            raise ValueError('cannot convert infinity or NaN to Sage Integer')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -3236,7 +3236,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             <... 'int'>
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Python int')
+            raise ValueError('cannot convert infinity or NaN to Python int')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -3352,7 +3352,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # as subject-to-change.
 
         if mpfr_nan_p(self.value) or mpfr_inf_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to Pari float')
+            raise ValueError('cannot convert NaN or infinity to Pari float')
 
         # wordsize for PARI
         cdef unsigned long wordsize = sizeof(long)*8
@@ -3678,14 +3678,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('-infinity').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if mpfr_zero_p(self.value):
             return Rational(0)
@@ -3784,23 +3784,23 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('nan').nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
 
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if ((max_error is None and max_denominator is None) or
             (max_error is not None and max_denominator is not None)):

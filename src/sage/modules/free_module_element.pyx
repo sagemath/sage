@@ -2570,7 +2570,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.dot_product('junk')
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert str to sage.modules.free_module_element.FreeModuleElement
+            TypeError: cannot convert str to sage.modules.free_module_element.FreeModuleElement
 
         The degrees of the arguments must match. ::
 

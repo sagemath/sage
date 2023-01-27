@@ -571,7 +571,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: ZZ(pari(Qp(11)(11^-7)))
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert p-adic with negative valuation to an integer
+            TypeError: cannot convert p-adic with negative valuation to an integer
 
         Test converting a list with a very large base::
 
@@ -640,7 +640,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 if n == x:
                     mpz_set_pylong(self.value, n)
                 else:
-                    raise TypeError("Cannot convert non-integral float to integer")
+                    raise TypeError("cannot convert non-integral float to integer")
 
             elif isinstance(x, pari_gen):
                 global set_integer_from_gen
