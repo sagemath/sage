@@ -1595,9 +1595,11 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
 # XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
 # until at least until 4.5.0 unpickle correctly as polynomials implemented #
 # via FLINT.                                                               #
-from sage.misc.persist import register_unpickle_override
-from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
-
-register_unpickle_override(
-    'sage.rings.polynomial.polynomial_element_generic',
-    'Polynomial_rational_dense', Polynomial_rational_flint)
+try:
+    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+except ImportError:
+    pass
+else:
+    from sage.misc.persist import register_unpickle_override
+    register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
+                               'Polynomial_rational_dense', Polynomial_rational_flint)
