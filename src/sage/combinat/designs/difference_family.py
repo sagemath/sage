@@ -1929,12 +1929,12 @@ def is_fixed_relative_difference_set(R, q):
 def skew_supplementary_difference_set(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
-    These sets are constructed from available data, as described in [Djo1994]_. The set `S_1 \subset G` is
+    These sets are constructed from available data, as described in [Djo1994a]_. The set `S_1 \subset G` is
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G \setminus \{0\}`.
 
     The data is taken from:
     
-    * `n = 103, 151`: [Djo1994]_
+    * `n = 103, 151`: [Djo1994a]_
     * `n = 67, 113, 127, 157, 163, 181, 241`: [Djo1992a]_
     * `n = 37, 43`: [Djo1992b]_
     * `n = 39, 49, 65, 93, 121, 129, 133, 217, 219, 267`: [Djo1992c]_
@@ -2174,7 +2174,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
 def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
-    This construction is described in [Djo1994]_.
+    This construction is described in [Djo1994a]_.
 
     Let H be a subgroup of Zmod(n) of order `t`. We construct the `2s = n/t` cosets
     `\alpha_0, .., \alpha_{2s-1}` by using the elements contained in a sequence `A`:
@@ -2184,7 +2184,7 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
     supplementary difference sets: `S_i = \bigcup_{j\in J__i} \alpha_i`. Note that
     if `J_i` contains the value `-1`, this function will add `0` to the set `S_i`.
 
-    To construct a coset `\alpha_{2i}` by listing it directly, replace the `2i`-th 
+    To construct a coset `\alpha_{2i}` by listing it directly, replace the `2i`-th
     element of the list `A` with the desired set.
 
     INPUT:
@@ -2271,10 +2271,106 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
     return S1, S2, S3, S4
 
 
+def supplementary_difference_set(n, existence=False, check=True):
+    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+
+    These sets are constructed from available data, as described in [Djo1994a]_.
+
+    The data for `n=191` is taken from [Djo2008c]_, and date for `n=239` is from [Djo1994b]_.
+    Additional SDS are constructed using :func:`skew_supplementary_difference_set`.
+
+    INPUT:
+
+    - ``n`` -- integer, the parameter of the supplementary difference set.
+
+    - ``existence`` -- boolean (dafault False). If true, only check whether the
+      supplementary difference sets can be constructed.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are
+      supplementary difference sets before returning them. Setting this parameter
+      to False may speed up the computation considerably.
+
+    OUTPUT:
+
+    If ``existence`` is false, the function returns the 4 sets (containing integers
+    modulo `n`), or raises an error if data for the given ``n`` is not available.
+    If ``existence`` is true, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import supplementary_difference_set
+        sage: S1, S2, S3, S4 = supplementary_difference_set(191)
+
+    If existence is ``True``, the function returns a boolean ::
+
+        sage: supplementary_difference_set(191, existence=True)
+        True
+        sage: supplementary_difference_set(17, existence=True)
+        False
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
+        sage: S1, S2, S3, S4 = supplementary_difference_set(191, check=False)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], 191, len(S1)+len(S2)+len(S3)+len(S4)-191)
+        True
+        sage: S1, S2, S3, S4 = supplementary_difference_set(37, check=False)
+        sage: supplementary_difference_set(7)
+        Traceback (most recent call last):
+        ...
+        ValueError: SDS of order 7 not yet implemented.
+        sage: supplementary_difference_set(7, existence=True)
+        False
+        sage: supplementary_difference_set(127, existence=True)
+        True
+    """
+
+    indices = {
+        191: [[1, 7, 9, 10, 11, 13, 17, 18, 25, 26, 30, 31, 33, 34, 35, 36, 37],
+              [1, 4, 7, 9, 11, 12, 13, 14, 19, 21, 22, 23, 24, 25, 26, 29, 36, 37],
+              [0, 3, 4, 5, 7, 8, 9, 16, 17, 19, 24, 25, 29, 30, 31, 33, 35, 37],
+              [1, 3, 4, 5, 8, 11, 14, 18, 19, 20, 21, 23, 24, 25, 28, 29, 30, 32, 34, 35]],
+        239: [[0, 1, 2, 3, 4, 5, 6, 7, 14, 18, 19, 21, 24, 25, 29, 30],
+              [0, 1, 3, 7, 9, 12, 15, 18, 20, 22, 26, 28, 29, 30, 31, 32, 33],
+              [2, 3, 4, 5, 8, 9, 10, 11, 13, 17, 19, 21, 22, 24, 27, 31, 32],
+              [0, 1, 2, 3, 6, 7, 8, 11, 13, 15, 17, 18, 19, 22, 25, 26, 27, 32, 33]],
+    }
+
+    cosets_gens = {
+        191: [1, 2, 3, 4, 6, 8, 9, 11, 12, 13, 16, 17, 18, 19, 22, 32, 36, 38, 41],
+        239: [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15, 18, 21, 28, 35, 42],
+    }
+
+    H_db = {
+        191: [1, 39, 184, 109, 49],
+        239: [1, 10, 24, 44, 98, 100, 201],
+    }
+
+    if existence:
+        return n in indices or skew_supplementary_difference_set(n, existence=True)
+
+    sets = None
+    if n in indices:
+        sets = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
+    elif skew_supplementary_difference_set(n, existence=True):
+        sets = skew_supplementary_difference_set(n, check=False)
+
+    if sets is None:
+        raise ValueError(f'SDS of order {n} not yet implemented.')
+
+    S1, S2, S3, S4 = sets
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
+
+    return S1, S2, S3, S4
+
+
 def _is_skew_set(S, n):
     r"""Check if `S` is a skew set over the set of integers modulo `n`.
 
-    From [Djo1994]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew
+    From [Djo1994a]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew
     type if `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus \{0\}`.
 
     INPUT:

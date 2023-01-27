@@ -2290,7 +2290,7 @@ def skew_hadamard_matrix_324():
     r"""
     Construct a skew Hadamard matrix of order 324.
 
-    The construction is taken from [Djo1994]_. It uses four supplementary difference sets `S_1, S_2, S_3, S_4`,
+    The construction is taken from [Djo1994a]_. It uses four supplementary difference sets `S_1, S_2, S_3, S_4`,
     with `S_1` of skew type. These are then used to generate four matrices of order `81`, which are
     inserted into the Goethals-Seidel array.
 
