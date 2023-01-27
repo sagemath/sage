@@ -504,12 +504,12 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(o, base_ring=QQ)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
-        sage: H.<x,y> = HyperplaneArrangements(QQ)
-        sage: h = x + y - 1; h
+        sage: H.<x,y> = HyperplaneArrangements(QQ)                                              # optional - sage.combinat
+        sage: h = x + y - 1; h                                                                  # optional - sage.combinat
         Hyperplane x + y - 1
-        sage: Polyhedron(h, base_ring=ZZ)
+        sage: Polyhedron(h, base_ring=ZZ)                                                       # optional - sage.combinat
         A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 line
-        sage: Polyhedron(h)
+        sage: Polyhedron(h)                                                                     # optional - sage.combinat
         A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
 
     .. NOTE::
