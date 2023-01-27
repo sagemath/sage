@@ -67,6 +67,7 @@ include sage/rings/finite_rings/finite_field_constructor.py
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.p*
+include sage/rings/finite_rings/integer_mod_ring.p*
 
 include sage/rings/number_field/number_field_base.*
 
