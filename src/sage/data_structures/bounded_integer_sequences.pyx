@@ -1208,7 +1208,7 @@ cdef class BoundedIntegerSequence:
             sage: T+list(S)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert list to sage.data_structures.bounded_integer_sequences.BoundedIntegerSequence
+            TypeError: Cannot convert list to sage.data_structures.bounded_integer_sequences.BoundedIntegerSequence
             sage: T+None
             Traceback (most recent call last):
             ...

@@ -948,7 +948,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: None^M
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert NoneType to sage.matrix.matrix_integer_dense.Matrix_integer_dense
+            TypeError: Cannot convert NoneType to sage.matrix.matrix_integer_dense.Matrix_integer_dense
             sage: M^M
             Traceback (most recent call last):
             ...

@@ -1603,7 +1603,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 sage: L([1, 2, 3, 4, 6, 12])
                 Traceback (most recent call last):
                 ...
-                TypeError: cannot convert list to sage.structure.element.Element
+                TypeError: Cannot convert list to sage.structure.element.Element
 
         EXAMPLES::
 

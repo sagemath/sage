@@ -1212,7 +1212,7 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: LinearConstraintsParent_class.__new__(LinearConstraintsParent_class, None)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert NoneType to sage.numerical.linear_functions.LinearFunctionsParent_class
+            TypeError: Cannot convert NoneType to sage.numerical.linear_functions.LinearFunctionsParent_class
         """
         self._LF = <LinearFunctionsParent_class?>linear_functions_parent
         # Do not use coercion framework for __richcmp__
@@ -1236,7 +1236,7 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: LinearConstraintsParent(None)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert NoneType to sage.numerical.linear_functions.LinearFunctionsParent_class
+            TypeError: Cannot convert NoneType to sage.numerical.linear_functions.LinearFunctionsParent_class
         """
         Parent.__init__(self)
 

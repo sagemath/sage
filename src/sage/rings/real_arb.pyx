@@ -704,7 +704,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RBF._sum_of_products([["a"]])
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert str to sage.rings.real_arb.RealBall
+            TypeError: Cannot convert str to sage.rings.real_arb.RealBall
         """
         cdef RealBall res = RealBall.__new__(RealBall)
         cdef RealBall factor

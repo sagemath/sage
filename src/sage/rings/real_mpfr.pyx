@@ -1337,7 +1337,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealNumber.__new__(RealNumber, None)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert NoneType to sage.rings.real_mpfr.RealField_class
+            TypeError: Cannot convert NoneType to sage.rings.real_mpfr.RealField_class
             sage: RealNumber.__new__(RealNumber, ZZ)
             Traceback (most recent call last):
             ...

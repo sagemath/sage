@@ -2414,7 +2414,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.weighted_adjacency_matrix()
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert NoneType to sage.structure.parent.Parent
+            TypeError: Cannot convert NoneType to sage.structure.parent.Parent
         """
         if self.has_multiple_edges():
             raise NotImplementedError("don't know how to represent weights for a multigraph")
