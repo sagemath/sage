@@ -72,7 +72,11 @@ import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
 
-from sage.libs.pari.all import pari, PariError
+try:
+    from sage.libs.pari.all import pari, PariError
+except ImportError:
+    class PariError(Exception):
+        pass
 
 from sage.misc.cachefunc import cached_method
 

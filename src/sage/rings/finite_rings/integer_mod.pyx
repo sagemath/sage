@@ -85,7 +85,13 @@ from sage.arith.long cimport (
     integer_check_long, integer_check_long_py, is_small_python_int)
 
 import sage.rings.rational as rational
-from sage.libs.pari.all import pari, PariError
+
+try:
+    from sage.libs.pari.all import pari, PariError
+except ImportError:
+    class PariError(Exception):
+        pass
+
 import sage.rings.integer_ring as integer_ring
 import sage.rings.rational_field
 
