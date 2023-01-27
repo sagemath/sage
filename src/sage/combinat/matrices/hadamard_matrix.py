@@ -71,27 +71,38 @@ from sage.combinat.t_sequences import T_sequences_smallcases
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
-def normalise_hadamard(H):
+def normalise_hadamard(H, skew=False):
     r"""
     Return the normalised Hadamard matrix corresponding to ``H``.
 
     The normalised Hadamard matrix corresponding to a Hadamard matrix `H` is a
     matrix whose every entry in the first row and column is +1.
 
+    If `skew` is True, the matrix returned will be `skew-normal`: a skew Hadamard
+    matrix with first row of all `+1`.
+
     EXAMPLES::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import normalise_hadamard
+        sage: from sage.combinat.matrices.hadamard_matrix import normalise_hadamard, is_hadamard_matrix, skew_hadamard_matrix
         sage: H = normalise_hadamard(hadamard_matrix(4))
         sage: H == hadamard_matrix(4)
         True
+        sage: H = normalise_hadamard(skew_hadamard_matrix(20, skew_normalize=False), skew=True)
+        sage: is_hadamard_matrix(H, skew=True, normalized=True)
+        True
     """
-    for i in range(H.ncols()):
-        if H[0, i] < 0:
-            H.rescale_col(i, -1)
-    for i in range(H.nrows()):
-        if H[i, 0] < 0:
-            H.rescale_row(i, -1)
-    return H
+
+    if skew:
+        dd = diagonal_matrix(H[0])
+        return dd*H*dd
+    else:
+        for i in range(H.ncols()):
+            if H[0, i] < 0:
+                H.rescale_col(i, -1)
+        for i in range(H.nrows()):
+            if H[i, 0] < 0:
+                H.rescale_row(i, -1)
+        return H
 
 
 def hadamard_matrix_paleyI(n, normalize=True):
@@ -1258,6 +1269,14 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
         False
         sage: is_hadamard_matrix(h, skew=False, verbose=True)
         True
+        sage: h = skew_hadamard_matrix(20, skew_normalize=False)
+        sage: is_hadamard_matrix(h, skew=True, normalized=True, verbose=True)
+        The matrix is not skew-normalized
+        False
+        sage: from sage.combinat.matrices.hadamard_matrix import normalise_hadamard
+        sage: h = normalise_hadamard(h, skew=True)
+        sage: is_hadamard_matrix(h, skew=True, normalized=True, verbose=True)
+        True
     """
     n = M.ncols()
     if n != M.nrows():
@@ -1282,7 +1301,11 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
         return False
 
     if normalized:
-        if (set(M.row(0)) != {1} or set(M.column(0)) != {1}):
+        if skew and (set(M.row(0)) != {1}):
+            if verbose:
+                print("The matrix is not skew-normalized")
+            return False
+        elif not skew and (set(M.row(0)) != {1} or set(M.column(0)) != {1}):
             if verbose:
                 print("The matrix is not normalized")
             return False
@@ -2599,12 +2622,9 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
                 return Unknown
             raise ValueError("A skew Hadamard matrix of order %s is not yet implemented." % n)
     if skew_normalize:
-        dd = diagonal_matrix(M[0])
-        M = dd*M*dd
+        M = normalise_hadamard(M, skew=True)
     if check:
-        assert is_hadamard_matrix(M, normalized=False, skew=True)
-        if skew_normalize:
-            assert M[0] == vector([1]*n)
+        assert is_hadamard_matrix(M, normalized=skew_normalize, skew=True)
     _skew_had_cache[n] = True
     return M
 
