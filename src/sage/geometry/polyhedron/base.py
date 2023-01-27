@@ -319,11 +319,11 @@ class Polyhedron_base(Polyhedron_base7):
 
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
-            sage: fl_oc = oc.face_lattice()
-            sage: fl_sc = sc_oc.face_poset()
-            sage: [len(x) for x in fl_oc.level_sets()]
+            sage: fl_oc = oc.face_lattice()                     # optional - sage.combinat
+            sage: fl_sc = sc_oc.face_poset()                    # optional - sage.combinat
+            sage: [len(x) for x in fl_oc.level_sets()]          # optional - sage.combinat
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]
+            sage: [len(x) for x in fl_sc.level_sets()]          # optional - sage.combinat
             [6, 12, 8]
             sage: sc_oc.euler_characteristic()
             2
@@ -1057,7 +1057,7 @@ class Polyhedron_base(Polyhedron_base7):
             (None, None)
             sage: Polyhedron([ (1/3,2/3), (3/3, 4/3) ]).bounding_box(integral_hull=True)
             ((1, 1), (1, 1))
-            sage: polytopes.buckyball(exact=False).bounding_box()
+            sage: polytopes.buckyball(exact=False).bounding_box()                                           # optional - sage.groups
             ((-0.8090169944, -0.8090169944, -0.8090169944), (0.8090169944, 0.8090169944, 0.8090169944))
 
         TESTS::
@@ -1162,12 +1162,12 @@ class Polyhedron_base(Polyhedron_base7):
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P
+            sage: P = polytopes.dodecahedron(exact=False); P                                                                                        # optional - sage.groups
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake                                         # optional - sage.groups
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0] # optional - jupymake
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                                 # optional - jupymake                                         # optional - sage.groups
             1 -0.472135955 0 -1.236067978
 
         """
