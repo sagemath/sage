@@ -100,7 +100,18 @@ prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/integral_points.pyx  # depends on matrix_integer_dense
 
 
-
+include src/sage/numerical/mip.p*
+include src/sage/numerical/interactive_simplex_method.p*
+include src/sage/numerical/linear_*.p*
+include src/sage/numerical/sdp.p*
+include src/sage/numerical/backends/cvxopt_*.p*
+include src/sage/numerical/backends/cvxpy_*.p*
+include src/sage/numerical/backends/generic_*.p*
+include src/sage/numerical/backends/interactivelp_*.p*
+include src/sage/numerical/backends/logging_*.p*
+include src/sage/numerical/backends/matrix_*.p*
+include src/sage/numerical/backends/ppl_*.p*
+include src/sage/numerical/backends/scip_*.p*
 
 
 global-exclude *.py[co]
