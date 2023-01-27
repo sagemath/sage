@@ -47,6 +47,7 @@ include sage/rings/abc.*
 include sage/rings/integer*.*
 include sage/rings/rational*.*
 include sage/rings/infinity.*
+include sage/rings/factorint.p*
 
 include sage/arith/*.*
 include sage/misc/allocator.*
@@ -65,7 +66,7 @@ include sage/rings/finite_rings/finite_field_base.p*
 include sage/rings/finite_rings/finite_field_constructor.py
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
-include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
+include sage/rings/finite_rings/integer_mod.p*
 
 include sage/rings/number_field/number_field_base.*
 
