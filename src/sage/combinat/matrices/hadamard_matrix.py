@@ -78,7 +78,7 @@ def normalise_hadamard(H, skew=False):
     The normalised Hadamard matrix corresponding to a Hadamard matrix `H` is a
     matrix whose every entry in the first row and column is +1.
 
-    If `skew` is True, the matrix returned will be `skew-normal`: a skew Hadamard
+    If ``skew`` is True, the matrix returned will be skew-normal: a skew Hadamard
     matrix with first row of all `+1`.
 
     EXAMPLES::
@@ -1335,11 +1335,11 @@ def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
 
     - ``M`` -- a matrix
 
-    - ``normalized`` (boolean) -- whether to test if ``M`` is a normalized
-      Hadamard matrix, i.e. has its first row/column filled with +1.
+    - ``normalized`` (boolean) -- whether to test if ``M`` is a skew-normalized
+      Hadamard matrix, i.e. has its first row filled with +1.
 
     - ``verbose`` (boolean) -- whether to be verbose when the matrix is not
-      Hadamard.
+      skew Hadamard.
 
     EXAMPLES::
 
