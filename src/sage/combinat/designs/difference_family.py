@@ -1618,8 +1618,8 @@ def is_supplementary_difference_set(Ks, v, lmbda):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import supplementary_difference_set, is_supplementary_difference_set
-        sage: S1, S2, S3, S4 = supplementary_difference_set(17)
+        sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set, is_supplementary_difference_set
+        sage: S1, S2, S3, S4 = supplementary_difference_set_from_rel_diff_set(17)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], 16, 16)
         True
         sage: is_supplementary_difference_set([S1, S2, S3, S4], 16, 14)
@@ -1651,7 +1651,7 @@ def is_supplementary_difference_set(Ks, v, lmbda):
 
     return True
 
-def supplementary_difference_set(q, existence=False, check=True):
+def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=True):
     r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
 
     The sets are created from relative difference sets as detailed in Theorem 3.3 of [Spe1975]_. this construction
@@ -1682,8 +1682,8 @@ def supplementary_difference_set(q, existence=False, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import supplementary_difference_set
-        sage: supplementary_difference_set(17) #random
+        sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
+        sage: supplementary_difference_set_from_rel_diff_set(17) #random
         ([0, 2, 5, 6, 8, 10, 13, 14],
         [0, 1, 2, 6, 7, 9, 10, 14, 15],
         [0, 1, 2, 6, 11, 12, 13, 15],
@@ -1691,31 +1691,31 @@ def supplementary_difference_set(q, existence=False, check=True):
 
     If existence is ``True``, the function returns a boolean::
 
-        sage: supplementary_difference_set(7, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
         False
-        sage: supplementary_difference_set(17, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(17, existence=True)
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
-        sage: is_supplementary_difference_set(supplementary_difference_set(17), 16, 16)
+        sage: is_supplementary_difference_set(supplementary_difference_set_from_rel_diff_set(17), 16, 16)
         True
-        sage: is_supplementary_difference_set(supplementary_difference_set(9), 8, 8)
+        sage: is_supplementary_difference_set(supplementary_difference_set_from_rel_diff_set(9), 8, 8)
         True
-        sage: supplementary_difference_set(7)
+        sage: supplementary_difference_set_from_rel_diff_set(7)
         Traceback (most recent call last):
         ...
         ValueError: There is no s for which m-1 is an odd prime power
-        sage: supplementary_difference_set(8)
+        sage: supplementary_difference_set_from_rel_diff_set(8)
         Traceback (most recent call last):
         ...
         ValueError: q must be an odd prime power
-        sage: supplementary_difference_set(8, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(8, existence=True)
         False
-        sage: supplementary_difference_set(7, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
         False
-        sage: supplementary_difference_set(1, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(1, existence=True)
         False
 
     .. SEEALSO::

@@ -1170,7 +1170,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     r"""Create an Hadamard matrix of order `n` using Spence construction.
 
     This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
-    :func:`sage.combinat.designs.difference_family.supplementary_difference_set` to create the
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
     desired matrix.
 
     INPUT:
@@ -1217,19 +1217,19 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         ...
         AssertionError
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set
+    from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
 
     assert n % 4 == 0 and n > 0
 
     q = n//4
 
     if existence:
-        return supplementary_difference_set(q, existence=True)
+        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
 
-    if not supplementary_difference_set(q, existence=True):
+    if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    S1, S2, S3, S4 = supplementary_difference_set(q, check=False)
+    S1, S2, S3, S4 = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
     A1 = matrix.circulant([1 if j in S1 else -1 for j in range(q-1)])
     A2 = matrix.circulant([1 if j in S4 else -1 for j in range(q-1)])
