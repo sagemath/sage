@@ -122,6 +122,27 @@ class sage__groups(JoinFeature):
                              [PythonModule('sage.groups.perm_gps.permgroup')])
 
 
+class sage__libs__pari(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__pari
+        sage: sage__libs__pari().is_present()                       # optional - sage.libs.pari
+        FeatureTestResult('sage.libs.pari', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__pari
+            sage: isinstance(sage__libs__pari(), sage__libs__pari)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.pari',
+                             [PythonModule('sage.libs.pari.convert_sage')])
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
