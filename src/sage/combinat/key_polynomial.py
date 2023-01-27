@@ -501,7 +501,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
         from sage.combinat.schubert_polynomial import SchubertPolynomialRing_xbasis
         if isinstance(R, SchubertPolynomialRing_xbasis):
-            return CallableConvertMap(R, self, self.from_schubert_polynomial)
+            return self.from_schubert_polynomial
 
         phi = P.coerce_map_from(R)
         if phi is not None:
@@ -660,41 +660,65 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(ZZ)
+            sage: k = KeyPolynomials(ZZ)
             sage: X = SchubertPolynomialRing(ZZ)
             sage: f = X([2,1,5,4,3])
             sage: k.from_schubert_polynomial(f)
             k[1, 0, 2, 1] + k[2, 0, 2] + k[3, 0, 0, 1]
             sage: k.from_schubert_polynomial(2)
             2*k[]
-            sage: k(f)  #indirect doctest
+            sage: k(f)
             k[1, 0, 2, 1] + k[2, 0, 2] + k[3, 0, 0, 1]
+
+            sage: k = KeyPolynomials(GF(7), 4)
+            sage: k.from_schubert_polynomial(f)
+            k[1, 0, 2, 1] + k[2, 0, 2, 0] + k[3, 0, 0, 1]
 
         TESTS::
 
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(ZZ)
+            sage: k = KeyPolynomials(ZZ)
             sage: k.from_schubert_polynomial(k([3,2]))
             Traceback (most recent call last):
             ...
-            ValueError: Please provide a Schubert polynomial
+            ValueError: not a Schubert polynomial
+
+            sage: k = KeyPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Compositions())
+            sage: for _ in range(50):
+            ....:     C = next(it)
+            ....:     assert k.from_schubert_polynomial(X(k[C])) == k[C], C
+
+            sage: k = KeyPolynomials(ZZ, 4)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(k.basis().keys())
+            sage: for _ in range(50):
+            ....:     C = next(it)
+            ....:     assert k.from_schubert_polynomial(X(k[C])) == k[C], C
         """
         if x in self.base_ring():
             return self(x)
+
         from sage.combinat.schubert_polynomial import SchubertPolynomial_class
         if not isinstance(x, SchubertPolynomial_class):
-            raise ValueError('Please provide a Schubert polynomial')
+            raise ValueError('not a Schubert polynomial')
 
         from sage.combinat.diagram import RotheDiagram
-        R = KeyPolynomialBasis(self.base_ring())
-        out = R.zero()
+        out = self.zero()
+        if self._k is not None:
+            def build_elt(wt):
+                wt = list(wt)
+                wt += [0] * (self._k - len(wt))
+                return self[wt]
+        else:
+            def build_elt(wt):
+                return self[wt]
 
         for m, c in x.monomial_coefficients().items():
             D = RotheDiagram(m)
-            a = R.zero()
+            a = self.zero()
             for d in D.peelable_tableaux():
-                a += R(d.left_key_tableau().weight())
+                a += build_elt(d.left_key_tableau().weight())
             out += c * a
 
         return out

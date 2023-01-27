@@ -443,6 +443,15 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
             sage: X([])
             X[1]
+
+        Check the round trip from key polynomials::
+
+            sage: k = KeyPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Permutations())
+            sage: for _ in range(50):
+            ....:     P = next(it)
+            ....:     assert X(k(X(P))) == X(P), P
         """
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
@@ -490,3 +499,4 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             X[4, 2, 1, 3]
         """
         return symmetrica.mult_schubert_schubert(left, right)
+
