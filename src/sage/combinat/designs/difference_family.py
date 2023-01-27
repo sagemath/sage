@@ -1629,7 +1629,7 @@ def is_supplementary_difference_set(Ks, v, lmbda):
 
     .. SEEALSO::
 
-        :func:`supplementary_difference_set`
+        :func:`supplementary_difference_set_from_rel_diff_set`
     """
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
@@ -1823,7 +1823,7 @@ def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
     `\{td | d\in R\}= R`.
 
     In addition, the set returned by this function will contain the element `0`. This is needed in the
-    construction of supplementary difference sets (see :func:`supplementary_difference_set`).
+    construction of supplementary difference sets (see :func:`supplementary_difference_set_from_rel_diff_set`).
 
     INPUT:
 
@@ -2155,6 +2155,88 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         267: [1, 4, 16, 64, 67, 91, 97, 121, 217, 223, 256],
     }
 
+    if existence:
+        return n in indices
+
+    if n not in indices:
+        raise ValueError(f'Skew SDS of order {n} not yet implemented.')
+
+    S1, S2, S3, S4 = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
+        assert _is_skew_set(S1, n)
+
+    return S1, S2, S3, S4
+
+
+def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=True):
+    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+
+    This construction is described in [Djo1994]_.
+
+    Let H be a subgroup of Zmod(n) of order `t`. We construct the `2s = n/t` cosets
+    `\alpha_0, .., \alpha_{2s-1}` by using the elements contained in a sequence `A`:
+    `\alpha_{2i} = a_iH` and `\alpha_{2i+1} = -\alpha_{2i}`.
+
+    Then, we use four indices sets `J_1, J_2, J_3, J_4` to construct the four
+    supplementary difference sets: `S_i = \bigcup_{j\in J__i} \alpha_i`. Note that
+    if `J_i` contains the value `-1`, this function will add `0` to the set `S_i`.
+
+    To construct a coset `\alpha_{2i}` by listing it directly, replace the `2i`-th 
+    element of the list `A` with the desired set.
+
+    INPUT:
+
+    - ``n`` -- integer, the parameter of the supplementary difference set.
+
+    - ``H`` -- list of integers, the set `H` used to construct the cosets.
+
+    - ``indices`` -- list containing four list of integers, which are the sets
+      `J_1, J_2, J_3, J_4` described above.
+
+    - ``cosets_gen`` -- list containing integers or list of integers, is the set `A`
+      described above.
+
+    - ``check`` -- boolean (default True). If true, check that the sets
+      are supplementary difference sets. Setting this parameter to False may speed
+      up the computation considerably.
+
+    OUTPUT:
+
+    The function returns the 4 sets (containing integers modulo `n`).
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set, _construction_supplementary_difference_set
+        sage: H = [1, 10, -11]
+        sage: cosets_gen = [1, 2, 3, 5, 6, 9]
+        sage: indices =  [[0, 3, 5, 7, 9, 10], [0, 5, 6, 7, 8], [1, 2, 6, 7, 9], [2, 6, 8, 9, 10]]
+        sage: _construction_supplementary_difference_set(37, H, indices, cosets_gen)
+        ([1, 10, 26, 35, 17, 22, 34, 7, 33, 32, 24, 18, 31, 14, 29, 9, 16, 12],
+         [1, 10, 26, 34, 7, 33, 5, 13, 19, 32, 24, 18, 6, 23, 8],
+         [36, 27, 11, 2, 20, 15, 5, 13, 19, 32, 24, 18, 31, 14, 29],
+         [2, 20, 15, 5, 13, 19, 6, 23, 8, 31, 14, 29, 9, 16, 12])
+        sage: H = [1, 16, 22]
+        sage: cosets_gen = [1, 2, 3, 4, 6, 8, [13]]
+        sage: indices = [[1, 3, 5, 6, 8, 10, 12], [0, 1, 5, 8, 12, 13], [1, 3, 4, 7, 9, 12, 13], [0, 1, 2, 3, 7, 8]]
+        sage: _construction_supplementary_difference_set(39, H, indices, cosets_gen)
+        ([38, 23, 17, 37, 7, 34, 36, 30, 12, 4, 25, 10, 6, 18, 15, 8, 11, 20, 13],
+         [1, 16, 22, 38, 23, 17, 36, 30, 12, 6, 18, 15, 13, 26],
+         [38, 23, 17, 37, 7, 34, 3, 9, 27, 35, 14, 29, 33, 21, 24, 13, 26],
+         [1, 16, 22, 38, 23, 17, 2, 32, 5, 37, 7, 34, 35, 14, 29, 6, 18, 15])
+        sage: H = [1, 4, 11, 16, 21, -2, -8]
+        sage: cosets_gen = [1, 3, 7]
+        sage: indices = [[1, 2, 4], [1, 2, 4], [0, 2, 3], [3, 4, -1]]
+        sage: sets = _construction_supplementary_difference_set(43, H, indices, cosets_gen, check=False)
+        sage: is_supplementary_difference_set(sets, 43, 35)
+        True
+
+    .. SEEALSO::
+
+        :func:`skew_supplementary_difference_set`
+    """
     def generate_set(index_set, cosets):
         S = []
         for idx in index_set:
@@ -2164,17 +2246,11 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
                 S += cosets[idx]
         return S
 
-    if existence:
-        return n in indices
-
-    if n not in indices:
-        raise ValueError(f'Skew SDS of order {n} not yet implemented.')
-
     Z = Zmod(n)
-    H = list(map(Z, H_db[n]))
+    H = list(map(Z, H))
 
     cosets = []
-    for el in cosets_gens[n]:
+    for el in cosets_gen:
         if isinstance(el, list):
             even_coset = [Z(x) for x in el]
         else:
@@ -2183,17 +2259,17 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         cosets.append(even_coset)
         cosets.append(odd_coset)
 
-    S1 = generate_set(indices[n][0], cosets)
-    S2 = generate_set(indices[n][1], cosets)
-    S3 = generate_set(indices[n][2], cosets)
-    S4 = generate_set(indices[n][3], cosets)
+    S1 = generate_set(indices[0], cosets)
+    S2 = generate_set(indices[1], cosets)
+    S3 = generate_set(indices[2], cosets)
+    S4 = generate_set(indices[3], cosets)
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
         assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
-        assert _is_skew_set(S1, n)
 
     return S1, S2, S3, S4
+
 
 def _is_skew_set(S, n):
     r"""Check if `S` is a skew set over the set of integers modulo `n`.
