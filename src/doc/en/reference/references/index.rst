@@ -4499,6 +4499,11 @@ REFERENCES:
 .. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
              International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
 
+.. [Miy1991] \M. Miyamoto.
+            *A construction of Hadamard matrices*,
+            Journal of Combinatorial Theory, Series A 57(1) (1991): 86-108.
+            :doi:`10.1016/0097-3165(91)90008-5`
+
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
              `Downloadable from Munthe-Kaas's website

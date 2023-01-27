@@ -280,6 +280,114 @@ def hadamard_matrix_paleyII(n):
     return normalise_hadamard(H)
 
 
+def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
+    r"""
+    Construct Hadamard matrix using Miyamoto construction.
+
+    If `q = n/4` is a prime power, and there exists an Hadamard matrix of order
+    `q-1`, then a Hadamard matrix of order `n` can be constructed (see [Miy1991]_).
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is a Hadamard
+      before returning.
+
+    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` is not a multiple of `4`.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default the function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_miyamoto_construction
+        sage: hadamard_matrix_miyamoto_construction(20)
+        20 x 20 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns a boolean ::
+
+        sage: hadamard_matrix_miyamoto_construction(36, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_miyamoto_construction(68, check=False))
+        True
+        sage: hadamard_matrix_miyamoto_construction(64, existence=True)
+        False
+        sage: hadamard_matrix_miyamoto_construction(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 64 is not covered by Miyamoto construction.
+        sage: hadamard_matrix_miyamoto_construction(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: No Hadamard matrix of order 14 exists.
+    """
+    if n < 0 or n % 4 != 0:
+        raise ValueError(f'No Hadamard matrix of order {n} exists.')
+
+    q = n // 4
+    if existence:
+        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)
+
+    if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+        raise ValueError(f'The order {n} is not covered by Miyamoto construction.')
+
+    m = (q-1) // 2
+
+    C = symmetric_conference_matrix_paley(q + 1)
+
+    neg = [i for i in range(2, m+2) if C[1, i] == -1]
+    pos = [i for i in range(m+2, 2*m+2) if C[1, i] == 1]
+
+    for i, j in zip(neg, pos):
+        C.swap_rows(i, j)
+        C.swap_columns(i, j)
+
+    C1 = -C.submatrix(row=2, col=2, nrows=m, ncols=m)
+    C2 = C.submatrix(row=2, col=m+2, nrows=m, ncols=m)
+    C4 = C.submatrix(row=m+2, col=m+2, nrows=m, ncols=m)
+
+    K = hadamard_matrix(q - 1)
+    K1 = K.submatrix(row=0, col=0, nrows=(q-1)//2, ncols=(q-1)//2)
+    K2 = K.submatrix(row=0, col=(q-1)//2, nrows=(q-1)//2, ncols=(q-1)//2)
+    K3 = -K.submatrix(row=(q-1)//2, col=0, nrows=(q-1)//2, ncols=(q-1)//2)
+    K4 = K.submatrix(row=(q-1)//2, col=(q-1)//2, nrows=(q-1)//2, ncols=(q-1)//2)
+
+    Zr = zero_matrix(m)
+    Us = [[C1, C2, Zr, Zr], [C2.T, C4, Zr, Zr], [Zr, Zr, C1, C2], [Zr, Zr, C2.T, C4]]
+    Vs = [[I(m), Zr, K1, K2], [Zr, I(m), K3, K4], [K1.T, K3.T, I(m), Zr], [K2.T, K4.T, Zr, I(m)]]
+
+    def T(i, j):
+        return block_matrix([[Us[i][j]+Vs[i][j], Us[i][j]-Vs[i][j]],
+                             [Us[i][j]-Vs[i][j], Us[i][j]+Vs[i][j]]])
+
+    e = matrix([[1] * (2*m)])
+    one = matrix([1])
+    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
+                      [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
+                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
+                      [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
+                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
+                      [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
+                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
+                      [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
+
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+
 def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     r"""
     Construction of Williamson type Hadamard matrix.
@@ -1657,6 +1765,10 @@ def hadamard_matrix(n, existence=False, check=True):
         if existence:
             return True
         M = turyn_type_hadamard_matrix_smallcases(n, check=False)
+    elif hadamard_matrix_miyamoto_construction(n, existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_miyamoto_construction(n, check=False)
     elif hadamard_matrix_from_sds(n, existence=True):
         if existence:
             return True
