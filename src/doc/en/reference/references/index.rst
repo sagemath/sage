@@ -2060,9 +2060,14 @@ REFERENCES:
              *Ten New Orders for Hadamard Matrices of Skew Type*,
              Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
 
-.. [Djo1994] \D. Đoković.
+.. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
+
+.. [Djo1994b] \D. Đoković.
+             *Two Hadamard matrices of order 956 of Goethals-Seidel type*,
+             Combinatorica  14(3) (1994): 375-377.
+             :doi:`10.1007/BF01212983`
 
 .. [Djo2008a] \D. Đoković.
             *Skew-Hadamard matrices of orders 188 and 388 exist*,
@@ -2073,6 +2078,11 @@ REFERENCES:
             *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
             Journal of Combinatorial Designs 16 (2008): 493-498.
             :arxiv:`0706.1973`
+
+.. [Djo2008c] \D. Đoković.
+            *Hadamard matrices of order 764 exist*,
+            Combinatorica 28(4) (2008): 487-489.
+            :doi:`10.1007/s00493-008-2384-z`
 
 .. [Djo2023a]  \D. Đoković.
             *Skew-Hadamard matrices of order 276*.
