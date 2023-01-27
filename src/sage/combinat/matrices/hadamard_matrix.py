@@ -172,6 +172,56 @@ def hadamard_matrix_paleyI(n, normalize=True):
     return H
 
 
+def symmetric_conference_matrix_paley(n):
+    r"""
+    Construct a symmetric conference matrix of order n.
+
+    A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
+    and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`. This construction assumes
+    that `q = n-1` is a prime power, with `q \cong 1 \mod 4`. See [Hora]_ or [Lon2013]_.
+
+    These matrices are used in the :func:`hadamard_matrix_paleyII`.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the symmetric conference matrix to consruct.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import symmetric_conference_matrix_paley
+        sage: symmetric_conference_matrix_paley(6)
+        [ 0  1  1  1  1  1]
+        [ 1  0  1 -1 -1  1]
+        [ 1  1  0  1 -1 -1]
+        [ 1 -1  1  0  1 -1]
+        [ 1 -1 -1  1  0  1]
+        [ 1  1 -1 -1  1  0]
+
+    TESTS::
+
+        sage: symmetric_conference_matrix_paley(5)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 5 is not covered by Paley construction of symmetric conference matrices.
+    """
+    q = n - 1
+    if not (is_prime_power(q) and (q % 4 == 1)):
+        raise ValueError("The order %s is not covered by Paley construction of symmetric conference matrices." % n)
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    K = FiniteField(q, 'x')
+    K_list = list(K)
+    K_list.insert(0, K.zero())
+    H = matrix(ZZ, [[(1 if (x-y).is_square() else -1)
+                     for x in K_list]
+                    for y in K_list])
+    for i in range(n):
+        H[0, i] = 1
+        H[i, 0] = 1
+        H[i, i] = 0
+    return H
+
+
 def hadamard_matrix_paleyII(n):
     r"""
     Implement the Paley type II construction.
@@ -219,17 +269,7 @@ def hadamard_matrix_paleyII(n):
     if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
         raise ValueError("The order %s is not covered by the Paley type II construction." % n)
 
-    from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    K = FiniteField(q, 'x')
-    K_list = list(K)
-    K_list.insert(0, K.zero())
-    H = matrix(ZZ, [[(1 if (x-y).is_square() else -1)
-                     for x in K_list]
-                    for y in K_list])
-    for i in range(q+1):
-        H[0, i] = 1
-        H[i, 0] = 1
-        H[i, i] = 0
+    H = symmetric_conference_matrix_paley(q+1)
 
     tr = { 0: matrix(2, 2, [ 1, -1, -1, -1]),
            1: matrix(2, 2, [ 1,  1,  1, -1]),
