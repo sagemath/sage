@@ -775,6 +775,92 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
                          [-D*R, -C.T*R,  B.T*R,      A]])
 
 
+def hadamard_matrix_from_sds(n, existence=False, check=True):
+    r"""Construction of Hadamard matrices from supplementary difference sets.
+
+    Given four SDS with parameters `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` with
+    `n_1 + n_2 + n_3 + n_4 = n+\lambda` we can construct four (-1,+1) sequences `a_i = (a_{i,0},...,a_{i,n-1})`
+    where `a_{i,j} = -1` iff `j \in S_i`. This will be the fist rows of four circulant
+    matrices `A_1, A_2, A_3, A_4` which, when plugged into the Goethals-Seidel array, create an
+    Hadamard matrix of order `4n` (see [Djo1994b]_).
+
+    The supplementary difference sets are taken from
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set`.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is a Hadamard
+      before returning.
+
+    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` is not a multiple of `4`.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default The function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_sds
+        sage: hadamard_matrix_from_sds(148)
+        148 x 148 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns a boolean ::
+
+        sage: hadamard_matrix_from_sds(764, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_sds, is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_from_sds(172))
+        True
+        sage: hadamard_matrix_from_sds(64, existence=True)
+        False
+        sage: hadamard_matrix_from_sds(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: SDS of order 16 not yet implemented.
+        sage: hadamard_matrix_from_sds(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a positive multiple of four.
+    """
+    from sage.combinat.designs.difference_family import supplementary_difference_set
+
+    if n <= 0 or n % 4 != 0:
+        raise ValueError(f'n must be a positive multiple of four.')
+    t = n // 4
+
+    if existence:
+        return supplementary_difference_set(t, existence=True)
+
+    S1, S2, S3, S4 = supplementary_difference_set(t, check=False)
+    a = [-1 if i in S1 else 1 for i in range(t)]
+    b = [-1 if i in S2 else 1 for i in range(t)]
+    c = [-1 if i in S3 else 1 for i in range(t)]
+    d = [-1 if i in S4 else 1 for i in range(t)]
+
+    if n == 956:
+        a, b, c, d = [-el for el in d], a, b, c
+
+    A, B, C, D = map(matrix.circulant, [a, b, c, d])
+    if check:
+        assert A*A.T+B*B.T+C*C.T+D*D.T == 4*t*I(t)
+
+    H = _construction_goethals_seidel_matrix(A, B, C, D)
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
     Create an Hadamard matrix using the contruction detailed in [CW1972]_.
@@ -1538,6 +1624,10 @@ def hadamard_matrix(n, existence=False, check=True):
         if existence:
             return True
         M = turyn_type_hadamard_matrix_smallcases(n, check=False)
+    elif hadamard_matrix_from_sds(n, existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_from_sds(n, check=False)
     elif hadamard_matrix_spence_construction(n, existence=True):
         if existence:
             return True
