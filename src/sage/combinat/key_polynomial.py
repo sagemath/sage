@@ -40,7 +40,6 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 
 from collections.abc import Collection
-from copy import copy
 
 
 class KeyPolynomial(CombinatorialFreeModule.Element):
