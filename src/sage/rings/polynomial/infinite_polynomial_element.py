@@ -58,6 +58,18 @@ callable object that accepts non-negative integers as input and
 returns non-negative integers, then ``c^P`` means to apply ``P`` to
 the variable indices occurring in ``c``.
 
+If you want to substitute variables you can use the standard polynomial
+methods, such as
+:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse.subs`::
+
+    sage: R.<x,y> = InfinitePolynomialRing(QQ)
+    sage: f = x[1] + x[1]*x[2]*x[3]
+    sage: f.subs({x[1]: x[0]})
+    x_3*x_2*x_0 + x_0
+    sage: g = x[0] + x[1] + y[0]
+    sage: g.subs({x[0]: y[0]})
+    x_1 + 2*y_0
+
 TESTS:
 
 We test whether coercion works, even in complicated cases in which
@@ -317,6 +329,10 @@ class InfinitePolynomial_sparse(RingElement):
             sage: a(x_1=x[100])
             x_100 + x_0
 
+            sage: M = matrix([[1,1],[2,0]])
+            sage: a(x_1=M)
+            [x_0 + 1       1]
+            [      2     x_0]
         """
         # Replace any InfinitePolynomials by their underlying polynomials
         if hasattr(self._p, 'variables'):
@@ -432,6 +448,88 @@ class InfinitePolynomial_sparse(RingElement):
             return getattr(self._p, s)
         except AttributeError:
             raise AttributeError('%s has no attribute %s' % (self.__class__, s))
+
+    def subs(self, fixed=None, **kwargs):
+        """
+        Substitute variables in ``self``.
+
+        INPUT:
+
+        - ``fixed`` -- (optional) ``dict`` with ``{variable:value}`` pairs
+        - ``**kwargs`` -- named parameters
+
+        OUTPUT:
+
+        the resulting substitution
+
+        EXAMPLES::
+
+            sage: R.<x,y> = InfinitePolynomialRing(QQ)
+            sage: f = x[1] + x[1]*x[2]*x[3]
+
+        Passing ``fixed={x[1]: x[0]}``. Note that the keys may be given
+        using the generators of the infinite polynomial ring
+        or as a string::
+
+            sage: f.subs({x[1]: x[0]})
+            x_3*x_2*x_0 + x_0
+            sage: f.subs({'x_1': x[0]})
+            x_3*x_2*x_0 + x_0
+
+        Passing the variables as names parameters::
+
+            sage: f.subs(x_1=y[1])
+            x_3*x_2*y_1 + y_1
+            sage: f.subs(x_1=y[1], x_2=2)
+            2*x_3*y_1 + y_1
+
+        The substitution returns the original polynomial if you try
+        to substitute a variable not present::
+
+            sage: g = x[0] + x[1]
+            sage: g.subs({y[0]: x[0]})
+            x_1 + x_0
+
+        The substitution can also handle matrices::
+
+            sage: M = matrix([[1,0],[0,2]])
+            sage: N = matrix([[0,3],[4,0]])
+            sage: g = x[0]^2 + 3*x[1]
+            sage: g.subs({'x_0': M})
+            [3*x_1 + 1         0]
+            [        0 3*x_1 + 4]
+            sage: g.subs({x[0]: M, x[1]: N})
+            [ 1  9]
+            [12  4]
+
+        If you pass both ``fixed`` and ``kwargs``, any conflicts
+        will defer to ``fixed``::
+
+            sage: R.<x,y> = InfinitePolynomialRing(QQ)
+            sage: f = x[0]
+            sage: f.subs({x[0]:1})
+            1
+            sage: f.subs(x_0=5)
+            5
+            sage: f.subs({x[0]:1}, x_0=5)
+            1
+
+        TESTS::
+
+            sage: g.subs(fixed=x[0], x_1=N)
+            Traceback (most recent call last):
+            ...
+            ValueError: fixed must be a dict
+        """
+        if fixed:
+            if not isinstance(fixed, dict):
+                raise ValueError('fixed must be a dict')
+            kwargs.update(fixed)
+        try:
+            return self(**kwargs)
+        except TypeError:
+            str_kwargs = {str(k): v for k, v in kwargs.items()}
+            return self(**str_kwargs)
 
     def ring(self):
         """
