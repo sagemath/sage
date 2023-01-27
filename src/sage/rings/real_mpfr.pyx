@@ -1341,7 +1341,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealNumber.__new__(RealNumber, ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfr.RealField_class
+            TypeError: Cannot convert sage.rings.integer_ring.IntegerRing_class to sage.rings.real_mpfr.RealField_class
             sage: RealNumber.__new__(RealNumber, RR)
             NaN
         """
@@ -6105,7 +6105,7 @@ def create_RealField(*args, **kwds):
         See http://trac.sagemath.org/24511 for details.
         Real Field with 53 bits of precision
     """
-    #deprecation has already been imported in this file
+    # deprecation has already been imported in this file
     deprecation(24511, "Please import create_RealField from sage.rings.real_field")
     from sage.rings.real_field import create_RealField as cr
     return cr(*args, **kwds)

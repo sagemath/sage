@@ -424,7 +424,7 @@ cdef class Element(SageObject):
             sage: q._set_parent(float)
             Traceback (most recent call last):
             ...
-            TypeError: cannot convert type to sage.structure.parent.Parent
+            TypeError: Cannot convert type to sage.structure.parent.Parent
         """
         self._parent = <Parent?>parent
 
@@ -4432,11 +4432,11 @@ def coerce_binop(method):
 
     Another real example::
 
-        sage: R1=QQ['x,y']
-        sage: R2=QQ['x,y,z']
-        sage: f=R1(1)
-        sage: g=R1(2)
-        sage: h=R2(1)
+        sage: R1 = QQ['x,y']
+        sage: R2 = QQ['x,y,z']
+        sage: f = R1(1)
+        sage: g = R1(2)
+        sage: h = R2(1)
         sage: f.gcd(g)
         1
         sage: f.gcd(g,algorithm='modular')
