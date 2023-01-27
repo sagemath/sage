@@ -1,6 +1,8 @@
 name: Build documentation
 
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
   workflow_dispatch:
     # Allow to run manually
