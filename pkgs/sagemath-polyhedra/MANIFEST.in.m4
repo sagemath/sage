@@ -97,7 +97,7 @@ exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 graft sage/geometry
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
-exclude sage/geometry/integral_points.pyx  # depends on matrix_integer_dense
+exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
 
 include sage/numerical/mip.p*
