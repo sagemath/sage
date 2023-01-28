@@ -1,4 +1,3 @@
-#cython: wraparound=False, boundscheck=False
 r"""
 Cython helper methods to compute integral points in polyhedra.
 """
@@ -19,16 +18,11 @@ import itertools
 
 from sage.matrix.constructor import matrix, column_matrix, vector, diagonal_matrix
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
 from sage.rings.integer cimport Integer
-from sage.arith.misc import GCD as gcd
+from sage.arith.misc import gcd
 from sage.arith.functions import lcm
-from sage.combinat.permutation import Permutation
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
-from sage.modules.vector_integer_dense cimport Vector_integer_dense
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 
 ##############################################################################
 # The basic idea to enumerate the lattice points in the parallelotope
@@ -140,8 +134,8 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
         sage: len(parallelotope_points(rays, ZZ^4))
         967
     """
-    cdef Matrix_integer_dense VDinv
-    cdef Matrix_integer_dense R = matrix(spanning_points).transpose()
+    cdef MatrixClass VDinv
+    cdef MatrixClass R = matrix(spanning_points).transpose()
     e, d, VDinv = ray_matrix_normal_form(R)
     cdef tuple points = loop_over_parallelotope_points(e, d, VDinv, R, lattice)
     for p in points:
@@ -183,8 +177,8 @@ cpdef tuple ray_matrix_normal_form(R):
 
 
 # The optimized version avoids constructing new matrices, vectors, and lattice points
-cpdef tuple loop_over_parallelotope_points(e, d, Matrix_integer_dense VDinv,
-                                           Matrix_integer_dense R, lattice,
+cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
+                                           MatrixClass R, lattice,
                                            A=None, b=None):
     r"""
     The inner loop of :func:`parallelotope_points`.
@@ -224,7 +218,7 @@ cpdef tuple loop_over_parallelotope_points(e, d, Matrix_integer_dense VDinv,
     s = ZZ.zero() # summation variable
     cdef list gens = []
     gen = lattice(ZZ.zero())
-    cdef Vector_integer_dense q_times_d = vector(ZZ, dim)
+    cdef VectorClass q_times_d = vector(ZZ, dim)
     for base in itertools.product(*[ range(i) for i in e ]):
         for i in range(dim):
             s = ZZ.zero()
@@ -308,15 +302,15 @@ cpdef tuple simplex_points(vertices):
     cdef list rays = [vector(ZZ, list(v)) for v in vertices]
     if not rays:
         return ()
-    cdef Vector_integer_dense origin = rays.pop()
+    cdef VectorClass origin = rays.pop()
     origin.set_immutable()
     if not rays:
         return (origin,)
     translate_points(rays, origin)
 
     # Find equation Ax<=b that cuts out simplex from parallelotope
-    cdef Matrix_integer_dense Rt = matrix(ZZ, rays)
-    cdef Matrix_integer_dense R = Rt.transpose()
+    cdef MatrixClass Rt = matrix(ZZ, rays)
+    cdef MatrixClass R = Rt.transpose()
     cdef int nrays = len(rays)
     cdef Integer b
     M = FreeModule(ZZ, nrays)
@@ -335,7 +329,7 @@ cpdef tuple simplex_points(vertices):
     return points
 
 
-cdef translate_points(v_list, Vector_integer_dense delta):
+cdef translate_points(v_list, VectorClass delta):
     r"""
     Add ``delta`` to each vector in ``v_list``.
     """
@@ -568,7 +562,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
         return loop_over_rectangular_box_points(box_min, box_max, inequalities, d, count_only)
 
     cdef list points = []
-    cdef Vector_integer_dense v = vector(ZZ, d)
+    cdef VectorClass v = vector(ZZ, d)
     if not return_saturated:
         for p in loop_over_rectangular_box_points(box_min, box_max, inequalities, d, count_only):
             #  v = vector(ZZ, perm_action(orig_perm, p))   # too slow
