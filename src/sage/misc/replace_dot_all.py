@@ -384,7 +384,9 @@ def make_replacements_in_file(location, package_regex, verbose=False, output=Non
         replaced_content += new_line + "\n"  # concatenate the new string and add an end-line break
         row_index += 1 + span
     file.close()  # close the file
-    write_file = open(location, "w")  # Open file in write mode
+    if output is None:
+        output = location
+    write_file = open(output, "w")  # Open file in write mode
     write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
     write_file.close()  # close the file
 
