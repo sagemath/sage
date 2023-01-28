@@ -1,4 +1,6 @@
 r"""
+Implementation of the command ``sage --fiximports``.
+
 This file provides a tool to fix the modularization antipattern ``namespace_pkg_all_import``
 reported by ``tox -e relint``. Sage library code should not import from ``sage.PAC.KAGE.all``
 when ``sage.PAC.KAGE`` is an implicit namespace package.
@@ -35,7 +37,7 @@ pass the verbose flag ``-v`` to print out the files being fixed. For example ::
 
 will fix all files in ``src/sage/arith`` and print out the unusual examples of ``import`` statements it finds.
 
-In some rare cases, such as ``import`` statments appearing in doctests, the program will not be able to fix the ``import`` statement. The program will
+In some rare cases, such as ``import`` statements appearing in doctests, the program will not be able to fix the ``import`` statement. The program will
 print out the location of the file and the line number of the exceptional ``import`` statement. The user can then manually fix the ``import`` statement.
 The program will also (usually) print out the suggested replacement for the ``import`` statement. The user can then copy and paste this replacement
 into the file. In the cases a suggested replacement is not printed out, the user should use the function :func:`~sage.misc.dev_tools.import_statements`
@@ -62,9 +64,14 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     # Optional arguments
     parser.add_argument(
-        "-l", "--location", help="Location of directory or file (root set at src/sage so input path from here). If no argument given, walks through all files in src/sage.", type=str)
-    parser.add_argument("-v", "--verbose", help="Increase output verbosity. Shows locations of any unusual cases of import statements and the corresponding changes.",
-                        action="store_true")    # Parse arguments
+        "-l", "--location",
+        help=("Location of directory or file (root set at src/sage so input path from here). "
+              "If no argument given, walks through all files in src/sage."),
+        type=str)
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Increase output verbosity. Shows locations of any unusual cases of import statements and the corresponding changes.",
+        action="store_true")    # Parse arguments
     args = parser.parse_args()
     return args
 
