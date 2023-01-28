@@ -1,14 +1,7 @@
 r"""
- This file provides a tool to fix the following issue:
-
- Modularization anti-patterns (from src/.relint.yml)
-- name: 'namespace_pkg_all_import: import from .all of a namespace package'
-  hint: |
-    Sage library code should not import from sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
-    Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
-  pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
-  filePattern: '.*[.](py|pyx|pxi)$'
-  error: false # Make this a warning instead of an error for now
+This file provides a tool to fix the modularization antipattern ``namespace_pkg_all_import``
+reported by ``tox -e relint``. Sage library code should not import from ``sage.PAC.KAGE.all``
+when ``sage.PAC.KAGE`` is an implicit namespace package.
 
 AUTHORS:
 
@@ -17,36 +10,36 @@ AUTHORS:
 
 INSTRUCTIONS:
 
-To fix the above issue for all .py, .pyx, and .pxi files in the src/sage directory,
-run the following from a terminal in SAGE_ROOT ::
+To fix the above issue for all Python and Cython source files (``.py``, ``.pyx``, ``.pxi``) files in the ``src/sage`` directory,
+run the following from a terminal in ``SAGE_ROOT`` ::
 
     ./sage -python src/sage/misc/replace_dot_all.py
 
-Running replace_dot_all.py will call the function walkdir_replace_dot_all() which walks through all files in
-src/sage matching the filePattern above and replaces certain 'from module.all import something' (those matching the pattern above)
-with the correct import statement by applying the function import_statements from src/sage/misc/dev_tools.py.
+Running replace_dot_all.py will call the function :func:`walkdir_replace_dot_all` which walks through all Python and Cython source files
+and replaces certain ``from sage.PAC.KAGE.all import something`` (those matching the pattern above)
+with the correct ``import`` statement by applying the function :func:`~sage.misc.dev_tools.import_statements`.
 
-The user can also pass arguments -l to specify a subdirectory of src/sage or even a specific file to fix. The root location is
-automatically set to src/sage so you need only specify the path from there. For example ::
+The user can also pass arguments ``-l`` to specify a subdirectory of ``src/sage`` or even a specific file to fix. The root location is
+automatically set to ``src/sage``, so you need only specify the path from there. For example ::
 
     ./sage -python src/sage/misc/replace_dot_all.py -l arith
 
-will fix all files in src/sage/arith and ::
+will fix all files in ``src/sage/arith`` and ::
 
     ./sage -python src/sage/misc/replace_dot_all.py -l arith/functions.pyx
 
 will fix the file src/sage/arith/functions.py. The file extension is necessary in the case of a specific file. The user can also
-pass the verbose flag -v to print out the files being fixed. For example ::
+pass the verbose flag ``-v`` to print out the files being fixed. For example ::
 
     ./sage -python src/sage/misc/replace_dot_all.py -l arith -v
 
-will fix all files in src/sage/arith and print out the unusual examples of import statements it finds.
+will fix all files in ``src/sage/arith`` and print out the unusual examples of ``import`` statements it finds.
 
-In some rare cases, such as import statments appearing in doctests, the program will not be able to fix the import statement. The program will
-print out the location of the file and the line number of the exceptional import statement. The user can then manually fix the import statement.
-The program will also (usually) print out the suggested replacement for the import statement. The user can then copy and paste this replacement
-into the file. In the cases a suggested replacement is not printed out, the user should use the function import_statements()
-from src/sage/misc/dev_tools.py to find the correct import statement.
+In some rare cases, such as ``import`` statments appearing in doctests, the program will not be able to fix the ``import`` statement. The program will
+print out the location of the file and the line number of the exceptional ``import`` statement. The user can then manually fix the ``import`` statement.
+The program will also (usually) print out the suggested replacement for the ``import`` statement. The user can then copy and paste this replacement
+into the file. In the cases a suggested replacement is not printed out, the user should use the function :func:`~sage.misc.dev_tools.import_statements`
+to find the correct ``import`` statement.
 """
 
 # Importing packages
@@ -61,7 +54,10 @@ import argparse
 
 # to parse arguments passed to the script
 
-def parseArguments():
+def parse_arguments():
+    r"""
+    Parse command-line arguments
+    """
     # Create argument parser
     parser = argparse.ArgumentParser()
     # Optional arguments
@@ -101,7 +97,7 @@ def find_replacements(location, regex, verbose=False):
     an array [row_index,import_index,replaced_commands,lines_spanned (optional)] with entries
 
     - ``row_index`` -- the row index (zero indexed) in the file which needs replacing
-    - ``import_index`` -- the index of row row_index which marks the beginning of the word 'import' in the line
+    - ``import_index`` -- the index of row row_index which marks the beginning of the word ``import`` in the line
     - ``replaced_commands`` -- the string which will replace the current line
     - ``lines_spanned`` -- the number of lines the original statement spans
 
@@ -430,7 +426,7 @@ def sort_log_messages():
 # this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
 if __name__ == "__main__":
     # Parse the arguments
-    args = parseArguments()
+    args = parse_arguments()
     verbosity = args.verbose
     # Print arguments
     print("Executing replace_dot_all.py with arguments:")
