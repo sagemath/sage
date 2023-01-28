@@ -140,8 +140,12 @@ def find_replacements(location, regex, verbose=False):
                 elif not (row.lstrip()[0:4] == 'from'):
                     skip_line = True
                     if '"' not in row and "'" not in row:
-                        print(
-                            f'\nNEED TO CHANGE MANUALLY \n  Issue: line with import statement does not start with "from" \n  Location: at {location} \n  Line number: {row_index + 1}. \n  Giving correct import statements:\n')
+                        print(f'\n'
+                              f'NEED TO CHANGE MANUALLY \n'
+                              f'  Issue: line with import statement does not start with "from" \n'
+                              f'  Location: at {location} \n'
+                              f'  Line number: {row_index + 1}. \n'
+                              f'  Giving correct import statements:\n')
                         leading_space = 0
                         while len(row) > 0 and row[leading_space] == ' ' and leading_space < len(row)-1:
                             leading_space += 1
@@ -151,8 +155,11 @@ def find_replacements(location, regex, verbose=False):
                         prefix = row[leading_space:prefix_space]
                         row = row[prefix_space:]
                     else:
-                        print(
-                            f'\nNEED TO CHANGE MANUALLY \n  Issue: import statement does not start with "from" and contains quotation marks \n  Location: at {location} \n  Line number: {row_index + 1}. \n  Not able to suggest correct import statements. User must use the function import_statements().')
+                        print(f'\n'
+                              f'NEED TO CHANGE MANUALLY \n'
+                              f'  Issue: import statement does not start with "from" and contains quotation marks \n'
+                              f'  Location: at {location} \n  Line number: {row_index + 1}. \n'
+                              f'  Not able to suggest correct import statements. User must use the function import_statements().')
                         continue
                 # find() method returns -1 if the value is not found, or if found it returns index of the first occurrence of the substring
                 import_index = row.find('import ')
@@ -231,11 +238,15 @@ def find_replacements(location, regex, verbose=False):
                         original_mod_string = to_eval_list[to_eval_list_index].strip()  # the name for the module as originally called in the document
                     if original_mod_string != new_mod_as_string:  # if the names differ, we use the original name as it was called in the document
                         if verbose and interesting_examples['A'] < number_examples_to_print:
-                            log_messages += f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.\n'
+                            log_messages += (f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. '
+                                             f'Names: {original_mod_string}, {new_mod_as_string}. '
+                                             f'Replacing new {new_mod_as_string} by original {original_mod_string}.\n')
                             interesting_examples['A'] += 1
                         new_import_statement = new_import_statement.replace(' ' + new_mod_as_string, ' ' + new_mod_as_string + ' as ' + original_mod_string)
                         if " as " in postfix and interesting_examples['G'] < number_examples_to_print:
-                            log_messages += f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. Names: {original_mod_string}, {new_mod_as_string}. Replacing new {new_mod_as_string} by original {original_mod_string}.\n'
+                            log_messages += (f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. '
+                                             f'Names: {original_mod_string}, {new_mod_as_string}. '
+                                             f'Replacing new {new_mod_as_string} by original {original_mod_string}.\n')
                             interesting_examples['G'] += 1
                     if len(postfix.strip()) > 0:  # if module was called with " as " statement, we put that back in by adding the string "postfix"
                         # if " as " in new_import_statement locate the index of " as ", remove the end after this, and add the postfix there
@@ -247,7 +258,9 @@ def find_replacements(location, regex, verbose=False):
                     to_eval_list_index += 1
                 # [:-1] on change_to gets rid of the last '\n' we added which adds an unnecessary new line
                 replacement = [row_index, import_index, change_to[:-1]].copy()
-                if span > 0:  # if original statement spanned multiple lines, we store that information to signal that we need to skip lines as we read the document in the function make_replacements_in_file
+                if span > 0:
+                    # if original statement spanned multiple lines, we store that information to signal that we need to skip lines
+                    # as we read the document in the function make_replacements_in_file
                     replacement.append(span)
                 if skip_line is False:
                     replacements.append(replacement)
@@ -343,6 +356,7 @@ def make_replacements_in_file(location, regex, verbose=False):
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     EXAMPLES::
+
         sage: from sage.misc.replace_dot_all import *
         sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
         sage: cwd = os.getcwd() # Get the current working directory
@@ -402,13 +416,17 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
             if pattern.search(name):
                 numberFilesMatchingRegex += 1
                 location = os.path.join(root, name)[1:]
-                if location.find('replace_dot_all') == -1:  # to avoid chaning anything in this file itself
+                if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
                     make_replacements_in_file(dir + location, regex, verbose)
     # sort lines of log_messages by first character of each line(lines are separated by \n)
     sort_log_messages()
     if verbosity:
         print(log_messages)
-    report = f'REPORT:\nNumber of files checked: {numberFiles}\nNumber of files matching regex: {numberFilesMatchingRegex}\nNumber of files changed: {numberFilesChanged}\nNumber of import statements replaced: {numberStatementsReplaced}'
+    report = (f'REPORT:\n'
+              f'Number of files checked: {numberFiles}\n'
+              f'Number of files matching regex: {numberFilesMatchingRegex}\n'
+              f'Number of files changed: {numberFilesChanged}\n'
+              f'Number of import statements replaced: {numberStatementsReplaced}')
     print('*'*100 + '\n' + report + '\n' + '*'*100)
 
 
