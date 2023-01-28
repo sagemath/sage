@@ -54,6 +54,11 @@ import re
 import argparse
 
 
+# Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
+
+default_package_regex = r"sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all"
+
+
 # to parse arguments passed to the script
 
 def parse_arguments():
@@ -77,7 +82,6 @@ def parse_arguments():
 
 
 # Global variables
-optional_arguments = sys.argv
 examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
 interesting_examples = dict(zip(examples, [0]*len(examples)))
 log_messages = ''
@@ -88,7 +92,7 @@ numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsRepla
 # Functions
 
 
-def find_replacements(location, regex, verbose=False):
+def find_replacements(location, package_regex=None, verbose=False):
     r"""
     Locates the lines in the file at location which match the regex pattern.
 
@@ -96,7 +100,8 @@ def find_replacements(location, regex, verbose=False):
 
     - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
                                     location = cwd + file_to_change
-    - ``regex`` -- a regular expression locating strings containing certain module.all import statements. The suggested value is ``regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"``.
+    - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
+      package names from which we do not want to import.
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     OUTPUT:
@@ -108,7 +113,7 @@ def find_replacements(location, regex, verbose=False):
     - ``replaced_commands`` -- the string which will replace the current line
     - ``lines_spanned`` -- the number of lines the original statement spans
 
-    this output is specifically designed to be fed into the function process_line(location,line,replacements,import_index) and
+    this output is specifically designed to be fed into the function :func:`process_line` (location,line,replacements,import_index) and
     called inside of the function "make_replacements_in_file(location)" to populate the variable "replacements"
 
     EXAMPLES::
@@ -118,10 +123,11 @@ def find_replacements(location, regex, verbose=False):
         sage: cwd = os.getcwd() # Get the current working directory
         sage: file_to_change = 'structure/element.pyx'
         sage: location = cwd + file_to_change
-        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
-        sage: replacements = find_replacements(location, regex, verbose=True)
+        sage: replacements = find_replacements(location, verbose=True)
     """
-
+    if package_regex is None:
+        package_regex = default_package_regex
+    regex = r"from\s+" + package_regex + r"\s+import"
     pattern = re.compile(regex)
     replacements = []
     global log_messages, interesting_examples
@@ -135,7 +141,8 @@ def find_replacements(location, regex, verbose=False):
                 if '*' in row or 'SAGE_ROOT' in row:
                     if verbose and interesting_examples['J'] < number_examples_to_print:
                         interesting_examples['J'] += 1
-                        log_messages += f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. Not applying any changes here.\n'
+                        log_messages += (f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. '
+                                         f'Not applying any changes here.\n')
                     continue
                 elif not (row.lstrip()[0:4] == 'from'):
                     skip_line = True
@@ -278,23 +285,22 @@ def find_replacements(location, regex, verbose=False):
 
 def process_line(location, line, replacements, import_index, verbose=False):
     r"""
-    Designed specifically to be called inside of the function make_replacements_in_file(location) to process a single line while iterating over lines in a file
+    Modify a single source code ``line`` according to the given ``replacements``.
 
     INPUTS:
 
-    - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
-                                    location = cwd + file_to_change
-    - ``line`` -- a line in a file
-    - ``replacements`` -- the array output from find_replacements(location)
-    - ``import_index`` -- the index in the line which locates 'import'
-    - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
+    - ``location`` -- a file path; only used for logging
+    - ``line`` -- a source code line
+    - ``replacements`` -- the array output from :func:`find_replacements`
+    - ``import_index`` -- the column number where ``import`` appears
+    - ``verbose`` -- if True, issue print statements when interesting examples are found
 
     OUTPUT:
 
     an array ``[new_line, replacements]`` with entries
 
     - ``new_line`` -- the modified import statement (possibly now on several lines)
-    - ``replacements`` -- just returns the original replacements with its index 0 element removed if replacements is nonempty
+    - ``replacements`` -- just returns the original replacements with its index 0 element removed if ``replacements`` is nonempty
 
     EXAMPLES:
 
@@ -305,8 +311,7 @@ def process_line(location, line, replacements, import_index, verbose=False):
         sage: cwd = os.getcwd() # Get the current working directory
         sage: file_to_change = 'structure/element.pyx'
         sage: location = cwd + file_to_change
-        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
-        sage: replacements = find_replacements(location, regex, verbose=True)
+        sage: replacements = find_replacements(location, verbose=True)
         sage: file = open(location, "r")
         sage: lines = file.readlines()
         sage: row_index,import_index = replacements[0],replacements[1]
@@ -315,7 +320,6 @@ def process_line(location, line, replacements, import_index, verbose=False):
         sage: new_line,replacements = process_line(location,line,replacements,import_index)
         sage: print(f'new line, new reps: {new_line,replacements}')
     """
-
     line = line.rstrip()  # stripping line break
     new_line = ''
     global log_messages, interesting_examples
@@ -344,7 +348,7 @@ def process_line(location, line, replacements, import_index, verbose=False):
 # to make all replacements matching the regex in a single file with filepath "location"
 
 
-def make_replacements_in_file(location, regex, verbose=False):
+def make_replacements_in_file(location, package_regex, verbose=False, output=None):
     r"""
     Writes over the file with filepath "location" making replacements for lines matching the regex pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
 
@@ -353,7 +357,8 @@ def make_replacements_in_file(location, regex, verbose=False):
     - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
                                     location = cwd + file_to_change
     - ``regex`` -- a regular expression locating strings containing certain module.all import statements. The suggested value is ``regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"``.
-    - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
+    - ``verbose`` -- if True, issue print statements when interesting examples are found
+    - ``output`` -- a file path; if ``None``, overwrite the file given by ``location``
 
     EXAMPLES::
 
@@ -362,11 +367,9 @@ def make_replacements_in_file(location, regex, verbose=False):
         sage: cwd = os.getcwd() # Get the current working directory
         sage: file_to_change = 'structure/element.pyx'
         sage: location = cwd + file_to_change
-        sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
-        sage: make_replacements_in_file(location, regex)
+        sage: make_replacements_in_file(location)
     """
-
-    replacements = find_replacements(location, regex, verbose)
+    replacements = find_replacements(location, package_regex, verbose)
     file = open(location, "r")
     replaced_content = ""
     row_index = 0  # keeps track of the line number
@@ -459,17 +462,17 @@ if __name__ == "__main__":
         print('    ' + str(a) + ": " + str(args.__dict__[a]))
     # Declare regular expressions
     fileRegex = r'.*[.](py|pyx|pxi)$'
-    regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
+    package_regex = None
     # Execute the main function based on the specified location and verbosity
     if args.location is None:
         os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
         dir = os.getcwd()  # Get the current working directory
-        walkdir_replace_dot_all(dir, fileRegex, regex, verbose=verbosity)
+        walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
     elif args.location.find('.py') == -1 and args.location.find('.pxi') == -1:
         os.chdir(sage.env.SAGE_SRC + '/sage/' + args.location)  # change to directory specified by location argument
         dir = os.getcwd()  # Get the current working directory
-        walkdir_replace_dot_all(dir, fileRegex, regex, verbose=verbosity)
+        walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
     elif args.location.find('.py') != -1 or args.location.find('.pxi') != -1:
         # make replacements in file specified by location argument
-        make_replacements_in_file(sage.env.SAGE_SRC + '/sage/' + args.location, regex, verbose=verbosity)
+        make_replacements_in_file(sage.env.SAGE_SRC + '/sage/' + args.location, package_regex, verbose=verbosity)
 # ************************************************************************************************************************************************************************
