@@ -573,7 +573,7 @@ class Polyhedron_base6(Polyhedron_base5):
             %% opacity = 0.8
             %% vertex_color = green
             %% axis = False
-            sage: print('\n'.join(Img.content().splitlines()[22:26]))
+            sage: print('\n'.join(Img.content().splitlines()[22:26]))                       # optional - sage.plot
             %% Coordinate of the vertices:
             %%
             \coordinate (-1.00000, -1.00000, 0.00000) at (-1.00000, -1.00000, 0.00000);
@@ -860,17 +860,17 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: tfcube.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
-            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])
-            sage: sp.plot()  # optional - sage.plot
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])                               # optional - sage.symbolic
+            sage: sp.plot()                                                 # optional - sage.plot  # optional - sage.symbolic
             Graphics3d Object
 
         A different values of ``position`` changes the projection::
 
-            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],1/2)
-            sage: sp.plot()  # optional - sage.plot
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4], 1/2)                          # optional - sage.symbolic
+            sage: sp.plot()                                                 # optional - sage.plot  # optional - sage.symbolic
             Graphics3d Object
-            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],4)
-            sage: sp.plot()  # optional - sage.plot
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4], 4)                            # optional - sage.symbolic
+            sage: sp.plot()                                                 # optional - sage.plot  # optional - sage.symbolic
             Graphics3d Object
 
         A value which is too large give a projection point that sees more than
@@ -966,7 +966,7 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: P = Polyhedron(V)
             sage: P.affine_hull_projection()
             A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 6 vertices
-            sage: P.affine_hull_projection(orthonormal=True)
+            sage: P.affine_hull_projection(orthonormal=True)                                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"

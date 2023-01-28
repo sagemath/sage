@@ -14,7 +14,6 @@ Functions for plotting polyhedra
 from math import pi
 
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.rings.real_double', 'RDF')
 from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix, identity_matrix
@@ -178,6 +177,8 @@ class ProjectionFuncStereographic():
             [ 0.7071067811...  0.7071067811...]
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
+        from sage.rings.real_double import RDF
+
         self.projection_point = vector(projection_point)
         self.dim = self.projection_point.degree()
 
@@ -227,6 +228,8 @@ class ProjectionFuncStereographic():
             sage: proj.__call__(vector([1,0,0]))
             (0.5, 0.0)
         """
+        from sage.rings.real_double import RDF
+
         img = self.house * x
         denom = self.psize - img[self.dim - 1]
         if denom.is_zero():
@@ -279,6 +282,8 @@ class ProjectionFuncSchlegel():
             (2.0, 2.0, 0.0)
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
+        from sage.rings.real_double import RDF
+
         self.facet = facet
         ineq = [h for h in facet.ambient_Hrepresentation() if h.is_inequality()][0]
         self.full_A = ineq.A()
@@ -500,14 +505,14 @@ class Projection(SageObject):
             sage: tcube4 = cube4.face_truncation(cube4.faces(0)[0])
             sage: tcube4.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
-            sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])
-            sage: into_tetra.plot()  # optional - sage.plot
+            sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])                      # optional - sage.symbolic
+            sage: into_tetra.plot()                                         # optional - sage.plot  # optional - sage.symbolic
             Graphics3d Object
 
         Taking a larger value for the position changes the image::
 
-            sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4],4)
-            sage: into_tetra_far.plot()  # optional - sage.plot
+            sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4], 4)               # optional - sage.symbolic
+            sage: into_tetra_far.plot()                                     # optional - sage.plot  # optional - sage.symbolic
             Graphics3d Object
 
         A value which is too large or negative give a projection point that
@@ -1360,7 +1365,7 @@ class Projection(SageObject):
             sage: Image3 = P3.projection().tikz([0.5, -1, -0.1], 55, scale=3, edge_color='blue!95!black',       # optional - sage.plot
             ....:                               facet_color='orange!95!black', opacity=0.7,
             ....:                               vertex_color='yellow', axis=True, output_type='TikzPicture')
-            sage: Image3
+            sage: Image3                                                                                        # optional - sage.plot
             \documentclass[tikz]{standalone}
             \begin{document}
             \begin{tikzpicture}%
@@ -1377,10 +1382,10 @@ class Projection(SageObject):
             %%
             \end{tikzpicture}
             \end{document}
-            sage: _ = Image3.tex('polytope-tikz3.tex')          # not tested
-            sage: _ = Image3.png('polytope-tikz3.png')          # not tested
-            sage: _ = Image3.pdf('polytope-tikz3.pdf')          # not tested
-            sage: _ = Image3.svg('polytope-tikz3.svg')          # not tested
+            sage: _ = Image3.tex('polytope-tikz3.tex')          # not tested                                    # optional - sage.plot
+            sage: _ = Image3.png('polytope-tikz3.png')          # not tested                                    # optional - sage.plot
+            sage: _ = Image3.pdf('polytope-tikz3.pdf')          # not tested                                    # optional - sage.plot
+            sage: _ = Image3.svg('polytope-tikz3.svg')          # not tested                                    # optional - sage.plot
 
         A fourth example::
 
@@ -1633,6 +1638,8 @@ class Projection(SageObject):
 
             The ``facet_color`` is the filing color of the polytope (polygon).
         """
+        from sage.rings.real_double import RDF
+
         view_vector = vector(RDF, view)
         rot = rotate_arbitrary(view_vector, -(angle/360)*2*pi)
         rotation_matrix = rot[:2].transpose()
@@ -1752,12 +1759,12 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: P = polytopes.small_rhombicuboctahedron()                                             # optional - sage.rings.number_field
-            sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,
+            sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,                        # optional - sage.rings.number_field
             ....:                                       edge_color='blue', facet_color='orange',
             ....:                                       opacity=0.5, vertex_color='green', axis=True)
             sage: type(Image)                                                                           # optional - sage.rings.number_field
             <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image.splitlines()[:4]))
+            sage: print('\n'.join(Image.splitlines()[:4]))                                              # optional - sage.rings.number_field
             \begin{tikzpicture}%
                 [x={(-0.046385cm, 0.837431cm)},
                 y={(-0.243536cm, 0.519228cm)},
@@ -1792,6 +1799,8 @@ class Projection(SageObject):
             \coordinate (1.00000, -1.00000, 0.00000) at (1.00000, -1.00000, 0.00000);
             \coordinate (1.00000, 0.00000, -1.00000) at (1.00000, 0.00000, -1.00000);
         """
+        from sage.rings.real_double import RDF
+
         view_vector = vector(RDF, view)
         rot = rotate_arbitrary(view_vector, -(angle/360)*2*pi)
         rotation_matrix = rot[:2].transpose()

@@ -217,7 +217,7 @@ triangle, that would be::
         A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
         sage: Polyhedron(vertices = [[1.12345678901234, 2.123456789012345]])
         A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
-        sage: Polyhedron(vertices = [[1.123456789012345, 2.123456789012345]])
+        sage: Polyhedron(vertices = [[1.123456789012345, 2.123456789012345]])       # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
@@ -561,18 +561,19 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     Check that input with too many bits of precision returns an error (see
     :trac:`22552`)::
 
-        sage: Polyhedron(vertices=[(8.3319544851638732, 7.0567045956967727), (6.4876921900819049, 4.8435898415984129)])
+        sage: Polyhedron(vertices=[(8.3319544851638732, 7.0567045956967727),                        # optional - sage.rings.real_mpfr
+        ....:                      (6.4876921900819049, 4.8435898415984129)])
         Traceback (most recent call last):
         ...
         ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
 
     Check that setting ``base_ring`` to a ``RealField`` returns an error (see :trac:`22552`)::
 
-        sage: Polyhedron(vertices =[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))
+        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))                # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 40 bits of precision
-        sage: Polyhedron(vertices =[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(53))
+        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(53))                # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision

@@ -624,7 +624,7 @@ class Polyhedron_base(Polyhedron_base7):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(2)
-            sage: p.hyperplane_arrangement()
+            sage: p.hyperplane_arrangement()                        # optional - sage.combinat
             Arrangement <-t0 + 1 | -t1 + 1 | t1 + 1 | t0 + 1>
         """
         names = tuple('t' + str(i) for i in range(self.ambient_dim()))
@@ -967,16 +967,16 @@ class Polyhedron_base(Polyhedron_base7):
         of the vertices of the square::
 
             sage: square = Polyhedron(vertices=[[1,1],[-1,1],[-1,-1],[1,-1]], backend='normaliz') # optional - pynormaliz
-            sage: square.vertices() # optional - pynormaliz
+            sage: square.vertices()                                                               # optional - pynormaliz
             (A vertex at (-1, -1),
             A vertex at (-1, 1),
             A vertex at (1, -1),
             A vertex at (1, 1))
-            sage: aut_square = square.restricted_automorphism_group(output = 'permutation')       # optional - pynormaliz
-            sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz
-            sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz
-            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz
-            sage: rotation_180,gens_dict[rotation_180]                                            # optional - pynormaliz
+            sage: aut_square = square.restricted_automorphism_group(output='permutation')         # optional - pynormaliz   # optional - sage.groups
+            sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz   # optional - sage.groups
+            sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz   # optional - sage.groups
+            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz   # optional - sage.groups
+            sage: rotation_180, gens_dict[rotation_180]                                           # optional - pynormaliz   # optional - sage.groups
             (
                         [-1  0  0]
                         [ 0 -1  0]
@@ -986,11 +986,11 @@ class Polyhedron_base(Polyhedron_base7):
         This example tests the functionality for additional elements::
 
             sage: C = polytopes.cross_polytope(2)
-            sage: G = C.restricted_automorphism_group(output = 'permutation')
-            sage: conj_reps = G.conjugacy_classes_representatives()
-            sage: add_elt = G([(0,2,3,1)])
-            sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])
-            sage: dict[add_elt]
+            sage: G = C.restricted_automorphism_group(output='permutation')                                                 # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: conj_reps = G.conjugacy_classes_representatives()                                                         # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: add_elt = G([(0, 2, 3, 1)])                                                                               # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])                                  # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: dict[add_elt]                                                                                             # optional - sage.groups  # optional - sage.rings.real_mpfr
              [ 0  1  0]
              [-1  0  0]
              [ 0  0  1]

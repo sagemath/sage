@@ -101,11 +101,11 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
 
     TESTS::
 
-        sage: Polyhedra(RR, 3, backend='field')
+        sage: Polyhedra(RR, 3, backend='field')                                                                         # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: the 'field' backend for polyhedron cannot be used with non-exact fields
-        sage: Polyhedra(RR, 3)
+        sage: Polyhedra(RR, 3)                                                                                          # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision

@@ -230,6 +230,27 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double')
 
 
+class sage__rings__real_mpfr(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfr`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__rings__real_mpfr
+        sage: sage__rings__real_mpfr().is_present()  # optional - sage.rings.real_mpfr
+        FeatureTestResult('sage.rings.real_mpfr', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__real_mpfr
+            sage: isinstance(sage__rings__real_mpfr(), sage__rings__real_mpfr)
+            True
+        """
+        PythonModule.__init__(self, 'sage.rings.real_mpfr')
+
+
 class sage__symbolic(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.symbolic`.
@@ -284,4 +305,5 @@ def all_features():
             sage__rings__number_field(),
             sage__rings__padics(),
             sage__rings__real_double(),
+            sage__rings__real_mpfr(),
             sage__symbolic()]
