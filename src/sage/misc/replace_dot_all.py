@@ -101,7 +101,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
                                     location = cwd + file_to_change
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
-      package names from which we do not want to import.
+      the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     OUTPUT:
@@ -356,7 +356,8 @@ def make_replacements_in_file(location, package_regex, verbose=False, output=Non
 
     - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
                                     location = cwd + file_to_change
-    - ``regex`` -- a regular expression locating strings containing certain module.all import statements. The suggested value is ``regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"``.
+    - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
+      the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
     - ``verbose`` -- if True, issue print statements when interesting examples are found
     - ``output`` -- a file path; if ``None``, overwrite the file given by ``location``
 
@@ -393,7 +394,7 @@ def make_replacements_in_file(location, package_regex, verbose=False, output=Non
 # to iterate over all files in src/sage matching the given regular expression
 
 
-def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
+def walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=False):
     r"""
     Writes over the files in src/sage matching the regex pattern fileRegex making replacements to all lines in such files
     which match the regex pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
@@ -401,7 +402,8 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
     INPUTS:
 
     - ``fileRegex`` -- a regular expression locating strings containing certain module.all import statements. The suggested value is ``fileRegex = r'.*[.](py|pyx|pxi)$'``.
-    - ``regex`` -- a regular expression locating strings containing certain module.all import statements. The suggested value is ``regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"``.
+    - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
+      the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
 
     EXAMPLES::
@@ -422,7 +424,7 @@ def walkdir_replace_dot_all(dir, fileRegex, regex, verbose=False):
                 numberFilesMatchingRegex += 1
                 location = os.path.join(root, name)[1:]
                 if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
-                    make_replacements_in_file(dir + location, regex, verbose)
+                    make_replacements_in_file(dir + location, package_regex, verbose)
     # sort lines of log_messages by first character of each line(lines are separated by \n)
     sort_log_messages()
     if verbosity:
