@@ -131,7 +131,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     pattern = re.compile(regex)
     replacements = []
     global log_messages, interesting_examples
-    with open(location, "r+") as fp:
+    with open(location, "r") as fp:
         skip_line = False
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
@@ -371,10 +371,10 @@ def make_replacements_in_file(location, package_regex, verbose=False, output=Non
         sage: make_replacements_in_file(location)
     """
     replacements = find_replacements(location, package_regex, verbose)
-    file = open(location, "r")
+    with open(location, "r") as file:
+        lines = file.readlines()
     replaced_content = ""
     row_index = 0  # keeps track of the line number
-    lines = file.readlines()
     while row_index < len(lines):  # looping through the file
         line = lines[row_index]
         span = 0  # keeps track of number of lines import statement spans
@@ -384,12 +384,10 @@ def make_replacements_in_file(location, package_regex, verbose=False, output=Non
         new_line, replacements = process_line(location, line, replacements, row_index, verbose=verbose)
         replaced_content += new_line + "\n"  # concatenate the new string and add an end-line break
         row_index += 1 + span
-    file.close()  # close the file
     if output is None:
         output = location
-    write_file = open(output, "w")  # Open file in write mode
-    write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
-    write_file.close()  # close the file
+    with open(output, "w") as write_file:  # Open file in write mode
+        write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
 
 # to iterate over all files in src/sage matching the given regular expression
 
