@@ -836,7 +836,8 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.all import RealField, ZZ
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.integer_ring import Z as ZZ
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x,e,b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')

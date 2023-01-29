@@ -45,7 +45,11 @@ from sage.libs.pari.all import pari
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
-from sage.arith.all import gcd, lcm, is_prime, factorial, bernoulli
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import is_prime
+from sage.arith.misc import factorial
+from sage.arith.misc import bernoulli
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element, parent
@@ -2391,7 +2395,7 @@ def register_symbol(obj, conversions, nargs=None):
       this can be deduced automatically.
 
     EXAMPLES::
-    
+
         sage: from sage.symbolic.expression import register_symbol as rs
         sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))

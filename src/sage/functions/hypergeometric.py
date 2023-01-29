@@ -166,7 +166,9 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
-from sage.arith.all import binomial, rising_factorial, factorial
+from sage.arith.misc import binomial
+from sage.arith.misc import rising_factorial
+from sage.arith.misc import factorial
 from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
