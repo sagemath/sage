@@ -349,6 +349,53 @@ class DiGraphGenerators():
         g.set_pos({i: (i, 0) for i in range(n)})
         return g
 
+    def StronglyRegular(self, n):
+        r"""
+        Return a Strongly Regular digraph with `n` vertices.
+
+        The adjacency matrix of the graph is constructed from a skew Hadamard
+        matrix of order `n+1`. These graphs were first constructed in [Duv1988]_.
+
+        INPUT:
+
+        - ``n`` -- integer, the number of vertices of the digraph.
+
+        .. SEEALSO::
+
+            - :func:`sage.combinat.matrices.hadamard_matrix.skew_hadamard_matrix`
+            - :meth:`Paley`
+
+        EXAMPLES:
+
+        A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
+        `A` is the adjacency matrix::
+
+            sage: g = digraphs.StronglyRegular(7); g
+            Strongly regular digraph: Digraph on 7 vertices
+            sage: A = g.adjacency_matrix()*ones_matrix(7); B = ones_matrix(7)*g.adjacency_matrix()
+            sage: A == B == A[0, 0]*ones_matrix(7)
+            True
+
+        TESTS:
+
+        Wrong parameter::
+
+            sage: digraphs.StronglyRegular(73)
+            Traceback (most recent call last):
+            ...
+            ValueError: strongly regular digraph with 73 vertices not yet implemented
+
+        """
+        from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
+        from sage.matrix.constructor import ones_matrix, identity_matrix
+        if skew_hadamard_matrix(n+1, existence=True) is not True:
+            raise ValueError(f'strongly regular digraph with {n} vertices not yet implemented')
+
+        H = skew_hadamard_matrix(n+1, skew_normalize=True)
+        M = H[1:, 1:]
+        M = (M + ones_matrix(n)) / 2 - identity_matrix(n)
+        return DiGraph(M, format='adjacency_matrix', name=f'Strongly regular digraph')
+
     def Paley(self, q):
         r"""
         Return a Paley digraph on `q` vertices.
