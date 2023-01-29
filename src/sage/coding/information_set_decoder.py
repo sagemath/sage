@@ -40,7 +40,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.all import ZZ, Integer, vector, SageObject, binomial
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer import Integer
+from sage.modules.free_module_element import free_module_element as vector
+from sage.structure.sage_object import SageObject
+from sage.functions.other import binomial
 from .decoder import Decoder
 
 

@@ -86,10 +86,11 @@ REFERENCES:
 # ****************************************************************************
 from pathlib import Path
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.libs.gap.libgap import libgap
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.all import factor, valuation
+from sage.arith.misc import factor
+from sage.arith.misc import valuation
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.functional import is_even
 from sage.misc.cachefunc import cached_method, weak_cached_function

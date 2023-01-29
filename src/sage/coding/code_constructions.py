@@ -41,7 +41,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.misc_c import prod
-from sage.arith.all import quadratic_residues, gcd
+from sage.arith.misc import quadratic_residues
+from sage.arith.misc import GCD as gcd
 
 from sage.structure.sequence import Sequence, Sequence_generic
 
@@ -753,7 +754,7 @@ def ToricCode(P,F):
 
     - David Joyner (07-2006)
     """
-    from sage.combinat.all import Tuples
+    from sage.combinat.tuple import Tuples
     mset = [x for x in F if x != 0]
     d = len(P[0])
     pts = Tuples(mset, d).list()
