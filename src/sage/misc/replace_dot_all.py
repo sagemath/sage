@@ -47,6 +47,17 @@ into the file. In the cases a suggested replacement is not printed out, the user
 to find the correct ``import`` statement.
 """
 
+# ****************************************************************************
+#       Copyright (C) 2022-2023 Alex Chandler
+#                     2023      Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 # Importing packages
 
 from sage.misc.dev_tools import import_statements
