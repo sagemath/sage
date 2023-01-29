@@ -61,7 +61,7 @@ import argparse
 
 default_package_regex = (r"sage("
                          r"|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets)"
-                         r")[.]all"
+                         r")[.]all")
 
 
 # to parse arguments passed to the script
