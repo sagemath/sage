@@ -121,11 +121,8 @@ def find_replacements(location, package_regex=None, verbose=False):
     EXAMPLES::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
-        sage: cwd = os.getcwd() # Get the current working directory
-        sage: file_to_change = 'structure/element.pyx'
-        sage: location = cwd + file_to_change
-        sage: replacements = find_replacements(location, verbose=True)
+        sage: location = sage.env.SAGE_SRC + '/sage/structure/element.pyx'
+        sage: find_replacements(location, verbose=True)
     """
     if package_regex is None:
         package_regex = default_package_regex
@@ -306,21 +303,18 @@ def process_line(location, line, replacements, import_index, verbose=False):
 
     EXAMPLES:
 
-    - to replace the first line which needs a replacement at the file with filepath #'structure/element.pyx'::
+    Replacing the first line which needs a replacement in the file with filepath ``src/sage/structure/element.pyx``::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
-        sage: cwd = os.getcwd() # Get the current working directory
-        sage: file_to_change = 'structure/element.pyx'
-        sage: location = cwd + file_to_change
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/structure/element.pyx')
         sage: replacements = find_replacements(location, verbose=True)
-        sage: file = open(location, "r")
-        sage: lines = file.readlines()
-        sage: row_index,import_index = replacements[0],replacements[1]
-        sage: line = lines[row_index]
-        sage: print(f'old line, old reps: {line,replacements}')
-        sage: new_line,replacements = process_line(location,line,replacements,import_index)
-        sage: print(f'new line, new reps: {new_line,replacements}')
+        sage: with open(location, "r") as file:
+        ....:     lines = file.readlines()
+        sage: row_index, import_index, *_ = replacements[0]
+        sage: line = lines[row_index]; line
+        sage: new_line, replacements = process_line(location, line, replacements, import_index)
+        sage: new_line
+        sage: replacements
     """
     line = line.rstrip()  # stripping line break
     new_line = ''
@@ -365,12 +359,19 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
     EXAMPLES::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: os.chdir(sage.env.SAGE_SRC + '/sage') # change to sage directory
-        sage: cwd = os.getcwd() # Get the current working directory
-        sage: file_to_change = 'structure/element.pyx'
-        sage: location = cwd + file_to_change
-        sage: make_replacements_in_file(location)
-    """
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     location = os.path.join(d, "input.py")
+        ....:     with open(location, "w") as input:
+        ....:         _ = input.write("from sage.plot.all import point2d\n")
+        ....:         _ = input.write("from sage.plot.line import line\n")
+        ....:     make_replacements_in_file(location, 'sage[.]plot[.]all', True)
+        ....:     with open(location, "r") as output:
+        ....:         for line in output:
+        ....:             print(line.strip())
+        from sage.plot.point import point2d
+        from sage.plot.line import line
+        """
     replacements = find_replacements(location, package_regex, verbose)
     with open(location, "r") as file:
         lines = file.readlines()
