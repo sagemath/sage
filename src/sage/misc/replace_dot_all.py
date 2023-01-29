@@ -282,7 +282,7 @@ def process_line(location, line, replacements, row_index, verbose=False):
 
     EXAMPLES:
 
-    Replacing the first line which needs a replacement in the file with filepath ``src/sage/structure/element.pyx``::
+    Replacing the first line which needs a replacement in the source file with filepath ``src/sage/plot/arc.py``::
 
         sage: from sage.misc.replace_dot_all import *
         sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
@@ -389,7 +389,7 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
     EXAMPLES::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: walkdir_replace_dot_all(sage.env.SAGE_SRC + '/sage')  # not tested
+        sage: walkdir_replace_dot_all(os.path.join(sage.env.SAGE_SRC, 'sage'))  # not tested
     """
     global numberFiles, numberFilesMatchingRegex
     file_regex = re.compile(file_regex)
@@ -427,7 +427,7 @@ if __name__ == "__main__":
     package_regex = None
     # Execute the main function based on the specified location and verbosity
     if not args.location:
-        args.location = [sage.env.SAGE_SRC + '/sage']
+        args.location = [os.path.join(sage.env.SAGE_SRC, 'sage')]
     try:
         for location in args.location:
             if not (location.endswith('.py') or location.endswith('.pxi')):
