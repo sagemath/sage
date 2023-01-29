@@ -207,7 +207,9 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.infinity import infinity
-from sage.arith.all import divisors, gcd, lcm
+from sage.arith.misc import divisors
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod

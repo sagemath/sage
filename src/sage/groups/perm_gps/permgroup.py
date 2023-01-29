@@ -141,7 +141,8 @@ from functools import wraps
 from sage.misc.randstate import current_randstate
 from sage.groups.group import FiniteGroup
 
-from sage.rings.all import QQ, Integer
+from sage.rings.rational_field import Q as QQ
+from sage.rings.integer import Integer
 from sage.interfaces.abc import ExpectElement, GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
@@ -151,7 +152,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.categories.all import FiniteEnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
 from sage.structure.richcmp import (richcmp_method,
                                     richcmp, rich_to_bool, op_EQ, op_NE)
@@ -195,7 +196,7 @@ def hap_decorator(f):
     @wraps(f)
     def wrapped(self, n, p=0):
         load_hap()
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         if not (p == 0 or is_prime(p)):
             raise ValueError("p must be 0 or prime")
 
@@ -3421,13 +3422,13 @@ class PermutationGroup_generic(FiniteGroup):
         irrG = G.Irr()
         ct   = [[irrG[i, j] for j in range(n)] for i in range(n)]
 
-        from sage.rings.all import CyclotomicField
+        from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()
         K = CyclotomicField(e)
         ct = [[K(x) for x in v] for v in ct]
 
         # Finally return the result as a matrix.
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(K, n)
         return MS(ct)
 
@@ -4742,7 +4743,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         """
         load_hap()
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         if not (p == 0 or is_prime(p)):
             raise ValueError("p must be 0 or prime")
 
