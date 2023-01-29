@@ -174,7 +174,7 @@ from sage.rings.integer cimport Integer
 
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
-from sage.arith.all import kronecker_symbol
+from sage.arith.misc import kronecker as kronecker_symbol
 from sage.arith.misc import euler_phi
 
 cdef extern from "<math.h>":

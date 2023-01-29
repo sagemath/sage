@@ -1213,7 +1213,12 @@ def _random_example_for_testing():
         sage: 5 <= K.order()
         True
     """
-    from sage.all import prime_range, choice, randrange, GF, lcm, Mod
+    from sage.rings.fast_arith import prime_range
+    from sage.misc.prandom import choice
+    from sage.misc.prandom import randrange
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+    from sage.arith.functions import lcm
+    from sage.rings.finite_rings.integer_mod import Mod
     while True:
         p = choice(prime_range(2, 100))
         e = randrange(1,5)

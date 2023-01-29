@@ -2486,7 +2486,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         # thesis are wrong, the correct formulas
         # are coded below
 
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
 
         for j in range(n - 1):
             psi_prpr += binomial(j+2, 2) * psi[j+2] * cur_x_pow

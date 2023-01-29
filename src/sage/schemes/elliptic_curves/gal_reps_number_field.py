@@ -50,9 +50,13 @@ from sage.rings.number_field.number_field import NumberField
 from sage.modules.free_module import VectorSpace
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.functional import cyclotomic_polynomial
-from sage.arith.all import legendre_symbol, primes
+from sage.arith.misc import legendre_symbol
+from sage.arith.misc import primes
 from sage.sets.set import Set
-from sage.rings.all import Integer, ZZ, QQ, Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import Q as QQ
+from sage.rings.infinity import Infinity
 
 
 class GaloisRepresentation(SageObject):

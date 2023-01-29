@@ -91,7 +91,10 @@ from sage.structure.sage_object import SageObject
 from sage.modular.modsym.all import ModularSymbols
 from sage.databases.cremona import parse_cremona_label
 
-from sage.arith.all import next_prime, kronecker_symbol, prime_divisors, valuation
+from sage.arith.misc import next_prime
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import prime_divisors
+from sage.arith.misc import valuation
 from sage.rings.infinity import unsigned_infinity as infinity
 from sage.rings.integer import Integer
 from sage.modular.cusps import Cusps

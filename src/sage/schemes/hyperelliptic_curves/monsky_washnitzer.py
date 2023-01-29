@@ -46,7 +46,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import integer_ceil as ceil
+from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
@@ -58,9 +58,16 @@ from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.module import Module
-from sage.rings.all import (Integers, Integer, PolynomialRing, PowerSeriesRing,
-                            Rationals, Rational, LaurentSeriesRing, QQ, ZZ,
-                            IntegralDomain)
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField as Rationals
+from sage.rings.rational import Rational
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.ring import IntegralDomain
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.all import pAdicField

@@ -28,11 +28,17 @@ from sage.schemes.curves.projective_curve import Hasse_bounds
 from .ell_field import EllipticCurve_field
 from .constructor import EllipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
-from sage.rings.all import Integer, ZZ, PolynomialRing, GF, polygen
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.finite_rings.element_base import is_FiniteFieldElement
 import sage.groups.generic as generic
 from . import ell_point
-from sage.arith.all import gcd, lcm, binomial
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import binomial
 from sage.misc.cachefunc import cached_method
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 

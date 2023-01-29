@@ -25,14 +25,14 @@ Miscellaneous `p`-adic methods
 import sage.rings.all as rings
 from . import padic_lseries as plseries
 import sage.arith.all as arith
-from sage.rings.all import (
-    Qp, Zp,
-    Integers,
-    Integer,
-    O,
-    PowerSeriesRing,
-    LaurentSeriesRing,
-    RationalField)
+from sage.rings.padics.factory import Qp
+from sage.rings.padics.factory import Zp
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.big_oh import O
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import RationalField
 import math
 import sage.misc.misc as misc
 import sage.matrix.all as matrix
