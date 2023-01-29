@@ -57,6 +57,7 @@ import argparse
 # We import this using __import__ so that "tox -e relint" does not complain about this source file.
 __import__("sage.all", globals(), locals(), ["*"])
 
+
 # Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
 
 default_package_regex = (r"sage("
@@ -402,25 +403,6 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
                     make_replacements_in_file(location, package_regex, verbose)
 
 
-def print_log_messages():
-    r"""
-    Print out the messages collected in the global variable ``log_messages``.
-
-    This function sorts the lines of ``log_messages`` by the first character of each line (lines are separated by \n).
-    """
-    global log_messages
-    # split the log messages into a list of strings (each string is a line separated by a newline character)
-    log_messages = log_messages.split('\n')
-    # sort the list of strings
-    log_messages.sort()
-    # add index to each line
-    for i, message in enumerate(log_messages):
-        log_messages[i] = f'{i}. {message}'
-    # join the list of strings into a single string separated by newline characters
-    log_messages = '\n'.join(log_messages)[2:]
-    print(log_messages)
-
-
 # ******************************************************** EXECUTES MAIN FUNCTION **********************************************************************
 # this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
 if __name__ == "__main__":
@@ -457,7 +439,10 @@ if __name__ == "__main__":
     finally:
         # Print report also when interrupted
         if verbosity:
-            print_log_messages()
+            log_messages = sorted(log_messages.rstrip().split('\n'))
+            for i, message in enumerate(log_messages, start=1):
+                # add index to each line
+                print(f'{i}. {message.rstrip()}')
         report = 'REPORT:\n'
         report += f'Number of files checked: {numberFiles}\n'
         report += f'Number of files matching regex: {numberFilesMatchingRegex}\n'
