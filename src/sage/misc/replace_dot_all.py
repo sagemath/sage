@@ -469,11 +469,12 @@ if __name__ == "__main__":
         os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
         dir = os.getcwd()  # Get the current working directory
         walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
-    elif args.location.find('.py') == -1 and args.location.find('.pxi') == -1:
+    elif not (args.location.endswith('.py') or args.location.endswith('.pxi')):
+        # Assume directory
         os.chdir(sage.env.SAGE_SRC + '/sage/' + args.location)  # change to directory specified by location argument
         dir = os.getcwd()  # Get the current working directory
         walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
-    elif args.location.find('.py') != -1 or args.location.find('.pxi') != -1:
+    else:
         # make replacements in file specified by location argument
         make_replacements_in_file(sage.env.SAGE_SRC + '/sage/' + args.location, package_regex, verbose=verbosity)
 # ************************************************************************************************************************************************************************
