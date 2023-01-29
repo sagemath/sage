@@ -3,7 +3,11 @@ Conway-Sloane masses
 """
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import kronecker_symbol, legendre_symbol, prime_divisors, is_prime, fundamental_discriminant
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import legendre_symbol
+from sage.arith.misc import prime_divisors
+from sage.arith.misc import is_prime
+from sage.arith.misc import fundamental_discriminant
 from sage.symbolic.constants import pi
 from sage.misc.misc_c import prod
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact

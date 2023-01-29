@@ -68,7 +68,12 @@ from sage.misc.classcall_metaclass import typecall
 from sage.misc.mrange import xmrange
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
-from sage.arith.all import gcd, lcm, next_prime, binomial, primes, moebius
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import next_prime
+from sage.arith.misc import binomial
+from sage.arith.misc import primes
+from sage.arith.misc import moebius
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.complex_mpfr import ComplexField

@@ -2,7 +2,9 @@ r"""
 Optimized counting of congruence solutions
 """
 
-from sage.arith.all import valuation, kronecker_symbol, is_prime
+from sage.arith.misc import valuation
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import is_prime
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 

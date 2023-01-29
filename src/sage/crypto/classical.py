@@ -55,7 +55,8 @@ from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.arith.all import xgcd, inverse_mod
+from sage.arith.misc import XGCD as xgcd
+from sage.arith.misc import inverse_mod
 from random import randint
 from sage.matrix.matrix_space import MatrixSpace
 

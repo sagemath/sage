@@ -8,7 +8,9 @@ Local Representation Conditions
 from __future__ import annotations
 from copy import deepcopy
 
-from sage.arith.all import prime_divisors, valuation, is_square
+from sage.arith.misc import prime_divisors
+from sage.arith.misc import valuation
+from sage.arith.misc import is_square
 from sage.misc.functional import numerator, denominator
 from sage.quadratic_forms.extras import least_quadratic_nonresidue
 from sage.rings.infinity import infinity

@@ -21,7 +21,10 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import is_prime, lcm, primes, random_prime
+from sage.arith.misc import is_prime
+from sage.arith.functions import lcm
+from sage.arith.misc import primes
+from sage.arith.misc import random_prime
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod as mod
 

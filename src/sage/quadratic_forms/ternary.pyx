@@ -15,7 +15,9 @@ Helper code for ternary quadratic forms
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
 from sage.modules.free_module_element import vector
-from sage.arith.all import inverse_mod, xgcd, gcd
+from sage.arith.misc import inverse_mod
+from sage.arith.misc import XGCD as xgcd
+from sage.arith.misc import GCD as gcd
 from sage.quadratic_forms.extras import extend_to_primitive
 from sage.rings.finite_rings.integer_mod import mod
 from sage.misc.prandom import randint
