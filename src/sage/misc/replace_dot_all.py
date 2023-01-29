@@ -219,7 +219,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                     print(f'SyntaxError: {err} found when trying to evaluate {to_eval} at {location} line number {row_index + 1}')
 
                 # Need module to be a list of modules we are importing. If a single module was given, we make it a 1-element list.
-                if not (type(modules) == tuple):
+                if not isinstance(modules, tuple):
                     modules = [modules]
 
                 to_eval_list = to_eval.replace('(', '').replace(')', '').split(',')  # convert comma separated string to_eval to a list
