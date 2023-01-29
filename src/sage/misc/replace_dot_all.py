@@ -72,7 +72,7 @@ def parse_arguments():
         "location",
         metavar='files or directories',
         nargs='*',
-        help=("Names of source directory or source file. "
+        help=("Names of source directories or source files. "
               "If none given, walks through all files in src/sage."),
         type=str)
     parser.add_argument(
@@ -426,6 +426,22 @@ def walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=False):
                 if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
                     make_replacements_in_file(location, package_regex, verbose)
 
+def print_log_messages():
+    r"""
+    If the user executes the function walkdir_replace_dot_all with the verbose parameter set to True, then the global variable log_messages will be a string containing all the log messages.
+    This function sorts the lines of log_messages by the first character of each line(lines are separated by \n). This function is called at the end of walkdir_replace_dot_all.
+    """
+    global log_messages
+    # split the log messages into a list of strings (each string is a line separated by a newline character)
+    log_messages = log_messages.split('\n')
+    # sort the list of strings
+    log_messages.sort()
+    # add index to each line
+    for i, message in enumerate(log_messages):
+        log_messages[i] = f'{i}. {message}'
+    # join the list of strings into a single string separated by newline characters
+    log_messages = '\n'.join(log_messages)[2:]
+    print(log_messages)
 
 # ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
 # this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
