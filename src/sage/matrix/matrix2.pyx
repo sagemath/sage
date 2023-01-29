@@ -86,7 +86,8 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose, get_verbose
-from sage.categories.all import Fields, IntegralDomains
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -16821,7 +16822,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: 'subdivide' keyword must be True or False, not garbage
         """
-        from sage.arith.all import gcd
+        from sage.arith.misc import GCD as gcd
         import sage.rings.polynomial.polynomial_ring_constructor
         from sage.matrix.constructor import (block_diagonal_matrix,
                                              companion_matrix)

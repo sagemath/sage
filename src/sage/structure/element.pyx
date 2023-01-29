@@ -4047,7 +4047,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
             right = py_scalar_to_element(right)
             if not isinstance(right, Element):
                 right = right.sage()
-        if not ((<Element>right)._parent is self._parent):
+        from sage.arith.misc import GCD as gcd
             from sage.arith.all import gcd
             return coercion_model.bin_op(self, right, gcd)
         return self._gcd(right)
@@ -4081,7 +4081,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
             right = py_scalar_to_element(right)
             if not isinstance(right, Element):
                 right = right.sage()
-        if not ((<Element>right)._parent is self._parent):
+        from sage.arith.functions import lcm
             from sage.arith.all import lcm
             return coercion_model.bin_op(self, right, lcm)
         return self._lcm(right)

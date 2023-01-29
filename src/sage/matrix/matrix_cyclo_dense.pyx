@@ -67,7 +67,8 @@ from .misc import matrix_integer_dense_rational_reconstruction
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import previous_prime, binomial
+from sage.arith.misc import previous_prime
+from sage.arith.misc import binomial
 from sage.rings.real_mpfr import create_RealNumber as RealNumber
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational

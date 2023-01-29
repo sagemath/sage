@@ -15,7 +15,8 @@ from sage.matrix.constructor import (random_matrix, matrix, identity_matrix)
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
-from sage.arith.all import previous_prime, CRT_list
+from sage.arith.misc import previous_prime
+from sage.arith.misc import CRT_list
 
 
 def max_det_prime(n):

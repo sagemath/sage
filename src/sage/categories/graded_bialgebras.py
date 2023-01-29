@@ -26,5 +26,5 @@ def GradedBialgebras(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import Bialgebras
+    from sage.categories.bialgebras import Bialgebras
     return Bialgebras(base_ring).Graded()

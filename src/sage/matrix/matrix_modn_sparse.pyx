@@ -113,7 +113,7 @@ from sage.misc.verbose import verbose, get_verbose
 
 from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 
 from sage.structure.element import is_Vector
 

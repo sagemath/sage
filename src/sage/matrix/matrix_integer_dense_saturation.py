@@ -4,7 +4,8 @@ Saturation over ZZ
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.all import binomial, gcd
+from sage.arith.misc import binomial
+from sage.arith.misc import GCD as gcd
 from sage.matrix.constructor import identity_matrix, random_matrix
 from sage.misc.verbose import verbose
 from sage.misc.randstate import current_randstate
