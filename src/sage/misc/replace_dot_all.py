@@ -100,8 +100,9 @@ def find_replacements(location, package_regex=None, verbose=False):
     EXAMPLES::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: location = sage.env.SAGE_SRC + '/sage/structure/element.pyx'
-        sage: find_replacements(location, verbose=True)
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True)
+        [[..., ..., 'from sage.plot.graphics import Graphics']]
     """
     if package_regex is None:
         package_regex = default_package_regex
@@ -259,7 +260,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     return replacements
 
 
-def process_line(location, line, replacements, import_index, verbose=False):
+def process_line(location, line, replacements, row_index, verbose=False):
     r"""
     Modify a single source code ``line`` according to the given ``replacements``.
 
@@ -268,7 +269,7 @@ def process_line(location, line, replacements, import_index, verbose=False):
     - ``location`` -- a file path; only used for logging
     - ``line`` -- a source code line
     - ``replacements`` -- the array output from :func:`find_replacements`
-    - ``import_index`` -- the column number where ``import`` appears
+    - ``row_index`` -- the line number where ``import`` appears
     - ``verbose`` -- if True, issue print statements when interesting examples are found
 
     OUTPUT:
@@ -283,22 +284,27 @@ def process_line(location, line, replacements, import_index, verbose=False):
     Replacing the first line which needs a replacement in the file with filepath ``src/sage/structure/element.pyx``::
 
         sage: from sage.misc.replace_dot_all import *
-        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/structure/element.pyx')
-        sage: replacements = find_replacements(location, verbose=True)
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: replacements = find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True); replacements
+        [[471, 24, 'from sage.plot.graphics import Graphics']]
         sage: with open(location, "r") as file:
         ....:     lines = file.readlines()
-        sage: row_index, import_index, *_ = replacements[0]
-        sage: line = lines[row_index]; line
-        sage: new_line, replacements = process_line(location, line, replacements, import_index)
-        sage: new_line
+        sage: row_index, col_number, *_ = replacements[0]
+        sage: line = lines[row_index]
+        sage: print(line.rstrip())
+        from sage.plot.all import Graphics
+        sage: new_line, replacements = process_line(location, line, replacements, row_index)
+        sage: print(new_line)
+        from sage.plot.graphics import Graphics
         sage: replacements
+        []
     """
     line = line.rstrip()  # stripping line break
     new_line = ''
     global log_messages, interesting_examples
     if len(replacements) == 0:
         return line, replacements
-    if import_index == replacements[0][0]:  # if line marked as containing .all
+    if row_index == replacements[0][0]:  # if line marked as containing .all
         replacement = replacements.pop(0)
         leading_space = 0
         while line and line[leading_space] == ' ' and leading_space < len(line)-1:
