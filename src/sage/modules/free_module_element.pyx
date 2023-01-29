@@ -1602,7 +1602,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if isinstance(ord, AnInfinity):
                 return ord
             v.append(ord)
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         return lcm(v)
 
     def items(self):

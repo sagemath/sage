@@ -1138,7 +1138,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
 
         """
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
-        from sage.categories.all import Hom
+        from sage.categories.homset import Hom
         parent = Hom(self.codomain(), self.domain(), SetsWithPartialMaps())
         return parent.__make_element_class__(FractionFieldEmbeddingSection)(self)
 

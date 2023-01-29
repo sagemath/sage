@@ -116,7 +116,9 @@ AUTHOR:
 - Martin Albrecht (2008-08): initial version
 """
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import xgcd, lcm, gcd
+from sage.arith.misc import XGCD as xgcd
+from sage.arith.functions import lcm
+from sage.arith.misc import GCD as gcd
 from sage.rings.polynomial.toy_buchberger import inter_reduction
 from sage.structure.sequence import Sequence
 

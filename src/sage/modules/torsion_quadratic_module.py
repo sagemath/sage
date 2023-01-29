@@ -20,7 +20,10 @@ from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_quadratic_module import FreeQuadraticModule
 from sage.arith.misc import gcd
-from sage.rings.all import ZZ, Zp, QQ, IntegerModRing
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.padics.factory import Zp
+from sage.rings.rational_field import Q as QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.groups.additive_abelian.qmodnz import QmodnZ
 from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix

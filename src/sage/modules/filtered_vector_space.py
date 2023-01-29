@@ -108,7 +108,11 @@ Or the algebraic field::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import QQ, ZZ, RDF, RR, Integer
+from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace

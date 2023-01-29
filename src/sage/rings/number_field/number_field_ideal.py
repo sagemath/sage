@@ -42,7 +42,8 @@ import sage.misc.latex as latex
 
 import sage.rings.rational_field as rational_field
 import sage.rings.integer_ring as integer_ring
-from sage.arith.all import kronecker_symbol, gcd
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import GCD as gcd
 import sage.misc.misc as misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -2073,7 +2074,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         Rbasis = R.basis()
         n = len(Rbasis)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(ZZ,n)([R.coordinates(y) for y in self.basis()])
 
         D = M.hermite_form()
@@ -2142,7 +2143,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         R = self.number_field().maximal_order()
         Rbasis = R.basis()
         n = len(Rbasis)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(ZZ, n)([R.coordinates(_) for _ in self.basis()])
 
         D = M.hermite_form()
@@ -2283,7 +2284,8 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         g = G.gens_values()
         n = G.ngens()
 
-        from sage.matrix.all import Matrix, diagonal_matrix
+        from sage.matrix.constructor import Matrix
+        from sage.matrix.special import diagonal_matrix
 
         M = diagonal_matrix(ZZ, invs)
         if subgp_gens:
@@ -2711,7 +2713,11 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         G = self.idealstar(2)
         invs = G.invariants()
 
-        from sage.matrix.all import matrix, identity_matrix, zero_matrix, diagonal_matrix, block_matrix
+        from sage.matrix.constructor import Matrix as matrix
+        from sage.matrix.special import identity_matrix
+        from sage.matrix.special import zero_matrix
+        from sage.matrix.special import diagonal_matrix
+        from sage.matrix.special import block_matrix
 
         # We use Hermite normal form twice: once to express the standard
         # generators in terms of the new ones (independently of x) and once to
