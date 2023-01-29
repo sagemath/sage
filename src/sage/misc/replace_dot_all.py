@@ -64,30 +64,6 @@ default_package_regex = (r"sage("
                          r")[.]all")
 
 
-# to parse arguments passed to the script
-
-def parse_arguments():
-    r"""
-    Parse command-line arguments
-    """
-    # Create argument parser
-    parser = argparse.ArgumentParser()
-    # Optional arguments
-    parser.add_argument(
-        "location",
-        metavar='files or directories',
-        nargs='*',
-        help=("Names of source directories or source files. "
-              "If none given, walks through all files in src/sage."),
-        type=str)
-    parser.add_argument(
-        "-v", "--verbose",
-        help="Increase output verbosity. Shows locations of any unusual cases of import statements and the corresponding changes.",
-        action="store_true")    # Parse arguments
-    args = parser.parse_args()
-    return args
-
-
 # Global variables
 
 examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
@@ -105,8 +81,7 @@ def find_replacements(location, package_regex=None, verbose=False):
 
     INPUT:
 
-    - ``location`` -- a file path   file_to_change = 'schemes/elliptic_curves/ell_rational_field.py'
-                                    location = cwd + file_to_change
+    - ``location`` -- a file path
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
       the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
     - ``verbose`` -- a parameter which if used will issue print statements when interesting examples are found
@@ -443,8 +418,21 @@ def print_log_messages():
 # ******************************************************** EXECUTES MAIN FUNCTION **********************************************************************
 # this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
 if __name__ == "__main__":
-    # Parse the arguments
-    args = parse_arguments()
+    # Create argument parser
+    parser = argparse.ArgumentParser()
+    # Optional arguments
+    parser.add_argument(
+        "location",
+        metavar='files or directories',
+        nargs='*',
+        help=("Names of source directories or source files. "
+              "If none given, walks through all files in src/sage."),
+        type=str)
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Increase output verbosity. Shows locations of any unusual cases of import statements and the corresponding changes.",
+        action="store_true")    # Parse arguments
+    args = parser.parse_args()
     verbosity = args.verbose
     # Declare regular expressions
     file_regex = r'.*[.](py|pyx|pxi)$'
