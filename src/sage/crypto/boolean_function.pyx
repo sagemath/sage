@@ -1008,7 +1008,7 @@ cdef class BooleanFunction(SageObject):
         from sage.misc.misc_c import prod
 
         from sage.matrix.constructor import Matrix
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         M = Matrix(GF(2), sum(binomial(self._nvariables,i) for i in range(d+1)), len(s))
 
         cdef long i

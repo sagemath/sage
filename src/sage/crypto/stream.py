@@ -17,7 +17,8 @@ from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
 
 from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import gcd, power_mod
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import power_mod
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 from sage.rings.polynomial.polynomial_element import is_Polynomial

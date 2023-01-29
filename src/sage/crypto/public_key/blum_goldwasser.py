@@ -37,7 +37,9 @@ from sage.crypto.util import random_blum_prime
 from sage.functions.log import log
 from sage.functions.other import Function_floor
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import gcd, power_mod, xgcd
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import power_mod
+from sage.arith.misc import XGCD as xgcd
 from sage.rings.finite_rings.integer_mod import Mod as mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 

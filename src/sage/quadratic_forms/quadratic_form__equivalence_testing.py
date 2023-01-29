@@ -5,7 +5,12 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
-from sage.arith.all import hilbert_symbol, prime_divisors, is_prime, valuation, GCD, legendre_symbol
+from sage.arith.misc import hilbert_symbol
+from sage.arith.misc import prime_divisors
+from sage.arith.misc import is_prime
+from sage.arith.misc import valuation
+from sage.arith.misc import GCD
+from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 

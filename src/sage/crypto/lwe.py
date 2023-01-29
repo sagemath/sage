@@ -100,8 +100,11 @@ from sage.misc.prandom import randint
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import random_vector, vector
 from sage.numerical.optimize import find_root
-from sage.rings.all import ZZ, IntegerModRing, RR
-from sage.arith.all import next_prime, euler_phi
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.real_mpfr import RR
+from sage.arith.misc import next_prime
+from sage.arith.misc import euler_phi
 from sage.structure.element import parent
 from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import pi

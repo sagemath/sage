@@ -23,7 +23,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.rings.infinity import PlusInfinity
-from sage.arith.all import prime_powers, next_prime
+from sage.arith.misc import prime_powers
+from sage.arith.misc import next_prime
 from sage.functions.log import log, exp
 from sage.functions.other import real, imag
 from sage.symbolic.constants import pi, euler_gamma

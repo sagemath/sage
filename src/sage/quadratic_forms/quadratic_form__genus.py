@@ -9,7 +9,8 @@ Local and Global Genus Symbols
 
 from sage.quadratic_forms.genera.genus import Genus, LocalGenusSymbol
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import is_prime, prime_divisors
+from sage.arith.misc import is_prime
+from sage.arith.misc import prime_divisors
 
 
 def global_genus_symbol(self):

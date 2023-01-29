@@ -16,8 +16,12 @@ from sage.misc.functional import is_odd
 
 from sage.libs.pari.all import pari
 from sage.misc.misc_c import prod
-from sage.arith.all import (factor, gcd, prime_to_m_part, CRT_vectors,
-        hilbert_symbol, kronecker_symbol)
+from sage.arith.misc import factor
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import prime_to_m_part
+from sage.arith.misc import CRT_vectors
+from sage.arith.misc import hilbert_symbol
+from sage.arith.misc import kronecker as kronecker_symbol
 
 from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
 from sage.modules.free_module import FreeModule

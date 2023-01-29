@@ -9,7 +9,10 @@ Routines for computing special values of L-functions
 
 from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
-from sage.arith.all import kronecker_symbol, bernoulli, factorial, fundamental_discriminant
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import bernoulli
+from sage.arith.misc import factorial
+from sage.arith.misc import fundamental_discriminant
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -60,7 +63,7 @@ def gamma__exact(n):
         ...
         TypeError: you must give an integer or half-integer argument
     """
-    from sage.all import sqrt
+    from sage.misc.functional import sqrt
     n = QQ(n)
 
     if denominator(n) == 1:
@@ -213,7 +216,8 @@ def quadratic_L_function__exact(n, d):
     - [IR1990]_
     - [Was1997]_
     """
-    from sage.all import SR, sqrt
+    from sage.symbolic.ring import SR
+    from sage.misc.functional import sqrt
     if n <= 0:
         return QuadraticBernoulliNumber(1-n,d)/(n-1)
     elif n >= 1:
