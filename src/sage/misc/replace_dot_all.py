@@ -17,23 +17,26 @@ run the following from a terminal in ``SAGE_ROOT`` ::
 
     ./sage -python src/sage/misc/replace_dot_all.py
 
+or ::
+
+    ./sage --fiximports
+
 Running replace_dot_all.py will call the function :func:`walkdir_replace_dot_all` which walks through all Python and Cython source files
 and replaces certain ``from sage.PAC.KAGE.all import something`` (those matching the pattern above)
 with the correct ``import`` statement by applying the function :func:`~sage.misc.dev_tools.import_statements`.
 
-The user can also pass arguments ``-l`` to specify a subdirectory of ``src/sage`` or even a specific file to fix. The root location is
-automatically set to ``src/sage``, so you need only specify the path from there. For example ::
+The user can also pass subdirectories of ``src/sage`` or specific files to fix. For example ::
 
-    ./sage -python src/sage/misc/replace_dot_all.py -l arith
+    ./sage -python src/sage/misc/replace_dot_all.py src/sage/arith
 
 will fix all files in ``src/sage/arith`` and ::
 
-    ./sage -python src/sage/misc/replace_dot_all.py -l arith/functions.pyx
+    ./sage -python src/sage/misc/replace_dot_all.py src/sage/arith/functions.pyx
 
-will fix the file src/sage/arith/functions.py. The file extension is necessary in the case of a specific file. The user can also
+will fix the file ``src/sage/arith/functions.py``. The file extension is necessary in the case of a specific file. The user can also
 pass the verbose flag ``-v`` to print out the files being fixed. For example ::
 
-    ./sage -python src/sage/misc/replace_dot_all.py -l arith -v
+    ./sage -python src/sage/misc/replace_dot_all.py -v src/sage/arith
 
 will fix all files in ``src/sage/arith`` and print out the unusual examples of ``import`` statements it finds.
 
@@ -56,7 +59,9 @@ import argparse
 
 # Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
 
-default_package_regex = r"sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all"
+default_package_regex = (r"sage("
+                         r"|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets)"
+                         r")[.]all"
 
 
 # to parse arguments passed to the script
@@ -84,6 +89,7 @@ def parse_arguments():
 
 
 # Global variables
+
 examples = list('ABCDEFGHIJ')  # controls how we print out interesting examples to the console
 interesting_examples = dict(zip(examples, [0]*len(examples)))
 log_messages = ''
@@ -92,7 +98,6 @@ numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsRepla
 
 
 # Functions
-
 
 def find_replacements(location, package_regex=None, verbose=False):
     r"""
@@ -115,8 +120,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     - ``replaced_commands`` -- the string which will replace the current line
     - ``lines_spanned`` -- the number of lines the original statement spans
 
-    this output is specifically designed to be fed into the function :func:`process_line` (location,line,replacements,import_index) and
-    called inside of the function "make_replacements_in_file(location)" to populate the variable "replacements"
+    This output can be processed by the function :func:`process_line`.
 
     EXAMPLES::
 
@@ -339,8 +343,6 @@ def process_line(location, line, replacements, import_index, verbose=False):
         new_line = line
     return new_line, replacements
 
-# to make all replacements matching the regex in a single file with filepath "location"
-
 
 def make_replacements_in_file(location, package_regex=None, verbose=False, output=None):
     r"""
@@ -389,8 +391,6 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
     with open(output, "w") as write_file:  # Open file in write mode
         write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
 
-# to iterate over all files in src/sage matching the given regular expression
-
 
 def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex=None, verbose=False):
     r"""
@@ -420,10 +420,12 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
                 if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
                     make_replacements_in_file(location, package_regex, verbose)
 
+
 def print_log_messages():
     r"""
-    If the user executes the function walkdir_replace_dot_all with the verbose parameter set to True, then the global variable log_messages will be a string containing all the log messages.
-    This function sorts the lines of log_messages by the first character of each line(lines are separated by \n). This function is called at the end of walkdir_replace_dot_all.
+    Print out the messages collected in the global variable ``log_messages``.
+
+    This function sorts the lines of ``log_messages`` by the first character of each line (lines are separated by \n).
     """
     global log_messages
     # split the log messages into a list of strings (each string is a line separated by a newline character)
@@ -437,7 +439,8 @@ def print_log_messages():
     log_messages = '\n'.join(log_messages)[2:]
     print(log_messages)
 
-# ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
+
+# ******************************************************** EXECUTES MAIN FUNCTION **********************************************************************
 # this executes the main function in this file which writes over all import statements matching regex in files in specified location matching fileRegex:
 if __name__ == "__main__":
     # Parse the arguments
@@ -468,4 +471,4 @@ if __name__ == "__main__":
         report += f'Number of import statements replaced: {numberStatementsReplaced}'
         print('*'*100 + '\n' + report + '\n' + '*'*100)
 
-# ************************************************************************************************************************************************************************
+# ******************************************************************************************************************************************************
