@@ -69,9 +69,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     # Optional arguments
     parser.add_argument(
-        "-l", "--location",
-        help=("Location of directory or file (root set at src/sage so input path from here). "
-              "If no argument given, walks through all files in src/sage."),
+        "location",
+        metavar='files or directories',
+        nargs='*',
+        help=("Names of source directory or source file. "
+              "If none given, walks through all files in src/sage."),
         type=str)
     parser.add_argument(
         "-v", "--verbose",
@@ -413,42 +415,16 @@ def walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=False):
         sage: regex = r"from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import"
         sage: walkdir_replace_dot_all(dir, fileRegex, regex)
     """
-    global numberFiles, numberFilesMatchingRegex, numberFilesChanged, numberStatementsReplaced, log_messages
+    global numberFiles, numberFilesMatchingRegex
     pattern = re.compile(fileRegex)
-    for root, dirs, files in os.walk(".", topdown=False):
+    for root, dirs, files in os.walk(dir, topdown=False):
         for name in files:
             numberFiles += 1
             if pattern.search(name):
                 numberFilesMatchingRegex += 1
-                location = os.path.join(root, name)[1:]
+                location = os.path.join(root, name)
                 if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
-                    make_replacements_in_file(dir + location, package_regex, verbose)
-    if verbosity:
-        print_log_messages()
-    report = (f'REPORT:\n'
-              f'Number of files checked: {numberFiles}\n'
-              f'Number of files matching regex: {numberFilesMatchingRegex}\n'
-              f'Number of files changed: {numberFilesChanged}\n'
-              f'Number of import statements replaced: {numberStatementsReplaced}')
-    print('*'*100 + '\n' + report + '\n' + '*'*100)
-
-
-def print_log_messages():
-    r"""
-    If the user executes the function walkdir_replace_dot_all with the verbose parameter set to True, then the global variable log_messages will be a string containing all the log messages.
-    This function sorts the lines of log_messages by the first character of each line(lines are separated by \n). This function is called at the end of walkdir_replace_dot_all.
-    """
-    global log_messages
-    # split the log messages into a list of strings (each string is a line separated by a newline character)
-    log_messages = log_messages.split('\n')
-    # sort the list of strings
-    log_messages.sort()
-    # add index to each line
-    for i, message in enumerate(log_messages):
-        log_messages[i] = f'{i}. {message}'
-    # join the list of strings into a single string separated by newline characters
-    log_messages = '\n'.join(log_messages)[2:]
-    print(log_messages)
+                    make_replacements_in_file(location, package_regex, verbose)
 
 
 # ******************************************************** EXECUTES MAIN FUNCTION ****************************************************************************************
@@ -465,16 +441,25 @@ if __name__ == "__main__":
     fileRegex = r'.*[.](py|pyx|pxi)$'
     package_regex = None
     # Execute the main function based on the specified location and verbosity
-    if args.location is None:
-        os.chdir(sage.env.SAGE_SRC + '/sage')  # change to sage directory
-        dir = os.getcwd()  # Get the current working directory
-        walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
-    elif not (args.location.endswith('.py') or args.location.endswith('.pxi')):
-        # Assume directory
-        os.chdir(sage.env.SAGE_SRC + '/sage/' + args.location)  # change to directory specified by location argument
-        dir = os.getcwd()  # Get the current working directory
-        walkdir_replace_dot_all(dir, fileRegex, package_regex, verbose=verbosity)
-    else:
-        # make replacements in file specified by location argument
-        make_replacements_in_file(sage.env.SAGE_SRC + '/sage/' + args.location, package_regex, verbose=verbosity)
+    if not args.location:
+        args.location = [sage.env.SAGE_SRC + '/sage']
+    try:
+        for location in args.location:
+            if not (location.endswith('.py') or location.endswith('.pxi')):
+                # Assume directory
+                walkdir_replace_dot_all(location, fileRegex, package_regex, verbose=verbosity)
+            else:
+                # make replacements in file specified by location argument
+                make_replacements_in_file(location, package_regex, verbose=verbosity)
+    finally:
+        # Print report also when interrupted
+        if verbosity:
+            print_log_messages()
+        report = 'REPORT:\n'
+        report += f'Number of files checked: {numberFiles}\n'
+        report += f'Number of files matching regex: {numberFilesMatchingRegex}\n'
+        report += f'Number of files changed: {numberFilesChanged}\n'
+        report += f'Number of import statements replaced: {numberStatementsReplaced}'
+        print('*'*100 + '\n' + report + '\n' + '*'*100)
+
 # ************************************************************************************************************************************************************************
