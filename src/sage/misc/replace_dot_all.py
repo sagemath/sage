@@ -144,7 +144,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                 if '*' in row or 'SAGE_ROOT' in row:
                     if verbose and interesting_examples['J'] < number_examples_to_print:
                         interesting_examples['J'] += 1
-                        log_messages += (f'J. Match but no changes made (import statement uses *) at {location} line number {row_index + 1}. '
+                        log_messages += (f'J. Match but no changes made (import statement uses *) at {location}:{row_index + 1}. '
                                          f'Not applying any changes here.\n')
                     continue
                 elif not (row.lstrip()[0:4] == 'from'):
@@ -168,7 +168,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                         print(f'\n'
                               f'NEED TO CHANGE MANUALLY \n'
                               f'  Issue: import statement does not start with "from" and contains quotation marks \n'
-                              f'  Location: at {location} \n  Line number: {row_index + 1}. \n'
+                              f'  Location: at {location}:{row_index + 1}. \n'
                               f'  Not able to suggest correct import statements. User must use the function import_statements().')
                         continue
                 # find() method returns -1 if the value is not found, or if found it returns index of the first occurrence of the substring
@@ -187,10 +187,10 @@ def find_replacements(location, package_regex=None, verbose=False):
                         to_eval_raw += lines[row_index + span].strip()
                     if span and verbose:  # useful to see these multiline examples for debugging
                         if " as " in to_eval_raw and interesting_examples['D'] < number_examples_to_print:
-                            log_messages += f'D. Interesting example (spans multiple lines and has " as ") at {location} line number {row_index + 1}\n'
+                            log_messages += f'D. Interesting example (spans multiple lines and has " as ") at {location}:{row_index + 1}\n'
                             interesting_examples['D'] += 1
                         elif interesting_examples['B'] < number_examples_to_print:
-                            log_messages += f'B. Interesting example (spans multiple lines) at {location} line number {row_index + 1}\n'
+                            log_messages += f'B. Interesting example (spans multiple lines) at {location}:{row_index + 1}\n'
                             interesting_examples['B'] += 1
 
                 # if there is an "as" statement inside to_eval, we want to keep only the new name for the module e.g. "(aa as a, bb, cc as c)" becomes "(a,bb,c)"
@@ -214,9 +214,9 @@ def find_replacements(location, package_regex=None, verbose=False):
                 try:  # try to evaluate the list of module names to get a list of the modules themselves which we can call import_statements on
                     modules = eval(to_eval)
                 except NameError as err:
-                    print(f'NameError: {err} found when trying to evaluate {to_eval} at {location} line number {row_index + 1}')
+                    print(f'NameError: {err} found when trying to evaluate {to_eval} at {location}:{row_index + 1}')
                 except SyntaxError as err:
-                    print(f'SyntaxError: {err} found when trying to evaluate {to_eval} at {location} line number {row_index + 1}')
+                    print(f'SyntaxError: {err} found when trying to evaluate {to_eval} at {location}:{row_index + 1}')
 
                 # Need module to be a list of modules we are importing. If a single module was given, we make it a 1-element list.
                 if not isinstance(modules, tuple):
@@ -234,7 +234,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                     # saves the callable name of module in variable postfix (e.g. for module "b" called by "bb as b" we set postfix = " as b")
                     if " as " in to_eval_list_raw[to_eval_list_index]:
                         if verbose and interesting_examples['C'] < number_examples_to_print:
-                            log_messages += f'C. Interesting example (" as " in tuple import) at {location} at line number {row_index + 1}\n'
+                            log_messages += f'C. Interesting example (" as " in tuple import) at {location}:{row_index + 1}\n'
                             interesting_examples['C'] += 1
                         as_index = to_eval_list_raw[to_eval_list_index].index(" as ")
                         postfix = to_eval_list_raw[to_eval_list_index][as_index:]
@@ -248,13 +248,13 @@ def find_replacements(location, package_regex=None, verbose=False):
                         original_mod_string = to_eval_list[to_eval_list_index].strip()  # the name for the module as originally called in the document
                     if original_mod_string != new_mod_as_string:  # if the names differ, we use the original name as it was called in the document
                         if verbose and interesting_examples['A'] < number_examples_to_print:
-                            log_messages += (f'A. Interesting example (module has multiple names) at {location} line number {row_index + 1}. '
+                            log_messages += (f'A. Interesting example (module has multiple names) at {location}:{row_index + 1}. '
                                              f'Names: {original_mod_string}, {new_mod_as_string}. '
                                              f'Replacing new {new_mod_as_string} by original {original_mod_string}.\n')
                             interesting_examples['A'] += 1
                         new_import_statement = new_import_statement.replace(' ' + new_mod_as_string, ' ' + new_mod_as_string + ' as ' + original_mod_string)
                         if " as " in postfix and interesting_examples['G'] < number_examples_to_print:
-                            log_messages += (f'G. Interesting example (module has multiple names) at {location} line number {row_index + 1}. '
+                            log_messages += (f'G. Interesting example (module has multiple names) at {location}:{row_index + 1}. '
                                              f'Names: {original_mod_string}, {new_mod_as_string}. '
                                              f'Replacing new {new_mod_as_string} by original {original_mod_string}.\n')
                             interesting_examples['G'] += 1
@@ -333,10 +333,10 @@ def process_line(location, line, replacements, import_index, verbose=False):
         # new_line = replacement[2].replace('from ',' '*leading_space + 'from ') # adds correct amount of indentation to the replacement at each line
         if verbose and leading_space > 0:
             if len(replacement) == 4 and interesting_examples['F'] < number_examples_to_print:
-                log_messages += f'F. Interesting example (has leading space and multiline) at {location} row number {replacement[0] + 1}\n'
+                log_messages += f'F. Interesting example (has leading space and multiline) at {location}:{replacement[0] + 1}\n'
                 interesting_examples['F'] += 1
             elif interesting_examples['E'] < number_examples_to_print:
-                log_messages += f'E. Interesting example (has leading space) at {location} row number {replacement[0] + 1}\n'
+                log_messages += f'E. Interesting example (has leading space) at {location}:{replacement[0] + 1}\n'
                 interesting_examples['E'] += 1
 
     else:  # if line does not contain .all
