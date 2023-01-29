@@ -181,7 +181,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                         to_exec += lines[row_index + span].strip()
                         to_eval += lines[row_index + span].strip()
                         to_eval_raw += lines[row_index + span].strip()
-                    if span > 0 and verbose:  # useful to see these multiline examples for debugging
+                    if span and verbose:  # useful to see these multiline examples for debugging
                         if " as " in to_eval_raw and interesting_examples['D'] < number_examples_to_print:
                             log_messages += f'D. Interesting example (spans multiple lines and has " as ") at {location} line number {row_index + 1}\n'
                             interesting_examples['D'] += 1
@@ -264,20 +264,18 @@ def find_replacements(location, package_regex=None, verbose=False):
                     to_eval_list_index += 1
                 # [:-1] on change_to gets rid of the last '\n' we added which adds an unnecessary new line
                 replacement = [row_index, import_index, change_to[:-1]].copy()
-                if span > 0:
+                if span:
                     # if original statement spanned multiple lines, we store that information to signal that we need to skip lines
                     # as we read the document in the function make_replacements_in_file
                     replacement.append(span)
-                if skip_line is False:
+                if not skip_line:
                     replacements.append(replacement)
-                else:
-                    print(replacement[2])
             row_index += 1
             skip_line = False
     # keeping track of the numbers of files changed and statements replaced
     global numberStatementsReplaced, numberFilesChanged
     numberStatementsReplaced += len(replacements)
-    if len(replacements) > 0:
+    if replacements:
         numberFilesChanged += 1
     return replacements
 
@@ -324,7 +322,7 @@ def process_line(location, line, replacements, import_index, verbose=False):
     if import_index == replacements[0][0]:  # if line marked as containing .all
         replacement = replacements.pop(0)
         leading_space = 0
-        while len(line) > 0 and line[leading_space] == ' ' and leading_space < len(line)-1:
+        while line and line[leading_space] == ' ' and leading_space < len(line)-1:
             leading_space += 1
         new_line = ' '*leading_space + replacement[2]  # adds leading space to first line (which may or may not start with 'from')
         new_line = new_line.replace('\n', '\n'+' '*leading_space)  # adds correct amount of indentation to the replacement at each line
@@ -380,7 +378,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
     while row_index < len(lines):  # looping through the file
         line = lines[row_index]
         span = 0  # keeps track of number of lines import statement spans
-        if len(replacements) > 0 and row_index == replacements[0][0] and len(replacements[0]) == 4:
+        if replacements and row_index == replacements[0][0] and len(replacements[0]) == 4:
             span = replacements[0][3]  # if import statement spans span lines
         # returns the line if no replacements are needed and returns the processed line otherwise
         new_line, replacements = process_line(location, line, replacements, row_index, verbose=verbose)
