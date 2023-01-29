@@ -102,7 +102,7 @@ def krawtchouk(n, q, l, x, check=True):
         ...
         TypeError: no conversion of this rational to integer
     """
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
     from sage.arith.srange import srange
     # Use the expression in equation (55) of MacWilliams & Sloane, pg 151
     # We write jth term = some_factor * (j-1)th term
@@ -171,7 +171,7 @@ def eberlein(n, w, k, u, check=True):
         TypeError: either m or x-m must be an integer
 
     """
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
     from sage.arith.srange import srange
 
     if 2*w > n:
@@ -275,7 +275,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
     """
     from sage.numerical.mip import MixedIntegerLinearProgram
-    from sage.arith.all import binomial
+    from sage.arith.misc import binomial
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)

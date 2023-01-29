@@ -935,7 +935,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
             if running_mod > bound:
                 break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
         l = l[:i + 1]
-        from sage.arith.all import CRT_list
+        from sage.arith.misc import CRT_list
         return (CRT_list(l, mods) + offset) % ord
     except ValueError:
         raise ValueError("no discrete log of %s found to base %s" % (a, base))

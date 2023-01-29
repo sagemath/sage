@@ -214,7 +214,8 @@ from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-from sage.arith.all import GCD, binomial
+from sage.arith.misc import GCD
+from sage.arith.misc import binomial
 from sage.groups.all import SymmetricGroup
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.rings.rational_field import QQ
