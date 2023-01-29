@@ -10,7 +10,8 @@ Weyl Character Rings
 # ****************************************************************************
 
 import sage.combinat.root_system.branching_rules
-from sage.categories.all import Algebras, AlgebrasWithBasis
+from sage.categories.algebras import Algebras
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem

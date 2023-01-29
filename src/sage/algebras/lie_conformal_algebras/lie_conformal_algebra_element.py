@@ -14,7 +14,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.misc.misc_c import prod
 from sage.misc.repr import repr_lincomb
 from sage.misc.latex import latex

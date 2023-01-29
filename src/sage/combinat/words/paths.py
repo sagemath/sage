@@ -1226,7 +1226,7 @@ class FiniteWordPath_all(SageObject):
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
 
         """
-        from sage.all import n
+        from sage.misc.functional import N as n
         f = lambda x: n(x,digits=3)
         l = [str(tuple(map(f, pt))) for pt in self.points()]
         return ' -- '.join(l)

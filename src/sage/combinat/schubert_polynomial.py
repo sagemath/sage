@@ -74,7 +74,7 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.all import GradedAlgebrasWithBasis
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

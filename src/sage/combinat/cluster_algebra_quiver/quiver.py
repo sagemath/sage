@@ -558,7 +558,9 @@ class ClusterQuiver(SageObject):
         """
         from sage.plot.colors import rainbow
         from sage.graphs.graph_generators import GraphGenerators
-        from sage.all import e, pi, I
+        from sage.symbolic.constants import e
+        from sage.symbolic.constants import pi
+        from sage.rings.imaginary_unit import I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
 

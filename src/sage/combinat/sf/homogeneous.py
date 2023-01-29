@@ -29,7 +29,8 @@ from . import multiplicative, classical
 from sage.combinat.partition import Partition
 from sage.rings.infinity import infinity
 from sage.misc.misc_c import prod
-from sage.arith.all import factorial, binomial
+from sage.arith.misc import factorial
+from sage.arith.misc import binomial
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):

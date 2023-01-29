@@ -24,7 +24,7 @@ from sage.structure.richcmp import richcmp
 #from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import powerset
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.algebras import Algebras
 from sage.combinat.diagram_algebras import (TemperleyLiebDiagrams, diagram_latex,

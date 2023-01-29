@@ -207,7 +207,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.matrix.all import Matrix, identity_matrix
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
 from sage.structure.element import is_Matrix
 from sage.interfaces.gap3 import gap3
 from sage.rings.universal_cyclotomic_field import E
@@ -1548,7 +1549,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         if self.is_crystallographic():
             from sage.combinat.root_system.cartan_matrix import CartanMatrix as CartanMat
         else:
-            from sage.matrix.all import Matrix as CartanMat
+            from sage.matrix.constructor import Matrix as CartanMat
         return CartanMat(self._gap_group.CartanMat().sage())
 
     def invariant_form(self, brute_force=False):

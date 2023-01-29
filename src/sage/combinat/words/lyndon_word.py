@@ -17,7 +17,10 @@ from sage.structure.parent import Parent
 
 from sage.combinat.composition import Composition, Compositions
 from sage.rings.integer import Integer
-from sage.arith.all import divisors, gcd, moebius, multinomial
+from sage.arith.misc import divisors
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import moebius
+from sage.arith.misc import multinomial
 
 from sage.combinat.necklace import _sfc
 from sage.combinat.words.words import FiniteWords

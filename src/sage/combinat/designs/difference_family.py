@@ -1268,8 +1268,8 @@ def turyn_1965_3x3xK(k=4):
 
 def _is_periodic_sequence(seq, period):
     r"""Check if the sequence is periodic with correct period.
-    
-    The sequence should have length at least twice the period, so that 
+
+    The sequence should have length at least twice the period, so that
     periodicity can be checked.
 
     INPUT:
@@ -1280,7 +1280,7 @@ def _is_periodic_sequence(seq, period):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import _is_periodic_sequence 
+        sage: from sage.combinat.designs.difference_family import _is_periodic_sequence
         sage: _is_periodic_sequence([0, 1, 2, 3, 0, 1, 2, 3], 4)
         True
         sage: _is_periodic_sequence([0, 1, 0, 1, 0, 1, 0, 1], 4)
@@ -1304,18 +1304,18 @@ def _is_periodic_sequence(seq, period):
     return True
 
 def _create_m_sequence(q, n, check=True):
-    r"""Create an m-sequence over GF(q) with period `q^n-1`. 
-    
+    r"""Create an m-sequence over GF(q) with period `q^n-1`.
+
     Given a prime power `q`, the m-sequence is created as described by [Zie1959]_
     from a primitive function over the finite field `GF(q)`.
 
-    Given a primitive function `f=c_0+c_1x+...+c_nx^n` over `K=GF(q)` of degree `n`, 
+    Given a primitive function `f=c_0+c_1x+...+c_nx^n` over `K=GF(q)` of degree `n`,
     the recurrence is given by: `a_i = -c_0^{-1}(c_1a_{i-1}+...+c_na{i-n})`.
     The first `n` elements will be `0,0,...,0,1` and these will give a maximal length recurrence sequence
     as shown in [Mit2008]_.
 
     INPUT:
-    
+
     - ``q`` -- a prime power.
 
     - ``n`` -- a nonnegative number.
@@ -1344,18 +1344,18 @@ def _create_m_sequence(q, n, check=True):
         raise ValueError('n cannot be negative')
 
     K = GF(q, 'a')
-    
+
     T = PolynomialRing(K, 'x')
     primitive = T.irreducible_element(n, algorithm='random')
     while not primitive.is_primitive():
         primitive = T.irreducible_element(n, algorithm='random')
     coeffs = primitive.coefficients()
     exps = primitive.exponents()
-    
+
     period = q**n - 1
     seq_len = period*2 if check else period
     seq = [1]+[0]*(n-1)
-    
+
     while len(seq) < seq_len:
         nxt = 0
         for i, coeff in zip(exps[1:], coeffs[1:]):
@@ -1368,14 +1368,14 @@ def _create_m_sequence(q, n, check=True):
 
 def _get_submodule_of_order(G, order):
     r"""Construct a submodule of the given order from group `G`.
-    
+
     This method tries to construct submodules from various elements of `G` until
-    a submodule of the correct order is found. 
-    
+    a submodule of the correct order is found.
+
     INPUT:
-    
+
     - ``G`` -- an additive abelian group.
-    
+
     - ``order`` -- integer, the order of the desired syubmodule.
 
     TESTS:
@@ -1396,9 +1396,9 @@ def _get_submodule_of_order(G, order):
 
 def relative_difference_set_from_m_sequence(q, N, check=True):
     r"""Construct `R((q^N-1)/(q-1), q-1, q^{N-1}, q^{N-2})` where `q` is a prime power and `N\ge 2`.
-    
+
     The relative difference set is constructed over the set of additive integers modulo `q^N-1`,
-    as described in Theorem 5.1 of [EB1966]_. Given an m-sequence `(a_i)` of period `q^N-1`, the 
+    as described in Theorem 5.1 of [EB1966]_. Given an m-sequence `(a_i)` of period `q^N-1`, the
     set is: `R=\{i | 0 \le i \le q^{N-1}, a_i=1\}`.
 
     INPUT:
@@ -1412,7 +1412,7 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence 
+        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence
         sage: relative_difference_set_from_m_sequence(2, 4) #random
         [(0), (4), (5), (6), (7), (9), (11), (12)]
         sage: relative_difference_set_from_m_sequence(8, 2, check=False) #random
@@ -1446,7 +1446,7 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
     m_seq = _create_m_sequence(q, N, check=False)
     period = q**N-1
     G = AdditiveAbelianGroup([period])
-    
+
     set1 = [i for i in G if m_seq[i[0]] == 1]
 
     if check:
@@ -1524,9 +1524,9 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True):
 def is_relative_difference_set(R, G, H, params, verbose =False):
     r"""Check if `R` is a difference set of `G` relative to `H`, with the given parameters.
 
-    This function checks that `G`, `H` and `R` have the orders specified in the parameters, and 
+    This function checks that `G`, `H` and `R` have the orders specified in the parameters, and
     that `R` satisfies the definition of relative difference set (from [EB1966]_): the collection of
-    differences `r-s`, `r,s \in R`, `r \neq s` contains only elements of `G` which are not in `H`, and contains 
+    differences `r-s`, `r,s \in R`, `r \neq s` contains only elements of `G` which are not in `H`, and contains
     every such element exactly `d` times.
 
     INPUT:
@@ -1562,33 +1562,33 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
     """
     m, n, k, d = params
     if G.order() != m*n:
-        if verbose: 
+        if verbose:
             print('Incorrect order of G:', G.order())
         return False
 
     if H.order() != n:
-        if verbose: 
+        if verbose:
             print('Incorect order of H:', H.order())
 
     if len(R) != k:
-        if verbose: 
+        if verbose:
             print('Length of R not correct:', len(R))
         return False
-    
+
     diff_set = {}
     for el1 in R:
         for el2 in R:
             if el1 != el2:
                 idx = el1-el2
-                if idx not in diff_set: 
+                if idx not in diff_set:
                     diff_set[idx] = 0
                 diff_set[idx] += 1
     values = [diff_set[x] for x in diff_set]
     if max(values) != d or min(values) != d:
-        if verbose: 
+        if verbose:
             print('There is a value in the difference set which is not repeated d times')
         return False
-    
+
     for el in G:
         if el in H and el in diff_set:
             if verbose:
@@ -1603,8 +1603,8 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
 
 def is_supplementary_difference_set(Ks, v, lmbda):
     r"""Check that the sets in ``Ks`` are `n-\{v; k_1,...,k_n; \lambda \}` supplementary difference sets.
-    
-    From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of an additive abelian group `G` of order `v` 
+
+    From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of an additive abelian group `G` of order `v`
     such that `|S_i|= k_i`. If, for each `g\in G`, `g \neq 0`, the total number of solutions of `a_i-a'_i = g`, with
     `a_i,a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1,...,k_n;\lambda\}` supplementary difference sets.
 
@@ -1617,7 +1617,7 @@ def is_supplementary_difference_set(Ks, v, lmbda):
     - ``lmbda`` -- integer, the parameter `\lambda` of the supplementary difference sets.
 
     EXAMPLES::
-        
+
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set, is_supplementary_difference_set
         sage: S1, S2, S3, S4 = supplementary_difference_set(17)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], 16, 16)
@@ -1639,7 +1639,7 @@ def is_supplementary_difference_set(Ks, v, lmbda):
         for el1 in K:
             for el2 in K:
                 diff = G[el1]-G[el2]
-                
+
                 if diff not in differences_counter:
                     differences_counter[diff] = 0
                 differences_counter[diff] += 1
@@ -1655,12 +1655,12 @@ def is_supplementary_difference_set(Ks, v, lmbda):
 def supplementary_difference_set(q, existence=False, check=True):
     r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
 
-    The sets are created from relative difference sets as detailed in Theorem 3.3 of [Spe1975]_. this construction 
+    The sets are created from relative difference sets as detailed in Theorem 3.3 of [Spe1975]_. this construction
     requires that `q` is an odd prime power and that there exists `s \ge 0` such that `(q-(2^{s+1}+1))/2^{s+1}` is
     an odd prime power.
 
-    Note that the construction from [Spe1975]_ states that the resulting sets are `4-\{2v; v+1, v, v, v; 2v\}` 
-    supplementary difference sets. However, the implementation of that construction returns 
+    Note that the construction from [Spe1975]_ states that the resulting sets are `4-\{2v; v+1, v, v, v; 2v\}`
+    supplementary difference sets. However, the implementation of that construction returns
     `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets. This is not important, since the supplementary
     difference sets are not ordered.
 
@@ -1671,14 +1671,14 @@ def supplementary_difference_set(q, existence=False, check=True):
     - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
       can be constructed.
 
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets 
+    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
       before returning them.
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers), or raises an 
+    If ``existence`` is false, the function returns the 4 sets (containing integers), or raises an
     error if ``q`` does not satify the constraints.
-    If ``existence`` is true, the function returns a boolean representing whether supplementary difference 
+    If ``existence`` is true, the function returns a boolean representing whether supplementary difference
     sets can be constructed.
 
     EXAMPLES::
@@ -1691,7 +1691,7 @@ def supplementary_difference_set(q, existence=False, check=True):
         [0, 2, 6, 9, 11, 12, 13, 15])
 
     If existence is ``True``, the function returns a boolean::
-        
+
         sage: supplementary_difference_set(7, existence=True)
         False
         sage: supplementary_difference_set(17, existence=True)
@@ -1732,8 +1732,8 @@ def supplementary_difference_set(q, existence=False, check=True):
         if is_prime_power(prime_pow) and prime_pow % 2 == 1:
             m = (q - (2**(s+1) + 1)) // 2**(s+1) + 1
             break
-        s += 1    
-    
+        s += 1
+
     if existence:
         return is_prime_power(q) and q % 2 == 1 and m != -1
 
@@ -1741,12 +1741,12 @@ def supplementary_difference_set(q, existence=False, check=True):
         raise ValueError('q must be an odd prime power')
     if m == -1:
         raise ValueError('There is no s for which m-1 is an odd prime power')
-   
+
     set1 = relative_difference_set_from_homomorphism(m-1, 2, (m-2)//2, check=False)
-    
+
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     P = PolynomialRing(ZZ, 'x')
-    
+
     #Compute psi3, psi4
     hall = 0
     for d in set1:
@@ -1755,7 +1755,7 @@ def supplementary_difference_set(q, existence=False, check=True):
     T_2m = 0
     for i in range(2*m):
         T_2m += P.monomial(i)
-    
+
     modulo = P.monomial(2*m)-1
 
     diff = T_2m - (1+P.monomial(m))*hall
@@ -1771,7 +1771,7 @@ def supplementary_difference_set(q, existence=False, check=True):
     for i in range(s):
         psi3 = (alfa3(P.monomial(2))+P.monomial(1)*alfa4(P.monomial(2))).mod(P.monomial(4*m)-1)
         psi4 = (alfa3(P.monomial(2)) + P.monomial(1)*(T_2m(P.monomial(2)) - alfa4(P.monomial(2)))).mod(P.monomial(4*m)-1)
-    
+
     # Construction of psi1, psi2
     set2 = relative_difference_set_from_m_sequence(q, 2, check=False)
     s3 = _get_fixed_relative_difference_set(set2)
@@ -1782,7 +1782,7 @@ def supplementary_difference_set(q, existence=False, check=True):
             diff = (s3[i]-s3[j])
             if diff%(q-1) == 0 and diff%(q**2-1) != 0:
                 phi_exps.append(s3[i])
-    
+
     exps1 = [(x+1)//2 for x in phi_exps if x%2 == 1]
     exps2 = [x//2 for x in phi_exps if x%2 == 0]
 
@@ -1824,14 +1824,14 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
     of this set fixed by `q` (see Section 3 of [Spe1975]_). We say that a set is fixed by `t` if
     `\{td | d\in R\}= R`.
 
-    In addition, the set returned by this function will contain the element `0`. This is needed in the 
+    In addition, the set returned by this function will contain the element `0`. This is needed in the
     construction of supplementary difference sets (see :func:`supplementary_difference_set`).
 
     INPUT:
-    
+
     - ``rel_diff_set`` -- the relative difference set.
 
-    - ``as_elements`` -- boolean (default False). If true, the list returned will contain elements of the 
+    - ``as_elements`` -- boolean (default False). If true, the list returned will contain elements of the
       abelian group (this may slow down the computation considerably).
 
     OUTPUT:
@@ -1842,11 +1842,11 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, _get_fixed_relative_difference_set 
+        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, _get_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(5, 2)
         sage: _get_fixed_relative_difference_set(s1) #random
-        [2, 10, 19, 23, 0] 
-    
+        [2, 10, 19, 23, 0]
+
     If ``as_elements`` is true, the reuslt will contain elements of the group::
 
         sage: _get_fixed_relative_difference_set(s1, as_elements=True) #random
@@ -1871,7 +1871,7 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
     """
     G = rel_diff_set[0].parent()
     q = len(rel_diff_set)
-    
+
     s2 = None
     for el in G:
         fixed_set = [el+x for x in rel_diff_set]
@@ -1894,20 +1894,20 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
 
 def _is_fixed_relative_difference_set(R, q):
     r"""Check if the relative difference set `R` is fixed by `q`.
-    
+
     A relative difference set  `R` is fixed by `q` if  `\{qd | d\in R\}= R` (see Section 3 of [Spe1975]_).
 
     INPUT:
 
     - ``R`` -- the relative difference sets, as a list containing elements of the abelian group.
 
-    - ``q`` -- an integer. 
+    - ``q`` -- an integer.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, _get_fixed_relative_difference_set, _is_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=True) 
+        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=True)
         sage: _is_fixed_relative_difference_set(s2, len(s2))
         True
         sage: G = AdditiveAbelianGroup([15])
@@ -1918,7 +1918,7 @@ def _is_fixed_relative_difference_set(R, q):
     If the relative difference set does not contain elements of the group, the method returns false::
 
         sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=False) 
+        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=False)
         sage: _is_fixed_relative_difference_set(s2, len(s2))
         False
 
@@ -1927,18 +1927,18 @@ def _is_fixed_relative_difference_set(R, q):
     for el in R:
         if q*el not in R:
             return False
-    return True 
+    return True
 
 
 def skew_supplementary_difference_set(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1+n_2+n_3+n_4= n+\lambda`.
 
-    These sets are constructed from available data, as described in [Djo1994]_. The set `S_1 \subset G` is 
+    These sets are constructed from available data, as described in [Djo1994]_. The set `S_1 \subset G` is
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus\{0\}`.
 
     The data for `n = 103, 151` is taken from [Djo1994]_ and the data for `n = 67, 113, 127, 157, 163, 181, 241`
     is taken from [Djo1992]_.
-    
+
     INPUT:
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
@@ -1946,14 +1946,14 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
       can be constructed.
 
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets 
+    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
       with `S_1` skew before returning them. Setting this parameter to False may speed up the computation considerably.
-    
+
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers modulo `n`), or raises an 
+    If ``existence`` is false, the function returns the 4 sets (containing integers modulo `n`), or raises an
     error if data for the given ``n`` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether skew supplementary difference 
+    If ``existence`` is true, the function returns a boolean representing whether skew supplementary difference
     sets can be constructed.
 
     EXAMPLES::
@@ -1962,7 +1962,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         sage: S1, S2, S3, S4 = skew_supplementary_difference_set(103)
 
     If existence is ``True``, the function returns a boolean ::
-        
+
         sage: skew_supplementary_difference_set(103, existence=True)
         True
         sage: skew_supplementary_difference_set(17, existence=True)
@@ -1991,14 +1991,14 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         True
     """
 
-    
+
     indices = {
         67:  [[0,3,5,6,9,10,13,14,17,18,20],
               [0,2,4,9,11,12,13,16,19,21],
               [1,3,6,10,11,13,14,16,20,21],
               [2,4,6,8,9,11,14,17,19]],
-        103: [[1,3,4,6,8,11,12,14,17,18,20,22,25,27,28,30,32], 
-              [2,9,10,12,13,14,15,16,20,21,22,23,24,26,28,29,30], 
+        103: [[1,3,4,6,8,11,12,14,17,18,20,22,25,27,28,30,32],
+              [2,9,10,12,13,14,15,16,20,21,22,23,24,26,28,29,30],
               [0,1,2,3,4,11,12,13,16,17,19,20,21,24,25,26,28,30,31],
               [0,1,2,3,4,5,6,13,15,18,19,20,23,24,25,26,27,28,29,31]],
         113: [[0,3,4,6,8,10,13,14],
@@ -2064,13 +2064,13 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
 
     if existence:
         return n in indices
-    
+
     if n not in indices:
         raise ValueError(f'Skew SDS of order {n} not yet implemented.')
-    
+
     Z = Zmod(n)
     H = list(map(Z, H_db[n]))
-    
+
     cosets = []
     for el in cosets_gens[n]:
         even_coset = []
@@ -2080,7 +2080,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
             odd_coset.append(-x*el)
         cosets.append(even_coset)
         cosets.append(odd_coset)
-    
+
     S1 = generate_set(indices[n][0], cosets)
     S2 = generate_set(indices[n][1], cosets)
     S3 = generate_set(indices[n][2], cosets)
@@ -2090,16 +2090,16 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         lmbda = len(S1)+len(S2)+len(S3)+len(S4) - n
         assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
         assert _is_skew_set(S1, n)
-        
+
     return S1, S2, S3, S4
 
 def _is_skew_set(S, n):
     r"""Check if `S` is a skew set over the set of integers modulo `n`.
 
-    From [Djo1994]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew 
+    From [Djo1994]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew
     type if `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus \{0\}`.
 
-    INPUT: 
+    INPUT:
 
     - ``S`` -- the set to be checked, containing integers modulo `n`.
 

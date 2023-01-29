@@ -129,7 +129,10 @@ from sage.matrix.matrix2 cimport Matrix
 import sage.matrix.constructor
 from sage.matrix.constructor import matrix
 from copy import copy, deepcopy
-from sage.rings.all import ZZ, QQ, FiniteField, GF
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import Q as QQ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 import itertools
 from itertools import combinations, product
 

@@ -308,7 +308,8 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.arith.all import factorial, gcd
+from sage.arith.misc import factorial
+from sage.arith.misc import GCD as gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
@@ -326,7 +327,7 @@ from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.graphs.dot2tex_utils import have_dot2tex
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 
 class Partition(CombinatorialElement):

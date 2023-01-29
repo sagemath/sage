@@ -35,9 +35,14 @@ Pickling test::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
-                            factor, gcd, kronecker_symbol, valuation)
-from sage.rings.all import RR, Integer
+from sage.arith.misc import hilbert_conductor_inverse
+from sage.arith.misc import hilbert_conductor
+from sage.arith.misc import factor
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import valuation
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF

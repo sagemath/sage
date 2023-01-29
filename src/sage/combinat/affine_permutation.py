@@ -23,7 +23,7 @@ from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition

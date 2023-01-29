@@ -171,7 +171,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.arith.all import bernoulli, factorial
+from sage.arith.misc import bernoulli
+from sage.arith.misc import factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.pari.all import pari

@@ -26,7 +26,10 @@ from sage.combinat.composition import Composition
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.arith.all import euler_phi, factorial, divisors, gcd
+from sage.arith.misc import euler_phi
+from sage.arith.misc import factorial
+from sage.arith.misc import divisors
+from sage.arith.misc import GCD as gcd
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod

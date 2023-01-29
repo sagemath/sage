@@ -21,7 +21,8 @@ from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
 from sage.sets.set import Set, Set_generic
 from sage.graphs.graph import Graph
-from sage.arith.all import factorial, binomial
+from sage.arith.misc import factorial
+from sage.arith.misc import binomial
 from .permutation import Permutations
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

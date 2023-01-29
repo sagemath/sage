@@ -33,7 +33,8 @@ from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_c import reduced_word_c, reduce_in_coset
-from sage.matrix.all import Matrix, identity_matrix
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
 
 
 cdef class ComplexReflectionGroupElement(PermutationGroupElement):

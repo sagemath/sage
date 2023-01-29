@@ -354,7 +354,7 @@ mutating at the initial seed::
 
 from copy import copy
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
 from sage.categories.rings import Rings

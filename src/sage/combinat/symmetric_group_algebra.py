@@ -21,7 +21,7 @@ from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.categories.weyl_groups import WeylGroups
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement

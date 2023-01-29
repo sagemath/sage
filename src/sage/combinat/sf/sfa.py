@@ -1013,7 +1013,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 m = lam.to_exp_dict() # == {i: m_i | i occurs in lam}
                 p = self.realization_of().power()
                 h = self.realization_of().complete()
-                from sage.arith.all import moebius, squarefree_divisors
+                from sage.arith.misc import moebius
+                from sage.arith.misc import squarefree_divisors
                 mu = moebius
 
                 def component(i, g):  # == h_g[L_i]
@@ -1802,7 +1803,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: TestSuite(s).run()
         """
         R = Sym.base_ring()
-        from sage.categories.all import CommutativeRings
+        from sage.categories.commutative_rings import CommutativeRings
         if R not in CommutativeRings():
             raise TypeError("argument R must be a commutative ring")
         try:
@@ -4707,7 +4708,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         parent = self.parent()
         if parent.has_coerce_map_from(QQ):
             from sage.combinat.partition import Partition
-            from sage.arith.all import gcd, lcm
+            from sage.arith.misc import GCD as gcd
+            from sage.arith.functions import lcm
             from itertools import product, repeat, chain
             p = parent.realization_of().power()
 

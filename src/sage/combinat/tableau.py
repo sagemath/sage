@@ -97,7 +97,8 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.infinity import PlusInfinity
-from sage.arith.all import factorial, binomial
+from sage.arith.misc import factorial
+from sage.arith.misc import binomial
 from sage.arith.misc import multinomial
 from sage.rings.integer import Integer
 from sage.combinat.composition import Composition, Compositions

@@ -43,13 +43,13 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.sets.all import Set
+from sage.sets.set import Set
 from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
 from sage.misc.misc_c import prod
-from sage.matrix.all import identity_matrix
+from sage.matrix.special import identity_matrix
 from sage.matrix.constructor import matrix
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
 from sage.rings.integer import Integer
@@ -3110,7 +3110,7 @@ class ClusterSeed(SageObject):
             sage: T2 == T
             True
         """
-        from sage.matrix.all import identity_matrix
+        from sage.matrix.special import identity_matrix
         if self._m != 0:
             raise ValueError("the b-matrix is not square")
         M = self._M.stack(identity_matrix(self._n))
@@ -4600,7 +4600,7 @@ def _bino(n, k):
         0
     """
     if n >= 0:
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         return binomial(n, k)
     else:
         return 0

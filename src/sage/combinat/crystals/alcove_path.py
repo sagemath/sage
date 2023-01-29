@@ -31,7 +31,7 @@ from sage.categories.loop_crystals import LoopCrystals
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.all import vector
+from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.integer import Integer
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod

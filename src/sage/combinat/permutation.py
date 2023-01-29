@@ -253,7 +253,8 @@ from sage.libs.gap.libgap import libgap
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.arith.all import factorial, multinomial
+from sage.arith.misc import factorial
+from sage.arith.misc import multinomial
 from sage.matrix.matrix_space import MatrixSpace
 from sage.combinat.tools import transitive_ideal
 from sage.combinat.composition import Composition
