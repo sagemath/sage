@@ -50,12 +50,12 @@ to find the correct ``import`` statement.
 # Importing packages
 
 from sage.misc.dev_tools import import_statements
-# import sage.all
-from sage.all import *
 import os
 import re
 import argparse
 
+# We import this using __import__ so that "tox -e relint" does not complain about this source file.
+__import__("sage.all", globals(), locals(), ["*"])
 
 # Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
 
