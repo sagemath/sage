@@ -108,8 +108,8 @@ Or the algebraic field::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.rational_field import Q as QQ
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer

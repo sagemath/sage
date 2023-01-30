@@ -39,8 +39,8 @@ arbitrary indexing set and values are
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.rational_field import Q as QQ
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity, minus_infinity
 from sage.categories.fields import Fields
