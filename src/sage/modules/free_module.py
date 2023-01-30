@@ -6718,7 +6718,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if not B:
             return 1
         d = B[0].denominator()
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         for x in B[1:]:
             d = lcm(d,x.denominator())
         return d
