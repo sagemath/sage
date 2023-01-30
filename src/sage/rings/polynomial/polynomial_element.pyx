@@ -116,10 +116,8 @@ from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
 
-from sage.arith.misc import sort_complex_numbers_for_display
-from sage.arith.misc import power_mod
+from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
-from sage.arith.misc import is_prime
 
 from . import polynomial_fateman
 
