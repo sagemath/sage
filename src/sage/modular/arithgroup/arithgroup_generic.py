@@ -1,5 +1,5 @@
 r"""
-Arithmetic subgroups (finite index subgroups of `\SL_2(\ZZ)`)
+Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 """
 ################################################################################
 #

@@ -2269,7 +2269,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 0  0  0]
         """
         p = self.fetch('pivots')
-        if not p is None:
+        if p is not None:
             return tuple(p)
 
         cdef Matrix_integer_dense E
@@ -3582,7 +3582,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                              "or 'linbox'")
 
         r = self.fetch('rank')
-        if not r is None:
+        if r is not None:
             return r
 
         if algorithm == 'flint' or (self._nrows <= 6 and self._ncols <= 6

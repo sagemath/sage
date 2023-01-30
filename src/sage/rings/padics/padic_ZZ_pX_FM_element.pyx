@@ -260,7 +260,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             tmp_Int = Integer.__new__(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
-        elif isinstance(x, (int, long)):
+        elif isinstance(x, int):
             x = Integer(x)
         if isinstance(x, Integer):
             self._set_from_mpz((<Integer>x).value)

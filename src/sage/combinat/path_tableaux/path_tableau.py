@@ -429,10 +429,12 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
                     G.add_edge(a,b,"%d,%d" % (i,j))
         return G
 
+
 class PathTableaux(UniqueRepresentation,Parent):
     """
     The abstract parent class for PathTableau.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -458,6 +460,7 @@ class PathTableaux(UniqueRepresentation,Parent):
         """
         return self.element_class(self, *args, **kwds)
 
+
 class CylindricalDiagram(SageObject):
     r"""
     Cylindrical growth diagrams.
@@ -474,6 +477,7 @@ class CylindricalDiagram(SageObject):
         [ ,  ,  ,  ,  , 0, 1, 0, 1, 2, 1, 0]
         [ ,  ,  ,  ,  ,  , 0, 1, 2, 3, 2, 1, 0]
     """
+
     def __init__(self, T):
         """
         Initialize ``self`` from the

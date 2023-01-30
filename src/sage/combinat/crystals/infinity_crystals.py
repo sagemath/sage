@@ -294,6 +294,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
+
         def phi(self,i):
             r"""
             Return `\varphi_i` of ``self``.

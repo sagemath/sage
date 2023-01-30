@@ -1,5 +1,5 @@
 """
-Ternary Quadratic Form with integer coefficients
+Ternary quadratic form with integer coefficients
 
 AUTHOR:
 

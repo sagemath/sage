@@ -73,6 +73,7 @@ class ShuffleProduct_abstract(Parent):
     """
     Abstract base class for shuffle products.
     """
+
     def __init__(self, l1, l2, element_constructor=None):
         """
         Initialize ``self``.
@@ -196,6 +197,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
          [6, 1],
          [6, 2, 3]]
     """
+
     def __init__(self, l1, l2, element_constructor=None):
         """
         Construct the set of all possible shuffle products of two sets of iterables.
@@ -336,6 +338,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
         ['de']
 
     """
+
     def __init__(self, l1, l2, element_constructor=None):
         """
         Construct the shuffle product of two iterable.
@@ -556,6 +559,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
          word: 939,
          word: 9,2,10]
     """
+
     def __init__(self, w1, w2, r, element_constructor=None, add=operator.add):
         """
         Initialize ``self``.
@@ -765,6 +769,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
          [{2, 3}, {1, 2}, {3, 4, 5, 6}],
          [{1, 2, 3}, {3, 4, 5, 6}]]
     """
+
     def __init__(self, w1, w2, element_constructor=None, add=operator.add):
         """
         Initialize ``self``.

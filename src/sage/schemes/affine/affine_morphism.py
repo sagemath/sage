@@ -1148,9 +1148,9 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: H = End(A)
             sage: f = H([(QQbar(sqrt(2))*x^2 + 1/QQbar(sqrt(3))) / (5*x)])
             sage: f.reduce_base_field()
-            Scheme endomorphism of Affine Space of dimension 1 over Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a = 1.931851652578137?
+            Scheme endomorphism of Affine Space of dimension 1 over Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a = ...?
               Defn: Defined on coordinates by sending (x) to
-                    (((a^3 - 3*a)*x^2 + (1/3*a^2 - 2/3))/(5*x))
+                    (((a^3 - 3*a)*x^2 + (-1/3*a^2 + 2/3))/(5*x))
 
         ::
 

@@ -110,23 +110,23 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             sage: V = lie_conformal_algebras.Virasoro(QQ)
             sage: TestSuite(V).run()
         """
-        is_super = kwds.get('super',None)
+        is_super = kwds.get('super', None)
         default_category = LieConformalAlgebras(R).WithBasis().FinitelyGenerated().Graded()
         if is_super or parity:
             category = default_category.Super().or_subcategory(category)
         else:
             category = default_category.or_subcategory(category)
 
-        LieConformalAlgebraWithStructureCoefficients.__init__(self,R,
-            s_coeff,index_set=index_set,central_elements=central_elements,
+        LieConformalAlgebraWithStructureCoefficients.__init__(self, R,
+            s_coeff, index_set=index_set, central_elements=central_elements,
             category=category, prefix=prefix,
             names=names, latex_names=latex_names, parity=parity, **kwds)
 
         if weights is None:
-            weights = (1,)* (len(self._generators) -
-                             len(self.central_elements()))
-        if len (weights) != (len(self._generators) -
-                                len(self.central_elements())):
-            raise ValueError("weights and (non-central) generator lists "\
+            weights = (1,) * (len(self._generators) -
+                              len(self.central_elements()))
+        if len(weights) != (len(self._generators) -
+                            len(self.central_elements())):
+            raise ValueError("weights and (non-central) generator lists "
                              "must be of same length")
         self._weights = weights

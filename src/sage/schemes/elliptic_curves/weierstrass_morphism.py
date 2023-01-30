@@ -487,6 +487,8 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         self._mpoly_ring = PolynomialRing(base_ring, ['x','y'])
         self._poly_ring = PolynomialRing(base_ring, ['x'])
+        self._xyfield = self._mpoly_ring.fraction_field()
+        self._xfield = self._poly_ring.fraction_field()
 
         self._domain = E
         self._codomain = F
@@ -748,14 +750,16 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: w(P).xy() == (f(P.xy()), g(P.xy()))
             True
 
-        TESTS::
+        TESTS:
+
+        Check for :trac:`34811`::
 
             sage: iso.rational_maps()[0].parent()
-            Multivariate Polynomial Ring in x, y over Rational Field
+            Fraction Field of Multivariate Polynomial Ring in x, y over Rational Field
             sage: iso.rational_maps()[1].parent()
-            Multivariate Polynomial Ring in x, y over Rational Field
+            Fraction Field of Multivariate Polynomial Ring in x, y over Rational Field
         """
-        return tuple(baseWI.__call__(self, self._mpoly_ring.gens()))
+        return tuple(baseWI.__call__(self, self._xyfield.gens()))
 
     def x_rational_map(self):
         """
@@ -775,12 +779,14 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: iso.x_rational_map() == iso.rational_maps()[0]
             True
 
-        TESTS::
+        TESTS:
+
+        Check for :trac:`34811`::
 
             sage: iso.x_rational_map().parent()
-            Univariate Polynomial Ring in x over Rational Field
+            Fraction Field of Univariate Polynomial Ring in x over Rational Field
         """
-        x, = self._poly_ring.gens()
+        x, = self._xfield.gens()
         return (x - self.r) / self.u**2
 
     def kernel_polynomial(self):

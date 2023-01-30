@@ -693,9 +693,9 @@ class FormsSpace_abstract(FormsRing_abstract):
             if (n == infinity):
                 # TODO: Figure out what to do in this case
                 # (l1 and l2 are no longer defined in an analog/unique way)
-                #l2 = num % ZZ(2)
-                #l1 = ((num-l2)/ZZ(2)).numerator()
-                ## TODO: The correct generalization seems (l1,l2) = (0,num)
+                # l2 = num % ZZ(2)
+                # l1 = ((num-l2)/ZZ(2)).numerator()
+                # TODO: The correct generalization seems (l1,l2) = (0,num)
                 l2 = ZZ(0)
                 l1 = num
             else:
