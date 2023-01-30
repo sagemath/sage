@@ -616,7 +616,6 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.dual.weight_space(base_ring, extended = extended)
 
-
     def ambient_lattice(self):
         r"""
         Return the ambient lattice for this root_system.

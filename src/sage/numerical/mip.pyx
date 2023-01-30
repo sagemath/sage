@@ -1133,20 +1133,20 @@ cdef class MixedIntegerLinearProgram(SageObject):
         for lb, (indices, values), ub in self.constraints():
             coeffs = dict(zip(indices, values))
             # Equalities
-            if (not lb is None) and lb == ub:
+            if (lb is not None) and lb == ub:
                 linear_function = []
                 linear_function = [coeffs.get(i,0) for i in range(nvar)]
                 linear_function.insert(0,-lb)
                 equalities.append(linear_function)
                 continue
             # Lower Bound
-            if not lb is None:
+            if lb is not None:
                 linear_function = []
                 linear_function = [coeffs.get(i,0) for i in range(nvar)]
                 linear_function.insert(0,-lb)
                 inequalities.append(linear_function)
             # Upper Bound
-            if not ub is None:
+            if ub is not None:
                 linear_function = []
                 linear_function = [-coeffs.get(i,0) for i in range(nvar)]
                 linear_function.insert(0,ub)
@@ -1157,20 +1157,20 @@ cdef class MixedIntegerLinearProgram(SageObject):
         for 0<= i < nvar:
             lb, ub = b.col_bounds(i)
             # Fixed variable
-            if (not lb is None) and lb == ub:
+            if (lb is not None) and lb == ub:
                 linear_function = copy(zero)
                 linear_function[i] = 1
                 linear_function.insert(0,-lb)
                 equalities.append(linear_function)
                 continue
             # Lower bound
-            if not lb is None:
+            if lb is not None:
                 linear_function = copy(zero)
                 linear_function[i] = 1
                 linear_function.insert(0,-lb)
                 inequalities.append(linear_function)
             # Upper bound
-            if not ub is None:
+            if ub is not None:
                 linear_function = copy(zero)
                 linear_function[i] = -1
                 linear_function.insert(0,ub)

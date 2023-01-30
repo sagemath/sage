@@ -22,6 +22,7 @@ class CartanType(CartanType_standard, CartanType_simple):
     """
     # We do not inherit from CartanType_crystallographic because it provides
     # methods that are not implemented for A_oo.
+
     def __init__(self, index_set):
         """
         EXAMPLES::

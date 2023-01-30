@@ -494,6 +494,7 @@ class RhombusPiece(PuzzlePiece):
         sage: RhombusPiece(delta,nabla)
         2/\3  6\/5
     """
+
     def __init__(self, north_piece, south_piece):
         r"""
         EXAMPLES::
@@ -650,6 +651,7 @@ class PuzzlePieces():
         [0/\0  0\/0, 0/\0  1\/10, 0/\10  10\/0, 0/\10  1\/1, 1/\0  0\/1,
         1/\1  10\/0, 1/\1  1\/1, 10/\1  0\/0, 10/\1  1\/10]
     """
+
     def __init__(self, forbidden_border_labels=None):
         r"""
         INPUT:
@@ -1070,6 +1072,7 @@ class PuzzleFilling():
     r"""
     Create partial puzzles and provides methods to build puzzles from them.
     """
+
     def __init__(self, north_west_labels, north_east_labels):
         r"""
         TESTS::
@@ -1925,6 +1928,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (4, 5): 1/\1  2\/2(1),
           (5, 5): 2(1)/1\2}]
     """
+
     def __init__(self, puzzle_pieces):
         r"""
         Knutson-Tao puzzle solver.

@@ -1,5 +1,5 @@
 """
-Modular Forms over a Non-minimal Base Ring
+Modular forms over a non-minimal base ring
 """
 
 #########################################################################

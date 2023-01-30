@@ -1168,11 +1168,11 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A4 = IntegralLattice("A4")
             sage: Aut = A4.orthogonal_group()
             sage: Aut
-            Group of isometries with 5 generators (
-            [-1  0  0  0]  [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
-            [ 0 -1  0  0]  [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
-            [ 0  0 -1  0]  [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
-            [ 0  0  0 -1], [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
+            Group of isometries with 4 generators (
+            [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
+            [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
+            [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
+            [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
             )
 
         The group acts from the right on the lattice and its discriminant group::
@@ -1180,19 +1180,19 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: x = A4.an_element()
             sage: g = Aut.an_element()
             sage: g
-            [ 1  1  1  0]
-            [ 0  0 -1  0]
-            [ 0  0  1  1]
-            [ 0 -1 -1 -1]
+            [-1 -1 -1  0]
+            [ 0  0  1  0]
+            [ 0  0 -1 -1]
+            [ 0  1  1  1]
             sage: x*g
-            (1, 1, 1, 0)
+            (-1, -1, -1, 0)
             sage: (x*g).parent()==A4
             True
             sage: (g*x).parent()
             Vector space of dimension 4 over Rational Field
             sage: y = A4.discriminant_group().an_element()
             sage: y*g
-            (1)
+            (4)
 
         If the group is finite we can compute the usual things::
 
@@ -1208,10 +1208,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: A2 = IntegralLattice(matrix.identity(3),Matrix(ZZ,2,3,[1,-1,0,0,1,-1]))
             sage: A2.orthogonal_group()
-            Group of isometries with 3 generators (
-            [-1/3  2/3  2/3]  [ 2/3  2/3 -1/3]  [1 0 0]
-            [ 2/3 -1/3  2/3]  [ 2/3 -1/3  2/3]  [0 0 1]
-            [ 2/3  2/3 -1/3], [-1/3  2/3  2/3], [0 1 0]
+            Group of isometries with 2 generators (
+            [ 2/3  2/3 -1/3]  [1 0 0]
+            [ 2/3 -1/3  2/3]  [0 0 1]
+            [-1/3  2/3  2/3], [0 1 0]
             )
 
         It can be negative definite as well::

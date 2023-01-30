@@ -120,7 +120,7 @@ class FiniteField_givaro(FiniteField):
             sage: TestSuite(GF(2^3, 'a')).run()
         """
         if repr not in ['int', 'log', 'poly']:
-            raise ValueError("Unknown representation %s"%repr)
+            raise ValueError("Unknown representation %s" % repr)
 
         q = Integer(q)
         if q < 2:
@@ -131,7 +131,7 @@ class FiniteField_givaro(FiniteField):
         p = F[0][0]
         k = F[0][1]
 
-        if q >= 1<<16:
+        if q >= 1 << 16:
             raise ValueError("q must be < 2^16")
 
         from .finite_field_constructor import GF

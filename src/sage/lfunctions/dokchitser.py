@@ -1,12 +1,5 @@
 """
-Dokchitser's L-functions Calculator
-
-AUTHORS:
-
-- Tim Dokchitser (2002): original PARI code and algorithm (and the
-  documentation below is based on Dokchitser's docs).
-
-- William Stein (2006-03-08): Sage interface
+Dokchitser's `L`-functions calculator
 
 .. TODO::
 
@@ -15,6 +8,14 @@ AUTHORS:
 
     - plug this code into number fields and modular forms code (elliptic
       curves are done).
+
+AUTHORS:
+
+- Tim Dokchitser (2002): original PARI code and algorithm (and the
+  documentation below is based on Dokchitser's docs).
+
+- William Stein (2006-03-08): Sage interface
+
 """
 
 # ****************************************************************************
@@ -337,6 +338,7 @@ class Dokchitser(SageObject):
             # After init_coeffs is called, future calls to this method should
             # return the full output for further parsing
             raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
+        t = t.replace("  *** _^_: Warning: normalizing a series with 0 leading term.\n", "")
         return t
 
     def __check_init(self):
