@@ -34,8 +34,8 @@ and for people to modify the C source code however they want.
 # ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.pari.all import pari
 

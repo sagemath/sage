@@ -1656,7 +1656,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             br = ZZ
             is_extension = False
         elif charstr[0] in ['0', 'QQ']:
-            from sage.rings.rational_field import Q as QQ
+            from sage.rings.rational_field import QQ
             br = QQ
         elif charstr[0].startswith('Float'):
             from sage.rings.real_mpfr import RealField
