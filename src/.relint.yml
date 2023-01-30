@@ -48,5 +48,5 @@
     Sage library code should not import from sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
     Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
   pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
-  # imports from .all are allowed in all.py
-  filePattern: '(.*/|)(?!all)[^/.]*[.](py|pyx|pxi)$'
+  # imports from .all are allowed in all.py; also allow in some modules that need sage.all
+  filePattern: '(.*/|)(?!(all|dev_tools|sage_eval))[^/.]*[.](py|pyx|pxi)$'
