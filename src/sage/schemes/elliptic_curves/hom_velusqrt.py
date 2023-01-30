@@ -122,21 +122,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sequence import Sequence
-from sage.structure.all import coercion_model as cm
-
 from sage.misc.cachefunc import cached_method
-
 from sage.misc.misc_c import prod
 from sage.rings.generic import ProductTree, prod_with_derivative
-
-from sage.structure.richcmp import op_EQ
-
 from sage.rings.integer import Integer
+from sage.structure.all import coercion_model as cm
+from sage.structure.richcmp import op_EQ
+from sage.structure.sequence import Sequence
 
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
+from .constructor import EllipticCurve
+from .ell_finite_field import EllipticCurve_finite_field
+from .hom import EllipticCurveHom, compare_via_evaluation
 
 
 def _choose_IJK(n):
@@ -1214,11 +1210,11 @@ def _random_example_for_testing():
         True
     """
     from sage.rings.fast_arith import prime_range
-    from sage.misc.prandom import choice
-    from sage.misc.prandom import randrange
+    from sage.misc.prandom import choice, randrange
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     from sage.arith.functions import lcm
     from sage.rings.finite_rings.integer_mod import Mod
+
     while True:
         p = choice(prime_range(2, 100))
         e = randrange(1,5)

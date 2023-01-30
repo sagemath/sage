@@ -21,25 +21,28 @@ Miscellaneous `p`-adic methods
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
+import math
 
-import sage.rings.all as rings
-from . import padic_lseries as plseries
 import sage.arith.all as arith
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.factory import Zp
+import sage.matrix.all as matrix
+import sage.misc.misc as misc
+import sage.rings.all as rings
+import sage.schemes.hyperelliptic_curves.hypellfrob
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+from sage.misc.cachefunc import cached_method
+from sage.rings.big_oh import O
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer import Integer
-from sage.rings.big_oh import O
-from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp, Zp
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField
-import math
-import sage.misc.misc as misc
-import sage.matrix.all as matrix
+
+from . import padic_lseries as plseries
+
 sqrt = math.sqrt
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
-import sage.schemes.hyperelliptic_curves.hypellfrob
-from sage.misc.cachefunc import cached_method
+
 
 def __check_padic_hypotheses(self, p):
     r"""
