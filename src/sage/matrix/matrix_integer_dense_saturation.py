@@ -2,15 +2,16 @@
 Saturation over ZZ
 """
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.misc import binomial
-from sage.arith.misc import GCD as gcd
-from sage.matrix.constructor import identity_matrix, random_matrix
-from sage.misc.verbose import verbose
-from sage.misc.randstate import current_randstate
-from . import matrix_integer_dense_hnf
 from copy import copy
+
+from sage.arith.misc import binomial, GCD as gcd
+from sage.misc.randstate import current_randstate
+from sage.misc.verbose import verbose
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+
+from . import matrix_integer_dense_hnf
+from .constructor import identity_matrix, random_matrix
 
 
 def p_saturation(A, p, proof=True):
