@@ -1001,7 +1001,7 @@ def lazy_import(module, names, as_=None, *,
         <class 'sage.misc.lazy_import.LazyImport'>
         sage: ZZ(4.0)
         4
-        sage: lazy_import('from sage.rings.real_double import RDF', 'RDF', 'my_RDF')
+        sage: lazy_import('sage.rings.real_double', 'RDF', 'my_RDF')
         sage: my_RDF._get_object() is RDF
         True
         sage: my_RDF(1/2)
