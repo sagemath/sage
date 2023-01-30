@@ -121,7 +121,8 @@ from sage.rings.fast_arith import prime_range
 import sage.misc.all as misc
 from sage.misc.verbose import verbose
 import sage.rings.all as rings
-from sage.rings.all import RealField, GF
+from sage.rings.real_mpfr import RealField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
 from math import sqrt
 from sage.libs.pari.all import pari
