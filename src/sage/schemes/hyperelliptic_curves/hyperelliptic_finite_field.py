@@ -48,9 +48,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.rational_field import Q as QQ
+from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing

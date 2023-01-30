@@ -97,8 +97,8 @@ AUTHORS:
 """
 
 from sage.modules.free_module import FreeModule_generic_pid
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar

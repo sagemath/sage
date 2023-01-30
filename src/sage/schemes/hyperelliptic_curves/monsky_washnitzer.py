@@ -65,8 +65,8 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField as Rationals
 from sage.rings.rational import Rational
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.rational_field import Q as QQ
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import IntegralDomain
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing

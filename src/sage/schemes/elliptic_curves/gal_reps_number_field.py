@@ -54,8 +54,8 @@ from sage.arith.misc import legendre_symbol
 from sage.arith.misc import primes
 from sage.sets.set import Set
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 
 

@@ -76,8 +76,8 @@ import sage.arith.all as arith
 import sage.rings.all as rings
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.infinity import Infinity as oo
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.real_mpfr import RealField

@@ -3261,7 +3261,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         from sage.rings.number_field.number_field import refine_embedding
         from sage.rings.real_mpfr import RealField
         from sage.rings.complex_mpfr import ComplexField
-        from sage.rings.rational_field import Q as QQ
+        from sage.rings.rational_field import QQ
 
         # Check the trivial case:
 
