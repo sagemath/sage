@@ -113,7 +113,7 @@ from cpython.list cimport *
 from cypari2.gen cimport Gen
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
