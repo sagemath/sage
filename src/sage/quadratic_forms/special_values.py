@@ -7,18 +7,20 @@ Routines for computing special values of `L`-functions
 - :func:`quadratic_L_function__numerical` -- Numerical values of the Dirichlet L-functions of quadratic characters in the domain of convergence
 """
 
+import sage.rings.abc
+
+from sage.arith.misc import (bernoulli,
+                             factorial,
+                             fundamental_discriminant,
+                             kronecker as kronecker_symbol)
 from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
-from sage.arith.misc import kronecker as kronecker_symbol
-from sage.arith.misc import bernoulli
-from sage.arith.misc import factorial
-from sage.arith.misc import fundamental_discriminant
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-import sage.rings.abc
 from sage.symbolic.constants import pi, I
+
 
 # ---------------- The Gamma Function  ------------------
 
