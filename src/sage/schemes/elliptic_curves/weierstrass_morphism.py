@@ -29,7 +29,8 @@ from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 from sage.structure.richcmp import (richcmp, richcmp_not_equal, op_EQ, op_NE)
 from sage.structure.sequence import Sequence
-from sage.rings.all import Integer, PolynomialRing
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 class baseWI():
     r"""

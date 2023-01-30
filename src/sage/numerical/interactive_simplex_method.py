@@ -183,10 +183,10 @@ from copy import copy
 
 from sage.misc.abstract_method import abstract_method
 from sage.geometry.all import Polyhedron
-from sage.matrix.all import (column_matrix,
-                             identity_matrix,
-                             matrix,
-                             random_matrix)
+from sage.matrix.special import column_matrix
+from sage.matrix.special import identity_matrix
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.special import random_matrix
 from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.prandom import randint, random
@@ -195,7 +195,11 @@ from sage.misc.misc import get_main_globals
 from sage.modules.all import random_vector, vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
-from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import Q as QQ
+from sage.rings.real_double import RDF
+from sage.rings.integer_ring import Z as ZZ
 from sage.structure.all import SageObject
 from sage.symbolic.ring import SR
 

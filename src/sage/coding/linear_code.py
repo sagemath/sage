@@ -205,32 +205,34 @@ TESTS::
 import os
 import subprocess
 
-from io import StringIO
 from copy import copy
+from io import StringIO
 
-from sage.cpython.string import bytes_to_str
+from sage.arith.misc import binomial, GCD
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
-from sage.matrix.matrix_space import MatrixSpace
-from sage.modules.free_module import VectorSpace
-from sage.modules.free_module_element import vector
-from sage.arith.all import GCD, binomial
+from sage.combinat.subset import Subsets
+from sage.cpython.string import bytes_to_str
+from sage.features.gap import GapPackage
 from sage.groups.all import SymmetricGroup
 from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.rings.rational_field import QQ
+from sage.interfaces.gap import gap
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_even
+from sage.misc.misc_c import prod
+from sage.misc.randstate import current_randstate
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.misc_c import prod
-from sage.misc.functional import is_even
-from sage.misc.cachefunc import cached_method
-from sage.misc.randstate import current_randstate
-from sage.combinat.subset import Subsets
-from sage.features.gap import GapPackage
-from sage.coding.linear_code_no_metric import AbstractLinearCodeNoMetric
+from sage.rings.rational_field import QQ
+
 from .encoder import Encoder
 from .decoder import Decoder
+from .linear_code_no_metric import AbstractLinearCodeNoMetric
 
 # *****************************************************************************
 # coding theory functions

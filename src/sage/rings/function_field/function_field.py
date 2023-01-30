@@ -225,7 +225,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.interfaces.singular import singular
 
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 
 from sage.rings.integer import Integer
 from sage.rings.ring import Field

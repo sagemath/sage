@@ -66,7 +66,7 @@ from sage.combinat.words.word import FiniteWord_list
 from sage.combinat.words.finite_word import FiniteWord_class, Factorization
 from sage.combinat.words.words import FiniteWords, InfiniteWords
 from sage.combinat.words.morphism import WordMorphism
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.misc.decorators import rename_keyword
 
 

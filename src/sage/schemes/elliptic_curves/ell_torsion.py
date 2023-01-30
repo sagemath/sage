@@ -26,7 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import RationalField
+from sage.rings.rational_field import RationalField
 import sage.groups.additive_abelian.additive_abelian_wrapper as groups
 from sage.structure.richcmp import richcmp_method, richcmp
 

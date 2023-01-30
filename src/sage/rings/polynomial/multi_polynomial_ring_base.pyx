@@ -438,7 +438,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
-        
+
             :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
         """
         from sage.matrix.constructor import matrix

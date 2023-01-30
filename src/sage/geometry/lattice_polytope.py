@@ -104,8 +104,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
-from sage.arith.all import gcd
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
+from sage.arith.misc import GCD as gcd
 from sage.geometry.cone import _ambient_space_point, integral_length
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,

@@ -679,7 +679,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.all import Modules, Algebras
+        from sage.categories.modules import Modules
+        from sage.categories.algebras import Algebras
         if nrows == ncols:
             category = Algebras(base_ring.category())
         else:

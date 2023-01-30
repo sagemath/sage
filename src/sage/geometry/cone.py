@@ -206,8 +206,9 @@ from copy import copy
 from warnings import warn
 
 from sage.misc.lazy_import import lazy_import
-from sage.arith.all import gcd, lcm
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.polyhedron.base import is_Polyhedron

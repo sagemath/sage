@@ -34,12 +34,12 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.interfaces.magma import magma
-from sage.rings.all import (Integer,
-                            QQ,
-                            ZZ,
-                            IntegerRing,
-                            is_fundamental_discriminant,
-                            PolynomialRing)
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer_ring import IntegerRing
+from sage.rings.number_field.number_field import is_fundamental_discriminant
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.cachefunc import cached_function
 from sage.structure.element import NumberFieldElement
@@ -126,7 +126,8 @@ def hilbert_class_polynomial(D, algorithm=None):
         raise ValueError("%s is not a valid algorithm" % algorithm)
 
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
-    from sage.rings.all import RR, ComplexField
+    from sage.rings.real_mpfr import RR
+    from sage.rings.complex_mpfr import ComplexField
     from sage.functions.all import elliptic_j
 
     # get all primitive reduced quadratic forms, (necessary to exclude

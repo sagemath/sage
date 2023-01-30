@@ -24,7 +24,10 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.morphism import SetMorphism
-from sage.categories.all import Category, Sets, ModulesWithBasis, GradedAlgebrasWithBasis
+from sage.categories.category import Category
+from sage.categories.sets_cat import Sets
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.tensor import tensor
 import sage.data_structures.blas_dict as blas
 from sage.typeset.ascii_art import AsciiArt, ascii_art

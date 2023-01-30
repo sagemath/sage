@@ -62,7 +62,9 @@ AUTHORS:
 
 import sage.misc.prandom as random
 
-from sage.arith.all import factor, primitive_root, CRT_basis
+from sage.arith.misc import factor
+from sage.arith.misc import primitive_root
+from sage.arith.misc import CRT_basis
 import sage.rings.ring as ring
 import sage.rings.abc
 from . import integer_mod
