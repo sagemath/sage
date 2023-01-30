@@ -141,7 +141,7 @@ from functools import wraps
 from sage.misc.randstate import current_randstate
 from sage.groups.group import FiniteGroup
 
-from sage.rings.rational_field import Q as QQ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.interfaces.abc import ExpectElement, GapElement
 from sage.libs.gap.libgap import libgap
