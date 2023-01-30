@@ -5,7 +5,7 @@ Neighbors
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.rational_field import Q as QQ
+from sage.rings.rational_field import QQ
 from copy import deepcopy
 from sage.matrix.constructor import matrix
 
