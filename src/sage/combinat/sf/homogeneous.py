@@ -25,12 +25,12 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 # Homogeneous Symmetric Functions  #
 #                                  #
 ####################################
-from . import multiplicative, classical
+from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
-from sage.rings.infinity import infinity
 from sage.misc.misc_c import prod
-from sage.arith.misc import factorial
-from sage.arith.misc import binomial
+from sage.rings.infinity import infinity
+
+from . import multiplicative, classical
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):

@@ -17,12 +17,13 @@ Elementary symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from . import multiplicative, classical
+from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
-from sage.arith.misc import factorial
-from sage.arith.misc import binomial
 from sage.rings.infinity import infinity
+
+from . import multiplicative, classical
+
 
 ###################################
 #                                 #

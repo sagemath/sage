@@ -85,6 +85,12 @@ For display options, see :meth:`Tableaux.options`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import repeat
+
+from sage.arith.misc import binomial, factorial, multinomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -97,24 +103,17 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.infinity import PlusInfinity
-from sage.arith.misc import factorial
-from sage.arith.misc import binomial
-from sage.arith.misc import multinomial
 from sage.rings.integer import Integer
-from sage.combinat.composition import Composition, Compositions
-from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
 import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
-from sage.combinat import permutation
-from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.misc_c import prod
 from sage.misc.misc import powerset
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.sets_cat import Sets
 
-from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.posets.posets import Poset
+from . import permutation
+from .combinatorial_map import combinatorial_map
+from .composition import Composition, Compositions
+from .integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
+from .posets.posets import Poset
 
 
 @richcmp_method
