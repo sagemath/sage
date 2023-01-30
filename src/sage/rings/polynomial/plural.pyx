@@ -2180,8 +2180,8 @@ cdef class NCPolynomial_plural(RingElement):
         cdef poly *m = mon._poly
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
 
-        if not mon._parent is self._parent:
-            raise TypeError("mon must have same parent as self.")
+        if mon._parent is not self._parent:
+            raise TypeError("mon must have same parent as self")
 
         while(p):
             if p_ExpVectorEqual(p, m, r) == 1:

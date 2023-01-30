@@ -93,6 +93,8 @@ from collections import defaultdict
 #--------------------------------------------------
 # Kleshchev partition - element classes
 #--------------------------------------------------
+
+
 class KleshchevPartition(Partition):
     r"""
     Abstract base class for Kleshchev partitions. See
@@ -857,10 +859,12 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = self.parent()
         return _is_restricted(self.to_list(), KP._multicharge, KP._convention)
 
+
 class KleshchevCrystalMixin():
     """
     Mixin class for the crystal structure of a Kleshchev partition.
     """
+
     def epsilon(self, i):
         r"""
         Return the Kashiwara crystal operator `\varepsilon_i` applied to ``self``.
@@ -964,10 +968,12 @@ class KleshchevCrystalMixin():
         return wt - WLR.sum(alpha[self.content(*c, multicharge=r)]
                             for c in self.cells())
 
+
 class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
     """
     Kleshchev partition with the crystal structure.
     """
+
     def e(self, i):
         r"""
         Return the action of `e_i` on ``self``.
@@ -1023,10 +1029,12 @@ class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
             mu[r] += 1
         return type(self)(P, mu)
 
+
 class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMixin):
     """
     Kleshchev partition tuple with the crystal structure.
     """
+
     def e(self, i):
         r"""
         Return the action of `e_i` on ``self``.
@@ -1414,6 +1422,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
     - [TingleyLN]_
     - [Vazirani2002]_
     """
+
     def __init__(self, e, multicharge, convention):
         r"""
         Initializes ``self``.
@@ -1628,6 +1637,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
     """
     Kleshchev partitions of a fixed size.
     """
+
     def __init__(self, e, multicharge=(0,), size=0, convention='RS'):
         r"""
         Initialize ``self``.
@@ -1853,6 +1863,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
 # helper functions
 #--------------------------------------------------
 
+
 def _a_good_cell(kpt, multicharge, convention):
     """
     Return a good cell from ``kpt`` considered as a Kleshchev partition
@@ -1904,6 +1915,7 @@ def _a_good_cell(kpt, multicharge, convention):
     # finally return the result
     return ret
 
+
 def _is_regular(kpt, multicharge, convention):
     """
     Return ``True`` if ``kpt`` is a ``multicharge``-regular
@@ -1933,6 +1945,7 @@ def _is_regular(kpt, multicharge, convention):
             kpt[k][r] -= 1
         cell = _a_good_cell(kpt, multicharge, convention)
     return all(part == [] for part in kpt)
+
 
 def _is_restricted(kpt, multicharge, convention):
     """

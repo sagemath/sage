@@ -65,6 +65,14 @@ Ring Extensions
    sage/rings/ring_extension_morphism
 
 
+Generic Data Structures and Algorithms for Rings
+------------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/rings/generic
+
 Utilities
 ---------
 

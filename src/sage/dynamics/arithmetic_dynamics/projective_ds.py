@@ -8313,9 +8313,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(3))*y^2, y^2, QQbar(sqrt(2))*z^2])
             sage: f.reduce_base_field()
             Dynamical System of Projective Space of dimension 2 over Number Field in a with
-            defining polynomial y^4 - 4*y^2 + 1 with a = 1.931851652578137?
+            defining polynomial y^4 - 4*y^2 + 1 with a = -0.5176380902050415?
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x^2 + (a^2 - 2)*y^2 : y^2 : (a^3 - 3*a)*z^2)
+                    (x^2 + (-a^2 + 2)*y^2 : y^2 : (a^3 - 3*a)*z^2)
 
         ::
 

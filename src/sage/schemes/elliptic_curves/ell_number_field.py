@@ -218,7 +218,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E == loads(dumps(E))
             True
             sage: E.simon_two_descent()
-            (2, 2, [(0 : 0 : 1)])
+            (2, 2, [(0 : 0 : 1), (1/18*a + 7/18 : -5/54*a - 17/54 : 1)])
             sage: E.simon_two_descent(lim1=5, lim3=5, limtriv=10, maxprob=7, limbigprime=10)
             (2, 2, [(-1 : 0 : 1), (-2 : -1/2*a - 1/2 : 1)])
 
@@ -274,7 +274,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.simon_two_descent()  # long time (4s on sage.math, 2013)
             (3,
              3,
-             [(5/8*zeta43_0^2 + 17/8*zeta43_0 - 9/4 : -27/16*zeta43_0^2 - 103/16*zeta43_0 + 39/8 : 1),
+             [(1/8*zeta43_0^2 - 3/8*zeta43_0 - 1/4 : -5/16*zeta43_0^2 + 7/16*zeta43_0 + 1/8 : 1),
               (0 : 0 : 1)])
         """
         verbose = int(verbose)
@@ -865,7 +865,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Conductor exponent: 1
             Kodaira Symbol: I1
             Tamagawa Number: 1,
-            Local data at Fractional ideal (-3*i - 2):
+            Local data at Fractional ideal (-2*i + 3):
             Reduction type: bad split multiplicative
             Local minimal model: Elliptic Curve defined by y^2 + (i+1)*x*y + y = x^3 over Number Field in i with defining polynomial x^2 + 1
             Minimal discriminant valuation: 2
@@ -2290,13 +2290,21 @@ class EllipticCurve_number_field(EllipticCurve_field):
         It can happen that no points are found if the height bounds
         used in the search are too small (see :trac:`10745`)::
 
-            sage: K.<y> = NumberField(x^4 + x^2 - 7)
-            sage: E = EllipticCurve(K, [1, 0, 5*y^2 + 16, 0, 0])
+            sage: K.<t> = NumberField(x^4 + x^2 - 7)
+            sage: E = EllipticCurve(K, [1, 0, 5*t^2 + 16, 0, 0])
             sage: E.gens(lim1=1, lim3=1)
             []
-            sage: E.rank(), E.gens(lim3=12)  # long time (about 4s)
-            (1,
-             [(369/25*y^3 + 539/25*y^2 + 1178/25*y + 1718/25 : -29038/125*y^3 - 43003/125*y^2 - 92706/125*y - 137286/125 : 1)])
+            sage: E.rank()
+            1
+            sage: gg=E.gens(lim3=13); gg  # long time (about 4s)
+            [(... : 1)]
+
+        Check that the the point found has infinite order, and that it is on the curve::
+
+            sage: P=gg[0]; P.order()
+            +Infinity
+            sage: E.defining_polynomial()(*P)
+            0
 
         Here is a curve of rank 2::
 
@@ -2644,13 +2652,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: [phi.codomain().cm_discriminant() for phi in E.isogenies_prime_degree()]  # long time
             [-92, -23, -23]
 
-            sage: C.matrix()  # long time
-            [1 2 2 4 2 4]
-            [2 1 2 2 4 4]
-            [2 2 1 4 4 2]
-            [4 2 4 1 3 3]
-            [2 4 4 3 1 3]
-            [4 4 2 3 3 1]
+            sage: C.matrix()  # long time # random
+            [1 2 2 4 4 2]
+            [2 1 2 4 2 4]
+            [2 2 1 2 4 4]
+            [4 4 2 1 3 3]
+            [4 2 4 3 1 3]
+            [2 4 4 3 3 1]
 
         The graph of this isogeny class has a shape which does not
         occur over `\QQ`: a triangular prism.  Note that for curves
@@ -2676,13 +2684,15 @@ class EllipticCurve_number_field(EllipticCurve_field):
         determined::
 
             sage: G = C.graph()  # long time
-            sage: G.adjacency_matrix()  # long time
-            [0 1 1 0 1 0]
-            [1 0 1 1 0 0]
-            [1 1 0 0 0 1]
-            [0 1 0 0 1 1]
-            [1 0 0 1 0 1]
-            [0 0 1 1 1 0]
+            sage: G.adjacency_matrix()  # long time # random
+            [0 1 1 0 0 1]
+            [1 0 1 0 1 0]
+            [1 1 0 1 0 0]
+            [0 0 1 0 1 1]
+            [0 1 0 1 0 1]
+            [1 0 0 1 1 0]
+            sage: Graph(polytopes.simplex(2).prism().adjacency_matrix()).is_isomorphic(G) # long time
+            True
 
         To display the graph without any edge labels::
 
@@ -3316,7 +3326,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: points = [E.lift_x(x) for x in xi]
             sage: newpoints, U = E.lll_reduce(points)  # long time (35s on sage.math, 2011)
             sage: [P[0] for P in newpoints]            # long time
-            [6823803569166584943, 5949539878899294213, 2005024558054813068, 5864879778877955778, 23955263915878682727/4, 5922188321411938518, 5286988283823825378, 175620639884534615751/25, -11451575907286171572, 3502708072571012181, 1500143935183238709184/225, 27180522378120223419/4, -5811874164190604461581/625, 26807786527159569093, 7404442636649562303, 475656155255883588, 265757454726766017891/49, 7272142121019825303, 50628679173833693415/4, 6951643522366348968, 6842515151518070703, 111593750389650846885/16, 2607467890531740394315/9, -1829928525835506297]
+            [6823803569166584943, 5949539878899294213, 2005024558054813068, 5864879778877955778, 23955263915878682727/4, 5922188321411938518, 5286988283823825378, 11465667352242779838, -11451575907286171572, 3502708072571012181, 1500143935183238709184/225, 27180522378120223419/4, -5811874164190604461581/625, 26807786527159569093, 7041412654828066743, 475656155255883588, 265757454726766017891/49, 7272142121019825303, 50628679173833693415/4, 6951643522366348968, 6842515151518070703, 111593750389650846885/16, 2607467890531740394315/9, -1829928525835506297]
 
         An example to show the explicit use of the height pairing matrix::
 

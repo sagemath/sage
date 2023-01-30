@@ -257,6 +257,7 @@ def is_SymmetricFunctionAlgebra(x):
     """
     return isinstance(x, SymmetricFunctionAlgebra_generic)
 
+
 def zee(part):
     r"""
     Return the size of the centralizer of any permutation of cycle type
@@ -306,6 +307,7 @@ def is_SymmetricFunction(x):
 #####################################################################
 ## Bases categories
 
+
 from sage.categories.realizations import Category_realization_of_parent
 
 
@@ -327,6 +329,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         sage: Sym.schur() in bases
         True
     """
+
     def _repr_(self):
         r"""
         Return the representation of ``self``.
@@ -381,7 +384,6 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         if R in PrincipalIdealDomains:
             categories.append(UniqueFactorizationDomains())
         return categories
-
 
     class ParentMethods:
 
@@ -1489,6 +1491,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             from sage.rings.lazy_series_ring import LazySymmetricFunctions
             return LazySymmetricFunctions(self)
 
+
 class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
     r"""
     The category of filtered bases of the ring of symmetric functions.
@@ -1504,6 +1507,7 @@ class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
         sage: Sym.sp() in bases
         True
     """
+
     def _repr_(self):
         r"""
         Return the representation of ``self``.
@@ -1534,6 +1538,7 @@ class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
         cat = HopfAlgebras(self.base().base_ring()).Commutative().WithBasis().Filtered()
         return [SymmetricFunctionsBases(self.base()), cat]
 
+
 class GradedSymmetricFunctionsBases(Category_realization_of_parent):
     r"""
     The category of graded bases of the ring of symmetric functions.
@@ -1552,6 +1557,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
         sage: Sym.sp() in bases
         False
     """
+
     def _repr_(self):
         r"""
         Return the representation of ``self``.
@@ -1781,6 +1787,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         sage: s(m([2,1]))
         -2*s[1, 1, 1] + s[2, 1]
     """
+
     def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
         r"""
         Initializes the symmetric function algebra.
@@ -2344,14 +2351,14 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         for i in range(len_pn):
             for j in range(len_pn):
-                if inverse[i,j] != zero:
+                if inverse[i, j] != zero:
                     if hasattr(self, '_normalize_coefficients'):
-                        unknown_cache_n[ pn[i] ] [ pn[j] ] = self._normalize_coefficients(inverse[i,j])
+                        unknown_cache_n[ pn[i] ][ pn[j] ] = self._normalize_coefficients(inverse[i, j])
                     else:
-                        unknown_cache_n[ pn[i] ] [ pn[j] ] = inverse[i,j]
+                        unknown_cache_n[ pn[i] ][ pn[j] ] = inverse[i, j]
 
-        known_cache[ n ]   = known_cache_n
-        unknown_cache[ n ] = unknown_cache_n
+        known_cache[n] = known_cache_n
+        unknown_cache[n] = unknown_cache_n
 
     def symmetric_function_ring(self):
         r"""
@@ -2486,7 +2493,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             m.append( [z.coefficient(col_part) for col_part in Plist] )
         return matrix(m)
 
-
     def _gram_schmidt(self, n, source, scalar, cache, leading_coeff=None, upper_triangular=True):
         r"""
         Apply Gram-Schmidt to ``source`` with respect to the scalar product
@@ -2571,7 +2577,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             cache[l[i]] = {}
             for j in range(i+1):
                 cache[l[i]][l[j]] = res.coefficient(l[j])
-
 
     def _inner_plethysm_pk_g(self, k, g, cache):
         r"""
@@ -2715,7 +2720,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         #To get the final answer, we compute the inner tensor product
         #of all the symmetric functions in res
         return self(reduce(lambda x, y: 0 if x==0 else x.itensor(y), res))
-
 
     def _dual_basis_default(self):
         """
@@ -3029,6 +3033,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
+
     def factor(self):
         """
         Return the factorization of this symmetric function.
@@ -3618,7 +3623,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         ip_pnu_g = parent._inner_plethysm_pnu_g
         return parent.sum(c*ip_pnu_g(p(x), cache, nu)
                           for (nu, c) in p(self).monomial_coefficients().items())
-
 
     def omega(self):
         r"""
@@ -5550,7 +5554,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         """
         return self._is_positive( self.parent().realization_of().schur() )
 
-
     def _is_positive(self, s):
         r"""
         Return ``True`` if and only if ``self`` has nonnegative coefficients
@@ -5602,7 +5605,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(0).degree()
             0
         """
-        return max([sum(cfs) for cfs in self._monomial_coefficients] + [0])
+        return max((sum(cfs) for cfs in self._monomial_coefficients),
+                   default=0)
 
     def restrict_degree(self, d, exact=True):
         r"""
@@ -6365,6 +6369,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         # introduce singularities, because it is not a Z-basis
         e = self.parent().realization_of().elementary()
         return e(self).exponential_specialization(t=t, q=q)
+
 
 SymmetricFunctionAlgebra_generic.Element = SymmetricFunctionAlgebra_generic_Element
 

@@ -395,6 +395,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         ....:      #this holds for all odd i and is easily proven by induction
         True
     """
+
     def __init__(self, Sym, coerce_h=True, coerce_e=False, coerce_p=False):
         """
         Initialize ``self``.

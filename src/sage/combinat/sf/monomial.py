@@ -488,6 +488,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             # introduce singularities, because it is not a Z-basis
             return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
 
+
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
 

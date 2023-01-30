@@ -3644,7 +3644,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L.<b> = K.extension(x^2 - 3, x^2 + 1)
             sage: M.<c> = L.extension(x^2 + 1)
             sage: L.ideal(K.ideal(2, a))
-            Fractional ideal (-a)
+            Fractional ideal (a)
             sage: M.ideal(K.ideal(2, a)) == M.ideal(a*(b - c)/2)
             True
 
@@ -4228,7 +4228,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             (y^2 + 6, Mod(1/6*y, y^2 + 6), Mod(6*y, y^2 + 1/6))
         """
         f = self.absolute_polynomial()._pari_with_name('y')
-        if f.pollead() == f.content().denominator() == 1:
+        f = f * f.content().denominator()
+        if f.pollead() == 1:
             g = f
             alpha = beta = g.variable().Mod(g)
         else:
@@ -4821,7 +4822,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
-            ([-6*a + 2, 6*a + 3, -1, 12*a + 5], [])
+            ([6*a + 2, 6*a + 3, -1, -12*a + 5], [])
         """
         K_pari = self.pari_bnf(proof=proof)
         S_pari = [p.pari_prime() for p in sorted(set(S))]
@@ -5166,7 +5167,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: [K.ideal(g).factor() for g in gens]
             [(Fractional ideal (2, a + 1)) * (Fractional ideal (3, a + 1)),
-            Fractional ideal (-a),
+            Fractional ideal (a),
             (Fractional ideal (2, a + 1))^2,
             1]
 
@@ -5751,7 +5752,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.elements_of_norm(3)
             []
             sage: K.elements_of_norm(50)
-            [-7*a + 1, 5*a - 5, 7*a + 1]
+            [-a - 7, 5*a - 5, 7*a + 1]
 
         TESTS:
 
@@ -5863,7 +5864,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.factor(1+a)
             Fractional ideal (a + 1)
             sage: K.factor(1+a/5)
-            (Fractional ideal (a + 1)) * (Fractional ideal (-a - 2))^-1 * (Fractional ideal (2*a + 1))^-1 * (Fractional ideal (-3*a - 2))
+            (Fractional ideal (a + 1)) * (Fractional ideal (-a - 2))^-1 * (Fractional ideal (2*a + 1))^-1 * (Fractional ideal (-2*a + 3))
 
         An example over a relative number field::
 
@@ -6466,9 +6467,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: new_basis = k.reduced_basis(prec=120)
             sage: [c.minpoly() for c in new_basis]
             [x - 1,
-             x^2 - x + 1,
+             x^2 + x + 1,
              x^6 + 3*x^5 - 102*x^4 - 103*x^3 + 10572*x^2 - 59919*x + 127657,
-             x^6 - 3*x^5 - 102*x^4 + 315*x^3 + 10254*x^2 - 80955*x + 198147,
+             x^6 + 3*x^5 - 102*x^4 - 103*x^3 + 10572*x^2 - 59919*x + 127657,
              x^3 - 171*x + 848,
              x^6 + 171*x^4 + 1696*x^3 + 29241*x^2 + 145008*x + 719104]
             sage: R = k.order(new_basis)
@@ -7064,7 +7065,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              -a^16 - a^15 - a^14 - a^13 - a^12 - a^11 - a^10 - a^9 - a^8 - a^7 - a^6 - a^5 - a^4 - a^3 - a^2 + 2,
              -2*a^16 + 3*a^15 - 3*a^14 + 3*a^13 - 3*a^12 + a^11 - a^9 + 3*a^8 - 4*a^7 + 5*a^6 - 6*a^5 + 4*a^4 - 3*a^3 + 2*a^2 + 2*a - 4,
              a^15 - a^12 + a^10 - a^9 - 2*a^8 + 3*a^7 + a^6 - 3*a^5 + a^4 + 4*a^3 - 3*a^2 - 2*a + 2,
-             -a^14 - a^13 + a^12 + 2*a^10 + a^8 - 2*a^7 - 2*a^6 + 2*a^3 - a^2 + 2*a - 2)
+             2*a^16 + a^15 - a^11 - 3*a^10 - 4*a^9 - 4*a^8 - 4*a^7 - 5*a^6 - 7*a^5 - 8*a^4 - 6*a^3 - 5*a^2 - 6*a - 7)
 
         TESTS:
 
@@ -7073,7 +7074,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(1/2*x^2 - 1/6)
             sage: K.units()
-            (-3*a + 2,)
+            (3*a - 2,)
         """
         proof = proof_flag(proof)
 
@@ -7152,7 +7153,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: U.gens()
             (u0, u1, u2, u3, u4, u5, u6, u7, u8)
             sage: U.gens_values()  # result not independently verified
-            [-1, -a^9 - a + 1, -a^16 + a^15 - a^14 + a^12 - a^11 + a^10 + a^8 - a^7 + 2*a^6 - a^4 + 3*a^3 - 2*a^2 + 2*a - 1, 2*a^16 - a^14 - a^13 + 3*a^12 - 2*a^10 + a^9 + 3*a^8 - 3*a^6 + 3*a^5 + 3*a^4 - 2*a^3 - 2*a^2 + 3*a + 4, a^15 + a^14 + 2*a^11 + a^10 - a^9 + a^8 + 2*a^7 - a^5 + 2*a^3 - a^2 - 3*a + 1, -a^16 - a^15 - a^14 - a^13 - a^12 - a^11 - a^10 - a^9 - a^8 - a^7 - a^6 - a^5 - a^4 - a^3 - a^2 + 2, -2*a^16 + 3*a^15 - 3*a^14 + 3*a^13 - 3*a^12 + a^11 - a^9 + 3*a^8 - 4*a^7 + 5*a^6 - 6*a^5 + 4*a^4 - 3*a^3 + 2*a^2 + 2*a - 4, a^15 - a^12 + a^10 - a^9 - 2*a^8 + 3*a^7 + a^6 - 3*a^5 + a^4 + 4*a^3 - 3*a^2 - 2*a + 2, -a^14 - a^13 + a^12 + 2*a^10 + a^8 - 2*a^7 - 2*a^6 + 2*a^3 - a^2 + 2*a - 2]
+            [-1, -a^9 - a + 1, -a^16 + a^15 - a^14 + a^12 - a^11 + a^10 + a^8 - a^7 + 2*a^6 - a^4 + 3*a^3 - 2*a^2 + 2*a - 1, 2*a^16 - a^14 - a^13 + 3*a^12 - 2*a^10 + a^9 + 3*a^8 - 3*a^6 + 3*a^5 + 3*a^4 - 2*a^3 - 2*a^2 + 3*a + 4, a^15 + a^14 + 2*a^11 + a^10 - a^9 + a^8 + 2*a^7 - a^5 + 2*a^3 - a^2 - 3*a + 1, -a^16 - a^15 - a^14 - a^13 - a^12 - a^11 - a^10 - a^9 - a^8 - a^7 - a^6 - a^5 - a^4 - a^3 - a^2 + 2, -2*a^16 + 3*a^15 - 3*a^14 + 3*a^13 - 3*a^12 + a^11 - a^9 + 3*a^8 - 4*a^7 + 5*a^6 - 6*a^5 + 4*a^4 - 3*a^3 + 2*a^2 + 2*a - 4, a^15 - a^12 + a^10 - a^9 - 2*a^8 + 3*a^7 + a^6 - 3*a^5 + a^4 + 4*a^3 - 3*a^2 - 2*a + 2, 2*a^16 + a^15 - a^11 - 3*a^10 - 4*a^9 - 4*a^8 - 4*a^7 - 5*a^6 - 7*a^5 - 8*a^4 - 6*a^3 - 5*a^2 - 6*a - 7]
         """
         proof = proof_flag(proof)
 

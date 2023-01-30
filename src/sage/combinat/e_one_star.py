@@ -264,6 +264,7 @@ class Face(SageObject):
         sage: f.color()
         RGB color (0.5, 0.5, 0.5)
     """
+
     def __init__(self, v, t, color=None):
         r"""
         Face constructor. See class doc for more information.
@@ -578,6 +579,7 @@ class Patch(SageObject):
         sage: Patch([Face((0,0,0),t) for t in [1,2,3]], face_contour=face_contour)
         Patch: [[(0, 0, 0), 1]*, [(0, 0, 0), 2]*, [(0, 0, 0), 3]*]
     """
+
     def __init__(self, faces, face_contour=None):
         r"""
         Constructor of a patch (set of faces).
@@ -1393,6 +1395,7 @@ class E1Star(SageObject):
         sage: E(P)
         Patch: [[(0, 0, 0, 0), 3]*, [(0, 0, 0, 0), 4]*, [(0, 0, 1, -1), 3]*, [(0, 1, 0, -1), 2]*, [(1, 0, 0, -1), 1]*]
     """
+
     def __init__(self, sigma, method='suffix'):
         r"""
         E1Star constructor. See class doc for more information.
