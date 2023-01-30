@@ -776,7 +776,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: from sage.matrix.benchmark import hilbert_matrix
-            sage: mat = hilbert_matrix(3).change_ring(CBF) 
+            sage: mat = hilbert_matrix(3).change_ring(CBF)
             sage: eigval, eigvec, _ = mat.eigenvectors_right_approx()[0]
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             ...
@@ -834,7 +834,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: from sage.matrix.benchmark import hilbert_matrix
-            sage: mat = hilbert_matrix(3).change_ring(CBF) 
+            sage: mat = hilbert_matrix(3).change_ring(CBF)
             sage: eigval, eigvec, _ = mat.eigenvectors_right()[0]
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             ...
