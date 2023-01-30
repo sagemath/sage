@@ -1,5 +1,5 @@
 r"""
-Congruence Subgroup `\Gamma_0(N)`
+Congruence subgroup `\Gamma_0(N)`
 """
 
 # ****************************************************************************

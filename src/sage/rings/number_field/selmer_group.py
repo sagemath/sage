@@ -491,7 +491,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
         sage: [K.ideal(g).factor() for g in gens]
         [(Fractional ideal (2, a + 1)) * (Fractional ideal (3, a + 1)),
-        Fractional ideal (-a),
+        Fractional ideal (a),
         (Fractional ideal (2, a + 1))^2,
         1]
 

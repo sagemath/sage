@@ -271,6 +271,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         [0, 11, 1, 0, 0]
         [0, 12, 0, 0, 0]
     """
+
     def __init__(self, weight):
         """
         TESTS::

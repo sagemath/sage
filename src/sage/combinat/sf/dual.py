@@ -536,6 +536,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``dual`` -- self as an element of the dual basis.
         """
+
         def __init__(self, A, dictionary=None, dual=None):
             """
             Create an element of a dual basis.
@@ -588,7 +589,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
                 dual = parent._dual_basis._from_dict(dual_dict)
 
-
             if dictionary is None:
                 # We need to compute the monomial coefficients dictionary
                 dictionary = {}
@@ -610,7 +610,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             # Initialize self
             self._dual = dual
             classical.SymmetricFunctionAlgebra_classical.Element.__init__(self, A, dictionary)
-
 
         def dual(self):
             """
@@ -888,6 +887,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                 3
             """
             return self._dual.expand(n, alphabet)
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

@@ -1383,7 +1383,7 @@ cdef class CommutativeRing(Ring):
                 poly = poly.polynomial(self)
             except (AttributeError, TypeError):
                 raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if not names is None:
+        if names is not None:
             name = names
         if isinstance(name, tuple):
             name = name[0]

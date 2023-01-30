@@ -57,6 +57,7 @@ class ClusterComplexFacet(SubwordComplexFacet):
     r"""
     A cluster (i.e., a facet) of a cluster complex.
     """
+
     def cluster(self):
         """
         Return this cluster as a set of almost positive roots.
