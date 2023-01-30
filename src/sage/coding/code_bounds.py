@@ -173,14 +173,14 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import binomial, is_prime_power
 from sage.libs.gap.libgap import libgap
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.arith.misc import is_prime_power
-from sage.arith.misc import binomial
 from sage.misc.functional import sqrt, log
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 from sage.features.gap import GapPackage

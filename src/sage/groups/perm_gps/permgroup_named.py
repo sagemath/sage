@@ -86,25 +86,24 @@ REFERENCES:
 # ****************************************************************************
 from pathlib import Path
 
-from sage.rings.integer import Integer
-from sage.libs.gap.libgap import libgap
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.misc import factor
-from sage.arith.misc import valuation
+from sage.arith.misc import factor, valuation
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.misc.functional import is_even
-from sage.misc.cachefunc import cached_method, weak_cached_function
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_element import SymmetricGroupElement
-from sage.structure.unique_representation import CachedRepresentation
+from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_method, weak_cached_function
+from sage.misc.functional import is_even
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.sets.family import Family
-from sage.sets.primes import Primes
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
