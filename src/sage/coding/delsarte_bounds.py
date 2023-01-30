@@ -602,7 +602,6 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
     EXAMPLES::
 
         sage: from sage.coding.delsarte_bounds import _delsarte_Q_LP_building
-        sage: from sage.all import *
         sage: q = Matrix([[codes.bounds.krawtchouk(6,2,i,j) for j in range(7)] for i in range(7)])
         sage: _, p = _delsarte_Q_LP_building(q, 2, "PPL", False)
         sage: p.show()
