@@ -1089,9 +1089,9 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.laplace(t,s)
                 (s + 1)*e^(-s)/s^2 + 2*e^(-s)/s - 1/s^2
             """
-            from sage.symbolic.assumptions import assume
+            from sage.symbolic.assumptions import assume, forget
             from sage.functions.log import exp
-            from sage.symbolic.assumptions import forget
+
             x = SR.var(x)
             s = SR.var(s)
             assume(s>0)
@@ -1363,9 +1363,9 @@ class PiecewiseFunction(BuiltinFunction):
 
             """
             from sage.symbolic.constants import pi
-            from sage.functions.trig import sin
-            from sage.functions.trig import cos
+            from sage.functions.trig import cos, sin
             from sage.arith.srange import srange
+
             if not L:
                 L = (self.domain().sup() - self.domain().inf()) / 2
             x = self.default_variable()
