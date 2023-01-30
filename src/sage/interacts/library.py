@@ -161,7 +161,7 @@ def html(obj):
         sage: html("<h1>Hello world</h1>")
         <h1>Hello world</h1>
     """
-    from sage.all import html
+    from sage.misc.html import html
     pretty_print(html(obj))
 
 
@@ -1301,7 +1301,7 @@ def simpson_integration(
     else:
         interval = interval_g[0]
     def parabola(a, b, c):
-        from sage.all import solve
+        from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")
         K = solve([A*a[0]**2+B*a[0]+C==a[1], A*b[0]**2+B*b[0]+C==b[1], A*c[0]**2+B*c[0]+C==c[1]], [A, B, C], solution_dict=True)[0]
         f = K[A]*x**2+K[B]*x+K[C]

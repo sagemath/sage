@@ -1555,7 +1555,7 @@ def default_mip_solver(solver=None):
         - a string indicating one of the available solvers
           (see :class:`MixedIntegerLinearProgram`);
 
-        - a callable (typically a subclass of 
+        - a callable (typically a subclass of
           :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
         - ``None`` (default), in which case the current default solver
@@ -1759,7 +1759,8 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         if base_ring is not None:
             base_ring = base_ring.fraction_field()
-            from sage.rings.all import QQ, RDF
+            from sage.rings.rational_field import Q as QQ
+            from sage.rings.real_double import RDF
             if base_ring is QQ:
                 solver = "Ppl"
             elif solver in ["Interactivelp", "Ppl"] and not base_ring.is_exact():
