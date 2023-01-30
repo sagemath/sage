@@ -26,8 +26,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import Matrix

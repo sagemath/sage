@@ -100,7 +100,7 @@ from sage.misc.prandom import randint
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import random_vector, vector
 from sage.numerical.optimize import find_root
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.real_mpfr import RR
 from sage.arith.misc import next_prime

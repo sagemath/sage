@@ -30,7 +30,7 @@ from sage.misc.functional import denominator, is_even
 from sage.arith.misc import GCD
 from sage.arith.functions import lcm as LCM
 from sage.rings.ideal import Ideal
-from sage.rings.rational_field import Q as QQ
+from sage.rings.rational_field import QQ
 from sage.rings.ring import is_Ring, PrincipalIdealDomain
 from sage.structure.sage_object import SageObject
 from sage.structure.element import is_Vector

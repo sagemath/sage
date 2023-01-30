@@ -88,7 +88,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.padics.factory import Zp
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.constructor import Matrix
 from copy import copy
