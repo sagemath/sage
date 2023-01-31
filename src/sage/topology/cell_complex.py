@@ -48,7 +48,6 @@ from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.abstract_method import abstract_method
-from sage.homology.chains import Chains, Cochains
 
 
 class GenericCellComplex(SageObject):
@@ -775,6 +774,8 @@ class GenericCellComplex(SageObject):
             sage: list(simplicial_complexes.Sphere(2).n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, 1), \chi_(0, 2), \chi_(0, 3), \chi_(1, 2), \chi_(1, 3), \chi_(2, 3)]
         """
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(self._n_cells_sorted(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)

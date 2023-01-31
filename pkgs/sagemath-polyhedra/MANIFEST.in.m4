@@ -99,6 +99,8 @@ prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
+# simplicial complexes
+graft sage/topology
 
 include sage/numerical/mip.p*
 include sage/numerical/interactive_simplex_method.p*
