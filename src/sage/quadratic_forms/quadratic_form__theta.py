@@ -173,7 +173,8 @@ def theta_by_cholesky(self, q_prec):
     # RAISE AN ERROR -- This routine is deprecated!
     #raise NotImplementedError, "This routine is deprecated.  Try theta_series(), which uses theta_by_pari()."
 
-    from sage.functions.other import sqrt, floor, ceil
+    from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
+    from sage.misc.functional import sqrt
 
     n = self.dim()
     theta = [0 for i in range(q_prec+1)]
@@ -302,7 +303,8 @@ def theta_series_degree_2(Q, prec):
     - Raum, Ryan, Skoruppa, Tornaria, 'On Formal Siegel Modular Forms'
       (preprint)
     """
-    from sage.functions.other import sqrt, floor, ceil
+    from sage.arith.misc import integer_floor as floor
+    from sage.misc.functional import sqrt
     from sage.misc.misc import cputime
     from sage.misc.verbose import verbose
 
