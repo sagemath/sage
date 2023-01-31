@@ -49,6 +49,7 @@ Here is a list of all content related to GRS codes:
 # ****************************************************************************
 from copy import copy
 
+from sage.arith.misc import binomial
 from sage.categories.cartesian_product import cartesian_product
 
 from sage.matrix.constructor import matrix
@@ -65,7 +66,6 @@ from sage.misc.functional import symbolic_sum
 from sage.misc.misc_c import prod
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "binomial")
 lazy_import("sage.symbolic.ring", "SR")
 
 from .linear_code import AbstractLinearCode

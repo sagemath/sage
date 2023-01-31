@@ -24,6 +24,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -32,7 +33,6 @@ from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "floor")
 from sage.misc.functional import sqrt
 
 
