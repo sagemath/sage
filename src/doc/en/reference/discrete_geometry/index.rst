@@ -46,6 +46,7 @@ Lattice polyhedra
    sage/geometry/polyhedron/palp_database
    sage/geometry/polyhedron/ppl_lattice_polygon
    sage/geometry/polyhedron/ppl_lattice_polytope
+   sage/geometry/polyhedron/generating_function
 
 Combinatorial Polyhedra
 ~~~~~~~~~~~~~~~~~~~~~~~

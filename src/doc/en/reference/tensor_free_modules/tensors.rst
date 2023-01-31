@@ -2,7 +2,9 @@ Tensors
 =======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+
+   sage/tensor/modules/reflexive_module
 
    sage/tensor/modules/tensor_free_module
 

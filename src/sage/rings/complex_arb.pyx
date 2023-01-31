@@ -2984,7 +2984,7 @@ cdef class ComplexBall(RingElement):
         return res
 
     def rising_factorial(self, n):
-        """
+        r"""
         Return the ``n``-th rising factorial of this ball.
 
         The `n`-th rising factorial of `x` is equal to `x (x+1) \cdots (x+n-1)`.
@@ -3704,7 +3704,7 @@ cdef class ComplexBall(RingElement):
         return res
 
     def polylog(self, s):
-        """
+        r"""
         Return the polylogarithm `\operatorname{Li}_s(\mathrm{self})`.
 
         EXAMPLES::

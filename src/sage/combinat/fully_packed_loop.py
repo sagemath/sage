@@ -60,6 +60,7 @@ FPL_turns = (
  ({L: L, R: R}, {L: U, D: R}, {R: U, D: L}, {U: U, D: D}, {U: R, L: D}, {R: D, U: L})  # odd
  )
 
+
 def _make_color_list(n, colors=None,  color_map=None, randomize=False):
     r"""
     TESTS::
@@ -735,7 +736,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self._six_vertex_model.to_alternating_sign_matrix()
 
-
     @options(link=True, loop=True, loop_fill=False)
     def plot(self, **options):
         r"""
@@ -1220,6 +1220,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self._six_vertex_model
 
+
 class FullyPackedLoops(Parent, UniqueRepresentation):
     r"""
     Class of all fully packed loops on an  `n \times n` grid.
@@ -1257,6 +1258,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         ....:     == FullyPackedLoops(n).cardinality() for n in range(1, 7))
         True
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.

@@ -1,5 +1,5 @@
 r"""
-Optimised Cython code for counting congruence solutions
+Optimized counting of congruence solutions
 """
 
 from sage.arith.all import valuation, kronecker_symbol, is_prime

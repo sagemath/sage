@@ -3308,12 +3308,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         to variables supplied in args.
 
         Multiple variables and iteration counts may be supplied; see
-        documentation for the global derivative() function for more
+        documentation for the global :func:`derivative` function for more
         details.
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+            :meth:`_derivative`
 
         EXAMPLES::
 
@@ -3336,7 +3336,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         respect to the given variable.
 
         If var is among the generators of this ring, the derivative
-        is with respect to the generator. Otherwise, _derivative(var) is called
+        is with respect to the generator. Otherwise, ``_derivative(var)`` is called
         recursively for each coefficient of this polynomial.
 
         .. SEEALSO:: :meth:`derivative`
@@ -3763,4 +3763,3 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
-

@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) jupyter_core
+$(PYTHON) jupyter_packaging | $(PYTHON_TOOLCHAIN) jupyter_core
 
 ----------
 All lines of this file are ignored except the first.

@@ -16,6 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.modular.arithgroup.congroup_sl2z import is_SL2Z
+from sage.modular.modform.constructor import EisensteinForms
 from sage.modular.modform.eis_series import eisenstein_series_qexp
 from sage.modular.modform.element import GradedModularFormElement
 
@@ -63,6 +65,26 @@ class QuasiModularFormsElement(ModuleElement):
         sage: M = QM.modular_forms_subring()
         sage: QM(M.0 * E2 + M.1 * E2^2)
         2 - 336*q + 4320*q^2 + 398400*q^3 - 3772992*q^4 - 89283168*q^5 + O(q^6)
+
+    One may convert a quasimodular form into a multivariate polynomial in the
+    generators of the ring by calling
+    :meth:`~sage.modular.quasimodform.element.QuasiModularFormsElement.polynomial`::
+
+        sage: QM = QuasiModularForms(1)
+        sage: F = QM.0^2 + QM.1^2 + QM.0*QM.1*QM.2
+        sage: F.polynomial()
+        E2*E4*E6 + E4^2 + E2^2
+
+    If the group is not the full modular group, the default names of the
+    generators are given by ``Ek_i`` and ``Sk_i`` to denote the `i`-th basis
+    element of the weight `k` Eisenstein subspace and cuspidal subspace
+    respectively (for more details, see the documentation of
+    :meth:`~sage.modular.quasimodform.ring.QuasiModularFormsRing.polynomial_ring`) ::
+
+        sage: QM = QuasiModularForms(Gamma1(4))
+        sage: F = (QM.0^4)*(QM.1^3) + QM.3
+        sage: F.polynomial()
+        -512*E2^4*E2_1^3 + E2^4*E3_0^2 + 48*E2^4*E3_1^2 + E3_0
     """
     def __init__(self, parent, polynomial):
         r"""
@@ -274,6 +296,9 @@ class QuasiModularFormsElement(ModuleElement):
             False
             sage: (QM.0).is_zero()
             False
+            sage: QM = QuasiModularForms(Gamma0(2))
+            sage: QM(0).is_zero()
+            True
         """
         return not self
 
@@ -291,6 +316,9 @@ class QuasiModularFormsElement(ModuleElement):
             True
             sage: (QM.0).is_one()
             False
+            sage: QM = QuasiModularForms(Gamma0(2))
+            sage: QM(1).is_one()
+            True
         """
         return self._polynomial.is_one()
 
@@ -318,6 +346,13 @@ class QuasiModularFormsElement(ModuleElement):
             True
             sage: QM.zero().is_graded_modular_form()
             True
+            sage: QM = QuasiModularForms(Gamma0(6))
+            sage: (QM.0).is_graded_modular_form()
+            False
+            sage: (QM.0 + QM.1*QM.2 + QM.3).is_graded_modular_form()
+            False
+            sage: (QM.1*QM.2 + QM.3).is_graded_modular_form()
+            True
 
         .. NOTE::
 
@@ -342,21 +377,29 @@ class QuasiModularFormsElement(ModuleElement):
             False
             sage: QM.zero().is_modular_form()
             True
+            sage: QM = QuasiModularForms(Gamma0(4))
+            sage: (QM.0).is_modular_form()
+            False
+            sage: (QM.1).is_modular_form()
+            True
         """
         return self._polynomial.degree() <= 0 and self._polynomial[0].is_modular_form()
 
-    def polynomial(self, names='E2, E4, E6'):
+    def polynomial(self, names=None):
         r"""
-        Return a multivariate polynomial `P(E_2, E_4, E_6)` corresponding to the
-        given form where `E_2`, `E_4` and `E_6` are the generators of the
-        quasimodular form ring given by the following method:
+        Return a multivariate polynomial such that every variable corresponds to
+        a generator of the ring, ordered by the method:
         :meth:`~sage.modular.quasimodform.ring.QuasiModularForms.gens`.
+
+        An alias of this method is ``to_polynomial``.
 
         INPUT:
 
-        - ``names`` (str, default: ``'E2, E4, E6'``) -- a list or tuple of names
-          (strings), or a comma separated string. Correspond to the names of the
-          variables;
+        - ``names`` (str, default: ``None``) -- a list or tuple of names
+          (strings), or a comma separated string. Defines the names for the
+          generators of the multivariate polynomial ring. The default names are
+          of the form ``ABCk`` where ``k`` is a number corresponding to the
+          weight of the form ``ABC``.
 
         OUTPUT: A multivariate polynomial in the variables ``names``
 
@@ -367,11 +410,25 @@ class QuasiModularFormsElement(ModuleElement):
             E4 + E2
             sage: (1/2 + QM.0 + 2*QM.1^2 + QM.0*QM.2).polynomial()
             E2*E6 + 2*E4^2 + E2 + 1/2
+
+        Check that :trac:`34569` is fixed::
+
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: QM.ngens()
+            5
+            sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).polynomial()
+            E3_1*E4_0 + E2_0*E3_0 + E2 + E2_0
+
         """
         P = self.parent().polynomial_ring(names)
-        g0, g1 = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
-        E2, E4, E6 = P.gens()
-        return sum(f.to_polynomial().subs({g0:E4, g1:E6}) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
+        poly_gens = P.gens()
+        E2 = poly_gens[0]
+        poly_gens = poly_gens[1:]
+        modform_poly_gens = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
+        subs_dictionnary = {}
+        for idx, g in enumerate(modform_poly_gens):
+            subs_dictionnary[g] = poly_gens[idx]
+        return sum(f.to_polynomial().subs(subs_dictionnary) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
 
     to_polynomial = polynomial # alias
 
@@ -391,6 +448,9 @@ class QuasiModularFormsElement(ModuleElement):
             [6]
             sage: QM(1/2).weights_list()
             [0]
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).weights_list()
+            [2, 5, 7]
         """
         return sorted(self.homogeneous_components().keys())
 
@@ -533,12 +593,23 @@ class QuasiModularFormsElement(ModuleElement):
             6
             sage: F.serre_derivative().weight()
             8
+
+        Check that :trac:`34569` is fixed::
+
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: E2 = QM.weight_2_eisenstein_series()
+            sage: E2.serre_derivative()
+            -1/6 - 16*q - 216*q^2 - 832*q^3 - 2248*q^4 - 4320*q^5 + O(q^6)
+            sage: F = QM.0 + QM.1*QM.2
         """
         # initial variables:
         QM = self.parent()
         R = QM.base_ring()
         E2 = QM.gen(0)
-        E4 = QM.gen(1)
+        if is_SL2Z(QM.group()):
+            E4 = QM.gen(1)
+        else:
+            E4 = QM(EisensteinForms(group=1, weight=4, base_ring=R).gen(0))
 
         # compute the derivative of E2: q*dE2/dq
         E2deriv = R(12).inverse_of_unit() * (E2 ** 2 - E4)

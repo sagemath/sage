@@ -12,7 +12,7 @@ interactive mathlet.  In the command line, it will simply return the underlying
 HTML and Sage code which creates the mathlet::
 
     sage: interacts.calculus.taylor_polynomial()
-    Interactive function <function taylor_polynomial at ...> with 3 widgets
+    ...Interactive function <function taylor_polynomial at ...> with 3 widgets
       title: HTMLText(value='<h2>Taylor polynomial</h2>')
       f: EvalText(value='e^(-x)*sin(x)', description='$f(x)=$', layout=Layout(max_width='81em'))
       order: SelectionSlider(description='order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
@@ -101,7 +101,7 @@ def library_interact(
         ....: def f(n):
         ....:     print(n)
         sage: f()  # an interact appears if using the notebook, else code
-        Interactive function <function f at ...> with 1 widget
+        ...Interactive function <function f at ...> with 1 widget
         n: TransformIntSlider(value=5, description='n', max=15, min=-5)
 
     TESTS:
@@ -117,7 +117,7 @@ def library_interact(
         DeprecationWarning: Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.
         See https://trac.sagemath.org/33382 for details.
         sage: f()  # an interact appears if using the notebook, else code
-        Interactive function <function f at ...> with 1 widget
+        ...Interactive function <function f at ...> with 1 widget
         n: TransformIntSlider(value=5, description='n', max=15, min=-5)
 
     .. NOTE::
@@ -183,7 +183,7 @@ def demo(n: int, m: int):
     creates the mathlet::
 
         sage: interacts.demo()
-        Interactive function <function demo at ...> with 2 widgets
+        ...Interactive function <function demo at ...> with 2 widgets
           n: SelectionSlider(description='n', options=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), value=0)
           m: SelectionSlider(description='m', options=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), value=0)
     """
@@ -213,7 +213,7 @@ def taylor_polynomial(title, f, order: int):
     creates the mathlet::
 
         sage: interacts.calculus.taylor_polynomial()
-        Interactive function <function taylor_polynomial at ...> with 3 widgets
+        ...Interactive function <function taylor_polynomial at ...> with 3 widgets
           title: HTMLText(value='<h2>Taylor polynomial</h2>')
           f: EvalText(value='e^(-x)*sin(x)', description='$f(x)=$', layout=Layout(max_width='81em'))
           order: SelectionSlider(description='order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
@@ -259,7 +259,7 @@ def definite_integral(title, f, g, interval, x_range, selection):
     creates the mathlet::
 
         sage: interacts.calculus.definite_integral()
-        Interactive function <function definite_integral at ...> with 6 widgets
+        ...Interactive function <function definite_integral at ...> with 6 widgets
           title: HTMLText(value='<h2>Definite integral</h2>')
           f: EvalText(value='3*x', description='$f(x)=$', layout=Layout(max_width='81em'))
           g: EvalText(value='x^2', description='$g(x)=$', layout=Layout(max_width='81em'))
@@ -345,7 +345,7 @@ def function_derivative(title, function, x_range, y_range):
     creates the mathlet::
 
         sage: interacts.calculus.function_derivative()
-        Interactive function <function function_derivative at ...> with 4 widgets
+        ...Interactive function <function function_derivative at ...> with 4 widgets
           title: HTMLText(value='<h2>Derivative grapher</h2>')
           function: EvalText(value='x^5-3*x^3+1', description='Function:', layout=Layout(max_width='81em'))
           x_range: FloatRangeSlider(value=(-2.0, 2.0), description='Range (x)', max=15.0, min=-15.0)
@@ -393,7 +393,7 @@ def difference_quotient(title, f, interval, a, x0):
     creates the mathlet::
 
         sage: interacts.calculus.difference_quotient()
-        Interactive function <function difference_quotient at ...> with 5 widgets
+        ...Interactive function <function difference_quotient at ...> with 5 widgets
           title: HTMLText(value='<h2>Difference quotient</h2>')
           f: EvalText(value='sin(x)', description='f(x)', layout=Layout(max_width='81em'))
           interval: FloatRangeSlider(value=(0.0, 10.0), description='Range', max=10.0)
@@ -458,7 +458,7 @@ def quadratic_equation(A, B, C):
     creates the mathlet::
 
         sage: interacts.calculus.quadratic_equation()
-        Interactive function <function quadratic_equation at ...> with 3 widgets
+        ...Interactive function <function quadratic_equation at ...> with 3 widgets
           A: IntSlider(value=1, description='A', max=7, min=-7)
           B: IntSlider(value=1, description='B', max=7, min=-7)
           C: IntSlider(value=-2, description='C', max=7, min=-7)
@@ -520,7 +520,7 @@ def trigonometric_properties_triangle(a0, a1, a2):
     creates the mathlet::
 
         sage: interacts.geometry.trigonometric_properties_triangle()
-        Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
+        ...Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
           a0: IntSlider(value=30, description='A', max=360)
           a1: IntSlider(value=180, description='B', max=360)
           a2: IntSlider(value=300, description='C', max=360)
@@ -601,7 +601,7 @@ def unit_circle(function, x):
     creates the mathlet::
 
         sage: interacts.geometry.unit_circle()
-        Interactive function <function unit_circle at ...> with 2 widgets
+        ...Interactive function <function unit_circle at ...> with 2 widgets
           function: Dropdown(description='function', options=(('sin(x)', 0), ('cos(x)', 1), ('tan(x)', 2)), value=0)
           x: TransformFloatSlider(value=0.0, description='x', max=6.283185307179586, step=0.015707963267948967)
     """
@@ -702,7 +702,7 @@ def special_points(
     creates the mathlet::
 
         sage: interacts.geometry.special_points()
-        Interactive function <function special_points at ...> with 10 widgets
+        ...Interactive function <function special_points at ...> with 10 widgets
           title: HTMLText(value='<h2>Special points in triangle</h2>')
           a0: IntSlider(value=30, description='A', max=360)
           a1: IntSlider(value=180, description='B', max=360)
@@ -875,7 +875,7 @@ def coin(n, interval):
     creates the mathlet::
 
         sage: interacts.statistics.coin()
-        Interactive function <function coin at ...> with 2 widgets
+        ...Interactive function <function coin at ...> with 2 widgets
           n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
           interval: IntRangeSlider(value=(0, 0), description='Plotting range (y)', max=1)
     """
@@ -915,7 +915,7 @@ def bisection_method(title, f, interval, d, maxn):
     creates the mathlet::
 
         sage: interacts.calculus.secant_method()
-        Interactive function <function secant_method at ...> with 5 widgets
+        ...Interactive function <function secant_method at ...> with 5 widgets
           title: HTMLText(value='<h2>Secant method for numerical root finding</h2>')
           f: EvalText(value='x^2-2', description='f(x)', layout=Layout(max_width='81em'))
           interval: IntRangeSlider(value=(0, 4), description='range', max=5, min=-5)
@@ -995,7 +995,7 @@ def secant_method(title, f, interval, d, maxn):
     creates the mathlet::
 
         sage: interacts.calculus.secant_method()
-        Interactive function <function secant_method at ...> with 5 widgets
+        ...Interactive function <function secant_method at ...> with 5 widgets
           title: HTMLText(value='<h2>Secant method for numerical root finding</h2>')
           f: EvalText(value='x^2-2', description='f(x)', layout=Layout(max_width='81em'))
           interval: IntRangeSlider(value=(0, 4), description='range', max=5, min=-5)
@@ -1068,7 +1068,7 @@ def newton_method(title, f, c, d, maxn, interval, list_steps):
     creates the mathlet::
 
         sage: interacts.calculus.newton_method()
-        Interactive function <function newton_method at ...> with 7 widgets
+        ...Interactive function <function newton_method at ...> with 7 widgets
           title: HTMLText(value='<h2>Newton method</h2>')
           f: EvalText(value='x^2 - 2', description='f', layout=Layout(max_width='81em'))
           c: IntSlider(value=6, description='Start ($x$)', max=10, min=-10)
@@ -1152,7 +1152,7 @@ def trapezoid_integration(
     creates the mathlet::
 
         sage: interacts.calculus.trapezoid_integration()
-        Interactive function <function trapezoid_integration at ...> with 7 widgets
+        ...Interactive function <function trapezoid_integration at ...> with 7 widgets
           title: HTMLText(value='<h2>Trapezoid integration</h2>')
           f: EvalText(value='x^2-5*x + 10', description='$f(x)=$', layout=Layout(max_width='81em'))
           n: IntSlider(value=5, description='# divisions', min=1)
@@ -1285,7 +1285,7 @@ def simpson_integration(
     creates the mathlet::
 
         sage: interacts.calculus.simpson_integration()
-        Interactive function <function simpson_integration at ...> with 7 widgets
+        ...Interactive function <function simpson_integration at ...> with 7 widgets
           title: HTMLText(value='<h2>Simpson integration</h2>')
           f: EvalText(value='x*sin(x)+x+1', description='$f(x)=$', layout=Layout(max_width='81em'))
           n: IntSlider(value=6, description='# divisions', min=2, step=2)
@@ -1549,7 +1549,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     creates the mathlet::
 
         sage: interacts.calculus.function_tool()
-        Interactive function <function function_tool at ...> with 7 widgets
+        ...Interactive function <function function_tool at ...> with 7 widgets
           f: EvalText(value='sin(x)', description='f')
           g: EvalText(value='cos(x)', description='g')
           xrange: IntRangeSlider(value=(0, 1), description='x-range', max=3, min=-3)
@@ -1679,7 +1679,7 @@ def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     creates the mathlet::
 
         sage: interacts.fractals.julia()
-        Interactive function <function julia at ...> with 8 widgets
+        ...Interactive function <function julia at ...> with 8 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           c_real: FloatSlider(value=0.5, description='real part const.', max=2.0, min=-2.0, step=0.01)
           c_imag: FloatSlider(value=0.5, description='imag part const.', max=2.0, min=-2.0, step=0.01)
@@ -1731,7 +1731,7 @@ def mandelbrot(expo, iterations, zoom_x, zoom_y, plot_points, dpi):
     creates the mathlet::
 
         sage: interacts.fractals.mandelbrot()
-        Interactive function <function mandelbrot at ...> with 6 widgets
+        ...Interactive function <function mandelbrot at ...> with 6 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           iterations: IntSlider(value=20, description='# iterations', min=1)
           zoom_x: FloatRangeSlider(value=(-2.0, 1.0), description='Zoom X', max=2.0, min=-2.0, step=0.01)
@@ -1776,7 +1776,7 @@ def cellular_automaton(N, rule_number, size):
     creates the mathlet::
 
         sage: interacts.fractals.cellular_automaton()
-        Interactive function <function cellular_automaton at ...> with 3 widgets
+        ...Interactive function <function cellular_automaton at ...> with 3 widgets
           N: IntSlider(value=100, description='Number of iterations', max=500, min=1)
           rule_number: IntSlider(value=110, description='Rule number', max=255)
           size: IntSlider(value=6, description='size of graphic', max=11, min=1)
@@ -1835,7 +1835,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
     creates the mathlet::
 
         sage: sage.interacts.algebra.polar_prime_spiral()
-        Interactive function <function polar_prime_spiral at ...> with 6 widgets
+        ...Interactive function <function polar_prime_spiral at ...> with 6 widgets
           interval: IntRangeSlider(value=(1, 1000), description='range', max=4000, min=1, step=10)
           show_factors: Checkbox(value=True, description='show_factors')
           highlight_primes: Checkbox(value=True, description='highlight_primes')

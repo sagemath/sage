@@ -25,6 +25,9 @@ from sage.arith.all import is_prime, lcm, primes, random_prime
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod as mod
 
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.arith.misc', ('carmichael_lambda'), deprecation=34719)
+
 def ascii_integer(B):
     r"""
     Return the ASCII integer corresponding to the binary string ``B``.
@@ -254,158 +257,6 @@ def bin_to_ascii(B):
         # ASCII integer to the corresponding ASCII character.
         A.append(chr(ascii_integer(b[8*i: 8*(i+1)])))
     return "".join(A)
-
-def carmichael_lambda(n):
-    r"""
-    Return the Carmichael function of a positive integer ``n``.
-
-    The Carmichael function of `n`, denoted `\lambda(n)`, is the smallest
-    positive integer `k` such that `a^k \equiv 1 \pmod{n}` for all
-    `a \in \ZZ/n\ZZ` satisfying `\gcd(a, n) = 1`. Thus, `\lambda(n) = k`
-    is the exponent of the multiplicative group `(\ZZ/n\ZZ)^{\ast}`.
-
-    INPUT:
-
-    - ``n`` -- a positive integer.
-
-    OUTPUT:
-
-    - The Carmichael function of ``n``.
-
-    ALGORITHM:
-
-    If `n = 2, 4` then `\lambda(n) = \varphi(n)`. Let `p \geq 3` be an odd
-    prime and let `k` be a positive integer. Then
-    `\lambda(p^k) = p^{k - 1}(p - 1) = \varphi(p^k)`. If `k \geq 3`, then
-    `\lambda(2^k) = 2^{k - 2}`. Now consider the case where `n > 3` is
-    composite and let `n = p_1^{k_1} p_2^{k_2} \cdots p_t^{k_t}` be the
-    prime factorization of `n`. Then
-
-    .. MATH::
-
-        \lambda(n)
-        = \lambda(p_1^{k_1} p_2^{k_2} \cdots p_t^{k_t})
-        = \text{lcm}(\lambda(p_1^{k_1}), \lambda(p_2^{k_2}), \dots, \lambda(p_t^{k_t}))
-
-    EXAMPLES:
-
-    The Carmichael function of all positive integers up to and including 10::
-
-        sage: from sage.crypto.util import carmichael_lambda
-        sage: list(map(carmichael_lambda, [1..10]))
-        [1, 1, 2, 2, 4, 2, 6, 2, 6, 4]
-
-    The Carmichael function of the first ten primes::
-
-        sage: list(map(carmichael_lambda, primes_first_n(10)))
-        [1, 2, 4, 6, 10, 12, 16, 18, 22, 28]
-
-    Cases where the Carmichael function is equivalent to the Euler phi
-    function::
-
-        sage: carmichael_lambda(2) == euler_phi(2)
-        True
-        sage: carmichael_lambda(4) == euler_phi(4)
-        True
-        sage: p = random_prime(1000, lbound=3, proof=True)
-        sage: k = randint(1, 1000)
-        sage: carmichael_lambda(p^k) == euler_phi(p^k)
-        True
-
-    A case where `\lambda(n) \neq \varphi(n)`::
-
-        sage: k = randint(3, 1000)
-        sage: carmichael_lambda(2^k) == 2^(k - 2)
-        True
-        sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)
-        False
-
-    Verifying the current implementation of the Carmichael function using
-    another implementation. The other implementation that we use for
-    verification is an exhaustive search for the exponent of the
-    multiplicative group `(\ZZ/n\ZZ)^{\ast}`. ::
-
-        sage: from sage.crypto.util import carmichael_lambda
-        sage: n = randint(1, 500)
-        sage: c = carmichael_lambda(n)
-        sage: def coprime(n):
-        ....:     return [i for i in range(n) if gcd(i, n) == 1]
-        sage: def znpower(n, k):
-        ....:     L = coprime(n)
-        ....:     return list(map(power_mod, L, [k]*len(L), [n]*len(L)))
-        sage: def my_carmichael(n):
-        ....:     if n == 1:
-        ....:         return 1
-        ....:     for k in range(1, n):
-        ....:         L = znpower(n, k)
-        ....:         ones = [1] * len(L)
-        ....:         T = [L[i] == ones[i] for i in range(len(L))]
-        ....:         if all(T):
-        ....:             return k
-        sage: c == my_carmichael(n)
-        True
-
-    Carmichael's theorem states that `a^{\lambda(n)} \equiv 1 \pmod{n}`
-    for all elements `a` of the multiplicative group `(\ZZ/n\ZZ)^{\ast}`.
-    Here, we verify Carmichael's theorem. ::
-
-        sage: from sage.crypto.util import carmichael_lambda
-        sage: n = randint(2, 1000)
-        sage: c = carmichael_lambda(n)
-        sage: ZnZ = IntegerModRing(n)
-        sage: M = ZnZ.list_of_elements_of_multiplicative_group()
-        sage: ones = [1] * len(M)
-        sage: P = [power_mod(a, c, n) for a in M]
-        sage: P == ones
-        True
-
-    TESTS:
-
-    The input ``n`` must be a positive integer::
-
-        sage: from sage.crypto.util import carmichael_lambda
-        sage: carmichael_lambda(0)
-        Traceback (most recent call last):
-        ...
-        ValueError: Input n must be a positive integer.
-        sage: carmichael_lambda(randint(-10, 0))
-        Traceback (most recent call last):
-        ...
-        ValueError: Input n must be a positive integer.
-
-    Bug reported in :trac:`8283`::
-
-        sage: from sage.crypto.util import carmichael_lambda
-        sage: type(carmichael_lambda(16))
-        <class 'sage.rings.integer.Integer'>
-
-    REFERENCES:
-
-    - :wikipedia:`Carmichael_function`
-    """
-    n = Integer(n)
-    # sanity check
-    if n < 1:
-        raise ValueError("Input n must be a positive integer.")
-
-    L = n.factor()
-    t = []
-
-    # first get rid of the prime factor 2
-    if n & 1 == 0:
-        e = L[0][1]
-        L = L[1:]   # now, n = 2**e * L.value()
-        if e < 3:   # for 1 <= k < 3, lambda(2**k) = 2**(k - 1)
-            e = e - 1
-        else:       # for k >= 3, lambda(2**k) = 2**(k - 2)
-            e = e - 2
-        t.append(1 << e)  # 2**e
-
-    # then other prime factors
-    t += [p**(k - 1) * (p - 1) for p, k in L]
-
-    # finish the job
-    return lcm(t)
 
 
 def has_blum_prime(lbound, ubound):

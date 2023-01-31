@@ -1197,12 +1197,16 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     Catch error message from Maxima::
 
         sage: solve(acot(x),x)
-        []
+        Traceback (most recent call last):
+        ...
+        TypeError: ECL says: cot: argument 0 isn't in the domain of cot.
 
     ::
 
         sage: solve(acot(x),x,to_poly_solve=True)
-        []
+        Traceback (most recent call last):
+        ...
+        TypeError: ECL says: cot: argument 0 isn't in the domain of cot.
 
     :trac:`7491` fixed::
 

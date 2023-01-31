@@ -2,7 +2,7 @@
 ===========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot3d/introduction
 
@@ -10,7 +10,7 @@ Function and Data Plots
 -----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot3d/plot3d
    sage/plot/plot3d/parametric_plot3d
@@ -24,7 +24,7 @@ Basic Shapes and Primitives
 ---------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot3d/base
    sage/plot/plot3d/shapes
@@ -37,7 +37,7 @@ Infrastructure
 --------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot3d/texture
    sage/plot/plot3d/index_face_set
@@ -48,7 +48,7 @@ Backends
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/plot/plot3d/tachyon
    threejs

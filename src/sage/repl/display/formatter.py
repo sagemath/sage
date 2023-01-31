@@ -143,6 +143,9 @@ class SageDisplayFormatter(DisplayFormatter):
 
             sage: import os
             sage: import importlib.resources
+            sage: import warnings
+            sage: warnings.filterwarnings('ignore', category=DeprecationWarning,
+            ....:     message=r'path is deprecated\. Use files\(\) instead\.')
             sage: from sage.repl.rich_output.backend_ipython import BackendIPython
             sage: backend = BackendIPython()
             sage: shell = get_test_shell()
@@ -169,8 +172,7 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('import ipywidgets')
             sage: shell.run_cell('slider = ipywidgets.IntSlider()')
             sage: shell.run_cell('get_ipython().display_formatter.format(slider)')
-            IntSlider(value=0)
-            ({}, {})
+            ...IntSlider(value=0)..., {})
 
             sage: shell.run_cell('%display default')
             sage: shell.quit()

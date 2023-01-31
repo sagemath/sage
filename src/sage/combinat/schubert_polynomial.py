@@ -2,7 +2,7 @@ r"""
 Schubert Polynomials
 
 
-See :wikipedia:`Schubert_polynomial` and 
+See :wikipedia:`Schubert_polynomial` and
 `SymmetricFunctions.com <https://www.symmetricfunctions.com/schubert.htm#schubert>`_.
 Schubert polynomials are representatives of cohomology classes in flag varieties.
 In `n` variables, they are indexed by permutations `w \in S_n`. They also form

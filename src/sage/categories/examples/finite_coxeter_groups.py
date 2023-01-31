@@ -1,14 +1,13 @@
 r"""
 Examples of finite Coxeter groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
 #  Copyright (C) 2009 Nicolas Borie <nicolas dot borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
@@ -87,10 +86,11 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
     def __init__(self, n=5):
         r"""
-        INPUT:
-         - ``n`` - an integer with `n>=2`
+        Construct the `n`-th DihedralGroup of order `2 n`.
 
-        Construct the n-th DihedralGroup of order 2*n
+        INPUT:
+
+        - `n` -- an integer with `n \geq 2`
 
         EXAMPLES::
 
@@ -238,12 +238,13 @@ class DihedralGroup(UniqueRepresentation, Parent):
                     return self.parent()(reduced_word[:-1])
                 else:
                     return self.parent()(reduced_word[1:])
-            elif (len(reduced_word) == n-1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
-                return self.parent()((1,)+reduced_word)
+            elif (len(reduced_word) == n - 1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
+                return self.parent()((1,) + reduced_word)
             else:
                 if self.has_descent(i):
                     return self.parent()(reduced_word[:-1])
                 else:
-                    return self.parent()(reduced_word+(i,))
+                    return self.parent()(reduced_word + (i,))
+
 
 Example = DihedralGroup

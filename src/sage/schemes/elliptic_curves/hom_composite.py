@@ -87,9 +87,10 @@ from sage.arith.misc import prod
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
 
 # TODO: Implement sparse strategies? (cf. the SIKE cryptosystem)
+
 
 def _eval_factored_isogeny(phis, P):
     """
@@ -114,6 +115,7 @@ def _eval_factored_isogeny(phis, P):
     for phi in phis:
         P = phi(P)
     return P
+
 
 def _compute_factored_isogeny_prime_power(P, l, e):
     """
@@ -143,6 +145,7 @@ def _compute_factored_isogeny_prime_power(P, l, e):
         phis.append(phi)
     return phis
 
+
 def _compute_factored_isogeny_single_generator(P):
     """
     This method takes a point `P` and returns a sequence of
@@ -169,6 +172,7 @@ def _compute_factored_isogeny_single_generator(P):
         phis += psis
     return phis
 
+
 def _compute_factored_isogeny(kernel):
     """
     This method takes a set of points on an elliptic curve
@@ -194,6 +198,7 @@ def _compute_factored_isogeny(kernel):
         ker = [_eval_factored_isogeny(psis, P) for P in ker]
         phis += psis
     return phis
+
 
 class EllipticCurveHom_composite(EllipticCurveHom):
 
@@ -267,7 +272,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         self._phis = _compute_factored_isogeny(kernel)
 
         if not self._phis:
-            self._phis = [WeierstrassIsomorphism(E, (1, 0, 0, 0))]
+            self._phis = [identity_morphism(E)]
 
         if model is not None:
             if codomain is not None:
@@ -345,7 +350,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         TESTS::
 
             sage: E = EllipticCurve('4730k1')
-            sage: EllipticCurveHom_composite.from_factors([], E) == E.multiplication_by_m_isogeny(1)
+            sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)
             True
 
         ::
@@ -370,7 +375,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             E = phi.codomain()
 
         if not maps:
-            maps = (WeierstrassIsomorphism(E, (1,0,0,0)),)
+            maps = (identity_morphism(E),)
 
         if len(maps) == 1 and not strict:
             return maps[0]
@@ -393,6 +398,16 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: R = E.lift_x(15/4 * (a+3))
             sage: psi(R)    # indirect doctest
             (1033648757/303450 : 58397496786187/1083316500*a - 62088706165177/2166633000 : 1)
+
+        Check that copying the order over works::
+
+            sage: E = EllipticCurve(GF(431), [1,0])
+            sage: P, = E.gens()
+            sage: Q = 2^99*P; Q.order()
+            27
+            sage: phi = E.isogeny(3^99*P, algorithm='factored')
+            sage: phi(Q)._order
+            27
         """
         return _eval_factored_isogeny(self._phis, P)
 
@@ -512,14 +527,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         if isinstance(left, EllipticCurveHom_composite):
-            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    #XXX bit of a hack
+            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    # XXX bit of a hack
                 return EllipticCurveHom_composite.from_factors((left.factors()[0] * right,) + left.factors()[1:], strict=False)
             if isinstance(right, EllipticCurveHom_composite):
                 return EllipticCurveHom_composite.from_factors(right.factors() + left.factors())
             if isinstance(right, EllipticCurveHom):
                 return EllipticCurveHom_composite.from_factors((right,) + left.factors())
         if isinstance(right, EllipticCurveHom_composite):
-            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  #XXX bit of a hack
+            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  # XXX bit of a hack
                 return EllipticCurveHom_composite.from_factors(right.factors()[:-1] + (left * right.factors()[-1],), strict=False)
             if isinstance(left, EllipticCurveHom):
                 return EllipticCurveHom_composite.from_factors(right.factors() + (left,))
@@ -548,7 +563,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: psi = phi.codomain().isogeny(phi(Q))
             sage: psi = psi.codomain().isomorphism_to(E) * psi
             sage: comp = psi * phi
-            sage: mu = E.multiplication_by_m_isogeny(phi.degree())
+            sage: mu = E.scalar_multiplication(phi.degree())
             sage: sum(a*comp == mu for a in E.automorphisms())
             1
 
@@ -665,9 +680,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             Composite morphism of degree 9 = 3^2:
               From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 28339*x + 59518 over Finite Field of size 65537
               To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 65537
-            sage: psi * phi == phi.domain().multiplication_by_m_isogeny(phi.degree())
+            sage: psi * phi == phi.domain().scalar_multiplication(phi.degree())
             True
-            sage: phi * psi == psi.domain().multiplication_by_m_isogeny(psi.degree())
+            sage: phi * psi == psi.domain().scalar_multiplication(psi.degree())
             True
         """
         phis = (phi.dual() for phi in self._phis[::-1])
@@ -787,4 +802,3 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         from sage.misc.superseded import deprecation
         deprecation(34410, 'calling EllipticCurveHom_composite.make_default() is no longer necessary')
-

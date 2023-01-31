@@ -213,7 +213,6 @@ def _normal_label(g, comb_emb, external_face):
         except Exception:
             raise RuntimeError('Contractible list is empty but graph still has %d vertices.  (Expected 3.)' % g.order())
 
-            break
         # going to contract v
         v_neighbors = Set(g.neighbors(v))
         contracted.append((v, v_neighbors,

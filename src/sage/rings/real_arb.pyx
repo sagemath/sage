@@ -238,7 +238,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
 cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision):
-    """
+    r"""
     Convert an MPFI interval to an Arb ball.
 
     INPUT:
@@ -282,7 +282,7 @@ cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision):
     mpfr_clear(right)
 
 cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -1:
-    """
+    r"""
     Convert an Arb ball to an MPFI interval.
 
     INPUT:
@@ -798,7 +798,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
     # Ball functions of non-ball arguments
 
     def sinpi(self, x):
-        """
+        r"""
         Return a ball enclosing `\sin(\pi x)`.
 
         This works even if ``x`` itself is not a ball, and may be faster or
@@ -844,7 +844,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         return res
 
     def cospi(self, x):
-        """
+        r"""
         Return a ball enclosing `\cos(\pi x)`.
 
         This works even if ``x`` itself is not a ball, and may be faster or
@@ -2986,7 +2986,7 @@ cdef class RealBall(RingElement):
         return res
 
     def sqrt1pm1(self):
-        """
+        r"""
         Return `\sqrt{1+\mathrm{self}}-1`, computed accurately when ``self`` is
         close to zero.
 
@@ -3728,7 +3728,7 @@ cdef class RealBall(RingElement):
         return res
 
     def gamma(self, a=None):
-        """
+        r"""
         Image of this ball by the (upper incomplete) Euler Gamma function
 
         For `a` real, return the upper incomplete Gamma function
@@ -3770,7 +3770,7 @@ cdef class RealBall(RingElement):
     gamma_inc = gamma
 
     def gamma_inc_lower(self, a):
-        """
+        r"""
         Image of this ball by the lower incomplete Euler Gamma function
 
         For `a` real, return the lower incomplete Gamma function
@@ -3828,7 +3828,7 @@ cdef class RealBall(RingElement):
         return res
 
     def rising_factorial(self, n):
-        """
+        r"""
         Return the ``n``-th rising factorial of this ball.
 
         The `n`-th rising factorial of `x` is equal to `x (x+1) \cdots (x+n-1)`.
@@ -3934,7 +3934,7 @@ cdef class RealBall(RingElement):
         return res
 
     def polylog(self, s):
-        """
+        r"""
         Return the polylogarithm `\operatorname{Li}_s(\mathrm{self})`.
 
         EXAMPLES::

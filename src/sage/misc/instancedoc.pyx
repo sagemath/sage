@@ -327,4 +327,3 @@ def instancedoc(cls):
     tp.tp_doc = NULL
     PyType_Modified(tp)
     return cls
-

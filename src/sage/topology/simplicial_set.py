@@ -3819,7 +3819,9 @@ def standardize_degeneracies(*L):
     - ``L`` -- list of integers, representing a composition of
       degeneracies in a simplicial set.
 
-    OUTPUT: an equivalent list of degeneracies, standardized to be
+    OUTPUT:
+
+    an equivalent list of degeneracies, standardized to be
     written in decreasing order, using the simplicial identity
 
     .. MATH::
@@ -3923,7 +3925,9 @@ def standardize_face_maps(*L):
     - ``L`` -- list of integers, representing a composition of
       face maps in a simplicial set.
 
-    OUTPUT: an equivalent list of face maps, standardized to be
+    OUTPUT:
+
+    an equivalent list of face maps, standardized to be
     written in non-increasing order, using the simplicial identity
 
     .. MATH::

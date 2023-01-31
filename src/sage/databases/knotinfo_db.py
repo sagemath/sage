@@ -603,16 +603,16 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
                     val_list.append(knot_list[i][col.name])
 
-            if  col.column_type() != col.types.OnlyKnots:
-                for i in range(1 , len_links):
+            if col.column_type() != col.types.OnlyKnots:
+                for i in range(1, len_links):
                     if col.name == self._names_column:
                         link_name = link_list[i][col.name]
                         link_name = link_name.replace('{', '_')
                         link_name = link_name.replace(',', '_')
                         link_name = link_name.replace('}', '')
- 
+
                         num_comp = int(link_list[i][self._components_column])
-                        row_dict[link_name] = [i + len_knots - 2 , num_comp]
+                        row_dict[link_name] = [i + len_knots - 2, num_comp]
 
                     val_list.append(link_list[i][col.name])
 

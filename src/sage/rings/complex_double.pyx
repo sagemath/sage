@@ -174,7 +174,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             (-1.0, -1.0 + 1.2246...e-16*I, False)
         """
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self, ('I',), normalize=False, category=Fields().Metric().Complete())
+        ParentWithGens.__init__(self, self, ('I',), normalize=False, category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_()
 
     def __reduce__(self):
@@ -380,7 +380,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             return x
         elif isinstance(x, tuple):
             return ComplexDoubleElement(x[0], x[1])
-        elif isinstance(x, (float, int, long)):
+        elif isinstance(x, (float, int)):
             return ComplexDoubleElement(x, 0)
         elif isinstance(x, complex):
             return ComplexDoubleElement(x.real, x.imag)
@@ -1637,7 +1637,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self.real().is_NaN() or self.imag().is_NaN()
 
     cpdef _pow_(self, other):
-        """
+        r"""
         The complex number ``self`` raised to the power ``other``.
 
         This is computed using complex logarithms and exponentials

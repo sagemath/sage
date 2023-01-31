@@ -901,8 +901,6 @@ class RecognizableSeries(ModuleElement):
                 return False
         return True
 
-
-
     def __hash__(self):
         r"""
         A hash value of this recognizable series.
@@ -1761,7 +1759,6 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         return _pickle_RecognizableSeriesSpace, \
             (self.coefficient_ring(), self.indices(), self.category())
-
 
     def alphabet(self):
         r"""

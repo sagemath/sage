@@ -1,16 +1,16 @@
 """
 Root system data for type D
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2009 Justin Walker
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from . import ambient_space
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     def dimension(self):
@@ -34,12 +34,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
             (-1, -1, 0)
             sage: e.root(0, 0, 1, 1)
             (-1, 0, 0)
-
         """
         if i != j:
             return (-1)**p1 * self.monomial(i) + (-1)**p2 * self.monomial(j)
-        else:
-            return (-1)**p1 * self.monomial(i)
+        return (-1)**p1 * self.monomial(i)
 
     def simple_root(self, i):
         """
@@ -69,12 +67,11 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1, 0, 0, -1),
              (0, 1, 0, -1),
              (0, 0, 1, -1)]
-
         """
         res = []
-        for p in [0,1]:
+        for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i,j,0,p) for i in range(j)])
+                res.extend([self.root(i, j, 0, p) for i in range(j)])
         return res
 
     def negative_roots(self):
@@ -94,14 +91,12 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (-1, 0, 0, -1),
              (0, -1, 0, -1),
              (0, 0, -1, -1)]
-
         """
         res = []
-        for p in [0,1]:
+        for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i,j,1,p) for i in range(j)])
+                res.extend([self.root(i, j, 1, p) for i in range(j)])
         return res
-
 
     def fundamental_weight(self, i):
         """
@@ -114,17 +109,21 @@ class AmbientSpace(ambient_space.AmbientSpace):
             raise ValueError("{} is not in the index set".format(i))
         n = self.dimension()
         if i == n:
-            return  self.sum(self.monomial(j) for j in range(n)) / 2
-        elif i == n-1:
+            return self.sum(self.monomial(j) for j in range(n)) / 2
+        elif i == n - 1:
             return (self.sum(self.monomial(j) for j in range(n-1)) - self.monomial(n-1)) / 2
         else:
-            return  self.sum(self.monomial(j) for j in range(i))
+            return self.sum(self.monomial(j) for j in range(i))
+
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 
 from sage.misc.cachefunc import cached_method
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
+
+
 class CartanType(CartanType_standard_finite, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -348,6 +347,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret += "---".join(node(label(i)) for i in range(1, n)) +"\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

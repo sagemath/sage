@@ -1,0 +1,15 @@
+cd src
+mkdir build
+cd build
+sdh_cmake -DCMAKE_INSTALL_LIBDIR=lib \
+         -DCMAKE_VERBOSE_MAKEFILE=ON \
+         -DCMAKE_BUILD_WITH_INSTALL_NAME_DIR=ON \
+         -DBLA_VENDOR=OpenBLAS \
+         -DBLAS_LIBRARIES="$(pkg-config --libs blas)" \
+         -DLAPACK_LIBRARIES="$(pkg-config --libs lapack)" \
+         -DSCIP_DIR="${SAGE_LOCAL}" \
+         -DSYM=bliss \
+         -DSDPS=dsdp \
+         ..
+sdh_make
+sdh_make_install

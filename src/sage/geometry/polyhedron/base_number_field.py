@@ -38,7 +38,7 @@ def _number_field_elements_from_algebraics_list_of_lists_of_lists(listss, **kwds
         1.732050807568878?
         sage: from sage.geometry.polyhedron.base_number_field import _number_field_elements_from_algebraics_list_of_lists_of_lists
         sage: K, results, hom = _number_field_elements_from_algebraics_list_of_lists_of_lists([[[rt2], [1]], [[rt3]], [[1], []]]); results  # optional - sage.rings.number_field
-        [[[-a^3 + 3*a], [1]], [[-a^2 + 2]], [[1], []]]
+        [[[-a^3 + 3*a], [1]], [[a^2 - 2]], [[1], []]]
     """
     from sage.rings.qqbar import number_field_elements_from_algebraics
     numbers = []

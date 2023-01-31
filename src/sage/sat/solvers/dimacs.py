@@ -15,6 +15,8 @@ Currently, interfaces to **RSat** and **Glucose** are included by default.
 AUTHORS:
 
 - Martin Albrecht (2012): first version
+- Sébastien Labbé (2018): adding Glucose SAT solver
+- Sébastien Labbé (2023): adding Kissat SAT solver
 
 Classes and Methods
 -------------------
@@ -354,14 +356,9 @@ class DIMACS(SatSolver):
                 fh.write(" ".join(map(str, lits)) + " 0\n")
         fh.close()
 
-    def __call__(self, assumptions=None):
+    def _run(self):
         """
         Run 'command' and collect output.
-
-        INPUT:
-
-        - ``assumptions`` - ignored, accepted for compatibility with
-          other solvers (default: ``None``)
 
         TESTS:
 
@@ -371,14 +368,25 @@ class DIMACS(SatSolver):
             sage: fn = tmp_filename()
             sage: solver = DIMACS(filename=fn)
             sage: solver.add_clause( (1, -2 , 3) )
-            sage: solver()
+            sage: solver._run()
             Traceback (most recent call last):
             ...
             ValueError: no SAT solver command selected
+
+        It is used by subclasses::
+
+            sage: from sage.sat.solvers import Glucose
+            sage: solver = Glucose()
+            sage: solver.add_clause( (1, 2, 3) )
+            sage: solver.add_clause( (-1,) )
+            sage: solver.add_clause( (-2,) )
+            sage: solver._run()                       # optional - glucose
+            sage: solver._output                      # optional - glucose
+            [...
+             's SATISFIABLE\n',
+             'v -1 -2 3 0\n']
         """
         from sage.misc.verbose import get_verbose
-        if assumptions is not None:
-            raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
 
         self.write()
         output_filename = None
@@ -414,19 +422,9 @@ class DIMACS(SatSolver):
             process.kill()
             raise
 
-
-class RSat(DIMACS):
-    """
-    An instance of the RSat solver.
-
-    For information on RSat see: http://reasoning.cs.ucla.edu/rsat/
-    """
-
-    command = "rsat {input} -v -s"
-
     def __call__(self, assumptions=None):
         """
-        Solve this instance.
+        Solve this instance and return the parsed output.
 
         INPUT:
 
@@ -441,7 +439,55 @@ class RSat(DIMACS):
 
         - If this instance is UNSAT: ``False``
 
-        EXAMPLES::
+        EXAMPLES:
+
+        When the problem is SAT::
+
+            sage: from sage.sat.solvers import RSat
+            sage: solver = RSat()
+            sage: solver.add_clause( (1, 2, 3) )
+            sage: solver.add_clause( (-1,) )
+            sage: solver.add_clause( (-2,) )
+            sage: solver()                            # optional - rsat
+            (None, False, False, True)
+
+        When the problem is UNSAT::
+
+            sage: solver = RSat()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((1,-2))
+            sage: solver.add_clause((-1,-2))
+            sage: solver()                            # optional - rsat
+            False
+
+        With Glucose::
+
+            sage: from sage.sat.solvers.dimacs import Glucose
+            sage: solver = Glucose()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((1,-2))
+            sage: solver()                           # optional - glucose
+            (None, True, True)
+            sage: solver.add_clause((-1,-2))
+            sage: solver()                           # optional - glucose
+            False
+
+        With GlucoseSyrup::
+
+            sage: from sage.sat.solvers.dimacs import GlucoseSyrup
+            sage: solver = GlucoseSyrup()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((1,-2))
+            sage: solver()                          # optional - glucose
+            (None, True, True)
+            sage: solver.add_clause((-1,-2))
+            sage: solver()                          # optional - glucose
+            False
+
+        TESTS::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
             sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
@@ -452,10 +498,14 @@ class RSat(DIMACS):
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
-        """
-        DIMACS.__call__(self)
 
-        s = [None] + [False for _ in range(self.nvars())]
+        """
+        if assumptions is not None:
+            raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
+
+        self._run()
+
+        v_lines = []
         for line in self._output:
             if line.startswith("c"):
                 continue
@@ -463,10 +513,51 @@ class RSat(DIMACS):
                 if "UNSAT" in line:
                     return False
             if line.startswith("v"):
-                lits = map(int, line[2:-2].strip().split(" "))
-                for e in lits:
-                    s[abs(e)] = e>0
-        return tuple(s)
+                v_lines.append(line[1:].strip())
+
+        if v_lines:
+            L = " ".join(v_lines).split(" ")
+            assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
+            return (None,) + tuple(int(e)>0 for e in L[:-1])
+        else:
+            raise ValueError("When parsing the output, no line starts with letter v or s")
+
+class RSat(DIMACS):
+    """
+    An instance of the RSat solver.
+
+    For information on RSat see: http://reasoning.cs.ucla.edu/rsat/
+
+    EXAMPLES::
+
+        sage: from sage.sat.solvers import RSat
+        sage: solver = RSat()
+        sage: solver
+        DIMACS Solver: 'rsat {input} -v -s'
+
+    When the problem is SAT::
+
+        sage: from sage.sat.solvers import RSat
+        sage: solver = RSat()
+        sage: solver.add_clause( (1, 2, 3) )
+        sage: solver.add_clause( (-1,) )
+        sage: solver.add_clause( (-2,) )
+        sage: solver()                            # optional - rsat
+        (None, False, False, True)
+
+    When the problem is UNSAT::
+
+        sage: solver = RSat()
+        sage: solver.add_clause((1,2))
+        sage: solver.add_clause((-1,2))
+        sage: solver.add_clause((1,-2))
+        sage: solver.add_clause((-1,-2))
+        sage: solver()                            # optional - rsat
+        False
+
+    """
+    command = "rsat {input} -v -s"
+
 
 class Glucose(DIMACS):
     """
@@ -479,148 +570,186 @@ class Glucose(DIMACS):
         sage: from sage.sat.solvers import Glucose
         sage: solver = Glucose()
         sage: solver
-        DIMACS Solver: 'glucose -verb=2 {input} {output}'
-        sage: solver.add_clause( (1, 2, 3) )
-        sage: solver.add_clause( (-1,) )
-        sage: solver.add_clause( (-2,) )
-        sage: solver()                            # optional - glucose
+        DIMACS Solver: 'glucose -verb=0 -model {input}'
+
+    When the problem is SAT::
+
+        sage: from sage.sat.solvers import Glucose
+        sage: solver1 = Glucose()
+        sage: solver1.add_clause( (1, 2, 3) )
+        sage: solver1.add_clause( (-1,) )
+        sage: solver1.add_clause( (-2,) )
+        sage: solver1()                            # optional - glucose
         (None, False, False, True)
 
+    When the problem is UNSAT::
+
+        sage: solver2 = Glucose()
+        sage: solver2.add_clause((1,2))
+        sage: solver2.add_clause((-1,2))
+        sage: solver2.add_clause((1,-2))
+        sage: solver2.add_clause((-1,-2))
+        sage: solver2()                            # optional - glucose
+        False
+
+    With one hundred variables::
+
+        sage: solver3 = Glucose()
+        sage: solver3.add_clause( (1, 2, 100) )
+        sage: solver3.add_clause( (-1,) )
+        sage: solver3.add_clause( (-2,) )
+        sage: solver3()                            # optional - glucose
+        (None, False, False, ..., True)
+
+    TESTS::
+
+        sage: print(''.join(solver1._output))      # optional - glucose
+        c...
+        s SATISFIABLE
+        v -1 -2 3 0
+
+    ::
+
+        sage: print(''.join(solver2._output))      # optional - glucose
+        c...
+        s UNSATISFIABLE
+
+    Glucose gives large solution on one single line::
+
+        sage: print(''.join(solver3._output))      # optional - glucose
+        c...
+        s SATISFIABLE
+        v -1 -2 ... 100 0
+
     """
-
-    command = "glucose -verb=2 {input} {output}"
-
-    def __call__(self, **kwds):
-        """
-        Solve this instance.
-
-        INPUT:
-
-        - ``assumptions`` - ignored, accepted for compatibility with
-          other solvers (default: ``None``)
-
-        OUTPUT:
-
-        - If this instance is SAT: A tuple of length ``nvars()+1``
-          where the ``i``-th entry holds an assignment for the
-          ``i``-th variables (the ``0``-th entry is always ``None``).
-
-        - If this instance is UNSAT: ``False``
-
-        EXAMPLES::
-
-            sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
-            ....:     try:
-            ....:         F, s = sr.polynomial_system()
-            ....:         break
-            ....:     except ZeroDivisionError:
-            ....:         pass
-            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
-            sage: Fsol = F.subs(sol)                                     # optional - glucose
-            sage: Fsol                                                   # optional - glucose
-            Polynomial Sequence with 36 Polynomials in 0 Variables
-            sage: Fsol.reduced()                                         # optional - glucose
-            []
-
-        ::
-
-            sage: from sage.sat.solvers.dimacs import Glucose
-            sage: solver = Glucose()
-            sage: solver.add_clause((1,2))
-            sage: solver.add_clause((-1,2))
-            sage: solver.add_clause((1,-2))
-            sage: solver()                           # optional - glucose
-            (None, True, True)
-            sage: solver.add_clause((-1,-2))
-            sage: solver()                           # optional - glucose
-            False
-        """
-        DIMACS.__call__(self)
-
-        for line in self._output:
-            if line.startswith("c"):
-                continue
-            if line.startswith("s"):
-                if "UNSAT" in line:
-                    return False
-            try:
-                s = map(int, line[:-2].strip().split(" "))
-                s = (None,) + tuple(e>0 for e in s)
-                return s
-            except ValueError:
-                pass
-        return False
+    command = "glucose -verb=0 -model {input}"
 
 class GlucoseSyrup(DIMACS):
     """
     An instance of the Glucose-syrup parallel solver.
 
     For information on Glucose see: http://www.labri.fr/perso/lsimon/glucose/
+
+    EXAMPLES::
+
+        sage: from sage.sat.solvers import GlucoseSyrup
+        sage: solver = GlucoseSyrup()
+        sage: solver
+        DIMACS Solver: 'glucose-syrup -model -verb=0 {input}'
+
+    When the problem is SAT::
+
+        sage: solver1 = GlucoseSyrup()
+        sage: solver1.add_clause( (1, 2, 3) )
+        sage: solver1.add_clause( (-1,) )
+        sage: solver1.add_clause( (-2,) )
+        sage: solver1()                            # optional - glucose
+        (None, False, False, True)
+
+    When the problem is UNSAT::
+
+        sage: solver2 = GlucoseSyrup()
+        sage: solver2.add_clause((1,2))
+        sage: solver2.add_clause((-1,2))
+        sage: solver2.add_clause((1,-2))
+        sage: solver2.add_clause((-1,-2))
+        sage: solver2()                            # optional - glucose
+        False
+
+    With one hundred variables::
+
+        sage: solver3 = GlucoseSyrup()
+        sage: solver3.add_clause( (1, 2, 100) )
+        sage: solver3.add_clause( (-1,) )
+        sage: solver3.add_clause( (-2,) )
+        sage: solver3()                            # optional - glucose
+        (None, False, False, ..., True)
+
+    TESTS::
+
+        sage: print(''.join(solver1._output))      # optional - glucose
+        c...
+        s SATISFIABLE
+        v -1 -2 3 0
+
+    ::
+
+        sage: print(''.join(solver2._output))      # optional - glucose
+        c...
+        s UNSATISFIABLE
+
+    GlucoseSyrup gives large solution on one single line::
+
+        sage: print(''.join(solver3._output))      # optional - glucose
+        c...
+        s SATISFIABLE
+        v -1 -2 ... 100 0
+
+    """
+    command = "glucose-syrup -model -verb=0 {input}"
+
+class Kissat(DIMACS):
+    """
+    An instance of the Kissat SAT solver
+
+    For information on Kissat see: http://fmv.jku.at/kissat/
+
+    EXAMPLES::
+
+        sage: from sage.sat.solvers import Kissat
+        sage: solver = Kissat()
+        sage: solver
+        DIMACS Solver: 'kissat -q {input}'
+
+    When the problem is SAT::
+
+        sage: solver1 = Kissat()
+        sage: solver1.add_clause( (1, 2, 3) )
+        sage: solver1.add_clause( (-1,) )
+        sage: solver1.add_clause( (-2,) )
+        sage: solver1()                           # optional - kissat
+        (None, False, False, True)
+
+    When the problem is UNSAT::
+
+        sage: solver2 = Kissat()
+        sage: solver2.add_clause((1,2))
+        sage: solver2.add_clause((-1,2))
+        sage: solver2.add_clause((1,-2))
+        sage: solver2.add_clause((-1,-2))
+        sage: solver2()                           # optional - kissat
+        False
+
+    With one hundred variables::
+
+        sage: solver3 = Kissat()
+        sage: solver3.add_clause( (1, 2, 100) )
+        sage: solver3.add_clause( (-1,) )
+        sage: solver3.add_clause( (-2,) )
+        sage: solver3()                           # optional - kissat
+        (None, False, False, ..., True)
+
+    TESTS::
+
+        sage: print(''.join(solver1._output))     # optional - kissat
+        s SATISFIABLE
+        v -1 -2 3 0
+
+    ::
+
+        sage: print(''.join(solver2._output))     # optional - kissat
+        s UNSATISFIABLE
+
+    Here the output contains many lines starting with letter "v"::
+
+        sage: print(''.join(solver3._output))     # optional - kissat
+        s SATISFIABLE
+        v -1 -2 ...
+        v ...
+        v ...
+        v ... 100 0
+
     """
 
-    command = "glucose-syrup -model -verb=2 {input}"
+    command = "kissat -q {input}"
 
-    def __call__(self, **kwds):
-        """
-        Solve this instance.
-
-        INPUT:
-
-        - ``assumptions`` - ignored, accepted for compatibility with
-          other solvers (default: ``None``)
-
-        OUTPUT:
-
-        - If this instance is SAT: A tuple of length ``nvars()+1``
-          where the ``i``-th entry holds an assignment for the
-          ``i``-th variables (the ``0``-th entry is always ``None``).
-
-        - If this instance is UNSAT: ``False``
-
-        EXAMPLES::
-
-            sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
-            ....:     try:
-            ....:         F, s = sr.polynomial_system()
-            ....:         break
-            ....:     except ZeroDivisionError:
-            ....:         pass
-            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
-            sage: Fsol = F.subs(sol)                                          # optional - glucose
-            sage: Fsol                                                        # optional - glucose
-            Polynomial Sequence with 36 Polynomials in 0 Variables
-            sage: Fsol.reduced()                                              # optional - glucose
-            []
-
-        ::
-
-            sage: from sage.sat.solvers.dimacs import GlucoseSyrup
-            sage: solver = GlucoseSyrup()
-            sage: solver.add_clause((1,2))
-            sage: solver.add_clause((-1,2))
-            sage: solver.add_clause((1,-2))
-            sage: solver()                          # optional - glucose
-            (None, True, True)
-            sage: solver.add_clause((-1,-2))
-            sage: solver()                          # optional - glucose
-            False
-        """
-        DIMACS.__call__(self)
-
-        full_line = ''
-
-        for line in self._output:
-            if line.startswith("c"):
-                continue
-            if line.startswith("s"):
-                if "UNSAT" in line:
-                    return False
-            if line.startswith("v"):
-                full_line += line[2:] + ' '
-        s = map(int, full_line[:-3].strip().split(" "))
-        s = (None,) + tuple(e > 0 for e in s)
-        return s

@@ -46,7 +46,7 @@ Similarly, valuations can be defined on function fields::
     sage: v = K.valuation(x)
     sage: v(1/x)
     -1
-    
+
     sage: v = K.valuation(1/x)
     sage: v(1/x)
     1
@@ -88,7 +88,7 @@ polynomial the minimum of the coefficient valuations::
 
     sage: R.<x> = QQ[]
     sage: v = GaussValuation(R, valuations.TrivialValuation(QQ))
-    
+
 The Gauss valuation can be augmented by specifying that `x - 4` has valuation 1::
 
     sage: v = v.augmentation(x - 4, 1); v
@@ -184,7 +184,7 @@ More Details
 ============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/valuation/value_group
    sage/rings/valuation/valuation

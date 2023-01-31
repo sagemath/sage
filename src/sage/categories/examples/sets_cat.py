@@ -249,7 +249,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
             sage: x.parent()
             Set of prime numbers
         """
-        assert(i in self)
+        assert i in self
         return self._from_integer_((Integer(i) + 1).next_prime())
 
     def some_elements(self):

@@ -278,7 +278,7 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     cdef ModField *F = new ModField(<long>modulus)
     cdef celement *cpy = linbox_copy(modulus, entries, n, n)
 
-    cdef celement d
+    cdef celement d = 0
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
@@ -299,7 +299,7 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
     C = A*B
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F[0].init(one, <int>1)
     F[0].init(zero, <int>0)
 
@@ -327,7 +327,7 @@ cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, cel
     C = A*v
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F.init(one, <int>1)
     F.init(zero, <int>0)
 

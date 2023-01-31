@@ -833,7 +833,7 @@ class PolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False, sparse=False):
+    def __init__(self, var, multi_variate=False, sparse=False, implementation=None):
         """
         TESTS::
 
@@ -857,6 +857,7 @@ class PolynomialFunctor(ConstructionFunctor):
         self.var = var
         self.multi_variate = multi_variate
         self.sparse = sparse
+        self.implementation = implementation
 
     def _apply_functor(self, R):
         """
@@ -870,7 +871,10 @@ class PolynomialFunctor(ConstructionFunctor):
 
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        return PolynomialRing(R, self.var, sparse=self.sparse)
+        kwds = {}
+        if self.implementation:
+            kwds['implementation'] = self.implementation
+        return PolynomialRing(R, self.var, sparse=self.sparse, **kwds)
 
     def _apply_functor_to_morphism(self, f):
         """
@@ -1349,7 +1353,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             sage: F != sage.categories.pushout.InfinitePolynomialFunctor(['a','b','x'],'deglex','sparse')
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     __hash__ = ConstructionFunctor.__hash__
 
@@ -2851,7 +2855,7 @@ class QuotientFunctor(ConstructionFunctor):
         if codomain is None:
             codomain = Rings()
         Functor.__init__(self, domain, codomain)
-        
+
         self.I = I
         if names is None:
             self.names = None

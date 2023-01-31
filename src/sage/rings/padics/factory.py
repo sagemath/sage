@@ -2949,12 +2949,12 @@ def ZpLF(p, prec=None, *args, **kwds):
 
     See documentation for :func:`Zp` for a description of the input parameters.
 
-    NOTE:
+    .. NOTE::
 
-    The precision is tracked using automatic differentiation
-    techniques (see [CRV2018]_ and [CRV2014]_).
-    Floating point `p`-adic numbers are used for the computation
-    of the differential (which is then not exact).
+        The precision is tracked using automatic differentiation
+        techniques (see [CRV2018]_ and [CRV2014]_).
+        Floating point `p`-adic numbers are used for the computation
+        of the differential (which is then not exact).
 
     EXAMPLES::
 

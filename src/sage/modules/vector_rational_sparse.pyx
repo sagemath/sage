@@ -409,4 +409,3 @@ cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w):
         elif c > 0:
             return 1
     return 0
-

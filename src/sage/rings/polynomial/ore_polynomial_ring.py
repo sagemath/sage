@@ -1,5 +1,5 @@
 r"""
-Univariate Ore Polynomial Rings
+Univariate Ore polynomial rings
 
 This module provides the
 :class:`~sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`,

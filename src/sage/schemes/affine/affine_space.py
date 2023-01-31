@@ -20,21 +20,24 @@ from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.categories.map import Map
 from sage.categories.fields import Fields
-_Fields = Fields()
+from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.misc.latex import latex
 from sage.misc.mrange import cartesian_product_iterator
+from sage.matrix.constructor import matrix
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.ambient_space import AmbientSpace
-from sage.schemes.affine.affine_homset import SchemeHomset_points_affine
+from sage.schemes.affine.affine_homset import (SchemeHomset_points_affine,
+                                               SchemeHomset_polynomial_affine_space)
 from sage.schemes.affine.affine_morphism import (SchemeMorphism_polynomial_affine_space,
                                                  SchemeMorphism_polynomial_affine_space_field,
                                                  SchemeMorphism_polynomial_affine_space_finite_field)
 from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine,
                                               SchemeMorphism_point_affine_field,
                                               SchemeMorphism_point_affine_finite_field)
-from sage.matrix.constructor import matrix
+
+_Fields = Fields()
 
 def is_AffineSpace(x):
     r"""
@@ -225,7 +228,6 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         for v in cartesian_product_iterator([R for _ in range(n)]):
             yield C._point(AHom, v, check=False)
 
-
     def ngens(self):
         """
         Return the number of generators of self, i.e. the number of
@@ -362,6 +364,20 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                     (a0*a1, a1*a2, a0*a2)
         """
         return SchemeMorphism_polynomial_affine_space(*args, **kwds)
+
+    def _homset(self, *args, **kwds):
+        """
+        Construct the Hom-set.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(2, QQ)
+            sage: Hom(A, A)
+            Set of morphisms
+              From: Affine Space of dimension 2 over Rational Field
+              To:   Affine Space of dimension 2 over Rational Field
+        """
+        return SchemeHomset_polynomial_affine_space(*args, **kwds)
 
     def _point_homset(self, *args, **kwds):
         """

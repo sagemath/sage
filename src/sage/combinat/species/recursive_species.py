@@ -410,7 +410,6 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
         self._reference = x
 
-
     def _add_to_digraph(self, d):
         """
         Adds this species as a vertex to the digraph d along with any

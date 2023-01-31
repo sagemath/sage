@@ -1065,6 +1065,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
     Element = KRRCSimplyLacedElement
 
+
 class RCNonSimplyLaced(RiggedConfigurations):
     r"""
     Rigged configurations in non-simply-laced types.
@@ -1405,6 +1406,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
     Element = KRRCNonSimplyLacedElement
 
+
 class RCTypeA2Even(RCNonSimplyLaced):
     """
     Rigged configurations for type `A_{2n}^{(2)}`.
@@ -1424,6 +1426,7 @@ class RCTypeA2Even(RCNonSimplyLaced):
         sage: RC = RiggedConfigurations(['A',4,2], [[2,1]])
         sage: TestSuite(RC).run() # long time
     """
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -1550,7 +1553,6 @@ class RCTypeA2Even(RCNonSimplyLaced):
                                                   [vac_num*g for vac_num in rp.vacancy_numbers])
         return self.virtual.element_class(self.virtual, partitions, use_vacancy_numbers=True)
 
-
     def from_virtual(self, vrc):
         """
         Convert ``vrc`` in the virtual crystal into a rigged configuration of
@@ -1611,6 +1613,7 @@ class RCTypeA2Dual(RCTypeA2Even):
         sage: RC = RiggedConfigurations(CartanType(['A',4,2]).dual(), [[2,1]])
         sage: TestSuite(RC).run() # long time
     """
+
     def _calc_vacancy_number(self, partitions, a, i, **options):
         r"""
         Calculate the vacancy number `p_i^{(a)}` in ``self``. A special case

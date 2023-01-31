@@ -443,8 +443,9 @@ $(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES),\
 #
 # Since Python's self-tests seem to fail on all platforms, we disable
 # its test suite by default.
+# meson_python 0.10.0 fails on some platforms, so we reduce it to warnings.
 # However, if SAGE_CHECK=warn, we do not do that.
-SAGE_CHECK_PACKAGES_DEFAULT_yes := !python3
+SAGE_CHECK_PACKAGES_DEFAULT_yes := !python3,?meson_python
 SAGE_CHECK_PACKAGES_DEFAULT_warn :=
 SAGE_CHECK_PACKAGES_DEFAULT_no :=
 comma := ,

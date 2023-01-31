@@ -263,8 +263,10 @@ class CoxeterGroups(Category_singleton):
             - ``word``: a list (or iterable) of indices in
               ``self.index_set()``
 
-            OUTPUT: a list of all lists that can be obtained from
-                    ``word`` by replacements of braid relations
+            OUTPUT:
+
+            a list of all lists that can be obtained from
+            ``word`` by replacements of braid relations
 
             See :meth:`braid_relations` for the definition of braid
             relations.
@@ -1233,6 +1235,15 @@ class CoxeterGroups(Category_singleton):
 
                 sage: W = CoxeterGroups().example()
                 sage: W._test_has_descent()
+
+                sage: W = Permutations(4)
+                sage: W._test_has_descent()
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"
+                sage: W._test_has_descent()
+                sage: sage.combinat.permutation.Permutations.options._reset()
+
+                sage: W = SignedPermutations(3)
+                sage: W._test_has_descent()
             """
             tester = self._tester(**options)
             s = self.simple_reflections()
@@ -1252,12 +1263,12 @@ class CoxeterGroups(Category_singleton):
                     tester.assertEqual(s[i].has_descent(j, positive=True), i != j)
                     if i == j:
                         continue
-                    u = s[i] * s[j]
-                    v = s[j] * s[i]
-                    tester.assertTrue((s[i] * s[j]).has_descent(i, side='left'))
-                    tester.assertTrue((s[i] * s[j]).has_descent(j, side='right'))
-                    tester.assertEqual((s[i] * s[j]).has_descent(j, side='left'), u == v)
-                    tester.assertEqual((s[i] * s[j]).has_descent(i, side='right'), u == v)
+                    u = s[i].apply_simple_reflection_right(j)
+                    v = s[j].apply_simple_reflection_right(i)
+                    tester.assertTrue(u.has_descent(i, side='left'))
+                    tester.assertTrue(u.has_descent(j, side='right'))
+                    tester.assertEqual(u.has_descent(j, side='left'), u == v)
+                    tester.assertEqual(u.has_descent(i, side='right'), u == v)
 
         def _test_descents(self, **options):
             """
@@ -1294,6 +1305,15 @@ class CoxeterGroups(Category_singleton):
 
                 sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
                 sage: W = WeylGroup(cm)
+                sage: W._test_coxeter_relations()
+
+                sage: W = Permutations(4)
+                sage: W._test_coxeter_relations()
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"
+                sage: W._test_coxeter_relations()
+                sage: sage.combinat.permutation.Permutations.options._reset()
+
+                sage: W = SignedPermutations(3)
                 sage: W._test_coxeter_relations()
             """
             tester = self._tester(**options)
@@ -1866,6 +1886,31 @@ class CoxeterGroups(Category_singleton):
                 False
                 sage: w1.absolute_le(w1)
                 True
+
+            TESTS:
+
+            Check that this is independent of the implementation of the group, see :trac:`34799`::
+
+                sage: W1 = WeylGroup(['A',2])
+                sage: W2 = Permutations(3)
+                sage: P = lambda pi: W2(list(pi.to_permutation()))
+                sage: d1 = set((P(w1), P(w2)) for w1 in W1 for w2 in W1 if w1.absolute_le(w2))
+                sage: d2 = set((w1, w2) for w1 in W2 for w2 in W2 if w1.absolute_le(w2))
+                sage: d1 == d2
+                True
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"
+                sage: d3 = set((w1, w2) for w1 in W2 for w2 in W2 if w1.absolute_le(w2))
+                sage: d1 == d3
+                True
+                sage: sage.combinat.permutation.Permutations.options._reset()
+
+                sage: W1 = WeylGroup(['B',2])
+                sage: W2 = SignedPermutations(2)
+                sage: P = lambda pi: W2(list(pi.to_permutation()))
+                sage: d1 = set((P(w1), P(w2)) for w1 in W1 for w2 in W1 if w1.absolute_le(w2))
+                sage: d2 = set((w1, w2) for w1 in W2 for w2 in W2 if w1.absolute_le(w2))
+                sage: d1 == d2
+                True
             """
             if self == other:
                 return True
@@ -2053,6 +2098,21 @@ class CoxeterGroups(Category_singleton):
 
                 sage: w0.binary_factorizations().category()
                 Category of finite enumerated sets
+
+            Check that this is independent of the implementation of the group, see :trac:`34799`::
+
+                sage: W1 = WeylGroup(['A',3])
+                sage: W2 = Permutations(4)
+                sage: P = lambda pi: W2(list(pi.to_permutation()))
+                sage: d1 = {P(pi): set((P(w[0]), P(w[1])) for w in pi.binary_factorizations()) for pi in W1}
+                sage: d2 = {pi: set(pi.binary_factorizations()) for pi in W2}
+                sage: d1 == d2
+                True
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"
+                sage: d3 = {pi: set(pi.binary_factorizations()) for pi in W2}
+                sage: d1 == d3
+                True
+                sage: sage.combinat.permutation.Permutations.options._reset()
             """
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             W = self.parent()
@@ -2062,11 +2122,11 @@ class CoxeterGroups(Category_singleton):
             s = W.simple_reflections()
 
             def succ(u_v):
-                (u, v) = u_v
+                u, v = u_v
                 for i in v.descents(side='left'):
-                    u1 = u * s[i]
+                    u1 = u.apply_simple_reflection_right(i)
                     if i == u1.first_descent() and predicate(u1):
-                        yield (u1, s[i] * v)
+                        yield u1, v.apply_simple_reflection_left(i)
             return RecursivelyEnumeratedSet_forest(((W.one(), self),), succ,
                                                    category=FiniteEnumeratedSets())
 
@@ -2212,7 +2272,6 @@ class CoxeterGroups(Category_singleton):
                 [s2*s3*s2, s3, s1]
 
             """
-
             if side == 'left':
                 self = self.inverse()
             return [x[1] for x in self.bruhat_lower_covers_reflections()]
@@ -2259,7 +2318,6 @@ class CoxeterGroups(Category_singleton):
                 [s4, s2, s1*s2*s1, s3*s4*s3]
 
             """
-
             if side == 'left':
                 self = self.inverse()
             return [x[1] for x in self.bruhat_upper_covers_reflections()]
@@ -2594,7 +2652,6 @@ class CoxeterGroups(Category_singleton):
                 s2*s3*s4*s1*s2*s3*s4*s2*s3*s2*s1
 
             """
-
             # if self and element have the same parent
             if self.parent().is_parent_of(element):
                 the_word = element.reduced_word()
@@ -2637,7 +2694,6 @@ class CoxeterGroups(Category_singleton):
                 s4*s2
 
             """
-
             # if self and element have the same parent
             if self.parent().is_parent_of(element):
                 the_word = element.reduced_word()
@@ -2770,7 +2826,6 @@ class CoxeterGroups(Category_singleton):
                 s2*s3*s2
 
             """
-
             vmin = self.coset_representative(index_set)
             wmin = w.coset_representative(index_set)
             if not wmin.bruhat_le(vmin):
