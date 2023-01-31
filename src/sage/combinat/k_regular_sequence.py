@@ -2181,8 +2181,8 @@ class RecurrenceParser():
         """
         from collections import namedtuple
 
+        from sage.arith.misc import ceil, floor
         from sage.arith.srange import srange
-        from sage.functions.other import ceil, floor
 
         coefficient_ring = self.coefficient_ring
         k = self.k
