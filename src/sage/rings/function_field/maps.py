@@ -54,6 +54,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import binomial
 from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.map import Map
 from sage.categories.homset import Hom
@@ -64,9 +65,6 @@ from sage.rings.morphism import RingHomomorphism
 from sage.rings.derivation import RingDerivationWithoutTwist
 
 from sage.modules.free_module_element import vector
-
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "binomial")
 
 from sage.matrix.constructor import matrix
 
