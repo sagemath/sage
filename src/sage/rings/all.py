@@ -189,7 +189,9 @@ from sage.rings.continued_fraction import (continued_fraction,
                                            continued_fraction_list)
 
 # asymptotic ring
-from .asymptotic.all import *
+#from .asymptotic.all import *
+lazy_import('sage.rings.asymptotic.asymptotic_ring', 'AsymptoticRing')
+lazy_import('sage.rings.asymptotic.asymptotic_expansion_generators', 'asymptotic_expansions')
 
 # Register classes in numbers abc
 from . import numbers_abc
