@@ -209,14 +209,12 @@ components are in the correct ring::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.functions import lcm
+from sage.arith.misc import divisors, factorial, moebius
+from sage.arith.power import generic_power
 from sage.structure.element import Element, parent
 from sage.structure.richcmp import op_EQ, op_NE
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "factorial")
 from sage.misc.misc_c import prod
-from sage.arith.power import generic_power
-from sage.arith.functions import lcm
-from sage.arith.misc import divisors, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
