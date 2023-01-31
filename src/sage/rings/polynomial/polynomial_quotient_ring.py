@@ -235,7 +235,8 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         ring, polynomial, names = key
 
         R = ring.base_ring()
-        from sage.categories.all import IntegralDomains, Fields
+        from sage.categories.integral_domains import IntegralDomains
+        from sage.categories.fields import Fields
         if R in IntegralDomains():
             try:
                 is_irreducible = polynomial.is_irreducible()
@@ -1056,7 +1057,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 ret = False
 
         if ret:
-            from sage.categories.all import Fields
+            from sage.categories.fields import Fields
             self._refine_category_(Fields())
         return ret
 
@@ -1112,7 +1113,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Unfortunately, the program above is already unable to determine
         that the modulus is irreducible.
         """
-        from sage.categories.all import IntegralDomains
+        from sage.categories.integral_domains import IntegralDomains
         if self.category().is_subcategory(IntegralDomains()):
             return True
         ret = self.base_ring().is_integral_domain(proof)
@@ -1977,7 +1978,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             # interface which we cannot provide (e.g. NumberFields).
             # So we just check some important special cases here (note that
             # integral domains is already handled elsewhere.)
-            from sage.categories.all import Fields
+            from sage.categories.fields import Fields
             if isomorphic_ring in Fields():
                 self._refine_category_(Fields())
 
@@ -2023,7 +2024,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             return from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring
 
-        from sage.categories.all import NumberFields
+        from sage.categories.number_fields import NumberFields
         if self.base_ring() in NumberFields():
             try:
                 isomorphic_ring = self.base_ring().extension(self.modulus(), names=self.variable_names())
@@ -2066,7 +2067,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         tester.assertNotIsInstance(ring, PolynomialQuotientRing_generic)
 
-        from sage.categories.all import Fields, IntegralDomains
+        from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if ring.category().is_subcategory(IntegralDomains()):
             category = IntegralDomains()
             if ring.category().is_subcategory(Fields()):

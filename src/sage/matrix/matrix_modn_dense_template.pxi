@@ -109,7 +109,7 @@ from libc.stdio cimport snprintf
 
 from sage.modules.vector_modn_dense cimport Vector_modn_dense
 
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.element cimport (Element, Vector, Matrix,
         ModuleElement, RingElement)
 from sage.matrix.matrix_dense cimport Matrix_dense

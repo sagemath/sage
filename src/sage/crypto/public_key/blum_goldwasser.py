@@ -30,17 +30,18 @@ AUTHORS:
 
 from operator import xor
 
-from sage.crypto.cryptosystem import PublicKeyCryptosystem
-from sage.crypto.util import is_blum_prime
-from sage.crypto.util import least_significant_bits
-from sage.crypto.util import random_blum_prime
+from sage.arith.misc import GCD as gcd, power_mod, XGCD as xgcd
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.log", "log")
-lazy_import("sage.functions.other", "Function_floor")
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import gcd, power_mod, xgcd
 from sage.rings.finite_rings.integer_mod import Mod as mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", "Function_floor")
+
+from .cryptosystem import PublicKeyCryptosystem
+from .util import is_blum_prime, least_significant_bits, random_blum_prime
+
 
 floor = Function_floor()
 IntegerModRing = IntegerModFactory("IntegerModRing")

@@ -23,7 +23,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.combinat.root_system.cartan_type import CartanType
 import sage.rings.abc
 from sage.matrix.args import SparseEntry
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from sage.structure.unique_representation import UniqueRepresentation

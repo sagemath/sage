@@ -40,7 +40,8 @@ from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 
 from copy import copy

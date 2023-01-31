@@ -1330,7 +1330,7 @@ cdef class Section(Map):
               To:   Multivariate Polynomial Ring in x, y over Rational Field
         """
         from sage.categories.homset import Hom
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 

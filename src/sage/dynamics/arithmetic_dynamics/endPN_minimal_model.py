@@ -22,10 +22,12 @@ REFERENCES: [BM2012]_, [Mol2015]_
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.hyperbolic", "cosh")
+from copy import copy
+
+from sage.arith.misc import GCD as gcd
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.rings.cc import CC
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -34,9 +36,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
+
 lazy_import("sage.symbolic.constants", "e")
-from sage.arith.all import gcd
-from copy import copy
+lazy_import("sage.functions.hyperbolic", "cosh")
+
 
 def bCheck(c, v, p, b):
     r"""

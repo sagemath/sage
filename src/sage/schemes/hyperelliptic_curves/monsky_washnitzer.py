@@ -46,27 +46,32 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import binomial
-from sage.arith.misc import integer_ceil as ceil
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.log", "log")
+from sage.arith.misc import binomial, integer_ceil as ceil
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
-from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import vector
 from sage.modules.module import Module
-from sage.rings.all import (Integers, Integer, PolynomialRing, PowerSeriesRing,
-                            Rationals, Rational, LaurentSeriesRing, QQ, ZZ,
-                            IntegralDomain)
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.all import pAdicField
 from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
+from sage.rings.rational_field import RationalField as Rationals
 from sage.rings.ring import CommutativeAlgebra
+from sage.rings.ring import IntegralDomain
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
@@ -74,6 +79,8 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_Hyperelli
 from sage.structure.element import CommutativeAlgebraElement, ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.functions.log", "log")
 
 
 class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):

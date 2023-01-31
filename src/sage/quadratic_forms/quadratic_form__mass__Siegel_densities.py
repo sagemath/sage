@@ -12,18 +12,20 @@ Local Masses and Siegel Densities
 
 import copy
 
+from sage.arith.misc import kronecker, legendre_symbol, prime_divisors
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.functional import squarefree_part
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import legendre_symbol, kronecker, prime_divisors
-from sage.misc.lazy_import import lazy_import
+
 lazy_import("sage.functions.all", "sgn")
-from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
-from sage.misc.functional import squarefree_part
 lazy_import("sage.symbolic.constants", "pi")
-from sage.matrix.matrix_space import MatrixSpace
+
+from .special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):

@@ -1426,7 +1426,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
         if l is None:
-            from sage.rings.all import prime_range
+            from sage.rings.fast_arith import prime_range
             L = prime_range(max_l + 1)
         else:
             try:

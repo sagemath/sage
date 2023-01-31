@@ -12,11 +12,13 @@ Cycle Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import divisors, euler_phi
+from sage.structure.unique_representation import UniqueRepresentation
+
+from .misc import accept_size
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.arith.all import divisors, euler_phi
-from sage.combinat.species.misc import accept_size
+
 
 
 class CycleSpeciesStructure(GenericSpeciesStructure):
