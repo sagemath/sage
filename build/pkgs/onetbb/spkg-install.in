@@ -1,0 +1,6 @@
+cd src
+mkdir build
+cd build
+sdh_cmake -DTBB_STRICT=off ..
+sdh_make
+sdh_make_install

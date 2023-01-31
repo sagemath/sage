@@ -103,12 +103,12 @@ def random_sublist_of_size(k, n):
         w = random_sublist_of_size(k, k - n)
         m = set(w)
         w = [z for z in range(k) if z not in m]
-        assert(len(w) == n)
+        assert len(w) == n
         return w
 
     randrange = current_randstate().python_random().randrange
 
-    w = set([])
+    w = set()
     while len(w) < n:
         z = randrange(k)
         if z not in w:

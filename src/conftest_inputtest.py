@@ -1,6 +1,6 @@
 def something():
     """ a doctest in a docstring
-    
+
     EXAMPLES::
 
         sage: something()

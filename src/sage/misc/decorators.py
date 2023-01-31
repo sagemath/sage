@@ -32,7 +32,8 @@ from copy import copy
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
                                    sage_getargspec)
-from inspect import ArgSpec
+
+from inspect import FullArgSpec
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
@@ -92,7 +93,8 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         5
         sage: from sage.misc.sageinspect import sage_getargspec
         sage: sage_getargspec(g)
-        ArgSpec(args=['x'], varargs=None, keywords=None, defaults=None)
+        FullArgSpec(args=['x'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Demonstrate that it correctly gets the source lines and the source
     file, which is essential for interactive code edition; note that we
@@ -391,7 +393,8 @@ class suboptions():
 
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f)
-            ArgSpec(args=['arrow_size'], varargs='args', keywords='kwds', defaults=(2,))
+            FullArgSpec(args=['arrow_size'], varargs='args', varkw='kwds', defaults=(2,),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         @sage_wraps(func)
         def wrapper(*args, **kwds):
@@ -422,7 +425,8 @@ class suboptions():
             defaults = (argspec.defaults if argspec.defaults is not None else ()) \
                         + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
-            return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
+            return FullArgSpec(args, argspec.varargs, argspec.varkw, defaults,
+                               kwonlyargs=[], kwonlydefaults=None, annotations={})
         wrapper._sage_argspec_ = argspec
 
         return wrapper
@@ -458,7 +462,8 @@ class options():
             sage: f1 = o(f)
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f1)
-            ArgSpec(args=['rgbcolor'], varargs='args', keywords='kwds', defaults=((0, 0, 1),))
+            FullArgSpec(args=['rgbcolor'], varargs='args', varkw='kwds', defaults=((0, 0, 1),),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         self.options = options
         self.original_opts = options.pop('__original_opts', False)
@@ -499,7 +504,8 @@ class options():
                     list(self.options))
             defaults = (argspec.defaults or ()) + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
-            return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
+            return FullArgSpec(args, argspec.varargs, argspec.varkw, defaults,
+                               kwonlyargs=[], kwonlydefaults=None, annotations={})
 
         wrapper._sage_argspec_ = argspec
 

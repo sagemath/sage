@@ -1,5 +1,5 @@
 """
-Ambient Jacobian Abelian Variety
+Ambient Jacobian abelian variety
 
 TESTS::
 

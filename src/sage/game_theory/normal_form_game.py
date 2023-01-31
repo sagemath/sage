@@ -1674,17 +1674,17 @@ class NormalFormGame(SageObject, MutableMapping):
         if not self._is_complete():
             raise ValueError("utilities have not been populated")
 
-        from sage.features.lrs import Lrs
+        from sage.features.lrs import LrsNash
         if not algorithm:
             if self.is_constant_sum():
                 algorithm = "lp"
-            elif Lrs().is_present():
+            elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
 
         if algorithm == "lrs":
-            Lrs().require()
+            LrsNash().require()
             return self._solve_lrs(maximization)
 
         if algorithm == "LCP":

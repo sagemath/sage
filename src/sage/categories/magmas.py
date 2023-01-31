@@ -1128,8 +1128,8 @@ class Magmas(Category_singleton):
                     sage: B[3] * B[2]
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
-                assert(x in self)
-                assert(y in self)
+                assert x in self
+                assert y in self
                 return self.retract(self.lift(x) * self.lift(y))
 
     class Realizations(RealizationsCategory):

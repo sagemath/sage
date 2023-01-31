@@ -104,6 +104,32 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message='The distutils(.sysconfig module| package) is deprecated',
                         module='Cython|distutils|numpy|sage.env|sage.features')
 
+# triggered by cython 0.29.32
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="'cgi' is deprecated and slated for removal in Python 3.13",
+                        module='Cython')
+
+# triggered by pyparsing 2.4.7
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="module 'sre_constants' is deprecated",
+                        module='pyparsing')
+
+# importlib.resources.path and ...read_binary are deprecated in python 3.11,
+# but the replacement importlib.resources.files needs python 3.9
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r'(path|read_binary) is deprecated\. Use files\(\) instead\.',
+                        module='sage.repl.rich_output.output_(graphics|graphics3d|video)')
+
+# triggered by sphinx
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="'imghdr' is deprecated and slated for removal in Python 3.13",
+                        module='sphinx.util.images')
+
+# triggered by docutils 0.19 on Python 3.11
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"Use setlocale\(\), getencoding\(\) and getlocale\(\) instead",
+                        module='docutils.io')
+
 ################ end setup warnings ###############################
 
 

@@ -144,6 +144,7 @@ class SloaneSequence(SageObject):
     r"""
     Base class for a Sloane integer sequence.
     """
+
     def __init__(self, offset=1):
         r"""
         A sequence starting at offset (=1 by default).
@@ -205,7 +206,6 @@ class SloaneSequence(SageObject):
         """
         from sage.misc.sageinspect import sage_getsource
         return sage_getsource(self.__class__)
-
 
     def __call__(self, n):
         """
@@ -585,7 +585,6 @@ class A000008(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-
     def _repr_(self):
         """
         EXAMPLES::
@@ -594,7 +593,6 @@ class A000008(SloaneSequence):
             'Number of ways of making change for n cents using coins of 1, 2, 5, 10 cents.'
         """
         return "Number of ways of making change for n cents using coins of 1, 2, 5, 10 cents."
-
 
     def _eval(self, n):
         """
@@ -685,7 +683,6 @@ class A000009(SloaneSequence):
             f = self._f
         self._b += [next(f) for i in range(how_many)]
 
-
     def _eval(self, n):
         """
         EXAMPLES::
@@ -775,7 +772,6 @@ class A000796(SloaneSequence):
                 a, a1 = 10*(a % b), 10*(a1 % b1)
                 d, d1 = a//b, a1//b1
 
-
     def _precompute(self, how_many=1000):
         """
         EXAMPLES::
@@ -791,7 +787,6 @@ class A000796(SloaneSequence):
             self._f = self.pi()
             f = self._f
         self._b += [next(f) for i in range(how_many)]
-
 
     def _eval(self, n):
         """
@@ -851,7 +846,6 @@ class A003418(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-
     def _repr_(self):
         """
         EXAMPLES::
@@ -860,7 +854,6 @@ class A003418(SloaneSequence):
             'Least common multiple (or lcm) of {1, 2, ..., n}.'
         """
         return "Least common multiple (or lcm) of {1, 2, ..., n}."
-
 
     def _eval(self, n):
         """
@@ -917,7 +910,6 @@ class A007318(SloaneSequence):
             "Pascal's triangle read by rows: C(n,k) = binomial(n,k) = n!/(k!*(n-k)!), 0<=k<=n."
         """
         return "Pascal's triangle read by rows: C(n,k) = binomial(n,k) = n!/(k!*(n-k)!), 0<=k<=n."
-
 
     def _eval(self, n):
         """
@@ -1068,7 +1060,6 @@ class A008277(SloaneSequence):
         """
         return "Triangle of Stirling numbers of 2nd kind, S2(n,k), n >= 1, 1<=k<=n."
 
-
     def s2(self, n, k):
         """
         Returns the Stirling number S2(n,k) of the 2nd kind.
@@ -1142,8 +1133,6 @@ class A049310(SloaneSequence):
             "Triangle of coefficients of Chebyshev's S(n,x) := U(n,x/2) polynomials (exponents in increasing order)."
         """
         return "Triangle of coefficients of Chebyshev's S(n,x) := U(n,x/2) polynomials (exponents in increasing order)."
-
-
 
     def _eval(self, n):
         """
@@ -3960,7 +3949,6 @@ class A000045(SloaneSequence):
             x, y = y, x+y
             yield x
 
-
     def _eval(self, n):
         """
         EXAMPLES::
@@ -4831,7 +4819,6 @@ class A006882(SloaneSequence):
             x, y = y, k*x
             yield x
 
-
     def _eval(self, n):
         """
         EXAMPLES::
@@ -5102,7 +5089,6 @@ class ExtremesOfPermanentsSequence(SloaneSequence):
             k = k+1
             x, y = y, (k)*y+(k-d)*x
             yield x
-
 
     def _eval(self, n):
         """
@@ -5636,8 +5622,7 @@ class A090012(SloaneSequence):
         """
         if n == 1:
             return ZZ(3)
-        else:
-            return  sloane.A000153(n+1) + sloane.A000153(n)
+        return sloane.A000153(n+1) + sloane.A000153(n)
 
 
 class A090013(SloaneSequence):
@@ -5710,8 +5695,7 @@ class A090013(SloaneSequence):
         """
         if n == 1:
             return ZZ(4)
-        else:
-            return  sloane.A000261(n+2) + sloane.A000261(n+1)
+        return sloane.A000261(n+2) + sloane.A000261(n+1)
 
 
 class A090014(SloaneSequence):
@@ -5784,8 +5768,7 @@ class A090014(SloaneSequence):
         """
         if n == 1:
             return ZZ(5)
-        else:
-            return  sloane.A001909(n+3) + sloane.A001909(n+2)
+        return sloane.A001909(n+3) + sloane.A001909(n+2)
 
 
 class A090015(SloaneSequence):
@@ -5858,8 +5841,7 @@ class A090015(SloaneSequence):
         """
         if n == 1:
             return ZZ(6)
-        else:
-            return  sloane.A001910(n+4) + sloane.A001910(n+3)
+        return sloane.A001910(n+4) + sloane.A001910(n+3)
 
 
 class A090016(SloaneSequence):
@@ -5925,7 +5907,6 @@ class A090016(SloaneSequence):
         """
         return "Permanent of (0,1)-matrix of size n X (n+d) with d=6 and n-1 zeros not on a line."
 
-
     def _eval(self, n):
         """
         EXAMPLES::
@@ -5935,8 +5916,7 @@ class A090016(SloaneSequence):
         """
         if n == 1:
             return ZZ(7)
-        else:
-            return  sloane.A090010(n-1) + sloane.A090010(n)
+        return sloane.A090010(n-1) + sloane.A090010(n)
 
 
 class A000166(SloaneSequence):
@@ -6115,7 +6095,7 @@ class A001157(SloaneSequence):
             sage: [sloane.A001157._eval(n) for n in range(1,11)]
             [1, 5, 10, 21, 26, 50, 50, 85, 91, 130]
         """
-        return  arith.sigma(n, 2)
+        return arith.sigma(n, 2)
 
 
 class A008683(SloaneSequence):
@@ -6168,7 +6148,7 @@ class A008683(SloaneSequence):
             sage: [sloane.A008683._eval(n) for n in range(1,11)]
             [1, -1, -1, 0, -1, 1, -1, 0, 0, 1]
         """
-        return  arith.moebius(n)
+        return arith.moebius(n)
 
 
 class A000204(SloaneSequence):
@@ -6232,8 +6212,7 @@ class A000204(SloaneSequence):
             return ZZ.one()
         elif n == 2:
             return 3
-        else:
-            return sloane.A000045(n+1) + sloane.A000045(n-1)
+        return sloane.A000045(n+1) + sloane.A000045(n-1)
 
 
 class A000217(SloaneSequence):
@@ -6564,7 +6543,6 @@ class A051959(RecurrenceSequence):
         self._params = (1,10,2,1,self.g)
         self._b = []
         self._precompute(2)
-
 
     def _repr_(self):
         """
@@ -7139,7 +7117,6 @@ class A001836(SloaneSequence):
         - Jaap Spies (2007-01-17)
         """
         SloaneSequence.__init__(self, offset=1)
-
 
     def _repr_(self):
         """
@@ -8321,8 +8298,6 @@ class A000073(SloaneSequence):
         return self._b[:n]
 
 
-
-
 def perm_mh(m, h):
     r"""
     This functions calculates `f(g,h)` from Sloane's sequences
@@ -8415,7 +8390,6 @@ class A079922(SloaneSequence):
             'Solutions to the Dancing School problem with n girls and n+3 boys'
         """
         return "Solutions to the Dancing School problem with n girls and n+3 boys"
-
 
     def _eval(self, n):
         """
@@ -8544,6 +8518,7 @@ class A109814(SloaneSequence):
 
     - Jaap Spies (2007-01-13)
     """
+
     def __init__(self):
         r"""
         EXAMPLES::
@@ -9155,6 +9130,7 @@ class Sloane(SageObject):
 
     - Nick Alexander
     """
+
     def __dir__(self):
         r"""
         List Sloane generating functions for tab-completion.

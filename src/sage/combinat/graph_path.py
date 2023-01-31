@@ -268,6 +268,7 @@ class GraphPaths_all(Parent, GraphPaths_common):
         sage: p.cardinality()
         37
     """
+
     def __init__(self, g):
         """
         TESTS::
@@ -412,6 +413,7 @@ class GraphPaths_st(Parent, GraphPaths_common):
         sage: GraphPaths(G,4,5).cardinality()
         2
     """
+
     def __init__(self, g, source, target):
         """
         TESTS::

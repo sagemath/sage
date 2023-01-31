@@ -4093,7 +4093,7 @@ cdef class BinaryCodeClassifier:
                     from sage.rings.integer_ring import ZZ
                     from sage.groups.perm_gps.permgroup import PermutationGroup
                     from sage.groups.perm_gps.constructor import PermutationGroupElement
-                    from sage.interfaces.gap import gap
+                    from sage.libs.gap.libgap import libgap
                     rs = []
                     for i from 0 <= i < B.nrows:
                         r = []
@@ -4104,7 +4104,7 @@ cdef class BinaryCodeClassifier:
 
                     m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
                     from sage.arith.all import factorial
-                    if True:#size*factorial(n-B.ncols) == m_size:
+                    if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
                             aut_m = PermutationGroup([()])
@@ -4112,17 +4112,13 @@ cdef class BinaryCodeClassifier:
                             aut_m = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in m_aut_gp_gens])
 
                         if len(aug_aut_gp_gens) == 0:
-                            aut_B_aug = PermutationGroup([()])
+                            aut_B_aug = libgap(PermutationGroup([()]))
                         else:
-                            aut_B_aug = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens])
-                        H = aut_m._gap_(gap).Intersection2(aut_B_aug._gap_(gap))
-                        rt_transversal = list(gap('List(RightTransversal( %s,%s ));'\
-                          %(str(aut_B_aug.__interface[gap]),str(H))))
-                        rt_transversal = [PermutationGroupElement(g) for g in rt_transversal if str(g) != '()']
-                        rt_transversal = [[a-1 for a in g.domain()] for g in rt_transversal]
-                        rt_transversal = [g + list(xrange(len(g), n))
-                                          for g in rt_transversal]
+                            aut_B_aug = libgap(PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens]))
+                        H = libgap(aut_m).Intersection2(aut_B_aug)
+                        rt_transversal = [[int(a) - 1 for a in g.ListPerm(n)] for g in aut_B_aug.RightTransversal(H) if not g.IsOne()]
                         rt_transversal.append(list(xrange(n)))
+
                         bingo2 = 0
                         for coset_rep in rt_transversal:
                             hwp = create_word_perm(coset_rep)

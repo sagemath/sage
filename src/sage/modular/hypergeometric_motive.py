@@ -1095,7 +1095,7 @@ class HypergeometricData():
         d = gcd(g)
         return HypergeometricData(gamma_list=[x / d for x in g])
 
-### L-functions
+    # ----- L-functions -----
 
     def gauss_table(self, p, f, prec):
         """

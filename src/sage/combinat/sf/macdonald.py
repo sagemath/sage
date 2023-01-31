@@ -539,9 +539,11 @@ class Macdonald(UniqueRepresentation):
         """
         return MacdonaldPolynomials_s(self)
 
+
 QQqt = QQ['q,t'].fraction_field()
 
 ##############################################
+
 
 def c1(part, q, t):
     r"""
@@ -652,6 +654,7 @@ def cmunu1(mu, nu):
                       / (q**nu.arm_length(s, 0) - t**(nu.leg_length(s, 0)+1))
                       for s in range(len(nu._list)) ))
 
+
 @cached_function
 def cmunu(mu, nu):
     r"""
@@ -715,6 +718,8 @@ def cmunu(mu, nu):
                 for al in nu.up()) / Bmu_skew(mu, nulist))
 
 #Generic MacdonaldPolynomials
+
+
 class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def __init__(self, macdonald):
@@ -985,6 +990,8 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             return parent(Ht(self).nabla(power=power))
 
 #P basis
+
+
 class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
@@ -1407,6 +1414,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     class Element(MacdonaldPolynomials_generic.Element):
         pass
 
+
 class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
@@ -1700,6 +1708,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             f = lambda part: t**(part.weighted_size()*power)*q**(part.conjugate().weighted_size()*power)*Ht(part)
             return P(Ht._apply_module_morphism(selfHt, f))
 
+
 class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
@@ -1820,7 +1829,6 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         self._invert_morphism(n, QQqt, self._self_to_s_cache,
                               self._s_to_self_cache,
                               to_other_function=self._to_s)
-
 
     class Element(MacdonaldPolynomials_generic.Element):
 

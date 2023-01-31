@@ -226,7 +226,7 @@ cdef class PointCollection(SageObject):
             raise NotImplementedError
         cdef PointCollection left_pc = left
         cdef PointCollection right_pc = right
-        if not left_pc._module is right_pc._module:
+        if left_pc._module is not right_pc._module:
             raise NotImplementedError
         return PointCollection(left_pc._points + right_pc._points,
                                left_pc._module)

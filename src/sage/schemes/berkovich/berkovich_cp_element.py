@@ -314,7 +314,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):
                             raise ValueError('could not convert %s to %s' % (center, self._base_space))
-                if not(center.scheme().ambient_space() is center.scheme()):
+                if center.scheme().ambient_space() is not center.scheme():
                     raise ValueError("the center of a point of projective Berkovich space cannot be " +
                                      "a point of %s" % (center.scheme()))
                 # since we are over a field, we normalize coordinates
@@ -334,7 +334,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         raise ValueError("center in %s, should be in %s") % (center.parent(), self._base_space)
                 else:
                     # make sure the center is in the appropriate number field
-                    if not(center.parent() == self._base_space):
+                    if not (center.parent() == self._base_space):
                         try:
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):

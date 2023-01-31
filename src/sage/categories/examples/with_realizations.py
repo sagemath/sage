@@ -166,8 +166,8 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                       From: The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
                       To:   The subset algebra of {1, 2, 3} over Rational Field in the Out basis
         """
-        assert(R in Rings())
-        self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
+        assert R in Rings()
+        self._base = R  # Won't be needed when CategoryObject won't override anymore base_ring
         self._S = S
         Parent.__init__(self, category=Algebras(R).Commutative().WithRealizations())
 

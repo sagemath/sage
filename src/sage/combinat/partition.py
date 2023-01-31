@@ -7692,6 +7692,7 @@ class Partitions_constraints(IntegerListsLex):
     For unpickling old constrained ``Partitions_constraints`` objects created
     with sage <= 3.4.1. See :class:`Partitions`.
     """
+
     def __setstate__(self, data):
         r"""
         TESTS::
@@ -7764,6 +7765,7 @@ class RegularPartitions(Partitions):
     - ``is_infinite`` -- boolean; if the subset of `\ell`-regular
       partitions is infinite
     """
+
     def __init__(self, ell, is_infinite=False):
         """
         Initialize ``self``.
@@ -7856,6 +7858,7 @@ class RegularPartitions_all(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell):
         """
         Initialize ``self``.
@@ -7925,6 +7928,7 @@ class RegularPartitions_truncated(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell, max_len):
         """
         Initialize ``self``.
@@ -8047,6 +8051,7 @@ class RegularPartitions_bounded(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell, k):
         """
         Initialize ``self``.
@@ -8125,6 +8130,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, n, ell):
         """
         Initialize ``self``.
@@ -8581,6 +8587,7 @@ class RestrictedPartitions_generic(Partitions):
     - ``is_infinite`` -- boolean; if the subset of `\ell`-restricted
       partitions is infinite
     """
+
     def __init__(self, ell, is_infinite=False):
         """
         Initialize ``self``.
@@ -8692,6 +8699,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
 
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
+
     def __init__(self, ell):
         """
         Initialize ``self``.
@@ -8745,6 +8753,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
 
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
+
     def __init__(self, n, ell):
         """
         Initialize ``self``.

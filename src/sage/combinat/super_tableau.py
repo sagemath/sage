@@ -416,6 +416,7 @@ class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
     """
     All semistandard super tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all semistandard super tableaux.
@@ -597,6 +598,7 @@ class StandardSuperTableaux_all(StandardSuperTableaux,
     """
     All standard super tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard super tableaux.
@@ -649,6 +651,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
          [[1', 1], [2'], [2]],
          [[1'], [1], [2'], [2]]]
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all standard super tableaux of size ``n``.
@@ -729,6 +732,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
     """
     Standard super tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all standard super tableaux of a given shape.

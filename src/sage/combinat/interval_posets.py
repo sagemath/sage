@@ -3568,6 +3568,7 @@ class TamariIntervalPosets_all(DisjointUnionEnumeratedSets, TamariIntervalPosets
     r"""
     The enumerated set of all Tamari interval-posets.
     """
+
     def __init__(self):
         r"""
         TESTS::
@@ -3655,6 +3656,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
     r"""
     The enumerated set of interval-posets of a given size.
     """
+
     def __init__(self, size):
         r"""
         TESTS::
