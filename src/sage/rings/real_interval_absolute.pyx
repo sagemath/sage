@@ -293,7 +293,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             upper = shift_left(upper, parent._absprec)
         else:
             upper = value
-        from sage.arith.misc import floor, ceil
+        from sage.arith.misc import integer_floor as floor, integer_ceil as ceil
         try:
             self._mantissa = floor(value)
             self._diameter = ceil(upper) - self._mantissa
