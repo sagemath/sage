@@ -14,9 +14,12 @@ prune sage/lfunctions
 prune sage/geometry/riemannian_manifolds
 prune sage/geometry/hyperbolic_space
 prune sage/dynamics/complex_dynamics
+prune sage/rings/asymptotic
 
 exclude sage/modules/vector_*symbol*.*
 exclude sage/matrix/matrix_symbolic_*.*
+exclude sage/groups/misc_gps/argument_groups.*
+exclude sage/groups/misc_gps/imaginary_groups.*
 
 prune sage/libs/pynac
 exclude sage/libs/ecl.p*
