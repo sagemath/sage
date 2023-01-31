@@ -31,11 +31,11 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import AA, AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.constants import pi
 
 lazy_import("sage.functions.log", "exp")
 lazy_import("sage.functions.gamma", "psi1")
 lazy_import("sage.functions.trig", ["cos", "sec"])
+lazy_import("sage.symbolic.constants", "pi")
 
 from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
 
