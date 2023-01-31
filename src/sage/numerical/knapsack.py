@@ -280,8 +280,6 @@ class Superincreasing(SageObject):
             ...
             ValueError: seq must be a super-increasing sequence
         """
-        from sage.functions.other import Function_floor
-        floor = Function_floor()
         # input error handling
         if len(self._seq) == 0:
             raise TypeError("self must be a non-empty list of integers.")
@@ -293,7 +291,7 @@ class Superincreasing(SageObject):
         low = 0
         high = len(self._seq) - 1
         while low <= high:
-            mid = floor((low + high) / 2)
+            mid = (low + high) // 2
             if N == self._seq[mid]:
                 return self._seq[mid]
             if N < self._seq[mid]:
