@@ -63,10 +63,9 @@ import sage.rings.abc
 import sage.rings.number_field.number_field as number_field
 
 from sage.arith.functions import lcm
-from sage.arith.misc import bernoulli, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
+from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
-from sage.functions.other import binomial, factorial
 from sage.libs.pari import pari
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
