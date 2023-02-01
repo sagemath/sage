@@ -1625,6 +1625,13 @@ class BinaryQF(SageObject):
             Q = self.matrix_action_right(M)
             assert not Q._c
 
+            if not Q._b:
+                # at this point, Q = a*x^2
+                if Q._a.divides(n) and (n // Q._a).is_square():
+                    x = (n // Q._a).isqrt()
+                    return tuple(row[0] * x for row in M.rows())
+                return None
+
             # at this point, Q = a*x^2 + b*x*y
             if not n:
                 return tuple(M.columns()[1])
