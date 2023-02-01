@@ -379,7 +379,7 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: AA(sqrt(~2)).inverse()
+                sage: AA(sqrt(~2)).inverse()                                    # optional - sage.symbolic, sage.rings.number_field
                 1.414213562373095?
             """
             # Nota Bene: Element classes should implement ``__invert__`` only.
