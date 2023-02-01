@@ -1782,18 +1782,18 @@ def gcd(a, b=None, **kwargs):
 
     Make sure we try QQ and not merely ZZ (:trac:`13014`)::
 
-        sage: bool(gcd(2/5, 3/7) == gcd(SR(2/5), SR(3/7)))
+        sage: bool(gcd(2/5, 3/7) == gcd(SR(2/5), SR(3/7)))                          # optional - sage.symbolic
         True
 
     Make sure that the gcd of Expressions stays symbolic::
 
         sage: parent(gcd(2, 4))
         Integer Ring
-        sage: parent(gcd(SR(2), 4))
+        sage: parent(gcd(SR(2), 4))                                                 # optional - sage.symbolic
         Symbolic Ring
-        sage: parent(gcd(2, SR(4)))
+        sage: parent(gcd(2, SR(4)))                                                 # optional - sage.symbolic
         Symbolic Ring
-        sage: parent(gcd(SR(2), SR(4)))
+        sage: parent(gcd(SR(2), SR(4)))                                             # optional - sage.symbolic
         Symbolic Ring
 
     Verify that objects without gcd methods but which cannot be
@@ -3680,13 +3680,13 @@ def binomial(x, m, **kwds):
 
     We test conversion of arguments to Integers -- see :trac:`6870`::
 
-        sage: binomial(1/2,1/1)
+        sage: binomial(1/2, 1/1)
         1/2
-        sage: binomial(10^20+1/1,10^20)
+        sage: binomial(10^20 + 1/1, 10^20)
         100000000000000000001
-        sage: binomial(SR(10**7),10**7)
+        sage: binomial(SR(10**7), 10**7)                                            # optional - sage.symbolic
         1
-        sage: binomial(3/2,SR(1/1))
+        sage: binomial(3/2, SR(1/1))                                                # optional - sage.symbolic
         3/2
 
     Some floating point cases -- see :trac:`7562`, :trac:`9633`, and
@@ -5049,7 +5049,7 @@ def falling_factorial(x, a):
 
     Check that :trac:`14858` is fixed::
 
-        sage: falling_factorial(-4, SR(2))
+        sage: falling_factorial(-4, SR(2))                                          # optional - sage.symbolic
         20
 
     Check that :trac:`16770` is fixed::
@@ -5141,7 +5141,7 @@ def rising_factorial(x, a):
 
     Check that :trac:`14858` is fixed::
 
-        sage: bool(rising_factorial(-4, 2) ==
+        sage: bool(rising_factorial(-4, 2) ==                                       # optional - sage.symbolic
         ....:      rising_factorial(-4, SR(2)) ==
         ....:      rising_factorial(SR(-4), SR(2)))
         True
