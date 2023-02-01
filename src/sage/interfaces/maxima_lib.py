@@ -94,6 +94,7 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.structure.element import Expression
 from sage.symbolic.ring import SR
 
 from sage.libs.ecl import EclObject, ecl_eval
@@ -1575,9 +1576,8 @@ def sr_to_max(expr):
         # For that, we should change the API of the functions there
         # (we need to have access to op, not only to expr.operands()
         if isinstance(op, FDerivativeOperator):
-            from sage.symbolic.ring import is_SymbolicVariable
             args = expr.operands()
-            if (not all(is_SymbolicVariable(v) for v in args) or
+            if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
                 len(args) != len(set(args))):
                 # An evaluated derivative of the form f'(1) is not a
                 # symbolic variable, yet we would like to treat it
