@@ -108,16 +108,25 @@ def Hom(X, Y, category=None, check=True):
         Set of Morphisms (Linear Transformations) from
         Vector space of dimension 3 over Rational Field to
         Vector space of dimension 3 over Rational Field
-        sage: G = AlternatingGroup(3)
-        sage: Hom(G, G)
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
-        sage: Hom(ZZ, QQ, Sets())
+        sage: G = AlternatingGroup(3)                                                                   # optional - sage.groups
+        sage: Hom(G, G)                                                                                 # optional - sage.groups
+        Set of Morphisms
+         from Alternating group of order 3!/2 as a permutation group
+         to Alternating group of order 3!/2 as a permutation group
+         in Category of finite enumerated permutation groups
+        sage: Hom(ZZ, QQ, Sets())                                                                       # optional - sage.groups
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
         sage: Hom(FreeModule(ZZ,1), FreeModule(QQ,1))
-        Set of Morphisms from Ambient free module of rank 1 over the principal ideal domain Integer Ring to Vector space of dimension 1 over Rational Field in Category of commutative additive groups
+        Set of Morphisms
+         from Ambient free module of rank 1 over the principal ideal domain Integer Ring
+         to Vector space of dimension 1 over Rational Field
+         in Category of commutative additive groups
         sage: Hom(FreeModule(QQ,1), FreeModule(ZZ,1))
-        Set of Morphisms from Vector space of dimension 1 over Rational Field to Ambient free module of rank 1 over the principal ideal domain Integer Ring in Category of commutative additive groups
+        Set of Morphisms
+         from Vector space of dimension 1 over Rational Field
+         to Ambient free module of rank 1 over the principal ideal domain Integer Ring
+         in Category of commutative additive groups
 
     Here, we test against a memory leak that has been fixed at :trac:`11521` by
     using a weak cache::
@@ -138,13 +147,13 @@ def Hom(X, Y, category=None, check=True):
 
         sage: X = ZZ; X
         Integer Ring
-        sage: Y = SymmetricGroup(3); Y
+        sage: Y = SymmetricGroup(3); Y                                                                  # optional - sage.groups
         Symmetric group of order 3! as a permutation group
 
     By default, the smallest category containing both ``X`` and ``Y``,
     is used::
 
-        sage: Hom(X, Y)
+        sage: Hom(X, Y)                                                                                 # optional - sage.groups
         Set of Morphisms from Integer Ring
          to Symmetric group of order 3! as a permutation group
          in Category of enumerated monoids
@@ -152,10 +161,13 @@ def Hom(X, Y, category=None, check=True):
     Otherwise, if ``category`` is specified, then ``category`` is used,
     after checking that ``X`` and ``Y`` are indeed in ``category``::
 
-        sage: Hom(X, Y, Magmas())
-        Set of Morphisms from Integer Ring to Symmetric group of order 3! as a permutation group in Category of magmas
+        sage: Hom(X, Y, Magmas())                                                                       # optional - sage.groups
+        Set of Morphisms
+         from Integer Ring
+         to Symmetric group of order 3! as a permutation group
+         in Category of magmas
 
-        sage: Hom(X, Y, Groups())
+        sage: Hom(X, Y, Groups())                                                                       # optional - sage.groups
         Traceback (most recent call last):
         ...
         ValueError: Integer Ring is not in Category of groups
@@ -487,19 +499,22 @@ def End(X, category=None):
 
         sage: V = VectorSpace(QQ, 3)
         sage: End(V)
-        Set of Morphisms (Linear Transformations) from
-        Vector space of dimension 3 over Rational Field to
-        Vector space of dimension 3 over Rational Field
+        Set of Morphisms (Linear Transformations)
+         from Vector space of dimension 3 over Rational Field
+         to Vector space of dimension 3 over Rational Field
 
     ::
 
-        sage: G = AlternatingGroup(3)
-        sage: S = End(G); S
-        Set of Morphisms from Alternating group of order 3!/2 as a permutation group to Alternating group of order 3!/2 as a permutation group in Category of finite enumerated permutation groups
+        sage: G = AlternatingGroup(3)                                                                   # optional - sage.groups
+        sage: S = End(G); S                                                                             # optional - sage.groups
+        Set of Morphisms
+         from Alternating group of order 3!/2 as a permutation group
+         to Alternating group of order 3!/2 as a permutation group
+         in Category of finite enumerated permutation groups
         sage: from sage.categories.homset import is_Endset
-        sage: is_Endset(S)
+        sage: is_Endset(S)                                                                              # optional - sage.groups
         True
-        sage: S.domain()
+        sage: S.domain()                                                                                # optional - sage.groups
         Alternating group of order 3!/2 as a permutation group
 
     To avoid creating superfluous categories, a homset in a category
@@ -694,13 +709,13 @@ class Homset(Set_generic):
 
         Homsets of non-unique parents are non-unique as well::
 
-            sage: G = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
-            sage: G is loads(dumps(G))
+            sage: G = PermutationGroup([[(1, 2, 3), (4, 5)], [(3, 4)]])                                 # optional - sage.groups
+            sage: G is loads(dumps(G))                                                                  # optional - sage.groups
             False
-            sage: H = Hom(G,G)
-            sage: H is loads(dumps(H))
+            sage: H = Hom(G, G)                                                                         # optional - sage.groups
+            sage: H is loads(dumps(H))                                                                  # optional - sage.groups
             False
-            sage: H == loads(dumps(H))
+            sage: H == loads(dumps(H))                                                                  # optional - sage.groups
             True
         """
         return Hom, (self._domain, self._codomain, self.__category, False)
@@ -726,10 +741,10 @@ class Homset(Set_generic):
             sage: hash(Hom(QQ, ZZ)) == hash((QQ, ZZ, QQ))
             True
 
-            sage: E = EllipticCurve('37a')                              # optional - sage.symbolic
-            sage: H = E(0).parent(); H                                  # optional - sage.symbolic
+            sage: E = EllipticCurve('37a')                                                              # optional - sage.symbolic
+            sage: H = E(0).parent(); H                                                                  # optional - sage.symbolic
             Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))
+            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                                 # optional - sage.symbolic
             True
         """
         return hash((self._domain, self._codomain, self.base()))
@@ -750,8 +765,8 @@ class Homset(Set_generic):
 
         EXAMPLES::
 
-            sage: H = Hom(AlternatingGroup(4), AlternatingGroup(7))
-            sage: H.homset_category()
+            sage: H = Hom(AlternatingGroup(4), AlternatingGroup(7))                                     # optional - sage.groups
+            sage: H.homset_category()                                                                   # optional - sage.groups
             Category of finite enumerated permutation groups
         """
         return self.__category
@@ -762,9 +777,9 @@ class Homset(Set_generic):
 
         EXAMPLES::
 
-            sage: H = Hom(SymmetricGroup(4), SymmetricGroup(7))
-            sage: phi = Hom(SymmetricGroup(5), SymmetricGroup(6)).natural_map()
-            sage: phi
+            sage: H = Hom(SymmetricGroup(4), SymmetricGroup(7))                                         # optional - sage.groups
+            sage: phi = Hom(SymmetricGroup(5), SymmetricGroup(6)).natural_map()                         # optional - sage.groups
+            sage: phi                                                                                   # optional - sage.groups
             Coercion morphism:
               From: Symmetric group of order 5! as a permutation group
               To:   Symmetric group of order 6! as a permutation group
@@ -776,7 +791,7 @@ class Homset(Set_generic):
         collection, if there is a strong reference to its domain (which is the
         case here)::
 
-            sage: H(phi)
+            sage: H(phi)                                                                                # optional - sage.groups
             Composite map:
               From: Symmetric group of order 4! as a permutation group
               To:   Symmetric group of order 7! as a permutation group
@@ -797,7 +812,7 @@ class Homset(Set_generic):
         Also note that making a copy of the resulting map will automatically
         make strengthened copies of the composed maps::
 
-            sage: copy(H(phi))
+            sage: copy(H(phi))                                                                          # optional - sage.groups
             Composite map:
               From: Symmetric group of order 4! as a permutation group
               To:   Symmetric group of order 7! as a permutation group
@@ -883,24 +898,24 @@ class Homset(Set_generic):
 
         TESTS::
 
-            sage: G.<x,y,z> = FreeGroup()
-            sage: H = Hom(G, G)
-            sage: H(H.identity())
+            sage: G.<x,y,z> = FreeGroup()                                                               # optional - sage.groups
+            sage: H = Hom(G, G)                                                                         # optional - sage.groups
+            sage: H(H.identity())                                                                       # optional - sage.groups
             Identity endomorphism of Free Group on generators {x, y, z}
-            sage: H()
+            sage: H()                                                                                   # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 0 to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
-            sage: H("whatever")
+            sage: H("whatever")                                                                         # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'whatever' to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
-            sage: HH = Hom(H, H)
-            sage: HH(HH.identity(), foo="bar")
+            sage: HH = Hom(H, H)                                                                        # optional - sage.groups
+            sage: HH(HH.identity(), foo="bar")                                                          # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: no keywords are implemented for
@@ -981,18 +996,18 @@ class Homset(Set_generic):
         this point this is the simplest one to create (gosh)::
 
             sage: cat = Groups().Finite().Commutative()
-            sage: C3 = PermutationGroup([(1,2,3)])
-            sage: C3._refine_category_(cat)
-            sage: C2 = PermutationGroup([(1,2)])
-            sage: C2._refine_category_(cat)
-            sage: H = Hom(C3, C2, cat)
-            sage: H.homset_category()
+            sage: C3 = PermutationGroup([(1,2,3)])                                                      # optional - sage.groups
+            sage: C3._refine_category_(cat)                                                             # optional - sage.groups
+            sage: C2 = PermutationGroup([(1,2)])                                                        # optional - sage.groups
+            sage: C2._refine_category_(cat)                                                             # optional - sage.groups
+            sage: H = Hom(C3, C2, cat)                                                                  # optional - sage.groups
+            sage: H.homset_category()                                                                   # optional - sage.groups
             Category of finite commutative groups
-            sage: H.category()
+            sage: H.category()                                                                          # optional - sage.groups
             Category of homsets of unital magmas
-            sage: cls = H._abstract_element_class; cls
+            sage: cls = H._abstract_element_class; cls                                                  # optional - sage.groups
             <class 'sage.categories.homsets.GroupHomset_libgap_with_category._abstract_element_class'>
-            sage: cls.__bases__ == (H.category().element_class, H.homset_category().morphism_class)
+            sage: cls.__bases__ == (H.category().element_class, H.homset_category().morphism_class)     # optional - sage.groups
             True
 
         A morphism of finite commutative semigroups is also a morphism
@@ -1162,9 +1177,10 @@ class Homset(Set_generic):
 
         EXAMPLES::
 
-            sage: K = GaussianIntegers()
-            sage: End(K).one()
-            Identity endomorphism of Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            sage: K = GaussianIntegers()                                                                # optional - sage.rings.number_field
+            sage: End(K).one()                                                                          # optional - sage.rings.number_field
+            Identity endomorphism of Gaussian Integers in Number Field in I
+             with defining polynomial x^2 + 1 with I = 1*I
         """
         return self.identity()
 
