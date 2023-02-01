@@ -35,7 +35,7 @@ def reset(vars=None, attached=False):
 
         sage: x = 5
         sage: reset()
-        sage: x
+        sage: x                                                                 # optional - sage.symbolic
         x
 
         sage: fn = tmp_filename(ext='foo.py')
@@ -57,19 +57,18 @@ def reset(vars=None, attached=False):
 
     Confirm that assumptions don't survive a reset (:trac:`10855`)::
 
-        sage: assume(x > 3)
-        sage: assumptions()
+        sage: assume(x > 3)                                                     # optional - sage.symbolic
+        sage: assumptions()                                                     # optional - sage.symbolic
         [x > 3]
-        sage: bool(x > 3)
+        sage: bool(x > 3)                                                       # optional - sage.symbolic
         True
         sage: reset()
-        sage: assumptions()
+        sage: assumptions()                                                     # optional - sage.symbolic
         []
-        sage: bool(x > 3)
+        sage: bool(x > 3)                                                       # optional - sage.symbolic
         False
 
     """
-    from sage.symbolic.assumptions import forget
     if vars is not None:
         restore(vars)
         return
@@ -82,7 +81,12 @@ def reset(vars=None, attached=False):
             except KeyError:
                 pass
     restore()
-    forget()
+    try:
+        from sage.symbolic.assumptions import forget
+    except ImportError:
+        pass
+    else:
+        forget()
     reset_interfaces()
     if attached:
         import sage.repl.attach
@@ -108,9 +112,9 @@ def restore(vars=None):
         Rational Field
         sage: x
         10
-        sage: y = var('y')
+        sage: y = var('y')                                                      # optional - sage.symbolic
         sage: restore('x y')
-        sage: x
+        sage: x                                                                 # optional - sage.symbolic
         x
         sage: y
         Traceback (most recent call last):
@@ -140,8 +144,12 @@ def restore(vars=None):
             import sage.all
             D = sage.all.__dict__
     _restore(G, D, vars)
-    import sage.calculus.calculus
-    _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
+    try:
+        import sage.calculus.calculus
+    except ImportError:
+        pass
+    else:
+        _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
 
 
 def _restore(G, D, vars):
@@ -165,5 +173,9 @@ def _restore(G, D, vars):
 
 
 def reset_interfaces():
-    from sage.interfaces.quit import expect_quitall
-    expect_quitall()
+    try:
+        from sage.interfaces.quit import expect_quitall
+    except ImportError:
+        pass
+    else:
+        expect_quitall()
