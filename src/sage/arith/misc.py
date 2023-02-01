@@ -543,8 +543,9 @@ def is_prime(n):
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
     (cf. :trac:`32340`) and we should not warn::
 
-        sage: K.<i> = NumberField(x^2+1)
-        sage: is_prime(1+i)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+        sage: is_prime(1 + i)                                                       # optional - sage.rings.number_field
         True
     """
     try:
@@ -2511,10 +2512,10 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        EXAMPLES::
 
-           sage: f(n)=n^2
-           sage: is_prime(f(3))
+           sage: f(n) = n^2                                                         # optional - sage.symbolic
+           sage: is_prime(f(3))                                                     # optional - sage.symbolic
            False
-           sage: factor(f(3))
+           sage: factor(f(3))                                                       # optional - sage.symbolic
            9
 
     INPUT:
@@ -3338,33 +3339,34 @@ def crt(a, b, m=None, n=None):
 
     Note that this also works for polynomial rings::
 
-        sage: K.<a> = NumberField(x^3 - 7)
-        sage: R.<y> = K[]
-        sage: f = y^2 + 3
-        sage: g = y^3 - 5
-        sage: CRT(1,3,f,g)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 7)                                                      # optional - sage.rings.number_field
+        sage: R.<y> = K[]                                                                       # optional - sage.rings.number_field
+        sage: f = y^2 + 3                                                                       # optional - sage.rings.number_field
+        sage: g = y^3 - 5                                                                       # optional - sage.rings.number_field
+        sage: CRT(1, 3, f, g)                                                                   # optional - sage.rings.number_field
         -3/26*y^4 + 5/26*y^3 + 15/26*y + 53/26
-        sage: CRT(1,a,f,g)
+        sage: CRT(1, a, f, g)                                                                   # optional - sage.rings.number_field
         (-3/52*a + 3/52)*y^4 + (5/52*a - 5/52)*y^3 + (15/52*a - 15/52)*y + 27/52*a + 25/52
 
     You can also do this for any number of moduli::
 
-        sage: K.<a> = NumberField(x^3 - 7)
-        sage: R.<x> = K[]
-        sage: CRT([], [])
+        sage: K.<a> = NumberField(x^3 - 7)                                                      # optional - sage.rings.number_field
+        sage: R.<x> = K[]                                                                       # optional - sage.rings.number_field
+        sage: CRT([], [])                                                                       # optional - sage.rings.number_field
         0
-        sage: CRT([a], [x])
+        sage: CRT([a], [x])                                                                     # optional - sage.rings.number_field
         a
-        sage: f = x^2 + 3
-        sage: g = x^3 - 5
-        sage: h = x^5 + x^2 - 9
-        sage: k = CRT([1, a, 3], [f, g, h]); k
+        sage: f = x^2 + 3                                                                       # optional - sage.rings.number_field
+        sage: g = x^3 - 5                                                                       # optional - sage.rings.number_field
+        sage: h = x^5 + x^2 - 9                                                                 # optional - sage.rings.number_field
+        sage: k = CRT([1, a, 3], [f, g, h]); k                                                  # optional - sage.rings.number_field
         (127/26988*a - 5807/386828)*x^9 + (45/8996*a - 33677/1160484)*x^8 + (2/173*a - 6/173)*x^7 + (133/6747*a - 5373/96707)*x^6 + (-6/2249*a + 18584/290121)*x^5 + (-277/8996*a + 38847/386828)*x^4 + (-135/4498*a + 42673/193414)*x^3 + (-1005/8996*a + 470245/1160484)*x^2 + (-1215/8996*a + 141165/386828)*x + 621/8996*a + 836445/386828
-        sage: k.mod(f)
+        sage: k.mod(f)                                                                          # optional - sage.rings.number_field
         1
-        sage: k.mod(g)
+        sage: k.mod(g)                                                                          # optional - sage.rings.number_field
         a
-        sage: k.mod(h)
+        sage: k.mod(h)                                                                          # optional - sage.rings.number_field
         3
 
     If the moduli are not coprime, a solution may not exist::
@@ -3647,11 +3649,11 @@ def binomial(x, m, **kwds):
         0
         sage: binomial(RealField()('2.5'), 2)
         1.87500000000000
-        sage: n=var('n'); binomial(n,2)
+        sage: n = var('n'); binomial(n, 2)                                          # optional - sage.symbolic
         1/2*(n - 1)*n
-        sage: n=var('n'); binomial(n,n)
+        sage: n = var('n'); binomial(n, n)                                          # optional - sage.symbolic
         1
-        sage: n=var('n'); binomial(n,n-1)
+        sage: n = var('n'); binomial(n, n-1)                                        # optional - sage.symbolic
         n
         sage: binomial(2^100, 2^100)
         1
@@ -3751,8 +3753,8 @@ def binomial(x, m, **kwds):
         ...
         TypeError: either m or x-m must be an integer
 
-        sage: k, i = var('k,i')
-        sage: binomial(k,i)
+        sage: k, i = var('k,i')                                                     # optional - sage.symbolic
+        sage: binomial(k,i)                                                         # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: either m or x-m must be an integer
@@ -3789,8 +3791,8 @@ def binomial(x, m, **kwds):
     :func:`~sage.functions.other.binomial` from the module
     :mod:`sage.functions.other`::
 
-        sage: from sage.functions.other import binomial
-        sage: binomial(k, i)
+        sage: from sage.functions.other import binomial                             # optional - sage.symbolic
+        sage: binomial(k, i)                                                        # optional - sage.symbolic
         binomial(k, i)
 
     binomial support numpy and gmpy2 parameters::
@@ -5016,17 +5018,17 @@ def falling_factorial(x, a):
 
         sage: falling_factorial(10, 3)
         720
-        sage: falling_factorial(10, RR('3.0'))
+        sage: falling_factorial(10, RR('3.0'))                                      # optional - sage.symbolic
         720.000000000000
-        sage: falling_factorial(10, RR('3.3'))
+        sage: falling_factorial(10, RR('3.3'))                                      # optional - sage.symbolic
         1310.11633396601
         sage: falling_factorial(10, 10)
         3628800
         sage: factorial(10)
         3628800
-        sage: a = falling_factorial(1+I, I); a
+        sage: a = falling_factorial(1+I, I); a                                      # optional - sage.symbolic
         gamma(I + 2)
-        sage: CC(a)
+        sage: CC(a)                                                                 # optional - sage.symbolic
         0.652965496420167 + 0.343065839816545*I
         sage: falling_factorial(1+I, 4)
         4*I + 2
@@ -5054,8 +5056,8 @@ def falling_factorial(x, a):
 
     Check that :trac:`16770` is fixed::
 
-        sage: d = var('d')
-        sage: parent(falling_factorial(d, 0))
+        sage: d = var('d')                                                          # optional - sage.symbolic
+        sage: parent(falling_factorial(d, 0))                                       # optional - sage.symbolic
         Symbolic Ring
 
     Check that :trac:`20075` is fixed::
@@ -5189,7 +5191,7 @@ def integer_ceil(x):
 
         sage: integer_ceil(5.4)
         6
-        sage: integer_ceil(x)
+        sage: integer_ceil(x)                                                       # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         NotImplementedError: computation of ceil of x not implemented
@@ -5235,7 +5237,7 @@ def integer_floor(x):
         sage: integer_floor(RDF(-5/2))
         -3
 
-        sage: integer_floor(x)
+        sage: integer_floor(x)                                                      # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         NotImplementedError: computation of floor of x not implemented
