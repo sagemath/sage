@@ -613,7 +613,7 @@ def _subs_make_dict(s):
     """
     if isinstance(s, dict):
         return s
-    elif is_SymbolicEquation(s):
+    elif isinstance(s, Expression) and s.is_relational():
         if s.operator() is not operator.eq:
             msg = "can only substitute equality, not inequalities; got {}"
             raise TypeError(msg.format(s))
@@ -692,7 +692,7 @@ def _subs_fun_make_dict(s):
     """
     if isinstance(s, dict):
         return dict((k, v) if not isinstance(k, Expression) else (k.operator(), v.function(*k.operands())) for k, v in s.items())
-    elif is_SymbolicEquation(s):
+    elif isinstance(s, Expression) and s.is_relational():
         if s.operator() is not operator.eq:
             msg = "can only substitute equality, not inequalities; got {}"
             raise TypeError(msg.format(s))
@@ -6807,12 +6807,11 @@ cdef class Expression(Expression_abc):
         # we override type checking in CallableSymbolicExpressionRing,
         # since it checks for old SymbolicVariable's
         # and do the check here instead
-        from sage.symbolic.callable import CallableSymbolicExpressionRing
-        from sage.symbolic.ring import is_SymbolicVariable
         for i in args:
-            if not is_SymbolicVariable(i):
+            if not (isinstance(i, Expression) and i.is_symbol()):
                 break
         else:
+            from sage.symbolic.callable import CallableSymbolicExpressionRing
             R = CallableSymbolicExpressionRing(args, check=False)
             return R(self)
         raise TypeError(f"must construct a function with symbolic variables as arguments, got {args}.")
@@ -12878,7 +12877,6 @@ cdef class Expression(Expression_abc):
             sage: plot(f,0,1)
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.symbolic.ring import is_SymbolicVariable
         from sage.plot.plot import plot
 
         # see if the user passed a variable in.
@@ -12887,7 +12885,7 @@ cdef class Expression(Expression_abc):
         else:
             param = None
             for i, arg in enumerate(args):
-                if is_SymbolicVariable(arg):
+                if isinstance(arg, Expression) and arg.is_symbol():
                     param = arg
                     args = args[:i] + args[i+1:]
                     break

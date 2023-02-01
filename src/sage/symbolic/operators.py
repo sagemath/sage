@@ -1,7 +1,6 @@
 "Operators"
 
 import operator
-from sage.symbolic.ring import is_SymbolicVariable, SR
 
 
 def add_vararg(first, *rest):
@@ -123,7 +122,7 @@ class FDerivativeOperator():
            D[0](f)(1)
 
         """
-        if (not all(is_SymbolicVariable(x) for x in args) or
+        if (not all(isinstance(x, Expression) and x.is_symbol() for x in args) or
                 len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it
