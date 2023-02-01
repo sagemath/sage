@@ -428,7 +428,7 @@ def preprocess_assumptions(args):
             del args[i]
             last = x
         elif ((not hasattr(x, 'assume')
-               or (isinstance(x, Expression) and x.is_symbol())
+               or (isinstance(x, Expression) and x.is_symbol()))
               and last is not None):
             args[i] = GenericDeclaration(x, last)
         else:
