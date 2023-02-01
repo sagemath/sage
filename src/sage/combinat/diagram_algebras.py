@@ -2053,9 +2053,9 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: q = var('q')
-            sage: PA = PartitionAlgebra(2, q)
-            sage: PA.order()
+            sage: q = var('q')                                                      # optional - sage.symbolic
+            sage: PA = PartitionAlgebra(2, q)                                       # optional - sage.symbolic
+            sage: PA.order()                                                        # optional - sage.symbolic
             2
         """
         return self._k
@@ -2412,12 +2412,12 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
-        sage: q = var('q')
-        sage: PA = PartitionAlgebra(2, q); PA
+        sage: q = var('q')                                                                                                          # optional - sage.symbolic
+        sage: PA = PartitionAlgebra(2, q); PA                                                                                       # optional - sage.symbolic
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
-        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
+        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])                                                                        # optional - sage.symbolic
         True
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])
+        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])      # optional - sage.symbolic
         True
 
     The identity element of the partition algebra is the set

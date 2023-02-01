@@ -2695,8 +2695,8 @@ def parametric_plot(funcs, *args, **kwargs):
 
     One test for :trac:`7165`::
 
-        sage: m = SR.var('m')
-        sage: parametric_plot([real(exp(i*m)),imaginary(exp(i*m))], (m,0,7))
+        sage: m = SR.var('m')                                                       # optional - sage.symbolic
+        sage: parametric_plot([real(exp(i*m)), imaginary(exp(i*m))], (m, 0, 7))     # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
     """
     num_ranges = 0

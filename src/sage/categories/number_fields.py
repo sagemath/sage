@@ -222,7 +222,8 @@ class NumberFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: S = NumberField(x**3-x-1, 'a')
+                sage: x = polygen(ZZ, 'x')
+                sage: S = NumberField(x**3 - x - 1, 'a')
                 sage: S._test_absolute_disc()
             """
             from sage.rings.integer import Integer

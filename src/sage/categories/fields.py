@@ -790,7 +790,8 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: NumberField(x^7+2,'a')(2).inverse_of_unit()
+                sage: x = polygen(ZZ, 'x')
+                sage: NumberField(x^7+2, 'a')(2).inverse_of_unit()                  # optional - sage.rings.number_field
                 1/2
 
             Trying to invert the zero element typically raises a
