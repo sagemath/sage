@@ -13,7 +13,7 @@ a model which is miniaml at all primes except one.  Another difference
 is the relative lack of understanding of modularity for elliptic
 curves over general number fields; the method :meth:`is_modular()`
 does implement recent methods to prove modularity of elliptic curves,
-over totally real fields only.
+over totally real and imaginary quadratic fields only.
 
 Currently Sage can obtain local information about `E/K_v` for finite
 places `v`, it has an interface to Denis Simon's script for 2-descent,
@@ -2306,9 +2306,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Check that the the point found has infinite order, and that it is on the curve::
 
-            sage: P=gg[0]; P.order()
+            sage: P=gg[0]; P.order() # long time
             +Infinity
-            sage: E.defining_polynomial()(*P)
+            sage: E.defining_polynomial()(*P) # long time
             0
 
         Here is a curve of rank 2::
@@ -4082,71 +4082,93 @@ class EllipticCurve_number_field(EllipticCurve_field):
             is not modular!  Only that modularity cannot be proved
             with current knowledge and implemented methods.  It is
             expected that the return value will be `True` for all
-            curves defined over totally real fields; any curve defined
-            over such fields for which the return value is `False` is
-            of great interest, as its mod `p` Galois representations
-            for the primes 3, 5 and 7 are simultaneously nonmaximal.
+            curves defined over totally real fields, and for all
+            defined over imaginary quadratic fields over which the
+            modular curve $X_0(15)$ (with label `15a1`) has rank
+            zero.  Any curve defined over totally real fields for
+            which the return value is `False` is of interest, as its
+            mod `p` Galois representations for the primes 3, 5 and 7
+            are simultaneously nonmaximal.
+
+            Note that over half of all imaginary quadratic fields,
+            there exist infinitely many elliptic curves (even up to
+            twist) whose mod 3 and mod 5 Galois representations are
+            both reducible (in other words, which posess rational
+            15-isogeny).  Such curves can be proved to be modular, but
+            not using the methods implemented here.
 
             There are currently no theoretical results which allow
             modularity to be proved over fields other than totally
-            real fields, with the exception of imaginary quadratic
-            fields, where it is currently possible to prove modularity
-            in individual cases by cmputing suitable spaces of Bianchi
-            modular forms, but this is not implemented.
+            real fields and imaginary quadratic fields.
 
         ALGORITHM:
 
-        This is based on code provided by S. Siksek and relies on
-        theorems in the following papers:
-
-        [Chen] Imin Chen, The Jacobian of Modular Curves Associated to Cartan
-        Subgroups, Oxford DPhil thesis, 1996.
-
-        [FLS] Nuno Freitas, Bao Le Hung, and S. Siksek, Elliptic curves over
-        Real Quadratic Fields are Modular, Invent. math. (2015) 201,
-        pp. 159--206.
-
-        [Thorne] Jack Thorne, Automorphy of some residually dihedral Galois
-        representations.  Mathematische Annalen 364 (2016), No. 1--2,
-        pp. 589--648
+        This is based on code provided by S. Siksek for the totally
+        real case, and relies on theorems in the following papers:
+        [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_.
 
         EXAMPLES.  Set ``verbose=True`` to see a reason for the conclusion::
 
             sage: E = EllipticCurve('11a1')
             sage: E.is_modular(verbose=True)
-            All elliptic curves over QQ are modular (Wiles et al)
+            All elliptic curves over QQ are modular
             True
             sage: K.<a> = QuadraticField(5)
             sage: E = EllipticCurve([0,1,0,a,0])
             sage: E.is_modular(verbose=True)
-            All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)
+            All elliptic curves over real quadratic fields are modular
             True
             sage: E = EllipticCurve([0,0,0,a,0])
             sage: E.is_modular(verbose=True)
-            All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)
+            All elliptic curves over real quadratic fields are modular
             True
-            sage: K.<a> = QuadraticField(-5)
+            sage: K.<a> = CyclotomicField(5)
             sage: E = EllipticCurve([0,1,0,a,0])
             sage: E.is_modular(verbose=True)
-            Unable to determine modularity except over totally real fields
+            Unable to determine modularity except over totally real and imaginary quadratic fields
             False
 
         Some examples from the LMFDB.  Over a totally real cubic field::
 
-            sage: R.<x> = PolynomialRing(QQ);  K.<a> = NumberField(R([-3, -7, -1, 1]))
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([-3, -7, -1, 1]))
             sage: E = EllipticCurve([K([-4,-1,1]),K([-4,-2,1]),K([-4,-1,1]),K([-2807,-660,446]),K([5874,1376,-933])])
             sage: E.is_modular(verbose=True)
-            Modularity implied by the mod 3 Galois image being neither reducible nor split
+            Modular since the mod 3 Galois image is neither reducible nor split
             True
 
-        Over a field which is not totally real, no conclusion is currently possible::
+        Over imaginary quadratic fields `K` over which `X_0(15)` has
+        positive rank, there are many curves where current results do
+        not imply modularity::
 
-            sage: R.<x> = PolynomialRing(QQ);  K.<a> = NumberField(R([1, 0, -1, 1]))
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([2, -1, 1]))
+            sage: EllipticCurve('15a1').change_ring(K).rank()
+            1
+            sage: E = EllipticCurve([K([1,0]),K([1,-1]),K([1,1]),K([-105,98]),K([-615,1188])])
+            sage: E.is_modular(verbose=True)
+            Modularity not established: this curve has small image at 3 and 5
+            False
+            sage: EllipticCurve('15a1').change_ring(K).rank()
+            1
+
+        Nevertheless, over the same field, most curves pass::
+
+            sage: E = EllipticCurve([K([0,0]),K([0,1]),K([1,1]),K([-8,-3]),K([-5,-5])])
+            sage: E.is_modular(verbose=True)
+            Modular since the mod 3 Galois image is neither reducible nor split
+            True
+
+        Over a field which is neither totally real nor imaginary
+        quadratic, no conclusion is currently possible::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([1, 0, -1, 1]))
             sage: K.is_totally_real()
             False
             sage: E = EllipticCurve([K([0,0,1]),K([1,0,0]),K([0,0,1]),K([0,0,0]),K([0,0,0])])
             sage: E.is_modular(verbose=True)
-            Unable to determine modularity except over totally real fields
+            Unable to determine modularity except over totally real and imaginary quadratic fields
             False
 
         """
@@ -4154,47 +4176,59 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return len(_modular_polynomial(group, p, j).roots()) == 0
 
         K = self.base_field()
-        if K is QQ:
+        d = K.degree()
+
+        if d == 1:
             if verbose:
-                print("All elliptic curves over QQ are modular (Wiles et al)")
+                print("All elliptic curves over QQ are modular")
             return True
-        if not K.is_totally_real():
+
+        TR =  K.is_totally_real()
+
+        if TR and d == 2: # real quadratic
             if verbose:
-                print("Unable to determine modularity except over totally real fields")
+                print("All elliptic curves over real quadratic fields are modular")
+            return True
+
+        if d > 2 and not TR:
+            if verbose:
+                print("Unable to determine modularity except over totally real and imaginary quadratic fields")
             return False # meaning unknown
-        if K.degree() == 2:
-            if verbose:
-                print("All elliptic curves over real quadratic fields are modular (Freitas, Le Hung and Siksek)")
-            return True
+
+        # from here either K is totally real (TR True) or imagainary quadratic
+
         if self.has_cm():
             if verbose:
-                print("All CM elliptic curves over totally real fields are modular")
+                print("All CM elliptic curves over totally real and imaginary quadratic fields are modular")
             return True
 
         j = self.j_invariant()
 
         if not_from("borel", 3, j) and not_from("split", 3, j):
             if verbose:
-                print("Modularity implied by the mod 3 Galois image being neither reducible nor split")
+                print("Modular since the mod 3 Galois image is neither reducible nor split")
             return True
 
         if not_from("borel", 5, j):
-            if not K(5).is_square():
+            if not (TR and K(5).is_square()):
                 if verbose:
-                    print("Modularity implied by the mod 5 Galois image being irreducible and 5 not square")
+                    print("Modular since the mod 5 Galois image is irreducible, and 5 not square")
                 return True
-            if not_from("split", 5, j) and not_from("nonsplit", 5, j):
+            if TR and not_from("split", 5, j) and not_from("nonsplit", 5, j):
                 if verbose:
-                    print("Modularity implied by the mod 5 Galois image not being reducible, split, or nonsplit")
+                    print("Modular since the mod 5 Galois image is not reducible, split, or nonsplit")
                 return True
 
-        if not_from("borel", 7, j) and not_from("split", 7, j) and not_from("nonsplit", 7, j):
+        if TR and not_from("borel", 7, j) and not_from("split", 7, j) and not_from("nonsplit", 7, j):
             if verbose:
-                print("Modularity implied by the mod 7 Galois image not being reducible, split, or nonsplit")
+                print("Modular since the mod 7 Galois image is not being reducible, split, or nonsplit")
             return True
 
         if verbose:
-            print("Modularity not established: this curve has small image at 3, 5 and 7!")
+            if TR:
+                print("Modularity not established: this curve has small image at 3, 5 and 7")
+            else:
+                print("Modularity not established: this curve has small image at 3 and 5")
 
         return False # We've run out of tricks!
 

@@ -600,6 +600,39 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return (Integer(1), Integer(0))
 
+    def is_totally_real(self):
+        r"""
+        Return ``True``, since `\QQ` has no non-real complex embeddings.
+
+        EXAMPLES::
+
+            sage: QQ.is_totally_real()
+            True
+        """
+        return True
+
+    def is_CM(self):
+        r"""
+        Return ``False``, since  `\QQ` is not a CM field.
+
+        EXAMPLES::
+
+            sage: QQ.is_CM()
+            False
+        """
+        return False
+
+    def is_abelian(self):
+        r"""
+        Return ``True``, since  `\QQ` is an abelian Galois extension of itself.
+
+        EXAMPLES::
+
+            sage: QQ.is_abelian()
+            True
+        """
+        return True
+
     def embeddings(self, K):
         r"""
         Return list of the one embedding of `\QQ` into `K`, if it exists.

@@ -1317,6 +1317,10 @@ REFERENCES:
 .. [Can1990] \J. Canny. Generalised characteristic polynomials.
              J. Symbolic Comput. Vol. 9, No. 3, 1990, 241--250.
 
+.. [CarNew2023] Ana Caraiani and James Newton.
+                *On the modularity of elliptic curves over imaginary quadratic fields.*
+                :arxiv:`2301.10509`
+
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
 
@@ -1734,6 +1738,11 @@ REFERENCES:
 .. [CP2015] Grégory Châtel and Viviane Pons.
             *Counting smaller elements in the tamari and m-tamari lattices*.
             Journal of Combinatorial Theory, Series A. (2015). :arxiv:`1311.3922`.
+
+.. [Chen1996] Imin Chen.
+              *The Jacobian of Modular Curves Associated to Cartan Subgroups*.
+              Oxford DPhil thesis (1996).
+              https://ora.ouls.ox.ac.uk/objects/uuid:46babaa0-c498-4211-a4ad-8dbabb8f05d9
 
 .. [CP2016] \N. Cohen, D. Pasechnik,
             *Implementing Brouwer's database of strongly regular graphs*,
@@ -2453,6 +2462,10 @@ REFERENCES:
 .. [Fra2011] Cameron Franc,
              "Nearly rigid analytic modular forms and their values at CM points",
              Ph.D. thesis, McGill University, 2011.
+
+.. [FLHS2015] Nuno Freitas, Bao Le Hung, and S. Siksek.
+              *Elliptic curves over Real Quadratic Fields are Modular.*
+              Invent. math. (2015) 201, pp. 159--206.
 
 .. [FRT1990] Faddeev, Reshetikhin and Takhtajan.
              *Quantization of Lie Groups and Lie Algebras*.
@@ -5880,6 +5893,10 @@ REFERENCES:
 .. [Tho2010] \T. Thongjunthug, Computing a lower bound for the canonical
              height on elliptic curves over number fields, Math. Comp. 79
              (2010), pages 2431-2449.
+
+.. [Thorne2016] Jack Thorne.
+                *Automorphy of some residually dihedral Galois representations.*
+                Mathematische Annalen 364 (2016), No. 1--2, pp. 589--648.
 
 .. [Tho2011] Anders Thorup. *ON THE INVARIANTS OF THE SPLITTING ALGEBRA*,
              2011, :arxiv:`1105.4478`
