@@ -11,17 +11,17 @@ Loop Crystals
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
+from sage.arith.misc import integer_ceil as ceil
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.map import Map
 from sage.graphs.dot2tex_utils import have_dot2tex
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "ceil")
+
 
 class LoopCrystals(Category_singleton):
     r"""
