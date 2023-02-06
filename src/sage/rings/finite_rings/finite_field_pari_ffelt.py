@@ -18,10 +18,10 @@ AUTHORS:
 
 
 from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_base import FiniteField
+from .finite_field_base import FiniteFieldAbsolute
 from .finite_field_constructor import GF
 
-class FiniteField_pari_ffelt(FiniteField):
+class FiniteField_pari_ffelt(FiniteFieldAbsolute):
     """
     Finite fields whose cardinality is a prime power (not a prime),
     implemented using PARI's ``FFELT`` type.
@@ -114,7 +114,7 @@ class FiniteField_pari_ffelt(FiniteField):
         if n < 2:
             raise ValueError("the degree must be at least 2")
 
-        FiniteField.__init__(self, base=GF(p), names=name, normalize=True)
+        FiniteFieldAbsolute.__init__(self, base=GF(p), names=name, normalize=True)
 
         self._modulus = modulus
         self._degree = n

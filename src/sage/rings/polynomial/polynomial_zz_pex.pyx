@@ -20,6 +20,7 @@ from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
+from sage.libs.ntl.ntl_ZZ_pEX cimport ntl_ZZ_pEX
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.convert cimport ZZ_to_mpz
@@ -135,6 +136,17 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
                 return
         except AttributeError:
             pass
+
+        if isinstance(x, ntl_ZZ_pEX):
+            # Check that the contexts are the same
+            if (<ntl_ZZ_pEX>x).c != parent._modulus:
+                raise ValueError("Modulus mismatch: %s vs %s" % (x.c, parent._modulus))
+            Polynomial.__init__(self, parent, is_gen=is_gen)
+            (<Polynomial_template>self)._cparent = get_cparent(parent)
+            celement_construct(&self.x, (<Polynomial_template>self)._cparent)
+            (<ntl_ZZ_pEX>x).c.restore_c()
+            self.x = (<ntl_ZZ_pEX>x).x # does this work?
+            return
 
         if isinstance(x, Polynomial):
             x = x.list()

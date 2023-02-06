@@ -144,7 +144,7 @@ overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
 # ****************************************************************************
-#       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2013-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -874,11 +874,11 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: v = GaussValuation(R, QQ.valuation(2))
             sage: w = v.augmentation(x^2 + x + 1, infinity)
             sage: w.residue_ring()
-            Finite Field in u1 of size 2^2
+            Finite Field in u1 of size 2^2 over its base
 
         Since trivial extensions of finite fields are not implemented, the
         resulting ring might be identical to the residue ring of the underlying
-        valuation::
+        valuation, see #25976::
 
             sage: w = v.augmentation(x, infinity)
             sage: w.residue_ring()
@@ -899,12 +899,17 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             Number Field in u1 with defining polynomial x^2 + 2
 
         """
-        # the following is correct, even if the polynomial ring is not over a field
-
         base = self._base_valuation.residue_ring().base()
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
-            return base.extension(self.psi(), names=generator)
+
+            kwargs = {}
+            if base.is_finite():
+                # Silence deprecation warnings. We should eventually change the valuation code to use relative extensions here, see https://trac.sagemath.org/ticket/25976
+                kwargs["absolute"] = False
+                kwargs["implementation"] = "GF" if base.prime_subfield() is base else "PQR"
+
+            return base.extension(self.psi(), names=generator, **kwargs)
         else:
             # Do not call extension() if self.psi().degree() == 1:
             # In that case the resulting field appears to be the same as the original field,
@@ -1120,7 +1125,14 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
                 G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
-            assert(G(self._residue_field_generator()) == F)
+
+            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+            if not is_PolynomialRing(G.parent()):
+                G = G.univariate_polynomial()
+
+            assert is_PolynomialRing(G.parent())
+
+            assert G(self._residue_field_generator()) == F
             F = G.change_variable_name(self._base_valuation.residue_ring().variable_name())
 
         H = self._base_valuation.lift(F)
@@ -1166,7 +1178,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
             sage: w = v.augmentation(x^2 + x + 1, 1)
             sage: w.residue_ring()
-            Univariate Polynomial Ring in x over Finite Field in u1 of size 2^2
+            Univariate Polynomial Ring in x over Finite Field in u1 of size 2^2 over its base
 
         Since trivial valuations of finite fields are not implemented, the
         resulting ring might be identical to the residue ring of the underlying
@@ -1184,7 +1196,14 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         base = self._base_valuation.residue_ring().base()
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
-            base = base.extension(self.psi(), names=generator)
+
+            kwargs = {}
+            if base.is_finite():
+                # Silence deprecation warnings. We should eventually change the valuation code to use relative extensions here, see https://trac.sagemath.org/ticket/25976
+                kwargs["absolute"] = False
+                kwargs["implementation"] = "GF" if base.prime_subfield() is base else "PQR"
+
+            base = base.extension(self.psi(), names=generator, **kwargs)
         else:
             # Do not call extension() if self.psi().degree() == 1:
             # In that case the resulting field appears to be the same as the original field,
@@ -1348,8 +1367,9 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
             u1
 
         """
-        if self.residue_ring() == self._base_valuation.residue_ring():
-            assert self.psi().degree() == 1
+        assert (self.psi().degree() == 1) == (self.residue_ring() is self._base_valuation.residue_ring()), "residue ring extension must be trivial iff psi is trivial"
+
+        if self.psi().degree() == 1:
             ret = self.residue_ring().base()(-self.psi()[0])
         else:
             ret = self.residue_ring().base().gen()

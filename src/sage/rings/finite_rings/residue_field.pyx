@@ -134,7 +134,7 @@ And now over a large prime field::
 """
 
 #*****************************************************************************
-#       Copyright (C) 2007 David Roe <roed@math.harvard.edu>
+#       Copyright (C) 2007 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
