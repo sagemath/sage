@@ -218,7 +218,7 @@ class DrinfeldModuleHomset(Homset):
 
     def __contains__(self, x):
         r"""
-        Implement the ``in`` operator for the homset; return ``True`` if
+        Implement the ``in`` operator for the homset; return ``True``
         whether the input defines a morphism in the homset.
 
         INPUT:
@@ -274,7 +274,7 @@ class DrinfeldModuleHomset(Homset):
 
     def _element_constructor_(self, *args, **kwds):
         r"""
-        Return the Drinfeld module morphism defined by the input Ore
+        Return the Drinfeld module morphism defined by the given Ore
         polynomial.
 
         INPUT: an Ore polynomial
