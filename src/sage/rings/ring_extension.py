@@ -100,7 +100,7 @@ AUTHOR:
 - Xavier Caruso (2019)
 """
 
-#############################################################################
+# **************************************************************************
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
 #                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -109,7 +109,7 @@ AUTHOR:
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
@@ -129,10 +129,10 @@ from sage.rings.infinity import Infinity
 from sage.rings.ring_extension_element import (
     RingExtensionElement, RingExtensionFractionFieldElement, RingExtensionWithBasisElement)
 from sage.rings.ring_extension_morphism import (
-    RingExtensionHomomorphism, RingExtensionBackendIsomorphism, RingExtensionBackendReverseIsomorphism,
+    RingExtensionHomomorphism, RingExtensionHomomorphism_baseinclusion, RingExtensionBackendIsomorphism, RingExtensionBackendReverseIsomorphism,
     are_different_morphisms, MapFreeModuleToRelativeRing, MapRelativeRingToFreeModule)
 from sage.rings.ring_extension_conversion import (
-    backend_parent, backend_morphism, to_backend, from_backend)
+    backend_parent, to_backend, from_backend)
 
 
 # Helper functions
@@ -346,7 +346,7 @@ class RingExtensionFactory(UniqueFactory):
         sage: E2 is E
         False
     """
-    def create_key_and_extra_args(self, ring, defining_morphism=None, gens=None, names=None, constructors=None):
+    def create_key_and_extra_args(self, ring, defining_morphism=None, gens=None, names=None, canonical_backend=None, constructors=None):
         """
         Create a key and return it together with a list of constructors
         of the object.
@@ -365,33 +365,48 @@ class RingExtensionFactory(UniqueFactory):
         - ``names`` -- a list or a tuple of variable names or ``None``
           (default: ``None``)
 
+        - ``canonical_backend`` -- whether the association between this ring extension is canonical,
+          or if there are choices involved (such as choosing a root of some defining polynomial).
+          This affects the existence of a coercion from the backend and coercions between ring extensions.
+          Defaults to True if the defining morphism is the coercion map.
+
         - ``constructors`` -- a list of constructors; each constructor
-          is a pair `(class, arguments)` where `class` is the class
-          implementing the extension and `arguments` is the dictionary
+          is a pair ``(class, arguments)`` where ``class`` is the class
+          implementing the extension and ``arguments`` is the dictionary
           of arguments to pass in to init function
 
         TESTS::
 
             sage: from sage.rings.ring_extension import RingExtension
             sage: RingExtension.create_key_and_extra_args(QQ, ZZ)
-            ((Ring morphism:
+            ((Natural morphism:
                 From: Integer Ring
-                To:   Rational Field
-                Defn: 1 |--> 1, (), ()),
+                To:   Rational Field,
+              (),
+              (),
+              True),
              {'constructors': [(<class 'sage.rings.ring_extension.RingExtension_generic'>,
-                {'is_backend_exposed': True,
-                 'print_options': {'print_elements_as': None, 'print_parent_as': None}})]})
+                {'print_options': {'print_elements_as': None, 'print_parent_as': None}})]})
 
             sage: RingExtension.create_key_and_extra_args(GF(5^4), GF(5^2), names=('a',))
             ((Ring morphism:
                 From: Finite Field in z2 of size 5^2
                 To:   Finite Field in z4 of size 5^4
-                Defn: z2 |--> z4^3 + z4^2 + z4 + 3, (z4,), ('a',)),
+                Defn: z2 |--> z4^3 + z4^2 + z4 + 3,
+              (z4,),
+              ('a',),
+              True),
              {'constructors': [(<class 'sage.rings.ring_extension.RingExtensionWithGen'>,
-                {'gen': z4, 'is_backend_exposed': True, 'names': ('a',)})]})
+                {'gen': z4, 'names': ('a',)})]})
+
+        We can fall back on the generic construction even in the presence of generators,
+        since RingExtensionWithGen only supports finite extensions::
+
+            sage: R.<x> = GF(5)['x'].over()
+            sage: type(R)
+            <class 'sage.rings.ring_extension.RingExtension_generic_with_category'>
         """
         use_generic_constructor = True
-        is_backend_exposed = True
         print_as = None
 
         if defining_morphism is None:
@@ -402,43 +417,45 @@ class RingExtensionFactory(UniqueFactory):
             base = defining_morphism
             defining_morphism = None
         else:
-            raise TypeError("only commutative rings are accepted")
+            raise TypeError(f"ring extension cannot be created from defining morphism {defining_morphism}")
 
         # We compute the defining morphism
         if defining_morphism is None:
-            if isinstance(base, RingExtension_generic):
+            defining_morphism = ring.coerce_map_from(base)
+            if defining_morphism is None and isinstance(base, RingExtension_generic):
                 backend_base = base._backend
                 if ring.has_coerce_map_from(backend_base):
                     defining_morphism = RingExtensionHomomorphism(base.Hom(ring), ring.coerce_map_from(backend_base))
-            else:
-                if ring.has_coerce_map_from(base):
-                    defining_morphism = ring.coerce_map_from(base)
             if defining_morphism is None:
-                raise ValueError("No coercion map from %s to %s" % (base,ring))
+                raise ValueError(f"No coercion map from {base} to {ring}")
+            if canonical_backend is None:
+                canonical_backend = True
         else:
             if defining_morphism.domain() is not base:
                 defining_morphism = defining_morphism.extend_domain(base)
             if defining_morphism.codomain() is not ring:
                 defining_morphism = defining_morphism.extend_codomain(ring)
-        if not isinstance(defining_morphism, RingExtensionHomomorphism):
-            defining_morphism = RingExtensionHomomorphism(defining_morphism.parent(), defining_morphism)
-        if isinstance(ring, RingExtension_generic):
-            defining_morphism = backend_morphism(defining_morphism, forget="codomain")
-            if ring._is_backend_exposed:
-                print_as = ring._backend
-            else:
-                use_generic_constructor = False
-                is_backend_exposed = False
+            if canonical_backend is None:
+                canonical_backend = not are_different_morphisms(defining_morphism, None)
+        #if not isinstance(defining_morphism, RingExtensionHomomorphism):
+        #    defining_morphism = RingExtensionHomomorphism(defining_morphism.parent(), defining_morphism)
+        #if isinstance(ring, RingExtension_generic):
+        #    defining_morphism = backend_morphism(defining_morphism, forget="codomain")
+        #    if ring._is_backend_exposed:
+        #        print_as = ring._backend
+        #    else:
+        #        use_generic_constructor = False
+        #        is_backend_exposed = False
 
         # We normalize other attributes
         if gens is not None:
             if not isinstance(gens, (list, tuple)):
                 raise TypeError("gens must be a list or a tuple")
-            gens = tuple(ring(g) for g in gens )
+            gens = tuple(ring(g) for g in gens)
             if names is None:
                 raise TypeError("you must specify the names of the generators")
             names = normalize_names(len(gens), names)
-            use_generic_constructor = False
+            #use_generic_constructor = False
         else:
             gens = _generators(ring, base)
             if names is None:
@@ -448,25 +465,23 @@ class RingExtensionFactory(UniqueFactory):
                     gens = names = None
             else:
                 names = normalize_names(len(gens), names)
-                use_generic_constructor = False
+                #use_generic_constructor = False
 
         # We figure out what are the best constructors
         if constructors is None:
-            constructors = [ ]
+            constructors = []
             if gens is not None and len(gens) == 1:
                 constructors.append((RingExtensionWithGen,
-                                     {'gen': gens[0], 'names': names,
-                                      'is_backend_exposed': is_backend_exposed}))
+                                     {'gen': gens[0], 'names': names}))
             if use_generic_constructor:
                 constructors.append((RingExtension_generic,
                                      {'print_options': {'print_parent_as': print_as,
-                                                        'print_elements_as': print_as},
-                                      'is_backend_exposed': is_backend_exposed}))
+                                                        'print_elements_as': print_as}}))
 
         assert defining_morphism.codomain() is ring
 
         # We build the key and return it
-        return (defining_morphism, gens, names), {'constructors': constructors}
+        return (defining_morphism, gens, names, canonical_backend), {'constructors': constructors}
 
     def create_object(self, version, key, **extra_args):
         """
@@ -475,21 +490,25 @@ class RingExtensionFactory(UniqueFactory):
         TESTS::
 
             sage: from sage.rings.ring_extension import RingExtension
-            sage: key, extra_args = RingExtension.create_key_and_extra_args(QQ, ZZ)
+            sage: key, extra_args = RingExtension.create_key_and_extra_args(QQ, ZZ, canonical_backend=True)
             sage: RingExtension.create_object((8,9,0), key, **extra_args)
             Rational Field over its base
         """
-        defining_morphism, gens, names = key
+        if len(key) == 3:
+            defining_morphism, gens, names = key
+            canonical_backend = True
+        else:
+            defining_morphism, gens, names, canonical_backend = key
         constructors = extra_args['constructors']
         if len(constructors) == 0:
             raise NotImplementedError("no constructor available for this extension")
         for (constructor, kwargs) in constructors[:-1]:
             try:
-                return constructor(defining_morphism, **kwargs)
+                return constructor(defining_morphism, canonical_backend=canonical_backend, **kwargs)
             except (NotImplementedError, ValueError, TypeError):
                 pass
         (constructor, kwargs) = constructors[-1]
-        return constructor(defining_morphism, **kwargs)
+        return constructor(defining_morphism, canonical_backend=canonical_backend, **kwargs)
 
 
 RingExtension = RingExtensionFactory("sage.rings.ring_extension.RingExtension")
@@ -516,7 +535,7 @@ class RingExtension_generic(CommutativeAlgebra):
     """
     Element = RingExtensionElement
 
-    def __init__(self, defining_morphism, print_options={}, import_methods=True, is_backend_exposed=False, category=None, check=True):
+    def __init__(self, defining_morphism, print_options={}, import_methods=True, canonical_backend=False, category=None, check=True):
         r"""
         Initialize this ring extension.
 
@@ -530,17 +549,13 @@ class RingExtension_generic(CommutativeAlgebra):
           parent (resp. its elements) import the methods of the backend
           parent class (resp. element class)
 
-        - ``is_backend_exposed`` -- a boolean (default: ``False``); whether
-          the backend ring can be exposed to the user
+        - ``canonical_backend`` -- a boolean (default: ``False``)
+          Whether the association between this ring extension is canonical,
+          or if there are choices involved (such as choosing a root of some defining polynomial).
+          This affects the existence of a coercion from the backend and coercions between ring extensions.
 
         - ``category`` -- the category for the resulting parent
           (default: ``CommutativeRings()``)
-
-        .. NOTE:
-
-            The attribute `is_backend_exposed` is only used for printing;
-            when it is ``False``, printing an element like its backend is
-            disabled (and a ``RuntimeError`` is raised when it would occur).
 
         OUTPUT:
 
@@ -560,13 +575,15 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: ZZ.over(NN)
             Traceback (most recent call last):
             ...
-            TypeError: only commutative rings are accepted
+            TypeError: ring extension cannot be created from defining morphism Non negative integer semiring
 
             sage: K = GF(5^3)
-            sage: K.over(K.frobenius_endomorphism())
-            Traceback (most recent call last):
-            ...
-            ValueError: exotic defining morphism between two rings in the tower; consider using another variable name
+            sage: L = K.over(K.frobenius_endomorphism()); L
+            Finite Field in z3 of size 5^3 noncanonically over its base
+            sage: L(K.gen())
+            2*z3^2 + 4*z3 + 4
+            sage: K.gen()^5
+            2*z3^2 + 4*z3 + 4
 
         """
         base = defining_morphism.domain()
@@ -580,12 +597,12 @@ class RingExtension_generic(CommutativeAlgebra):
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
-        self._defining_morphism = RingExtensionHomomorphism(base.Hom(self), defining_morphism)
+        self._defining_morphism = RingExtensionHomomorphism_baseinclusion(base.Hom(self))
         self._print_options = print_options.copy()
         if 'over' not in self._print_options:
             self._print_options['over'] = ZZ(0)
         self._import_methods = import_methods
-        self._is_backend_exposed = is_backend_exposed
+        self._canonical_backend = canonical_backend
         self._type = "Ring"
         if self._backend in Fields():
             self._type = "Field"
@@ -595,33 +612,33 @@ class RingExtension_generic(CommutativeAlgebra):
                 or ring not in CommutativeRings()
                 or not defining_morphism.category_for().is_subcategory(CommutativeRings())):
                 raise TypeError("only commutative rings are accepted")
-            f = ring.Hom(ring).identity()
-            b = self
-            while isinstance(b, RingExtension_generic):
-                f *= backend_morphism(b._backend_defining_morphism)
-                b = b._base
-                if isinstance(b, RingExtension_generic):
-                    backend = b._backend
-                else:
-                    backend = b
-                if ring.has_coerce_map_from(backend):
-                    differing = are_different_morphisms(f, None)
-                    if differing:
-                        # TODO: find a better message
-                        msg = "exotic defining morphism between two rings in the tower; consider using another variable name\n"
-                        for x, y, z in differing:
-                            if isinstance(x, str):
-                                msg += f" different {x}:\n  {y}\n  {z}"
-                            else:
-                                msg += f" f({x}) = {y}\n g({x}) = {z}\n"
-                        raise ValueError(msg)
+            # f = ring.Hom(ring).identity()
+            # b = self._base
+            # while isinstance(b, RingExtension_generic):
+            #     f *= b._backend_defining_morphism
+            #     b = b._base
+            #     #if isinstance(b, RingExtension_generic):
+            #     #    backend = b._backend
+            #     #else:
+            #     #    backend = b
+            #     if ring.has_coerce_map_from(b):
+            #         differing = are_different_morphisms(f, None)
+            #         if differing:
+            #             # TODO: find a better message
+            #             msg = "exotic defining morphism between two rings in the tower; consider using another variable name\n"
+            #             for x, y, z in differing:
+            #                 if isinstance(x, str):
+            #                     msg += f" different {x}:\n  {y}\n  {z}"
+            #                 else:
+            #                     msg += f" f({x}) = {y}\n g({x}) = {z}\n"
+            #             raise ValueError(msg)
 
         self.register_coercion(self._defining_morphism.__copy__())
 
         self._from_backend_morphism = RingExtensionBackendIsomorphism(ring.Hom(self))
         self._to_backend_morphism = RingExtensionBackendReverseIsomorphism(self.Hom(ring))
 
-        if is_backend_exposed:
+        if canonical_backend:
             self.register_coercion(self._from_backend_morphism)
             ring.register_conversion(self._to_backend_morphism)
 
@@ -732,9 +749,8 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: x.parent()
             Field in v with defining polynomial x^2 + (3 - u)*x + u over its base
         """
-        if r not in self._base:
-            raise TypeError("%s is not an element of the base of %s (= %s)" % (r, self._backend, self._base))
-        return self.element_class(self, r)
+        r = self._base.coerce(r)
+        return self.element_class(self, self._backend_defining_morphism(r))
 
     def print_options(self, **options):
         """
@@ -877,15 +893,21 @@ class RingExtension_generic(CommutativeAlgebra):
         except NotImplementedError:
             trivial = False
 
-        if trivial:
+        if trivial and self._canonical_backend:
             s = "Trivial extension of "
         else:
             s = self._repr_topring(**print_options)
             if over > 0:
-                s += " over "
+                if self._canonical_backend:
+                    s += " over "
+                else:
+                    s += " noncanonically over "
                 over -= 1
             else:
-                s += " over its base"
+                if self._canonical_backend:
+                    s += " over its base"
+                else:
+                    s += " noncanonically over its base"
                 return s
         if trivial or over >= 0:
             base = self._base
@@ -905,8 +927,6 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: E._repr_topring()
             'Rational Field'
         """
-        if not self._is_backend_exposed:
-            raise RuntimeError("backend is not exposed to the user; cannot print")
         return str(self._backend)
 
     def _latex_(self, **options):
@@ -979,8 +999,6 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: E._latex_topring()
             \Bold{Q}
         """
-        if not self._is_backend_exposed:
-            raise RuntimeError("backend is not exposed to the user; cannot print")
         return latex(self._backend)
 
     def _coerce_map_from_(self, other):
@@ -992,7 +1010,7 @@ class RingExtension_generic(CommutativeAlgebra):
         If `L/K` is an extension, a coercion map `K \to (L/K)`
         (acting through the defining morphism of `L/K`) is set.
 
-        If ``L_1/K_1` and `L_2/K_2` are two extensions, a coercion
+        If `L_1/K_1` and `L_2/K_2` are two extensions, a coercion
         map `(L_1/K_1) \to (L_2/K_2)`` is set when `L_1` coerces to
         `L_2` and `K_1` coerces to `K_2` in such a way that the
         appropriate diagram commutes.
@@ -1002,7 +1020,7 @@ class RingExtension_generic(CommutativeAlgebra):
         Given two iterated extensions `A = (A_n/\cdots/A_2/A_1)` and
         `B = (B_m/\cdots/B_2/B_1)`, there is a coercion map `A \to B`
         if there exists a strictly increasing function
-        `sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
+        `\sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
         `A_i \to B_{\sigma(i)}` making all the appropriate diagrams
         commutative.
 
@@ -1019,16 +1037,22 @@ class RingExtension_generic(CommutativeAlgebra):
 
             sage: E1 = GF(3^6).over(GF(3^3))
             sage: E1.coerce_map_from(GF(3^3))  # indirect doctest
-            Ring morphism:
+            Base injection morphism:
               From: Finite Field in z3 of size 3^3
               To:   Field in z6 with defining polynomial x^2 + (2*z3 + 1)*x + z3 over its base
-              Defn: z3 |--> z3
 
             sage: E1.coerce_map_from(GF(3))    # indirect doctest
-            Ring morphism:
+            Composite map:
               From: Finite Field of size 3
               To:   Field in z6 with defining polynomial x^2 + (2*z3 + 1)*x + z3 over its base
-              Defn: 1 |--> 1
+              Defn:   Ring morphism:
+                      From: Finite Field of size 3
+                      To:   Finite Field in z3 of size 3^3
+                      Defn: 1 |--> 1
+                    then
+                      Base injection morphism:
+                      From: Finite Field in z3 of size 3^3
+                      To:   Field in z6 with defining polynomial x^2 + (2*z3 + 1)*x + z3 over its base
 
             sage: E2 = GF(3^18).over(GF(3^9))
             sage: E2.coerce_map_from(E1)       # indirect doctest
@@ -1047,14 +1071,16 @@ class RingExtension_generic(CommutativeAlgebra):
             True
 
         """
-        if isinstance(other, RingExtension_generic):
-            right = other
-            if self._backend.has_coerce_map_from(right._backend) and self._base.has_coerce_map_from(right._base):
-                backend = self._backend.coerce_map_from(right._backend)
-                f = backend * backend_morphism(right._defining_morphism)
-                g = backend_morphism(self._defining_morphism * self._base.coerce_map_from(right._base))
-                if not are_different_morphisms(f, g):
-                    return RingExtensionHomomorphism(right.Hom(self), backend)
+        if isinstance(other, RingExtension_generic) and self._canonical_backend and other._canonical_backend:
+           right = other
+           if self._backend.has_coerce_map_from(right._backend) and self._base.has_coerce_map_from(right._base):
+               back_map = self._backend.coerce_map_from(right._backend)
+               base_map = self._base.coerce_map_from(right._base)
+               f = back_map * right._backend_defining_morphism
+               g = self._backend_defining_morphism * base_map
+               if not are_different_morphisms(f, g):
+                   back_map = self._from_backend_morphism * back_map
+                   return RingExtensionHomomorphism(right.Hom(self), back_map)
 
     def base(self):
         r"""
@@ -1261,25 +1287,29 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: L = GF(5^12).over(K)
 
             sage: K.defining_morphism()
-            Ring morphism:
+            Base injection morphism:
               From: Finite Field in z2 of size 5^2
               To:   Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-              Defn: z2 |--> z2
 
             sage: L.defining_morphism()
-            Ring morphism:
+            Base injection morphism:
               From: Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
               To:   Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
-              Defn: z4 |--> z4
 
         One can also pass in a base over which the extension is explicitly
         defined (see also :meth:`is_defined_over`)::
 
             sage: L.defining_morphism(F)
-            Ring morphism:
+            Composite map:
               From: Finite Field in z2 of size 5^2
               To:   Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
-              Defn: z2 |--> z2
+              Defn:   Base injection morphism:
+                      From: Finite Field in z2 of size 5^2
+                      To:   Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+                    then
+                      Base injection morphism:
+                      From: Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+                      To:   Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
 
             sage: L.defining_morphism(GF(5))
             Traceback (most recent call last):
@@ -1406,8 +1436,9 @@ class RingExtension_generic(CommutativeAlgebra):
         """
         Factor a univariate polynomial using code for the backend
 
-        EXAMPLES:
+        EXAMPLES::
 
+<<<<<<< HEAD
         We need to disable randomness since the defining polynomial of finite
         field extensions is determined randomly, and this affects the output
         below::
@@ -1417,11 +1448,15 @@ class RingExtension_generic(CommutativeAlgebra):
         ::
 
             sage: K.<a> = GF(625, base=GF(25))
+=======
+            sage: K = GF(625, 'a').over()
+            sage: a = K.gen()
+>>>>>>> ring-extensions-revisions
             sage: R.<x> = K[]
             sage: (x^2 - a^14).factor()
-            (x + (4*z2 + 3)*a) * (x + (z2 + 2)*a)
+            (x + 2 + a + 3*a^2 + a^3) * (x + 3 - a + 2*a^2 - a^3)
             sage: a^7
-            (z2 + 2)*a
+            3 - a + 2*a^2 - a^3
         """
         from sage.structure.factorization import Factorization
         F = f.change_ring(self._to_backend_morphism).factor()
@@ -1722,7 +1757,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         If ``extend_base`` is ``False``, the fraction field of the
         extension `L/K` is defined as `\textrm{Frac}(L)/L/K`, except
-        if `L` is already a field in which base the fraction field
+        if `L` is already a field in which case the fraction field
         of `L/K` is `L/K` itself.
 
         If ``extend_base`` is ``True``, the fraction field of the
@@ -1778,19 +1813,19 @@ class RingExtension_generic(CommutativeAlgebra):
         if defining_morphism is None:
             return self
         ring = defining_morphism.codomain()
-        constructor = RingExtensionFractionField, {'ring': self, 'is_backend_exposed': self._is_backend_exposed}
-        return RingExtension(ring, defining_morphism, constructors=[constructor])
+        constructor = RingExtensionFractionField, {'ring': self}
+        return RingExtension(ring, defining_morphism, canonical_backend=self._canonical_backend, constructors=[constructor])
 
     def _defining_morphism_fraction_field(self, extend_base):
         r"""
         Return the defining morphism of the fraction field of this extension.
 
-        This is an helper function.
+        This is a helper function.
 
         INPUT:
 
         - ``extend_base`` -- a boolean (default: ``False``); see
-          :meth:`fraction_field` for more informations
+          :meth:`fraction_field` for more information
 
         TESTS::
 
@@ -1803,18 +1838,17 @@ class RingExtension_generic(CommutativeAlgebra):
             Rational Field over its base
         """
         if extend_base:
-            defining_morphism = backend_morphism(self._backend_defining_morphism)
-            defining_morphism = defining_morphism.extend_to_fraction_field()
+            defining_morphism = self._backend_defining_morphism.extend_to_fraction_field()
             if isinstance(self._base, RingExtension_generic):
                 base = self._base.fraction_field(extend_base)
-                ring = defining_morphism.codomain()
-                defining_morphism = RingExtensionHomomorphism(base.Hom(ring), defining_morphism)
+                backend = defining_morphism.codomain()
+                defining_morphism = RingExtensionHomomorphism(base.Hom(backend), defining_morphism)
         else:
             if self.is_field():
                 defining_morphism = None
             else:
-                ring = self._backend.fraction_field()
-                defining_morphism = RingExtensionHomomorphism(self.Hom(ring), ring.coerce_map_from(self._backend))
+                backend = self._backend.fraction_field()
+                defining_morphism = RingExtensionHomomorphism(self.Hom(backend), backend.coerce_map_from(self._backend))
         return defining_morphism
 
     def _Hom_(self, codomain, category):
@@ -1882,39 +1916,69 @@ class RingExtension_generic(CommutativeAlgebra):
             Ring endomorphism of Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> 2 + 2*a*b + (2 - a)*b^2
 
-        Defining the absolute Frobenius of `L` is a bit more complicated
+        Defining the absolute Frobenius of `L` can be bit more complicated
         because it is not a homomorphism of `K`-algebras.
-        For this reason, the construction ``L.hom([b^5])`` fails::
+        In this case it works since `b` generates `GF(5^6)` over its base `GF(5)`::
 
             sage: L.hom([b^5])
+            Ring endomorphism of Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
+              Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
+
+        However, it can fail in other cases, if we choose a poor generator for example::
+
+            sage: l = GF(5^6); z6 = l.gen()
+            sage: z3 = 4*z6^5 + z6^4 + 4*z6^3 + 4*z6^2 + 3*z6 + 3
+            sage: z3.minpoly()
+            x^3 + 3*x + 3
+            sage: M = GF(5^12); img = z3.minpoly().any_root(M)
+            sage: L.<b> = GF(5^6).over(K, gens=[z3])
+            sage: b.minpoly()
+            x^3 + 3*x + 3
+            sage: L.hom([img])
             Traceback (most recent call last):
             ...
-            ValueError: images do not define a valid homomorphism
+            ValueError: There is no coercion from base ring to codomain; try specifying base_map
 
         What we need is to specify a base map::
 
-            sage: FrobK = K.hom([a^5])
-            sage: FrobL = L.hom([b^5], base_map=FrobK)
-            sage: FrobL
-            Ring endomorphism of Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
-              Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
+            sage: imga = a.minpoly().any_root(M)
+            sage: base_map = K.hom([imga])
+            sage: phi = L.hom([img], base_map=base_map); phi
+            Ring morphism:
+              From: Field in b with defining polynomial x^3 + 3*x + 3 over its base
+              To:   Finite Field in z12 of size 5^12
+              Defn: b |--> 4*z12^10 + 3*z12^9 + z12^8 + 4*z12^7 + z12^6 + 2*z12^5 + 3*z12^4 + 4*z12^3 + 3*z12^2 + 3
                     with map on base ring:
-                    a |--> 1 - a
+                    a |--> 4*z12^11 + 4*z12^10 + 2*z12^9 + 3*z12^7 + 4*z12^6 + 4*z12^5 + 3*z12^4 + 3*z12^3 + 4*z12^2 + 4*z12 + 3
 
         As a shortcut, we may use the following construction::
 
-            sage: phi = L.hom([b^5, a^5])
-            sage: phi
-            Ring endomorphism of Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
-              Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
-                    with map on base ring:
-                    a |--> 1 - a
-            sage: phi == FrobL
+            sage: psi = L.hom([img, imga])
+            sage: phi == psi
             True
         """
-        if codomain is None:
-            from sage.structure.sequence import Sequence
-            codomain = Sequence(im_gens).universe()
+        if isinstance(im_gens, Map):
+            if base_map is not None:
+                raise ValueError("base_map cannot be set when passing in a morphism")
+            if codomain is not None and codomain is not im_gens.codomain():
+                im_gens = im_gens.extend_codomain(codomain)
+            if im_gens.domain() is not self:
+                im_gens = im_gens.extend_domain(domain)
+            if category is not None and category is not im_gens.category_for():
+                parent = self.Hom(im_gens.codomain(), category=category)
+                im_gens = parent(im_gens)
+            return im_gens
+        elif isinstance(im_gens, (list, tuple)):
+            if codomain is None:
+                from sage.structure.sequence import Sequence
+                codomain = Sequence(im_gens).universe()
+            n = self.ngens()
+            if n > len(im_gens):
+                raise ValueError("Not enough images provided")
+            elif n < len(im_gens):
+                base_map = self.base_ring().hom(im_gens[n:], codomain=codomain, base_map=base_map, category=category, check=check)
+                im_gens = im_gens[:n]
+            im_gens = [codomain(g) for g in im_gens]
         parent = self.Hom(codomain, category=category)
         return RingExtensionHomomorphism(parent, im_gens, base_map=base_map, check=check)
 
@@ -1971,12 +2035,19 @@ class RingExtension_generic(CommutativeAlgebra):
         """
         return self._backend.characteristic()
 
+    def hom_backend(self, im_gens, codomain=None, base_map=None, category=None, check=True):
+        """
+        """
+        backend, from_backend, to_backend = backend_parent(self, map=True)
+        mor = backend.hom(im_gens, codomain=codomain, base_map=base_map, category=category, check=check)
+        parent = self.Hom(codomain, category=category)
+        return RingExtensionHomomorphism(parent, mor)
 
 # Fraction fields
 #################
 
 class RingExtensionFractionField(RingExtension_generic):
-    """
+    r"""
     A class for ring extensions of the form `\textrm{Frac}(A)/A`.
 
     TESTS::
@@ -2017,10 +2088,7 @@ class RingExtensionFractionField(RingExtension_generic):
 
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
-        if ring is None:
-            self._ring = self._base
-        else:
-            self._ring = ring
+        self._ring = ring or self.base_ring()
 
     def ring(self):
         r"""
@@ -2519,9 +2587,8 @@ class RingExtensionWithBasis(RingExtension_generic):
             gen = names = None
             constructor = RingExtensionFractionField
             kwargs = { 'print_options': {'print_elements_as': self.fraction_field(extend_base=True)} }
-        kwargs['is_backend_exposed'] = self._is_backend_exposed
         ring = defining_morphism.codomain()
-        return RingExtension(ring, defining_morphism, gen=gen, names=names, constructors=[(constructor, kwargs)])
+        return RingExtension(ring, defining_morphism, gen=gen, names=names, canonical_backend=self._canonical_backend, constructors=[(constructor, kwargs)])
 
 
 class RingExtensionWithGen(RingExtensionWithBasis):
@@ -2801,6 +2868,5 @@ class RingExtensionWithGen(RingExtensionWithBasis):
             gen = names = None
             constructor = RingExtensionFractionField
             kwargs = { 'print_options': {'print_elements_as': self.fraction_field(extend_base=True)} }
-        kwargs['is_backend_exposed'] = self._is_backend_exposed
         ring = defining_morphism.codomain()
-        return RingExtension(ring, defining_morphism, gen=gen, names=names, constructors=[(constructor, kwargs)])
+        return RingExtension(ring, defining_morphism, gen=gen, names=names, canonical_backend=self._canonical_backend, constructors=[(constructor, kwargs)])

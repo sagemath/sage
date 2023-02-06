@@ -396,6 +396,7 @@ cpdef to_backend(arg):
         :meth:`to_backend_parent`, :meth:`to_backend_element`, :meth:`to_backend_morphism`
     """
     from sage.rings.ring_extension import RingExtension_generic
+    from sage.rings.ring_extension_morphism import RingExtensionHomomorphism, RingExtensionHomomorphism_baseinclusion
     if isinstance(arg, list):
         return [ to_backend(x) for x in arg ]
     elif isinstance(arg, tuple):
@@ -404,10 +405,12 @@ cpdef to_backend(arg):
         return { to_backend(key): to_backend(value) for (key, value) in arg.items() }
     elif isinstance(arg, RingExtension_generic):
         return arg._backend
-    elif isinstance(arg, Map):
-        return backend_morphism(arg)
+    elif isinstance(arg, RingExtensionHomomorphism):
+        return arg._backend
+    elif isinstance(arg, RingExtensionHomomorphism_baseinclusion):
+        return arg.codomain()._backend_defining_morphism
     elif isinstance(arg, RingExtensionElement):
-        return (<RingExtensionElement>arg)._backend
+        return arg._backend
     return arg
 
 cpdef from_backend(arg, E):
