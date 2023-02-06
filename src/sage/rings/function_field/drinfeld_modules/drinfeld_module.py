@@ -1082,9 +1082,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def invert(self, ore_pol):
         r"""
-        Return the preimage of the input under the Drinfeld module;
-        raise an exception if the input is not in the image of the
-        Drinfeld module.
+        Return the preimage of the input under the Drinfeld module, if it
+        exists.
 
         INPUT:
 
