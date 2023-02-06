@@ -49,7 +49,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     The monic polynomial that generates the kernel of the base morphism
     is called the `\mathbb{F}_q[X]`-characteristic of the
-    `\mathbb{F}_q[X]`-field `K`. It cal also be referred to as the
+    `\mathbb{F}_q[X]`-field `K`. It can also be referred to as the
     function-field characteristic of `K`.
 
     We say that `\mathbb{F}_q[X]` is the function ring of the category;
