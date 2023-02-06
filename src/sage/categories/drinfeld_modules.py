@@ -137,7 +137,7 @@ class DrinfeldModules(Category_over_base_ring):
 
         sage: psi = cat.object([p_root, 1])
         sage: psi
-        Drinfeld module defined by T |--> t + z^3 + 7*z^2 + 6*z + 10 over base Finite Field in z of size 11^4 over its base
+        Drinfeld module defined by T |--> t + z^3 + 7*z^2 + 6*z + 10 over Finite Field in z of size 11^4 over its base
         sage: psi.category() is cat
         True
 
@@ -474,7 +474,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: cat = phi.category()
             sage: psi = cat.object([p_root, 0, 1])
             sage: psi
-            Drinfeld module defined by T |--> t^2 + z^3 + 7*z^2 + 6*z + 10 over base Finite Field in z of size 11^4 over its base
+            Drinfeld module defined by T |--> t^2 + z^3 + 7*z^2 + 6*z + 10 over Finite Field in z of size 11^4 over its base
             sage: t = phi.ore_polring().gen()
             sage: cat.object(t^3 + z^3 + 7*z^2 + 6*z + 10) is phi
             True
@@ -690,7 +690,7 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: t = phi.ore_polring().gen()
                 sage: psi = cat.object(phi.constant_coefficient() + t^3)
                 sage: psi
-                Drinfeld module defined by T |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
+                Drinfeld module defined by T |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
 
             Reciprocally, it is impossible to create two Drinfeld modules in
             this category if they do not share the same constant

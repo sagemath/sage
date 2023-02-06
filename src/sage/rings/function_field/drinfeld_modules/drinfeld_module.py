@@ -90,7 +90,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(A, [z, 4, 1])
         sage: phi
-        Drinfeld module defined by T |--> t^2 + 4*t + z over base Finite Field in z of size 5^12 over its base
+        Drinfeld module defined by T |--> t^2 + 4*t + z over Finite Field in z of size 5^12 over its base
 
     ::
 
@@ -145,7 +145,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(A, [z, 1, 1])
         sage: phi
-        Drinfeld module defined by T |--> t^2 + t + z over base Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
 
     Note that the definition of the base morphism is implicit; it is
     defined as the `\mathbb{F}_q`-algebra morphism defined from
@@ -158,7 +158,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: L = Frac(A)
         sage: psi = DrinfeldModule(A, [L(T), 1, T^3 + T + 1])
         sage: psi
-        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T over base Ring morphism:
+        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T over Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
           To:   Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
           Defn: T |--> T
@@ -179,7 +179,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: rho_T = z + t^3
         sage: rho = DrinfeldModule(A, rho_T)
         sage: rho
-        Drinfeld module defined by T |--> t^3 + z over base Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^3 + z over Finite Field in z of size 3^12 over its base
         sage: rho(T) == rho_T
         True
 
@@ -191,6 +191,12 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
         sage: phi(1)  # phi_1
         1
+
+    One can give a LaTeX name to be used for LaTeX representation::
+
+        sage: sigma = DrinfeldModule(A, [z, 1, 1], latexname='\phi')
+        sage: latex(sigma)
+        \phi
 
     .. RUBRIC:: The category of Drinfeld modules
 
@@ -208,7 +214,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: cat = phi.category()
         sage: cat.object([z, 0, 0, 1])
-        Drinfeld module defined by T |--> t^3 + z over base Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^3 + z over Finite Field in z of size 3^12 over its base
 
     .. RUBRIC:: The base ring of a Drinfeld module
 
@@ -380,7 +386,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
         sage: psi = phi.velu(ore_pol)
         sage: psi
-        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over base Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over Finite Field in z of size 3^12 over its base
         sage: ore_pol in Hom(phi, psi)
         True
         sage: ore_pol * phi(T) == psi(T) * ore_pol
@@ -411,7 +417,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by T |--> t^2 + t + z over base Finite Field in z of size 3^12 over its base
+            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
 
     The action on elements is computed by calling the action object::
 
@@ -576,7 +582,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall_private__(cls, function_ring, gen, name='t'):
+    def __classcall_private__(cls, function_ring, gen, name='t', latexname=None):
         """
         Check input validity and return a ``DrinfeldModule`` or
         ``FiniteDrinfeldModule`` object accordingly.
@@ -589,6 +595,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           coefficients or an Ore polynomial
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
+        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
+          module
 
         OUTPUT: a DrinfeldModule or FiniteDrinfeldModule
 
@@ -648,6 +656,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 base_ring_noext.has_coerce_map_from(function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base ring')
 
+        # Check LaTeX name
+        if latexname is not None and type(latexname) is not str:
+            raise ValueError('LaTeX name should be a string')
+
         # Build the category
         if isinstance(base_ring_noext, RingExtension_generic):
             base_ring = base_ring_noext
@@ -669,7 +681,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return FiniteDrinfeldModule(gen, category)
         return cls.__classcall__(cls, gen, category)
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category, latexname=None):
         """
         Initialize ``self``.
 
@@ -684,6 +696,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           coefficients or an Ore polynomial
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
+        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
+          module
 
         TESTS::
 
@@ -704,10 +718,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             True
             sage: phi._morphism == Hom(A, ore_polring)(phi._gen)
             True
+            sage: phi._latexname is None
+            True
         """
         self._base = category.base()
         self._function_ring = category.function_ring()
         self._gen = gen
+        self._latexname = latexname
         self._morphism = category._function_ring.hom([gen])
         self._ore_polring = gen.parent()
         self._Fq = self._function_ring.base_ring()  # Must be last
@@ -818,6 +835,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return a LaTeX representation of the Drinfeld module.
 
+        If a LaTeX name was given at init. using `latexname`, use the LaTeX
+        name. Otherwise, create a representation.
+
         OUTPUT: a string
 
         EXAMPLES::
@@ -829,11 +849,27 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: latex(phi)
             \text{Drinfeld{ }module{ }defined{ }by{ }} T \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }base{ }}\Bold{F}_{5^{12}}
+
+        ::
+
+            sage: psi = DrinfeldModule(A, [p_root, z12^3, z12^5], latexname='\psi')
+            sage: latex(psi)
+            \psi
+
+        ::
+
+            sage: psi = DrinfeldModule(A, [p_root, z12^3, z12^5], latexname=1729)
+            Traceback (most recent call last):
+            ...
+            ValueError: LaTeX name should be a string
         """
-        return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
-               f'{latex(self._function_ring.gen())} '\
-               f'\\mapsto {latex(self._gen)}' \
-               f'\\text{{{{ }}over{{ }}base{{ }}}}{latex(self._base)}'
+        if self._latexname is not None:
+            return self._latexname
+        else:
+            return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
+                   f'{latex(self._function_ring.gen())} '\
+                   f'\\mapsto {latex(self._gen)}' \
+                   f'\\text{{{{ }}over{{ }}base{{ }}}}{latex(self._base)}'
 
     def _repr_(self):
         r"""
@@ -849,10 +885,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi
-            Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
+            Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
         """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
-               f'|--> {self._gen} over base {self._base}'
+               f'|--> {self._gen} over {self._base}'
 
     def action(self):
         r"""
@@ -872,7 +908,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
+            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
 
     The action on elements is computed as follows::
 
@@ -1190,8 +1226,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         The rank must be two::
 
-            sage: theta = DrinfeldModule(A, [p_root, 1, 0])
-            sage: theta.j_invariant()
+            sage: sigma = DrinfeldModule(A, [p_root, 1, 0])
+            sage: sigma.j_invariant()
             Traceback (most recent call last):
             ...
             NotImplementedError: rank must be 2
@@ -1319,7 +1355,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: psi
-            Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Finite Field in z12 of size 5^12 over its base
+            Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
             sage: isog in Hom(phi, psi)
             True
 
