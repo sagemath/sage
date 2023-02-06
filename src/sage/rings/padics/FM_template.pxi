@@ -727,7 +727,7 @@ cdef class FMElement(pAdicTemplateElement):
             L.extend([R.zero()] * (n - len(L)))
         return L
 
-    def polynomial(self, var='x'):
+    def polynomial(self, var='x', base=None):
         """
         Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
@@ -746,8 +746,12 @@ cdef class FMElement(pAdicTemplateElement):
             sage: (5*a^2 + 25).polynomial()
             5*x^2 + 5^2
         """
-        R = self.base_ring()
-        S = R[var]
+        if base is None:
+          base = self.base_ring()
+        if base is not self.base_ring():
+          raise NotImplementedError
+
+        S = base[var]
         return S(self._polynomial_list())
 
     def precision_absolute(self):
@@ -834,7 +838,7 @@ cdef class FMElement(pAdicTemplateElement):
         # for backward compatibility
         return cvaluation(self.value, self.prime_pow.ram_prec_cap, self.prime_pow)
 
-    cpdef val_unit(self):
+    cpdef val_unit(self, p=None):
         """
         Returns a 2-tuple, the first element set to the valuation of
         self, and the second to the unit part of self.
@@ -850,6 +854,8 @@ cdef class FMElement(pAdicTemplateElement):
             sage: b.val_unit()
             (5, 0)
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         cdef FMElement unit = self._new_c()
         cdef Integer valuation = Integer.__new__(Integer)
         mpz_set_si(valuation.value, cremove(unit.value, self.value, self.prime_pow.ram_prec_cap, self.prime_pow))

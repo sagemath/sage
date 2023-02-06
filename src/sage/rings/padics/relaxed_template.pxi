@@ -1481,7 +1481,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             raise ValueError("unit part of 0 not defined")
         return self >> val
 
-    def val_unit(self, halt=True):
+    def val_unit(self, p=None, halt=True):
         r"""
         Return the valuation and the unit part of this element.
 
@@ -1522,64 +1522,12 @@ cdef class RelaxedElement(pAdicGenericElement):
         See :meth:`valuation` for more details on the parameter ``halt``.
 
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         val = self.valuation(halt)
         if self._valuation >= self._precbound:
             raise ValueError("unit part of 0 not defined")
         return val, self >> val
-
-    def residue(self, absprec=1, field=True, check_prec=True):
-        r"""
-        Return the image of this element in the quotient
-        `\ZZ/p^\mathrm{absprec}\ZZ`.
-
-        INPUT:
-
-        - ``absprec`` -- a non-negative integer (default: ``1``)
-
-        - ``field`` -- boolean (default ``True``); when ``absprec`` is ``1``,
-          whether to return an element of GF(p) or Zmod(p).
-
-        - ``check_prec`` -- boolean (default ``True``); whether to raise an error
-          if this element has insufficient precision to determine the reduction.
-
-        EXAMPLES::
-
-            sage: R = ZpER(7, 10)
-            sage: a = R(1/2021); a
-            3 + 6*7 + 4*7^2 + 3*7^3 + 6*7^4 + 7^5 + 6*7^6 + 3*7^7 + 6*7^8 + 5*7^9 + ...
-            sage: a.residue()
-            3
-            sage: a.residue(2)
-            45
-
-        If this element has negative valuation, an error is raised::
-
-            sage: K = R.fraction_field()
-            sage: b = K(20/21)
-            sage: b.residue()
-            Traceback (most recent call last):
-            ...
-            ValueError: element must have non-negative valuation in order to compute residue
-        """
-        if absprec >= maxordp:
-            raise OverflowError
-        if absprec < 0:
-            raise ValueError("cannot reduce modulo a negative power of p")
-        error = self._jump_c(absprec)
-        raise_error(error, not check_prec)
-        if self._valuation < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
-        cdef celement digits
-        cdef Integer ans
-        if absprec <= self._valuation:
-            ans = ZZ(0)
-        else:
-            self._getslice_relative(digits, 0, min(self._precrel, absprec - self._valuation))
-            ans = element_get_sage(digits, self.prime_pow) * self.prime_pow(self._valuation)
-        if field and absprec == 1:
-            return self._parent.residue_class_field()(ans)
-        else:
-            return self._parent.residue_ring(absprec)(ans)
 
     def lift(self, absprec=None):
         r"""

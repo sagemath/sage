@@ -940,7 +940,7 @@ cdef class CAElement(pAdicTemplateElement):
         else:
             return [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
 
-    def polynomial(self, var='x'):
+    def polynomial(self, var='x', base=None):
         """
         Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
@@ -959,8 +959,12 @@ cdef class CAElement(pAdicTemplateElement):
             sage: (5*a^2 + R(25, 4)).polynomial()
             (5 + O(5^4))*x^2 + O(5^4)*x + 5^2 + O(5^4)
         """
-        R = self.base_ring()
-        S = R[var]
+        if base is None:
+          base = self.base_ring()
+        if base is not self.base_ring():
+          raise NotImplementedError
+
+        S = base[var]
         return S(self._polynomial_list())
 
     def precision_absolute(self):
@@ -1043,7 +1047,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         return cvaluation(self.value, self.absprec, self.prime_pow)
 
-    cpdef val_unit(self):
+    cpdef val_unit(self, p=None):
         r"""
         Return a 2-tuple, the first element set to the valuation of this
         element, and the second to the unit part of this element.
@@ -1059,6 +1063,8 @@ cdef class CAElement(pAdicTemplateElement):
             sage: b.val_unit()
             (6, O(5^0))
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         cdef CAElement unit = self._new_c()
         cdef Integer valuation = Integer.__new__(Integer)
         cdef long val = cremove(unit.value, self.value, self.absprec, self.prime_pow, True)

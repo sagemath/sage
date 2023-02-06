@@ -11,12 +11,13 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
@@ -46,6 +47,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         else:
             self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
         pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
+
         if self.is_field():
             if self.is_capped_relative():
                 coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]
@@ -81,7 +83,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             convert_list = [QQ]
         else:
             raise RuntimeError
-        self.Element = element_class
+
         self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=convert_list)
 
     def _repr_(self, do_latex=False):
@@ -171,8 +173,6 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic ring
-
         - ``ring`` -- a ring
 
         OUTPUT:
@@ -233,8 +233,6 @@ class pAdicBaseGeneric(pAdicGeneric):
         Returns the discriminant of this `p`-adic ring over ``K``
 
         INPUT:
-
-        - ``self`` -- a `p`-adic ring
 
         - ``K`` -- a sub-ring of ``self`` or ``None`` (default: ``None``)
 
@@ -335,8 +333,6 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic ring
-
         - ``n`` -- an integer
 
         OUTPUT:
@@ -362,8 +358,6 @@ class pAdicBaseGeneric(pAdicGeneric):
         Returns a generator of the group of roots of unity.
 
         INPUT:
-
-        - ``self`` -- a `p`-adic ring
 
         - ``n`` -- an integer or ``None`` (default: ``None``)
 
@@ -431,11 +425,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: Zp(3).plot()
+            sage: Zp(3).plot()  # long time, 1s in early 2022
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(5).plot(max_points=625)
+            sage: Zp(5).plot(max_points=625)  # long time, 2s in early 2022
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(23).plot(rgbcolor=(1,0,0))
+            sage: Zp(23).plot(rgbcolor=(1,0,0))  # long time, 2s in early 2022
             Graphics object consisting of 1 graphics primitive
         """
         if 'pointsize' not in args:

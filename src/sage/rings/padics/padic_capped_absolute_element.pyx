@@ -23,7 +23,6 @@ include "sage/libs/linkages/padics/mpz.pxi"
 include "CA_template.pxi"
 
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
-from sage.rings.finite_rings.integer_mod import Mod
 
 cdef extern from "sage/rings/padics/transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
@@ -166,93 +165,6 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             17
         """
         return self.lift_c()
-
-    def residue(self, absprec=1, field=None, check_prec=True):
-        r"""
-        Reduces ``self`` modulo `p^\mathrm{absprec}`.
-
-        INPUT:
-
-        - ``absprec`` -- a non-negative integer (default: 1)
-
-        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
-
-        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
-          element has insufficient precision to determine the reduction.
-
-        OUTPUT:
-
-        This element reduced modulo `p^\mathrm{absprec}` as an element of
-        `\ZZ/p^\mathrm{absprec}\ZZ`
-
-         EXAMPLES::
-
-            sage: R = Zp(7,10,'capped-abs')
-            sage: a = R(8)
-            sage: a.residue(1)
-            1
-
-        This is different from applying ``% p^n`` which returns an element in
-        the same ring::
-
-            sage: b = a.residue(2); b
-            8
-            sage: b.parent()
-            Ring of integers modulo 49
-            sage: c = a % 7^2; c
-            1 + 7 + O(7^10)
-            sage: c.parent()
-            7-adic Ring with capped absolute precision 10
-
-        Note that reduction of ``c`` dropped to the precision of the unit part
-        of ``7^2``, see :meth:`_mod_`::
-
-            sage: R(7^2).unit_part()
-            1 + O(7^8)
-
-        TESTS::
-
-            sage: a.residue(0)
-            0
-            sage: a.residue(-1)
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot reduce modulo a negative power of p
-            sage: a.residue(11)
-            Traceback (most recent call last):
-            ...
-            PrecisionError: not enough precision known in order to compute residue
-            sage: a.residue(5, check_prec=False)
-            8
-
-            sage: a.residue(field=True).parent()
-            Finite Field of size 7
-
-        .. SEEALSO::
-
-            :meth:`_mod_`
-
-        """
-        if not isinstance(absprec, Integer):
-            absprec = Integer(absprec)
-        if check_prec and mpz_cmp_si((<Integer>absprec).value, self.absprec) > 0:
-            raise PrecisionError("not enough precision known in order to compute residue")
-        elif mpz_sgn((<Integer>absprec).value) < 0:
-            raise ValueError("cannot reduce modulo a negative power of p")
-        if field is None:
-            field = (absprec == 1)
-        elif field and absprec != 1:
-            raise ValueError("field keyword may only be set at precision 1")
-        cdef long aprec = mpz_get_ui((<Integer>absprec).value)
-        cdef Integer modulus = Integer.__new__(Integer)
-        mpz_set(modulus.value, self.prime_pow.pow_mpz_t_tmp(aprec))
-        cdef Integer selfvalue = Integer.__new__(Integer)
-        mpz_set(selfvalue.value, self.value)
-        if field:
-            from sage.rings.finite_rings.finite_field_constructor import GF
-            return GF(self.parent().prime())(selfvalue)
-        else:
-            return Mod(selfvalue, modulus)
 
     def multiplicative_order(self):
         r"""

@@ -461,6 +461,7 @@ cdef class CRElement(pAdicTemplateElement):
             sage: a * b # indirect doctest
             2*5^4 + 2*5^6 + 4*5^7 + 2*5^8 + 3*5^10 + 5^11 + 3*5^12 + 4*5^13 + O(5^14)
         """
+        #print("_mul_:\n  %s\n  %s" % (self, _right))
         cdef CRElement ans
         cdef CRElement right = _right
         if exactzero(self.ordp):
@@ -476,6 +477,7 @@ cdef class CRElement(pAdicTemplateElement):
             cmul(ans.unit, self.unit, right.unit, ans.relprec, ans.prime_pow)
             creduce(ans.unit, ans.unit, ans.relprec, ans.prime_pow)
         check_ordp(ans.ordp)
+        #print("_mul_ finished")
         return ans
 
     cpdef _div_(self, _right):
@@ -1338,7 +1340,7 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             return [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
 
-    def polynomial(self, var='x'):
+    def polynomial(self, var='x', base=None):
         """
         Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
@@ -1357,8 +1359,12 @@ cdef class CRElement(pAdicTemplateElement):
             sage: (5*a^2 + K(25, 4)).polynomial()
             (5 + O(5^4))*x^2 + O(5^4)*x + 5^2 + O(5^4)
         """
-        R = self.base_ring()
-        S = R[var]
+        if base is None:
+          base = self.base_ring()
+        if base is not self.base_ring():
+          raise NotImplementedError
+
+        S = base[var]
         return self.base_ring()[var](self._polynomial_list())
 
     def precision_absolute(self):

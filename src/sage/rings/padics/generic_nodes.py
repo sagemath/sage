@@ -34,31 +34,6 @@ from .padic_lattice_element import pAdicLatticeElement, pAdicLatticeCapElement, 
 
 
 class CappedAbsoluteGeneric(LocalGeneric):
-    def is_capped_absolute(self):
-        """
-        Return whether this `p`-adic ring bounds precision in a
-        capped absolute fashion.
-
-        The absolute precision of an element is the power of `p` modulo
-        which that element is defined.  In a capped absolute ring, the
-        absolute precision of elements are bounded by a constant
-        depending on the ring.
-
-        EXAMPLES::
-
-            sage: R = ZpCA(5, 15)
-            sage: R.is_capped_absolute()
-            True
-            sage: R(5^7)
-            5^7 + O(5^15)
-            sage: S = Zp(5, 15)
-            sage: S.is_capped_absolute()
-            False
-            sage: S(5^7)
-            5^7 + O(5^22)
-        """
-        return True
-
     def _prec_type(self):
         """
         Return the precision handling type.
@@ -71,31 +46,6 @@ class CappedAbsoluteGeneric(LocalGeneric):
         return 'capped-abs'
 
 class CappedRelativeGeneric(LocalGeneric):
-    def is_capped_relative(self):
-        """
-        Return whether this `p`-adic ring bounds precision in a capped
-        relative fashion.
-
-        The relative precision of an element is the power of p modulo
-        which the unit part of that element is defined.  In a capped
-        relative ring, the relative precision of elements are bounded
-        by a constant depending on the ring.
-
-        EXAMPLES::
-
-            sage: R = ZpCA(5, 15)
-            sage: R.is_capped_relative()
-            False
-            sage: R(5^7)
-            5^7 + O(5^15)
-            sage: S = Zp(5, 15)
-            sage: S.is_capped_relative()
-            True
-            sage: S(5^7)
-            5^7 + O(5^22)
-        """
-        return True
-
     def _prec_type(self):
         """
         Return the precision handling type.
@@ -108,32 +58,6 @@ class CappedRelativeGeneric(LocalGeneric):
         return 'capped-rel'
 
 class FixedModGeneric(LocalGeneric):
-    def is_fixed_mod(self):
-        """
-        Return whether this `p`-adic ring bounds precision in a fixed
-        modulus fashion.
-
-        The absolute precision of an element is the power of p modulo
-        which that element is defined.  In a fixed modulus ring, the
-        absolute precision of every element is defined to be the
-        precision cap of the parent.  This means that some operations,
-        such as division by `p`, don't return a well defined answer.
-
-        EXAMPLES::
-
-            sage: R = ZpFM(5,15)
-            sage: R.is_fixed_mod()
-            True
-            sage: R(5^7,absprec=9)
-            5^7
-            sage: S = ZpCA(5, 15)
-            sage: S.is_fixed_mod()
-            False
-            sage: S(5^7,absprec=9)
-            5^7 + O(5^9)
-        """
-        return True
-
     def _prec_type(self):
         """
         Return the precision handling type.
@@ -146,30 +70,6 @@ class FixedModGeneric(LocalGeneric):
         return 'fixed-mod'
 
 class FloatingPointGeneric(LocalGeneric):
-    def is_floating_point(self):
-        """
-        Return whether this `p`-adic ring uses a floating point precision model.
-
-        Elements in the floating point model are stored by giving a
-        valuation and a unit part.  Arithmetic is done where the unit
-        part is truncated modulo a fixed power of the uniformizer,
-        stored in the precision cap of the parent.
-
-        EXAMPLES::
-
-            sage: R = ZpFP(5,15)
-            sage: R.is_floating_point()
-            True
-            sage: R(5^7,absprec=9)
-            5^7
-            sage: S = ZpCR(5,15)
-            sage: S.is_floating_point()
-            False
-            sage: S(5^7,absprec=9)
-            5^7 + O(5^9)
-        """
-        return True
-
     def _prec_type(self):
         """
         Return the precision handling type.
@@ -180,82 +80,6 @@ class FloatingPointGeneric(LocalGeneric):
             'floating-point'
         """
         return 'floating-point'
-
-    def _test_distributivity(self, **options):
-        r"""
-        Test the distributivity of `*` on `+` on (not necessarily
-        all) elements of this set.
-
-        p-adic floating point rings only satisfy distributivity
-        up to a precision that depends on the elements.
-
-        INPUT:
-
-        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
-
-        EXAMPLES:
-
-        By default, this method runs the tests only on the
-        elements returned by ``self.some_elements()``::
-
-            sage: R = ZpFP(5,3)
-            sage: R.some_elements()
-            [0, 1, 5, 1 + 3*5 + 3*5^2, 5 + 4*5^2 + 4*5^3]
-            sage: R._test_distributivity()
-
-        However, the elements tested can be customized with the
-        ``elements`` keyword argument::
-
-            sage: R._test_distributivity(elements=[R(0),~R(0),R(42)])
-
-        See the documentation for :class:`TestSuite` for more information.
-        """
-        tester = self._tester(**options)
-        S = tester.some_elements()
-        from sage.misc.misc import some_tuples
-        for x,y,z in some_tuples(S, 3, tester._max_runs):
-            yz_prec = min(y.precision_absolute(), z.precision_absolute())
-            yz_val = (y + z).valuation()
-            try:
-                prec = min(x.valuation() + yz_val + min(x.precision_relative(), yz_prec - yz_val),
-                           x.valuation() + y.valuation() + (x * y).precision_relative(),
-                           x.valuation() + z.valuation() + (x * z).precision_relative())
-            except SignError:
-                pass
-            else:
-                if prec > -infinity:
-                    # only check left distributivity, since multiplication commutative
-                    tester.assertTrue((x * (y + z)).is_equal_to((x * y) + (x * z),prec))
-
-    def _test_additive_associativity(self, **options):
-        r"""
-        Test associativity for (not necessarily all) elements of this
-        additive semigroup.
-
-        INPUT:
-
-        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
-
-        EXAMPLES:
-
-        By default, this method tests only the elements returned by
-        ``self.some_elements()``::
-
-            sage: R = QpFP(7,3)
-            sage: R._test_additive_associativity()
-
-        However, the elements tested can be customized with the
-        ``elements`` keyword argument::
-
-            sage: R._test_additive_associativity(elements = [R(0), ~R(0), R(42)])
-
-        See the documentation for :class:`TestSuite` for more information.
-        """
-        tester = self._tester(**options)
-        S = tester.some_elements()
-        from sage.misc.misc import some_tuples
-        for x,y,z in some_tuples(S, 3, tester._max_runs):
-            tester.assertTrue(((x + y) + z).is_equal_to(x + (y + z), min(x.precision_absolute(), y.precision_absolute(), z.precision_absolute())))
 
 class FloatingPointRingGeneric(FloatingPointGeneric):
     pass
@@ -356,33 +180,6 @@ class pAdicLatticeGeneric(pAdicGeneric):
             'lattice-cap'
         """
         return 'lattice-' + self._subtype
-
-    def is_lattice_prec(self):
-        """
-        Return whether this `p`-adic ring bounds precision using
-        a lattice model.
-
-        In lattice precision, relationships between elements
-        are stored in a precision object of the parent, which
-        allows for optimal precision tracking at the cost of
-        increased memory usage and runtime.
-
-        EXAMPLES::
-
-            sage: R = ZpCR(5, 15)
-            sage: R.is_lattice_prec()
-            False
-            sage: x = R(25, 8)
-            sage: x - x
-            O(5^8)
-            sage: S = ZpLC(5, 15)
-            sage: S.is_lattice_prec()
-            True
-            sage: x = S(25, 8)
-            sage: x - x
-            O(5^30)
-        """
-        return True
 
     def precision_cap(self):
         """
@@ -941,7 +738,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
             try:
                 x = self.exact_ring()(x)
                 return self._get_element_class('value')(self, x, precbound=prec)
-            except (TypeError, ValueError):
+            except (TypeError, ValueError, NotImplementedError):
                 pass
             try:
                 x = self.exact_field()(x)
@@ -1211,26 +1008,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
         """
         return False
 
-
-    def krull_dimension(self):
-        r"""
-        Return the Krull dimension of self, i.e. 1
-
-        INPUT:
-
-        - self -- a `p`-adic ring
-
-        OUTPUT:
-
-        - the Krull dimension of self.  Since self is a `p`-adic ring,
-          this is 1.
-
-        EXAMPLES::
-
-            sage: Zp(5).krull_dimension()
-            1
-        """
-        return 1
 
     def _xgcd_univariate_polynomial(self, f, g):
         """

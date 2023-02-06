@@ -1101,7 +1101,7 @@ cdef class CoercionModel:
         self._division_parents.set(P, None, None, ret)
         return ret
 
-    cpdef bin_op(self, x, y, op):
+    def bin_op(self, x, y, op):
         """
         Execute the operation op on x and y. It first looks for an action
         corresponding to op, and failing that, it tries to coerces x and y

@@ -709,9 +709,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #def precision_relative(self):
     #    raise NotImplementedError
 
-    #def residue(self, prec):
-    #    raise NotImplementedError
-
     def sqrt(self, extend=True, all=False, algorithm=None):
         r"""
         Return the square root of this element.

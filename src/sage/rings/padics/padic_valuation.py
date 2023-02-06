@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 `p`-adic Valuations on Number Fields and Their Subrings and Completions
 
@@ -21,7 +20,7 @@ in the completion of a ring::
     sage: v = ZZ.valuation(2)
     sage: R.<x> = ZZ[]
     sage: f = x^5 + x^4 + x^3 + x^2 + x - 1
-    sage: v.montes_factorization(f, required_precision=20)
+    sage: v.montes_factorization(f, required_precision=20)  # long time, 2s in early 2022
     (x + 676027) * (x^4 + 372550*x^3 + 464863*x^2 + 385052*x + 297869)
 
 AUTHORS:
@@ -35,12 +34,12 @@ overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
 #*****************************************************************************
-#       Copyright (C) 2013-2020 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2013-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.rings.valuation.valuation import DiscreteValuation
 from sage.rings.valuation.value_group import DiscreteValueSemigroup
@@ -98,6 +97,18 @@ class PadicValuationFactory(UniqueFactory):
         sage: L.<b> = R.quo(x^2 + a)
         sage: valuations.pAdicValuation(L, 2)
         2-adic valuation
+
+    Valuations cannot be computed yet for extensions given by p-adically
+    non-integral defining polynomials, see #33362::
+
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(x^2 + 1/3)
+        sage: K.valuation(2)
+        2-adic valuation
+        sage: K.valuation(3)
+        Traceback (most recent call last):
+        ...
+        ValueError: G must be integral
 
     .. SEEALSO::
 
@@ -1076,6 +1087,42 @@ class pAdicValuation_padic(pAdicValuation_base):
         normalized_error = (error / self.value_group().gen()).ceil()
         return x.add_bigoh(normalized_error + 1).lift_to_precision()
 
+    def F(self):
+        r"""
+        Return the relative residual degree of this valuation over its base valuation.
+
+        EXAMPLES:
+
+            sage: L.<a> = Qp(2).extension(x^2 + x + 1)
+            sage: L.valuation().F()
+            2
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^2 + b + a)  # long time, 3s in early 2022
+            sage: M.valuation().F()  # long time
+            2
+                
+        """
+        return self.domain().relative_f()
+
+    def E(self):
+        r"""
+        Return the relative ramification index of this valuation over its base valuation.
+
+        EXAMPLES:
+
+            sage: L.<a> = Qp(2).extension(x^2 + x + 1)
+            sage: L.valuation().E()
+            1
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^2 + b + a)
+            sage: M.valuation().E()
+            1
+                
+        """
+        return self.domain().relative_e()
+
 
 class pAdicValuation_int(pAdicValuation_base):
     r"""
@@ -1333,6 +1380,32 @@ class pAdicValuation_int(pAdicValuation_base):
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
         return self.domain()(ZZ(x).inverse_mod(self.p() ** QQ(precision).ceil()))
+
+    def F(self):
+        r"""
+        Return the residual degree of this valuation, i.e., 1.
+
+        EXAMPLES::
+
+            sage: Qp(2).valuation().F()
+            1
+
+        """
+        from sage.rings.integer_ring import ZZ
+        return ZZ(1)
+
+    def E(self):
+        r"""
+        Return the ramification index of this valuation, i.e., 1.
+
+        EXAMPLES::
+
+            sage: Qp(2).valuation().E()
+            1
+
+        """
+        from sage.rings.integer_ring import ZZ
+        return ZZ(1)
 
 
 class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_base):
