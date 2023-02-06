@@ -47,7 +47,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=docs --prod="${NETLIFY_PRODUCTION}"
+          args: deploy --dir=docs ${NETLIFY_PRODUCTION:+"--prod"}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
