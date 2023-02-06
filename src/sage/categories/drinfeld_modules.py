@@ -139,7 +139,7 @@ class DrinfeldModules(Category_over_base_ring):
         True
 
     Of course, the constant coefficient of the input must be the same as
-    the category'::
+    the category::
 
         sage: cat.object([z, 1])
         Traceback (most recent call last):
@@ -280,7 +280,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def _latex_(self):
         r"""
-        Return a latex representation of the category
+        Return a latex representation of the category.
 
         OUTPUT: a string
 
@@ -300,7 +300,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def _repr_(self):
         r"""
-        Return a string representation of the category
+        Return a string representation of the category.
 
         OUTPUT: a string
 
@@ -359,7 +359,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def base_morphism(self):
         r"""
-        Return the base morphism of the category
+        Return the base morphism of the category.
 
         OUTPUT: a ring morphism
 
