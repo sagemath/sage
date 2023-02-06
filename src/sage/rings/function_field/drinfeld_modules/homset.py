@@ -39,10 +39,10 @@ class DrinfeldModuleHomset(Homset):
     EXAMPLES::
 
         sage: Fq = GF(27)
-        sage: FqX.<X> = Fq[]
+        sage: A.<T> = Fq[]
         sage: K.<z6> = Fq.extension(2)
-        sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-        sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+        sage: phi = DrinfeldModule(A, [z6, z6, 2])
+        sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
         sage: hom = Hom(phi, psi)
         sage: hom
         Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
@@ -64,7 +64,7 @@ class DrinfeldModuleHomset(Homset):
     The domain and codomain must have the same Drinfeld modules
     category::
 
-        sage: rho = DrinfeldModule(FqX, [Frac(FqX)(X), 1])
+        sage: rho = DrinfeldModule(A, [Frac(A)(T), 1])
         sage: Hom(phi, rho)
         Traceback (most recent call last):
         ...
@@ -72,7 +72,7 @@ class DrinfeldModuleHomset(Homset):
 
     ::
 
-        sage: sigma = DrinfeldModule(FqX, [1, z6, 2])
+        sage: sigma = DrinfeldModule(A, [1, z6, 2])
         sage: Hom(phi, sigma)
         Traceback (most recent call last):
         ...
@@ -152,10 +152,10 @@ class DrinfeldModuleHomset(Homset):
         TESTS::
 
             sage: Fq = GF(27)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: hom.domain() is phi
             True
@@ -183,10 +183,10 @@ class DrinfeldModuleHomset(Homset):
         EXAMPLES::
 
             sage: Fq = GF(27)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: latex(hom)
             \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from{ }(gen){ }}2 t^{2} + z_{6} t + z_{6}\text{{ }to{ }(gen){ }}2 t^{2} + \left(2 z_{6}^{5} + 2 z_{6}^{4} + 2 z_{6} + 1\right) t + z_{6}
@@ -205,10 +205,10 @@ class DrinfeldModuleHomset(Homset):
         EXAMPLES::
 
             sage: Fq = GF(27)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: hom
             Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
@@ -232,10 +232,10 @@ class DrinfeldModuleHomset(Homset):
         In the next examples, the input is an Ore polynomial::
 
             sage: Fq = GF(27)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: end = End(phi)
             sage: t = phi.ore_polring().gen()
@@ -284,10 +284,10 @@ class DrinfeldModuleHomset(Homset):
         EXAMPLES::
 
             sage: Fq = GF(27)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
-            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: phi = DrinfeldModule(A, [z6, z6, 2])
+            sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: end = End(phi)
             sage: t = phi.ore_polring().gen()

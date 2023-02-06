@@ -29,7 +29,7 @@ class DrinfeldModuleAction(Action):
     This class represents the module action induced by a Drinfeld
     module.
 
-    Let `\phi` be a Drinfeld module with base `\gamma: \mathbb{F}_q[X]
+    Let `\phi` be a Drinfeld module with base `\gamma: \mathbb{F}_q[T]
     \to K`. Let `L/K` be a field extension, let `x \in L`, let `a` be a
     function ring element; the action is defined as `(a, x) \mapsto
     \phi_a(x)`.
@@ -46,23 +46,23 @@ class DrinfeldModuleAction(Action):
     EXAMPLES::
 
         sage: Fq.<z2> = GF(11)
-        sage: FqX.<X> = Fq[]
+        sage: A.<T> = Fq[]
         sage: K.<z> = Fq.extension(2)
-        sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+        sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
         sage: action = phi.action()
         sage: action
-        Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by X |--> t^3 + z over base Finite Field in z of size 11^2 over its base
+        Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> t^3 + z over base Finite Field in z of size 11^2 over its base
 
     The action on elements is computed as follows::
 
-        sage: P = X + 1
+        sage: P = T + 1
         sage: a = z
         sage: action(P, a)
         ...
         4*z + 2
         sage: action(0, K.random_element())
         0
-        sage: action(FqX.random_element(), 0)
+        sage: action(A.random_element(), 0)
         0
 
     Finally, given a Drinfeld module action, it is easy to recover the
@@ -81,9 +81,9 @@ class DrinfeldModuleAction(Action):
         TESTS::
 
             sage: Fq.<z2> = GF(11)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action._drinfeld_module is phi
             True
@@ -110,17 +110,17 @@ class DrinfeldModuleAction(Action):
         EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
-            sage: P = X + 1
+            sage: P = T + 1
             sage: a = z
             sage: action(P, a)
             4*z + 2
             sage: action(0, K.random_element())
             0
-            sage: action(FqX.random_element(), 0)
+            sage: action(A.random_element(), 0)
             0
         """
         if pol not in self._drinfeld_module.function_ring():
@@ -138,12 +138,12 @@ class DrinfeldModuleAction(Action):
         EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: latex(action)
-            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{3} + z\text{{ }over{ }base{ }}\Bold{F}_{11^{2}}
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} T \mapsto t^{3} + z\text{{ }over{ }base{ }}\Bold{F}_{11^{2}}
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
                f'{latex(self._base_ring)}\\text{{{{ }}' \
@@ -158,12 +158,12 @@ class DrinfeldModuleAction(Action):
         EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by X |--> t^3 + z over base Finite Field in z of size 11^2 over its base
+            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> t^3 + z over base Finite Field in z of size 11^2 over its base
         """
         return f'Action on {self._base_ring} induced by ' \
                f'{self._drinfeld_module}'
@@ -177,9 +177,9 @@ class DrinfeldModuleAction(Action):
         EXAMPLES::
 
             sage: Fq.<z2> = GF(11)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action.drinfeld_module() is phi
             True

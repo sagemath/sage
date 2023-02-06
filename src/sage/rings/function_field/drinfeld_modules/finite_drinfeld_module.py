@@ -44,11 +44,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
     ``FiniteDrinfeldModule`` depending on the input::
 
         sage: Fq = GF(343)
-        sage: FqX.<X> = Fq[]
+        sage: A.<T> = Fq[]
         sage: K.<z6> = Fq.extension(2)
-        sage: phi = DrinfeldModule(FqX, [z6, 0, 5])
+        sage: phi = DrinfeldModule(A, [z6, 0, 5])
         sage: phi
-        Drinfeld module defined by X |--> 5*t^2 + z6 over base Finite Field in z6 of size 7^6 over its base
+        Drinfeld module defined by T |--> 5*t^2 + z6 over base Finite Field in z6 of size 7^6 over its base
 
     ::
 
@@ -84,19 +84,19 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         sage: chi = phi.frobenius_charpoly()
         sage: chi
-        T^2 + (X + 2*z3^2 + 2*z3 + 1)*T + 2*X^2 + (z3^2 + z3 + 4)*X + 2*z3
+        X^2 + (T + 2*z3^2 + 2*z3 + 1)*X + 2*T^2 + (z3^2 + z3 + 4)*T + 2*z3
         sage: frob_pol = frobenius_endomorphism.ore_polynomial()
-        sage: chi(frob_pol, phi(X))
+        sage: chi(frob_pol, phi(T))
         0
 
     This makes it possible to compute the Frobenius trace and norm::
 
         sage: phi.frobenius_trace()
-        6*X + 5*z3^2 + 5*z3 + 6
+        6*T + 5*z3^2 + 5*z3 + 6
         sage: phi.frobenius_trace() == -chi[1]
         True
         sage: phi.frobenius_norm()
-        2*X^2 + (z3^2 + z3 + 4)*X + 2*z3
+        2*T^2 + (z3^2 + z3 + 4)*T + 2*z3
 
     And to decide if a Drinfeld module is ordinary or supersingular::
 
@@ -125,11 +125,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
         TESTS::
 
             sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: gen = [p_root, z12^3, z12^5]
-            sage: phi = DrinfeldModule(FqX, gen)
+            sage: phi = DrinfeldModule(A, gen)
             sage: ore_polring = phi.ore_polring()
             sage: phi._gen == ore_polring(gen)
             True
@@ -157,9 +157,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
             Drinfeld Module morphism:
               From (gen): z6*t^2 + 1
@@ -190,15 +190,15 @@ class FiniteDrinfeldModule(DrinfeldModule):
         characteristic polynomial of the Frobenius endomorphism as a
         bivariate polynomial.
 
-        Let `\chi = T^2 - A(X)T + B(X)` be the characteristic polynomial
+        Let `\chi = X^2 - A(T)X + B(T)` be the characteristic polynomial
         of the Frobenius endomorphism, let `t^n` be the Ore polynomial
         that defines the Frobenius endomorphism of `\phi`; by
         definition, `n` is the degree over `\mathbb{F}_q` of the base
-        codomain. We have `\chi(t^n)(\phi(X)) = t^{2n} - \phi_A t^n +
+        codomain. We have `\chi(t^n)(\phi(T)) = t^{2n} - \phi_A t^n +
         \phi_B = 0`, with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
 
-        Note that the *Frobenius trace* is defined as `A(X)` and the
-        *Frobenius norm* is defined as `B(X)`.
+        Note that the *Frobenius trace* is defined as `A(T)` and the
+        *Frobenius norm* is defined as `B(T)`.
 
         INPUT: (default: ``'T'``) the name of the second variable
 
@@ -208,9 +208,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: chi = phi.frobenius_charpoly()
             sage: chi
             T^2 + ((3*z3^2 + z3 + 4)*X + 4*z3^2 + 6*z3 + 3)*T + (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
@@ -218,24 +218,24 @@ class FiniteDrinfeldModule(DrinfeldModule):
         ::
 
             sage: frob_pol = phi.frobenius_endomorphism().ore_polynomial()
-            sage: chi(frob_pol, phi(X))
+            sage: chi(frob_pol, phi(T))
             0
 
         ::
 
-            sage: A = phi.frobenius_trace()
-            sage: A
-            (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
-            sage: B = phi.frobenius_norm()
-            sage: B
-            (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
+            sage: trace = phi.frobenius_trace()
+            sage: trace
+            (4*z3^2 + 6*z3 + 3)*T + 3*z3^2 + z3 + 4
+            sage: norm = phi.frobenius_norm()
+            sage: norm
+            (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
 
         ::
 
             sage: n = 2  # Degree over Fq of the base codomain
-            sage: A.degree() <= n/2
+            sage: trace.degree() <= n/2
             True
-            sage: B.degree() == n
+            sage: norm.degree() == n
             True
 
         ALGORITHM:
@@ -249,8 +249,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             computation of the norm and of the trace.
         """
         self._check_rank_two()
-        A = self._function_ring  # Fq[X]
-        S = PolynomialRing(A, name=var)  # Fq[X][T]
+        A = self._function_ring  # Fq[T]
+        S = PolynomialRing(A, name=var)  # Fq[T][T]
         # Does not work when Fq is not a prime field...
         # chi = self._gen.reduced_charpoly()
         # return -chi(A.gen(), S.gen())
@@ -261,10 +261,10 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Let `\mathbb{F}_q[X]` be the function ring, write `\chi = T^2 -
-        A(X)T + B(X) \in \mathbb{F}_q[X][T]` for the characteristic
+        Let `\mathbb{F}_q[T]` be the function ring, write `\chi = X^2 -
+        A(T)X + B(T) \in \mathbb{F}_q[T][X]` for the characteristic
         polynomial of the Frobenius endomorphism. The *Frobenius norm*
-        is defined as the polynomial `B(X) \in \mathbb{F}_q[X]`.
+        is defined as the polynomial `B(T) \in \mathbb{F}_q[T]`.
 
         Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
         Then the Frobenius norm has degree `n`.
@@ -274,12 +274,12 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: B = phi.frobenius_norm()
             sage: B
-            (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
+            (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
 
         ::
 
@@ -315,10 +315,10 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Let `\mathbb{F}_q[X]` be the function ring, write `\chi = T^2 -
-        A(X)T + B(X) \in \mathbb{F}_q[X][T]` for the characteristic
+        Let `\mathbb{F}_q[T]` be the function ring, write `\chi = T^2 -
+        A(X)T + B(X) \in \mathbb{F}_q[T][T]` for the characteristic
         polynomial of the Frobenius endomorphism. The *Frobenius norm*
-        is defined as the polynomial `B(X) \in \mathbb{F}_q[X]`.
+        is defined as the polynomial `B(T) \in \mathbb{F}_q[T]`.
 
         Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
         Then the Frobenius trace has degree `\leq \frac{n}{2}`.
@@ -327,13 +327,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         ALGORITHM:
 
-            Let `A(X)` denote the Frobenius trace and `B(X)` denote the
-            Frobenius norm. We begin by computing `B(X)`, see docstring
+            Let `A(T)` denote the Frobenius trace and `B(T)` denote the
+            Frobenius norm. We begin by computing `B(T)`, see docstring
             of method :meth:`frobenius_norm` for details. The
             characteristic polynomial of the Frobenius yields `t^{2n} -
             \phi_A t^n + \phi_B = 0`, where `t^n` is the Frobenius
             endomorphism. As `\phi_B` is now known, we can compute
-            `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(X)` by
+            `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(T)` by
             inverting this quantity, using the method
             :meth:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule.invert`,
             see its docstring for details.
@@ -341,12 +341,12 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: A = phi.frobenius_trace()
             sage: A
-            (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
+            (4*z3^2 + 6*z3 + 3)*T + 3*z3^2 + z3 + 4
 
         ::
 
@@ -386,9 +386,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.is_ordinary()
             False
             sage: phi_p = phi(phi.characteristic())
@@ -398,10 +398,10 @@ class FiniteDrinfeldModule(DrinfeldModule):
         ALGORITHM:
 
             Compute the Frobenius trace and test if the
-            `\mathbb{F}_q[X]` characteristic divides it.
+            `\mathbb{F}_q[T]` characteristic divides it.
 
             We could also test if the image of the
-            `\mathbb{F}_q[X]`-characteristic under the Drinfeld module
+            `\mathbb{F}_q[T]`-characteristic under the Drinfeld module
             is purely inseparable; see [Gek1991]_, Proposition 4.1.
         """
         self._check_rank_two()
@@ -422,9 +422,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         EXAMPLES::
 
             sage: Fq = GF(343)
-            sage: FqX.<X> = Fq[]
+            sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(FqX, [1, 0, z6])
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.is_supersingular()
             True
             sage: phi(phi.characteristic()) # Purely inseparable
