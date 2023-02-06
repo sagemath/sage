@@ -66,6 +66,7 @@ class SignedCompositions(Compositions_n):
         sage: SC = SignedCompositions(3)
         sage: TestSuite(SC).run()
     """
+
     def __repr__(self):
         """
         TESTS::

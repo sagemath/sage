@@ -377,7 +377,7 @@ translated to Mathematica (:trac:`34087`)::
     sage: FL=[sin, cos, tan, csc, sec, cot,        # optional - mathematica
     ....:     sinh, cosh, tanh, csch, sech, coth]
     sage: IFL=[arcsin, arccos, arctan, arccsc,     # optional - mathematica
-    ....:      arcsec, arccot, arcsinh, arccosh, 
+    ....:      arcsec, arccot, arcsinh, arccosh,
     ....:      arctanh, arccsch, arcsech, arccoth]
     sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
     ....:  for u in FL]
@@ -1078,8 +1078,6 @@ class MathematicaElement(ExpectElement):
         P = self._check_valid()
         cmd = '%s===%s' % (self._name, P._false_symbol())
         return P.eval(cmd).strip() != P._true_symbol()
-
-    
 
     def n(self, *args, **kwargs):
         r"""

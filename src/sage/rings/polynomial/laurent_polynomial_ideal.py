@@ -2,7 +2,7 @@
 r"""
 Ideals in Laurent polynomial rings.
 
-For `R` a commutative ring, ideals in the Laurent polynomial ring 
+For `R` a commutative ring, ideals in the Laurent polynomial ring
 `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]` are implemented as
 ideals in the ordinary polynomial ring `R[x_1, \ldots, x_n]` which are
 saturated with respect to the ideal `(x_1 \cdots x_n)`.
@@ -35,7 +35,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         associated ordinary polynomial ring `R[x_1,\ldots,x_n]` which is saturated
         with respect to the ideal `(x_1 \cdots x_n)`. Since computing the saturation
         can be expensive, we employ some strategies to reduce the need for it.
-    
+
         - We only create the polynomial ideal as needed.
 
         - For some operations, we try some superficial tests first. E.g., for
@@ -98,14 +98,14 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Set the hint of this ideal.
 
-        The hint is an ideal of the associated polynomial ring, which is 
+        The hint is an ideal of the associated polynomial ring, which is
         assumed to be contained in the associated ideal. It is used internally
         to speed up computation of the associated ideal in some cases;
         normally the end user will have no need to work with it directly.
 
             sage: P.<x,y,z> = LaurentPolynomialRing(QQ, 3)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
-            sage: I.hint()           
+            sage: I.hint()
             Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
             sage: I.set_hint(P.polynomial_ring().ideal([x + 3*y]))
             sage: I.hint()
@@ -117,7 +117,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Return the hint of this ideal.
 
-        The hint is an ideal of the associated polynomial ring, which is 
+        The hint is an ideal of the associated polynomial ring, which is
         assumed to be contained in the associated ideal. It is used internally
         to speed up computation of the associated ideal in some cases;
         normally the end user will have no need to work with it directly.
@@ -126,7 +126,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
             sage: P.<x,y,z> = LaurentPolynomialRing(QQ, 3)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
-            sage: I.hint()           
+            sage: I.hint()
             Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         return self._hint
@@ -198,8 +198,8 @@ class LaurentPolynomialIdeal( Ideal_generic ):
     def change_ring(self, R, hint=None):
         """
         Coerce an ideal into a new ring.
-        
-        This operation does not forward hints, but a new hint can be 
+
+        This operation does not forward hints, but a new hint can be
         specified manually.
 
         EXAMPLES::
@@ -319,7 +319,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         Return the sum of two ideals in the same ring.
 
         Currently this operation does not support coercion.
-        
+
         This operation forwards hints.
 
         EXAMPLES::
@@ -367,10 +367,10 @@ class LaurentPolynomialIdeal( Ideal_generic ):
     def polynomial_ideal(self, saturate=True):
         """
         Return the associated polynomial ideal.
-        
+
         By default, the ideal is saturated with respect to the product of the
         polynomial ring generators; this is necessary for testing equality and inclusion.
-        As saturation can be quite time-consuming, it can be disabled by setting 
+        As saturation can be quite time-consuming, it can be disabled by setting
         ``saturate=False``; however, the result will then depend not just on the original ideal
         but also on the choice of generators.
 
@@ -441,7 +441,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Determine whether every generator of ``self`` is a binomial.
 
-        If ``groebner_basis`` is True, this becomes intrinsic (for a choice of 
+        If ``groebner_basis`` is True, this becomes intrinsic (for a choice of
         term order).
 
         EXAMPLES::

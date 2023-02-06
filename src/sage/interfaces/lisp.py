@@ -220,7 +220,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
-            sage: lisp.__reduce__()
+            sage: Lisp().__reduce__()
             (<function reduce_load_Lisp at 0x...>, ())
         """
         return reduce_load_Lisp, tuple([])
@@ -434,8 +434,6 @@ class LispElement(RingElement, ExpectElement):
         """
         return self != 0 and repr(self) != 'NIL'
 
-    
-
     def _add_(self, right):
         """
         EXAMPLES::
@@ -445,7 +443,7 @@ class LispElement(RingElement, ExpectElement):
             3
         """
         P = self._check_valid()
-        return P.new('(+ %s %s)'%(self._name, right._name))
+        return P.new('(+ %s %s)' % (self._name, right._name))
 
     def _sub_(self, right):
         """
@@ -527,11 +525,16 @@ def is_LispElement(x):
     EXAMPLES::
 
         sage: from sage.interfaces.lisp import is_LispElement
+        sage: is_LispElement(2)
+        doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
+        See https://trac.sagemath.org/34804 for details.
+        False
         sage: is_LispElement(lisp(2))
         True
-        sage: is_LispElement(2)
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead")
+
     return isinstance(x, LispElement)
 
 # An instance

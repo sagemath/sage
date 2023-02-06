@@ -1,5 +1,5 @@
 r"""
-Fraction fields of Ore polynomial rings.
+Fraction fields of Ore polynomial rings
 
 Sage provides support for building the fraction field of any Ore
 polynomial ring and performing basic operations in it.

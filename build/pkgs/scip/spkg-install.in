@@ -1,0 +1,17 @@
+cd src
+mkdir build
+cd build
+sdh_cmake -DCMAKE_INSTALL_LIBDIR=lib \
+         -DCMAKE_VERBOSE_MAKEFILE=ON \
+         -DCMAKE_BUILD_WITH_INSTALL_NAME_DIR=ON \
+         -DGMP_DIR="${SAGE_GMP_PREFIX}" \
+         -DReadline_ROOT_DIR=$(pkg-config --variable=prefix readline) \
+         -DHistory_ROOT_DIR=$(pkg-config --variable=prefix readline) \
+         -DIPOPT=off \
+         -DPAPILO=on -DPAPILO_DIR="${SAGE_LOCAL}" \
+         -DZIMPL=off \
+         -DAMPL=off \
+         -DSYM=bliss \
+         ..
+sdh_make
+sdh_make_install

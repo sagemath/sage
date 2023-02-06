@@ -12,6 +12,8 @@ Root system data for type BC affine
 
 from .cartan_type import CartanType_standard_affine
 from sage.rings.integer_ring import ZZ
+
+
 class CartanType(CartanType_standard_affine):
     def __init__(self, n):
         """

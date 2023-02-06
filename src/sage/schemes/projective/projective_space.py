@@ -87,10 +87,10 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import is_RationalField
 
 from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom
 from sage.categories.map import Map
@@ -123,6 +123,8 @@ from sage.schemes.projective.projective_morphism import (SchemeMorphism_polynomi
 
 # for better efficiency
 _Fields = Fields()
+_Rings = Rings()
+_CommRings = _Rings.Commutative()
 
 
 def is_ProjectiveSpace(x):
@@ -260,10 +262,9 @@ def ProjectiveSpace(n, R=None, names=None):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
-    elif isinstance(R, CommutativeRing):
+    elif R in _CommRings:
         return ProjectiveSpace_ring(n, R, names)
-    else:
-        raise TypeError("R (=%s) must be a commutative ring" % R)
+    raise TypeError("R (=%s) must be a commutative ring" % R)
 
 
 class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
@@ -1392,7 +1393,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c>=ProjectiveSpace(RR, 2)
             sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target)
+            sage: P1.point_transformation_matrix(points_source, points_target) # abs tol 1e-13
             [-0.0619047619047597  -0.609523809523810  -0.119047619047621]
             [  0.853968253968253  0.0380952380952380  0.0412698412698421]
             [ -0.214285714285712  -0.933333333333333   0.280952380952379]

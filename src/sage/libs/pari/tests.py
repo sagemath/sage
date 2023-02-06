@@ -356,7 +356,7 @@ Constructors::
     [2, 4]~*x + [1, 3]~
 
     sage: pari(3).Qfb(7, 1)
-    Qfb(3, 7, 1, 0.E-19)
+    Qfb(3, 7, 1)
     sage: pari(3).Qfb(7, 2)
     Traceback (most recent call last):
     ...
@@ -512,7 +512,7 @@ Basic functions::
     sage: pari('sqrt(-2)').frac()
     Traceback (most recent call last):
     ...
-    PariError: incorrect type in gfloor (t_COMPLEX)
+    PariError: incorrect type in gfrac (t_COMPLEX)
 
     sage: pari('1+2*I').imag()
     2
@@ -1767,7 +1767,7 @@ library::
     sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
-    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit 
+    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
     sage: from cypari2 import Pari
     sage: pari = Pari()
 

@@ -1,5 +1,5 @@
 r"""
-Skew Univariate Polynomial Rings
+Univariate skew polynomial rings
 
 This module provides the
 :class:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing`.

@@ -88,6 +88,7 @@ class AbstractSingleCrystalElement(Element):
     r"""
     Abstract base class for elements in crystals with a single element.
     """
+
     def __lt__(self, other):
         r"""
         EXAMPLES::
@@ -350,6 +351,7 @@ class TCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `T_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -612,6 +614,7 @@ class RCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `R_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -854,6 +857,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `B_i` crystal.
         """
+
         def __init__(self, parent, m):
             r"""
             EXAMPLES::
@@ -1172,6 +1176,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a component crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::

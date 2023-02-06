@@ -95,7 +95,7 @@ is from a special code family, the derived codes inherit structural properties
 like decoding radius or minimum distance:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/coding/subfield_subcode
    sage/coding/punctured_code
@@ -127,7 +127,7 @@ Automorphism Groups of Linear Codes
 -----------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/coding/codecan/codecan
    sage/coding/codecan/autgroup_can_label
@@ -136,7 +136,7 @@ Bounds for Parameters of Linear Codes
 -------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/coding/code_bounds
    sage/coding/delsarte_bounds
@@ -145,7 +145,7 @@ Databases for Coding Theory
 ---------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/coding/databases
    sage/coding/two_weight_db

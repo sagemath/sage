@@ -953,4 +953,3 @@ cdef class PowerSeries_pari(PowerSeries):
                 precision = self._prec
             f = self
         return PowerSeries_pari(self._parent, f.g.serreverse(), precision)
-

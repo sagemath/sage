@@ -2,7 +2,7 @@ Alternating Multivector Fields
 ==============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/multivector_module
 

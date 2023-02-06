@@ -173,7 +173,7 @@ class AsymptoticExpansionGenerators(SageObject):
 
             sage: set_series_precision(5)
             sage: asymptotic_expansions.Stirling('n')
-            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) + 
+            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) +
             ... + O(e^(n*log(n))*(e^n)^(-1)*n^(-5/2))
             sage: set_series_precision(20)  # restore series precision default
         """

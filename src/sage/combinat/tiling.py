@@ -467,6 +467,8 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
 ##############################
 # Class Polyomino
 ##############################
+
+
 class Polyomino(SageObject):
     r"""
     A polyomino in `\ZZ^d`.
@@ -489,6 +491,7 @@ class Polyomino(SageObject):
         sage: Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
         Polyomino: [(0, 0, 0), (0, 1, 0), (1, 1, 0), (1, 1, 1)], Color: blue
     """
+
     def __init__(self, coords, color='gray', dimension=None):
         r"""
         Constructor.
@@ -1440,7 +1443,6 @@ class Polyomino(SageObject):
             G += line(edge, color=color, thickness=thickness)
         return G
 
-
     def self_surrounding(self, radius, remove_incomplete_copies=True,
                          ncpus=None):
         r"""
@@ -1594,6 +1596,7 @@ class TilingSolver(SageObject):
         ...
         NotImplementedError: When reflection is allowed and rotation is not allowed
     """
+
     def __init__(self, pieces, box, rotation=True,
                  reflection=False, reusable=False, outside=False):
         r"""

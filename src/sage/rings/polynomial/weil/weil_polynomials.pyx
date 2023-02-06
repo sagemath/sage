@@ -585,4 +585,3 @@ class WeilPolynomials():
             158
         """
         return self.w.node_count()
-
