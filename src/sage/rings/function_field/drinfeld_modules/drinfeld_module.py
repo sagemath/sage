@@ -76,7 +76,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     2. For every element `a` in the `\mathbb{F}_q[T]`, the constant
        coefficient `\phi(a)` is `\gamma(a)`.
 
-    For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
+    For `a` in `\mathbb{F}_q[T]`, `\phi(a)` is denoted `\phi_a`.
 
     The Drinfeld `\mathbb{F}_q[T]`-module `\phi` is uniquely determined
     by the image `\phi_T` of `T` — this serves as input of the class.
@@ -137,8 +137,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: Construction
 
-    A Drinfeld module object is constructed by precising the function
-    ring and the generator::
+    A Drinfeld module object is constructed by giving the function ring
+    and the generator::
 
         sage: Fq.<z2> = GF(3^2)
         sage: A.<T> = Fq[]
@@ -187,7 +187,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: phi(T)  # phi_T, the generator of the Drinfeld module
         t^2 + t + z
-        sage: phi(T^3 + T + 1)  # phi_(T^3 +T + 1)
+        sage: phi(T^3 + T + 1)  # phi_(T^3 + T + 1)
         t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
         sage: phi(1)  # phi_1
         1
