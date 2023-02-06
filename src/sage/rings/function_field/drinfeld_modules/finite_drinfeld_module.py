@@ -378,7 +378,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         trace. A *supersingular* rank two finite Drinfeld module is a
         Drinfeld module that is not ordinary.
 
-        A rnak two Drinfeld module is *ordinary* if and only if it is
+        A rank two Drinfeld module is *ordinary* if and only if it is
         note supersingular; see :meth:`is_supersingular`.
 
         OUTPUT: a boolean
