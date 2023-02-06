@@ -170,7 +170,7 @@ class DrinfeldModuleAction(Action):
 
     def drinfeld_module(self):
         r"""
-        Return the Drinfeld module defining to the action.
+        Return the Drinfeld module defining the action.
 
         OUTPUT: a Drinfeld module
 
