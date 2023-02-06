@@ -117,7 +117,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         - ``function_ring`` -- a univariate polynomial ring whose base
           is a finite field
-        - ``gen`` -- the generator of the Drinfeld module; as a list of
+        - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
@@ -178,7 +178,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
     def frobenius_charpoly(self, var='T'):
         r"""
         Return the characteristic polynomial of the Frobenius
-        endomorphism, if the rank is two; raise a NotImplementedError
+        endomorphism if the rank is two. Raise a NotImplementedError
         otherwise.
 
         Let `\mathbb{F}_q` be the base ring of the function ring. The
@@ -191,7 +191,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         bivariate polynomial.
 
         Let `\chi = X^2 - A(T)X + B(T)` be the characteristic polynomial
-        of the Frobenius endomorphism, let `t^n` be the Ore polynomial
+        of the Frobenius endomorphism, and let `t^n` be the Ore polynomial
         that defines the Frobenius endomorphism of `\phi`; by
         definition, `n` is the degree over `\mathbb{F}_q` of the base
         codomain. We have `\chi(t^n)(\phi(T)) = t^{2n} - \phi_A t^n +
@@ -245,12 +245,12 @@ class FiniteDrinfeldModule(DrinfeldModule):
             See [MS2019]_, Section 4.
 
             See docstrings of methods :meth:`frobenius_norm` and
-            :meth:`frobenius_trace` for furthere details on the
+            :meth:`frobenius_trace` for further details on the
             computation of the norm and of the trace.
         """
         self._check_rank_two()
         A = self._function_ring  # Fq[T]
-        S = PolynomialRing(A, name=var)  # Fq[T][T]
+        S = PolynomialRing(A, name=var)  # Fq[T][X]
         # Does not work when Fq is not a prime field...
         # chi = self._gen.reduced_charpoly()
         # return -chi(A.gen(), S.gen())
@@ -259,7 +259,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
     def frobenius_norm(self):
         r"""
         Return Frobenius norm of the Drinfeld module, if the rank is
-        two; raise a NotImplementedError otherwise.
+        two, raise a NotImplementedError otherwise.
 
         Let `\mathbb{F}_q[T]` be the function ring, write `\chi = X^2 -
         A(T)X + B(T) \in \mathbb{F}_q[T][X]` for the characteristic
@@ -316,7 +316,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         two; raise a NotImplementedError otherwise.
 
         Let `\mathbb{F}_q[T]` be the function ring, write `\chi = T^2 -
-        A(X)T + B(X) \in \mathbb{F}_q[T][T]` for the characteristic
+        A(X)T + B(X) \in \mathbb{F}_q[T][X]` for the characteristic
         polynomial of the Frobenius endomorphism. The *Frobenius norm*
         is defined as the polynomial `B(T) \in \mathbb{F}_q[T]`.
 
@@ -379,7 +379,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Drinfeld module that is not ordinary.
 
         A rank two Drinfeld module is *ordinary* if and only if it is
-        note supersingular; see :meth:`is_supersingular`.
+        not supersingular; see :meth:`is_supersingular`.
 
         OUTPUT: a boolean
 
