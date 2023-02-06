@@ -42,35 +42,18 @@ jobs:
           mkdir -p ./docs
           cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
 
-      - name: Deploy to Netlify preview
-        id: preview-netlify
-        if: env.CAN_DEPLOY == 'true' && github.ref != 'refs/heads/develop'
-        uses: netlify/actions/cli@master
-        with:
-          args: deploy --dir=docs --alias="${NETLIFY_ALIAS}"
-        env:
-          # Set deployment url to commit hash to easily link from the trac.
-          # We could also set NETLIFY_ALIAS to the branch name.
-          # However, netlify currently doesn't support updates to a deployment with the same alias
-          # https://github.com/netlify/cli/issues/948
-          # https://github.com/netlify/cli/issues/1984
-          # Note that even if this feature is implemented, one would also need to first process the branch name
-          # to workaround the bug https://github.com/netlify/cli/issues/969.
-          NETLIFY_ALIAS: ${{ github.sha }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
       - name: Deploy to Netlify production
         id: deploy-netlify
-        if: env.CAN_DEPLOY == 'true' && github.ref == 'refs/heads/develop'
+        if: env.CAN_DEPLOY == 'true'
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=docs --prod
+          args: deploy --dir=docs --prod="${NETLIFY_PRODUCTION}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_PRODUCTION: ${{ github.ref == 'refs/heads/develop' }}
 
       - name: Report deployment url
         if: env.CAN_DEPLOY == 'true'
         run: |
-          echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.preview-netlify.outputs.NETLIFY_URL || steps.deploy-netlify.outputs.NETLIFY_URL }}"
+          echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
