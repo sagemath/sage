@@ -100,7 +100,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         sage: morphism.parent() == Hom(phi, psi)
         True
-        sage: phi.frobenius_endomorphism().parent() == End(phi)  # todo: not tested
+        sage: phi.frobenius_endomorphism().parent() == End(phi)
         True
         sage: End(phi)(0).parent() == End(phi)
         True
@@ -315,8 +315,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         ::
 
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
-            sage: frobenius_endomorphism.is_isogeny()  # todo: not tested
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
+            sage: frobenius_endomorphism.is_isogeny()
             True
         """
         return not self.is_zero()
@@ -351,8 +351,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         ::
 
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()  # todo: not tested
-            sage: frobenius_endomorphism.is_isomorphism()  # todo: not tested
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
+            sage: frobenius_endomorphism.is_isomorphism()
             False
         """
         return self.is_isogeny() and self._ore_polynomial.degree() == 0

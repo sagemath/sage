@@ -97,8 +97,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: Fq = GF(49)
         sage: FqX.<X> = Fq[]
         sage: K.<z> = Frac(FqX)
-        sage: psi = DrinfeldModule(FqX, [z, X+1])  # todo: not tested
-        sage: psi  # todo: not tested
+        sage: psi = DrinfeldModule(FqX, [z, X+1])
+        sage: psi
 
     .. NOTE::
 
@@ -155,9 +155,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     The above Drinfeld module is finite; it can also be infinite::
 
-        sage: L = Frac(FqX)  # todo: not tested
-        sage: psi = DrinfeldModule(FqX, [L(X), 1, X^3 + X + 1])  # todo: not tested
-        sage: psi  # todo: not tested
+        sage: L = Frac(FqX)
+        sage: psi = DrinfeldModule(FqX, [L(X), 1, X^3 + X + 1])
+        sage: psi
         Drinfeld module defined by X |--> (X^3 + X + 1)*t^2 + t + X over base Ring morphism:
           From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           To:   Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
@@ -167,7 +167,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: phi.is_finite()
         True
-        sage: psi.is_finite()  # todo: not tested
+        sage: psi.is_finite()
         False
 
     In those examples, we used a list of coefficients (``[z, 1, 1]``) to
@@ -199,7 +199,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: phi.category()
         Category of Drinfeld modules defined over Finite Field in z of size 3^12 over its base
-        sage: phi.category() is psi.category()  # todo: not tested
+        sage: phi.category() is psi.category()
         False
         sage: phi.category() is rho.category()
         True
@@ -279,7 +279,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: phi.rank()
         2
-        sage: phi.height()  # todo: not tested
+        sage: phi.height()
         1
 
     As well as the j-invariant if the rank is two::
@@ -433,7 +433,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     injective, see [Gos1998]_, cor. 4.5.2.)::
 
         sage: a = FqX.random_element()
-        sage: phi.invert(phi(a)) == a  # todo: not tested
+        sage: phi.invert(phi(a)) == a
         True
 
     TESTS:
@@ -539,7 +539,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: FqX.<X> = Fq[]
         sage: K = Frac(Fq)
         sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(1)])
-        sage: phi.base().codomain() is K  # todo: not tested
+        sage: phi.base().codomain() is K
         True
 
     ::
@@ -550,7 +550,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: kT.<T> = k[]
         sage: K = k.extension(T^3 + T + 1)
         sage: phi = DrinfeldModule(FqX, [Fq.gen(), K.gen()])
-        sage: phi.base().codomain() is K  # todo: not tested
+        sage: phi.base().codomain() is K
         True
 
     In particular, note that the field `K` may not be the smallest field
@@ -562,7 +562,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: kT.<T> = k[]
         sage: K = k.extension(T^3 + T + 1)
         sage: phi = DrinfeldModule(FqX, [K(k.gen()), 1])
-        sage: phi.base().codomain() is K  # todo: not tested
+        sage: phi.base().codomain() is K
         True
 
     ::
@@ -571,7 +571,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: FqX.<X> = Fq[]
         sage: K = Fq.extension(2)
         sage: phi = DrinfeldModule(FqX, [Fq.gen(), K(Fq.gen())])
-        sage: phi.base().codomain() is K  # todo: not tested
+        sage: phi.base().codomain() is K
         True
     """
 
@@ -606,8 +606,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ::
 
             sage: K = Frac(FqX)
-            sage: phi = DrinfeldModule(FqX, [K(X), 1])  # todo: not tested
-            sage: isinstance(psi, FiniteDrinfeldModule)  # todo: not tested
+            sage: phi = DrinfeldModule(FqX, [K(X), 1])
+            sage: isinstance(psi, FiniteDrinfeldModule)
             False
         """
 
@@ -1012,14 +1012,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi.height() == 1  # todo: not tested
+            sage: phi.height() == 1
             True
-            sage: phi.is_ordinary()  # todo: not tested
+            sage: phi.is_ordinary()
             True
 
             sage: L = Frac(FqX)
-            sage: phi = DrinfeldModule(FqX, [L(2), L(1)])  # todo: not tested
-            sage: phi.height()  # todo: not tested
+            sage: phi = DrinfeldModule(FqX, [L(2), L(1)])
+            sage: phi.height()
             Traceback (most recent call last):
             ...
             ValueError: height is defined for prime function field characteristic
@@ -1028,9 +1028,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: FqX.<X> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
-            sage: phi.height()  # todo: not tested
+            sage: phi.height()
             2
-            sage: phi.is_supersingular()  # todo: not tested
+            sage: phi.is_supersingular()
             True
 
         """
@@ -1065,22 +1065,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
             sage: a = FqX.random_element()
-            sage: phi.invert(phi(a)) == a  # todo: not tested
+            sage: phi.invert(phi(a)) == a
             True
-            sage: phi.invert(phi(X)) == X  # todo: not tested
+            sage: phi.invert(phi(X)) == X
             True
-            sage: phi.invert(phi(Fq.gen())) == Fq.gen()  # todo: not tested
+            sage: phi.invert(phi(Fq.gen())) == Fq.gen()
             True
 
         When the input is not in the image of the Drinfeld module, an
         exception is raised::
 
             sage: t = phi.ore_polring().gen()
-            sage: phi.invert(t + 1)  # todo: not tested
+            sage: phi.invert(t + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
-            sage: phi.invert(t^3 + t^2 + 1)  # todo: not tested
+            sage: phi.invert(t^3 + t^2 + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -1095,19 +1095,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: a = FqX.random_element()
             sage: cat = phi.category()
             sage: phi_r1 = cat.random_object(1)
-            sage: phi_r1.invert(phi_r1(a)) == a  # todo: not tested
+            sage: phi_r1.invert(phi_r1(a)) == a
             True
             sage: phi_r2 = cat.random_object(2)
-            sage: phi_r2.invert(phi_r2(a)) == a  # todo: not tested
+            sage: phi_r2.invert(phi_r2(a)) == a
             True
             sage: phi_r3 = cat.random_object(3)
-            sage: phi_r3.invert(phi_r3(a)) == a  # todo: not tested
+            sage: phi_r3.invert(phi_r3(a)) == a
             True
             sage: phi_r4 = cat.random_object(4)
-            sage: phi_r4.invert(phi_r4(a)) == a  # todo: not tested
+            sage: phi_r4.invert(phi_r4(a)) == a
             True
             sage: phi_r5 = cat.random_object(5)
-            sage: phi_r5.invert(phi_r5(a)) == a  # todo: not tested
+            sage: phi_r5.invert(phi_r5(a)) == a
             True
         """
         deg = ore_pol.degree()
@@ -1153,8 +1153,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_finite()
             True
             sage: L = Frac(FqX)
-            sage: psi = DrinfeldModule(FqX, [L(2), L(1)])  # todo: not tested
-            sage: psi.is_finite()  # todo: not tested
+            sage: psi = DrinfeldModule(FqX, [L(2), L(1)])
+            sage: psi.is_finite()
             False
         """
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
@@ -1327,7 +1327,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi.velu(phi(X)) is phi
             True
-            sage: phi.velu(t^6) is phi  # todo: not tested
+            sage: phi.velu(t^6) is phi
             True
 
         The following inputs do not define isogenies, and the method
