@@ -29,9 +29,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
     r"""
     This class represents a finite Drinfeld module.
 
-    A *finite Drinfeld module* is a Drinfeld module whose base codomain
-    is a finite field. In this case, the function field characteristic
-    is a prime ideal.
+    A *finite Drinfeld module* is a Drinfeld module whose base field is
+    finite. In this case, the function field characteristic is a prime
+    ideal.
 
     For general definitions and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
@@ -148,7 +148,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return the Frobenius endomorphism of the Drinfeld module as a
         morphism object.
 
-        Let `q` be the order of the base ring of the function ring. The
+        Let `q` be the order of the base field of the function ring. The
         *Frobenius endomorphism* is defined as the endomorphism whose
         defining Ore polynomial is `t^q`.
 
@@ -181,7 +181,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         endomorphism if the rank is two. Raise a NotImplementedError
         otherwise.
 
-        Let `\mathbb{F}_q` be the base ring of the function ring. The
+        Let `\mathbb{F}_q` be the base field of the function ring. The
         *characteristic polynomial `\chi` of the Frobenius endomorphism*
         is defined in [Gek1991]_. An important feature of this
         polynomial is that it is a monic univariate polynomial with
@@ -193,9 +193,10 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `\chi = X^2 - A(T)X + B(T)` be the characteristic polynomial
         of the Frobenius endomorphism, and let `t^n` be the Ore polynomial
         that defines the Frobenius endomorphism of `\phi`; by
-        definition, `n` is the degree over `\mathbb{F}_q` of the base
-        codomain. We have `\chi(t^n)(\phi(T)) = t^{2n} - \phi_A t^n +
-        \phi_B = 0`, with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
+        definition, `n` is the degree over of the base field over
+        `\mathbb{F}_q`. We have `\chi(t^n)(\phi(T)) = t^{2n} - \phi_A
+        t^n + \phi_B = 0`, with `\deg(A) \leq \frac{n}{2}` and `\deg(B)
+        = n`.
 
         Note that the *Frobenius trace* is defined as `A(T)` and the
         *Frobenius norm* is defined as `B(T)`.
@@ -232,7 +233,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         ::
 
-            sage: n = 2  # Degree over Fq of the base codomain
+            sage: n = 2  # Degree of the base field over Fq
             sage: trace.degree() <= n/2
             True
             sage: norm.degree() == n
@@ -266,8 +267,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
         polynomial of the Frobenius endomorphism. The *Frobenius norm*
         is defined as the polynomial `B(T) \in \mathbb{F}_q[T]`.
 
-        Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
-        Then the Frobenius norm has degree `n`.
+        Let `n` be the degree of the base field over `\mathbb{F}_q` Then the
+        Frobenius norm has degree `n`.
 
         OUTPUT: an element in the function ring
 
@@ -283,7 +284,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         ::
 
-            sage: n = 2  # Degree over Fq of the base codomain
+            sage: n = 2  # Degree of the base field over Fq
             sage: B.degree() == n
             True
 
@@ -298,7 +299,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             Gekeler, given in [MS2019]_, Section 4, Proposition 3.
         """
         self._check_rank_two()
-        L = self._base.codomain().over(self._Fq)
+        L = self._base.over(self._Fq)
         # Notations from Schost-Musleh:
         if self._frobenius_norm is None:
             n = L.degree_over(self._Fq)
@@ -362,7 +363,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         self._check_rank_two()
         # Notations from Schost-Musleh:
         if self._frobenius_trace is None:
-            n = self._base.codomain().over(self._Fq).degree_over(self._Fq)
+            n = self._base.over(self._Fq).degree_over(self._Fq)
             B = self.frobenius_norm()
             t = self.ore_polring().gen()
             self._frobenius_trace = self.invert(t**n + (self(B) // t**n))

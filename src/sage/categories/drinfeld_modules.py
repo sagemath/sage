@@ -36,11 +36,11 @@ class DrinfeldModules(Category_over_base_ring):
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
     morphism `\gamma: \mathbb{F}_q[T] \to K`. We say that the field `K`
-    is an `\mathbb{F}_q[T]`-field, so that the *base of the category* is
-    defined as the `\mathbb{F}_q[T]`-field *K*. The base uniquely
-    defines the category, and we also refer to it as the *base ring* or
-    *base field*. The *base morphism* is the morphism `\gamma:
-    \mathbb{F}_q[T] \to K`.
+    is an `\mathbb{F}_q[T]`-field, so that the *base field of the
+    category* is defined as the `\mathbb{F}_q[T]`-field *K*. The base
+    field uniquely defines the category, and we also refer to it as its
+    *base*. The *base morphism* is the morphism `\gamma: \mathbb{F}_q[T]
+    \to K`.
 
     .. NOTE::
 
@@ -57,7 +57,7 @@ class DrinfeldModules(Category_over_base_ring):
     coefficient of the category is the image of `T` under the base
     morphism.
 
-    INPUT: the base ring morphism
+    INPUT: the base field
 
     .. RUBRIC:: Construction
 
@@ -79,12 +79,9 @@ class DrinfeldModules(Category_over_base_ring):
 
     .. RUBRIC:: Properties of the category
 
-    The base ring is retrieved using the method :meth:`base` or
-    :meth:`base_ring`::
+    The base field is retrieved using the method :meth:`base`.
 
         sage: cat.base()
-        Finite Field in z of size 11^4 over its base
-        sage: cat.base_ring()
         Finite Field in z of size 11^4 over its base
 
     Equivalently, one can use :meth:`base_morphism` to retrieve the base
@@ -114,7 +111,7 @@ class DrinfeldModules(Category_over_base_ring):
         sage: cat.base_morphism()(cat.characteristic())
         0
 
-    The base ring, base morphism, function ring and Ore polynomial ring
+    The base field, base morphism, function ring and Ore polynomial ring
     are the same for the category and its objects::
 
         sage: cat.base() is phi.base()
@@ -212,7 +209,7 @@ class DrinfeldModules(Category_over_base_ring):
 
         INPUT:
 
-        - ``base_ring`` -- the base field, which is a ring extension
+        - ``base_field`` -- the base field, which is a ring extension
           over a base
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           variable

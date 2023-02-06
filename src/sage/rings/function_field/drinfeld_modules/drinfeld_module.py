@@ -45,17 +45,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
     morphism `\gamma: \mathbb{F}_q[T] \to K`. We say that the field `K`
-    is an `\mathbb{F}_q[T]`-field, so that the *base of the Drinfeld
-    module* is defined as the `\mathbb{F}_q[T]`-field *K*. The base
-    uniquely defines the category, and we also refer to it as the *base
-    ring* or *base field*. The *base morphism* is the morphism `\gamma:
+    is an `\mathbb{F}_q[T]`-field, so that the *base field of the
+    Drinfeld module* is defined as the `\mathbb{F}_q[T]`-field *K*. This
+    field is the `base` of the category of Drinfeld modules, which it
+    uniquely defines. The *base morphism* is the morphism `\gamma:
     \mathbb{F}_q[T] \to K`.
-
-    .. NOTE::
-
-        Equivalently, the base of the Drinfeld module could be defined as the
-        base morphism `\gamma: \mathbb{F}_q[T] \to K`.
-
 
     .. NOTE::
 
@@ -63,7 +57,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     The monic polynomial that generates the kernel of the base morphism
     is called the `\mathbb{F}_q[T]`-characteristic of the
-    `\mathbb{F}_q[T]`-field `K`. It cal also be referred to as the
+    `\mathbb{F}_q[T]`-field `K`. It can also be referred to as the
     function-field characteristic of `K`.
 
     Let `K\{\tau\}` be the ring of Ore polynomials with coefficients in
@@ -111,7 +105,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     constant coefficient of `\phi_T`. The
     `\mathbb{F}_q[T]`-characteristic of the `\mathbb{F}_q[T]`-field `K`
     can also be referred to as its function ring-characteristic.
-    Finally, `K` is just referred to as the codomain base.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1991]_.
@@ -128,8 +121,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     INPUT:
 
-    - ``function_ring`` -- a univariate polynomial ring whose base is a
-      finite field
+    - ``function_ring`` -- a univariate polynomial ring whose base field
+      is a finite field
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
     - ``name`` (default: ``'t'``) -- the name of the Ore polynomial ring
@@ -147,11 +140,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi
         Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
 
-    Note that the definition of the base morphism is implicit; it is
-    defined as the `\mathbb{F}_q`-algebra morphism defined from
-    `\mathbb{F}_q[T]` to the base ring, and the base ring is a ring
-    extension over the base morphism whose underlying ring is the
-    compositum of all the parents of the coefficients.
+    Note that the definition of the base field is implicit; it is
+    automatically defined as  the compositum of all the parents of the
+    coefficients.
 
     The above Drinfeld module is finite; it can also be infinite::
 
@@ -216,12 +207,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: cat.object([z, 0, 0, 1])
         Drinfeld module defined by T |--> t^3 + z over Finite Field in z of size 3^12 over its base
 
-    .. RUBRIC:: The base ring of a Drinfeld module
+    .. RUBRIC:: The base field of a Drinfeld module
 
-    The base ring of the Drinfeld module is retrieved using
-    :meth:`base_ring` or :meth:`base`::
+    The base field of the Drinfeld module is retrieved using :meth:`base`::
 
-        sage: phi.base_ring()
+        sage: phi.base()
         Finite Field in z of size 3^12 over its base
 
     The base morphism is retrieved using :meth:`base_morphism`::
@@ -232,11 +222,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           To:   Finite Field in z of size 3^12 over its base
           Defn: T |--> z
 
-    Note that the base ring is *not* the field `K`. Rather, it is a ring
-    extension (see :class:`sage.rings.ring_extension.RingExtension`)
-    whose underlying ring is `K` and whose base is the base morphism::
+    Note that the base field is *not* the field `K`. Rather, it is a ring
+    extension (see :class:`sage.rings.ring_extension.RingExtension`) whose
+    underlying ring is `K` and whose base is the base morphism::
 
-        sage: phi.base_ring() is K
+        sage: phi.base() is K
         False
 
     .. RUBRIC:: Getters
@@ -474,7 +464,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: DrinfeldModule(A, [z, QQ(1)])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce into base ring
+        ValueError: function ring base must coerce into base field
 
     ::
 
@@ -484,7 +474,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: DrinfeldModule(A, [1, QQ(1)])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce into base ring
+        ValueError: function ring base must coerce into base field
 
     The function ring must be an univariate polynomial ring whose
     base is a finite field::
@@ -529,7 +519,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi = DrinfeldModule(A, [1, 1])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce into base ring
+        ValueError: function ring base must coerce into base field
 
     ::
 
@@ -545,40 +535,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: A.<T> = Fq[]
         sage: K = Frac(Fq)
         sage: phi = DrinfeldModule(A, [Fq.gen(), K(1)])
-        sage: phi.base().codomain() is K
-        True
-
-    ::
-
-        sage: Fq = GF(25)
-        sage: A.<T> = Fq[]
-        sage: k = Frac(Fq)
-        sage: kS.<S> = k[]
-        sage: K = k.extension(S^3 + S + 1)
-        sage: phi = DrinfeldModule(A, [Fq.gen(), K.gen()])
-        sage: phi.base().codomain() is K
-        True
-
-    In particular, note that the field `K` may not be the smallest field
-    of definition of the coefficients::
-
-        sage: Fq = GF(25)
-        sage: A.<T> = Fq[]
-        sage: k = Frac(Fq)
-        sage: kS.<S> = k[]
-        sage: K = k.extension(S^3 + S + 1)
-        sage: phi = DrinfeldModule(A, [K(k.gen()), 1])
-        sage: phi.base().codomain() is K
-        True
-
-    ::
-
-        sage: Fq = GF(25)
-        sage: A.<T> = Fq[]
-        sage: K = Fq.extension(2)
-        sage: phi = DrinfeldModule(A, [Fq.gen(), K(Fq.gen())])
-        sage: phi.base().codomain() is K
-        True
+        sage: phi.base_morphism().codomain() is K
     """
 
     @staticmethod
@@ -638,36 +595,36 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
             # Base ring without morphism structure:
-            base_ring_noext = ore_polring.base()
+            base_field_noext = ore_polring.base()
             name = ore_polring.variable_name()
         # `gen` is a list of coefficients (function_ring = Fq[T]):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
             # Base ring without morphism structure:
-            base_ring_noext = Sequence(gen).universe()
+            base_field_noext = Sequence(gen).universe()
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
         # Constant coefficient must be nonzero:
         if gen[0].is_zero():
             raise ValueError('constant coefficient must be nonzero')
-        # The coefficients are in a base ring that has coercion from Fq:
-        if not (hasattr(base_ring_noext, 'has_coerce_map_from') and
-                base_ring_noext.has_coerce_map_from(function_ring.base_ring())):
-            raise ValueError('function ring base must coerce into base ring')
+        # The coefficients are in a base field that has coercion from Fq:
+        if not (hasattr(base_field_noext, 'has_coerce_map_from') and
+                base_field_noext.has_coerce_map_from(function_ring.base_field())):
+            raise ValueError('function ring base must coerce into base field')
 
         # Check LaTeX name
         if latexname is not None and type(latexname) is not str:
             raise ValueError('LaTeX name should be a string')
 
         # Build the category
-        if isinstance(base_ring_noext, RingExtension_generic):
-            base_ring = base_ring_noext
+        if isinstance(base_field_noext, RingExtension_generic):
+            base_field = base_field_noext
         else:
-            base_morphism = Hom(function_ring, base_ring_noext)(gen[0])
-            base_ring = base_ring_noext.over(base_morphism)
+            base_morphism = Hom(function_ring, base_field_noext)(gen[0])
+            base_field = base_field_noext.over(base_morphism)
 
-        category = DrinfeldModules(base_ring, name=name)
+        category = DrinfeldModules(base_field, name=name)
 
         # Check gen as Ore polynomial
         ore_polring = category.ore_polring()  # Sanity cast
@@ -676,7 +633,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('generator must have positive degree')
 
         # Instantiate the appropriate class
-        if base_ring.is_finite():
+        if base_field.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
             return FiniteDrinfeldModule(gen, category)
         return cls.__classcall__(cls, gen, category)
@@ -1202,7 +1159,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         Assume the rank is two. Write the generator `\phi_T = \omega +
         g\tau + \Delta\tau^2`. The j-invariant is defined by
-        `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base ring
+        `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base field
         of the function ring. In our case, this field is always finite.
 
         OUTPUT: an element in the base codomain
