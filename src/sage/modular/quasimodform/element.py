@@ -24,6 +24,7 @@ from sage.modular.modform.element import GradedModularFormElement
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 class QuasiModularFormsElement(ModuleElement):
@@ -542,6 +543,49 @@ class QuasiModularFormsElement(ModuleElement):
         poly_self = self.to_polynomial()
         pol_hom_comp = poly_self.homogeneous_components()
         return {k: QM.from_polynomial(pol) for k, pol in pol_hom_comp.items()}
+
+    def __getitem__(self, weight):
+        r"""
+        Return the homogeneous component of the given quasimodular form ring
+        element.
+
+        An alias of this method is ``homogeneous_component``.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: E2, E4, E6 = QM.gens()
+            sage: F = E2 + E4*E6 + E2^3*E6
+            sage: F[2]
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+            sage: F[10]
+            1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+            sage: F[12]
+            1 - 576*q + 21168*q^2 + 308736*q^3 - 15034608*q^4 - 39208320*q^5 + O(q^6)
+            sage: F[4]
+            0
+            sage: F.homogeneous_component(2)
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+
+        TESTS::
+
+            sage: F[x]
+            Traceback (most recent call last):
+            ...
+            KeyError: 'the weight must be an integer'
+            sage: F[-1]
+            Traceback (most recent call last):
+            ...
+            ValueError: the weight must be nonnegative
+        """
+        if not isinstance(weight, (int, Integer)):
+            raise KeyError("the weight must be an integer")
+        if weight < 0:
+            raise ValueError("the weight must be nonnegative")
+        return self.homogeneous_components().get(weight, self.parent().zero())
+
+    homogeneous_component = __getitem__  # alias
+
 
     def serre_derivative(self):
         r"""
