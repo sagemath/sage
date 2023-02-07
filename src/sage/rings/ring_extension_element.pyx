@@ -1463,6 +1463,11 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L(u).minpoly(base=F).degree() in [ 1, 3 ]
             True
         """
+        from sage.modules.free_module import FreeModule
+        if not isinstance(var, str):
+            raise ValueError("Variable name must be a string, but it is %s" % (type(var)))
+        from sage.modules.free_module import FreeModule
+        parent = self._parent
         if base is None:
             mod = parent.modulus()
             S = mod.parent().quotient(mod)
@@ -1470,12 +1475,6 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                 return S(list(self.vector())).minpoly()
             except NotImplementedError:
                 pass  # fall back to generic code below
-
-        from sage.modules.free_module import FreeModule
-        if not isinstance(var, str):
-            raise ValueError("Variable name must be a string, but it is %s" % (type(var)))
-        from sage.modules.free_module import FreeModule
-        parent = self._parent
 
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):

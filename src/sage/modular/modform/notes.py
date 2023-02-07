@@ -1,4 +1,4 @@
-"""
+r"""
 Design notes
 
 The implementation depends on the fact that we have dimension formulas

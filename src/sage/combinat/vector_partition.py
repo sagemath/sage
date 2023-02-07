@@ -333,4 +333,3 @@ class VectorPartitions(UniqueRepresentation, Parent):
                             new_parts = self._parts[i+1:]
                     for vecpar in VectorPartitions(new_vec, min=self._min, parts=new_parts, distinct=self._distinct, is_repeatable=self._is_repeatable):
                         yield self.element_class(self, [list(part)] + list(vecpar))
-
