@@ -1,8 +1,6 @@
 name: CI cygwin-standard
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
