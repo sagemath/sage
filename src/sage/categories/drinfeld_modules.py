@@ -423,8 +423,8 @@ class DrinfeldModules(Category_over_base_ring):
 
         ::
 
-            sage: psi = DrinfeldModule(A, [Frac(A).gen(), 1])  # todo: not tested
-            sage: psi.category().characteristic()  # todo: not tested
+            sage: psi = DrinfeldModule(A, [Frac(A).gen(), 1])
+            sage: psi.category().characteristic()
             0
         """
         if self._characteristic is None:
@@ -602,8 +602,8 @@ class DrinfeldModules(Category_over_base_ring):
 
             The base can be infinite::
 
-                sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])  # todo: not tested
-                sage: sigma.base()  # todo: not tested
+                sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])
+                sage: sigma.base()
                 Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2 over its base
             """
             return self.category().base()
@@ -629,8 +629,8 @@ class DrinfeldModules(Category_over_base_ring):
 
             The base field can be infinite::
 
-                sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])  # todo: not tested
-                sage: sigma.base_morphism()  # todo: not tested
+                sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])
+                sage: sigma.base_morphism()
             """
             return self.category().base_morphism()
 
@@ -666,16 +666,17 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: K.<z12> = Fq.extension(6)
                 sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
                 sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-                sage: phi.characteristic()  # todo: not tested
+                sage: phi.characteristic()
                 T^2 + (4*z2 + 2)*T + 2
                 sage: phi.base_morphism()(phi.characteristic())
                 0
 
             ::
 
-                sage: L = Frac(A)  # todo: not tested
-                sage: psi = DrinfeldModule(A, [L(1), 0, 0, L(1)])  # todo: not tested
-                sage: psi.characteristic()  # todo: not tested
+                sage: B.<Y> = Fq[]
+                sage: L = Frac(B)
+                sage: psi = DrinfeldModule(A, [L(1), 0, 0, L(1)])
+                sage: psi.characteristic()
                 0
             """
             return self.category().characteristic()
