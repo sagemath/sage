@@ -553,7 +553,8 @@ def factor_eisenstein(P, wK, e):
     v = 0
     while True:
         Q, R = P.quo_rem(F)
-        if R == 0: break
+        if R == 0:
+            break
         vn = min(R[i].valuation() + i/e for i in range(e))
         if vn > v:
             v = vn
@@ -610,7 +611,7 @@ def krasner_reduce(E):
         else:
             s = (valder - v) / (i - 1)
             if s > slope:
-                 slope = s
+                slope = s
     val = valder + slope
     coeffs = [ ]
     for i in range(d):
@@ -1221,7 +1222,8 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         t = walltime()
         k = Ku.residue_field()
         if f_rel == 1:
-            Lu = Ku; l = k
+            Lu = Ku
+            l = k
             fu = None
         else:
             # Lu
