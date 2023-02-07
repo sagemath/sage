@@ -1518,7 +1518,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         EXAMPLES::
 
             sage: k = GF(3^2); R.<x> = k[]
-            sage: l.<b> = GF(3^6).over(k)
+            sage: l.<b> = GF(3^6, base=k, modulus=x^3+x^2+2)
             sage: (b+1).minimal_polynomial()
             x^3 + (2*z2 + 2)*x^2 + 2*x + 1
         """
