@@ -6,8 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-09-06): Initial version
 - Trevor K. Karn (2022-07-27): Rewrite basis indexing using FrozenBitset
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2022 Travis Scrimshaw <tcscrims at gmail.com>
 #                 (C) 2022 Trevor Karn <karnx018 at umn.edu>
 #
@@ -15,9 +14,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -631,7 +629,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             return self.element_class(self, {FrozenBitset((i,)): R.one() for i in x})
 
         try:
-            return super(CliffordAlgebra, self)._element_constructor_(x)
+            return super()._element_constructor_(x)
         except TypeError:
             raise TypeError(f'do not know how to make {x=} an element of self')
 
@@ -1758,16 +1756,26 @@ class ExteriorAlgebra(CliffordAlgebra):
         EXAMPLES::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: E.interior_product_on_basis((0,), (0,))
+            sage: k = list(E.basis().keys())
+            sage: E.interior_product_on_basis(k[1], k[1])
             1
-            sage: E.interior_product_on_basis((0,2), (0,))
+            sage: E.interior_product_on_basis(k[5], k[1])
             z
-            sage: E.interior_product_on_basis((1,), (0,2))
+            sage: E.interior_product_on_basis(k[2], k[5])
             0
-            sage: E.interior_product_on_basis((0,2), (1,))
+            sage: E.interior_product_on_basis(k[5], k[2])
             0
-            sage: E.interior_product_on_basis((0,1,2), (0,2))
+            sage: E.interior_product_on_basis(k[7], k[5])
             -y
+
+        Check :trac:`34694`::
+
+            sage: E = ExteriorAlgebra(SR,'e',3)
+            sage: E.inject_variables()
+            Defining e0, e1, e2
+            sage: a = (e0*e1).interior_product(e0)
+            sage: a * e0
+            -e0*e1
         """
         sgn = True
         t = list(a)
@@ -1778,7 +1786,9 @@ class ExteriorAlgebra(CliffordAlgebra):
                 sgn = not sgn
             t.remove(i)
         R = self.base_ring()
-        return self.term(tuple(t), (R.one() if sgn else - R.one()))
+        if not t:  # catch empty sets
+            t = None
+        return self.term(FrozenBitset(t), (R.one() if sgn else - R.one()))
 
     def lifted_bilinear_form(self, M):
         r"""

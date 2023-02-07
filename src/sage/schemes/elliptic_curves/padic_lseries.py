@@ -61,7 +61,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import   ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.padics.factory import Qp
 from sage.rings.infinity import infinity

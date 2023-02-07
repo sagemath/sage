@@ -107,7 +107,7 @@ preparser, ``-ZZ(5)/7 == -ZZ(5)/ZZ(7)``.::
 The ``int`` method on :class:`SageInputBuilder` returns a SIE for an
 integer that is always represented in the simple way, without coercions.
 (So, depending on the preparser mode, it might read in as an
-:class:`~sage.rings.integer.Integer`, an ``int``, or a ``long``.)::
+:class:`~sage.rings.integer.Integer` or an ``int``.)::
 
     sage: test_qq_formatter(qq_sage_input_v2)
     [-ZZ(5)/7, -ZZ(5)/7, -5/7, -5/7, ZZ(3)/1, ZZ(3)/1, 3/1, 3/1]
@@ -463,8 +463,6 @@ class SageInputBuilder:
             return SIE_literal_stringrep(self, str(x))
 
         if isinstance(x, int):
-            # For longs that don't fit in an int, we just use the int
-            # code; it will get extended to long automatically.
             if self._preparse is True:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x) + 'r')
@@ -548,12 +546,12 @@ class SageInputBuilder:
         r"""
         Return a raw SIE from the integer ``n``
 
-        As it is raw, it may read back as a Sage Integer, a Python int or a
-        Python long, depending on its size and whether the preparser is enabled.
+        As it is raw, it may read back as a Sage Integer or a Python int,
+        depending on its size and whether the preparser is enabled.
 
         INPUT:
 
-        - ``n`` - a Sage Integer, a Python int or a Python long
+        - ``n`` -- a Sage Integer or a Python int
 
         EXAMPLES::
 

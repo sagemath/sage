@@ -61,6 +61,7 @@ def is_FreeModuleMorphism(x):
     """
     return isinstance(x, FreeModuleMorphism)
 
+
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
     def __init__(self, parent, A, side="left"):
         """
@@ -80,7 +81,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             <class 'sage.modules.free_module_morphism.FreeModuleMorphism'>
         """
         if not free_module_homspace.is_FreeModuleHomspace(parent):
-            raise TypeError("parent (=%s) must be a free module hom space"%parent)
+            raise TypeError("parent (=%s) must be a free module hom space" % parent)
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
         A = parent._matrix_space(side)(A)
@@ -162,15 +163,15 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         The representation displays which side of the vectors the matrix is acting::
 
-            sage: V = ZZ^3                                                                  
-            sage: h = V.hom([V.1, V.2, V.0]); h                                             
+            sage: V = ZZ^3
+            sage: h = V.hom([V.1, V.2, V.0]); h
             Free module morphism defined by the matrix
             [0 1 0]
             [0 0 1]
             [1 0 0]
             Domain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
-            sage: h2 = V.hom([V.1, V.2, V.0], side="right"); h2                             
+            sage: h2 = V.hom([V.1, V.2, V.0], side="right"); h2
             Free module morphism defined as left-multiplication by the matrix
             [0 0 1]
             [1 0 0]
@@ -551,18 +552,18 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             ], 1), (2, [
             (0, 1, 0, 17/7)
             ], 2)]
-        
+
         ::
 
-            sage: V = QQ^2                                                                  
-            sage: m = matrix(2, [1, 1, 0, 1])                                               
-            sage: V.hom(m, side="right").eigenvectors()                                                          
+            sage: V = QQ^2
+            sage: m = matrix(2, [1, 1, 0, 1])
+            sage: V.hom(m, side="right").eigenvectors()
             [(1,
               [
               (1, 0)
               ],
               2)]
-            sage: V.hom(m).eigenvectors()                                                   
+            sage: V.hom(m).eigenvectors()
             [(1,
               [
               (0, 1)
@@ -638,16 +639,16 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
               Basis matrix:
               [0 1 0]
               [0 0 1])]
-        
+
         ::
 
-            sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])                                     
-            sage: V.hom(m, side="right").eigenspaces()                                      
+            sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
+            sage: V.hom(m, side="right").eigenspaces()
             [(1,
               Vector space of degree 2 and dimension 1 over Rational Field
               Basis matrix:
               [1 0])]
-            sage: V.hom(m).eigenspaces()                                                    
+            sage: V.hom(m).eigenspaces()
             [(1,
               Vector space of degree 2 and dimension 1 over Rational Field
               Basis matrix:
@@ -796,7 +797,7 @@ class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
         sage: W, from_W, to_W = R.free_module(R, basis=4)
         Traceback (most recent call last):
         ...
-        ValueError: Basis element must be a unit
+        ValueError: basis element must be a unit
     """
     def __init__(self, parent, basis=None):
         """
@@ -852,7 +853,7 @@ class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
         sage: W, from_W, to_W = R.free_module(R, basis=x)
         Traceback (most recent call last):
         ...
-        ValueError: Basis element must be a unit
+        ValueError: basis element must be a unit
     """
     def __init__(self, parent, basis=None):
         """
@@ -878,5 +879,4 @@ class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
         """
         if self._basis is None:
             return x[0]
-        else:
-            return self.codomain()(x[0] / self._basis)
+        return self.codomain()(x[0] / self._basis)

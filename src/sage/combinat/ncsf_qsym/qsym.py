@@ -542,6 +542,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         sage: algebras.QSym(QQ) is QSym
         True
     """
+
     def __init__(self, R):
         """
         The Hopf algebra of quasi-symmetric functions.
@@ -720,6 +721,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: QSym.Bases()
             Category of bases of Quasisymmetric functions over the Rational Field
         """
+
         def super_categories(self):
             r"""
             Return the super categories of bases of the Quasi-symmetric functions.
@@ -1698,6 +1700,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: M(m([]))
             M[]
         """
+
         def __init__(self, QSym):
             """
             EXAMPLES::
@@ -2184,6 +2187,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: F(s(0))
             0
         """
+
         def __init__(self, QSym):
             """
             EXAMPLES::
@@ -2195,7 +2199,6 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, QSym.base_ring(), Compositions(),
                                              prefix='F', bracket=False,
                                              category=QSym.Bases())
-
 
         def _from_schur_on_basis(self, la):
             r"""
@@ -2666,6 +2669,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: E(s(0))
             0
         """
+
         def __init__(self, QSym):
             """
             EXAMPLES::
@@ -2832,6 +2836,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: QS(s[2,1,1])
             QS[1, 1, 2] + QS[1, 2, 1] + QS[2, 1, 1]
         """
+
         def __init__(self, QSym):
             r"""
             EXAMPLES::
@@ -3017,6 +3022,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: YQS(s[2,1,1])
             YQS[1, 1, 2] + YQS[1, 2, 1] + YQS[2, 1, 1]
         """
+
         def __init__(self, QSym):
             r"""
             Initialize ``self``.
@@ -3046,7 +3052,6 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                  codomain=self._M, category=QSym.Bases()).register_as_coercion()
             self._M.module_morphism(self._from_monomial_on_basis,
                                     codomain=self, category=QSym.Bases()).register_as_coercion()
-
 
         def _realization_name(self):
             r"""
@@ -3854,6 +3859,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: all(test_psi(k) for k in range(1,5))
             True
         """
+
         def __init__(self, QSym):
             r"""
             Initialize ``self``.
@@ -3996,6 +4002,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: all(test_phi(k) for k in range(1,5))
             True
         """
+
         def __init__(self, QSym):
             r"""
             Initialize ``self``.

@@ -329,19 +329,24 @@ class _Coordinates():
             sage: t1,t2,t3=T.to_cartesian(lambda a,b: 2*a+b)
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(t1)
-            ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
             sage: sage_getargspec(t2)
-            ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
             sage: sage_getargspec(t3)
-            ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
 
             sage: def g(a,b): return 2*a+b
             sage: t1,t2,t3=T.to_cartesian(g)
             sage: sage_getargspec(t1)
-            ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
             sage: t1,t2,t3=T.to_cartesian(2*a+b)
             sage: sage_getargspec(t1)
-            ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
 
         If we cannot guess the right parameter names, then the
         parameters are named `u` and `v`::
@@ -352,7 +357,8 @@ class _Coordinates():
             sage: T = _ArbitraryCoordinates((x + y, x - y, z), z,[x,y])
             sage: t1,t2,t3=T.to_cartesian(operator.add)
             sage: sage_getargspec(t1)
-            ArgSpec(args=['u', 'v'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['u', 'v'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
             sage: [h(1,2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
             sage: [h(u=1,v=2) for h in T.to_cartesian(operator.mul)]

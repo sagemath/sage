@@ -433,11 +433,11 @@ class Divisor_curve(Divisor_generic):
             -1
         """
         P = self.parent().scheme()(P)
-        if not(P in self.support()):
+        if P not in self.support():
             return self.base_ring().zero()
         t, i = search(self.support(), P)
         assert t
         try:
             return self._points[i][0]
         except AttributeError:
-                raise NotImplementedError
+            raise NotImplementedError

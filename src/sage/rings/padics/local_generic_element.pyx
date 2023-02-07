@@ -408,8 +408,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
         return ans
 
     def _latex_(self):
-        """
-        Returns a latex representation of self.
+        r"""
+        Return a latex representation of self.
 
         EXAMPLES::
 
@@ -737,10 +737,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         The square root or the list of all square roots of this element.
 
-        NOTE:
+        .. NOTE::
 
-        The square root is chosen (resp. the square roots are ordered) in
-        a deterministic way, which is compatible with change of precision.
+            The square root is chosen (resp. the square roots are ordered) in
+            a deterministic way, which is compatible with change of precision.
 
         EXAMPLES::
 

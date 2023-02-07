@@ -66,12 +66,14 @@ import operator
 import sage.arith.all
 import sage.rings.finite_rings.finite_field_constructor as finite_field
 
-import sage.interfaces.gap
 from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
+
+
+from sage.interfaces.abc import GapElement
 
 cdef object is_IntegerMod
 cdef object Integer
@@ -378,7 +380,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer, long)) or is_IntegerMod(e):
+        elif isinstance(e, (int, Integer)) or is_IntegerMod(e):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)
@@ -431,9 +433,12 @@ cdef class Cache_givaro(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif sage.interfaces.gap.is_GapElement(e):
-            from sage.interfaces.gap import gfq_gap_to_sage
-            return gfq_gap_to_sage(e, self.parent)
+        elif isinstance(e, sage.libs.gap.element.GapElement_FiniteField):
+            return e.sage(ring=self.parent)
+
+        elif isinstance(e, GapElement):
+            from sage.libs.gap.libgap import libgap
+            return libgap(e).sage(ring=self.parent)
 
         elif isinstance(e, list):
             if len(e) > self.exponent():
@@ -643,7 +648,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache._element_int_repr(a^20)
             '74'
         """
-        return str(e.integer_representation())
+        return str(e._integer_representation())
 
     def _element_poly_repr(self, FiniteField_givaroElement e, varname=None):
         """
@@ -1350,7 +1355,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             raise TypeError("Cannot coerce element to an integer.")
         return self_int
 
-    def integer_representation(FiniteField_givaroElement self):
+    def _integer_representation(FiniteField_givaroElement self):
         r"""
         Return the integer representation of ``self``.  When ``self`` is in the
         prime subfield, the integer returned is equal to ``self``.
@@ -1362,15 +1367,19 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         OUTPUT: A Python ``int``.
 
+        .. SEEALSO::
+
+            :meth:`sage.rings.finite_rings.element_base.FinitePolyExtElement.to_integer`
+
         EXAMPLES::
 
             sage: k.<b> = GF(5^2); k
             Finite Field in b of size 5^2
-            sage: k(4).integer_representation()
+            sage: k(4)._integer_representation()
             4
-            sage: b.integer_representation()
+            sage: b._integer_representation()
             5
-            sage: type(b.integer_representation())
+            sage: type(b._integer_representation())
             <... 'int'>
         """
         return self._cache.log_to_int(self.element)
@@ -1637,6 +1646,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             'Z(25)^3'
             sage: S(gap('Z(25)^3'))
             4*b + 3
+            sage: S(libgap.Z(25)^3)
+            4*b + 3
         """
         cdef Cache_givaro cache = self._cache
         if self == 0:
@@ -1669,7 +1680,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: hash(a)
             5
         """
-        return hash(self.integer_representation())
+        return hash(self._integer_representation())
 
     def _vector_(FiniteField_givaroElement self, reverse=False):
         """

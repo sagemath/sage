@@ -919,7 +919,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             L[c3] = Y*T1*point[c3]
             bezout = P(self.defining_polynomial()(L) / T0)
             t = [bezout([x,y,0,-1]),bezout([x,y,1,0])]
-            par = (tuple([Q(p([x,y,t[0],t[1]])/y) for  p in L]),
+            par = (tuple([Q(p([x,y,t[0],t[1]])/y) for p in L]),
                    tuple([gens[m]*point[c3]-gens[c3]*point[m]
                        for m in [c2,c1]]))
             if self._parametrization is None:

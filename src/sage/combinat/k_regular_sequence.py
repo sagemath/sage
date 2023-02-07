@@ -85,7 +85,7 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #                     2021 Gabriel F. Lipnik <dev@gabriellipnik.at>
 #
@@ -93,9 +93,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .recognizable_series import RecognizableSeries
 from .recognizable_series import RecognizableSeriesSpace
 from .recognizable_series import minimize_result
@@ -477,7 +476,7 @@ class kRegularSequence(RecognizableSeries):
                 #   = v(kan+ar+c) [kan+ar+c >= 0]
                 #   = v(k(an+d)+f) [an+d >= 0]
                 #   = mu[f] v(an+d) [an+d >= 0].
-                d, f = (a*r + c).quo_rem(k)
+                d, f = (a * r + c).quo_rem(k)
                 if d not in kernel:
                     kernel.append(d)
                 rule[r, c] = (d, f)
@@ -492,7 +491,7 @@ class kRegularSequence(RecognizableSeries):
             {r: Matrix.block([matrix_row(r, c) for c in kernel])
              for r in A},
             vector(chain.from_iterable(
-                b.get(c, 0)*self.left
+                b.get(c, 0) * self.left
                 for c in kernel)),
             vector(chain.from_iterable(
                 (self.__getitem__(c, multiply_left=False) if c >= 0 else zero_R)
@@ -760,9 +759,9 @@ class kRegularSequence(RecognizableSeries):
 
         result = P.element_class(
             P,
-            {r: Matrix.block([[B[0], -B[r+1]], [Z, self.mu[r]]]) for r in A},
+            {r: Matrix.block([[B[0], -B[r + 1]], [Z, self.mu[r]]]) for r in A},
             vector(chain(self.left,
-                         (dim*(0,) if include_n else -self.left))),
+                         (dim * (0,) if include_n else -self.left))),
             vector(chain(self.right, self.right)))
 
         return result
@@ -1276,6 +1275,7 @@ class RecurrenceParser():
     This is used by :meth:`kRegularSequenceSpace.from_recurrence`
     to construct a :class:`kRegularSequence`.
     """
+
     def __init__(self, k, coefficient_ring):
         r"""
         See :class:`RecurrenceParser`.
@@ -1776,7 +1776,7 @@ class RecurrenceParser():
             if left_side.operator() != function:
                 raise ValueError("Term %s in the equation %s is not an evaluation of %s."
                                  % (left_side, eq, function))
-            if  len(left_side.operands()) != 1:
+            if len(left_side.operands()) != 1:
                 raise ValueError("Term %s in the equation %s does not have "
                                  "one argument."
                                  % (left_side, eq))
@@ -1788,7 +1788,7 @@ class RecurrenceParser():
                                  "integer coefficients."
                                  % (left_side, eq,
                                     left_side.operands()[0], var)) from None
-            if polynomial_left.degree()  > 1:
+            if polynomial_left.degree() > 1:
                 raise ValueError("Term %s in the equation %s: "
                                  "%s is not a polynomial in %s of degree smaller than 2."
                                  % (left_side, eq, polynomial_left, var))
@@ -1872,7 +1872,7 @@ class RecurrenceParser():
 
         if not M:
             raise ValueError("No recurrence relations are given.")
-        elif M and m is None: # for the zero sequence
+        elif M and m is None:  # for the zero sequence
             m = M - 1
 
         missing_remainders = [rem for rem in srange(k**M)
@@ -2189,7 +2189,7 @@ class RecurrenceParser():
         keys_coeffs = coeffs.keys()
         indices_right = [key[1] for key in keys_coeffs if coeffs[key]]
 
-        if not indices_right: # the sequence is the zero sequence
+        if not indices_right:  # the sequence is the zero sequence
             l = 0
             u = 0
         else:
@@ -2239,7 +2239,7 @@ class RecurrenceParser():
                              % (values_not_in_ring, coefficient_ring))
 
         last_value_needed = max(
-            k**(M-1) - k**m + uu + (n1 > 0)*k**(M-1)*(k*(n1 - 1) + k - 1), # for matrix W
+            k**(M-1) - k**m + uu + (n1 > 0)*k**(M-1)*(k*(n1 - 1) + k - 1),  # for matrix W
             k**m*offset + u,
             max(keys_initial))
         initial_values = self.values(
@@ -2872,7 +2872,7 @@ class RecurrenceParser():
             if j < M - 1:
                 return int(kk == ind[(j + 1, k**j*rem + d)])
             else:
-                rem_d = k**(M-1)*rem + (d%k**M)
+                rem_d = k**(M-1)*rem + (d % k**M)
                 dd = d // k**M
                 if rem_d < k**M:
                     lambd = l - ind[(m, (k**m)*dd + l)]
@@ -2892,7 +2892,7 @@ class RecurrenceParser():
                 j, d = ind[row]
                 if j != M - 1:
                     return (None, None)
-                rem_d = k**(M-1)*rem + (d%k**M)
+                rem_d = k**(M-1)*rem + (d % k**M)
                 dd = d // k**M
                 if rem_d < k**M:
                     return (rem_d, dd)

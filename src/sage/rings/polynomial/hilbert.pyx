@@ -601,4 +601,3 @@ def hilbert_poincare_series(I, grading=None):
         if HP.leading_coefficient() >= 0:
             return HP / PR.prod([(1-t**d) for d in grading])
         return (-HP) / (-PR.prod([(1-t**d) for d in grading]))
-

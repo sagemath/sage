@@ -1450,4 +1450,3 @@ cpdef print_cache(InequalityCollection inequality_collection):
     print('Cached next-to-inner loop: ' +
           str(ieq.coeff) + ' * x_0 + ' +
           str(ieq.coeff_next) + ' * x_1 + ' + str(ieq.cache_next) + ' >= 0')
-

@@ -97,7 +97,7 @@ def LinearTensorConstraintsParent(linear_functions_parent):
         sage: LF = LinearFunctionsParent(QQ)
         sage: LT = LinearTensorParent(QQ^2, LF)
         sage: LinearTensorConstraintsParent(LT)
-        Linear constraints in the tensor product of Vector space of dimension 2 
+        Linear constraints in the tensor product of Vector space of dimension 2
         over Rational Field and Linear functions over Rational Field
     """
     return LinearTensorConstraintsParent_class(linear_functions_parent)
@@ -215,7 +215,7 @@ class LinearTensorConstraint(Element):
 
             sage: mip.<x> = MixedIntegerLinearProgram()
             sage: (x[0] * vector([1,2]) == 0).lhs()
-            (1.0, 2.0)*x_0            
+            (1.0, 2.0)*x_0
         """
         return self._lhs
 
@@ -250,7 +250,7 @@ class LinearTensorConstraint(Element):
             sage: mip.<x> = MixedIntegerLinearProgram()
             sage: ascii_art(x[0] * vector([1,2]) >= 0)
             (0.0, 0.0) <= (1.0, 2.0)*x_0
-            sage: ascii_art(x[0] * matrix([[1,2],[3,4]]) >= 0)            
+            sage: ascii_art(x[0] * matrix([[1,2],[3,4]]) >= 0)
             [0 0] <= [x_0   2*x_0]
             [0 0]    [3*x_0 4*x_0]
         """
@@ -313,12 +313,12 @@ class LinearTensorConstraintsParent_class(Parent):
 
         sage: p = MixedIntegerLinearProgram()
         sage: LT = p.linear_functions_parent().tensor(RDF^2);  LT
-        Tensor product of Vector space of dimension 2 over Real Double 
+        Tensor product of Vector space of dimension 2 over Real Double
         Field and Linear functions over Real Double Field
         sage: from sage.numerical.linear_tensor_constraints import LinearTensorConstraintsParent
         sage: LTC = LinearTensorConstraintsParent(LT);  LTC
-        Linear constraints in the tensor product of Vector space of 
-        dimension 2 over Real Double Field and Linear functions over 
+        Linear constraints in the tensor product of Vector space of
+        dimension 2 over Real Double Field and Linear functions over
         Real Double Field
         sage: type(LTC)
         <class 'sage.numerical.linear_tensor_constraints.LinearTensorConstraintsParent_class'>
@@ -330,10 +330,10 @@ class LinearTensorConstraintsParent_class(Parent):
         The Python constructor
 
         INPUT:
-        
+
         - ``linear_tensor_parent`` -- instance of
           :class:`LinearTensorParent_class`.
-        
+
         TESTS::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
@@ -342,7 +342,7 @@ class LinearTensorConstraintsParent_class(Parent):
             sage: LT = LinearTensorParent(RDF^2, LF)
             sage: from sage.numerical.linear_tensor_constraints import LinearTensorConstraintsParent
             sage: LinearTensorConstraintsParent(LT)
-            Linear constraints in the tensor product of Vector space of 
+            Linear constraints in the tensor product of Vector space of
             dimension 2 over Real Double Field and Linear functions over
             Real Double Field
         """
@@ -399,7 +399,7 @@ class LinearTensorConstraintsParent_class(Parent):
             sage: ieq = (x[0] * vector([1,2]) >= 0)
             sage: ieq.parent()    # indirect doctests
             Linear constraints in the tensor product of Vector space of
-            dimension 2 over Real Double Field and Linear functions over 
+            dimension 2 over Real Double Field and Linear functions over
             Real Double Field
         """
         return 'Linear constraints in the tensor product of {0} and {1}'.format(

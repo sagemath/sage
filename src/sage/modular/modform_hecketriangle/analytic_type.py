@@ -1,5 +1,5 @@
 r"""
-Analytic types of modular forms.
+Analytic types of modular forms
 
 Properties of modular forms and their generalizations are assembled
 into one partially ordered set.  See :class:`AnalyticType` for a

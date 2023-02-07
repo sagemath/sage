@@ -843,6 +843,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
     """
     Class for elements of ``crystals.ShiftedPrimedTableau``.
     """
+
     def _to_matrix(self):
         """
         Return a 2-dimensional array representation of a shifted tableau.
@@ -1364,6 +1365,7 @@ class PrimedEntry(SageObject):
       possibly ending in ``p`` or ``'``
     - ``double`` -- the doubled value
     """
+
     def __init__(self, entry=None, double=None):
         """
         Normalize the entry.
@@ -1996,6 +1998,7 @@ class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):
     """
     The class of all shifted primed tableaux.
     """
+
     def __init__(self, skew=None, primed_diagonal=False):
         """
         Initialize the class of all shifted tableaux.
@@ -2380,6 +2383,7 @@ class ShiftedPrimedTableaux_weight(ShiftedPrimedTableaux):
         sage: T.cardinality()
         16
     """
+
     def __init__(self, weight, skew=None, primed_diagonal=False):
         """
         Initialize the class of shifted primed tableaux of a given weight.
@@ -2498,6 +2502,7 @@ class ShiftedPrimedTableaux_weight_shape(ShiftedPrimedTableaux):
         sage: T.cardinality()
         32
     """
+
     def __init__(self, weight, shape, skew=None, primed_diagonal=False):
         """
         Initialize the class of shifted primed tableaux of the given weight

@@ -610,4 +610,3 @@ def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     cdef ExpansionIter expansion = ExpansionIter(dummy, n.exact_log(p) + 2, mode)
     mpz_set(expansion.curvalue, n.value)
     return trim_zeros(list(expansion))
-

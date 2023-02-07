@@ -221,4 +221,3 @@ def multi_derivative(F, args):
     for arg in derivative_parse(args):
         F = F._derivative(arg)
     return F
-

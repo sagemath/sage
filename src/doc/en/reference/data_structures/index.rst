@@ -2,7 +2,7 @@ Data Structures
 ===============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/misc/binary_tree
    sage/data_structures/bitset

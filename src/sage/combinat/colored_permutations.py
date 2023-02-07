@@ -28,6 +28,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
     """
     A colored permutation.
     """
+
     def __init__(self, parent, colors, perm):
         """
         Initialize ``self``.
@@ -400,6 +401,8 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
 # TODO: Parts of this should be put in the category of complex
 # reflection groups
+
+
 class ColoredPermutations(Parent, UniqueRepresentation):
     r"""
     The group of `m`-colored permutations on `\{1, 2, \ldots, n\}`.
@@ -454,6 +457,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
     - :wikipedia:`Generalized_symmetric_group`
     - :wikipedia:`Complex_reflection_group`
     """
+
     def __init__(self, m, n):
         """
         Initialize ``self``.
@@ -1278,6 +1282,7 @@ class SignedPermutations(ColoredPermutations):
 
     - :wikipedia:`Hyperoctahedral_group`
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.

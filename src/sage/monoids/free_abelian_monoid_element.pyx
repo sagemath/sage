@@ -388,4 +388,3 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
         """
         cdef Py_ssize_t i
         return [_Integer_from_mpz(self._element_vector[i]) for i in range(self._n)]
-

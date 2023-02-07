@@ -44,7 +44,6 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         else:
             return "{" + s[1:-1] + "}"
 
-
     def canonical_label(self):
         """
         EXAMPLES::
@@ -58,7 +57,6 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         P = self.parent()
         rng = list(range(1, P._n + 1))
         return CharacteristicSpeciesStructure(P, self._labels, rng)
-
 
     def transport(self, perm):
         """
@@ -230,8 +228,10 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return var_mapping['z']**(self._n)
 
+
 #Backward compatibility
 CharacteristicSpecies_class = CharacteristicSpecies
+
 
 class EmptySetSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
@@ -272,8 +272,10 @@ class EmptySetSpecies(CharacteristicSpecies):
         self._name = "Empty set species"
         self._state_info = []
 
+
 #Backward compatibility
 EmptySetSpecies_class = EmptySetSpecies._cached_constructor = EmptySetSpecies
+
 
 class SingletonSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
@@ -313,6 +315,7 @@ class SingletonSpecies(CharacteristicSpecies):
         CharacteristicSpecies_class.__init__(self, 1, min=min, max=max, weight=weight)
         self._name = "Singleton species"
         self._state_info = []
+
 
 #Backward compatibility
 SingletonSpecies_class = SingletonSpecies

@@ -14,18 +14,17 @@ AUTHORS:
 
 - Sebastian Oehms May 2020: initial version
 """
-
-##############################################################################
+# ###########################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 from enum import Enum
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.verbose import verbose
 from sage.rings.integer import Integer
@@ -136,10 +135,10 @@ class RepresentationType(Enum):
             raise ValueError("nstrands must be between 1 and 4")
         return self.value['num_rep'][nstrands - 1]
 
-    RegularLeft = {'split': False, 'regular': True,   'data': sc.regular_left,  'num_rep': [1, 1, 1, 1]}
-    RegularRight = {'split': False, 'regular': True,   'data': sc.regular_right, 'num_rep': [1, 1, 1, 1]}
-    SplitIrredMarin = {'split': True,  'regular': False,  'data': sc.split_irred,   'num_rep': [1, 3, 7, 24]}
-    SplitIrredChevie = {'split': True,  'regular': False,  'data': None,             'num_rep': [1, 3, 7, 24, 30]}
+    RegularLeft = {'split': False, 'regular': True, 'data': sc.regular_left, 'num_rep': [1, 1, 1, 1]}
+    RegularRight = {'split': False, 'regular': True, 'data': sc.regular_right, 'num_rep': [1, 1, 1, 1]}
+    SplitIrredMarin = {'split': True, 'regular': False, 'data': sc.split_irred, 'num_rep': [1, 3, 7, 24]}
+    SplitIrredChevie = {'split': True, 'regular': False, 'data': None, 'num_rep': [1, 3, 7, 24, 30]}
 
 
 # ---------------------------------------------
@@ -275,42 +274,42 @@ class AbsIrreducibeRep(Enum):
     # -------------------------------------------------------------------------------------------------
     # absolutely irreducible representations corresponding to braids on 2 strands
     # -------------------------------------------------------------------------------------------------
-    W2_100 = {'alt_name': 'Sa',  'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
-    W2_001 = {'alt_name': 'Sc',  'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
-    W2_010 = {'alt_name': 'Sb',  'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
+    W2_100 = {'alt_name': 'Sa', 'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
+    W2_001 = {'alt_name': 'Sc', 'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
+    W2_010 = {'alt_name': 'Sb', 'dim': 1, 'ngens': 1, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
 
     # -------------------------------------------------------------------------------------------------
     # absolutely irreducible representations corresponding to braids on 3 strands
     # -------------------------------------------------------------------------------------------------
-    W3_100 = {'alt_name': 'Sa',   'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
-    W3_001 = {'alt_name': 'Sc',   'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
-    W3_010 = {'alt_name': 'Sb',   'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
+    W3_100 = {'alt_name': 'Sa', 'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
+    W3_001 = {'alt_name': 'Sc', 'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
+    W3_010 = {'alt_name': 'Sb', 'dim': 1, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
 
-    W3_011 = {'alt_name': 'Tbc',  'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 3, 'intern_ind': 3}
-    W3_110 = {'alt_name': 'Tab',  'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 4, 'intern_ind': 4}
-    W3_101 = {'alt_name': 'Tac',  'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 5, 'intern_ind': 5}
+    W3_011 = {'alt_name': 'Tbc', 'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 3, 'intern_ind': 3}
+    W3_110 = {'alt_name': 'Tab', 'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 4, 'intern_ind': 4}
+    W3_101 = {'alt_name': 'Tac', 'dim': 2, 'ngens': 2, 'len_orbit': 3, 'gap_ind': 5, 'intern_ind': 5}
 
-    W3_111 = {'alt_name': 'V',    'dim': 3, 'ngens': 2, 'len_orbit': 1, 'gap_ind': 6, 'intern_ind': 6}
+    W3_111 = {'alt_name': 'V', 'dim': 3, 'ngens': 2, 'len_orbit': 1, 'gap_ind': 6, 'intern_ind': 6}
 
     # -------------------------------------------------------------------------------------------------
     # absolutely irreducible representations corresponding to braids on 4 strands
     # -------------------------------------------------------------------------------------------------
-    W4_100 = {'alt_name': 'Sa',   'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
-    W4_001 = {'alt_name': 'Sc',   'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
-    W4_010 = {'alt_name': 'Sb',   'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
+    W4_100 = {'alt_name': 'Sa', 'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 0, 'intern_ind': 0}
+    W4_001 = {'alt_name': 'Sc', 'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 1, 'intern_ind': 1}
+    W4_010 = {'alt_name': 'Sb', 'dim': 1, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 2, 'intern_ind': 2}
 
-    W4_011 = {'alt_name': 'Tbc',  'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 3, 'intern_ind': 3}
-    W4_110 = {'alt_name': 'Tab',  'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 4, 'intern_ind': 4}
-    W4_101 = {'alt_name': 'Tac',  'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 5, 'intern_ind': 5}
+    W4_011 = {'alt_name': 'Tbc', 'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 3, 'intern_ind': 3}
+    W4_110 = {'alt_name': 'Tab', 'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 4, 'intern_ind': 4}
+    W4_101 = {'alt_name': 'Tac', 'dim': 2, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 5, 'intern_ind': 5}
 
-    W4_111 = {'alt_name': 'V',    'dim': 3, 'ngens': 3, 'len_orbit': 1, 'gap_ind': 6, 'intern_ind': 6}
+    W4_111 = {'alt_name': 'V', 'dim': 3, 'ngens': 3, 'len_orbit': 1, 'gap_ind': 6, 'intern_ind': 6}
 
-    W4_120 = {'alt_name': 'Uba',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 7, 'intern_ind': 7}
-    W4_201 = {'alt_name': 'Uac',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 8, 'intern_ind': 8}
-    W4_012 = {'alt_name': 'Ucb',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 9, 'intern_ind': 9}
-    W4_102 = {'alt_name': 'Uca',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 10, 'intern_ind': 10}
-    W4_210 = {'alt_name': 'Uab',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 11, 'intern_ind': 11}
-    W4_021 = {'alt_name': 'Ubc',  'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 12, 'intern_ind': 12}
+    W4_120 = {'alt_name': 'Uba', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 7, 'intern_ind': 7}
+    W4_201 = {'alt_name': 'Uac', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 8, 'intern_ind': 8}
+    W4_012 = {'alt_name': 'Ucb', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 9, 'intern_ind': 9}
+    W4_102 = {'alt_name': 'Uca', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 10, 'intern_ind': 10}
+    W4_210 = {'alt_name': 'Uab', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 11, 'intern_ind': 11}
+    W4_021 = {'alt_name': 'Ubc', 'dim': 3, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 12, 'intern_ind': 12}
 
     W4_213 = {'alt_name': 'Vcab', 'dim': 6, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 13, 'intern_ind': 13}
     W4_132 = {'alt_name': 'Vbca', 'dim': 6, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 14, 'intern_ind': 14}
@@ -319,11 +318,11 @@ class AbsIrreducibeRep(Enum):
     W4_123 = {'alt_name': 'Vcba', 'dim': 6, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 17, 'intern_ind': 17}
     W4_312 = {'alt_name': 'Vacb', 'dim': 6, 'ngens': 3, 'len_orbit': 6, 'gap_ind': 18, 'intern_ind': 18}
 
-    W4_422 = {'alt_name': 'Wa',   'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 19, 'intern_ind': 19}
-    W4_224 = {'alt_name': 'Wc',   'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 20, 'intern_ind': 20}
-    W4_242 = {'alt_name': 'Wb',   'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 21, 'intern_ind': 21}
+    W4_422 = {'alt_name': 'Wa', 'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 19, 'intern_ind': 19}
+    W4_224 = {'alt_name': 'Wc', 'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 20, 'intern_ind': 20}
+    W4_242 = {'alt_name': 'Wb', 'dim': 8, 'ngens': 3, 'len_orbit': 3, 'gap_ind': 21, 'intern_ind': 21}
 
-    W4_333 = {'alt_name': 'X',    'dim': 9, 'ngens': 3, 'len_orbit': 2, 'gap_ind': 22, 'intern_ind': 22}
+    W4_333 = {'alt_name': 'X', 'dim': 9, 'ngens': 3, 'len_orbit': 2, 'gap_ind': 22, 'intern_ind': 22}
     W4_333bar = {'alt_name': 'Xbar', 'dim': 9, 'ngens': 3, 'len_orbit': 2, 'gap_ind': 23, 'intern_ind': 23}
 
     # -------------------------------------------------------------------------------------------------
@@ -340,7 +339,7 @@ class AbsIrreducibeRep(Enum):
     W5_103 = {'alt_name': None, 'dim': 4, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 7, 'intern_ind': 7}
     W5_310 = {'alt_name': None, 'dim': 4, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 8, 'intern_ind': 8}
 
-    W5_203 = {'alt_name': None, 'dim': 5, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 9,  'intern_ind': 9}
+    W5_203 = {'alt_name': None, 'dim': 5, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 9, 'intern_ind': 9}
     W5_032 = {'alt_name': None, 'dim': 5, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 10, 'intern_ind': 10}
     W5_320 = {'alt_name': None, 'dim': 5, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 11, 'intern_ind': 11}
     W5_230 = {'alt_name': None, 'dim': 5, 'ngens': 4, 'len_orbit': 6, 'gap_ind': 12, 'intern_ind': 12}
@@ -513,7 +512,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         elif isinstance(item, (Integer, int)):
             return self._get_block(item)
 
-        return super(CubicHeckeMatrixRep, self).__getitem__(item)
+        return super().__getitem__(item)
 
     @cached_method
     def block_diagonal_list(self):
@@ -799,12 +798,12 @@ class CubicHeckeMatrixSpace(MatrixSpace):
         """
         from sage.algebras.hecke_algebras.cubic_hecke_algebra import CubicHeckeAlgebra
         if entries is None:
-            return super(CubicHeckeMatrixSpace, self).__call__(entries=entries, coerce=coerce, copy=copy)
+            return super().__call__(entries=entries, coerce=coerce, copy=copy)
         if not hasattr(entries, 'parent'):
-            return super(CubicHeckeMatrixSpace, self).__call__(entries=entries, coerce=coerce, copy=copy)
+            return super().__call__(entries=entries, coerce=coerce, copy=copy)
         ele_parent = entries.parent()
         if not isinstance(ele_parent, (CubicHeckeAlgebra, MatrixSpace)):
-            return super(CubicHeckeMatrixSpace, self).__call__(entries=entries, coerce=coerce, copy=copy)
+            return super().__call__(entries=entries, coerce=coerce, copy=copy)
         return self._element_constructor_(entries)
 
     @cached_method
@@ -890,12 +889,12 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             Return the inverse matrix of generators.
             """
             cfs = ch_algebra.cubic_equation(as_coefficients=True, generic=True)
-            fac = - 1/cfs[0]
-            cf0, cf1, cf2, cf3 = [original_base_ring(cf*fac) for cf in cfs]
+            fac = - 1 / cfs[0]
+            cf0, cf1, cf2, cf3 = [original_base_ring(cf * fac) for cf in cfs]
 
-            matri = cf1*matr.parent().one()
-            matri += cf2*matr
-            matri += cf3*matr**2
+            matri = cf1 * matr.parent().one()
+            matri += cf2 * matr
+            matri += cf3 * matr**2
             d1, d2 = matr.dimensions()
             matrI = matrix(original_base_ring, d1, d2, lambda i, j: original_base_ring(matri[i, j]))
             return matrI
@@ -912,7 +911,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
         num_rep = representation_type.number_of_representations(n)
 
         if representation_type == RepresentationType.SplitIrredChevie:
-            rep_list = [ch_algebra._fetch_matrix_list_from_chevie(i+1) for i in range(num_rep)]
+            rep_list = [ch_algebra._fetch_matrix_list_from_chevie(i + 1) for i in range(num_rep)]
             if gen_ind > 0:
                 matrix_list = [rep[gen_ind - 1] for rep in rep_list]
             else:
@@ -1003,7 +1002,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             [0 0 0]
             ]
         """
-        z = self.element_class(self, super(CubicHeckeMatrixSpace, self).zero())
+        z = self.element_class(self, super().zero())
         z._cubic_hecke_element = self._cubic_hecke_algebra.zero()
         z.set_immutable()
         return z
@@ -1031,7 +1030,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             [0 0 1]
             ]
         """
-        o = self.element_class(self, super(CubicHeckeMatrixSpace, self).one())
+        o = self.element_class(self, super().one())
         o._cubic_hecke_element = self._cubic_hecke_algebra.one()
         o.set_immutable()
         return o

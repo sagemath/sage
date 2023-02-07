@@ -1886,11 +1886,10 @@ class Category(UniqueRepresentation, SageObject):
             sage: Algebras(QQ)._is_subclass(ModulesWithBasis)
             False
         """
-        assert( isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)) )
+        assert (isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)))
         if isinstance(c, Category):
             return self.is_subcategory(c)
-        else:
-            return any(isinstance(cat, c) for cat in self._all_super_categories)
+        return any(isinstance(cat, c) for cat in self._all_super_categories)
 
     @cached_method
     def _meet_(self, other):
@@ -2954,8 +2953,8 @@ class JoinCategory(CategoryWithParameters):
             sage: TestSuite(C).run()
 
         """
-        assert(len(super_categories) >= 2)
-        assert(all(not isinstance(category, JoinCategory) for category in super_categories))
+        assert len(super_categories) >= 2
+        assert all(not isinstance(category, JoinCategory) for category in super_categories)
         # Use __super_categories to not overwrite the lazy attribute Category._super_categories
         # Maybe this would not be needed if the flattening/sorting is does consistently?
         self.__super_categories = list(super_categories)

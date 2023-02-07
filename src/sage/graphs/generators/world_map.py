@@ -311,7 +311,7 @@ def WorldMap():
         sage: sorted(g.connected_component_containing_vertex('Ireland'))
         ['Ireland', 'United Kingdom']
 
-    TESTS::
+    TESTS:
 
     :trac:`24488`::
 

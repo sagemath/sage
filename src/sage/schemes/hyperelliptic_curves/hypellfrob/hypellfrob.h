@@ -44,17 +44,10 @@ The intervals are supplied in "target", simply as the list
 
 There are three possible underlying implementations:
    * ntl_interval_products (ZZ_p version),
-   * ntl_interval_products (zz_p version),
-   * zn_poly_interval_products.
-This function is a wrapper which takes ZZ_p input, calls one of the three
+   * ntl_interval_products (zz_p version)
+This function is a wrapper which takes ZZ_p input, calls one of the two
 above implementations depending on the size of the current ZZ_p modulus, and
 produces output in ZZ_p format.
-
-If the force_ntl flag is set, it will never use the zn_poly version.
-
-Note that the zn_poly version occasionally fails; this happens more frequently
-for smaller p, but is extremely rare for larger p. This wrapper detects this
-and falls back on the zz_p/ZZ_p versions, which should never fail.
 
 PRECONDITIONS:
    Let d = b[n-1] - a[0]. Then 2, 3, ... 1 + floor(sqrt(d)) must all be
@@ -63,8 +56,7 @@ PRECONDITIONS:
 */
 void hypellfrob_interval_products_wrapper(NTL::mat_ZZ_p& output,
                                const NTL::mat_ZZ_p& M0, const NTL::mat_ZZ_p& M1,
-                               const std::vector<NTL::ZZ>& target,
-                               int force_ntl);
+                               const std::vector<NTL::ZZ>& target);
 
 /*
 Computes frobenius matrix for given p, to precision p^N, for the
@@ -82,8 +74,7 @@ RETURN VALUE:
        will not check that p is prime. That's up to you.)
 
 */
-int matrix(NTL::mat_ZZ& output, const NTL::ZZ& p, int N, const NTL::ZZX& Q,
-           int force_ntl = 0);
+int matrix(NTL::mat_ZZ& output, const NTL::ZZ& p, int N, const NTL::ZZX& Q);
 
 
 };
