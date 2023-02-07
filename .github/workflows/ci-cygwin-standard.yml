@@ -59,6 +59,7 @@ jobs:
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
   cygwin-stage-ii-e:
+    uses: ./.github/workflows/cygwin.yml
     env:
       STAGE: ii-e
       PREVIOUS_STAGES: i-*
