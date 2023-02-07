@@ -619,9 +619,12 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             base_field = base_field_noext
         else:
             base_morphism = Hom(function_ring, base_field_noext)(gen[0])
-            natural_map = Hom(function_ring, base_field_noext).natural_map()
-            if base_morphism == natural_map:
-                base_morphism = natural_map
+            try:
+                natural_map = Hom(function_ring, base_field_noext).natural_map()
+                if base_morphism == natural_map:
+                    base_morphism = natural_map
+            except TypeError:
+                pass
             base_field = base_field_noext.over(base_morphism)
 
         category = DrinfeldModules(base_field, name=name)
