@@ -275,6 +275,10 @@ class DrinfeldModules(Category_over_base_ring):
                 self._characteristic = Integer(0)
         except NotImplementedError:
             pass
+        # Create base over constants field
+        i = A.coerce_map_from(Fq)
+        Fq_to_K = self._base_morphism * i
+        self._base_over_constants_field = base_field.over(Fq_to_K)
         super().__init__(base=base_field)
 
     def _latex_(self):
@@ -379,6 +383,26 @@ class DrinfeldModules(Category_over_base_ring):
             True
         """
         return self._base_morphism
+
+    def base_over_constants_field(self):
+        r"""
+        Return the base field, seen as an extension over the constants
+        field `\mathbb{F}_q`.
+
+        OUTPUT: a ring extension
+
+        EXAMPLES::
+
+            sage: Fq = GF(11)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: cat.base_over_constants_field()
+            Field in z with defining polynomial x^4 + 8*x^2 + 10*x + 2 over its base
+        """
+        return self._base_over_constants_field
 
     def characteristic(self):
         r"""
