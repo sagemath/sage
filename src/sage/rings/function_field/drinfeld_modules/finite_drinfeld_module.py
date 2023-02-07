@@ -471,12 +471,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
                 mat_lines[j][i] = phi_T_i[r*j]
         mat = Matrix(mat_lines)
         vec = vector([list(ore_pol)[r*j] for j in range(k+1)])
-        coeffs = list((mat**(-1)) * vec)
-        coeffs_in_Fq = []
-        for coeff in coeffs:
-            coeff_in_Fq = base_over_Fq(coeff).vector()[0]
-            coeffs_in_Fq.append(coeff_in_Fq)
-        pre_image = self._function_ring(coeffs_in_Fq)
+        coeffs_K = list((mat**(-1)) * vec)
+        coeffs_Fq = list(map(lambda x: base_over_Fq(x).vector()[0], coeffs_K))
+        pre_image = self._function_ring(coeffs_Fq)
 
         if self(pre_image) == ore_pol:
             return pre_image
