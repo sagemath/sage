@@ -1379,7 +1379,10 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.<x,y,z> = ZZ[]
             sage: mons = R.monomials_of_degree(2)
             sage: mons
-            [x^2, x*y, x*z, y^2, y*z, z^2]
+            [z^2, y*z, x*z, y^2, x*y, x^2]
+            sage: P = PolynomialRing(QQ, 3, 'x,y,z', order=TermOrder('wdeglex', [1,2,1]))
+            sage: P.monomials_of_degree(2)
+            [y, z^2, x*z, x^2]
 
         The number of such monomials equals `\binom{n+k-1}{k}`
         where `n` is the number of variables and `k` the degree::
