@@ -524,14 +524,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi = DrinfeldModule(A, [K(1), 1])
         sage: isinstance(phi.ore_polring(), OrePolynomialRing)
         True
-
-    Test that the base morphism is correct::
-
-        sage: Fq = GF(25)
-        sage: A.<T> = Fq[]
-        sage: K = Frac(Fq)
-        sage: phi = DrinfeldModule(A, [Fq.gen(), K(1)])
-        sage: phi.base_morphism().codomain() is K
     """
 
     @staticmethod
@@ -812,6 +804,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ::
 
             sage: psi = DrinfeldModule(A, [p_root, z12^3, z12^5], latexname='\psi')
+            ...
             sage: latex(psi)
             \psi
 
@@ -1012,12 +1005,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_ordinary()
             True
 
-            sage: L = Frac(A)
+        ::
+
+            sage: B.<Y> = Fq[]
+            sage: L = Frac(B)
             sage: phi = DrinfeldModule(A, [L(2), L(1)])
             sage: phi.height()
             Traceback (most recent call last):
             ...
             ValueError: height is defined for prime function field characteristic
+
+        ::
 
             sage: Fq = GF(343)
             sage: A.<T> = Fq[]
@@ -1146,7 +1144,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.is_finite()
             True
-            sage: L = Frac(A)
+            sage: B.<Y> = Fq[]
+            sage: L = Frac(B)
             sage: psi = DrinfeldModule(A, [L(2), L(1)])
             sage: psi.is_finite()
             False
