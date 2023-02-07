@@ -1441,9 +1441,8 @@ class RingExtension_generic(CommutativeAlgebra):
         """
         Factor a univariate polynomial using code for the backend
 
-        EXAMPLES::
+        EXAMPLES:
 
-<<<<<<< HEAD
         We need to disable randomness since the defining polynomial of finite
         field extensions is determined randomly, and this affects the output
         below::
@@ -1453,10 +1452,6 @@ class RingExtension_generic(CommutativeAlgebra):
         ::
 
             sage: K.<a> = GF(625, base=GF(25))
-=======
-            sage: K = GF(625, 'a').over()
-            sage: a = K.gen()
->>>>>>> ring-extensions-revisions
             sage: R.<x> = K[]
             sage: (x^2 - a^14).factor()
             (x + 2 + a + 3*a^2 + a^3) * (x + 3 - a + 2*a^2 - a^3)
