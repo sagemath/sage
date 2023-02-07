@@ -413,7 +413,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return the constant coefficient of the category.
 
-        OUTPUT: an element in the base codomain
+        OUTPUT: an element in the base field
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class DrinfeldModules(Category_over_base_ring):
                   To:   Finite Field in z12 of size 5^12 over its base
                   Defn: T |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
-            The base codomain can be infinite::
+            The base field can be infinite::
 
                 sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])  # todo: not tested
                 sage: sigma.base_morphism()  # todo: not tested
@@ -660,7 +660,7 @@ class DrinfeldModules(Category_over_base_ring):
             r"""
             Return the constant coefficient of the generator.
 
-            OUTPUT: an element in the base codomain
+            OUTPUT: an element in the base field
 
             EXAMPLES::
 

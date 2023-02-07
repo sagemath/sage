@@ -1108,7 +1108,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r = self.rank()
         if ore_pol not in self._ore_polring:
             raise TypeError('input must be an Ore polynomial')
-        if ore_pol in self._base.codomain():
+        if ore_pol in self._base:
             return self._Fq(ore_pol)
         if deg % r != 0:
             raise ValueError('input must be in the image of the Drinfeld '
