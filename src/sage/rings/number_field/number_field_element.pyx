@@ -1637,10 +1637,10 @@ cdef class NumberFieldElement(FieldElement):
             sage: K.<a> = NumberField(x^3 + x + 1)
             sage: Q.<X> = K[]
             sage: L.<b> = NumberField(X^4 + a)
-            sage: t = (-a).is_norm(L, element=True); t
-            (True, -b^3 - 1)
-            sage: t[1].norm(K)
-            -a
+            sage: t, u = (-a).is_norm(L, element=True); u # random (not unique)
+            b^3 + 1
+            sage: t and u.norm(K) == -a
+            True
 
         Verify that :trac:`27469` has been fixed::
 
@@ -1648,8 +1648,7 @@ cdef class NumberFieldElement(FieldElement):
             Cyclotomic Field of order 24 and degree 8
             sage: K = L.subfield(z24^3, 'z8')[0]; K
             Number Field in z8 with defining polynomial x^4 + 1 with z8 = 0.7071067811865475? + 0.7071067811865475?*I
-            sage: flag, c = K(-7).is_norm(K, element=True)
-            sage: flag
+            sage: flag, c = K(-7).is_norm(K, element=True); flag
             True
             sage: c.norm(K)
             -7
@@ -1746,30 +1745,34 @@ cdef class NumberFieldElement(FieldElement):
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x - 1, 'a')
             sage: P.<X> = K[]
             sage: L = NumberField(X^2 + a^2 + 2*a + 1, 'b')
-            sage: K(17)._rnfisnorm(L)  # representation depends, not tested
-            ((a^2 - 2)*b - 4, 1)
+            sage: y, q = K(17)._rnfisnorm(L)
+            sage: q==1
+            True
+            sage: y # random (not unique)
+            (a^2 - 2)*b - 4
 
             sage: K.<a> = NumberField(x^3 + x + 1)
             sage: Q.<X> = K[]
             sage: L.<b> = NumberField(X^4 + a)
-            sage: t = (-a)._rnfisnorm(L); t
-            (-b^3 - 1, 1)
-            sage: t[0].norm(K)
-            -a
-            sage: t = K(3)._rnfisnorm(L); t
+            sage: y, q = (-a)._rnfisnorm(L)
+            sage: y # random (not unique)
+            b^3 + 1
+            sage: q == 1 and y.norm(K) == -a
+            True
+            sage: y, q = K(3)._rnfisnorm(L); y, q # random (not unique)
             (b^3 + a*b^2 + a^2*b - 1, 3*a^2 - 3*a + 6)
-            sage: t[0].norm(K)*t[1]
-            3
+            sage: y.norm(K)*q == 3
+            True
 
         An example where the base field is a relative field::
 
             sage: K.<a, b> = NumberField([x^2 - 2, x^2 - 3])
             sage: L.<c> = K.extension(x^3 + 2)
             sage: s = 2*a + b
-            sage: t = s._rnfisnorm(L)
-            sage: t[1] == 1 # True iff s is a norm
+            sage: y, q = s._rnfisnorm(L)
+            sage: q == 1 # True iff s is a norm
             False
-            sage: s == t[0].norm(K)*t[1]
+            sage: s == y.norm(K)*q
             True
 
         TESTS:
@@ -1779,7 +1782,9 @@ cdef class NumberFieldElement(FieldElement):
 
             sage: K.<a> = NumberField(x^2 + 1/2)
             sage: L.<b> = K.extension(x^2 - 1/2)
-            sage: a._rnfisnorm(L)
+            sage: y, q = a._rnfisnorm(L)
+            sage: y # random (not unique)
+            q == 1 and y.norm(K) == a
             (a*b + a + 1/2, 1)
 
         We test the above doctest, which was not tested.
@@ -1788,12 +1793,10 @@ cdef class NumberFieldElement(FieldElement):
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x - 1, 'a')
             sage: P.<X> = K[]
             sage: L.<b> = NumberField(X^2 + a^2 + 2*a + 1, 'b')
-            sage: (xbar, q) = K(17)._rnfisnorm(L)
-            sage: q == 1
-            1
-            sage: xbar.norm()
+            sage: y, q = K(17)._rnfisnorm(L)
+            sage: y.norm()
             4913
-            sage: xbar in ((a^2 - 2)*b - 4, (a^2 - 2)*b + 4)
+            sage: q == 1 and y in ((a^2 - 2)*b - 4, (a^2 - 2)*b + 4)
             True
 
         AUTHORS:
@@ -4446,7 +4449,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: f = Qi.embeddings(K)[0]
             sage: a = f(2+3*i) * (2-zeta)^2
             sage: a.descend_mod_power(Qi,2)
-            [-3*i - 2, -2*i + 3]
+            [-2*i + 3, 3*i + 2]
 
         An absolute example::
 
@@ -5124,7 +5127,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         EXAMPLES::
 
             sage: K.<a, b, c> = NumberField([x^2 - 2, x^2 - 3, x^2 - 5])
-            sage: P = K.prime_factors(5)[0]
+            sage: P = K.prime_factors(5)[1]
             sage: (2*a + b - c).valuation(P)
             1
         """

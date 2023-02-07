@@ -205,6 +205,7 @@ class CombinatorialMap():
     :ref:`sage.combinat.combinatorial_map` and
     :func:`combinatorial_map_wrapper`.
     """
+
     def __init__(self, f, order=None, name=None):
         """
         Constructor for combinatorial maps.

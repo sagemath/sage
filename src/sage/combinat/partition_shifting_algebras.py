@@ -51,6 +51,7 @@ class ShiftingSequenceSpace(Singleton, Parent):
         sage: (0.5, 1) in S
         False
     """
+
     def __init__(self):
         r"""
         Initialize ``self``.
@@ -233,6 +234,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         sage: s(op(h[3,2,1]))
         s[3, 2, 1]
     """
+
     def __init__(self, base_ring=QQ['t'], prefix='S'):
         r"""
         Initialize ``self``.
@@ -533,6 +535,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         r"""
         An element of a :class:`ShiftingOperatorAlgebra`.
         """
+
         def __call__(self, operand):
             r"""
             Call method for shifting sequence operators to act on objects.

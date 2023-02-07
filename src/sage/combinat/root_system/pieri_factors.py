@@ -918,6 +918,7 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
         sage: W.from_reduced_word([0,2,0]) in PF
         True
     """
+
     def __init__(self, W):
         r"""
 

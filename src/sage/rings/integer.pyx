@@ -1541,7 +1541,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             # set up digits for optimal access once we get inside the worker
             # functions
-            if not digits is None:
+            if digits is not None:
                 # list objects have fastest access in the innermost loop
                 if type(digits) is not list:
                     digits = [digits[i] for i in range(_base)]

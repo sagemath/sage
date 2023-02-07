@@ -896,8 +896,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     dg_tmp.delete_vertices( c1 )
 
                     components = dg_tmp.connected_components()
-                    #if not len( components ) == 2:
-                    if len ( components ) != 2:
+                    # if not len(components) == 2:
+                    if len(components) != 2:
                         return _false_return(4)
                     else:
                         dg_tmp1 = dg_tmp.subgraph( components[0] )
@@ -938,7 +938,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                         c2.reverse()
                         dg_tmp.delete_edge( tuple( c2 ) )
                     components = dg_tmp.connected_components()
-                    if len ( components ) != 2:
+                    if len(components) != 2:
                         return _false_return(7)
                     else:
                         dg_tmp1 = dg_tmp.subgraph( components[0] )
@@ -1211,8 +1211,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 else:
                     cycle.remove(edge)
                     cycle.append( (edge[0],edge[1], 1 ) )
-        r = sum ((x[2] for x in cycle))
-        r = max ( r, n-r )
+        r = sum(x[2] for x in cycle)
+        r = max(r, n - r)
         if ret_conn_vert:
             return [ QuiverMutationType( ['A',[r,n-r],1] ), connecting_vertices ]
         else:

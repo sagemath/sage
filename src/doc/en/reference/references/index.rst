@@ -4418,6 +4418,10 @@ REFERENCES:
              leurs modules*. Effective methods in algebraic geometry (Castiglioncello,
              1990), 313--334, Progr. Math., 94, Birkhauser Boston, Boston, MA, 1991.
 
+.. [MG1992] \J. Misra and D. Gries. *A constructive proof of Vizing's theorem*.
+            Information Processing Letters, (3) 41 (1992), 131-133.
+            :doi:`10.1016/0020-0190(92)90041-S`.
+
 .. [Mil1958] \J. W. Milnor, *The Steenrod algebra and its dual*,
              Ann. of Math. (2) 67 (1958), 150-171.
 
@@ -5382,6 +5386,12 @@ REFERENCES:
 .. [Shi1971] Goro Shimura, *Introduction to the arithmetic theory of
              automorphic functions*. Publications of the Mathematical
              Society of Japan and Princeton University Press, 1971.
+
+.. [Sho1999] Victor Shoup: *Efficient computation of minimal polynomials in
+             algebraic extensions of finite fields*.
+             In ISSAC '99, pp. 53–58. ACM, 1999.
+             :doi:`10.1145/309831.309859`,
+             https://shoup.net/papers/mpol.pdf
 
 .. [Shr2004] \S. Shreve, *Stochastic Calculus for Finance II:
              Continuous-Time Models*.  New York: Springer, 2004
