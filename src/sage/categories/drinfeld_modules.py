@@ -270,10 +270,13 @@ class DrinfeldModules(Category_over_base_ring):
         # Create characteristic
         self._characteristic = None
         if K.is_finite():
-            #FIXME: This minpoly is over Fp, not Fq
+            # FIXME: This minpoly is over Fp, not Fq
             self._characteristic = A(K(base_morphism(T)).minpoly())
-        elif A.is_subring(K):
-            self._characteristic = Integer(0)
+        try:
+            if A.is_subring(K):
+                self._characteristic = Integer(0)
+        except NotImplementedError:
+            pass
         super().__init__(base=base_field)
 
     def _latex_(self):

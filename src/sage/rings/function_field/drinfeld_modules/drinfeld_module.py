@@ -607,7 +607,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('constant coefficient must be nonzero')
         # The coefficients are in a base field that has coercion from Fq:
         if not (hasattr(base_field_noext, 'has_coerce_map_from') and
-                base_field_noext.has_coerce_map_from(function_ring.base_field())):
+                base_field_noext.has_coerce_map_from(function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base field')
 
         # Check LaTeX name
