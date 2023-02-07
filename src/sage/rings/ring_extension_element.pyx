@@ -673,10 +673,11 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        if self.parent().ring() is not self.base_ring():
+        R = self.parent().ring()
+        if R is not self.base_ring():
             raise NotImplementedError("cannot determine numerator in this fraction field yet")
 
-        return self._backend_defining_morphism.section()(self._backend.numerator())
+        return R._from_backend_morphism(self._backend.numerator())
 
     def denominator(self):
         r"""
@@ -710,10 +711,11 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        if self.parent().ring() is not self.base_ring():
+        R = self.parent().ring()
+        if R is not self.base_ring():
             raise NotImplementedError("cannot determine denominator in this fraction field yet")
 
-        return self._backend_defining_morphism.section()(self._backend.denominator())
+        return R._from_backend_morphism(self._backend.denominator())
 
 
 # Finite free extensions
@@ -1516,9 +1518,9 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         EXAMPLES::
 
             sage: k = GF(3^2); R.<x> = k[]
-            sage: l.<b> = GF(3^6, base=k, modulus=x^3+x^2+2)
+            sage: l.<b> = GF(3^6).over(k)
             sage: (b+1).minimal_polynomial()
-            x^3 + x^2 + x + 2
+            x^3 + (2*z2 + 2)*x^2 + 2*x + 1
         """
         return self.minpoly(var, base)
 

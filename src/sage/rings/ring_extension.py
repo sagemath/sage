@@ -399,7 +399,9 @@ class RingExtensionFactory(UniqueFactory):
               ('a',),
               True),
              {'constructors': [(<class 'sage.rings.ring_extension.RingExtensionWithGen'>,
-                {'gen': z4, 'names': ('a',)})]})
+                {'gen': z4, 'names': ('a',)}),
+               (<class 'sage.rings.ring_extension.RingExtension_generic'>,
+                {'print_options': {'print_elements_as': None, 'print_parent_as': None}})]})
 
         We can fall back on the generic construction even in the presence of generators,
         since RingExtensionWithGen only supports finite extensions::
