@@ -27,7 +27,7 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 class DrinfeldModuleAction(Action):
     r"""
     This class implements the module action induced by a Drinfeld
-    module.
+    `\mathbb{F}_q[T]`-module.
 
     Let `\phi` be a Drinfeld `\mathbb{F}_q[T]`-module over a field `K`
     and let `L/K` be a field extension. Let `x \in L` and let `a` be a

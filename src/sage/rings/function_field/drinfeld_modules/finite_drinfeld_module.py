@@ -27,7 +27,7 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
     r"""
-    This class represents a finite Drinfeld module.
+    This class implements finite Drinfeld `\mathbb{F}_q[T]`-modules.
 
     A *finite Drinfeld module* is a Drinfeld module whose base field is
     finite. In this case, the function field characteristic is a prime
@@ -106,7 +106,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         False
     """
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category, latexname=None):
         """
         Initialize `self`.
 
@@ -121,6 +121,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
           coefficients or an Ore polynomial
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
+        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
+          module
 
         TESTS::
 
@@ -139,7 +141,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         # added one to ensure that FiniteDrinfeldModule would always
         # have _frobenius_norm and _frobenius_trace attributes.
 
-        super().__init__(gen, category)
+        super().__init__(gen, category, latexname)
         self._frobenius_norm = None
         self._frobenius_trace = None
 
@@ -171,7 +173,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         """
         t = self.ore_polring().gen()
         Fq = self._function_ring.base()
-        #FIXME
+        # FIXME
         deg = self._base.over(Fq).degree(Fq)
         return self._Hom_(self, category=self.category())(t**deg)
 

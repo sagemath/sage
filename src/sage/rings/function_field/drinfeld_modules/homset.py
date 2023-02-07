@@ -28,8 +28,8 @@ from sage.structure.parent import Parent
 
 class DrinfeldModuleHomset(Homset):
     r"""
-    This class represents the set of morphisms between two Drinfeld
-    modules.
+    This class implements the set of morphisms between two Drinfeld
+    `\mathbb{F}_q[T]`-modules.
 
     INPUT:
 

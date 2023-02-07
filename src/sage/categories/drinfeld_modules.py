@@ -30,32 +30,30 @@ from sage.rings.ring_extension import RingExtension_generic
 
 class DrinfeldModules(Category_over_base_ring):
     r"""
-    This class represents the category of Drinfeld modules on a given
-    base.
+    This class implements the category of Drinfeld
+    `\mathbb{F}_q[T]`-modules on a given base field.
 
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
-    morphism `\gamma: \mathbb{F}_q[T] \to K`. We say that the field `K`
-    is an `\mathbb{F}_q[T]`-field, so that the *base field of the
-    category* is defined as the `\mathbb{F}_q[T]`-field *K*. The base
-    field uniquely defines the category, and we also refer to it as its
-    *base*. The *base morphism* is the morphism `\gamma: \mathbb{F}_q[T]
-    \to K`.
+    morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
+    `\mathbb{F}_q[T]`*-field*. Let `K\{\tau\}` be the ring of Ore
+    polynomials with coefficients in `K`, whose multiplication is given
+    by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
+
+    We call `K` the *base field* of the category, and `\gamma` its *base
+    morphism*.
 
     .. NOTE::
 
         Equivalently, the base of the category could be defined as the
         base morphism `\gamma: \mathbb{F}_q[T] \to K`.
 
-    The monic polynomial that generates the kernel of the base morphism
-    is called the `\mathbb{F}_q[T]`-characteristic of the
-    `\mathbb{F}_q[T]`-field `K`. It can also be referred to as the
-    function-field characteristic of `K`.
-
-    We say that `\mathbb{F}_q[T]` is the function ring of the category;
-    `K\{\tau\}` is the Ore polynomial ring of the category. The constant
-    coefficient of the category is the image of `T` under the base
-    morphism.
+    The monic polynomial that generates the kernel of `\gamma` is called
+    the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
+    characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
+    the *function ring* of the category; `K\{\tau\}` is the *Ore
+    polynomial ring*. The constant coefficient of the category is the
+    image of `T` under the base morphism.
 
     INPUT: the base field
 
@@ -184,7 +182,6 @@ class DrinfeldModules(Category_over_base_ring):
 
     ::
 
-
         sage: base = 'I hate Rostropovitch'
         sage: cat = DrinfeldModules(base)  # known bug (blankline)
         <BLANKLINE>
@@ -272,10 +269,13 @@ class DrinfeldModules(Category_over_base_ring):
         # Create characteristic
         self._characteristic = None
         if K.is_finite():
-            #FIXME: This minpoly is over Fp, not Fq
+            # FIXME: This minpoly is over Fp, not Fq
             self._characteristic = A(K(base_morphism(T)).minpoly())
-        elif A.is_subring(K):
-            self._characteristic = Integer(0)
+        try:
+            if A.is_subring(K):
+                self._characteristic = Integer(0)
+        except NotImplementedError:
+            pass
         super().__init__(base=base_field)
 
     def _latex_(self):
@@ -413,7 +413,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return the constant coefficient of the category.
 
-        OUTPUT: an element in the base codomain
+        OUTPUT: an element in the base field
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class DrinfeldModules(Category_over_base_ring):
                   To:   Finite Field in z12 of size 5^12 over its base
                   Defn: T |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
-            The base codomain can be infinite::
+            The base field can be infinite::
 
                 sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])  # todo: not tested
                 sage: sigma.base_morphism()  # todo: not tested
@@ -660,7 +660,7 @@ class DrinfeldModules(Category_over_base_ring):
             r"""
             Return the constant coefficient of the generator.
 
-            OUTPUT: an element in the base codomain
+            OUTPUT: an element in the base field
 
             EXAMPLES::
 
