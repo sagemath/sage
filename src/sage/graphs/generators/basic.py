@@ -397,12 +397,17 @@ def CompleteGraph(n):
 
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
     """
-    TODO: docstring
+    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+    
+    Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
+
+    If include_anticorrelation is true, then edges are also added between nodes with correlation coeffecient less than -alpha.
+
     EXAMPLES:
 
         sage: from sage.graphs.correlation_graph import CorrelationGraph
         sage: data=[[1,2,3],[4,5,6],[7,8,9999]]
-        sage: CG = CorrelationGraph(data, 0.9)
+        sage: CG = CorrelationGraph(data, 0.9, False)
         sage: CG
         Looped graph on 3 vertices
     """
@@ -412,10 +417,11 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
     # compare against alpha to get adjacency matrix
     if include_anticorrelation:
-        boolean_adjacency_matrix = (abs(corrs)>=alpha)
+        boolean_adjacency_matrix = abs(corrs)>=alpha
     else:
-        boolean_adjacency_matrix = (corrs>=alpha)
-    adjacency_matrix=Matrix(boolean_adjacency_matrix.astype(int))
+        boolean_adjacency_matrix = corrs>=alpha
+
+    adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
     return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")   
