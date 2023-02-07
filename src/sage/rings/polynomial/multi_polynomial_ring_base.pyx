@@ -444,7 +444,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
-        
+
             :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
         """
         # get ring and number of variables
@@ -1387,8 +1387,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: len(mons) == binomial(3+2-1,2)
             True
         """
-        from sage.combinat.integer_vector import IntegerVectors
-        return [self.monomial(*a) for a in IntegerVectors(degree, self.ngens())]
+        deg_of_gens = [x.degree() for x in self.gens()]
+        from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+        return [self.monomial(*a) for a in WeightedIntegerVectors(degree, deg_of_gens)]
 
     def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""
