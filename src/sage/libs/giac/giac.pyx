@@ -1409,7 +1409,7 @@ cdef class Pygen(GiacMethods_base):
             return result
 
         else:
-            raise TypeError("Cannot convert non giac integers to Integer")
+            raise TypeError("cannot convert non giac integers to Integer")
 
 
     def _rational_(self,Z=None):
@@ -1434,7 +1434,7 @@ cdef class Pygen(GiacMethods_base):
             # giac _RAT_
             return ZZ(self.numer()) / ZZ(self.denom())
         else:
-            raise TypeError("Cannot convert non giac _FRAC_ to QQ")
+            raise TypeError("cannot convert non giac _FRAC_ to QQ")
 
 
     def sage(self):
@@ -1736,7 +1736,7 @@ cdef class Pygen(GiacMethods_base):
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _INT_ giac gen")
+                raise TypeError("cannot convert non _INT_ giac gen")
 
 
     property _double:  # immediate double (type _DOUBLE_)
@@ -1750,7 +1750,7 @@ cdef class Pygen(GiacMethods_base):
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _DOUBLE_ giac gen")
+                raise TypeError("cannot convert non _DOUBLE_ giac gen")
 
     property help:
         def __get__(self):

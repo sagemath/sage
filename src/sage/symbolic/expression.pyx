@@ -1603,7 +1603,7 @@ cdef class Expression(Expression_abc):
             sage: x._eval_self(CC)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
 
         Check if we can compute a real evaluation even if the expression
         contains complex coefficients::
@@ -1644,7 +1644,7 @@ cdef class Expression(Expression_abc):
                 ans = ans.real
             return R(ans)
         else:
-            raise TypeError("Cannot evaluate symbolic expression to a numeric value.")
+            raise TypeError("cannot evaluate symbolic expression to a numeric value")
 
     cpdef _convert(self, kwds):
         """
@@ -7064,7 +7064,7 @@ cdef class Expression(Expression_abc):
             sage: p.coefficients(x, sparse=False)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot return dense coefficient list with noninteger exponents.
+            ValueError: cannot return dense coefficient list with noninteger exponents
 
         Series coefficients are now handled correctly (:trac:`17399`)::
 
@@ -7126,12 +7126,12 @@ cdef class Expression(Expression_abc):
         else:
             from sage.rings.integer_ring import ZZ
             if any(not c[1] in ZZ for c in l):
-                raise ValueError("Cannot return dense coefficient list with noninteger exponents.")
+                raise ValueError("cannot return dense coefficient list with noninteger exponents")
             if not l:
                 l = [[0, 0]]
             val = l[0][1]
             if val < 0:
-                raise ValueError("Cannot return dense coefficient list with negative valuation.")
+                raise ValueError("cannot return dense coefficient list with negative valuation")
             deg = l[-1][1]
             ret = [ZZ(0)] * int(deg+1)
             for c in l:
@@ -8258,7 +8258,7 @@ cdef class Expression(Expression_abc):
             sage: (x^(1/3)).horner(x)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot return dense coefficient list with noninteger exponents.
+            ValueError: cannot return dense coefficient list with noninteger exponents
         """
         coef = self.coefficients(x, sparse=False)
         res = coef[-1]
@@ -12092,7 +12092,7 @@ cdef class Expression(Expression_abc):
             sage: wrong.convert()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert
+            ValueError: cannot convert
         """
         from . import units
         return units.convert(self, target)

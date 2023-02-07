@@ -282,7 +282,7 @@ cdef class NamedConvertMap(Map):
                 print(type(x), x)
                 print(type(C), C)
                 print(self.method_name)
-            raise TypeError("Cannot coerce {} to {}".format(x, C))
+            raise TypeError(f"cannot coerce {x} to {C}")
         cdef Map m
         cdef Element e = method(C)
         if e is None:
