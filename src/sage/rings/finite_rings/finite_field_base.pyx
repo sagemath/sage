@@ -2422,6 +2422,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
         d = self.absolute_degree()
         D = list(reversed(d.divisors()[:-1]))
         P = d.support()
+
         def make_family(gen, poly):
             if poly.degree() != d:
                 return False, {}
@@ -2437,6 +2438,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
                         fam[n] = (b, bpoly)
                         break
             return True, fam
+
         while True:
             ok, fam = make_family(g, f)
             if ok:
