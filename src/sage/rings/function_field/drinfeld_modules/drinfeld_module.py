@@ -40,32 +40,18 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
-    This class represents a Drinfeld `\mathbb{F}_q[T]`-module.
+    This class implements Drinfeld `\mathbb{F}_q[T]`-modules.
 
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
-    morphism `\gamma: \mathbb{F}_q[T] \to K`. We say that the field `K`
-    is an `\mathbb{F}_q[T]`-field, so that the *base field of the
-    Drinfeld module* is defined as the `\mathbb{F}_q[T]`-field *K*. This
-    field is the `base` of the category of Drinfeld modules, which it
-    uniquely defines. The *base morphism* is the morphism `\gamma:
-    \mathbb{F}_q[T] \to K`.
+    morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
+    `\mathbb{F}_q[T]`*-field*. Let `K\{\tau\}` be the ring of Ore
+    polynomials with coefficients in `K`, whose multiplication is given
+    by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
-    .. NOTE::
-
-        See also :class:`sage.categories.drinfeld_modules`.
-
-    The monic polynomial that generates the kernel of the base morphism
-    is called the `\mathbb{F}_q[T]`-characteristic of the
-    `\mathbb{F}_q[T]`-field `K`. It can also be referred to as the
-    function-field characteristic of `K`.
-
-    Let `K\{\tau\}` be the ring of Ore polynomials with coefficients in
-    `K` and Frobenius variable `\tau: x \mapsto x^q`. A Drinfeld
-    `\mathbb{F}_q[T]`-module over the `\mathbb{F}_q[T]`-field `K` is an
-    `\mathbb{F}_q`-algebra morphism `\phi: \mathbb{F}_q[T] \to
-    K\{\tau\}` such that:
-
+    A Drinfeld `\mathbb{F}_q[T]`-module over the `base
+    \mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
+    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that:
     1. The image of `\phi` contains nonconstant Ore polynomials.
     2. For every element `a` in the `\mathbb{F}_q[T]`, the constant
        coefficient `\phi(a)` is `\gamma(a)`.
@@ -75,9 +61,21 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     The Drinfeld `\mathbb{F}_q[T]`-module `\phi` is uniquely determined
     by the image `\phi_T` of `T` — this serves as input of the class.
 
-    A Drinfeld module is said to be finite if the field `K` is. Despite
-    an emphasis on this case, the base field can be any extension of
-    `\mathbb{F}_q`::
+    .. NOTE::
+
+        See also :class:`sage.categories.drinfeld_modules`.
+
+    The *base morphism* is the morphism `\gamma: \mathbb{F}_q[T] \to K`.
+    The monic polynomial that generates the kernel of `\gamma` is called
+    the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
+    characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
+    the *function ring* of `\phi`; `K\{\tau\}` is the *Ore polynomial
+    ring* of `\phi`. Further, the *generator* of `\phi` is `\phi_T` and
+    its *constant coefficient* is the constant coefficient of `\phi_T`.
+
+    A Drinfeld module is said to be *finite* if the field `K` is.
+    Despite an emphasis on this case, the base field can be any
+    extension of `\mathbb{F}_q`::
 
         sage: Fq = GF(25)
         sage: A.<T> = Fq[]
@@ -98,13 +96,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         Finite Drinfeld modules are implemented in the class
         :class:`sage.rings.function_field.drinfeld_modules.finite_drinfeld_module`.
-
-    We say that `\mathbb{F}_q[T]` is the function ring of `\phi`;
-    `K\{\tau\}` is the Ore polynomial ring of `\phi`. Further, the
-    generator of `\phi` is `\phi_T` and its constant coefficient is the
-    constant coefficient of `\phi_T`. The
-    `\mathbb{F}_q[T]`-characteristic of the `\mathbb{F}_q[T]`-field `K`
-    can also be referred to as its function ring-characteristic.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1991]_.
@@ -140,9 +131,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi
         Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
 
-    Note that the definition of the base field is implicit; it is
-    automatically defined as  the compositum of all the parents of the
-    coefficients.
+    .. NOTE::
+
+        Note that the definition of the base field is implicit; it is
+        automatically defined as  the compositum of all the parents of
+        the coefficients.
 
     The above Drinfeld module is finite; it can also be infinite::
 
@@ -166,7 +159,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     regular Ore polynomials::
 
         sage: ore_polring = phi.ore_polring()
-        sage: t = phi.ore_polring().gen()
+        sage: t = ore_polring.gen()
         sage: rho_T = z + t^3
         sage: rho = DrinfeldModule(A, rho_T)
         sage: rho
@@ -185,9 +178,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     One can give a LaTeX name to be used for LaTeX representation::
 
-        sage: sigma = DrinfeldModule(A, [z, 1, 1], latexname='\phi')
+        sage: sigma = DrinfeldModule(A, [z, 1, 1], latexname='\sigma')
         sage: latex(sigma)
-        \phi
+        \sigma
 
     .. RUBRIC:: The category of Drinfeld modules
 
@@ -299,10 +292,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: Morphisms and isogenies
 
-    A morphism of Drinfeld modules `\phi \to \psi` is an Ore polynomial
-    `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a` in
-    the function ring. In our case, this is equivalent to `f \phi_T =
-    \psi_T f`. An isogeny is a nonzero morphism.
+    A *morphism* of Drinfeld modules `\phi \to \psi` is an Ore
+    polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
+    every `a` in the function ring. In our case, this is equivalent to
+    `f \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
 
     Use the ``in`` syntax to test if an Ore polynomial defines a
     morphism::
@@ -421,6 +414,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: action(A.random_element(), 0)
         0
 
+    .. WARNING::
+
+        The class ``DrinfeldModuleAction`` may be replaced later on. See
+        issues #34833 and #34834.
+
     .. RUBRIC:: Inverting the Drinfeld module
 
     The morphism that defines a Drinfeld module is injective. Given an
@@ -510,7 +508,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Traceback (most recent call last):
         ...
         ValueError: constant coefficient must equal that of the category
-
 
     ::
 
