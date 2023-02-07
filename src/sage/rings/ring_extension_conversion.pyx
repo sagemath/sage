@@ -47,7 +47,7 @@ cpdef backend_parent(R, map=False):
             return R._backend
     else:
         if map:
-            return R, R, R
+            return R, IdentityMorphism(R), IdentityMorphism(R)
         else:
             return R
 
@@ -253,15 +253,19 @@ cpdef to_backend(arg):
 
         sage: f = K.hom([a^5])
         sage: to_backend(f)
-        Ring endomorphism of Finite Field in z2 of size 5^2
-          Defn: z2 |--> 4*z2 + 1
+        Ring morphism:
+          From: Finite Field in z2 of size 5^2
+          To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
+          Defn: z2 |--> 1 - a
 
     list/tuple of them::
 
         sage: to_backend(([K, a], f))
         ([Finite Field in z2 of size 5^2, z2],
-         Ring endomorphism of Finite Field in z2 of size 5^2
-           Defn: z2 |--> 4*z2 + 1)
+         Ring morphism:
+           From: Finite Field in z2 of size 5^2
+           To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
+           Defn: z2 |--> 1 - a)
 
     and dictionaries::
 
