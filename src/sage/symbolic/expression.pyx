@@ -10702,6 +10702,10 @@ cdef class Expression(Expression_abc):
             sage: f.simplify_full()
             sin(x)/cos(x)
 
+        Check that :trac:`20846` is fixed::
+
+            sage: ((1/6*pi^2).series(x)).simplify_full()
+            1/6*pi^2
         """
         x = self
         x = x.simplify_factorial()
