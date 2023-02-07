@@ -269,8 +269,7 @@ class DrinfeldModules(Category_over_base_ring):
         # Create characteristic
         self._characteristic = None
         if K.is_finite():
-            # FIXME: This minpoly is over Fp, not Fq
-            self._characteristic = A(K(base_morphism(T)).minpoly())
+            self._characteristic = A(K.over(Fq)(base_morphism(T)).minpoly())
         try:
             if A.is_subring(K):
                 self._characteristic = Integer(0)

@@ -173,7 +173,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         """
         t = self.ore_polring().gen()
         Fq = self._function_ring.base()
-        # FIXME
         deg = self._base.over(Fq).degree(Fq)
         return self._Hom_(self, category=self.category())(t**deg)
 
