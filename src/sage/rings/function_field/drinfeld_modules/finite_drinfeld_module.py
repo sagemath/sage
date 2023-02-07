@@ -106,7 +106,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         False
     """
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category, latexname=None):
         """
         Initialize `self`.
 
@@ -121,6 +121,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
           coefficients or an Ore polynomial
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
+        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
+          module
 
         TESTS::
 
@@ -139,7 +141,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         # added one to ensure that FiniteDrinfeldModule would always
         # have _frobenius_norm and _frobenius_trace attributes.
 
-        super().__init__(gen, category)
+        super().__init__(gen, category, latexname)
         self._frobenius_norm = None
         self._frobenius_trace = None
 

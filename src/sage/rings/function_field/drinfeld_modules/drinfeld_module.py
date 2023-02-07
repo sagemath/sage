@@ -91,6 +91,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Frac(A)
         sage: psi = DrinfeldModule(A, [z, T+1])
         sage: psi
+        Drinfeld module defined by T |--> (T + 1)*t + T over Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 7^2 over its base
 
     .. NOTE::
 
@@ -142,10 +143,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: L = Frac(A)
         sage: psi = DrinfeldModule(A, [L(T), 1, T^3 + T + 1])
         sage: psi
-        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T over Ring morphism:
-          From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          To:   Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          Defn: T |--> T
+        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T over Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2 over its base
 
     ::
 
@@ -179,6 +177,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     One can give a LaTeX name to be used for LaTeX representation::
 
         sage: sigma = DrinfeldModule(A, [z, 1, 1], latexname='\sigma')
+        ...
         sage: latex(sigma)
         \sigma
 
@@ -638,8 +637,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Instantiate the appropriate class
         if base_field.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-            return FiniteDrinfeldModule(gen, category)
-        return cls.__classcall__(cls, gen, category)
+            return FiniteDrinfeldModule(gen, category, latexname)
+        return cls.__classcall__(cls, gen, category, latexname)
 
     def __init__(self, gen, category, latexname=None):
         """
