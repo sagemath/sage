@@ -3464,6 +3464,12 @@ cdef class Expression(Expression_abc):
 
             sage: bool(x^2 + 2*x + 1 != (x + 1)^2)
             False
+
+        Check that :trac:`16031` is fixed::
+
+            sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
+            sage: expr.is_zero()
+            False
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
