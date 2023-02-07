@@ -29,8 +29,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     r"""
     This class represents Drinfeld `\mathbb{F}_q[T]`-module morphisms.
 
-    Let `\phi, \psi` be two Drinfeld `\mathbb{F}_q[T]`-modules over a
-    field `K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an
+    Let `\phi` and `\psi` be two Drinfeld `\mathbb{F}_q[T]`-modules over
+    a field `K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an
     Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
     every `a \in \mathbb{F}_q[T]`. In our case, this is equivalent to `f
     \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
@@ -54,7 +54,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
               To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
               Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
 
-    The input Ore polynomial must indeed define a morphism::
+    The given Ore polynomial must indeed define a morphism::
 
         sage: morphism = Hom(phi, psi)(1)
         Traceback (most recent call last):
@@ -105,20 +105,18 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: End(phi)(0).parent() == End(phi)
         True
 
-    .. NOTE::
+    For the sake of completeness, we explain how the user can directly
+    instantiate the class, even though this should never be explicitly
+    done::
 
-        For the sake of completeness, we explain how the user can
-        directly instantiate the class, even though this should never be
-        explicitly done::
-
-            sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
-            sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
-            Drinfeld Module morphism:
-              From (gen): z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-              To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-              Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
-            sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
-            True
+        sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
+        sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
+        Drinfeld Module morphism:
+          From (gen): z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+          To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+          Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
+        sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
+        True
     """
 
     @staticmethod

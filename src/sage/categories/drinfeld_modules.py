@@ -182,7 +182,6 @@ class DrinfeldModules(Category_over_base_ring):
 
     ::
 
-
         sage: base = 'I hate Rostropovitch'
         sage: cat = DrinfeldModules(base)  # known bug (blankline)
         <BLANKLINE>
