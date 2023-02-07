@@ -21,6 +21,8 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.matrix.constructor import Matrix
+from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 
@@ -104,6 +106,16 @@ class FiniteDrinfeldModule(DrinfeldModule):
         True
         sage: phi.is_supersingular()
         False
+
+    .. RUBRIC:: Inverting the Drinfeld module
+
+    The morphism that defines a Drinfeld module is injective (see
+    [Gos1998]_, cor. 4.5.2). If the Drinfeld module is finite, one can
+    retrieve preimages:
+
+        sage: a = A.random_element()
+        sage: phi.invert(phi(a)) == a
+        True
     """
 
     def __init__(self, gen, category, latexname=None):
@@ -369,6 +381,108 @@ class FiniteDrinfeldModule(DrinfeldModule):
             t = self.ore_polring().gen()
             self._frobenius_trace = self.invert(t**n + (self(B) // t**n))
         return self._frobenius_trace
+
+    def invert(self, ore_pol):
+        r"""
+        Return the preimage of the input under the Drinfeld module, if it
+        exists.
+
+        INPUT:
+
+        - ``ore_pol`` -- the Ore polynomial whose preimage we want to
+          compute
+
+        OUTPUT: a function ring element
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: a = A.random_element()
+            sage: phi.invert(phi(a)) == a
+            True
+            sage: phi.invert(phi(T)) == T
+            True
+            sage: phi.invert(phi(Fq.gen())) == Fq.gen()
+            True
+
+        When the input is not in the image of the Drinfeld module, an
+        exception is raised::
+
+            sage: t = phi.ore_polring().gen()
+            sage: phi.invert(t + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be in the image of the Drinfeld module
+            sage: phi.invert(t^3 + t^2 + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be in the image of the Drinfeld module
+
+        ALGORITHM:
+
+            The algorithm relies on the inversion of a linear algebra
+            system. See [MS2019]_, 3.2.5 for details.
+
+        TESTS::
+
+            sage: a = A.random_element()
+            sage: cat = phi.category()
+            sage: phi_r1 = cat.random_object(1)
+            sage: phi_r1.invert(phi_r1(a)) == a
+            True
+            sage: phi_r2 = cat.random_object(2)
+            sage: phi_r2.invert(phi_r2(a)) == a
+            True
+            sage: phi_r3 = cat.random_object(3)
+            sage: phi_r3.invert(phi_r3(a)) == a
+            True
+            sage: phi_r4 = cat.random_object(4)
+            sage: phi_r4.invert(phi_r4(a)) == a
+            True
+            sage: phi_r5 = cat.random_object(5)
+            sage: phi_r5.invert(phi_r5(a)) == a
+            True
+        """
+        deg = ore_pol.degree()
+        r = self.rank()
+        base_over_Fq = self.base_over_constants_field()
+        if ore_pol not in self._ore_polring:
+            raise TypeError('input must be an Ore polynomial')
+        if ore_pol.degree() == 0:
+            coord = base_over_Fq(self._base(ore_pol)).vector()
+            if coord.nonzero_positions == [0]:
+                return self._Fq(coord[0])
+        if ore_pol == 0:
+            return self._Fq.zero()
+        if deg % r != 0:
+            raise ValueError('input must be in the image of the Drinfeld '
+                             'module')
+
+        k = deg // r
+        T = self._function_ring.gen()
+        mat_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
+        for i in range(k+1):
+            phi_T_i = self(T**i)
+            for j in range(i+1):
+                mat_lines[j][i] = phi_T_i[r*j]
+        mat = Matrix(mat_lines)
+        vec = vector([list(ore_pol)[r*j] for j in range(k+1)])
+        coeffs = list((mat**(-1)) * vec)
+        coeffs_in_Fq = []
+        for coeff in coeffs:
+            coeff_in_Fq = base_over_Fq(coeff).vector()[0]
+            coeffs_in_Fq.append(coeff_in_Fq)
+        pre_image = self._function_ring(coeffs_in_Fq)
+
+        if self(pre_image) == ore_pol:
+            return pre_image
+        else:
+            raise ValueError('input must be in the image of the Drinfeld '
+                             'module')
 
     def is_ordinary(self):
         r"""

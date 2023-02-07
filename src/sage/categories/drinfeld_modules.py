@@ -634,30 +634,12 @@ class DrinfeldModules(Category_over_base_ring):
             """
             return self.category().base_morphism()
 
-    def base_over_constants_field(self):
-        r"""
-        Return the base field, seen as an extension over the constants
-        field `\mathbb{F}_q`.
-
-        OUTPUT: a ring extension
-
-        EXAMPLES::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi.base_over_constants_field()
-            Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
-        """
-        return self.category().base_over_constants_field()
-
-        def characteristic(self):
+        def base_over_constants_field(self):
             r"""
-            Return the function ring-characteristic.
+            Return the base field, seen as an extension over the constants
+            field `\mathbb{F}_q`.
 
-            OUTPUT: a univariate polynomial ring
+            OUTPUT: a ring extension
 
             EXAMPLES::
 
@@ -666,110 +648,128 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: K.<z12> = Fq.extension(6)
                 sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
                 sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-                sage: phi.characteristic()
-                T^2 + (4*z2 + 2)*T + 2
-                sage: phi.base_morphism()(phi.characteristic())
-                0
-
-            ::
-
-                sage: B.<Y> = Fq[]
-                sage: L = Frac(B)
-                sage: psi = DrinfeldModule(A, [L(1), 0, 0, L(1)])
-                sage: psi.characteristic()
-                0
+                sage: phi.base_over_constants_field()
+                Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
             """
-            return self.category().characteristic()
+            return self.category().base_over_constants_field()
 
-        def function_ring(self):
-            r"""
-            Return the function ring of the Drinfeld module.
+            def characteristic(self):
+                r"""
+                Return the function ring-characteristic.
 
-            OUTPUT: a univariate polynomial ring
+                OUTPUT: a univariate polynomial ring
 
-            EXAMPLES::
+                EXAMPLES::
 
-                sage: Fq = GF(25)
-                sage: A.<T> = Fq[]
-                sage: K.<z12> = Fq.extension(6)
-                sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-                sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-                sage: phi.function_ring() is A
-                True
-            """
-            return self.category().function_ring()
+                    sage: Fq = GF(25)
+                    sage: A.<T> = Fq[]
+                    sage: K.<z12> = Fq.extension(6)
+                    sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+                    sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+                    sage: phi.characteristic()
+                    T^2 + (4*z2 + 2)*T + 2
+                    sage: phi.base_morphism()(phi.characteristic())
+                    0
 
-        def constant_coefficient(self):
-            r"""
-            Return the constant coefficient of the generator.
+                ::
 
-            OUTPUT: an element in the base field
+                    sage: B.<Y> = Fq[]
+                    sage: L = Frac(B)
+                    sage: psi = DrinfeldModule(A, [L(1), 0, 0, L(1)])
+                    sage: psi.characteristic()
+                    0
+                """
+                return self.category().characteristic()
 
-            EXAMPLES::
+            def function_ring(self):
+                r"""
+                Return the function ring of the Drinfeld module.
 
-                sage: Fq = GF(25)
-                sage: A.<T> = Fq[]
-                sage: K.<z12> = Fq.extension(6)
-                sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-                sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-                sage: phi.constant_coefficient() == p_root
-                True
+                OUTPUT: a univariate polynomial ring
 
-            Let `\mathbb{F}_q[T]` be the function ring, and let `\gamma`
-            the base of the Drinfeld module. The constant coefficient
-            equals `\gamma(T)`::
+                EXAMPLES::
 
-                sage: cat = phi.category()
-                sage: base = cat.base()
-                sage: base(T) == phi.constant_coefficient()
-                True
+                    sage: Fq = GF(25)
+                    sage: A.<T> = Fq[]
+                    sage: K.<z12> = Fq.extension(6)
+                    sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+                    sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+                    sage: phi.function_ring() is A
+                    True
+                """
+                return self.category().function_ring()
 
-            Naturally, two Drinfeld modules in the same category have the
-            same constant coefficient::
+            def constant_coefficient(self):
+                r"""
+                Return the constant coefficient of the generator.
 
-                sage: t = phi.ore_polring().gen()
-                sage: psi = cat.object(phi.constant_coefficient() + t^3)
-                sage: psi
-                Drinfeld module defined by T |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
+                OUTPUT: an element in the base field
 
-            Reciprocally, it is impossible to create two Drinfeld modules in
-            this category if they do not share the same constant
-            coefficient::
+                EXAMPLES::
 
-                sage: rho = cat.object(phi.constant_coefficient() + 1 + t^3)
-                Traceback (most recent call last):
-                ...
-                ValueError: constant coefficient must equal that of the category
-            """
-            return self.category().constant_coefficient()
+                    sage: Fq = GF(25)
+                    sage: A.<T> = Fq[]
+                    sage: K.<z12> = Fq.extension(6)
+                    sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+                    sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+                    sage: phi.constant_coefficient() == p_root
+                    True
 
-        def ore_polring(self):
-            r"""
-            Return the Ore polynomial ring of the Drinfeld module.
+                Let `\mathbb{F}_q[T]` be the function ring, and let `\gamma`
+                the base of the Drinfeld module. The constant coefficient
+                equals `\gamma(T)`::
 
-            OUTPUT: an Ore polynomial ring
+                    sage: cat = phi.category()
+                    sage: base = cat.base()
+                    sage: base(T) == phi.constant_coefficient()
+                    True
 
-            EXAMPLES::
+                Naturally, two Drinfeld modules in the same category have the
+                same constant coefficient::
 
-                sage: Fq = GF(25)
-                sage: A.<T> = Fq[]
-                sage: K.<z12> = Fq.extension(6)
-                sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-                sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-                sage: ore_polring = phi.ore_polring()
-                sage: ore_polring
-                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
+                    sage: t = phi.ore_polring().gen()
+                    sage: psi = cat.object(phi.constant_coefficient() + t^3)
+                    sage: psi
+                    Drinfeld module defined by T |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
 
-            The Ore polynomial ring can also be retrieved from the category
-            of the Drinfeld module::
+                Reciprocally, it is impossible to create two Drinfeld modules in
+                this category if they do not share the same constant
+                coefficient::
 
-                sage: ore_polring is phi.category().ore_polring()
-                True
+                    sage: rho = cat.object(phi.constant_coefficient() + 1 + t^3)
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: constant coefficient must equal that of the category
+                """
+                return self.category().constant_coefficient()
 
-            The generator of the Drinfeld module is in the Ore polynomial
-            ring::
+            def ore_polring(self):
+                r"""
+                Return the Ore polynomial ring of the Drinfeld module.
 
-                sage: phi(T) in ore_polring
-                True
-            """
-            return self.category().ore_polring()
+                OUTPUT: an Ore polynomial ring
+
+                EXAMPLES::
+
+                    sage: Fq = GF(25)
+                    sage: A.<T> = Fq[]
+                    sage: K.<z12> = Fq.extension(6)
+                    sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+                    sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+                    sage: ore_polring = phi.ore_polring()
+                    sage: ore_polring
+                    Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
+
+                The Ore polynomial ring can also be retrieved from the category
+                of the Drinfeld module::
+
+                    sage: ore_polring is phi.category().ore_polring()
+                    True
+
+                The generator of the Drinfeld module is in the Ore polynomial
+                ring::
+
+                    sage: phi(T) in ore_polring
+                    True
+                """
+                return self.category().ore_polring()
