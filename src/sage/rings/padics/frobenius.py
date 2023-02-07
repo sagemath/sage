@@ -290,7 +290,7 @@ class Frobenius(RingHomomorphism):
 
     def _richcmp_(left, right, op):
         """
-        Compare ``left'' and ``right''
+        Compare two p-adic elements
 
         EXAMPLES::
 

@@ -665,7 +665,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         r"""
         Return the ramification degree of this ring over its base ring.
 
-        EXAMPLES::
+        EXAMPLES:
 
         A trivial extension::
 
@@ -775,7 +775,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         r"""
         Return the residue class field of this ring.
 
-        EXAMPLES::
+        EXAMPLES:
 
         A trivial extension::
 
