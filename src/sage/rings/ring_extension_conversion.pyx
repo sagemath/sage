@@ -324,7 +324,7 @@ cpdef from_backend_morphism(f, E):
 
     - ``x`` -- a morphism
 
-    - ``E`` -- a ring extension 
+    - ``E`` -- a ring extension
 
     EXAMPLES::
 
