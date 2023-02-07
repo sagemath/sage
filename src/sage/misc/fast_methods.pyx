@@ -343,7 +343,7 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
             sage: __main__.C = C       # ... in doctests
             sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
             True
- 
+
         The pickle data mainly consist of the class of the unique instance,
         which may be a subclass of the original class used to create the
         instance.If the class is replaced by a sub-sub-class after creation

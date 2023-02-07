@@ -1,5 +1,5 @@
 r"""
-Modular Forms for `\Gamma_0(N)` over `\QQ`
+Modular forms for `\Gamma_0(N)` over `\QQ`
 
 TESTS::
 

@@ -150,7 +150,7 @@ cpdef py_scalar_parent(py_type):
         sage: py_scalar_parent(gmpy2.mpc)
         Complex Double Field
     """
-    if issubclass(py_type, int) or issubclass(py_type, long):
+    if issubclass(py_type, int):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
     if py_type is FractionType:
@@ -266,7 +266,7 @@ cpdef py_scalar_to_element(x):
     """
     if isinstance(x, Element):
         return x
-    elif isinstance(x, (int, long)):
+    elif isinstance(x, int):
         from sage.rings.integer import Integer
         return Integer(x)
     elif type(x) is FractionType:
@@ -344,7 +344,7 @@ cpdef bint parent_is_integers(P) except -1:
         2*f
     """
     if isinstance(P, type):
-        if issubclass(P, int) or issubclass(P, long):
+        if issubclass(P, int):
             return True
         elif is_numpy_type(P):
             from numpy import integer
@@ -969,7 +969,7 @@ cdef class CoercionModel:
                 res = self.division_parent(res)
             return all, res
 
-        if isinstance(yp, Parent) and xp in [int, long, float, complex, bool]:
+        if isinstance(yp, Parent) and xp in [int, float, complex, bool]:
             mor = yp._internal_coerce_map_from(xp)
             if mor is not None:
                 mor = mor.__copy__()
@@ -982,7 +982,7 @@ cdef class CoercionModel:
         elif type(xp) is type:
             all.append("Left operand is not Sage element, will try _sage_.")
 
-        if isinstance(xp, Parent) and yp in [int, long, float, complex, bool]:
+        if isinstance(xp, Parent) and yp in [int, float, complex, bool]:
             mor = xp._internal_coerce_map_from(yp)
             if mor is not None:
                 mor = mor.__copy__()
@@ -1331,8 +1331,8 @@ cdef class CoercionModel:
                     return x_elt,y_elt
             self._coercion_error(x, x_map, x_elt, y, y_map, y_elt)
 
-        cdef bint x_numeric = isinstance(x, (int, long, float, complex))
-        cdef bint y_numeric = isinstance(y, (int, long, float, complex))
+        cdef bint x_numeric = isinstance(x, (int, float, complex))
+        cdef bint y_numeric = isinstance(y, (int, float, complex))
 
         if not x_numeric and is_numpy_type(type(x)):
             import numpy

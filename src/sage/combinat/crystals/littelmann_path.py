@@ -1168,9 +1168,9 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 else:
                     return s
             else:
-                s = sum((1-scalars[i])*c_weight.scalar( dualize (Qd.sum(stretch_short_root(root) for root in paths_labels[i])) ) for i in range(len(paths_labels)))
+                s = sum((1-scalars[i])*c_weight.scalar( dualize(Qd.sum(stretch_short_root(root) for root in paths_labels[i])) ) for i in range(len(paths_labels)))
                 if ct.dual().type() == 'BC':
-                    return s/2
+                    return s / 2
                 else:
                     return s
 

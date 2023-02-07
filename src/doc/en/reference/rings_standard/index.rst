@@ -5,7 +5,7 @@ Integers
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/integer_ring
    sage/rings/integer
@@ -30,7 +30,7 @@ Rationals
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/rational_field
    sage/rings/rational

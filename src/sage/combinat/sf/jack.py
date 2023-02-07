@@ -45,6 +45,8 @@ QQt = FractionField(QQ['t'])
 
 p_to_m_cache = {}
 m_to_p_cache = {}
+
+
 class Jack(UniqueRepresentation):
 
     def __init__(self, Sym, t='t'):
@@ -374,6 +376,8 @@ class Jack(UniqueRepresentation):
         return JackPolynomials_qp(self)
 
 ###################################################################
+
+
 def c1(part, t):
     r"""
     Returns the `t`-Jack scalar product between ``J(part)`` and ``P(part)``.
@@ -398,6 +402,7 @@ def c1(part, t):
     """
     return prod([1+t*part.arm_lengths(flat=True)[i]+part.leg_lengths(flat=True)[i] for i in range(sum(part))],
                 t.parent().one())
+
 
 def c2(part, t):
     r"""
@@ -424,6 +429,7 @@ def c2(part, t):
     """
     return prod([t+t*part.arm_lengths(flat=True)[i]+part.leg_lengths(flat=True)[i] for i in range(sum(part))],
                 t.parent().one())
+
 
 def normalize_coefficients(self, c):
     r"""
@@ -480,6 +486,7 @@ def normalize_coefficients(self, c):
         return c
 
 ####################################################################
+
 
 class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
     def __init__(self, jack):
@@ -773,7 +780,6 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         return self.tensor_square().sum(normalize(coeff)*tensor([self(x), self(y)])
                     for ((x,y), coeff) in g)
 
-
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def scalar_jack(self, x, t=None):
             r"""
@@ -840,6 +846,7 @@ def part_scalar_jack(part1, part2, t):
         return part1.centralizer_size()*t**len(part1)
 
 #P basis
+
 
 class JackPolynomials_p(JackPolynomials_generic):
 
@@ -1017,7 +1024,6 @@ class JackPolynomials_p(JackPolynomials_generic):
             return self.base_ring().zero()
         return self.c2(part1) / self.c1(part1)
 
-
     class Element(JackPolynomials_generic.Element):
         def scalar_jack(self, x, t=None):
             r"""
@@ -1046,6 +1052,7 @@ class JackPolynomials_p(JackPolynomials_generic):
                 return JackPolynomials_generic.Element.scalar_jack(self, x, t)
 
 #J basis
+
 
 class JackPolynomials_j(JackPolynomials_generic):
 
@@ -1080,7 +1087,6 @@ class JackPolynomials_j(JackPolynomials_generic):
 
     class Element(JackPolynomials_generic.Element):
         pass
-
 
 
 #Q basis
@@ -1318,6 +1324,8 @@ class JackPolynomials_qp(JackPolynomials_generic):
         pass
 
 #Zonal polynomials ( =P(at t=2) )
+
+
 class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
     def __init__(self, Sym):
         r"""

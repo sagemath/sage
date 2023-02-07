@@ -195,7 +195,7 @@ cpdef LCM_list(v):
         sig_check()
         if isinstance(elt, Integer):
             x = <Integer>elt
-        elif isinstance(elt, (int, long)):
+        elif isinstance(elt, int):
             x = Integer(elt)
         else:
             # The result is no longer an Integer, pass to generic code

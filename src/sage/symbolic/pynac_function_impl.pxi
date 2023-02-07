@@ -42,7 +42,7 @@ cpdef call_registered_function(unsigned serial,
     cdef GEx res
     cdef GExVector vec
     if nargs == 0 or nargs > 3:
-        for i from 0 <= i < len(args):
+        for i in range(len(args)):
             vec.push_back((<Expression>args[i])._gobj)
         res = g_function_evalv(serial, vec, hold)
     elif nargs == 1:

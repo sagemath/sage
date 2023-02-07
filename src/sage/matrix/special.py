@@ -67,6 +67,7 @@ from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
 from sage.modules.free_module_element import vector
 from sage.structure.element import is_Matrix
+from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
@@ -2332,6 +2333,9 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: polynomial cannot be specified by an empty list
 
+        sage: companion_matrix([QQ.one()]).parent()
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
+
     AUTHOR:
 
     - Rob Beezer (2011-05-19)
@@ -2340,7 +2344,7 @@ def companion_matrix(poly, format='right'):
     if format not in ['right', 'left', 'top', 'bottom']:
         raise ValueError("format must be 'right', 'left', 'top' or 'bottom', not {0}".format(format))
     try:
-        poly = list(poly)
+        poly = Sequence(poly)
     except TypeError:
         raise TypeError('input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not {0}'.format(poly))
     n = len(poly) - 1
@@ -2348,31 +2352,30 @@ def companion_matrix(poly, format='right'):
         raise ValueError('polynomial cannot be specified by an empty list')
     if not poly[n] == 1:
         raise ValueError('polynomial (or the polynomial implied by coefficients) must be monic, not a leading coefficient of {0}'.format(poly[n]))
-    entries = [0] * (n * n)
+    try:
+        M = sage.matrix.constructor.matrix(poly.universe(), n, n)
+    except TypeError:
+        raise TypeError("unable to find common ring for coefficients from polynomial")
     # 1's below diagonal, or above diagonal
     if format in ['right', 'top']:
         for i in range(n - 1):
-            entries[(i+1)*n + i] = 1
+            M[i+1, i] = 1
     else:
         for i in range(n-1):
-            entries[i*n + i+1] = 1
+            M[i, i+1] = 1
     # right side, left side (reversed), bottom edge, top edge (reversed)
     if format == 'right':
         for i in range(n):
-            entries[i*n + n-1] = -poly[i]
+            M[i, n-1] = -poly[i]
     elif format == 'left':
         for i in range(n):
-            entries[(n-1-i)*n + 0] = -poly[i]
+            M[n-1-i, 0] = -poly[i]
     elif format == 'bottom':
         for i in range(n):
-            entries[(n-1)*n + i] = -poly[i]
+            M[n-1, i] = -poly[i]
     elif format == 'top':
         for i in range(n):
-            entries[0*n + n-1-i] = -poly[i]
-    try:
-        M = sage.matrix.constructor.matrix(n, n, entries)
-    except TypeError:
-        raise TypeError("unable to find common ring for coefficients from polynomial")
+            M[0, n-1-i] = -poly[i]
     return M
 
 

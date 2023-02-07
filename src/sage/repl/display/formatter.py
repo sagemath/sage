@@ -143,6 +143,9 @@ class SageDisplayFormatter(DisplayFormatter):
 
             sage: import os
             sage: import importlib.resources
+            sage: import warnings
+            sage: warnings.filterwarnings('ignore', category=DeprecationWarning,
+            ....:     message=r'path is deprecated\. Use files\(\) instead\.')
             sage: from sage.repl.rich_output.backend_ipython import BackendIPython
             sage: backend = BackendIPython()
             sage: shell = get_test_shell()

@@ -1,5 +1,5 @@
 r"""
-Modular Forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
+Modular forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
 
 EXAMPLES::
 

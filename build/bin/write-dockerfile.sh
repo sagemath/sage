@@ -63,11 +63,15 @@ EOF
 RUN sed -i.bak $DIST_UPGRADE /etc/apt/sources.list && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
 EOF
                 fi
-                if [ -n "$EXTRA_REPOSITORY" ]; then
+                if [ -n "$EXTRA_REPOSITORIES" ]; then
                     cat <<EOF
 RUN $UPDATE $INSTALL software-properties-common && ($INSTALL gpg gpg-agent || echo "(ignored)")
-RUN $SUDO add-apt-repository $EXTRA_REPOSITORY
 EOF
+                    for repo in $EXTRA_REPOSITORIES; do
+                        cat <<EOF
+RUN $SUDO add-apt-repository $repo
+EOF
+                    done
                 fi
         esac
         ;;

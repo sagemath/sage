@@ -27,9 +27,11 @@ REFERENCES:
 """
 
 # *****************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
-#       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
+#       Copyright (C) 2015-2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#                     2015      Michal Bejger <bejger@camk.edu.pl>
+#                     2016      Travis Scrimshaw <tscrimsh@umn.edu>
+#                     2020      Michael Jung
+#                     2022      Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -41,6 +43,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.modules import Modules
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
 from sage.tensor.modules.tensor_free_module import TensorFreeModule
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
@@ -51,7 +54,8 @@ from sage.manifolds.differentiable.multivectorfield import (MultivectorField,
 from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
                                                              AutomorphismFieldParal)
 
-class TensorFieldModule(UniqueRepresentation, Parent):
+
+class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
     r"""
     Module of tensor fields of a given type `(k,l)` along a differentiable
     manifold `U` with values on a differentiable manifold `M`, via a
@@ -123,8 +127,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
     `T^{(2,0)}(M)` is a module over the algebra `C^k(M)`::
 
         sage: T20.category()
-        Category of modules over Algebra of differentiable scalar fields on the
-         2-dimensional differentiable manifold M
+        Category of tensor products of modules over Algebra of differentiable scalar fields
+         on the 2-dimensional differentiable manifold M
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 
@@ -226,10 +230,16 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         [1 0]
         [0 1]
 
+    TESTS::
+
+        sage: T11.tensor_factors()
+        [Module X(M) of vector fields on the 2-dimensional differentiable manifold M,
+        Module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M]
+
     """
     Element = TensorField
 
-    def __init__(self, vector_field_module, tensor_type):
+    def __init__(self, vector_field_module, tensor_type, category=None):
         r"""
         Construct a module of tensor fields taking values on a (a priori) not
         parallelizable differentiable manifold.
@@ -281,7 +291,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         # the member self._ring is created for efficiency (to avoid calls to
         # self.base_ring()):
         self._ring = domain.scalar_field_algebra()
-        Parent.__init__(self, base=self._ring, category=Modules(self._ring))
+        category = Modules(self._ring).TensorProducts().or_subcategory(category)
+        Parent.__init__(self, base=self._ring, category=category)
         self._domain = domain
         self._dest_map = dest_map
         self._ambient_domain = vector_field_module._ambient_domain

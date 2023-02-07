@@ -826,31 +826,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return Morphism.__hash__(self)
 
-    cdef dict _extra_slots(self):
-        r"""
-        Helper function for copying and pickling
-
-        TESTS::
-
-            sage: k.<t> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism(2)
-            sage: Frob.__reduce__()  # indirect doctest
-            (<built-in function unpickle_map>,
-             (<class 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>,
-              Automorphism group of Finite Field in t of size 5^3,
-              {},
-              {'_codomain': Finite Field in t of size 5^3,
-               '_domain': Finite Field in t of size 5^3,
-               '_is_coercion': False,
-               '_lift': None,
-               '_power': 2,
-               '_repr_type_str': None}))
-        """
-        cdef dict slots
-        slots = FrobeniusEndomorphism_generic._extra_slots(self)
-        slots['_power'] = self._power
-        return slots
-
     cdef _update_slots(self, dict slots):
         r"""
         Helper function for copying and pickling
@@ -869,7 +844,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             True
         """
         FrobeniusEndomorphism_generic._update_slots(self, slots)
-        self._power = slots['_power']
         domain = self.domain()
         self._degree = domain.degree()
         self._degree_fixed = domain.degree().gcd(self._power)

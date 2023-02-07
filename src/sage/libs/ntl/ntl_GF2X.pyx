@@ -160,7 +160,7 @@ cdef class ntl_GF2X():
             if x.characteristic() == 2:
                 x = list(x.modulus())
         elif isinstance(x, FiniteField_givaroElement):
-            x = "0x"+hex(x.integer_representation())[2:][::-1]
+            x = "0x" + hex(x.to_integer())[2:][::-1]
         elif isinstance(x, FiniteField_ntl_gf2eElement):
             x = x.polynomial().list()
         s = str(x).replace(","," ")

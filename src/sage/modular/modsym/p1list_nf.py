@@ -1,5 +1,5 @@
 r"""
-Lists of Manin symbols (elements of `\mathbb{P}^1(R/N)`) over number fields
+Lists of Manin symbols over number fields, elements of `\mathbb{P}^1(R/N)`
 
 Lists of elements of `\mathbb{P}^1(R/N)` where `R` is the ring of integers of a number
 field `K` and `N` is an integral ideal.
@@ -58,7 +58,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [-3*a^2 + a + 12, 25*a^2 - 50*a + 100, a + 2, a^2 - 3*a + 3]
+    [-1, 4*a^2 - 13*a + 23, a + 2, 5*a^2 + 3*a - 3]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -945,11 +945,11 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, 2*a^2 + 4*a - 1]
+            [-1, -2*a^2 - 4*a + 1]
             sage: P.apply_J_epsilon(4, -1)
             2
             sage: P.apply_J_epsilon(4, u[0], u[1])
-            1
+            5
 
         ::
 

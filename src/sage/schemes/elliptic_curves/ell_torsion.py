@@ -376,7 +376,7 @@ def torsion_bound(E, number_of_places=20):
     p = ZZ(2)  # so we start with 3
 
     try:  # special case, useful for base-changes from QQ
-        ainvs = [ZZ(ai)  for ai in ainvs]
+        ainvs = [ZZ(ai) for ai in ainvs]
         while k < number_of_places:
             p = p.next_prime()
             if p.divides(disc_E) or p.divides(disc_f):

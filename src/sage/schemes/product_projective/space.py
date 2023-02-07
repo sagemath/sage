@@ -45,9 +45,9 @@ from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.categories.fields import Fields
+from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.polynomial.polydict import ETuple
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -145,9 +145,9 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             X = ProductProjectiveSpaces_ring(N, R, names)
         X._components = n
     else:
-        if not isinstance(n,(list,tuple)):
+        if not isinstance(n,(list, tuple)):
             raise ValueError("need list or tuple of dimensions")
-        if not isinstance(R, CommutativeRing):
+        if R not in CommutativeRings():
             raise ValueError("must be a commutative ring")
         from sage.structure.category_object import normalize_names
         n_vars = sum(d + 1 for d in n)
@@ -230,7 +230,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         assert isinstance(N, (tuple, list))
         N = [Integer(n) for n in N]
-        assert isinstance(R, CommutativeRing)
+        assert R in CommutativeRings()
         if len(N) < 2:
             raise ValueError("must be at least two components for a product")
         AmbientSpace.__init__(self, sum(N), R)
@@ -1259,19 +1259,19 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
             (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
-        L=[]
+        L = []
         for x in iters:
-            L.append(next(x)) # put at zero
-        yield(self(L))
+            L.append(next(x))  # put at zero
+        yield self(L)
         j = 0
         while j < self.num_components():
             try:
                 L[j] = next(iters[j])
-                yield(self(L))
+                yield self(L)
                 j = 0
             except StopIteration:
                 iters[j] = iter(self[j])  # reset
-                L[j] = next(iters[j]) # put at zero
+                L[j] = next(iters[j])  # put at zero
                 j += 1
 
     def rational_points(self, F=None):

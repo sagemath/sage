@@ -76,12 +76,12 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         """
         SchemeMorphism.__init__(self, X)
         if check:
-            from sage.rings.ring import CommutativeRing
+            from sage.categories.commutative_rings import CommutativeRings
             if is_SchemeMorphism(v):
                 v = list(v)
             else:
                 try:
-                    if isinstance(v.parent(), CommutativeRing):
+                    if v.parent() in CommutativeRings():
                         v = [v]
                 except AttributeError:
                     pass
@@ -105,7 +105,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
         - ``mat`` -- a matrix
 
-        - ``dom`` -- (unused) needed for consistent function call with projective 
+        - ``dom`` -- (unused) needed for consistent function call with projective
 
         OUTPUT: a scheme point given by ``mat*self``
 

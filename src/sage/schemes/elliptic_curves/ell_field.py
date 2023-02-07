@@ -414,7 +414,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant():
+        if j != F.j_invariant():
             return zero
 
         if E.is_isomorphic(F):
@@ -440,7 +440,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 um = c6E/c6F
                 x=rings.polygen(K)
                 ulist=(x**3-um).roots(multiplicities=False)
-                if  not ulist:
+                if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -513,7 +513,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or j!=K(1728):
+        if j != F.j_invariant() or j!=K(1728):
             return zero
 
         if E.is_isomorphic(F):
@@ -582,7 +582,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or not j.is_zero():
+        if j != F.j_invariant() or not j.is_zero():
             return zero
 
         if E.is_isomorphic(F):
@@ -845,7 +845,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = E.base_extend(G).quadratic_twist(c); E
             Elliptic Curve defined by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000) over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
             sage: K.<b> = E.division_field(3, simplify_all=True); K
-            Number Field in b with defining polynomial x^12 - 10*x^10 + 55*x^8 - 60*x^6 + 75*x^4 + 1350*x^2 + 2025
+            Number Field in b with defining polynomial x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
 
         Some higher-degree examples::
 
@@ -1023,53 +1023,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             return L, F_to_K.post_compose(K_to_L)
         else:
             return L
-
-    def _fetch_cached_order(self, other):
-        r"""
-        This method copies the ``_order`` member from ``other``
-        to ``self`` if their base field is the same and finite.
-
-        This is used in :class:`EllipticCurveIsogeny` to keep track of
-        an already computed curve order: According to Tate's theorem
-        [Tate1966b]_, isogenous elliptic curves over a finite field
-        have the same number of rational points.
-
-        EXAMPLES::
-
-            sage: E1 = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
-            sage: E1.set_order(170141183460469231746191640949390434666)
-            sage: E2 = EllipticCurve(GF(2^127-1), [115649500210559831225094148253060920818, 36348294106991415644658737184600079491])
-            sage: E2._fetch_cached_order(E1)
-            sage: E2._order
-            170141183460469231746191640949390434666
-
-        TESTS::
-
-            sage: E3 = EllipticCurve(GF(17), [1,2,3,4,5])
-            sage: hasattr(E3, '_order')
-            False
-            sage: E3._fetch_cached_order(E1)
-            Traceback (most recent call last):
-            ...
-            ValueError: curves have distinct base fields
-
-        ::
-
-            sage: E4 = EllipticCurve([1,2,3,4,5])
-            sage: E4._fetch_cached_order(E1.change_ring(QQ))
-            sage: hasattr(E4, '_order')
-            False
-        """
-        if hasattr(self, '_order') or not hasattr(other, '_order'):
-            return
-        F = self.base_field()
-        if F != other.base_field():
-            raise ValueError('curves have distinct base fields')
-        if not F.is_finite():
-            raise ValueError('base field must be finite')
-        n = getattr(other, '_order', None)
-        if n is not None:
-            self._order = n
 
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""

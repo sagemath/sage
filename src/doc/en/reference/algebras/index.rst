@@ -12,7 +12,7 @@ Free associative algebras and quotients
 ---------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/free_algebra
    sage/algebras/free_algebra_element
@@ -29,7 +29,7 @@ Finite dimensional algebras
 ---------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra
    sage/algebras/finite_dimensional_algebras/finite_dimensional_algebra_element
@@ -40,7 +40,7 @@ Named associative algebras
 --------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/affine_nil_temperley_lieb
    sage/algebras/askey_wilson
@@ -48,6 +48,7 @@ Named associative algebras
    sage/algebras/clifford_algebra
    sage/algebras/cluster_algebra
    sage/combinat/descent_algebra
+   fusion_rings
    sage/algebras/hall_algebra
    sage/combinat/posets/incidence_algebras
    sage/algebras/group_algebra
@@ -73,7 +74,7 @@ Hecke algebras
 --------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/hecke_algebras/ariki_koike_algebra
    sage/algebras/iwahori_hecke_algebra
@@ -85,7 +86,7 @@ Graded algebras
 ---------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/finite_gca
    sage/algebras/commutative_dga
@@ -94,7 +95,7 @@ Various associative algebras
 ----------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/associated_graded
    sage/algebras/cellular_basis
@@ -106,7 +107,7 @@ Non-associative algebras
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    lie_algebras
    lie_conformal_algebras
@@ -115,6 +116,6 @@ Non-associative algebras
    sage/combinat/free_prelie_algebra
    sage/algebras/shuffle_algebra
    sage/algebras/free_zinbiel_algebra
-   
+
 .. include:: ../footer.txt
 

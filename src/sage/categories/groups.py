@@ -233,10 +233,10 @@ class Groups(CategoryWithAxiom):
               this can be used when the base set is infinite.
 
             OUTPUT:
+
             An object representing the multiplication table.  This is
             an :class:`~sage.matrix.operation_table.OperationTable` object
             and even more documentation can be found there.
-
 
             EXAMPLES:
 

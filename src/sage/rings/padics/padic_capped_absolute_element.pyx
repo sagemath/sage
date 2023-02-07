@@ -320,7 +320,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
           this valuation (and beyond) to see if they can contribute to the
           series.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             1 in the residue field. If this assumption is not fulfilled
@@ -383,7 +383,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         return ans
 
     def _exp_binary_splitting(self, aprec):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -393,7 +393,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -443,7 +443,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         return ans
 
     def _exp_newton(self, aprec, log_algorithm=None):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -458,7 +458,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
           method. See :meth:`log` for more details about the possible
           algorithms.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not

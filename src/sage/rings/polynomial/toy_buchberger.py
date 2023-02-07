@@ -399,7 +399,9 @@ def inter_reduction(Q):
 
     - ``Q`` -- a set of polynomials
 
-    OUTPUT: if ``Q`` is the set `(f_1, ..., f_n)`, this method returns `(g_1,
+    OUTPUT:
+
+    if ``Q`` is the set `(f_1, ..., f_n)`, this method returns `(g_1,
     ..., g_s)` such that:
 
     - `<f_1,...,f_n> = <g_1,...,g_s>`

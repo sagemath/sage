@@ -2,15 +2,15 @@ r"""
 Descent on elliptic curves over `\QQ` with a 2-isogeny
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2009 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -316,7 +316,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         result = 0
         (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
         qq = nmod_poly_factor(f_factzn, f)
-        for i from 0 <= i < f_factzn.num:
+        for i in range(f_factzn.num):
             if f_factzn.exp[i]&1:
                 result = 1
                 break
@@ -327,15 +327,15 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
         nmod_poly_zero(f)
         nmod_poly_set_coeff_ui(f, 0, 1)
-        for i from 0 <= i < f_factzn.num:
-            for j from 0 <= j < (f_factzn.exp[i]>>1):
+        for i in range(f_factzn.num):
+            for j in range(f_factzn.exp[i]>>1):
                 nmod_poly_mul(f, f, &f_factzn.p[i])
 
         (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
         nmod_poly_factor(f_factzn, f)
         has_roots = 0
         j = 0
-        for i from 0 <= i < f_factzn.num:
+        for i in range(f_factzn.num):
             if nmod_poly_degree(&f_factzn.p[i]) == 1 and 0 != nmod_poly_get_coeff_ui(&f_factzn.p[i], 1):
                 has_roots = 1
                 roots[j] = pp_ui - nmod_poly_get_coeff_ui(&f_factzn.p[i], 0)
@@ -393,7 +393,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
         result = 0
         mpz_init(tt)
-        for i from 0 <= i < j:
+        for i in range(j):
             mpz_mul_ui(tt, aaa, roots[i])
             mpz_add(tt, tt, bbb)
             mpz_mul_ui(tt, tt, roots[i])
@@ -454,7 +454,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         has_roots = 0
         has_single_roots = 0
         j = 0
-        for i from 0 <= i < f_factzn.num:
+        for i in range(f_factzn.num):
             if nmod_poly_degree(&f_factzn.p[i]) == 1 and 0 != nmod_poly_get_coeff_ui(&f_factzn.p[i], 1):
                 has_roots = 1
                 if f_factzn.exp[i] == 1:
@@ -473,7 +473,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_init(cc)
             mpz_init(dd)
             mpz_init(ee)
-        for i from 0 <= i < j:
+        for i in range(j):
             fmpz_poly_zero(f1)
             fmpz_poly_zero(linear)
             fmpz_poly_set_coeff_mpz(f1, 0, e)
@@ -558,7 +558,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
         f = ntl.ZZ_pX([1], P)
         for factor, exponent in f_factzn:
-            for j from 0 <= j < (exponent/2):
+            for j in range(exponent // 2):
                 f *= factor
 
         f /= f.leading_coefficient()
@@ -631,7 +631,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
         result = 0
         mpz_init(tt)
-        for i from 0 <= i < j:
+        for i in range(j):
             mpz_mul(tt, aaa, roots[i])
             mpz_add(tt, tt, bbb)
             mpz_mul(tt, tt, roots[i])
@@ -712,7 +712,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_init(cc)
             mpz_init(dd)
             mpz_init(ee)
-        for i from 0 <= i < j:
+        for i in range(j):
             fmpz_poly_zero(f1)
             fmpz_poly_zero(linear)
             fmpz_poly_set_coeff_mpz(f1, 0, e)
@@ -958,7 +958,7 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
 
     # Set up coefficient array, and static variables
     cdef mpz_t *coeffs = <mpz_t *> sig_malloc(5 * sizeof(mpz_t))
-    for i from 0 <= i <= 4:
+    for i in range(5):
         mpz_init(coeffs[i])
     mpz_set_ui(coeffs[1], 0)     #
     mpz_set(coeffs[2], c_mpz)    # These never change
@@ -969,7 +969,7 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
     # local solubility over RR)
     cdef mpz_t *p_div_d_mpz = <mpz_t *> sig_malloc((p_list_len+1) * sizeof(mpz_t))
     n_primes = 0
-    for i from 0 <= i < p_list_len:
+    for i in range(p_list_len):
         if mpz_divisible_p(d_mpz, p_list[i]):
             mpz_init(p_div_d_mpz[n_primes])
             mpz_set(p_div_d_mpz[n_primes], p_list[i])
@@ -987,7 +987,7 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
     mpz_set_ui(n2, 0)
     while mpz_cmp(j, n_divisors) < 0:
         mpz_set_ui(coeffs[4], 1)
-        for i from 0 <= i < n_primes:
+        for i in range(n_primes):
             if mpz_tstbit(j, i):
                 mpz_mul(coeffs[4], coeffs[4], p_div_d_mpz[i])
         if verbosity > 3:
@@ -1012,7 +1012,7 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
         if not found_global_points:
             # Test whether the quartic is everywhere locally soluble:
             els = 1
-            for i from 0 <= i < p_list_len:
+            for i in range(p_list_len):
                 if not Qp_soluble(coeffs[4], coeffs[3], coeffs[2], coeffs[1], coeffs[0], p_list[i]):
                     els = 0
                     break
@@ -1035,11 +1035,11 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                         print("\nDone calling ratpoints for large point search")
         mpz_add_ui(j, j, 1)
     mpz_clear(j)
-    for i from 0 <= i < n_primes:
+    for i in range(n_primes):
         mpz_clear(p_div_d_mpz[i])
     sig_free(p_div_d_mpz)
     mpz_clear(n_divisors)
-    for i from 0 <= i <= 4:
+    for i in range(5):
         mpz_clear(coeffs[i])
     sig_free(coeffs)
     return 0
@@ -1202,16 +1202,16 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
         p_list_len = 1
         n_factor_init(&fact)
         n_factor(&fact, mpz_get_ui(d_mpz), proof)
-        for i from 0 <= i < fact.num:
+        for i in range(fact.num):
             p = fact.p[i]
             if p != 2:
                 mpz_init_set_ui(p_list_mpz[p_list_len], p)
                 p_list_len += 1
         n_factor(&fact, mpz_get_ui(d_prime_mpz), proof)
-        for i from 0 <= i < fact.num:
+        for i in range(fact.num):
             p = fact.p[i]
             found = 0
-            for j from 0 <= j < p_list_len:
+            for j in range(p_list_len):
                 if mpz_cmp_ui(p_list_mpz[j], p)==0:
                     found = 1
                     break
@@ -1233,7 +1233,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
         if P not in primes: primes.append(P)
         p_list_len = len(primes)
         p_list_mpz = <mpz_t *> sig_malloc(p_list_len * sizeof(mpz_t))
-        for i from 0 <= i < p_list_len:
+        for i in range(p_list_len):
             P = Integer(primes[i])
             mpz_init_set(p_list_mpz[i], P.value)
     if d_neg:
@@ -1257,7 +1257,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
           global_limit_small, global_limit_large, verbosity, selmer_only,
           n1_prime.value, n2_prime.value)
 
-    for i from 0 <= i < p_list_len:
+    for i in range(p_list_len):
         mpz_clear(p_list_mpz[i])
     sig_free(p_list_mpz)
 

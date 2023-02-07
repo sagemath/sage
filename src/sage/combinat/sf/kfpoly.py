@@ -201,6 +201,7 @@ def schur_to_hl(mu, t=None):
         d[ key.conjugate() ] = res[key]
     return d
 
+
 def riggings(part):
     r"""
     Generate all possible rigging sequences for a fixed partition ``part``.
@@ -241,6 +242,7 @@ def riggings(part):
         res = [[new] + nu for nu in res for new in compat(sa, nu[0], nu[1])]
 
     return [x[:l] for x in res]
+
 
 def compat(n, mu, nu):
     r"""

@@ -2636,4 +2636,3 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
             sage: TestSuite(circuit).run(skip='_test_pickling')               # long time
         """
         super().__init__(pls, G, Q, DifferentialAGCodeDecoder_K, verbose=verbose)
-

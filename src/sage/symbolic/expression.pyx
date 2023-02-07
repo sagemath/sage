@@ -4712,7 +4712,7 @@ cdef class Expression(Expression_abc):
                 return self.gradient()
             else:
                 raise ValueError("No differentiation variable specified.")
-        if not isinstance(deg, (int, long, sage.rings.integer.Integer)) \
+        if not isinstance(deg, (int, sage.rings.integer.Integer)) \
                 or deg < 1:
             raise TypeError("argument deg should be an integer >= 1.")
         cdef Expression symbol = self.coerce_in(symb)
@@ -7000,7 +7000,7 @@ cdef class Expression(Expression_abc):
         # the following is a temporary fix for GiNaC bug #9505
         if is_a_mul(ss._gobj): # necessarily n=1 here
             res = self
-            for i from 0 <= i < ss._gobj.nops():
+            for i in range(ss._gobj.nops()):
                 res = res.coefficient(new_Expression_from_GEx(self._parent, ss._gobj.op(i)))
             return res
         sig_on()
@@ -10135,7 +10135,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return new_Expression_from_GEx(self._parent, ex)
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if not is_a_power(oper):
                     vec.push_back(oper)
@@ -10225,7 +10225,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return new_Expression_from_GEx(self._parent, ex)
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):
                     ex = oper.op(0)
@@ -10318,7 +10318,7 @@ cdef class Expression(Expression_abc):
             return (new_Expression_from_GEx(self._parent, ex.op(0)),
                     new_Expression_from_GEx(self._parent, ex.op(1)))
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):   # oper = ex^power
                     ex = oper.op(0)
@@ -11290,10 +11290,11 @@ cdef class Expression(Expression_abc):
 
     def canonicalize_radical(self):
         r"""
-        Choose a canonical branch of the given expression. The square
-        root, cube root, natural log, etc. functions are multi-valued. The
-        ``canonicalize_radical()`` method will choose *one* of these values
-        based on a heuristic.
+        Choose a canonical branch of the given expression.
+
+        The square root, cube root, natural log, etc. functions are
+        multi-valued. The ``canonicalize_radical()`` method will
+        choose *one* of these values based on a heuristic.
 
         For example, ``sqrt(x^2)`` has two values: ``x``, and
         ``-x``. The ``canonicalize_radical()`` function will choose
@@ -13722,10 +13723,11 @@ cpdef new_Expression(parent, x):
             from sage.symbolic.constants import NaN
             return NaN
         exp = x
-    elif isinstance(x, long):
-        exp = x
     elif isinstance(x, int):
-        exp = GEx(<long>x)
+        try:
+            exp = GEx(<long>x)
+        except OverflowError:
+            exp = x
     elif x is infinity:
         return new_Expression_from_GEx(parent, g_Infinity)
     elif x is minus_infinity:

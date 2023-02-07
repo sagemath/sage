@@ -796,7 +796,7 @@ class ManinMap():
         M = self._manin
 
         if algorithm == 'prep':
-            ## psi will denote self | T_ell
+            # psi will denote self | T_ell
             psi = {}
             for g in M.gens():
                 psi_g = sum((self[h] * A for h, A in M.prep_hecke_on_gen_list(ell, g)), self._codomain(0))
