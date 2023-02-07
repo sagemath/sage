@@ -30,7 +30,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     This class represents Drinfeld `\mathbb{F}_q[T]`-module morphisms.
 
     Let `\phi` and `\psi` be two Drinfeld `\mathbb{F}_q[T]`-modules over
-    a field `K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an
+    a field `K`. A *morphism of Drinfeld modules* `\phi \to \psi` is an
     Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
     every `a \in \mathbb{F}_q[T]`. In our case, this is equivalent to `f
     \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
@@ -68,8 +68,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: morphism.domain() is phi
         True
 
-    ::
-
         sage: morphism.codomain()
         Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
         sage: morphism.codomain() is psi
@@ -79,8 +77,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         sage: morphism.ore_polynomial()
         t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
-
-    ::
 
         sage: morphism.ore_polynomial() is ore_pol
         True
@@ -126,12 +122,12 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``cls`` -- DrinfeldModuleMorphism
+        - ``cls`` -- the class ``DrinfeldModuleMorphism``
+
         - ``parent`` -- the Drinfeld module homset
+
         - ``x`` -- the Ore polynomial defining the morphism or a
           DrinfeldModuleMorphism
-
-        OUTPUT: the morphism object
 
         TESTS::
 
@@ -176,6 +172,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         INPUT:
 
         - ``parent`` -- the Drinfeld module homset
+
         - ``ore_pol`` -- the Ore polynomial that defines the morphism
 
         TESTS::
@@ -194,7 +191,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: morphism._ore_polynomial == t + z6^5 + z6^2 + 1
             True
         """
-
         super().__init__(parent)
         self._domain = parent.domain()
         self._codomain = parent.codomain()
@@ -203,8 +199,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     def _latex_(self):
         r"""
         Return a LaTeX representation of the morphism.
-
-        OUTPUT: a string
 
         EXAMPLES::
 
@@ -236,8 +230,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     def _repr_(self):
         r"""
         Return a string representation of the morphism.
-
-        OUTPUT: a string
 
         EXAMPLES::
 

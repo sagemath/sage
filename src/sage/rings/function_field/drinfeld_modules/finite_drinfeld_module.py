@@ -91,7 +91,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: chi(frob_pol, phi(T))
         0
 
-    This makes it possible to compute the Frobenius trace and norm::
+    as well as its trace and norm::
 
         sage: phi.frobenius_trace()
         6*T + 5*z3^2 + 5*z3 + 6
@@ -100,7 +100,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: phi.frobenius_norm()
         2*T^2 + (z3^2 + z3 + 4)*T + 2*z3
 
-    And to decide if a Drinfeld module is ordinary or supersingular::
+    We can decide if a Drinfeld module is ordinary or supersingular::
 
         sage: phi.is_ordinary()
         True
@@ -129,10 +129,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         - ``function_ring`` -- a univariate polynomial ring whose base
           is a finite field
+
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
+
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
+
         - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
           module
 
@@ -148,11 +151,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi._gen == ore_polring(gen)
             True
         """
-
         # NOTE: There used to be no __init__ here (which was fine). I
         # added one to ensure that FiniteDrinfeldModule would always
         # have _frobenius_norm and _frobenius_trace attributes.
-
         super().__init__(gen, category, latexname)
         self._frobenius_norm = None
         self._frobenius_trace = None
@@ -166,8 +167,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         *Frobenius endomorphism* is defined as the endomorphism whose
         defining Ore polynomial is `t^q`.
 
-        OUTPUT: a Drinfeld module morphism
-
         EXAMPLES::
 
             sage: Fq = GF(343)
@@ -179,6 +178,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
               From (gen): z6*t^2 + 1
               To (gen):   z6*t^2 + 1
               Defn:       t^2
+
+       TESTS::
+
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)
             True
@@ -214,10 +216,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Note that the *Frobenius trace* is defined as `A(T)` and the
         *Frobenius norm* is defined as `B(T)`.
 
-        INPUT: (default: ``'T'``) the name of the second variable
+        INPUT:
 
-        OUTPUT: an univariate polynomial with coefficients in the
-        function ring
+        - ``var`` (default: ``'X'``) -- the name of the second variable
 
         EXAMPLES::
 
@@ -283,8 +284,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `n` be the degree of the base field over `\mathbb{F}_q` Then the
         Frobenius norm has degree `n`.
 
-        OUTPUT: an element in the function ring
-
         EXAMPLES::
 
             sage: Fq = GF(343)
@@ -331,26 +330,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         Let `\mathbb{F}_q[T]` be the function ring, write `\chi = T^2 -
         A(X)T + B(X) \in \mathbb{F}_q[T][X]` for the characteristic
-        polynomial of the Frobenius endomorphism. The *Frobenius norm*
-        is defined as the polynomial `B(T) \in \mathbb{F}_q[T]`.
+        polynomial of the Frobenius endomorphism. The *Frobenius trace*
+        is defined as the polynomial `A(T) \in \mathbb{F}_q[T]`.
 
         Let `n` be the degree over `\mathbb{F}_q` of the base codomain.
-        Then the Frobenius trace has degree `\leq \frac{n}{2}`.
-
-        OUTPUT: an element in the function ring
-
-        ALGORITHM:
-
-            Let `A(T)` denote the Frobenius trace and `B(T)` denote the
-            Frobenius norm. We begin by computing `B(T)`, see docstring
-            of method :meth:`frobenius_norm` for details. The
-            characteristic polynomial of the Frobenius yields `t^{2n} -
-            \phi_A t^n + \phi_B = 0`, where `t^n` is the Frobenius
-            endomorphism. As `\phi_B` is now known, we can compute
-            `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(T)` by
-            inverting this quantity, using the method
-            :meth:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule.invert`,
-            see its docstring for details.
+        Then the Frobenius trace has degree at most `\frac{n}{2}`.
 
         EXAMPLES::
 
@@ -372,6 +356,19 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
             sage: A == -phi.frobenius_charpoly()[1]
             True
+
+        ALGORITHM:
+
+            Let `A(T)` denote the Frobenius trace and `B(T)` denote the
+            Frobenius norm. We begin by computing `B(T)`, see docstring
+            of method :meth:`frobenius_norm` for details. The
+            characteristic polynomial of the Frobenius yields `t^{2n} -
+            \phi_A t^n + \phi_B = 0`, where `t^n` is the Frobenius
+            endomorphism. As `\phi_B` is now known, we can compute
+            `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(T)` by
+            inverting this quantity, using the method
+            :meth:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule.invert`,
+            see its docstring for details.
         """
         self._check_rank_two()
         # Notations from Schost-Musleh:
@@ -391,8 +388,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         - ``ore_pol`` -- the Ore polynomial whose preimage we want to
           compute
-
-        OUTPUT: a function ring element
 
         EXAMPLES::
 
@@ -417,6 +412,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
+
             sage: phi.invert(t^3 + t^2 + 1)
             Traceback (most recent call last):
             ...
@@ -494,8 +490,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         A rank two Drinfeld module is *ordinary* if and only if it is
         not supersingular; see :meth:`is_supersingular`.
 
-        OUTPUT: a boolean
-
         EXAMPLES::
 
             sage: Fq = GF(343)
@@ -529,8 +523,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         if the function ring-characteristic divides the Frobenius
         trace. An *ordinary* rank two finite Drinfeld module is a
         Drinfeld module that is not supersingular.
-
-        OUTPUT: a boolean
 
         EXAMPLES::
 

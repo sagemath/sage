@@ -34,6 +34,7 @@ class DrinfeldModuleHomset(Homset):
     INPUT:
 
     - ``X`` -- the domain
+
     - ``Y`` -- the codomain
 
     EXAMPLES::
@@ -43,22 +44,22 @@ class DrinfeldModuleHomset(Homset):
         sage: K.<z6> = Fq.extension(2)
         sage: phi = DrinfeldModule(A, [z6, z6, 2])
         sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-        sage: hom = Hom(phi, psi)
-        sage: hom
+        sage: H = Hom(phi, psi)
+        sage: H
         Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
 
     ::
 
         sage: from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
-        sage: isinstance(hom, DrinfeldModuleHomset)
+        sage: isinstance(H, DrinfeldModuleHomset)
         True
 
     There is a simpler syntax for endomorphisms sets::
 
-        sage: end = End(phi)
-        sage: end
+        sage: E = End(phi)
+        sage: E
         Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + z6*t + z6
-        sage: end is Hom(phi, phi)
+        sage: E is Hom(phi, phi)
         True
 
     The domain and codomain must have the same Drinfeld modules
@@ -80,8 +81,7 @@ class DrinfeldModuleHomset(Homset):
 
     One can create morphism objects by calling the homset::
 
-        sage: t = phi.ore_polring().gen()
-        sage: identity_morphism = end(1)
+        sage: identity_morphism = E(1)
         sage: identity_morphism
         Drinfeld Module morphism:
           From (gen): 2*t^2 + z6*t + z6
@@ -90,7 +90,8 @@ class DrinfeldModuleHomset(Homset):
 
     ::
 
-        sage: frobenius_endomorphism = end(t^6)
+        sage: t = phi.ore_polring().gen()
+        sage: frobenius_endomorphism = E(t^6)
         sage: frobenius_endomorphism
         Drinfeld Module morphism:
           From (gen): 2*t^2 + z6*t + z6
@@ -99,7 +100,7 @@ class DrinfeldModuleHomset(Homset):
 
     ::
 
-        sage: isogeny = hom(t + 1)
+        sage: isogeny = H(t + 1)
         sage: isogeny
         Drinfeld Module morphism:
           From (gen): 2*t^2 + z6*t + z6
@@ -109,28 +110,28 @@ class DrinfeldModuleHomset(Homset):
     And one can test if an Ore polynomial defines a morphism using the
     ``in`` syntax::
 
-        sage: 1 in hom
+        sage: 1 in H
         False
-        sage: t^6 in hom
+        sage: t^6 in H
         False
-        sage: t + 1 in hom
+        sage: t + 1 in H
         True
-        sage: 1 in end
+        sage: 1 in E
         True
-        sage: t^6 in end
+        sage: t^6 in E
         True
-        sage: t + 1 in end
+        sage: t + 1 in E
         False
 
     This also works if the candidate is a morphism object::
 
-        sage: isogeny in hom
+        sage: isogeny in H
         True
-        sage: end(0) in end
+        sage: E(0) in E
         True
-        sage: identity_morphism in hom
+        sage: identity_morphism in H
         False
-        sage: frobenius_endomorphism in hom
+        sage: frobenius_endomorphism in H
         False
     """
 
@@ -144,9 +145,12 @@ class DrinfeldModuleHomset(Homset):
         INPUT:
 
         - ``X`` -- the domain of the homset
+
         - ``Y`` -- the codomain of the homset
+
         - ``category`` (default: ``None``) -- the Drinfeld modules category of
           the domain and codomain
+
         - ``check`` (default: ``True``) -- check the validity of the category
 
         TESTS::
@@ -156,10 +160,10 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z6, z6, 2])
             sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-            sage: hom = Hom(phi, psi)
-            sage: hom.domain() is phi
+            sage: H = Hom(phi, psi)
+            sage: H.domain() is phi
             True
-            sage: hom.codomain() is psi
+            sage: H.codomain() is psi
             True
         """
         if category is None:
@@ -178,8 +182,6 @@ class DrinfeldModuleHomset(Homset):
         r"""
         Return a LaTeX representation of the homset.
 
-        OUTPUT: a string
-
         EXAMPLES::
 
             sage: Fq = GF(27)
@@ -187,8 +189,8 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z6, z6, 2])
             sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-            sage: hom = Hom(phi, psi)
-            sage: latex(hom)
+            sage: H = Hom(phi, psi)
+            sage: latex(H)
             \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from{ }(gen){ }}2 t^{2} + z_{6} t + z_{6}\text{{ }to{ }(gen){ }}2 t^{2} + \left(2 z_{6}^{5} + 2 z_{6}^{4} + 2 z_{6} + 1\right) t + z_{6}
         """
         return f'\\text{{Set{{ }}of{{ }}Drinfeld{{ }}module{{ }}morphisms' \
@@ -200,8 +202,6 @@ class DrinfeldModuleHomset(Homset):
         r"""
         Return a string representation of the homset.
 
-        OUTPUT: a string
-
         EXAMPLES::
 
             sage: Fq = GF(27)
@@ -209,8 +209,8 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z6, z6, 2])
             sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-            sage: hom = Hom(phi, psi)
-            sage: hom
+            sage: H = Hom(phi, psi)
+            sage: H
             Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
         """
         return f'Set of Drinfeld module morphisms from (gen) '\
@@ -218,14 +218,11 @@ class DrinfeldModuleHomset(Homset):
 
     def __contains__(self, x):
         r"""
-        Implement the ``in`` operator for the homset; return ``True``
-        whether the input defines a morphism in the homset.
+        Return ``True`` if the input defines a morphism in the homset.
 
         INPUT:
 
         - ``x`` -- an Ore polynomial or a Drinfeld module morphism
-
-        OUTPUT: a boolean
 
         EXAMPLES:
 
@@ -236,34 +233,34 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z6, z6, 2])
             sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-            sage: hom = Hom(phi, psi)
-            sage: end = End(phi)
+            sage: H = Hom(phi, psi)
+            sage: E = End(phi)
             sage: t = phi.ore_polring().gen()
-            sage: 1 in hom
+            sage: 1 in H
             False
-            sage: t^6 in hom
+            sage: t^6 in H
             False
-            sage: t + 1 in hom
+            sage: t + 1 in H
             True
-            sage: 1 in end
+            sage: 1 in E
             True
-            sage: t^6 in end
+            sage: t^6 in E
             True
-            sage: t + 1 in end
+            sage: t + 1 in E
             False
 
         Whereas the input is now a Drinfeld module morphism::
 
-            sage: isogeny = hom(t + 1)
-            sage: isogeny in hom
+            sage: isogeny = H(t + 1)
+            sage: isogeny in H
             True
-            sage: end(0) in end
+            sage: E(0) in E
             True
-            sage: identity_morphism = end(1)
-            sage: identity_morphism in hom
+            sage: identity_morphism = E(1)
+            sage: identity_morphism in H
             False
             sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-            sage: frobenius_endomorphism in hom
+            sage: frobenius_endomorphism in H
             False
         """
         try:
@@ -279,8 +276,6 @@ class DrinfeldModuleHomset(Homset):
 
         INPUT: an Ore polynomial
 
-        OUTPUT: a Drinfeld module morphism
-
         EXAMPLES::
 
             sage: Fq = GF(27)
@@ -288,10 +283,10 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z6, z6, 2])
             sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
-            sage: hom = Hom(phi, psi)
-            sage: end = End(phi)
+            sage: H = Hom(phi, psi)
+            sage: E = End(phi)
             sage: t = phi.ore_polring().gen()
-            sage: identity_morphism = end(1)
+            sage: identity_morphism = E(1)
             sage: identity_morphism
             Drinfeld Module morphism:
               From (gen): 2*t^2 + z6*t + z6
@@ -300,7 +295,7 @@ class DrinfeldModuleHomset(Homset):
 
         ::
 
-            sage: frobenius_endomorphism = end(t^6)
+            sage: frobenius_endomorphism = E(t^6)
             sage: frobenius_endomorphism
             Drinfeld Module morphism:
               From (gen): 2*t^2 + z6*t + z6
@@ -309,7 +304,7 @@ class DrinfeldModuleHomset(Homset):
 
         ::
 
-            sage: isogeny = hom(t + 1)
+            sage: isogeny = H(t + 1)
             sage: isogeny
             Drinfeld Module morphism:
               From (gen): 2*t^2 + z6*t + z6

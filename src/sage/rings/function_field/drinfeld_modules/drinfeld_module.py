@@ -47,15 +47,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     polynomials with coefficients in `K`, whose multiplication is given
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
-    A Drinfeld `\mathbb{F}_q[T]`-module over the `base
-    \mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
+    A Drinfeld `\mathbb{F}_q[T]`-module over the base
+    `\mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
     `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that `\Im(\phi) \not\subset K`
     and `\phi` agrees with `\gamma` on `\mathbb{F}_q`.
 
     For `a` in `\mathbb{F}_q[T]`, `\phi(a)` is denoted `\phi_a`.
 
     The Drinfeld `\mathbb{F}_q[T]`-module `\phi` is uniquely determined
-    by the image `\phi_T` of `T` — this serves as input of the class.
+    by the image `\phi_T` of `T`; this serves as input of the class.
 
     .. NOTE::
 
@@ -84,8 +84,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: Fq = GF(49)
         sage: A.<T> = Fq[]
-        sage: K.<z> = Frac(A)
-        sage: psi = DrinfeldModule(A, [z, T+1])
+        sage: K = Frac(A)
+        sage: psi = DrinfeldModule(A, [K(T), T+1])
         sage: psi
         Drinfeld module defined by T |--> (T + 1)*t + T
 
@@ -111,8 +111,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     - ``function_ring`` -- a univariate polynomial ring whose base field
       is a finite field
+
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
+
     - ``name`` (default: ``'t'``) -- the name of the Ore polynomial ring
       generator
 
@@ -131,7 +133,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. NOTE::
 
         Note that the definition of the base field is implicit; it is
-        automatically defined as  the compositum of all the parents of
+        automatically defined as the compositum of all the parents of
         the coefficients.
 
     The above Drinfeld module is finite; it can also be infinite::
@@ -337,7 +339,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: identity_morphism.ore_polynomial()
         1
 
-    It is easy to check if a morphism is an isogeny, endomorphism or
+    One checks if a morphism is an isogeny, endomorphism or
     isomorphism::
 
         sage: frobenius_endomorphism.is_isogeny()
@@ -355,17 +357,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: The Vélu formula
 
-    Let ``ore_pol`` be a nonzero Ore polynomial. We can decide if there
-    exists a Drinfeld module ``psi`` such that ``ore_pol`` is an isogeny
-    from ``self`` to ``psi``. If so, we find ``psi``::
+    Let ``P`` be a nonzero Ore polynomial. We can decide if ``P``
+    defines an isogeny with a given domain and, if it does, find
+    the codomain::
 
-        sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
-        sage: psi = phi.velu(ore_pol)
+        sage: P = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
+        sage: psi = phi.velu(P)
         sage: psi
         Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z
-        sage: ore_pol in Hom(phi, psi)
+        sage: P in Hom(phi, psi)
         True
-        sage: ore_pol * phi(T) == psi(T) * ore_pol
+        sage: P * phi(T) == psi(T) * P
         True
 
     If the input does not define an isogeny, an exception is raised:
@@ -519,14 +521,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``function_ring`` -- a univariate polynomial ring whose base
           is a finite field
+
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
+
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
+
         - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
           module
 
-        OUTPUT: a DrinfeldModule or FiniteDrinfeldModule
+        OUTPUT:
+
+        A DrinfeldModule or FiniteDrinfeldModule.
 
         TESTS::
 
@@ -618,17 +625,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         Initialize ``self``.
 
-        Validity of the input is checked in ``__classcall_private__``.
-        The ``__init__`` just saves attributes.
+        Validity of the input is checked in meth:`__classcall_private__`.
+        The meth:`__init__` just saves attributes.
 
         INPUT:
 
         - ``function_ring`` -- a univariate polynomial ring whose base
           is a finite field
+
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
+
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
+
         - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
           module
 
@@ -718,10 +728,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         INPUT:
 
         - ``other`` -- the codomain of the homset
+
         - ``category`` -- the category in which we consider the
           morphisms, usually ``self.category()``
-
-        OUTPUT: an homset
 
         EXAMPLES::
 
@@ -768,10 +777,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return a LaTeX representation of the Drinfeld module.
 
-        If a LaTeX name was given at init. using `latexname`, use the LaTeX
-        name. Otherwise, create a representation.
-
-        OUTPUT: a string
+        If a LaTeX name was given at initialization, we use it.
+        Otherwise, we create a representation.
 
         EXAMPLES::
 
@@ -807,9 +814,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def _repr_(self):
         r"""
-        Return a string representation of the Drinfeld module.
-
-        OUTPUT: a string
+        Return a string representation of this Drinfeld module.
 
         EXAMPLES::
 
@@ -844,7 +849,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: action
             Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
-    The action on elements is computed as follows::
+        The action on elements is computed as follows::
 
             sage: P = T^2 + T + 1
             sage: a = z12 + 1
@@ -905,8 +910,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``sparse`` -- a boolean
 
-        OUTPUT: a list of elements in the base codomain
-
         EXAMPLES::
 
             sage: Fq = GF(25)
@@ -939,8 +942,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the generator of the Drinfeld module.
 
-        OUTPUT: an Ore polynomial
-
         EXAMPLES::
 
             sage: Fq = GF(25)
@@ -972,8 +973,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         A rank two Drinfeld module is supersingular if and only if its
         height equals its rank.
-
-        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -1015,15 +1014,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                                  'function field characteristic')
             else:
                 p = self.characteristic()
-                return Integer((self(p).valuation()) // (p.degree()))
+                return Integer(self(p).valuation() // p.degree())
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
     def is_finite(self):
         r"""
-        Return ``True`` whether the Drinfeld module is finite.
-
-        OUTPUT: a boolean
+        Return ``True`` if this Drinfeld module is finite,
+        ``False`` otherwise.
 
         EXAMPLES::
 
