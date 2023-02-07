@@ -606,16 +606,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('LaTeX name should be a string')
 
         # Build the category
+        T = function_ring.gen()
         if isinstance(base_field_noext, RingExtension_generic):
             base_field = base_field_noext
+        elif base_field_noext.has_coerce_map_from(function_ring) \
+                and T == gen[0]:
+            base_morphism = base_field_noext.coerce_map_from(function_ring)
+            base_field = base_field_noext.over(base_morphism)
         else:
             base_morphism = Hom(function_ring, base_field_noext)(gen[0])
-            try:
-                natural_map = Hom(function_ring, base_field_noext).natural_map()
-                if base_morphism == natural_map:
-                    base_morphism = natural_map
-            except TypeError:
-                pass
             base_field = base_field_noext.over(base_morphism)
 
         category = DrinfeldModules(base_field, name=name)
