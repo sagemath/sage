@@ -188,7 +188,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         deg = self._base.over(Fq).degree(Fq)
         return self._Hom_(self, category=self.category())(t**deg)
 
-    def frobenius_charpoly(self, var='T'):
+    def frobenius_charpoly(self, var='X'):
         r"""
         Return the characteristic polynomial of the Frobenius
         endomorphism if the rank is two. Raise a NotImplementedError
@@ -227,7 +227,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: chi = phi.frobenius_charpoly()
             sage: chi
-            T^2 + ((3*z3^2 + z3 + 4)*X + 4*z3^2 + 6*z3 + 3)*T + (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
+            X^2 + ((3*z3^2 + z3 + 4)*T + 4*z3^2 + 6*z3 + 3)*X + (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
 
         ::
 

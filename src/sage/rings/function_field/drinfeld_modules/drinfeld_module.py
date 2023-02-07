@@ -999,7 +999,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.height()
             Traceback (most recent call last):
             ...
-            ValueError: height is defined for prime function field characteristic
+            NotImplementedError: height not implemented in this case
 
         ::
 
