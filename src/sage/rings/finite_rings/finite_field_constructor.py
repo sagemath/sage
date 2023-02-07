@@ -813,7 +813,8 @@ class FiniteFieldFactory(UniqueFactory):
 
         modulus = kwds.pop("modulus", modulus if names else None)
 
-        if impl == "modn": impl = None
+        if impl == "modn":
+            impl = None
         impl = kwds.pop("impl", impl)
 
         proof = kwds.pop("proof", proof)
