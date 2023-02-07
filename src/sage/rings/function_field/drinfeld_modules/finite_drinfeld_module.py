@@ -50,7 +50,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: K.<z6> = Fq.extension(2)
         sage: phi = DrinfeldModule(A, [z6, 0, 5])
         sage: phi
-        Drinfeld module defined by T |--> 5*t^2 + z6 over Finite Field in z6 of size 7^6 over its base
+        Drinfeld module defined by T |--> 5*t^2 + z6
 
     ::
 

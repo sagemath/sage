@@ -49,10 +49,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     A Drinfeld `\mathbb{F}_q[T]`-module over the `base
     \mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
-    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that:
-    1. The image of `\phi` contains nonconstant Ore polynomials.
-    2. For every element `a` in the `\mathbb{F}_q[T]`, the constant
-       coefficient `\phi(a)` is `\gamma(a)`.
+    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that `\Im(\phi) \not\subset K`
+    and `\phi` agrees with `\gamma` on `\mathbb{F}_q`.
 
     For `a` in `\mathbb{F}_q[T]`, `\phi(a)` is denoted `\phi_a`.
 
@@ -80,7 +78,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(A, [z, 4, 1])
         sage: phi
-        Drinfeld module defined by T |--> t^2 + 4*t + z over Finite Field in z of size 5^12 over its base
+        Drinfeld module defined by T |--> t^2 + 4*t + z
 
     ::
 
@@ -89,7 +87,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Frac(A)
         sage: psi = DrinfeldModule(A, [z, T+1])
         sage: psi
-        Drinfeld module defined by T |--> (T + 1)*t + T over Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 7^2 over its base
+        Drinfeld module defined by T |--> (T + 1)*t + T
 
     .. NOTE::
 
@@ -128,7 +126,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: K.<z> = Fq.extension(6)
         sage: phi = DrinfeldModule(A, [z, 1, 1])
         sage: phi
-        Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^2 + t + z
 
     .. NOTE::
 
@@ -141,7 +139,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: L = Frac(A)
         sage: psi = DrinfeldModule(A, [L(T), 1, T^3 + T + 1])
         sage: psi
-        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T over Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2 over its base
+        Drinfeld module defined by T |--> (T^3 + T + 1)*t^2 + t + T
 
     ::
 
@@ -159,7 +157,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: rho_T = z + t^3
         sage: rho = DrinfeldModule(A, rho_T)
         sage: rho
-        Drinfeld module defined by T |--> t^3 + z over Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^3 + z
         sage: rho(T) == rho_T
         True
 
@@ -195,7 +193,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: cat = phi.category()
         sage: cat.object([z, 0, 0, 1])
-        Drinfeld module defined by T |--> t^3 + z over Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> t^3 + z
 
     .. RUBRIC:: The base field of a Drinfeld module
 
@@ -222,8 +220,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. RUBRIC:: Getters
 
     One can retrieve basic properties::
-
-    ::
 
         sage: phi.base_morphism()
         Ring morphism:
@@ -366,7 +362,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
         sage: psi = phi.velu(ore_pol)
         sage: psi
-        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over Finite Field in z of size 3^12 over its base
+        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z
         sage: ore_pol in Hom(phi, psi)
         True
         sage: ore_pol * phi(T) == psi(T) * ore_pol
@@ -397,7 +393,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by T |--> t^2 + t + z over Finite Field in z of size 3^12 over its base
+            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by T |--> t^2 + t + z
 
     The action on elements is computed by calling the action object::
 
@@ -823,10 +819,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi
-            Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
+            Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
         """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
-               f'|--> {self._gen} over {self._base}'
+               f'|--> {self._gen}'
 
     def action(self):
         r"""
@@ -846,7 +842,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
+            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
     The action on elements is computed as follows::
 
@@ -1206,7 +1202,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: psi
-            Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12 over its base
+            Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: isog in Hom(phi, psi)
             True
 
