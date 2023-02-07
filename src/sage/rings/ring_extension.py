@@ -441,15 +441,6 @@ class RingExtensionFactory(UniqueFactory):
                 defining_morphism = defining_morphism.extend_codomain(ring)
             if canonical_backend is None:
                 canonical_backend = not are_different_morphisms(defining_morphism, None)
-        #if not isinstance(defining_morphism, RingExtensionHomomorphism):
-        #    defining_morphism = RingExtensionHomomorphism(defining_morphism.parent(), defining_morphism)
-        #if isinstance(ring, RingExtension_generic):
-        #    defining_morphism = backend_morphism(defining_morphism, forget="codomain")
-        #    if ring._is_backend_exposed:
-        #        print_as = ring._backend
-        #    else:
-        #        use_generic_constructor = False
-        #        is_backend_exposed = False
 
         # We normalize other attributes
         if gens is not None:
