@@ -990,7 +990,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     if existence:
         return supplementary_difference_set(t, existence=True)
 
-    S1, S2, S3, S4 = supplementary_difference_set(t, check=False)
+    _, [S1, S2, S3, S4] = supplementary_difference_set(t, check=False)
     a = [-1 if i in S1 else 1 for i in range(t)]
     b = [-1 if i in S2 else 1 for i in range(t)]
     c = [-1 if i in S3 else 1 for i in range(t)]
@@ -1463,12 +1463,13 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    S1, S2, S3, S4 = supplementary_difference_set_from_rel_diff_set(q, check=False)
+    G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
-    A1 = matrix.circulant([1 if j in S1 else -1 for j in range(q-1)])
-    A2 = matrix.circulant([1 if j in S4 else -1 for j in range(q-1)])
-    A3 = matrix.circulant([1 if j in S3 else -1 for j in range(q-1)])
-    A4 = matrix.circulant([1 if j in S2 else -1 for j in range(q-1)])
+    Glist = list(G)
+    A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
+    A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
+    A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
+    A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
 
     P = matrix(ZZ, [[1 if (i + j) % (q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
 
@@ -2324,8 +2325,8 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     if n % 4 != 0 or not is_prime_power(q) or q % 8 != 5:
         raise ValueError(f'The order {n} is not covered by the Spence construction.')
 
-    D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False)
-    D_fixed = get_fixed_relative_difference_set(D)
+    G, D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False)
+    D_fixed = get_fixed_relative_difference_set(G, D)
     D_union = D_fixed + [q+1+el for el in D_fixed]
     D_union = list(set([el % (4*(q+1)) for el in D_union]))
 
@@ -2433,7 +2434,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     if skew_supplementary_difference_set(n//4, existence=True):
         t = n//4
-        S1, S2, S3, S4 = skew_supplementary_difference_set(t, check=False)
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set(t, check=False)
         a = [-1 if i in S1 else 1 for i in range(t)]
         b = [-1 if i in S2 else 1 for i in range(t)]
         c = [-1 if i in S3 else 1 for i in range(t)]
