@@ -634,6 +634,25 @@ class DrinfeldModules(Category_over_base_ring):
             """
             return self.category().base_morphism()
 
+    def base_over_constants_field(self):
+        r"""
+        Return the base field, seen as an extension over the constants
+        field `\mathbb{F}_q`.
+
+        OUTPUT: a ring extension
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi.base_over_constants_field()
+            Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
+        """
+        return self.category().base_over_constants_field()
+
         def characteristic(self):
             r"""
             Return the function ring-characteristic.
