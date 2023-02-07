@@ -24,8 +24,10 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.arith.misc import gcd
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
+from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.misc.latex import latex
 from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
@@ -1122,6 +1124,78 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         delta = self.coefficient(2)
         q = self._Fq.order()
         return (g**(q+1)) / delta
+
+    def basic_J_invariant(self, coeffs_exponents, check=True):
+        r"""
+        Return the basic J-invariant given by coeff if it exists.
+        """
+        r = self._gen.degree()
+        q = self._Fq.order()
+        dr = list(coeffs_exponents).pop()
+        if check:
+            left = 0
+            for k, d in enumerate(coeffs_exponents, start=1):
+                left += d*(q**k - 1)
+            if left != dr*(q**r - 1):
+                raise ValueError
+        num = self._base.one()
+        coeffs = self.coefficients()[1:]
+        gr = coeffs.pop()
+        for g, d in zip(coeffs, coeffs_exponents):
+            if g:
+                num *= g**d
+        return num/(gr**dr)
+
+    def _compute_basic_J_invariants(self):
+        """
+        Return a generator of basic J-invariants.
+        """
+        # Create the equation and inequalities for the polyhedron:
+        r = self._gen.degree()
+        q = self._Fq.order()
+        equation = [0]
+        inequalities = []
+        for i in range(1, r):
+
+            # create the equation:
+            #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
+            equation.append(q ** i - 1)
+
+            # create inequalities of the form 0 <= delta_i
+            lower_bounds = [0] * (r + 1)
+            lower_bounds[i] = 1
+
+            # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
+            upper_bounds = [Integer((q ** r - 1)/(q ** (gcd(i, r)) - 1))] + [0] * r
+            upper_bounds[i] = -1
+
+            inequalities.extend((lower_bounds, upper_bounds))
+
+        equation.append(1 - q ** r)
+
+        # Create the polyhedron defined by the equation and the inequalities.
+        polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
+
+        # Compute its integral points
+        integral_points = polyhedron.integral_points()
+
+        return [p for p in integral_points if gcd(p) == 1]
+
+    def is_isomorphic(self, psi):
+        r"""
+        Return whether ``self`` is isomorphic to the Drinfeld module `\psi`.
+        """
+        if self.rank() != psi.rank():
+            return False
+        if self.rank() == 1:
+            return True
+        basic_J_inv = self._compute_basic_J_invariants()
+        isom = True
+        for J in basic_J_inv:
+            if self.basic_J_invariant(J, check=False) != psi.basic_J_invariant(J, check=False):
+                isom = False
+                break
+        return isom
 
     def morphism(self):
         r"""
