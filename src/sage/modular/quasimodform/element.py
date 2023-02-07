@@ -489,7 +489,8 @@ class QuasiModularFormsElement(ModuleElement):
         r"""
         Return the weight of the given quasimodular form.
 
-        Note that the given form must be homogeneous.
+        Note that the given form must be homogeneous. An alias of this method is
+        ``degree``.
 
         EXAMPLES::
 
@@ -500,6 +501,8 @@ class QuasiModularFormsElement(ModuleElement):
             6
             sage: QM(1/2).weight()
             0
+            sage: (QM.0).degree()
+            2
             sage: (QM.0 + QM.1).weight()
             Traceback (most recent call last):
             ...
@@ -509,6 +512,8 @@ class QuasiModularFormsElement(ModuleElement):
             return self.to_polynomial().degree()
         else:
             raise ValueError("the given graded quasiform is not an homogeneous element")
+
+    degree = weight  # alias
 
     def homogeneous_components(self):
         r"""
