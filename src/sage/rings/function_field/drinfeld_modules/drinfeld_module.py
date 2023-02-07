@@ -1125,30 +1125,70 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
-    def basic_J_invariant(self, coeffs_exponents, check=True):
+    def basic_j_invariant(self, parameters, check=True):
         r"""
-        Return the basic J-invariant given by coeff if it exists.
+        Return the basic J-invariant corresponding to the given parameters.
+
+        EXAMPLES::
+
+            sage: K.<T> = Frac(GF(5)['T'])
+            sage: c = T^4 + 3*T^2 + T
+            sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
+            sage: phi.basic_j_invariant([20, 7, 2])
+            (T^7 + 2*T^6 + T^5 + T^2 + 2*T + 1)/(T^4 + 2*T^2 + 1)
+            sage: phi.basic_j_invariant([1, 1, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the given parameters does not defines a basic j-invariant
         """
         r = self._gen.degree()
         q = self._Fq.order()
-        dr = list(coeffs_exponents).pop()
+        parameters = list(parameters)
+        dr = parameters.pop()
         if check:
+            right = dr*(q**r - 1)
             left = 0
-            for k, d in enumerate(coeffs_exponents, start=1):
-                left += d*(q**k - 1)
-            if left != dr*(q**r - 1):
-                raise ValueError
+            for k, d in enumerate(parameters):
+                left += d*(q**(k+1) - 1)
+            if left != right:
+                raise ValueError("the given parameters does not defines a basic j-invariant")
         num = self._base.one()
         coeffs = self.coefficients()[1:]
         gr = coeffs.pop()
-        for g, d in zip(coeffs, coeffs_exponents):
+        for g, d in zip(coeffs, parameters):
             if g:
                 num *= g**d
         return num/(gr**dr)
 
-    def _compute_basic_J_invariants(self):
+    def basic_j_invariants_parameters(self):
         """
-        Return a generator of basic J-invariants.
+        Return the list of basic j-invariants.
+
+        EXAMPLES::
+
+            sage: K.<T> = Frac(GF(5)['T'])
+            sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
+            sage: phi.basic_j_invariants_parameters()
+            [(1, 5, 1),
+             (7, 4, 1),
+             (13, 3, 1),
+             (19, 2, 1),
+             (25, 1, 1),
+             (31, 0, 1),
+             (8, 9, 2),
+             (20, 7, 2),
+             (9, 14, 3),
+             (15, 13, 3),
+             (27, 11, 3),
+             (10, 19, 4),
+             (22, 17, 4),
+             (11, 24, 5),
+             (17, 23, 5),
+             (23, 22, 5),
+             (29, 21, 5),
+             (0, 31, 6),
+             (12, 29, 6),
+             (31, 31, 7)]
         """
         # Create the equation and inequalities for the polyhedron:
         r = self._gen.degree()
@@ -1183,16 +1223,29 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def is_isomorphic(self, psi):
         r"""
-        Return whether ``self`` is isomorphic to the Drinfeld module `\psi`.
+        Return ``True``  whether ``self`` is isomorphic to the Drinfeld module
+        `\psi`.
+
+        EXAMPLES::
+
+            sage: K.<T> = Frac(GF(5)['T'])
+            sage: c = T^4 + 3*T^2 + T
+            sage: phi = DrinfeldModule(A, [T, T^3, T^9, T])
+            sage: psi = DrinfeldModule(A, [T, c^4*T^3, c^(24)*T^9, c^(124)*T])
+            sage: phi.is_isomorphic(psi)
+            True
+            sage: phi0 = DrinfeldModule(A, [T, 1, 1, 1])
+            sage: phi.is_isomorphic(phi0)
+            False
         """
         if self.rank() != psi.rank():
             return False
         if self.rank() == 1:
             return True
-        basic_J_inv = self._compute_basic_J_invariants()
+        basic_J_inv = self.basic_j_invariants_parameters()
         isom = True
         for J in basic_J_inv:
-            if self.basic_J_invariant(J, check=False) != psi.basic_J_invariant(J, check=False):
+            if self.basic_j_invariant(J, check=False) != psi.basic_j_invariant(J, check=False):
                 isom = False
                 break
         return isom
