@@ -1,0 +1,57 @@
+name: Publish documentation
+
+on:
+  workflow_run:
+    workflows: ["Build documentation"]
+    types:
+      - completed
+
+jobs:
+  upload-docs:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      secrets.NETLIFY_AUTH_TOKEN != ''
+    steps:
+      # Once https://github.com/actions/download-artifact/issues/172 is implemented, we can use the official download-artifact action
+      # For now use the solution from https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
+      - name: Download docs
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "docs"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
+      - name: Extract docs
+        run: unzip docs.zip
+
+      - name: Deploy to Netlify production
+        id: deploy-netlify
+        if: env.CAN_DEPLOY == 'true'
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=docs ${NETLIFY_PRODUCTION:+"--prod"}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_PRODUCTION: ${{ github.ref == 'refs/heads/develop' }}
+
+      - name: Report deployment url
+        if: env.CAN_DEPLOY == 'true'
+        run: |
+          echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
+
