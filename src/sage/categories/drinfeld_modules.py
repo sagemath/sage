@@ -631,6 +631,10 @@ class DrinfeldModules(Category_over_base_ring):
 
                 sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])
                 sage: sigma.base_morphism()
+                Ring morphism:
+                  From: Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+                  To:   Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2 over its base
+                  Defn: T |--> T
             """
             return self.category().base_morphism()
 
@@ -677,7 +681,9 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: L = Frac(B)
                 sage: psi = DrinfeldModule(A, [L(1), 0, 0, L(1)])
                 sage: psi.characteristic()
-                0
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: function ring characteristic notimplemented in this case
             """
             return self.category().characteristic()
 
