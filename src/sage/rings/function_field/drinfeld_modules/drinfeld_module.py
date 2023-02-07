@@ -70,8 +70,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
     characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
     the *function ring* of `\phi`; `K\{\tau\}` is the *Ore polynomial
-    ring* of `\phi`. Further, the *generator* of `\phi` is `\phi_T` and
-    its *constant coefficient* is the constant coefficient of `\phi_T`.
+    ring*. Further, the *generator* is `\phi_T` and the *constant
+    coefficient* is the constant coefficient of `\phi_T`.
 
     A Drinfeld module is said to be *finite* if the field `K` is.
     Despite an emphasis on this case, the base field can be any

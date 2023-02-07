@@ -27,7 +27,7 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
     r"""
-    This class represents a finite Drinfeld module.
+    This class implements finite Drinfeld `\mathbb{F}_q[T]`-modules.
 
     A *finite Drinfeld module* is a Drinfeld module whose base field is
     finite. In this case, the function field characteristic is a prime

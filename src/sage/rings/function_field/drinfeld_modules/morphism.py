@@ -27,7 +27,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                              metaclass=InheritComparisonClasscallMetaclass):
     r"""
-    This class represents a Drinfeld module morphism.
+    This class represents Drinfeld `\mathbb{F}_q[T]`-module morphisms.
 
     Let `\phi, \psi` be two Drinfeld `\mathbb{F}_q[T]`-modules over a
     field `K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an
@@ -36,8 +36,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
 
     To create a morphism object, the user should never explicitly
-    instantiate :class:`DrinfeldModuleMorphism`, but rather call the parent
-    homset with the defining Ore polynomial::
+    instantiate :class:`DrinfeldModuleMorphism`, but rather call the
+    parent homset with the defining Ore polynomial::
 
         sage: Fq = GF(25)
         sage: A.<T> = Fq[]

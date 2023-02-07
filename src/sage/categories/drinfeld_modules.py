@@ -30,32 +30,30 @@ from sage.rings.ring_extension import RingExtension_generic
 
 class DrinfeldModules(Category_over_base_ring):
     r"""
-    This class represents the category of Drinfeld modules on a given
-    base.
+    This class implements the category of Drinfeld
+    `\mathbb{F}_q[T]`-modules on a given base field.
 
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
-    morphism `\gamma: \mathbb{F}_q[T] \to K`. We say that the field `K`
-    is an `\mathbb{F}_q[T]`-field, so that the *base field of the
-    category* is defined as the `\mathbb{F}_q[T]`-field *K*. The base
-    field uniquely defines the category, and we also refer to it as its
-    *base*. The *base morphism* is the morphism `\gamma: \mathbb{F}_q[T]
-    \to K`.
+    morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
+    `\mathbb{F}_q[T]`*-field*. Let `K\{\tau\}` be the ring of Ore
+    polynomials with coefficients in `K`, whose multiplication is given
+    by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
+
+    We call `K` the *base field* of the category, and `\gamma` its *base
+    morphism*.
 
     .. NOTE::
 
         Equivalently, the base of the category could be defined as the
         base morphism `\gamma: \mathbb{F}_q[T] \to K`.
 
-    The monic polynomial that generates the kernel of the base morphism
-    is called the `\mathbb{F}_q[T]`-characteristic of the
-    `\mathbb{F}_q[T]`-field `K`. It can also be referred to as the
-    function-field characteristic of `K`.
-
-    We say that `\mathbb{F}_q[T]` is the function ring of the category;
-    `K\{\tau\}` is the Ore polynomial ring of the category. The constant
-    coefficient of the category is the image of `T` under the base
-    morphism.
+    The monic polynomial that generates the kernel of `\gamma` is called
+    the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
+    characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
+    the *function ring* of the category; `K\{\tau\}` is the *Ore
+    polynomial ring*. The constant coefficient of the category is the
+    image of `T` under the base morphism.
 
     INPUT: the base field
 
