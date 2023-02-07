@@ -187,10 +187,12 @@ def tower_bases(ring, degree):
                     d = base.degree()
                 except AttributeError:
                     break
-            if d is Infinity: break
+            if d is Infinity:
+                break
             deg *= d
         newbase = base._base
-        if newbase is base: break
+        if newbase is base:
+            break
         base = newbase
     return bases, degrees
 
@@ -703,7 +705,8 @@ class RingExtension_generic(CommutativeAlgebra):
         if not self._import_methods:
             return d
         for name in dir(self._backend):
-            if name[0] == "_": continue
+            if name[0] == "_":
+                continue
             try:
                 attribute = getattr(self._backend, name)
                 if callable(attribute):
@@ -1072,15 +1075,15 @@ class RingExtension_generic(CommutativeAlgebra):
 
         """
         if isinstance(other, RingExtension_generic) and self._canonical_backend and other._canonical_backend:
-           right = other
-           if self._backend.has_coerce_map_from(right._backend) and self._base.has_coerce_map_from(right._base):
-               back_map = self._backend.coerce_map_from(right._backend)
-               base_map = self._base.coerce_map_from(right._base)
-               f = back_map * right._backend_defining_morphism
-               g = self._backend_defining_morphism * base_map
-               if not are_different_morphisms(f, g):
-                   back_map = self._from_backend_morphism * back_map
-                   return RingExtensionHomomorphism(right.Hom(self), back_map)
+            right = other
+            if self._backend.has_coerce_map_from(right._backend) and self._base.has_coerce_map_from(right._base):
+                back_map = self._backend.coerce_map_from(right._backend)
+                base_map = self._base.coerce_map_from(right._base)
+                f = back_map * right._backend_defining_morphism
+                g = self._backend_defining_morphism * base_map
+                if not are_different_morphisms(f, g):
+                    back_map = self._from_backend_morphism * back_map
+                    return RingExtensionHomomorphism(right.Hom(self), back_map)
 
     def base(self):
         r"""
@@ -1212,7 +1215,8 @@ class RingExtension_generic(CommutativeAlgebra):
         """
         b = self
         while isinstance(b, RingExtension_generic):
-            if b is base or b._backend is base: return True
+            if b is base or b._backend is base:
+                return True
             b = b._base
         return b is base
 
@@ -1265,7 +1269,8 @@ class RingExtension_generic(CommutativeAlgebra):
             return self._base
         b = self
         while isinstance(b, RingExtension_generic):
-            if b is base: return b
+            if b is base:
+                return b
             b = b._base
         if b is base:
             return b
@@ -1856,7 +1861,7 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: L = GF(5^12).over(F)
 
             sage: K.Hom(L)  # indirect doctest
-            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base 
+            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
             to Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
 
             sage: K.Hom(L, category=Sets())
@@ -2012,7 +2017,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         TESTS:
 
-            Ensure ticket :trac:`34692` is fixed::
+        Ensure ticket :trac:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]

@@ -519,7 +519,8 @@ class RingExtensionHomomorphism(RingMap):
             s += "with map on base ring"
             ss = self.base_map()._repr_defn()
             ss = re.sub('\nwith map on base ring:?$', '', ss, 0, re.MULTILINE)
-            if ss != "": s += ":\n" + ss
+            if ss != "":
+                s += ":\n" + ss
         if s != "" and s[-1] == "\n":
             s = s[:-1]
         return s

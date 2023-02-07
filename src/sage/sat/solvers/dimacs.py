@@ -357,7 +357,7 @@ class DIMACS(SatSolver):
         fh.close()
 
     def _run(self):
-        """
+        r"""
         Run 'command' and collect output.
 
         TESTS:
@@ -752,4 +752,3 @@ class Kissat(DIMACS):
     """
 
     command = "kissat -q {input}"
-
