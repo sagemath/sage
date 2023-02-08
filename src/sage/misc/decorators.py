@@ -603,7 +603,7 @@ class rename_keyword():
 
             sage: r = rename_keyword(deprecation=13109, color='rgbcolor')
         """
-        assert deprecated is None, 'Use @rename_keyword(deprecation=<trac_number>, ...)'
+        assert deprecated is None, 'Use @rename_keyword(deprecation=<issue_number>, ...)'
         self.renames = renames
         self.deprecation = deprecation
 

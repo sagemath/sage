@@ -1196,7 +1196,7 @@ class TikzPicture(Standalone):
                            usetikzlibrary=['shapes'])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_graph(cls, graph, merge_multiedges=True,
             merge_label_function=tuple, **kwds):
         r"""
@@ -1342,7 +1342,7 @@ class TikzPicture(Standalone):
         return TikzPicture(tikz, standalone_config=["border=4mm"])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_graph_with_pos(cls, graph, scale=1, merge_multiedges=True,
             merge_label_function=tuple):
         r"""
@@ -1468,7 +1468,7 @@ class TikzPicture(Standalone):
         return TikzPicture(tikz, standalone_config=["border=4mm"])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_poset(cls, poset, **kwds):
         r"""
         Convert a poset to a tikzpicture using graphviz and dot2tex.

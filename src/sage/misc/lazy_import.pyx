@@ -269,14 +269,14 @@ cdef class LazyImport():
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
             try:
-                trac_number, message = self._deprecation
+                issue_number, message = self._deprecation
             except TypeError:
-                trac_number = self._deprecation
+                issue_number = self._deprecation
                 import_command = f'from {self._module} import {self._name}'
                 if self._as_name != self._name:
                     import_command += f' as {self._as_name}'
                 message = f'\nImporting {self._as_name} from here is deprecated; please use "{import_command}" instead.'
-            deprecation(trac_number, message)
+            deprecation(issue_number, message)
         # Replace the lazy import in the namespace by the actual object
         name = self._as_name
         if self._namespace is not None:
@@ -987,7 +987,7 @@ def lazy_import(module, names, as_=None, *,
     - ``deprecation`` -- (optional) if not ``None``, a deprecation warning
       will be issued when the object is actually imported;
       ``deprecation`` should be either a trac number (integer) or a
-      pair ``(trac_number, message)``
+      pair ``(issue_number, message)``
 
     - ``feature`` -- a python module (optional), if it cannot be imported
       an appropriate error is raised

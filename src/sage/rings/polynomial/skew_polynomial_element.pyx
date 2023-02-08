@@ -322,7 +322,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return self._call(eval_pt)
 
-    @experimental(trac_number=13215)
+    @experimental(issue_number=13215)
     def _call(self, eval_pt):
         r"""
         Helper function for the :meth:`__call__` method to accommodate

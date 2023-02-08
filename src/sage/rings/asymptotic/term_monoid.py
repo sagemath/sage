@@ -4919,7 +4919,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         sage: BT is BTermMonoid(TermMonoid, G, QQ)
         True
     """
-    __init__ = experimental(trac_number=31922)(GenericTermMonoid.__init__)
+    __init__ = experimental(issue_number=31922)(GenericTermMonoid.__init__)
 
     # enable the category framework for elements
     Element = BTerm

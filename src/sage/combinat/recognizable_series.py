@@ -1687,7 +1687,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(trac_number=21202)
+    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
