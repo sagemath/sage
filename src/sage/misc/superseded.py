@@ -56,7 +56,7 @@ def _check_issue_number(issue_number):
         TypeError: 10.0000000000000 is not a valid github issue number
         sage: _check_issue_number('10')
         Traceback (most recent call last):
-a        ...
+        ...
         TypeError: '10' is not a valid github issue number
     """
     try:
