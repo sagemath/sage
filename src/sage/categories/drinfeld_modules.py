@@ -473,7 +473,7 @@ class DrinfeldModules(Category_over_base_ring):
         INPUT:
 
         - ``gen`` -- the generator of the Drinfeld module, given as an Ore
-        polynomial or a list of coefficients
+          polynomial or a list of coefficients
 
         EXAMPLES::
 
