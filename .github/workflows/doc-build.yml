@@ -1,6 +1,7 @@
 name: Build documentation
 
 on:
+  pull_request:
   push:
   workflow_dispatch:
     # Allow to run manually
@@ -14,7 +15,8 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:dev
-    if: github.repository == 'sagemath/sagetrac-mirror'
+    env:
+      CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,6 +34,7 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
+        if: env.CAN_DEPLOY == 'true'
         run: |
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
@@ -41,7 +44,7 @@ jobs:
 
       - name: Deploy to Netlify preview
         id: preview-netlify
-        if: github.ref != 'refs/heads/develop'
+        if: env.CAN_DEPLOY == 'true' && github.ref != 'refs/heads/develop'
         uses: netlify/actions/cli@master
         with:
           args: deploy --dir=docs --alias="${NETLIFY_ALIAS}"
@@ -59,7 +62,7 @@ jobs:
 
       - name: Deploy to Netlify production
         id: deploy-netlify
-        if: github.ref == 'refs/heads/develop'
+        if: env.CAN_DEPLOY == 'true' && github.ref == 'refs/heads/develop'
         uses: netlify/actions/cli@master
         with:
           args: deploy --dir=docs --prod
@@ -68,5 +71,6 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
       - name: Report deployment url
+        if: env.CAN_DEPLOY == 'true'
         run: |
           echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.preview-netlify.outputs.NETLIFY_URL || steps.deploy-netlify.outputs.NETLIFY_URL }}"
