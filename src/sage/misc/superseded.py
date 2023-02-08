@@ -6,7 +6,7 @@ add a deprecation warning. This will be shown once, the first time
 that the deprecated function is called.
 
 Note that all doctests in the following use the github issue number
-:github:`13109`, which is where this mandatory argument to
+:issue:`13109`, which is where this mandatory argument to
 :func:`deprecation` was introduced.
 
 Functions and classes

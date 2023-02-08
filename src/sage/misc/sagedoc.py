@@ -506,7 +506,7 @@ pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
     'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :trac: for backward compatibility
-    'github': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
+    'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence %s'),
@@ -520,7 +520,7 @@ def process_extlinks(s, embedded=False):
     r"""nodetex
 
     In docstrings at the command line, process markup related to the
-    Sphinx extlinks extension. For example, replace ``:github:`NUM```
+    Sphinx extlinks extension. For example, replace ``:issue:`NUM```
     with ``https://github.com/sagemath/sage/issues/NUM``, and similarly with
     ``:python:TEXT`` and ``:wikipedia:TEXT``, looking up the url from
     the dictionary ``extlinks`` in ``sage_docbuild.conf``.
@@ -542,8 +542,8 @@ def process_extlinks(s, embedded=False):
         sage: from sage.misc.sagedoc import process_extlinks
         sage: process_extlinks('See :trac:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :trac:`4321` ...')
         'See https://github.com/sagemath/sage/issues/1234, https://en.wikipedia.org/wiki/Sage_(mathematics_software), and https://github.com/sagemath/sage/issues/4321 ...'
-        sage: process_extlinks('See :github:`1234` for more information.', embedded=True)
-        'See :github:`1234` for more information.'
+        sage: process_extlinks('See :issue:`1234` for more information.', embedded=True)
+        'See :issue:`1234` for more information.'
         sage: process_extlinks('see :python:`Implementing Descriptors <reference/datamodel.html#implementing-descriptors>` ...')
         'see https://docs.python.org/release/.../reference/datamodel.html#implementing-descriptors ...'
     """
