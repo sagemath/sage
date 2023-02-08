@@ -320,10 +320,12 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
 
     cdef long lead
     cdef long lead_2_overflow = (<long>1) << (BITS_IN_LONG - PyLong_SHIFT)
-    cdef long lead_3_overflow = (<long>1) << (BITS_IN_LONG - 2 * PyLong_SHIFT)
+    cdef long lead_3_overflow
     if BITS_IN_LONG < 2 * PyLong_SHIFT:
         # in this case 3 digit is always overflow
         lead_3_overflow = 0
+    else:
+        lead_3_overflow = (<long>1) << (BITS_IN_LONG - 2 * PyLong_SHIFT)
     if size == 0:
         value[0] = 0
         err[0] = 0
