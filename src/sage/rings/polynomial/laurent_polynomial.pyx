@@ -2254,12 +2254,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict D = <dict> self._poly.dict()
         cdef dict DD
         if self._mon.is_constant():
-            self._prod = PolyDict(D, force_etuples=False)
+            self._prod = PolyDict(D)
             return
         DD = {}
         for k in D:
             DD[k.eadd(self._mon)] = D[k]
-        self._prod = PolyDict(DD, force_etuples=False)
+        self._prod = PolyDict(DD)
 
     def is_unit(self):
         """

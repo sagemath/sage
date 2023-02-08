@@ -1,6 +1,9 @@
 cdef class PolyDict:
     cdef dict __repn
-    cdef object __zero
+
+    cdef PolyDict _new(self, dict pdict)
+    cpdef remove_zeros(self)
+
 
 cdef class ETuple:
     cdef size_t _length
@@ -8,7 +11,7 @@ cdef class ETuple:
     cdef int *_data
 
     cpdef size_t unweighted_degree(self)
-    cdef size_t weighted_degree(self, tuple w)
+    cpdef size_t weighted_degree(self, tuple w)
     cdef size_t unweighted_quotient_degree(self, ETuple other)
     cdef size_t weighted_quotient_degree(self, ETuple other, tuple w)
     cpdef ETuple eadd(ETuple self, ETuple other)
@@ -16,7 +19,7 @@ cdef class ETuple:
     cpdef ETuple emul(ETuple self, int factor)
     cpdef ETuple emin(ETuple self, ETuple other)
     cpdef ETuple emax(ETuple self, ETuple other)
-    cpdef ETuple eadd_p(ETuple self, int other, int pos)
+    cpdef ETuple eadd_p(ETuple self, int other, size_t pos)
     cpdef ETuple eadd_scaled(ETuple self, ETuple other, int scalar)
     cpdef int dotprod(ETuple self, ETuple other)
     cpdef ETuple escalar_div(ETuple self, int n)
@@ -30,5 +33,4 @@ cdef class ETuple:
     cpdef list nonzero_values(ETuple self, bint sort=*)
     cpdef ETuple reversed(ETuple self)
     cdef ETuple _new(ETuple self)
-    cdef size_t get_exp(ETuple self, int i)
-
+    cdef int get_exp(ETuple self, size_t i)
