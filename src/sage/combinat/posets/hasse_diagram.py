@@ -745,7 +745,7 @@ class HasseDiagram(DiGraph):
             sage: Q.rank_function() is None
             True
 
-        test for ticket :trac:`14006`::
+        test for issue :trac:`14006`::
 
             sage: H = Poset()._hasse_diagram
             sage: s = dumps(H)

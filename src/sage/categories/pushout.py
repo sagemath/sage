@@ -2881,7 +2881,7 @@ class QuotientFunctor(ConstructionFunctor):
 
         Note that the ``quo()`` method of a field used to return the
         integer zero. That strange behaviour was removed in trac
-        ticket :trac:`9138`. It now returns a trivial quotient ring
+        issue :trac:`9138`. It now returns a trivial quotient ring
         when applied to a field::
 
             sage: F = ZZ.quo([5]*ZZ).construction()[0]

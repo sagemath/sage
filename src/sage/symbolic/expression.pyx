@@ -5050,7 +5050,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that ticket :trac:`7472` is fixed (Taylor polynomial in
+        Check that issue :trac:`7472` is fixed (Taylor polynomial in
         more variables)::
 
             sage: x,y = var('x y'); taylor(x*y^3,(x,1),(y,1),4)

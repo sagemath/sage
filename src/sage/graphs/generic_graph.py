@@ -643,7 +643,7 @@ class GenericGraph(GenericGraph_pyx):
         Equality and hash do not depend on ordering of vertices. In other words,
         `G1 == G2` can be `True` even when
         `G1.vertices(sort=True) == G2.vertices(sort=True)` is
-        `False`. This is parts 1 and 2 of ticket :trac:`17086`. ::
+        `False`. This is parts 1 and 2 of issue :trac:`17086`. ::
 
             sage: import functools
             sage: @functools.total_ordering
@@ -676,7 +676,7 @@ class GenericGraph(GenericGraph_pyx):
             True
 
         Hash of unweighted graphs does not depend on edge labels. That is,
-        part 3 of ticket :trac:`17086` is fixed ::
+        part 3 of issue :trac:`17086` is fixed ::
 
             sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True)
             sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True)
@@ -10859,7 +10859,7 @@ class GenericGraph(GenericGraph_pyx):
         TESTS:
 
         When ``vertices2`` is ``None``, then ``vertices2`` is the complement of
-        ``vertices1``. Corrected in ticket :trac:`20479`::
+        ``vertices1``. Corrected in issue :trac:`20479`::
 
             sage: P = graphs.PathGraph(3)
             sage: P.vertex_boundary([0, 1])
