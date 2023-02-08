@@ -5759,7 +5759,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             #where the numerator of a polynomial over RationalField
             #is a polynomial over IntegerRing
             #
-            # Trac ticket #11780: Create the polynomial ring over
+            # Github issue #11780: Create the polynomial ring over
             # the integers using the (cached) polynomial ring constructor:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             integer_polynomial_ring = PolynomialRing(ZZ,\

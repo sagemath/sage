@@ -60,7 +60,7 @@ def stopgap(message, int ticket_no):
 
      - ``message`` - an explanation of how an incorrect answer might be produced.
 
-     - ``ticket_no`` - an integer, giving the number of the Trac ticket tracking the underlying issue.
+     - ``ticket_no`` - an integer, giving the number of the Github issue tracking the underlying issue.
 
     EXAMPLES::
 

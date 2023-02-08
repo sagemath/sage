@@ -622,7 +622,7 @@ For example:
     # gentoo uses 3.2.1
     sphinx >=3, <3.3
 
-The comments may include links to Trac tickets, as in the following example:
+The comments may include links to Github issues, as in the following example:
 
 .. CODE-BLOCK:: bash
 
@@ -1048,7 +1048,7 @@ In addition to these fields in ``checksums.ini``, the optional field
 
 The Release Manager uses the information in ``upstream_url`` to
 download the upstream package archive and to make it available on the
-Sage mirrors when a new release is prepared.  On Trac tickets
+Sage mirrors when a new release is prepared.  On Github issues
 upgrading a package, the ticket description should no longer contain
 the upstream URL to avoid duplication of information.
 

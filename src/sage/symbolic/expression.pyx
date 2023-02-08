@@ -3644,7 +3644,7 @@ cdef class Expression(Expression_abc):
                     # We don't want to be in the business of trying to
                     # ensure enough precision to solve EVERY problem,
                     # but since there are two real-life examples in
-                    # Trac tickets 31424 and 31665 that are aided by
+                    # Github issues 31424 and 31665 that are aided by
                     # a bump, we reluctantly enter that game.
                     domain = ComplexIntervalField(128)
                 else:

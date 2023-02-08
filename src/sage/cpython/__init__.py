@@ -39,7 +39,7 @@ if _sys.platform == 'cygwin':
         def connect(*args, **kwargs):
             if fix_for_ticket_30157():
                 raise RuntimeError(
-                    'patch for Trac ticket #30157 failed; please report this '
+                    'patch for Github issue #30157 failed; please report this '
                     'bug to https://trac.sagemath.org')
 
             # Undo the monkey-patch

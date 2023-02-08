@@ -12747,7 +12747,7 @@ cdef class Matrix(Matrix1):
         if extend:
             # Try to use the algebraic reals but fall back to what is
             # probably QQbar if we find an entry in "L" that won't fit
-            # in AA. This was Trac ticket #18381.
+            # in AA. This was Github issue #18381.
             from sage.rings.qqbar import AA
             try:
                 C = L.change_ring(AA)

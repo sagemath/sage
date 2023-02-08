@@ -31,7 +31,7 @@
 # absolute path (a relative path remains relative), nor does it treat
 # "." or ".." specially.
 #
-# AUTHOR: Jeroen Demeyer (2011-08-23): Trac tickets #5852 and #11704
+# AUTHOR: Jeroen Demeyer (2011-08-23): Github issues #5852 and #11704
 #
 resolvelinks() {
     # $in is what still needs to be converted (normally has no starting slash)

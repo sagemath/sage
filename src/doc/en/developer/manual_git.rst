@@ -230,7 +230,7 @@ following commands instead::
 Checking Out Tickets
 --------------------
 
-Trac tickets that are finished or in the process of being worked on
+Github issues that are finished or in the process of being worked on
 can have a git branch attached to them. This is the "Branch:" field in
 the ticket description. The branch name is generally of the form
 ``u/user/description``, where ``user`` is the name of the user who
