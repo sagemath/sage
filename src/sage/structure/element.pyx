@@ -2331,7 +2331,7 @@ cdef class ElementWithCachedMethod(Element):
             ....: cdef class MyParent(Parent):
             ....:     Element = MyElement
             ....: from sage.misc.cachefunc import cached_method
-            ....: from sage.misc.cachefunc import cached_in_parent_method
+            ....: from sage.misc.lazy_attribute import lazy_attribute
             ....: from sage.categories.category import Category
             ....: from sage.categories.objects import Objects
             ....: class MyCategory(Category):
