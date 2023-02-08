@@ -625,7 +625,8 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
 
     TESTS::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                                         # optional - sage.misc.cython
+        ....: '''
         ....: from sage.rings.tate_algebra_ideal cimport regular_reduce
         ....: def python_regular_reduce(gb, s, v, stopval):
         ....:     return regular_reduce(gb, s, v, stopval)
