@@ -2306,9 +2306,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Check that the the point found has infinite order, and that it is on the curve::
 
-            sage: P=gg[0]; P.order() # long time
+            sage: P=gg[0]; P.order()  # long time
             +Infinity
-            sage: E.defining_polynomial()(*P) # long time
+            sage: E.defining_polynomial()(*P)  # long time
             0
 
         Here is a curve of rank 2::

@@ -357,7 +357,7 @@ class DIMACS(SatSolver):
         fh.close()
 
     def _run(self):
-        """
+        r"""
         Run 'command' and collect output.
 
         TESTS:
