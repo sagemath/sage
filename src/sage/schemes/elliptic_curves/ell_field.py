@@ -988,7 +988,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         verbose("Adjoining Y-coordinates of %s-torsion points" % l)
 
-        # THEOREM (Cremona, https://github.com/sagemath/sage/issues/11905).
+        # THEOREM (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21).
         # Let K be a field, E an elliptic curve over K and p an odd
         # prime number. Assume that K contains all roots of the
         # p-division polynomial of E. Then either K contains all
