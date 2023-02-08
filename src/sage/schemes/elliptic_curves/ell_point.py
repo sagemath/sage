@@ -254,14 +254,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             (1 : -2 : 1)
         """
         point_homset = curve.point_homset()
+        R = point_homset.value_ring()
         if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
             v = list(v)
         elif v == 0:
-            # some of the code assumes that E(0) has integral entries
-            # regardless of the base ring...
-            # R = self.base_ring()
-            # v = (R.zero(),R.one(),R.zero())
-            v = (0, 1, 0)
+            v = (R.zero(), R.one(), R.zero())
         if check:
             # mostly from SchemeMorphism_point_projective_field
             d = point_homset.codomain().ambient_space().ngens()
@@ -269,7 +266,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise TypeError("Argument v (= %s) must be a scheme point, list, or tuple." % str(v))
             if len(v) != d and len(v) != d-1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
-            v = Sequence(v, point_homset.value_ring())
+            v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
                 v.append(v.universe()(1))
 
