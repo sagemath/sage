@@ -77,10 +77,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         sage: frobenius_endomorphism = phi.frobenius_endomorphism()
         sage: frobenius_endomorphism
-        Drinfeld Module morphism:
-          From (gen): 5*t^2 + z6
-          To (gen):   5*t^2 + z6
-          Defn:       t^2
+        Endomorphism of Drinfeld module defined by T |--> 5*t^2 + z6
+          Defn: t^2
 
     Its characteristic polynomial can be computed::
 
@@ -174,10 +172,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
-            Drinfeld Module morphism:
-              From (gen): z6*t^2 + 1
-              To (gen):   z6*t^2 + 1
-              Defn:       t^2
+            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
+              Defn: t^2
 
        TESTS::
 

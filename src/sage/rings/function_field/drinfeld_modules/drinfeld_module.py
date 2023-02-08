@@ -27,11 +27,13 @@ AUTHORS:
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.misc.latex import latex
+from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.parent import Parent
+from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -185,7 +187,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     :class:`sage.categories.drinfeld_modules.DrinfeldModules`)::
 
         sage: phi.category()
-        Category of Drinfeld modules defined over Finite Field in z of size 3^12 over its base
+        Category of Drinfeld modules over Finite Field in z of size 3^12 over its base
         sage: phi.category() is psi.category()
         False
         sage: phi.category() is rho.category()
@@ -316,20 +318,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: identity_morphism = hom(1)
         sage: zero_morphism = hom(0)
         sage: frobenius_endomorphism
-        Drinfeld Module morphism:
-          From (gen): t^2 + t + z
-          To (gen):   t^2 + t + z
-          Defn:       t^6
+        Endomorphism of Drinfeld module defined by T |--> t^2 + t + z
+          Defn: t^6
         sage: identity_morphism
-        Drinfeld Module morphism:
-          From (gen): t^2 + t + z
-          To (gen):   t^2 + t + z
-          Defn:       1
+        Identity morphism of Drinfeld module defined by T |--> t^2 + t + z
         sage: zero_morphism
-        Drinfeld Module morphism:
-          From (gen): t^2 + t + z
-          To (gen):   t^2 + t + z
-          Defn:       0
+        Endomorphism of Drinfeld module defined by T |--> t^2 + t + z
+          Defn: 0
 
     The underlying Ore polynomial is retrieved with the method
     :meth:`ore_polynomial`::
@@ -663,6 +658,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             True
             sage: phi._latexname is None
             True
+
+        ::
+
+            sage: TestSuite(phi).run()
         """
         self._base = category.base()
         self._function_ring = category.function_ring()
@@ -788,7 +787,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: latex(phi)
-            \text{Drinfeld{ }module{ }defined{ }by{ }} T \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }base{ }}\Bold{F}_{5^{12}}
+            \phi: T \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}
 
         ::
 
@@ -807,10 +806,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if self._latexname is not None:
             return self._latexname
         else:
-            return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
-                   f'{latex(self._function_ring.gen())} '\
-                   f'\\mapsto {latex(self._gen)}' \
-                   f'\\text{{{{ }}over{{ }}base{{ }}}}{latex(self._base)}'
+            return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
+                   f'{latex(self._gen)}'
 
     def _repr_(self):
         r"""
@@ -828,6 +825,33 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
                f'|--> {self._gen}'
+
+    def _test_category(self, **options):
+        """
+        Run generic tests on the method :meth:`.category`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi._test_category()
+
+        .. NOTE::
+
+            We reimplemented this method because Drinfeld modules are
+            parents, and
+            meth:`sage.structure.parent.Parent._test_category` requires
+            parents' categories to be subcategories of ``Sets()``.
+        """
+        tester = self._tester(**options)
+        SageObject._test_category(self, tester=tester)
+        category = self.category()
+        # Tests that self inherits methods from the categories
+        tester.assertTrue(isinstance(self, category.parent_class),
+                _LazyString("category of %s improperly initialized", (self,), {}))
 
     def action(self):
         r"""

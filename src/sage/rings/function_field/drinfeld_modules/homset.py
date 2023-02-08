@@ -83,29 +83,24 @@ class DrinfeldModuleHomset(Homset):
 
         sage: identity_morphism = E(1)
         sage: identity_morphism
-        Drinfeld Module morphism:
-          From (gen): 2*t^2 + z6*t + z6
-          To (gen):   2*t^2 + z6*t + z6
-          Defn:       1
+        Identity morphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
 
     ::
 
         sage: t = phi.ore_polring().gen()
         sage: frobenius_endomorphism = E(t^6)
         sage: frobenius_endomorphism
-        Drinfeld Module morphism:
-          From (gen): 2*t^2 + z6*t + z6
-          To (gen):   2*t^2 + z6*t + z6
-          Defn:       t^6
+        Endomorphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+          Defn: t^6
 
     ::
 
         sage: isogeny = H(t + 1)
         sage: isogeny
         Drinfeld Module morphism:
-          From (gen): 2*t^2 + z6*t + z6
-          To (gen):   2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
-          Defn:       t + 1
+          From: Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+          To:   Drinfeld module defined by T |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
+          Defn: t + 1
 
     And one can test if an Ore polynomial defines a morphism using the
     ``in`` syntax::
@@ -288,28 +283,23 @@ class DrinfeldModuleHomset(Homset):
             sage: t = phi.ore_polring().gen()
             sage: identity_morphism = E(1)
             sage: identity_morphism
-            Drinfeld Module morphism:
-              From (gen): 2*t^2 + z6*t + z6
-              To (gen):   2*t^2 + z6*t + z6
-              Defn:       1
+            Identity morphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
 
         ::
 
             sage: frobenius_endomorphism = E(t^6)
             sage: frobenius_endomorphism
-            Drinfeld Module morphism:
-              From (gen): 2*t^2 + z6*t + z6
-              To (gen):   2*t^2 + z6*t + z6
-              Defn:       t^6
+            Endomorphism of Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+              Defn: t^6
 
         ::
 
             sage: isogeny = H(t + 1)
             sage: isogeny
             Drinfeld Module morphism:
-              From (gen): 2*t^2 + z6*t + z6
-              To (gen):   2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
-              Defn:       t + 1
+              From: Drinfeld module defined by T |--> 2*t^2 + z6*t + z6
+              To:   Drinfeld module defined by T |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
+              Defn: t + 1
         """
         # NOTE: This used to be self.element_class(self, ...), but this
         # would call __init__ instead of __classcall_private__. This
