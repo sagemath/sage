@@ -257,13 +257,13 @@ class LinearExtensionOfPoset(ClonableArray,
         Return ``True`` if the linear extension is supergreedy.
 
         A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
-        for every `i`, either if there is a minimal element `e_{i+1}` in 
+        for every `i`, either if there is a minimal element `e_{i+1}` in
         `[e_{i+1}, \ldots, e_n]` which is in the upper cover of `e_j` in
         `[e_1, \ldots, e_i]` for which j is maximum or if no such element
         exist `e_{i+1}` is the any of the minimal element in
         `[e_i+1,\dots, e_n]`.
 
-        Informally said a linear extension is supergreedy if it "always 
+        Informally said a linear extension is supergreedy if it "always
         goes up and receedes the least" loosely speaking, supergreedy
         linear extensions are depth-first linear extensions.
 
@@ -306,7 +306,6 @@ class LinearExtensionOfPoset(ClonableArray,
                     S = [x for x in H.neighbor_out_iterator(linext[k-1]) if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x))]
                     k -= 1
             return S
-
         if not self:
             return True
         if self[0] not in H.sources():
@@ -318,7 +317,6 @@ class LinearExtensionOfPoset(ClonableArray,
             else:
                 return False
         return True
-    
     
     def tau(self, i):
         r"""
