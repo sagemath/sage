@@ -150,7 +150,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: type(T)
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category'>
 
-            sage: T == loads(dumps(T))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7
+            sage: T == loads(dumps(T))  # known bug, see https://github.com/sagemath/sage/issues/11599
             True
         """
         self.__E = E

@@ -296,7 +296,7 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
     # - BITS_IN_LONG = 63, PyLong_SHIFT = 30
     # - BITS_IN_LONG = 31, PyLong_SHIFT = 15 (python <= 3.10)
     # - BITS_IN_LONG = 31, PyLong_SHIFT = 30 (new in python 3.11)
-    # cf. https://github.com/sagemath/sage/issues/33842#comment:130
+    # cf. https://github.com/sagemath/sage/issues/33842
     #
     # This way, we know that 1 digit certainly fits in a C long
     # and 4 or more digits never fit.

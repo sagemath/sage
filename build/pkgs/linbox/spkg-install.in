@@ -24,7 +24,7 @@ fi
 LINBOX_CONFIGURE="--without-fplll $LINBOX_CONFIGURE"
 
 # We disable openmp because of build failures, see
-# https://github.com/sagemath/sage/issues/17635#comment:67
+# https://github.com/sagemath/sage/issues/17635
 # We disable ocl because of build failures, see
 # https://github.com/sagemath/sage/issues/32076
 sdh_configure --with-default="$SAGE_LOCAL" \
