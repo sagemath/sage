@@ -99,7 +99,7 @@ class RingExtensionHomomorphism(RingMap):
                 a |--> 1 - a
 
         sage: type(phi)
-        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism_with_category'>
 
         sage: TestSuite(phi).run()
 

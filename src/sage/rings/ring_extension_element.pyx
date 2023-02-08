@@ -936,9 +936,28 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         return self._vector(base)
 
     def _vector_(self, reverse=False, base=None):
+        """
+        Return the vector of coordinates of this element over a base ring.
+
+        The arguments are chosen for compatibility with the analogous methods of finite fields.
+
+        INPUT:
+
+        - ``reverse`` -- a boolean, whether to reverse the coordinates of the output
+        - ``base`` -- a commutative ring; if specified it must be an explicit base over which
+            this extension has been defined.
+
+        TESTS::
+
+            sage: K = GF(11^10).over(GF(11^2))
+            sage: x = K.random_element()
+            sage: coeffs = x._vector_()
+            sage: rcoeffs = x._vector_(reverse=True)
+            sage: list(coeffs) == list(reversed(rcoeffs))
+        """
         v = self.vector(base)
         if reverse:
-            v = v.parent()(reversed(v))
+            v = v.parent()(list(reversed(v)))
         return v
 
     cdef _vector(self, CommutativeRing base):

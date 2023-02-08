@@ -607,26 +607,6 @@ class RingExtension_generic(CommutativeAlgebra):
                 or ring not in CommutativeRings()
                 or not defining_morphism.category_for().is_subcategory(CommutativeRings())):
                 raise TypeError("only commutative rings are accepted")
-            # f = ring.Hom(ring).identity()
-            # b = self._base
-            # while isinstance(b, RingExtension_generic):
-            #     f *= b._backend_defining_morphism
-            #     b = b._base
-            #     #if isinstance(b, RingExtension_generic):
-            #     #    backend = b._backend
-            #     #else:
-            #     #    backend = b
-            #     if ring.has_coerce_map_from(b):
-            #         differing = are_different_morphisms(f, None)
-            #         if differing:
-            #             # TODO: find a better message
-            #             msg = "exotic defining morphism between two rings in the tower; consider using another variable name\n"
-            #             for x, y, z in differing:
-            #                 if isinstance(x, str):
-            #                     msg += f" different {x}:\n  {y}\n  {z}"
-            #                 else:
-            #                     msg += f" f({x}) = {y}\n g({x}) = {z}\n"
-            #             raise ValueError(msg)
 
         self.register_coercion(self._defining_morphism.__copy__())
 
@@ -1966,7 +1946,7 @@ class RingExtension_generic(CommutativeAlgebra):
                 im_gens = im_gens[:n]
             im_gens = [codomain(g) for g in im_gens]
         parent = self.Hom(codomain, category=category)
-        return RingExtensionHomomorphism(parent, im_gens, base_map=base_map, check=check)
+        return parent(im_gens, base_map=base_map, check=check)
 
     def characteristic(self):
         r"""
@@ -2714,7 +2694,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 
-    def gens(self, base=None):
+    def gens(self, base=None, check=True):
         r"""
         Return the generators of this extension over ``base``.
 
@@ -2722,6 +2702,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
 
         - ``base`` -- a commutative ring (which might be itself an
           extension) or ``None`` (default: ``None``)
+        - ``check`` -- whether to check the validity of ``base``
 
         EXAMPLES::
 
@@ -2751,7 +2732,8 @@ class RingExtensionWithGen(RingExtensionWithBasis):
             ValueError: not (explicitly) defined over Integer Ring
 
         """
-        base = self._check_base(base)
+        if check:
+            base = self._check_base(base)
 
         if base is self:
             return tuple()
@@ -2761,7 +2743,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         if base is self.base():
             return gens
 
-        return gens + tuple([self(gen) for gen in self.base().gens(base=base)])
+        return gens + tuple([self(gen) for gen in self.base().gens(base=base, check=False)])
 
     def gen(self, i=0):
         r"""
