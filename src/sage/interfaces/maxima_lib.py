@@ -1016,7 +1016,7 @@ def is_MaximaLibElement(x):
         sage: from sage.interfaces.maxima_lib import maxima_lib, is_MaximaLibElement
         sage: is_MaximaLibElement(1)
         doctest:...: DeprecationWarning: the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: m = maxima_lib(1)
         sage: is_MaximaLibElement(m)

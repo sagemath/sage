@@ -76,8 +76,8 @@ to the Sage directory and tell ``git trac`` about your trac account::
 
     [user@localhost sage]$ git trac config --user USERNAME --pass 'PASSWORD'
     Trac xmlrpc URL:
-        https://trac.sagemath.org/xmlrpc (anonymous)
-        https://trac.sagemath.org/login/xmlrpc (authenticated)
+        https://github.com/sagemath/sage/issues/xmlrpc (anonymous)
+        https://github.com/sagemath/sage/issues/login/xmlrpc (authenticated)
         realm sage.math.washington.edu
     Username: USERNAME
     Password: PASSWORD
@@ -158,7 +158,7 @@ want to add it to Sage. You would first open a ticket for that::
     [user@localhost sage]$ git trac create 'Last Twin Prime'
     Remote branch: u/user/last_twin_prime
     Newly-created ticket number: 12345
-    Ticket URL: https://trac.sagemath.org/12345
+    Ticket URL: https://github.com/sagemath/sage/issues/12345
     Local branch: t/12345/last_twin_prime
 
 This will create a new trac ticket titled "Last Twin Prime" with a

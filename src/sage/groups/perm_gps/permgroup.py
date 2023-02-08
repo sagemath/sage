@@ -381,7 +381,7 @@ def PermutationGroup(gens=None, *args, **kwds):
         doctest:warning
         ...
         DeprecationWarning: gap_group, domain, canonicalize, category will become keyword only
-        See https://trac.sagemath.org/31510 for details.
+        See https://github.com/sagemath/sage/issues/31510 for details.
 
     """
     if not isinstance(gens, ExpectElement) and hasattr(gens, '_permgroup_'):
@@ -1090,7 +1090,7 @@ class PermutationGroup_generic(FiniteGroup):
             doctest:warning
             ...
             DeprecationWarning: G.has_element(g) is deprecated; use :meth:`__contains__`, i.e., `g in G` instead
-            See https://trac.sagemath.org/33831 for details.
+            See https://github.com/sagemath/sage/issues/33831 for details.
             True
             sage: h = H([(1,2),(3,4)]); h
             (1,2)(3,4)

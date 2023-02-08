@@ -12369,7 +12369,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.edges(sort=None)
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://trac.sagemath.org/27408 for details.
+            See https://github.com/sagemath/sage/issues/27408 for details.
             [(0, 1, None), (0, 2, None), (1, 3, None), (2, 3, None), (2, 4, None), (3, 4, None)]
         """
         if sort is None:

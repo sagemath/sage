@@ -2343,7 +2343,7 @@ def is_SingularElement(x):
         sage: from sage.interfaces.singular import is_SingularElement
         sage: is_SingularElement(singular(2))
         doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         True
         sage: is_SingularElement(2)
         False

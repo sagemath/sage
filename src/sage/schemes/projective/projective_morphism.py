@@ -1872,7 +1872,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1929,7 +1929,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
             sage: f.indeterminacy_points()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::

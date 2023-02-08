@@ -1477,7 +1477,7 @@ def is_ExpectElement(x):
         sage: from sage.interfaces.expect import is_ExpectElement
         sage: is_ExpectElement(2)
         doctest:...: DeprecationWarning: the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
     """
     from sage.misc.superseded import deprecation

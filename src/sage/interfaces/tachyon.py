@@ -861,7 +861,7 @@ class TachyonRT(SageObject):
             sage: t = TachyonRT()
             sage: t.help(use_pager=False)
             doctest:...: DeprecationWarning: type 'sage.interfaces.tachyon?' for help
-            See https://trac.sagemath.org/34066 for details.
+            See https://github.com/sagemath/sage/issues/34066 for details.
         """
         deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
 

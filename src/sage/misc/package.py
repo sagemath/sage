@@ -203,7 +203,7 @@ class PackageInfo(NamedTuple):
             sage: package["name"]
             doctest:warning...
             dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://trac.sagemath.org/31013 for details.
+            See https://github.com/sagemath/sage/issues/31013 for details.
             'test_package'
             sage: package[0]
             'test_package'

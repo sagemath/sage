@@ -3732,7 +3732,7 @@ def permutation_sign(s, u):
         sage: s = ['b', 'd']
         sage: permutation_sign(s, u)
         doctest:...: DeprecationWarning: the function permutation_sign is deprecated
-        See https://trac.sagemath.org/29465 for details.
+        See https://github.com/sagemath/sage/issues/29465 for details.
         -1
         sage: s = ['d', 'b']
         sage: permutation_sign(s, u)

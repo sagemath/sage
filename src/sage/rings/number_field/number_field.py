@@ -1058,7 +1058,7 @@ def is_QuadraticField(x) -> bool:
         doctest:warning...
         DeprecationWarning: is_QuadraticField is deprecated;
         use isinstance(..., sage.rings.abc.NumberField_quadratic instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         True
         sage: is_QuadraticField(NumberField(x^2 - 5, 'b'))
         True
@@ -1255,7 +1255,7 @@ def is_CyclotomicField(x) -> bool:
         doctest:warning...
         DeprecationWarning: is_CyclotomicField is deprecated;
         use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         False
         sage: is_CyclotomicField(CyclotomicField(4))
         True
@@ -3436,7 +3436,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: NumberField(x^2 + 3, 'a').latex_variable_name()
             doctest:...: DeprecationWarning: This method is replaced by ...
-            See https://trac.sagemath.org/30372 for details.
+            See https://github.com/sagemath/sage/issues/30372 for details.
             'a'
             sage: NumberField(x^3 + 3, 'theta3').latex_variable_name()
             '\\theta_{3}'
@@ -6238,7 +6238,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L = K.extension(t^5-t+a, 'b')
             sage: L.galois_group()
             ...DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group 10T22 (S(5)[x]2) with order 240 of t^5 - t + a
 
         TESTS:
@@ -6247,10 +6247,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: G = NumberField(x^3-2, 'a').galois_group(type="pari")
             ...DeprecationWarning: the different Galois types have been merged into one class
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.group()
             ...DeprecationWarning: the group method is deprecated; you can use _pol_galgp if you really need it
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             PARI group [6, -1, 2, "S3"] of degree 3
         """
         if type is not None:

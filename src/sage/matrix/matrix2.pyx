@@ -6722,7 +6722,7 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)
             doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             []
 
         Check :trac:`30518`::

@@ -2112,7 +2112,7 @@ def is_FriCASElement(x):
         sage: from sage.interfaces.fricas import is_FriCASElement
         sage: is_FriCASElement(2)
         doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_FriCASElement(fricas(2))                                       # optional - fricas
         True

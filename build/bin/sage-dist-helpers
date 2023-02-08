@@ -98,7 +98,7 @@
 #    (Linux only--no-op on other platforms.)  Check shared libraries loaded by
 #    EXECUTABLE (may be a program or another library) for a library starting
 #    with SONAME, and if found appends SONAME to the LD_PRELOAD environment
-#    variable.  See https://trac.sagemath.org/24885.
+#    variable.  See https://github.com/sagemath/sage/issues/24885.
 
 set -o allexport
 

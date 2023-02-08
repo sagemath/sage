@@ -7225,7 +7225,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_left_descent(2, mult='r2l')
                 True
@@ -7279,7 +7279,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_right_descent(3, mult='r2l')
                 True
@@ -9040,7 +9040,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
             sage: P = Permutations(3, avoiding=[[2,1,3],[1,2,3]])
             sage: P.a
             doctest:...: DeprecationWarning: The attribute a for the list of patterns to avoid is deprecated, use the method patterns instead.
-            See https://trac.sagemath.org/26810 for details.
+            See https://github.com/sagemath/sage/issues/26810 for details.
             ([2, 1, 3], [1, 2, 3])
         """
         from sage.misc.superseded import deprecation

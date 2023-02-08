@@ -730,7 +730,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         REFERENCES:
 
         - [GCL1992]_ Section 8.8
-        - https://trac.sagemath.org/attachment/ticket/25390/qqbar.pdf
+        - https://github.com/sagemath/sage/issues/attachment/ticket/25390/qqbar.pdf
 
         .. TODO::
 
@@ -1534,7 +1534,7 @@ def is_AlgebraicRealField(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicRealField is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicRealField instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         [True, False, False, False, False]
     """
     from sage.misc.superseded import deprecation
@@ -2087,7 +2087,7 @@ def is_AlgebraicField(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicField is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicField instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         [False, True, False, False, False]
     """
     from sage.misc.superseded import deprecation
@@ -2113,7 +2113,7 @@ def is_AlgebraicField_common(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicField_common is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicField_common) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         [True, True, False, False, False]
     """
     from sage.misc.superseded import deprecation

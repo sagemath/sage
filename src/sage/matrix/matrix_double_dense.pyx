@@ -1271,7 +1271,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: ev = A.eigenvalues('symmetric', 1e-13)
             doctest:...: DeprecationWarning: "algorithm" and "tol" should be used
             as keyword argument only
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             sage: ev  # tol 1e-13
             [(-2.0, 4), (1.0, 5), (3.0, 1)]
             sage: A.eigenvalues('symmetric', 1e-13, tol=1e-12)

@@ -423,7 +423,7 @@ cpdef bint is_Expression(x):
         doctest:warning...
         DeprecationWarning: is_Expression is deprecated;
         use isinstance(..., sage.structure.element.Expression) instead
-        See https://trac.sagemath.org/32638 for details.
+        See https://github.com/sagemath/sage/issues/32638 for details.
         True
         sage: is_Expression(2)
         False
@@ -6326,7 +6326,7 @@ cdef class Expression(Expression_abc):
             sage: len(a)
             doctest:warning...
             DeprecationWarning: using len on a symbolic expression is deprecated; use method number_of_operands instead
-            See https://trac.sagemath.org/29738 for details.
+            See https://github.com/sagemath/sage/issues/29738 for details.
             0
             sage: len((a^2 + b^2 + (x+y)^2))
             3

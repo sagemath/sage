@@ -1132,7 +1132,7 @@ def is_MaximaElement(x):
         sage: from sage.interfaces.maxima import is_MaximaElement
         sage: is_MaximaElement(1)
         doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: m = maxima(1)
         sage: is_MaximaElement(m)
