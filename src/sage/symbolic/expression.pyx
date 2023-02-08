@@ -5873,7 +5873,7 @@ cdef class Expression(Expression_abc):
             # this is needed because sometimes this function get called as
             # expr.substitute(None, **kwds). This is because its signature used
             # to be (in_dict=None, **kwds) instead of (*args, **kwds)
-            # (see ticket #12834)
+            # (see issue #12834)
             args = args[1:]
 
         for a in args:

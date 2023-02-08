@@ -8317,7 +8317,7 @@ class NumberField_absolute(NumberField_generic):
             else:
                 # R is embedded, self isn't. So, we could only have
                 # the forgetful coercion. But this yields to non-commuting
-                # coercions, as was pointed out at ticket #8800
+                # coercions, as was pointed out at issue #8800
                 return None
 
     def base_field(self):
