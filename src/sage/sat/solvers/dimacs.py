@@ -752,4 +752,3 @@ class Kissat(DIMACS):
     """
 
     command = "kissat -q {input}"
-
