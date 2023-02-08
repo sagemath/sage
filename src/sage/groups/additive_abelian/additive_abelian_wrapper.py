@@ -24,7 +24,7 @@ We create a toy example based on the Mordell-Weil group of an elliptic curve ove
     (0 : 1 : 0)
     sage: 3000000000000001 * M.0
     (4 : -7 : 1)
-    sage: M == loads(dumps(M))  # known bug, see https://github.com/sagemath/sage/issues/sage_trac/ticket/11599
+    sage: M == loads(dumps(M))  # known bug, see https://github.com/sagemath/sage/issues/11599
     True
 
 TESTS:

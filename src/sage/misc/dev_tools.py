@@ -558,7 +558,7 @@ def import_statements(*objects, **kwds):
                 if isinstance(obj[i], LazyImport):
                     tmp = obj.pop(i)
                     # Ignore deprecated lazy imports
-                    tmp_deprecation = tmp._get_deprecation_ticket()
+                    tmp_deprecation = tmp._get_deprecation_issue()
                     if tmp_deprecation:
                         deprecation = tmp_deprecation
                     else:

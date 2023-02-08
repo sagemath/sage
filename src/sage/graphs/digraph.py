@@ -1567,7 +1567,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Comparing with/without constraint generation. Also double-checks ticket
+        Comparing with/without constraint generation. Also double-checks issue
         :trac:`12833`::
 
             sage: for i in range(20):

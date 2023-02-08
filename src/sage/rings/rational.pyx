@@ -3578,7 +3578,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return True
 
-    #Function alias for checking if the number is a integer.Added to solve ticket 15500
+    #Function alias for checking if the number is a integer.  Added to solve issue 15500
     is_integer = is_integral
 
 

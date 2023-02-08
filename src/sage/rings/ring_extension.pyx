@@ -724,7 +724,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
              sage: E.construction()
 
         """
-        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another ticket
+        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another issue
         pass
 
     def from_base_ring(self, r):

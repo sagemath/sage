@@ -95,8 +95,8 @@ from sage.rings.cc import CC
 # for degrees <= this threshold, pari is used
 # for degrees > this threshold, sage matrices are used
 # the value was decided by running a tuning script on a number of
-# architectures; you can find this script attached to trac
-# ticket 5213
+# architectures; you can find this script attached to github
+# issue 5213
 TUNE_CHARPOLY_NF = 25
 
 def is_NumberFieldElement(x):

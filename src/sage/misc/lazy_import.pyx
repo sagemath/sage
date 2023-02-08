@@ -284,22 +284,22 @@ cdef class LazyImport():
                 self._namespace[name] = self._object
         return self._object
 
-    def _get_deprecation_ticket(self):
+    def _get_deprecation_issue(self):
         """
-        Return the ticket number of the deprecation, or 0 if this lazy
+        Return the issue number of the deprecation, or 0 if this lazy
         import is not deprecated.
 
         EXAMPLES::
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: H = LazyImport('sage.categories.homsets', 'Homsets')
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             0
             sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=10668)
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             10668
             sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=(10668, "this is deprecated"))
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             10668
         """
         if self._deprecation is None:

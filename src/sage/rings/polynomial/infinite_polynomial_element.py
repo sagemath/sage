@@ -423,7 +423,7 @@ class InfinitePolynomial_sparse(RingElement):
             sage: latex(alpha[3]*alpha[2]^2) # indirect doctest
             \alpha_{3} \alpha_{2}^{2}
 
-        Related with tickets :trac:`6854` and :trac:`7580`, the attribute
+        Related with issues :trac:`6854` and :trac:`7580`, the attribute
         ``__methods__`` is treated in a special way, which
         makes introspection and tab completion work::
 

@@ -52,7 +52,7 @@ warnings.filterwarnings('always', category=StopgapWarning)
 
 cdef set _stopgap_cache = set([])
 
-def stopgap(message, int ticket_no):
+def stopgap(message, int issue_no):
     r"""
     Issue a stopgap warning.
 
@@ -60,7 +60,7 @@ def stopgap(message, int ticket_no):
 
      - ``message`` - an explanation of how an incorrect answer might be produced.
 
-     - ``ticket_no`` - an integer, giving the number of the Github issue tracking the underlying issue.
+     - ``issue_no`` - an integer, giving the number of the Github issue tracking the underlying issue.
 
     EXAMPLES::
 
@@ -73,7 +73,7 @@ def stopgap(message, int ticket_no):
         sage: sage.misc.stopgap.stopgap("This is not printed", 12509)
         sage: sage.misc.stopgap.set_state(False)  # so rest of doctesting fine
     """
-    if not ENABLED or ticket_no in _stopgap_cache:
+    if not ENABLED or issue_no in _stopgap_cache:
         return
     # We reset show_warning so that the message is not printed twice.
     old_format = warnings.formatwarning
@@ -82,7 +82,7 @@ def stopgap(message, int ticket_no):
         return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno,
                                          "*" * 80, message, "*" * 80)
     warnings.formatwarning = my_format
-    message = message + "\nThis issue is being tracked at https://github.com/sagemath/sage/issues/%s." % ticket_no
+    message = message + "\nThis issue is being tracked at https://github.com/sagemath/sage/issues/%s." % issue_no
     warnings.warn(StopgapWarning(message), stacklevel=2)
     warnings.formatwarning = old_format
-    _stopgap_cache.add(ticket_no)
+    _stopgap_cache.add(issue_no)

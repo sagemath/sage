@@ -6356,7 +6356,7 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
-        Ticket :trac:`22003` is fixed:
+        Issue :trac:`22003` is fixed:
 
             sage: Graph(1).num_faces()
             1
@@ -12582,7 +12582,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: G = Graph({0: [0]}, loops=True)  # ticket 9581
+            sage: G = Graph({0: [0]}, loops=True)  # issue 9581
             sage: G.edges_incident(0)
             [(0, 0, None)]
         """
@@ -15496,7 +15496,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.girth()
             5
 
-        Ticket :trac:`12355`::
+        Issue :trac:`12355`::
 
             sage: H=Graph([(0, 1), (0, 3), (0, 4), (0, 5), (1, 2), (1, 3), (1, 4), (1, 6), (2, 5), (3, 4), (5, 6)])
             sage: H.girth()
