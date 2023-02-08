@@ -169,32 +169,24 @@ cpdef _backward_subs(factory, bint flatten=True):
                 res = _flatten_coeffs(res)
             fvars[sextuple] = res
 
+
 cdef _fmat(fvars, _Nk_ij, id_anyon, a, b, c, d, x, y):
-      """
-      Cython version of fmat class method. Using cdef for fastest dispatch
-      """
-      if _Nk_ij(a, b, x) == 0 or _Nk_ij(x, c, d) == 0 or _Nk_ij(b, c, y) == 0 or _Nk_ij(a, y, d) == 0:
-          return 0
-      # Some known F-symbols
-      if a == id_anyon:
-          if x == b and y == d:
-              return 1
-          else:
-              return 0
-      if b == id_anyon:
-          if x == a and y == c:
-              return 1
-          else:
-              return 0
-      if c == id_anyon:
-          if x == d and y == b:
-              return 1
-          else:
-              return 0
-      return fvars[a, b, c, d, x, y]
+    """
+    Cython version of fmat class method. Using cdef for fastest dispatch
+    """
+    if _Nk_ij(a, b, x) == 0 or _Nk_ij(x, c, d) == 0 or _Nk_ij(b, c, y) == 0 or _Nk_ij(a, y, d) == 0:
+        return 0
+    # Some known F-symbols
+    if a == id_anyon:
+        return int(x == b and y == d)
+    if b == id_anyon:
+        return int(x == a and y == c)
+    if c == id_anyon:
+        return int(x == d and y == b)
+    return fvars[a, b, c, d, x, y]
 
 ######################################
-### Fast fusion coefficients cache ###
+#   Fast fusion coefficients cache   #
 ######################################
 
 # from sage.misc.cachefunc import cached_function
@@ -232,7 +224,7 @@ cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple):
     lhs = r_matrix(a, c, e, base_coercion=False) * _fmat(fvars, Nk_ij, id_anyon, a, c, b, d, e, g) * r_matrix(b, c, g, base_coercion=False)
     rhs = 0
     for f in basis:
-      rhs += _fmat(fvars, Nk_ij, id_anyon, c, a, b, d, e, f) * r_matrix(f, c, d, base_coercion=False) * _fmat(fvars, Nk_ij, id_anyon, a, b, c, d, f, g)
+        rhs += _fmat(fvars, Nk_ij, id_anyon, c, a, b, d, e, f) * r_matrix(f, c, d, base_coercion=False) * _fmat(fvars, Nk_ij, id_anyon, a, b, c, d, f, g)
     return lhs-rhs
 
 @cython.wraparound(False)
@@ -299,7 +291,7 @@ cdef MPolynomial_libsingular feq_cy(tuple basis, fvars, Nk_ij, id_anyon, zero, t
         return zero
     rhs = zero
     for h in basis:
-      rhs += _fmat(fvars, Nk_ij, id_anyon, a, b, c, g, f, h)*_fmat(fvars, Nk_ij, id_anyon, a, h, d, e, g, k)*_fmat(fvars, Nk_ij, id_anyon, b, c, d, k, h, l)
+        rhs += _fmat(fvars, Nk_ij, id_anyon, a, b, c, g, f, h)*_fmat(fvars, Nk_ij, id_anyon, a, h, d, e, g, k)*_fmat(fvars, Nk_ij, id_anyon, b, c, d, k, h, l)
     return lhs - rhs
 
 @cython.wraparound(False)
@@ -511,10 +503,10 @@ cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, f
     lhs = _fmat(fvars, Nk_ij, id_anyon, f, c, d, e, g, l)*_fmat(fvars, Nk_ij, id_anyon, a, b, l, e, f, k)
     rhs = 0.0
     for h in factory._FR.basis():
-      rhs += _fmat(fvars, Nk_ij, id_anyon, a, b, c, g, f, h)*_fmat(fvars, Nk_ij, id_anyon, a, h, d, e, g, k)*_fmat(fvars, Nk_ij, id_anyon, b, c, d, k, h, l)
+        rhs += _fmat(fvars, Nk_ij, id_anyon, a, b, c, g, f, h)*_fmat(fvars, Nk_ij, id_anyon, a, h, d, e, g, k)*_fmat(fvars, Nk_ij, id_anyon, b, c, d, k, h, l)
     diff = lhs - rhs
     if diff > tol or diff < -tol:
-      worker_results.append(diff)
+        worker_results.append(diff)
 
 @cython.wraparound(False)
 @cython.nonecheck(False)

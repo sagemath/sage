@@ -147,7 +147,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_FM_Eis
@@ -260,7 +260,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             tmp_Int = Integer.__new__(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
-        elif isinstance(x, (int, long)):
+        elif isinstance(x, int):
             x = Integer(x)
         if isinstance(x, Integer):
             self._set_from_mpz((<Integer>x).value)

@@ -711,6 +711,20 @@ class InterfaceFunctionElement(SageObject):
 
 
 def is_InterfaceElement(x):
+    """
+    Return True if ``x`` is of type :class:`InterfaceElement`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.interface import is_InterfaceElement
+        sage: is_InterfaceElement(2)
+        doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
+        See https://trac.sagemath.org/34804 for details.
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead")
+
     return isinstance(x, InterfaceElement)
 
 

@@ -989,7 +989,7 @@ def eta_poly_relations(eta_elements, degree, labels=['x1', 'x2'],
     if verbose:
         print("Trying to find a relation of degree %s" % degree)
     inf = CuspFamily(eta1.level(), 1)
-    loterm = -(min([0, eta1.order_at_cusp(inf)]) + min([0, eta2.order_at_cusp(inf)])) * degree
+    loterm = -(min(0, eta1.order_at_cusp(inf)) + min(0, eta2.order_at_cusp(inf))) * degree
     if verbose:
         print("Lowest order of a term at infinity = %s" % -loterm)
 
@@ -1036,7 +1036,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     indices = [(i, j) for j in range(degree) for i in range(degree)]
     inf = CuspFamily(eta1.level(), 1)
 
-    pole_at_infinity = -(min([0, eta1.order_at_cusp(inf)]) + min([0, eta2.order_at_cusp(inf)])) * degree
+    pole_at_infinity = -(min(0, eta1.order_at_cusp(inf)) + min(0, eta2.order_at_cusp(inf))) * degree
     if verbose:
         print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 

@@ -68,6 +68,7 @@ class CrystalOfWords(UniqueRepresentation, Parent):
     column-reading (and hence different shapes) to be considered elements
     in the same crystal.
     """
+
     def _element_constructor_(self, *crystalElements):
         """
         EXAMPLES::
@@ -86,6 +87,7 @@ class CrystalOfWords(UniqueRepresentation, Parent):
 
     class Element(TensorProductOfCrystalsElement):
         pass
+
 
 class TensorProductOfCrystals(CrystalOfWords):
     r"""
@@ -469,6 +471,7 @@ class TensorProductOfCrystals(CrystalOfWords):
             crystalElements = reversed(crystalElements)
         return self.element_class(self, list(crystalElements))
 
+
 class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
     """
     Tensor product of crystals with a generating set.
@@ -478,6 +481,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         Deprecate this class in favor of using
         :meth:`~sage.categories.crystals.Crystals.ParentMethods.subcrystal`.
     """
+
     def __init__(self, crystals, generators, cartan_type):
         """
         EXAMPLES::
@@ -510,6 +514,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
             st = repr(list(self.crystals))
         return "The tensor product of the crystals {}".format(st)
 
+
 class FullTensorProductOfCrystals(TensorProductOfCrystals):
     """
     Full tensor product of crystals.
@@ -518,6 +523,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
 
         Merge this into :class:`TensorProductOfCrystals`.
     """
+
     def __init__(self, crystals, **options):
         """
         TESTS::
@@ -616,6 +622,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         return cm.common_parent(*[crystal.weight_lattice_realization()
                                   for crystal in self.crystals])
 
+
 class FullTensorProductOfRegularCrystals(FullTensorProductOfCrystals):
     """
     Full tensor product of regular crystals.
@@ -623,12 +630,14 @@ class FullTensorProductOfRegularCrystals(FullTensorProductOfCrystals):
     class Element(TensorProductOfRegularCrystalsElement):
         pass
 
+
 class TensorProductOfRegularCrystalsWithGenerators(TensorProductOfCrystalsWithGenerators):
     """
     Tensor product of regular crystals with a generating set.
     """
     class Element(TensorProductOfRegularCrystalsElement):
         pass
+
 
 class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     r"""
@@ -643,6 +652,7 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     """
     class Element(TensorProductOfSuperCrystalsElement):
         pass
+
 
 class QueerSuperCrystalsMixin():
     """
@@ -681,6 +691,7 @@ class QueerSuperCrystalsMixin():
         from sage.combinat.permutation import Permutations
         n = self.cartan_type().n
         return tuple(Permutations(n+1).long_element().reduced_word())
+
 
 class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSuperCrystalsMixin):
     r"""
@@ -962,7 +973,6 @@ class CrystalOfTableaux(CrystalOfWords):
         T.shapes = spin_shapes
         return T
 
-
     def __init__(self, cartan_type, shapes):
         """
         Construct the crystal of all tableaux of the given shapes.
@@ -1054,6 +1064,7 @@ class CrystalOfTableaux(CrystalOfWords):
     class Element(CrystalOfTableauxElement):
         pass
 
+
 class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     """
     A queer crystal of the semistandard decomposition tableaux of a given shape.
@@ -1063,6 +1074,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     - ``cartan_type`` -- a Cartan type
     - ``shape``       -- a shape
     """
+
     def __init__(self, cartan_type, shape):
         """
         Initialize ``self``.

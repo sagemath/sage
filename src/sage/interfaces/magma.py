@@ -225,6 +225,7 @@ SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
 from sage.env import SAGE_EXTCODE, DOT_SAGE
 import sage.misc.misc
 import sage.misc.sage_eval
+import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
@@ -566,6 +567,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: magma = Magma()
             sage: magma._preparse_colon_equals = False
             sage: magma._preparse('a = 5')
             'a = 5'
@@ -1812,13 +1814,11 @@ class MagmaFunction(ExpectFunction):
 
 def is_MagmaElement(x):
     """
-    Return True if x is of type MagmaElement, and False otherwise.
+    Return True if ``x`` is of type :class:`MagmaElement`, and False otherwise.
 
     INPUT:
 
-
     -  ``x`` - any object
-
 
     OUTPUT: bool
 
@@ -1826,15 +1826,20 @@ def is_MagmaElement(x):
 
         sage: from sage.interfaces.magma import is_MagmaElement
         sage: is_MagmaElement(2)
+        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
+        See https://trac.sagemath.org/34804 for details.
         False
         sage: is_MagmaElement(magma(2))                    # optional - magma
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
+
     return isinstance(x, MagmaElement)
 
 
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular

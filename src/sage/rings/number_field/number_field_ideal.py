@@ -3355,7 +3355,7 @@ def quotient_char_p(I, p):
         []
 
         sage: I = K.factor(13)[0][0]; I
-        Fractional ideal (-3*i - 2)
+        Fractional ideal (-2*i + 3)
         sage: I.residue_class_degree()
         1
         sage: quotient_char_p(I, 13)[0]

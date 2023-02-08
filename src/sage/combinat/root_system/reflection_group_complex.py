@@ -185,15 +185,15 @@ AUTHORS:
 
 - Christian Stump (2015): initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011-2016 Christian Stump <christian.stump at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.misc_c import prod
@@ -225,6 +225,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         :func:`ReflectionGroup`
     """
+
     def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
         r"""
         TESTS::
@@ -236,26 +237,26 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         W_components = []
         reflection_type = []
         for W_type in W_types:
-            if W_type == (1,1,1):
+            if W_type == (1, 1, 1):
                 raise ValueError("the one element group is not considered a reflection group")
             elif W_type in ZZ:
-                call_str = 'ComplexReflectionGroup(%s)'%W_type
-            elif isinstance(W_type,CartanMatrix):
-                call_str = 'PermRootGroup(IdentityMat(%s),%s)'%(W_type._rank,str(W_type._M._gap_()))
+                call_str = 'ComplexReflectionGroup(%s)' % W_type
+            elif isinstance(W_type, CartanMatrix):
+                call_str = 'PermRootGroup(IdentityMat(%s),%s)' % (W_type._rank, str(W_type._M._gap_()))
             elif is_Matrix(W_type):
-                call_str = 'PermRootGroup(IdentityMat(%s),%s)'%(W_type._rank,str(W_type._gap_()))
-            elif W_type in ZZ or ( isinstance(W_type, tuple) and len(W_type) == 3 ):
-                call_str = 'ComplexReflectionGroup%s'%str(W_type)
+                call_str = 'PermRootGroup(IdentityMat(%s),%s)' % (W_type._rank, str(W_type._gap_()))
+            elif W_type in ZZ or (isinstance(W_type, tuple) and len(W_type) == 3):
+                call_str = 'ComplexReflectionGroup%s' % str(W_type)
             else:
                 if W_type[0] == "I":
-                    call_str = 'CoxeterGroup("I",2,%s)'%W_type[1]
+                    call_str = 'CoxeterGroup("I",2,%s)' % W_type[1]
                 else:
-                    call_str = 'CoxeterGroup("%s",%s)'%W_type
+                    call_str = 'CoxeterGroup("%s",%s)' % W_type
 
             W_components.append(gap3(call_str))
             X = list(W_components[-1].ReflectionType())
             if len(X) > 1:
-                raise ValueError("input data %s is invalid"%W_type)
+                raise ValueError("input data %s is invalid" % W_type)
             X = X[0]
             type_dict = {}
             type_dict["series"] = X.series.sage()
@@ -1389,7 +1390,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             [[[1, 2, 1], [2, 1, 2]], [[1, 3], [3, 1]], [[2, 3, 2], [3, 2, 3]]]
         """
         if self.is_real():
-            return super(ComplexReflectionGroup,self).braid_relations()
+            return super().braid_relations()
         else:
             return self._gap_group.BraidRelations().sage()
 
@@ -1910,7 +1911,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             24
         """
         if chi is None:
-            return super(ComplexReflectionGroup, self).coxeter_number()
+            return super().coxeter_number()
 
         G = self.gens()
         cox_chi = 0
@@ -2028,6 +2029,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 # is hopefully never needed
                 assert w in self.parent().conjugacy_classes_representatives()
                 return w.reflection_length(in_unitary_group=in_unitary_group)
+
 
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
@@ -2201,6 +2203,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                         return True
             return False
 
+
 def multi_partitions(n, S, i=None):
     r"""
     Return all vectors as lists of the same length as ``S`` whose
@@ -2238,6 +2241,7 @@ def multi_partitions(n, S, i=None):
         coeff[i] += 1
     coeffs = coeffs1 + coeffs2
     return coeffs
+
 
 @cached_function
 def power(f, k):

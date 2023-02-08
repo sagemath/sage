@@ -754,7 +754,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # and the gcd of orders over Fp and 24 is 24
             # or if the gcd is equal to the number of automorphisms we have
             if (len(elements) == gcd(orderaut + [24])) or \
-                (gcd(orderaut + [24]) == 24 and \
+                (gcd(orderaut + [24]) == 24 and
                 (len(elements) == 12 or len(elements) == 8)):
                     if iso_type:
                         return elements, which_group(elements)

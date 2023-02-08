@@ -65,10 +65,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         """
         AlgebraicScheme_subscheme.__init__(self, A, polynomials)
         if embedding_images is not None:
-            self._embedding_morphism = self.hom(embedding_images, embedding_codomain)
+            self._embedding_morphism = self.hom(embedding_images,
+                                                embedding_codomain)
         elif A._ambient_projective_space is not None:
-            self._embedding_morphism = self.projective_embedding \
-                (A._default_embedding_index, A._ambient_projective_space)
+            self._embedding_morphism = self.projective_embedding(
+                A._default_embedding_index, A._ambient_projective_space)
         if embedding_center is not None:
             self._embedding_center = self.point(embedding_center)
 

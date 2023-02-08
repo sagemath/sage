@@ -1391,7 +1391,7 @@ class ToricVarietyFactory(SageObject):
             Closed subscheme of 2-d toric variety covered by 3 affine patches defined by:
               -x^6 + z^6 + y^2
         """
-        if len(q)==1:
+        if len(q) == 1:
             # tuples and lists of weights are acceptable input
             if isinstance(q[0], (list, tuple)):
                 q = q[0]
@@ -1403,7 +1403,7 @@ class ToricVarietyFactory(SageObject):
         for i in range(m):
             try:
                 q[i] = ZZ(q[i])
-            except(TypeError):
+            except TypeError:
                 raise TypeError("the weights (=%s) must be integers" % q)
             if q[i] <= 0:
                 raise ValueError("the weights (=%s) must be positive integers" % q)

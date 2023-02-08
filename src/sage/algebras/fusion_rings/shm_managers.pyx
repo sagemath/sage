@@ -559,7 +559,7 @@ cdef class FvarsHandler:
             cache, so each process must update its cache before retrieving a
             modified entry, tagged via its ``modified`` property.
         """
-        if not sextuple in self.sext_to_idx:
+        if sextuple not in self.sext_to_idx:
             raise KeyError('invalid sextuple {}'.format(sextuple))
         cdef Py_ssize_t idx = self.sext_to_idx[sextuple]
         # Each process builds its own cache, so each process must know

@@ -469,6 +469,7 @@ class SemistandardPathTableau(PathTableau):
         RHS = self.to_tableau().promotion_inverse(len(self)-2)
         tester.assertEqual(LHS,RHS)
 
+
 class SemistandardPathTableaux(PathTableaux):
     """
     The parent class for :class:`SemistandardPathTableau`.

@@ -1424,7 +1424,6 @@ class FSMState(SageObject):
 
         self.color = color
 
-
     def __lt__(self, other):
         """
         Return ``True`` if label of ``self`` is less than label of ``other``.
@@ -1484,7 +1483,6 @@ class FSMState(SageObject):
         """
         return self._final_word_out_
 
-
     @final_word_out.setter
     def final_word_out(self, final_word_out):
         """
@@ -1542,7 +1540,6 @@ class FSMState(SageObject):
         else:
             self._final_word_out_ = []
 
-
     @property
     def is_final(self):
         """
@@ -1568,7 +1565,6 @@ class FSMState(SageObject):
             False
         """
         return (self.final_word_out is not None)
-
 
     @is_final.setter
     def is_final(self, is_final):
@@ -1872,7 +1868,6 @@ class FSMState(SageObject):
         """
         return hash(self.label())
 
-
     def _repr_(self):
         """
         Return the string "label".
@@ -2009,8 +2004,6 @@ class FSMState(SageObject):
             True
         """
         return True  # A state cannot be zero (see __init__)
-
-
 
     def _epsilon_successors_(self, fsm=None):
         """
@@ -2234,7 +2227,6 @@ class FSMTransition(SageObject):
     word_out = None
     """Output word of the transition. Read-only."""
 
-
     def __init__(self, from_state, to_state,
                  word_in=None, word_out=None,
                  hook=None):
@@ -2275,7 +2267,6 @@ class FSMTransition(SageObject):
                 self.hook = hook
             else:
                 raise TypeError('Wrong argument for hook.')
-
 
     def __lt__(self, other):
         """
@@ -2488,8 +2479,6 @@ class FSMTransition(SageObject):
             True
         """
         return True  # A transition cannot be zero (see __init__)
-
-
 
 
 # ****************************************************************************
@@ -3076,7 +3065,6 @@ class FiniteStateMachine(SageObject):
     # init
     # ************************************************************************
 
-
     def __init__(self,
                  data=None,
                  initial_states=None, final_states=None,
@@ -3134,7 +3122,6 @@ class FiniteStateMachine(SageObject):
 
             self._copy_from_other_(data)
             return
-
 
         if initial_states is not None:
             if not isinstance(initial_states, Iterable):
@@ -3219,7 +3206,6 @@ class FiniteStateMachine(SageObject):
 
         if with_final_word_out is not None:
             self.construct_final_word_out(with_final_word_out)
-
 
     # ************************************************************************
     # copy and hash
@@ -3552,7 +3538,6 @@ class FiniteStateMachine(SageObject):
 
         return new
 
-
     def __hash__(self):
         """
         Since finite state machines are mutable, they should not be
@@ -3578,11 +3563,9 @@ class FiniteStateMachine(SageObject):
         raise TypeError("Finite state machines are mutable, "
                         "and thus not hashable.")
 
-
     # ************************************************************************
     # operators
     # ************************************************************************
-
 
     def __or__(self, other):
         """
@@ -3616,9 +3599,7 @@ class FiniteStateMachine(SageObject):
         else:
             raise TypeError("Can only add finite state machine")
 
-
     __add__ = __or__
-
 
     def __iadd__(self, other):
         """
@@ -3657,7 +3638,6 @@ class FiniteStateMachine(SageObject):
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def __call__(self, *args, **kwargs):
         """
@@ -3930,8 +3910,6 @@ class FiniteStateMachine(SageObject):
         """
         return bool(self._states_)
 
-
-
     def __eq__(self, other):
         """
         Return ``True`` if the two finite state machines are equal,
@@ -4074,7 +4052,6 @@ class FiniteStateMachine(SageObject):
             return self.has_transition(item)
         return False
 
-
     def is_Markov_chain(self, is_zero=None):
         """
         Checks whether ``self`` is a Markov chain where the transition
@@ -4192,11 +4169,9 @@ class FiniteStateMachine(SageObject):
         return all(is_zero_function(sum(t.word_in[0] for t in state.transitions) - 1)
                    for state in self.iter_states())
 
-
     # ************************************************************************
     # representations / LaTeX
     # ************************************************************************
-
 
     def _repr_(self):
         """
@@ -4241,7 +4216,6 @@ class FiniteStateMachine(SageObject):
     default_format_letter = latex
     format_letter = default_format_letter
 
-
     def format_letter_negative(self, letter):
         r"""
         Format negative numbers as overlined numbers, everything
@@ -4272,7 +4246,6 @@ class FiniteStateMachine(SageObject):
             return r'\overline{%d}' % -letter
         else:
             return latex(letter)
-
 
     def format_transition_label_reversed(self, word):
         r"""
@@ -4317,7 +4290,6 @@ class FiniteStateMachine(SageObject):
             '\\varepsilon'
         """
         return self.default_format_transition_label(reversed(word))
-
 
     def default_format_transition_label(self, word):
         r"""
@@ -4405,9 +4377,7 @@ class FiniteStateMachine(SageObject):
         else:
             return EmptyWordLaTeX
 
-
     format_transition_label = default_format_transition_label
-
 
     def latex_options(self,
                       coordinates=None,
@@ -4994,7 +4964,6 @@ class FiniteStateMachine(SageObject):
         """
         return ' '
 
-
     def set_coordinates(self, coordinates, default=True):
         """
         Set coordinates of the states for the LaTeX representation by
@@ -5187,7 +5156,6 @@ class FiniteStateMachine(SageObject):
                                 = entry(transition)
         return matrix(
             len(relabeledFSM.states()), dictionary)
-
 
     def determine_input_alphabet(self, reset=True):
         """
@@ -5853,7 +5821,6 @@ class FiniteStateMachine(SageObject):
 
         return True
 
-
     def is_connected(self):
         """
         TESTS::
@@ -5864,7 +5831,6 @@ class FiniteStateMachine(SageObject):
             NotImplementedError
         """
         raise NotImplementedError
-
 
     # ************************************************************************
     # let the finite state machine work
@@ -6254,7 +6220,6 @@ class FiniteStateMachine(SageObject):
         accept_input, current_state, output = output_data
         return (accept_input, current_state, output)
 
-
     def iter_process(self, input_tape=None, initial_state=None,
                      process_iterator_class=None,
                      iterator_type=None,
@@ -6415,7 +6380,6 @@ class FiniteStateMachine(SageObject):
         else:
             raise ValueError('Iterator type %s unknown.' % (iterator_type,))
 
-
     def _iter_process_simple_(self, iterator):
         r"""
         Converts a :class:`process iterator <FSMProcessIterator>` to a simpler
@@ -6550,7 +6514,6 @@ class FiniteStateMachine(SageObject):
             pass
         return s
 
-
     def add_states(self, states):
         """
         Adds several states. See add_state for more information.
@@ -6572,7 +6535,6 @@ class FiniteStateMachine(SageObject):
         """
         for state in states:
             self.add_state(state)
-
 
     def add_transition(self, *args, **kwargs):
         """
@@ -6663,7 +6625,6 @@ class FiniteStateMachine(SageObject):
 
         return self._add_fsm_transition_(FSMTransition(**data))
 
-
     def _add_fsm_transition_(self, t):
         """
         Adds a transition.
@@ -6693,7 +6654,6 @@ class FiniteStateMachine(SageObject):
         self.add_state(t.to_state)
         from_state.transitions.append(t)
         return t
-
 
     def add_from_transition_function(self, function, initial_states=None,
                                      explore_existing_states=True):
@@ -6848,7 +6808,6 @@ class FiniteStateMachine(SageObject):
                     self.add_transition(s, st_label,
                                         word_in=letter, word_out=word)
 
-
     def add_transitions_from_function(self, function, labels_as_input=True):
         """
         Adds one or more transitions if ``function(state, state)``
@@ -6949,7 +6908,6 @@ class FiniteStateMachine(SageObject):
                         label_out = None
                     self.add_transition(s_from, s_to, label_in, label_out)
 
-
     def delete_transition(self, t):
         """
         Deletes a transition by removing it from the list of transitions of
@@ -6972,7 +6930,6 @@ class FiniteStateMachine(SageObject):
         """
         transition = self.transition(t)
         transition.from_state.transitions.remove(transition)
-
 
     def delete_state(self, s):
         """
@@ -7014,7 +6971,6 @@ class FiniteStateMachine(SageObject):
             del self._states_dict_[state.label()]
         except AttributeError:
             pass
-
 
     def remove_epsilon_transitions(self):
         """
@@ -7067,7 +7023,6 @@ class FiniteStateMachine(SageObject):
             {0: [['b']], 1: [['b', 'a']]}
         """
         return self.state(state)._epsilon_successors_(self)
-
 
     def accessible_components(self):
         """
@@ -7178,7 +7133,6 @@ class FiniteStateMachine(SageObject):
     # *************************************************************************
     # creating new finite state machines
     # *************************************************************************
-
 
     def disjoint_union(self, other):
         """
@@ -7338,7 +7292,6 @@ class FiniteStateMachine(SageObject):
             result.input_alphabet = None
 
         return result
-
 
     def concatenation(self, other):
         r"""
@@ -7538,9 +7491,7 @@ class FiniteStateMachine(SageObject):
 
         return result
 
-
     __mul__ = concatenation
-
 
     def kleene_star(self):
         r"""
@@ -7635,7 +7586,6 @@ class FiniteStateMachine(SageObject):
 
         return result
 
-
     def intersection(self, other):
         """
         TESTS::
@@ -7646,7 +7596,6 @@ class FiniteStateMachine(SageObject):
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def product_FiniteStateMachine(self, other, function,
                                    new_input_alphabet=None,
@@ -7916,7 +7865,6 @@ class FiniteStateMachine(SageObject):
             return result.accessible_components()
         else:
             return result
-
 
     def composition(self, other, algorithm=None,
                     only_accessible_components=True):
@@ -8280,7 +8228,6 @@ class FiniteStateMachine(SageObject):
 
         return result
 
-
     def _composition_explorative_(self, other):
         """
         See :meth:`.composition` for details.
@@ -8331,7 +8278,6 @@ class FiniteStateMachine(SageObject):
                                    initial_state=state2,
                                    write_final_word_out=False,
                                    always_include_output=True)]
-
 
         first = other
         if any(len(t.word_in) > 1
@@ -8687,7 +8633,6 @@ class FiniteStateMachine(SageObject):
                 for component in condensation.vertices(sort=True)
                 if condensation.out_degree(component) == 0]
 
-
     def completion(self, sink=None):
         """
         Return a completion of this finite state machine.
@@ -8838,7 +8783,6 @@ class FiniteStateMachine(SageObject):
                 result.add_transition(state, sink_state, missing)
 
         return result
-
 
     # *************************************************************************
     # simplifications
@@ -9230,7 +9174,6 @@ class FiniteStateMachine(SageObject):
                     "final output words." % (c,)
         return new
 
-
     def merged_transitions(self):
         """
         Merges transitions which have the same ``from_state``,
@@ -9302,7 +9245,6 @@ class FiniteStateMachine(SageObject):
         else:
             return self
 
-
     def markov_chain_simplification(self):
         """
         Consider ``self`` as Markov chain with probabilities as input labels
@@ -9342,7 +9284,6 @@ class FiniteStateMachine(SageObject):
                 return new
             current = new
             number_states = new_number_states
-
 
     def with_final_word_out(self, letters, allow_non_final=True):
         """
@@ -9750,9 +9691,7 @@ class FiniteStateMachine(SageObject):
         G.add_vertices(isolated_vertices)
         return G
 
-
     digraph = graph
-
 
     def plot(self):
         """
@@ -9773,7 +9712,6 @@ class FiniteStateMachine(SageObject):
             Graphics object consisting of 3 graphics primitives
         """
         return self.graph(edge_labels='words_in_out').plot()
-
 
     def predecessors(self, state, valid_input=None):
         """
@@ -10441,7 +10379,6 @@ class FiniteStateMachine(SageObject):
         return {'expectation': e_2*variable + SR(1).Order(),
                 'variance': v_2*variable + SR(1).Order(),
                 'covariance': c*variable + SR(1).Order()}
-
 
     def moments_waiting_time(self, test=bool, is_zero=None,
                              expectation_only=False):
@@ -11590,7 +11527,6 @@ class Automaton(FiniteStateMachine):
         except KeyError:
             return False
 
-
     def process(self, *args, **kwargs):
         """
         Return whether the automaton accepts the input and the state
@@ -11834,7 +11770,6 @@ class Automaton(FiniteStateMachine):
             return any(result)
         return result
 
-
     def _process_convert_output_(self, output_data, **kwargs):
         """
         Helper function which converts the output of
@@ -11880,7 +11815,6 @@ class Automaton(FiniteStateMachine):
             return (accept_input, current_state)
         else:
             return accept_input
-
 
     def shannon_parry_markov_chain(self):
         """
@@ -12015,7 +11949,6 @@ class Automaton(FiniteStateMachine):
             P.state(s.label()).initial_probability = w[states[s]] * u[states[s]]
         return P
 
-
     def with_output(self, word_out_function=None):
         r"""
         Construct a transducer out of this automaton.
@@ -12110,7 +12043,6 @@ class Automaton(FiniteStateMachine):
         for t in new.iter_transitions():
             t.word_out = word_out_function(t)
         return new
-
 
     def language(self, max_length=None, **kwargs):
         r"""
@@ -13098,6 +13030,7 @@ class _FSMTapeCache_(SageObject):
         sage: TC2.tape_cache_manager
         [multi-tape at (0, 0)]
     """
+
     def __init__(self, tape_cache_manager, tape, tape_ended,
                  position, is_multitape):
         """
@@ -13178,7 +13111,6 @@ class _FSMTapeCache_(SageObject):
             return 'multi-tape at %s' % (pos,)
         else:
             return 'tape at %s' % (self.position[0][0],)
-
 
     def __deepcopy__(self, memo):
         """
@@ -13354,7 +13286,6 @@ class _FSMTapeCache_(SageObject):
             self.read(track_number)  # to make sure tape_ended is correct
         return self.tape_ended[track_number] and not self.cache[track_number]
 
-
     def preview_word(self, track_number=None, length=1, return_word=False):
         """
         Reads a word from the input tape.
@@ -13505,7 +13436,6 @@ class _FSMTapeCache_(SageObject):
                 return False
         return True
 
-
     def forward(self, transition):
         """
         Forwards the tape according to the given transition.
@@ -13584,7 +13514,6 @@ class _FSMTapeCache_(SageObject):
                     for p, t in self.position]
         self.position = tuple(sorted(position))
 
-
     def transition_possible(self, transition):
         """
         Tests whether the input word of ``transition`` can be read
@@ -13629,7 +13558,6 @@ class _FSMTapeCache_(SageObject):
                                                      len(self.cache)))
         return self._transition_possible_test_(word_in)
 
-
     def _transition_possible_epsilon_(self, word_in):
         """
         This helper function tests whether ``word_in`` equals ``epsilon``,
@@ -13661,7 +13589,6 @@ class _FSMTapeCache_(SageObject):
         # to be consistent with the other _transition_possible_*_
         # functions.
         return all(letter is None for t in word_in for letter in t)
-
 
     def _transition_possible_test_(self, word_in):
         """
@@ -13726,6 +13653,7 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
     This is a class is similar to :class:`_FSMTapeCache_` but accepts
     only epsilon transitions.
     """
+
     def __init__(self, *args, **kwargs):
         """
         See :class:`_FSMTapeCache_` for more details.
@@ -13739,7 +13667,6 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
         """
         super().__init__(*args, **kwargs)
         self._visited_states_ = set()
-
 
     def __deepcopy__(self, memo):
         """
@@ -13798,6 +13725,7 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
     This is a class is similar to :class:`_FSMTapeCache_` but accepts
     each transition.
     """
+
     def compare_to_tape(self, track_number, word):
         """
         Return whether it is possible to read a word of the same length
@@ -14178,6 +14106,7 @@ class FSMProcessIterator(SageObject, Iterator):
             {}
             process (0 branches)
         """
+
         def __repr__(self):
             """
             Return a nice representation of ``self``.
@@ -14214,14 +14143,12 @@ class FSMProcessIterator(SageObject, Iterator):
                     result += "\n+-- %s, %s" % (tape_cache, outputs)
             return result
 
-
     FinishedBranch = namedtuple('Branch', 'accept, state, output')
     r"""
     A :func:`named tuple <collections.namedtuple>` representing the
     attributes of a branch, once
     it is fully processed.
     """
-
 
     def __init__(self, fsm,
                  input_tape=None,
@@ -14310,13 +14237,11 @@ class FSMProcessIterator(SageObject, Iterator):
 
         self._finished_ = []  # contains (accept, state, output)
 
-
     _branch_ = namedtuple('Branch', 'tape_cache, outputs')
     r"""
     A :func:`named tuple <collections.namedtuple>` representing the
     attributes of a branch at a particular state during processing.
     """
-
 
     def _push_branch_(self, state, tape_cache, outputs):
         """
@@ -14409,7 +14334,6 @@ class FSMProcessIterator(SageObject, Iterator):
                 existing.tape_cache, new_outputs)
         else:
             states[state] = FSMProcessIterator._branch_(tape_cache, outputs)
-
 
     def _push_branches_(self, state, tape_cache, outputs):
         """
@@ -15087,6 +15011,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         sage: it.visited_states
         {0: ['', 'bde', 'cde'], 1: ['a'], 2: ['b', 'c'], 3: ['bd', 'cd']}
     """
+
     def __init__(self, *args, **kwargs):
         """
         See :class:`_FSMProcessIteratorEpsilon_` and
@@ -15103,7 +15028,6 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
         return super().__init__(*args, **kwargs)
-
 
     def _push_branch_(self, state, tape_cache, outputs):
         """
@@ -15208,6 +15132,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
          Branch(accept=True, state='B', output='zzm'),
          Branch(accept=True, state='B', output='zzo')]
     """
+
     def __init__(self, *args, **kwargs):
         """
         See :class:`_FSMProcessIteratorAll_` and
