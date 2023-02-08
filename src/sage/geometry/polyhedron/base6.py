@@ -72,7 +72,7 @@ class Polyhedron_base6(Polyhedron_base5):
         %% opacity = 0.8
         %% vertex_color = green
         %% axis = False
-        <BLANKLINE>
+        %%
         %% Coordinate of the vertices:
         %%
         \coordinate (1.00000, -1.00000, -1.00000) at (1.00000, -1.00000, -1.00000);

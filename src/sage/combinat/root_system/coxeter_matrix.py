@@ -205,7 +205,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         else:
             index_set = tuple(range(1, n + 1))
         if len(set(index_set)) != n:
-                raise ValueError("the given index set is not valid")
+            raise ValueError("the given index set is not valid")
 
         return cls._from_matrix(data, coxeter_type, index_set, coxeter_type_check)
 
@@ -653,7 +653,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         if key == 'ascii_art' or key == 'element_ascii_art':
             return self._matrix.nrows() > 1
-        return super(CoxeterMatrix, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def _latex_(self):
         r"""

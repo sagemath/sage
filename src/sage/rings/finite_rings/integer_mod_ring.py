@@ -72,12 +72,12 @@ import sage.rings.quotient_ring as quotient_ring
 
 from sage.libs.pari.all import pari, PariError
 
-import sage.interfaces.all
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import richcmp, richcmp_method
 
+from sage.interfaces.abc import GapElement
 
 class IntegerModFactory(UniqueFactory):
     r"""
@@ -1180,16 +1180,21 @@ In the latter case, please inform the developers.""".format(self.order()))
             4
             sage: libgap(a.sage()) == a
             True
+
+        better syntax for libgap interface::
+
+            sage: a = libgap.Z(13)^2
+            sage: libgap(a.sage()) == a
+            True
         """
         try:
             return integer_mod.IntegerMod(self, x)
         except (NotImplementedError, PariError):
             raise TypeError("error coercing to finite field")
         except TypeError:
-            if sage.interfaces.gap.is_GapElement(x):
-                from sage.interfaces.gap import intmod_gap_to_sage
-                y = intmod_gap_to_sage(x)
-                return integer_mod.IntegerMod(self, y)
+            if isinstance(x, GapElement):
+                from sage.libs.gap.libgap import libgap
+                return libgap(x).sage()
             raise  # Continue up with the original TypeError
 
     def __iter__(self):

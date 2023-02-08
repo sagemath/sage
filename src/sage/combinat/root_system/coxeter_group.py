@@ -1,17 +1,18 @@
 """
 Coxeter Groups
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Nicolas Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 from sage.combinat.root_system.cartan_type import CartanType
+
 
 def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=None):
     """
@@ -154,6 +155,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         return ReflectionGroup(cartan_type, index_set=index_set)
 
     raise NotImplementedError("Coxeter group of type {} as {} group not implemented".format(cartan_type, implementation))
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.coxeter_group', 'CoxeterGroupAsPermutationGroup',  ReflectionGroup)

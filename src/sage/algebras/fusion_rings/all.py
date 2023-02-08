@@ -1,7 +1,6 @@
 """
 Fusion Rings
 """
-
 # ****************************************************************************
 #  Copyright (C) 2022 Guillermo Aboumrad <gh_willieab>
 #
@@ -17,4 +16,3 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.algebras.fusion_rings.fusion_ring', ['FusionRing'])
 
 del lazy_import
-

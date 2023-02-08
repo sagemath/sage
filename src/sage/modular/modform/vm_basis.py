@@ -1,5 +1,5 @@
 r"""
-The Victor Miller Basis
+The Victor Miller basis
 
 This module contains functions for quick calculation of a basis of
 `q`-expansions for the space of modular forms of level 1 and any weight. The

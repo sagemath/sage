@@ -2324,7 +2324,8 @@ class GenericGraph(GenericGraph_pyx):
             ret.set_immutable()
         return ret
 
-    def weighted_adjacency_matrix(self, sparse=True, vertices=None, *, base_ring=None, **kwds):
+    def weighted_adjacency_matrix(self, sparse=True, vertices=None,
+                                  default_weight=None, *, base_ring=None, **kwds):
         """
         Return the weighted adjacency matrix of the graph.
 
@@ -2340,6 +2341,10 @@ class GenericGraph(GenericGraph_pyx):
           is represented by its position in the list ``vertices``, otherwise
           each vertex is represented by its position in the list returned by
           method :meth:`vertices`
+
+        - ``default_weight`` -- (default: ``None``); specifies the weight to
+          replace any ``None`` edge label. When not specified an error is raised
+          if the label of an edge is ``None``.
 
         - ``base_ring`` -- a ring (default: determined from the weights); the base
           ring of the matrix space to use.
@@ -2394,6 +2399,22 @@ class GenericGraph(GenericGraph_pyx):
             [0 0 0]
             [1 0 0]
             [1 0 0]
+
+        Check error message for non numerical edge weights (:trac:`33562`)::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.weighted_adjacency_matrix()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find the weight of (0, 1, None). Consider setting parameter 'default_weight'
+            sage: G.weighted_adjacency_matrix(default_weight=3)
+            [0 3]
+            [3 0]
+            sage: G = Graph([(0, 1, 'a')])
+            sage: G.weighted_adjacency_matrix()
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot convert NoneType to sage.structure.parent.Parent
         """
         if self.has_multiple_edges():
             raise NotImplementedError("don't know how to represent weights for a multigraph")
@@ -2404,20 +2425,35 @@ class GenericGraph(GenericGraph_pyx):
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")
 
-        new_indices = {v: i for i, v in enumerate(vertices)}
+        # Method for checking edge weights and setting default weight
+        if default_weight is None:
+            def func(u, v, label):
+                if label is None:
+                    raise ValueError(f"cannot find the weight of ({u}, {v}, None). "
+                                     "Consider setting parameter 'default_weight'")
+                return label
+        else:
+            def func(u, v, label):
+                if label is None:
+                    return default_weight
+                return label
+
+        new_indices = {v: i for i,v in enumerate(vertices)}
 
         D = {}
         if self._directed:
-            for u, v, l in self.edge_iterator():
+            for u, v, label in self.edge_iterator():
                 i = new_indices[u]
                 j = new_indices[v]
-                D[i, j] = l
+                D[i, j] = func(u, v, label)
         else:
-            for u, v, l in self.edge_iterator():
+            for u, v, label in self.edge_iterator():
                 i = new_indices[u]
                 j = new_indices[v]
-                D[i, j] = l
-                D[j, i] = l
+                label = func(u, v, label)
+                D[i, j] = label
+                D[j, i] = label
+
         from sage.matrix.constructor import matrix
         if base_ring is None:
             M = matrix(self.num_verts(), D, sparse=sparse, **kwds)

@@ -41,6 +41,7 @@ from sage.combinat.rigged_configurations.bij_type_A2_even import RCToKRTBijectio
 from sage.combinat.rigged_configurations.bij_type_D import KRTToRCBijectionTypeD
 from sage.combinat.rigged_configurations.bij_type_D import RCToKRTBijectionTypeD
 
+
 class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2Even):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -49,6 +50,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
     This inherits from type `C_n^{(1)}` and `D_n^{(1)}` because we use the
     same methods in some places.
     """
+
     def run(self, verbose=False):
         """
         Run the bijection from a tensor product of KR tableaux to a rigged
@@ -305,11 +307,13 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
                     partition.rigging[j-1] -= 1
                     break
 
+
 class RCToKRTBijectionTypeDTwisted(RCToKRTBijectionTypeD, RCToKRTBijectionTypeA2Even):
     r"""
     Specific implementation of the bijection from rigged configurations to
     tensor products of KR tableaux for type `D_{n+1}^{(2)}`.
     """
+
     def run(self, verbose=False, build_graph=False):
         """
         Run the bijection from rigged configurations to tensor product of KR

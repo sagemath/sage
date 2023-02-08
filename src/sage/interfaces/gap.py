@@ -202,6 +202,8 @@ from sage.misc.instancedoc import instancedoc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.element import ModuleElement
 
+import sage.interfaces.abc
+
 import re
 import os
 import io
@@ -1524,7 +1526,7 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
 
 
 @instancedoc
-class GapElement(GapElement_generic):
+class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
     def __getitem__(self, n):
         """
         EXAMPLES::
@@ -1633,17 +1635,25 @@ class GapFunction(ExpectFunction):
 
 def is_GapElement(x):
     """
-    Returns True if x is a GapElement.
+    Return True if ``x`` is a :class:`GapElement`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.GapElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.gap import is_GapElement
         sage: is_GapElement(gap(2))
+        doctest:...: DeprecationWarning: the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead
+        See https://trac.sagemath.org/34823 for details.
         True
         sage: is_GapElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34823, "the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead")
     return isinstance(x, GapElement)
+
 
 def gfq_gap_to_sage(x, F):
     """

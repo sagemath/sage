@@ -414,7 +414,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant():
+        if j != F.j_invariant():
             return zero
 
         if E.is_isomorphic(F):
@@ -440,7 +440,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 um = c6E/c6F
                 x=rings.polygen(K)
                 ulist=(x**3-um).roots(multiplicities=False)
-                if  not ulist:
+                if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -513,7 +513,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or j!=K(1728):
+        if j != F.j_invariant() or j!=K(1728):
             return zero
 
         if E.is_isomorphic(F):
@@ -582,7 +582,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not K == F.base_ring():
             return zero
         j=E.j_invariant()
-        if  j != F.j_invariant() or not j.is_zero():
+        if j != F.j_invariant() or not j.is_zero():
             return zero
 
         if E.is_isomorphic(F):
@@ -845,7 +845,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = E.base_extend(G).quadratic_twist(c); E
             Elliptic Curve defined by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000) over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
             sage: K.<b> = E.division_field(3, simplify_all=True); K
-            Number Field in b with defining polynomial x^12 - 10*x^10 + 55*x^8 - 60*x^6 + 75*x^4 + 1350*x^2 + 2025
+            Number Field in b with defining polynomial x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
 
         Some higher-degree examples::
 

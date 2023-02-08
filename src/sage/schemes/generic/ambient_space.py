@@ -1,8 +1,7 @@
 """
 Ambient spaces
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,11 +9,11 @@ Ambient spaces
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.schemes.generic.scheme import Scheme
 
 
@@ -41,7 +40,6 @@ class AmbientSpace(Scheme):
 
     INPUT:
 
-
     -  ``n`` - dimension
 
     -  ``R`` - ring
@@ -54,7 +52,7 @@ class AmbientSpace(Scheme):
             sage: A = AmbientSpace(5, ZZ)
             sage: TestSuite(A).run() # not tested (abstract scheme with no elements?)
         """
-        if not isinstance(R, CommutativeRing):
+        if R not in CommutativeRings():
             raise TypeError("R (={}) must be a commutative ring".format(R))
         if n < 0:
             raise ValueError("n (={}) must be nonnegative".format(n))
@@ -235,7 +233,7 @@ class AmbientSpace(Scheme):
             ValueError: no natural map from the base ring (=Rational Field)
             to R (=Finite Field of size 5)!
         """
-        if isinstance(R, CommutativeRing):
+        if R in CommutativeRings():
             if self.base_ring() == R:
                 return self
             if not R.has_coerce_map_from(self.base_ring()):

@@ -115,7 +115,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
         R = make_ring(f"({char},{gen})")
 
         minpoly = str(base_ring.modulus()).replace("x",gen).replace(" ","")
-        if  singular.eval('minpoly') != f"({minpoly})":
+        if singular.eval('minpoly') != f"({minpoly})":
             singular.eval(f"minpoly={minpoly}")
             minpoly = singular.eval('minpoly')[1:-1]
 
@@ -130,7 +130,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
         R = make_ring(f"({char},{gen})")
 
         minpoly = poly_str.replace(" ","")
-        if  singular.eval('minpoly') != f"({minpoly})":
+        if singular.eval('minpoly') != f"({minpoly})":
             singular.eval(f"minpoly={minpoly}")
             minpoly = singular.eval('minpoly')[1:-1]
 
@@ -336,7 +336,7 @@ class PolynomialRing_singular_repr:
             if sage.rings.finite_rings.finite_field_constructor.is_FiniteField(self.base_ring()) or \
                     (number_field.number_field_base.is_NumberField(self.base_ring()) and self.base_ring().is_absolute()):
                 R.set_ring()  # sorry for that, but needed for minpoly
-                if  singular.eval('minpoly') != f"({self.__minpoly})":
+                if singular.eval('minpoly') != f"({self.__minpoly})":
                     singular.eval(f"minpoly={self.__minpoly}")
                     self.__minpoly = singular.eval('minpoly')[1:-1]
             return R

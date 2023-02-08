@@ -22,6 +22,7 @@ on:
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
+           "ubuntu-lunar",
            "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
@@ -32,6 +33,7 @@ on:
            "linuxmint-20.2",
            "linuxmint-20.3",
            "linuxmint-21",
+           "linuxmint-21.1",
            "fedora-29-python3.8",
            "fedora-30-python3.8",
            "fedora-31",
@@ -41,11 +43,13 @@ on:
            "fedora-35",
            "fedora-36",
            "fedora-37",
+           "fedora-38",
            "centos-7-devtoolset-gcc_11",
            "centos-stream-8-python3.9",
            "centos-stream-9-python3.9",
            "gentoo-python3.9",
            "gentoo-python3.10",
+           "gentoo-python3.11",
            "archlinux-latest",
            "opensuse-15.3-gcc_11-python3.9",
            "opensuse-15.4-gcc_11-python3.10",
@@ -138,7 +142,7 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Check out SageMath
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
@@ -158,7 +162,7 @@ jobs:
           df -h
         if: inputs.free_disk_space
       - name: Check out git-trac-command
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: sagemath/git-trac-command
           path: git-trac-command
@@ -173,7 +177,7 @@ jobs:
         if: inputs.sage_trac_git != ''
 
       - name: Download upstream artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -225,7 +229,7 @@ jobs:
           if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
           if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
         if: always()
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

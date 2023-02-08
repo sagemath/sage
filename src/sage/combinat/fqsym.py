@@ -41,6 +41,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis and must match one
       of the names that the basis can be constructed from FQSym
     """
+
     def __init__(self, alg):
         r"""
         Initialize ``self``.
@@ -1232,6 +1233,7 @@ class FQSymBases(Category_realization_of_parent):
     r"""
     The category of graded bases of `FQSym` indexed by permutations.
     """
+
     def __init__(self, base):
         r"""
         Initialize the bases of an `FQSym`

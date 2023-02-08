@@ -675,3 +675,132 @@ class Polyhedron_base2(Polyhedron_base1):
             raise EmptySetError('polyhedron does not contain any integral points')
 
         return self.get_integral_point(current_randstate().python_random().randint(0, count-1), **kwds)
+
+    def generating_function_of_integral_points(self, **kwds):
+        r"""
+        Return the multivariate generating function of the
+        integral points of this polyhedron.
+
+        To be precise, this returns
+
+        .. MATH::
+
+            \sum_{(r_0,\dots,r_{d-1}) \in \mathit{polyhedron}\cap \ZZ^d}
+            y_0^{r_0} \dots y_{d-1}^{r_{d-1}}.
+
+        This calls
+        :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`,
+        so have a look at the documentation and examples there.
+
+        INPUT:
+
+        The following keyword arguments are passed to
+        :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
+
+        - ``split`` -- (default: ``False``) a boolean or list
+
+          - ``split=False`` computes the generating function directly,
+            without any splitting.
+
+          - When ``split`` is a list of disjoint polyhedra, then
+            for each of these polyhedra, this polyhedron is intersected with it,
+            its generating function computed and all these generating functions
+            are summed up.
+
+          - ``split=True`` splits into `d!` disjoint polyhedra.
+
+        - ``result_as_tuple`` -- (default: ``None``) a boolean or ``None``
+
+          This specifies whether the output is a (partial) factorization
+          (``result_as_tuple=False``) or a sum of such (partial)
+          factorizations (``result_as_tuple=True``). By default
+          (``result_as_tuple=None``), this is automatically determined.
+          If the output is a sum, it is represented as a tuple whose
+          entries are the summands.
+
+        - ``indices`` -- (default: ``None``) a list or tuple
+
+          If this
+          is ``None``, this is automatically determined.
+
+        - ``name`` -- (default: ``'y'``) a string
+
+          The variable names of the Laurent polynomial ring of the output
+          are this string followed by an integer.
+
+        - ``names`` -- a list or tuple of names (strings), or a comma separated string
+
+          ``name`` is extracted from ``names``, therefore ``names`` has to contain
+          exactly one variable name, and ``name`` and``names`` cannot be specified
+          both at the same time.
+
+        - ``Factorization_sort`` (default: ``False``) and
+          ``Factorization_simplify`` (default: ``True``) -- booleans
+
+          These are passed on to
+          :class:`sage.structure.factorization.Factorization` when creating
+          the result.
+
+        - ``sort_factors`` -- (default: ``False``) a boolean
+
+          If set, then
+          the factors of the output are sorted such that the numerator is
+          first and only then all factors of the denominator. It is ensured
+          that the sorting is always the same; use this for doctesting.
+
+        OUTPUT:
+
+        The generating function as a (partial)
+        :class:`~sage.structure.factorization.Factorization`
+        of the result whose factors are Laurent polynomials
+
+        The result might be a tuple of such factorizations
+        (depending on the parameter ``result_as_tuple``) as well.
+
+        .. NOTE::
+
+            At the moment, only polyhedra with nonnegative coordinates
+            (i.e. a polyhedron in the nonnegative orthant) are handled.
+
+        EXAMPLES::
+
+            sage: P2 = (
+            ....:   Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
+            ....:   Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
+            sage: P2[0].generating_function_of_integral_points(sort_factors=True)
+            1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
+            sage: P2[1].generating_function_of_integral_points(sort_factors=True)
+            1 * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0*y2 + 1)^-1
+            sage: (P2[0] & P2[1]).Hrepresentation()
+            (An equation (1, 0, -1) x + 0 == 0,
+             An inequality (1, 0, 0) x + 0 >= 0,
+             An inequality (0, 1, 0) x + 0 >= 0)
+            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)
+            1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
+
+        The number of integer partitions
+        `1 \leq r_0 \leq r_1 \leq r_2 \leq r_3 \leq r_4`::
+
+            sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
+            ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
+            ....:                      (0, 0, 0, 0, -1, 1)])
+            sage: f = P.generating_function_of_integral_points(sort_factors=True); f
+            y0*y1*y2*y3*y4 * (-y4 + 1)^-1 * (-y3*y4 + 1)^-1 * (-y2*y3*y4 + 1)^-1 *
+            (-y1*y2*y3*y4 + 1)^-1 * (-y0*y1*y2*y3*y4 + 1)^-1
+            sage: f = f.value()
+            sage: P.<z> = PowerSeriesRing(ZZ)
+            sage: c = f.subs({y: z for y in f.parent().gens()}); c
+            z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
+            23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +
+            101*z^21 + 119*z^22 + 141*z^23 + 164*z^24 + O(z^25)
+            sage: [Partitions(k, length=5).cardinality() for k in range(5,20)] == \
+            ....:     c.truncate().coefficients(sparse=False)[5:20]
+            True
+
+        .. SEEALSO::
+
+            More examples can be found at
+            :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`.
+        """
+        from .generating_function import generating_function_of_integral_points
+        return generating_function_of_integral_points(self, **kwds)

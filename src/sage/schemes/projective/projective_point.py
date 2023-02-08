@@ -165,7 +165,6 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-
             if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)
             else:

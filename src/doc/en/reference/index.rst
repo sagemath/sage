@@ -119,17 +119,14 @@ Number Fields, Function Fields, and Valuations
 Number Theory
 -------------
 
-* :doc:`Diophantine approximation <diophantine_approximation/index>`
+* :doc:`Diophantine Approximation <diophantine_approximation/index>`
 * :doc:`Quadratic Forms <quadratic_forms/index>`
 * :doc:`\\(L\\)-Functions <lfunctions/index>`
 * :doc:`Arithmetic Subgroups of \\({\\rm SL}_2(\\ZZ)\\) <arithgroup/index>`
 * :doc:`General Hecke Algebras and Hecke Modules <hecke/index>`
-* :doc:`Modular Symbols <modsym/index>`
 * :doc:`Modular Forms <modfrm/index>`
-* :doc:`Quasimodular Forms <quasimodfrm/index>`
-* :doc:`Modular Forms for Hecke Triangle Groups <modfrm_hecketriangle/index>`
+* :doc:`Modular Symbols <modsym/index>`
 * :doc:`Modular Abelian Varieties <modabvar/index>`
-* :doc:`Miscellaneous Modular-Form-Related Modules <modmisc/index>`
 
 Algebraic and Arithmetic Geometry
 ---------------------------------

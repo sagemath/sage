@@ -173,6 +173,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
                                         ring=ring, cache_matrices=cache_matrices)
     return Rep(partition)
 
+
 def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
         cache_matrices=True):
     r"""
@@ -459,6 +460,7 @@ class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
     Generic methods for the CombinatorialClass of irreducible
     representations of the symmetric group.
     """
+
     def __init__(self, n, ring=None, cache_matrices=True):
         r"""
         Irreducible representations of the symmetric group.

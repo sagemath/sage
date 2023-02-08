@@ -42,7 +42,7 @@ class FunctionFields(Category):
             sage: FunctionFields().super_categories()
             [Category of fields]
         """
-        return[Fields()]
+        return [Fields()]
 
     def _call_(self, x):
         r"""

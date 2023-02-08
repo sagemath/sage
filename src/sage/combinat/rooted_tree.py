@@ -517,6 +517,7 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
 
     See :class:`RootedTree` for a definition.
     """
+
     def __init__(self):
         """
         TESTS::
@@ -626,6 +627,7 @@ class RootedTrees_size(RootedTrees):
         sage: from sage.combinat.rooted_tree import RootedTrees_size
         sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()
     """
+
     def __init__(self, n):
         """
         TESTS::

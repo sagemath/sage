@@ -353,6 +353,7 @@ Comprehensive Module List
     sage/combinat/superpartition
     sage/combinat/symmetric_group_algebra
     sage/combinat/symmetric_group_representations
+    sage/combinat/t_sequences
     sage/combinat/tableau
     sage/combinat/tableau_residues
     sage/combinat/tableau_tuple

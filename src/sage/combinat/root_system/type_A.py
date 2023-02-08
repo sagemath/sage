@@ -14,6 +14,7 @@ from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from . import ambient_space
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     r"""
     EXAMPLES::
@@ -170,12 +171,15 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
+
+
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
     """
     Cartan Type `A_n`
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -334,6 +338,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         ret  = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

@@ -186,7 +186,6 @@ from sage.modular.modform.hecke_operator_on_qexp import hecke_operator_on_qexp
 from sage.modular.modform.j_invariant import j_invariant_qexp
 from sage.modules.free_module_element import vector
 from sage.modules.module import Module
-from sage.plot.plot import plot
 from sage.rings.big_oh import O
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
@@ -1652,6 +1651,8 @@ class OverconvergentModularFormElement(ModuleElement):
             sage: f.valuation_plot()
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.plot import plot
+
         if rmax is None:
             rmax = ZZ(self.prime()) / ZZ(1 + self.prime())
         return plot(self.r_ord, (0, rmax))

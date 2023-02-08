@@ -249,8 +249,7 @@ from sage.structure.sequence import Sequence
 from sage.rings.fraction_field import FractionField
 from sage.rings.all import RealField
 
-from sage.interfaces.singular import singular as singular_default, is_SingularElement, SingularElement
-from sage.interfaces.macaulay2 import macaulay2 as macaulay2_default, is_Macaulay2Element
+import sage.interfaces.abc
 
 from sage.misc.misc_c import prod as mul
 from sage.misc.sage_eval import sage_eval
@@ -969,9 +968,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                 gens_map = dict(zip(Q.variable_names(),self.gens()[:Q.ngens()]))
                 return eval(str(element),gens_map)
 
-        if isinstance(element, (SingularElement, cypari2.gen.Gen)):
+        if isinstance(element, (sage.interfaces.abc.SingularElement, cypari2.gen.Gen)):
             element = str(element)
-        elif is_Macaulay2Element(element):
+        elif isinstance(element, sage.interfaces.abc.Macaulay2Element):
             element = element.external_string()
 
         if isinstance(element, str):
@@ -1106,10 +1105,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if gens.ring() is self:
                 return gens
             gens = gens.gens()
-        if is_SingularElement(gens):
-            gens = list(gens)
-            coerce = True
-        elif is_Macaulay2Element(gens):
+        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
             gens = list(gens)
             coerce = True
         if not isinstance(gens, (list, tuple)):
@@ -1118,7 +1114,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
         return MPolynomialIdeal(self, gens, coerce=False)
 
-    def _macaulay2_(self, macaulay2=macaulay2_default):
+    def _macaulay2_(self, macaulay2=None):
         """
         Create an M2 representation of this polynomial ring if
         Macaulay2 is installed.
@@ -1147,6 +1143,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             --[x...y]
             17
         """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2
         try:
             R = self.__macaulay2
             if R is None or not (R.parent() is macaulay2):
@@ -1165,18 +1163,18 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             'sage...[symbol x0,symbol x1, MonomialSize=>16, MonomialOrder=>GLex]'
         """
         if macaulay2 is None:
-            macaulay2 = macaulay2_default
+            from sage.interfaces.macaulay2 import macaulay2
         return macaulay2._macaulay2_input_ring(self.base_ring(), self.gens(),
                                                self.term_order().macaulay2_str())
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Create a SINGULAR (as in the computer algebra system)
         representation of this polynomial ring. The result is cached.
 
         INPUT:
 
-        - ``singular`` - SINGULAR interpreter (default: ``singular_default``)
+        - ``singular`` - SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -1222,6 +1220,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             //                  : names    x
             //        block   2 : ordering C
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             R = self.__singular
             if R is None or not (R.parent() is singular):
@@ -1241,7 +1241,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular_default):
+    def _singular_init_(self, singular=None):
         """
         Create a SINGULAR (as in the computer algebra system)
         representation of this polynomial ring. The result is NOT
@@ -1249,7 +1249,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``singular`` - SINGULAR interpreter (default: ``singular_default``)
+        - ``singular`` - SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -1374,6 +1374,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         """
         from sage.functions.other import ceil
+
+        if singular is None:
+            from sage.interfaces.singular import singular
 
         if self.ngens()==1:
             _vars = str(self.gen())
@@ -2857,7 +2860,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         # Extract the monomials that match the specifications
         # this loop needs improvement
-        while(p):
+        while p:
             flag = 0
             for i from 0<=i<gens:
                 if exps[i] != -1 and p_GetExp(p,i+1,r)!=exps[i]:
@@ -2923,10 +2926,10 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef poly *m = mon._poly
         cdef ring *r = self._parent_ring
 
-        if not mon._parent is self._parent:
+        if mon._parent is not self._parent:
             raise TypeError("mon must have same parent as self.")
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 return si2sa(p_GetCoeff(p, r), r, self._parent._base)
             p = pNext(p)
@@ -3126,7 +3129,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             i += 1
         p_Setm(m, r)
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 p_Delete(&m,r)
                 return si2sa(p_GetCoeff(p, r), r, self._parent._base)
@@ -5001,14 +5004,14 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sig_off()
         return new_MP(parent, quo), new_MP(parent, rem)
 
-    def _singular_init_(self, singular=singular_default):
+    def _singular_init_(self, singular=None):
         """
         Return a SINGULAR (as in the computer algebra system) string
         representation for this element.
 
         INPUT:
 
-        - ``singular`` - interpreter (default: ``singular_default``)
+        - ``singular`` - interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -5023,6 +5026,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: P(0)._singular_init_()
             '0'
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         self._parent._singular_().set_ring()
         return self._repr_short_()
 
@@ -5053,9 +5058,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
          """
         cdef ring *r = self._parent_ring
 
-        if not self._parent is m._parent:
+        if self._parent is not m._parent:
             m = self._parent.coerce(m)
-        if not self._parent is q._parent:
+        if self._parent is not q._parent:
             q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
@@ -5071,7 +5076,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         return new_MP(self._parent, p_Minus_mm_Mult_qq(p_Copy(self._poly, r), m._poly, q._poly, r))
 
-    def _macaulay2_(self, macaulay2=macaulay2_default):
+    def _macaulay2_(self, macaulay2=None):
         """
         Return a Macaulay2 element corresponding to this polynomial.
 
@@ -5110,6 +5115,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: macaulay2(R('4')).ring()._operator('===', R)  # optional - macaulay2
             true
         """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2
         m2_parent = macaulay2(self.parent())
         macaulay2.use(m2_parent)
         return macaulay2('substitute(%s,%s)' % (repr(self), m2_parent._name))
@@ -5141,9 +5148,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         """
         cdef ring *r = self._parent_ring
 
-        if not self._parent is m._parent:
+        if self._parent is not m._parent:
             m = self._parent.coerce(m)
-        if not self._parent is q._parent:
+        if self._parent is not q._parent:
             q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
@@ -5417,7 +5424,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: d = a.resultant(b,y); d
             2*x^3
 
-
             sage: P.<x,y> = PolynomialRing(ZZ,2)
             sage: f = x+y
             sage: g=y^2+x
@@ -5430,12 +5436,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
         if variable is None:
             variable = self.parent().gen(0)
 
-        if not self._parent is other._parent:
+        if self._parent is not other._parent:
             raise TypeError("first parameter needs to be an element of self.parent()")
 
         if not variable.parent() is self.parent():
             raise TypeError("second parameter needs to be an element of self.parent() or None")
-
 
         if n_GetChar(_ring.cf) > 1<<29:
             raise NotImplementedError("Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")

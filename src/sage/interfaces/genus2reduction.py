@@ -143,31 +143,31 @@ class ReductionData(SageObject):
        sur un corps de valuation discrète", Trans. AMS 348 (1996),
        4577-4610, Section 7.2, Proposition 4).
     """
-    def __init__(self, pari_result, P, Q, minimal_equation, minimal_disc,
-                 local_data, conductor, prime_to_2_conductor_only):
+    def __init__(self, pari_result, P, Q, Pmin, Qmin, minimal_disc,
+                 local_data, conductor):
         self.pari_result = pari_result
         self.P = P
         self.Q = Q
-        self.minimal_equation = minimal_equation
+        self.Pmin = Pmin
+        self.Qmin = Qmin
         self.minimal_disc = minimal_disc
         self.local_data = local_data
         self.conductor = conductor
-        self.prime_to_2_conductor_only = prime_to_2_conductor_only
 
     def _repr_(self):
-        if self.prime_to_2_conductor_only:
-            ex = ' (away from 2)'
-        else:
-            ex = ''
         if self.Q == 0:
             yterm = ''
         else:
             yterm = '+ (%s)*y '%self.Q
+
         s = 'Reduction data about this proper smooth genus 2 curve:\n'
         s += '\ty^2 %s= %s\n'%(yterm, self.P)
-        s += 'A Minimal Equation (away from 2):\n\ty^2 = %s\n'%self.minimal_equation
-        s += 'Minimal Discriminant (away from 2):  %s\n'%self.minimal_disc
-        s += 'Conductor%s: %s\n'%(ex, self.conductor)
+        if self.Qmin:
+            s += 'A Minimal Equation:\n\ty^2 + (%s)y = %s\n'%(self.Qmin, self.Pmin)
+        else:
+            s += 'A Minimal Equation:\n\ty^2 = %s\n'%self.Pmin
+        s += 'Minimal Discriminant: %s\n'%self.minimal_disc
+        s += 'Conductor: %s\n'%self.conductor
         s += 'Local Data:\n%s'%self._local_data_str()
         return s
 
@@ -242,17 +242,7 @@ class Genus2reduction(SageObject):
         sage: factor(R.conductor)
         5^4 * 2267
 
-    This means that only the odd part of the conductor is known.
-
-    ::
-
-        sage: R.prime_to_2_conductor_only
-        True
-
-    The discriminant is always minimal away from 2, but possibly not at
-    2.
-
-    ::
+    The discriminant is always minimal::
 
         sage: factor(R.minimal_disc)
         2^3 * 5^5 * 2267
@@ -264,10 +254,10 @@ class Genus2reduction(SageObject):
         sage: R
         Reduction data about this proper smooth genus 2 curve:
             y^2 + (x^3 - 2*x^2 - 2*x + 1)*y = -5*x^5
-        A Minimal Equation (away from 2):
-            y^2 = x^6 - 240*x^4 - 2550*x^3 - 11400*x^2 - 24100*x - 19855
-        Minimal Discriminant (away from 2):  56675000
-        Conductor (away from 2): 1416875
+        A Minimal Equation:
+            y^2 ...
+        Minimal Discriminant: 56675000
+        Conductor: 1416875
         Local Data:
             p=2
             (potential) stable reduction:  (II), j=1
@@ -293,10 +283,10 @@ class Genus2reduction(SageObject):
         sage: genus2reduction(0, x^6 + 3*x^3 + 63)
         Reduction data about this proper smooth genus 2 curve:
                 y^2 = x^6 + 3*x^3 + 63
-        A Minimal Equation (away from 2):
-                y^2 = x^6 + 3*x^3 + 63
-        Minimal Discriminant (away from 2):  10628388316852992
-        Conductor (away from 2): 2893401
+        A Minimal Equation:
+                y^2 ...
+        Minimal Discriminant: -10628388316852992
+        Conductor: 2893401
         Local Data:
                 p=2
                 (potential) stable reduction:  (V), j1+j2=0, j1*j2=0
@@ -327,9 +317,9 @@ class Genus2reduction(SageObject):
         sage: genus2reduction(x^3-x^2-1, x^2 - x)
         Reduction data about this proper smooth genus 2 curve:
                 y^2 + (x^3 - x^2 - 1)*y = x^2 - x
-        A Minimal Equation (away from 2):
-                y^2 = x^6 + 58*x^5 + 1401*x^4 + 18038*x^3 + 130546*x^2 + 503516*x + 808561
-        Minimal Discriminant (away from 2):  169
+        A Minimal Equation:
+                y^2 ...
+        Minimal Discriminant: -169
         Conductor: 169
         Local Data:
                 p=13
@@ -370,10 +360,10 @@ class Genus2reduction(SageObject):
             sage: genus2reduction(x^3 - 2*x^2 - 2*x + 1, -5*x^5)
             Reduction data about this proper smooth genus 2 curve:
                     y^2 + (x^3 - 2*x^2 - 2*x + 1)*y = -5*x^5
-            A Minimal Equation (away from 2):
-                    y^2 = x^6 - 240*x^4 - 2550*x^3 - 11400*x^2 - 24100*x - 19855
-            Minimal Discriminant (away from 2):  56675000
-            Conductor (away from 2): 1416875
+            A Minimal Equation:
+                    y^2 ...
+            Minimal Discriminant: 56675000
+            Conductor: 1416875
             Local Data:
                     p=2
                     (potential) stable reduction:  (II), j=1
@@ -389,9 +379,9 @@ class Genus2reduction(SageObject):
             sage: genus2reduction(x^2 + 1, -5*x^5)
             Reduction data about this proper smooth genus 2 curve:
                     y^2 + (x^2 + 1)*y = -5*x^5
-            A Minimal Equation (away from 2):
-                    y^2 = -20*x^5 + x^4 + 2*x^2 + 1
-            Minimal Discriminant (away from 2):  48838125
+            A Minimal Equation:
+                    y^2 ...
+            Minimal Discriminant: 48838125
             Conductor: 32025
             Local Data:
                     p=3
@@ -412,9 +402,9 @@ class Genus2reduction(SageObject):
             sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
             Reduction data about this proper smooth genus 2 curve:
                     y^2 + (x^3 + x^2 + x)*y = -2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2
-            A Minimal Equation (away from 2):
-                    y^2 = x^6 + 18*x^3 + 36*x^2 - 27
-            Minimal Discriminant (away from 2):  1520984142
+            A Minimal Equation:
+                    y^2 ...
+            Minimal Discriminant: 1520984142
             Conductor: 954
             Local Data:
                     p=2
@@ -436,18 +426,10 @@ class Genus2reduction(SageObject):
             raise ValueError("Q (=%s) must have degree at most 3" % Q)
 
         res = pari.genus2red([P, Q])
-
         conductor = ZZ(res[0])
-        minimal_equation = R(res[2])
-
-        minimal_disc = QQ(res[2].poldisc()).abs()
-        if minimal_equation.degree() == 5:
-            minimal_disc *= minimal_equation[5]**2
-        # Multiply with suitable power of 2 of the form 2^(2*(d-1) - 12)
-        b = 2 * (minimal_equation.degree() - 1)
-        k = QQ((12 - minimal_disc.valuation(2), b)).ceil()
-        minimal_disc >>= 12 - b*k
-        minimal_disc = ZZ(minimal_disc)
+        Pmin = R(res[2][0])
+        Qmin = R(res[2][1])
+        minimal_disc = ZZ(pari.hyperelldisc(res[2]))
 
         local_data = {}
         for red in res[3]:
@@ -468,9 +450,7 @@ class Genus2reduction(SageObject):
 
             local_data[p] = data
 
-        prime_to_2_conductor_only = (-1 in res[1].component(2))
-        return ReductionData(res, P, Q, minimal_equation, minimal_disc, local_data,
-                             conductor, prime_to_2_conductor_only)
+        return ReductionData(res, P, Q, Pmin, Qmin, minimal_disc, local_data, conductor)
 
     def __reduce__(self):
         return _reduce_load_genus2reduction, tuple([])

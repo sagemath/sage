@@ -234,20 +234,6 @@ class OrderedSetPartition(ClonableArray,
         par = parent(self)
         assert self in par, "%s not in %s" % (self, par)
 
-    def _hash_(self):
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: OS = OrderedSetPartitions(4)
-            sage: s = OS([[1, 3], [2, 4]])
-            sage: OSP = OrderedSetPartitions()
-            sage: hash(s) == hash(OSP(s))
-            True
-        """
-        return hash(tuple(self))
-
     def base_set(self):
         """
         Return the base set of ``self``.
@@ -1077,6 +1063,7 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
     """
     Class of ordered partitions of a set `S`.
     """
+
     def _repr_(self):
         """
         TESTS::
@@ -1411,6 +1398,7 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
     Ordered set partitions of `\{1, \ldots, n\}` for all
     `n \in \ZZ_{\geq 0}`.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
