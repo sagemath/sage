@@ -2317,7 +2317,8 @@ cdef class ElementWithCachedMethod(Element):
 
         EXAMPLES::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport ElementWithCachedMethod
             ....: cdef class MyElement(ElementWithCachedMethod):
             ....:     cdef public object x
@@ -4124,7 +4125,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         EXAMPLES::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):
@@ -4154,7 +4156,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         ::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):
