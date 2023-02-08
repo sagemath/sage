@@ -9,9 +9,7 @@ on:
 jobs:
   upload-docs:
     runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
       # Once https://github.com/actions/download-artifact/issues/172 is implemented, we can use the official download-artifact action
       # For now use the solution from https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
