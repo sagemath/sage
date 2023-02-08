@@ -58,7 +58,7 @@ Special Update/Build Instructions
    This has been fixed in the Gentoo Linux distribution. Some
    information
    from Christopher can be seen on
-   http://trac.sagemath.org/sage_trac/ticket/9703
+   https://github.com/sagemath/sage/issues/9703
    This package will generate binary versions of all shipped datafiles,
    so these will work. However, creating totally new datafiles from
    scratch

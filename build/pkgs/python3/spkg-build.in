@@ -52,7 +52,7 @@ elif [ "$UNAME" = SunOS ]; then
     # Enable some C99 features on Solaris. This in particular enables
     # the isinf() and isfinite() functions. It works both for C and
     # C++ code (which is not true for -std=c99).  See
-    # http://trac.sagemath.org/sage_trac/ticket/14265
+    # https://github.com/sagemath/sage/issues/14265
     export CFLAGS="-D__C99FEATURES__ $CFLAGS"
 fi
 

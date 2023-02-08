@@ -181,7 +181,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
 
     # Check that the assembler and linker used by $CXX match $AS and $LD.
-    # See http://trac.sagemath.org/sage_trac/ticket/14296
+    # See https://github.com/sagemath/sage/issues/14296
     if test -n "$AS"; then
         CXX_as=`$CXX -print-prog-name=as 2>/dev/null`
         CXX_as=`command -v $CXX_as 2>/dev/null`

@@ -35,7 +35,7 @@ def set_state(bint mode):
         sage: sage.misc.stopgap.stopgap("Displays something.", 123456)
         doctest:...:
         ...StopgapWarning: Displays something.
-        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/123456.
+        This issue is being tracked at https://github.com/sagemath/sage/issues/123456.
         sage: sage.misc.stopgap.set_state(False)
     """
     global ENABLED
@@ -69,7 +69,7 @@ def stopgap(message, int ticket_no):
         sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)
         doctest:...
         ...StopgapWarning: Computation of heights on elliptic curves over number fields can return very imprecise results.
-        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/12509.
+        This issue is being tracked at https://github.com/sagemath/sage/issues/12509.
         sage: sage.misc.stopgap.stopgap("This is not printed", 12509)
         sage: sage.misc.stopgap.set_state(False)  # so rest of doctesting fine
     """
@@ -82,7 +82,7 @@ def stopgap(message, int ticket_no):
         return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno,
                                          "*" * 80, message, "*" * 80)
     warnings.formatwarning = my_format
-    message = message + "\nThis issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/%s." % ticket_no
+    message = message + "\nThis issue is being tracked at https://github.com/sagemath/sage/issues/%s." % ticket_no
     warnings.warn(StopgapWarning(message), stacklevel=2)
     warnings.formatwarning = old_format
     _stopgap_cache.add(ticket_no)
