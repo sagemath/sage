@@ -730,7 +730,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         REFERENCES:
 
         - [GCL1992]_ Section 8.8
-        - :trac:`25390` and https://github.com/sagemath/sage-prod/files/10659152/qqbar.pdf.gz
+        - :trac:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
 
         .. TODO::
 
