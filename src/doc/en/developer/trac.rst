@@ -280,7 +280,7 @@ To produce the warning message, use code like the following:
         TICKET_NUM)
 
 Replace ``TICKET_NUM`` by the ticket number for the main ticket. On the main
-trac ticket, enter the ticket number for the stopgap ticket in the "Stopgaps"
+github issue, enter the ticket number for the stopgap ticket in the "Stopgaps"
 field (see :ref:`section-trac-fields`). Stopgap tickets should be marked as
 blockers.
 
@@ -298,7 +298,7 @@ Working on Tickets
 If you manage to fix a bug or enhance Sage you are our hero. See
 :ref:`chapter-walkthrough` for making changes to the Sage source
 code, uploading them to the Sage trac server, and finally putting your
-new branch on the trac ticket.
+new branch on the github issue.
 
 .. image:: ticket_badges.png
 

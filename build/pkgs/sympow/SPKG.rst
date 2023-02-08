@@ -43,7 +43,7 @@ Special Update/Build Instructions
    that might show up. I (David Kirkby) would personally not trust this
    code much at all.
 
--  This is a difficult package to maintain. A trac ticket (#9758) has
+-  This is a difficult package to maintain. A github issue (#9758) has
    been
    opened to implement Watkins-Delaunay's algorithm for computing
    modular

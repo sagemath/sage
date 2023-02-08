@@ -590,7 +590,7 @@ in the future. We call this a *deprecation*.
     Deprecated code can only be removed one year after the first
     stable release in which it appeared.
 
-Each deprecation warning contains the number of the trac ticket that defines
+Each deprecation warning contains the number of the github issue that defines
 it. We use 666 in the examples below. For each entry, consult the function's
 documentation for more information on its behaviour and optional arguments.
 

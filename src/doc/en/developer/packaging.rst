@@ -1169,13 +1169,13 @@ problems they can be proposed to be included as standard packages in
 Sage.
 
 To propose a package for optional/experimental inclusion please open a
-trac ticket with the respective ``Component:`` field set to either
+github issue with the respective ``Component:`` field set to either
 ``packages:experimental`` or ``packages:optional``. The associated code
 requirements are described in the following sections.
 
 After the ticket was reviewed and included, optional packages stay in
 that status for at least a year, after which they can be proposed to be
-included as standard packages in Sage. For this a trac ticket is opened
+included as standard packages in Sage. For this a github issue is opened
 with the ``Component:`` field set to ``packages:standard``. Then make
 a proposal in the Google Group ``sage-devel``.
 

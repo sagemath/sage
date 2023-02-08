@@ -1559,7 +1559,7 @@ def _vizing_edge_coloring(g):
        sage: all(len(Graph(C).matching()) == len(C) for C in colors)
        True
     """
-    # This implementation was discussed in trac ticket #34809
+    # This implementation was discussed in github issue #34809
 
     # dictionary mapping edges to colors
     e_colors = {frozenset(e): None for e in g.edge_iterator(labels=False, sort_vertices=False)}

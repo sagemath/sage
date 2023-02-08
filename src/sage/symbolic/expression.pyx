@@ -9174,7 +9174,7 @@ cdef class Expression(Expression_abc):
             0.0
             sage: maxima('atan2(0,0.6)')
             0.0
-            sage: SR(0).arctan2(0) # see trac ticket #21614
+            sage: SR(0).arctan2(0) # see github issue #21614
             NaN
             sage: SR(I).arctan2(1)
             arctan2(I, 1)

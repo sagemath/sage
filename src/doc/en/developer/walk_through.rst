@@ -136,7 +136,7 @@ Branching Out
 In order to start modifying Sage, we want to make a *branch* of Sage.
 A branch is a copy (except that it doesn't take up twice the space) of
 the Sage source code where you can store your modifications to the
-Sage source code and which you can upload to trac tickets.
+Sage source code and which you can upload to github issues.
 
 To begin with, type the command ``git branch``. You will see the following::
 

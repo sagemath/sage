@@ -3010,7 +3010,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # Todo: This and ordinal_sum() of posets could keep
         # distinguished linear extension, if it is defined
         # for both posets/lattices. That can be done after
-        # trac ticket #21607.
+        # github issue #21607.
 
         if labels not in ['integers', 'pairs']:
             raise ValueError("labels must be either 'pairs' or 'integers'")

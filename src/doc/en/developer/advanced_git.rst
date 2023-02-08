@@ -70,7 +70,7 @@ usual ``git checkout my_branch``) and back to your detached head.
 
 Detached heads can be used to your advantage when reviewing
 tickets. Just check out the commit (look at the "Commit:" field on the
-trac ticket) that you are reviewing as a detached head. Then you can
+github issue) that you are reviewing as a detached head. Then you can
 look at the changes and run tests in the detached head. When you are
 finished with the review, you just abandon the detached head. That way
 you never create a new local branch, so you don't have to type ``git

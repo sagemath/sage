@@ -37,7 +37,7 @@ ready for inclusion into Sage.
 You can now begin the review by reading the diff code.
 
 **Read the diff:** the diff (i.e. the ticket's content) can be obtained by
-clicking on the (green) branch's name that appears on the trac ticket. If that
+clicking on the (green) branch's name that appears on the github issue. If that
 name appears in red (see :ref:`section-trac-fields`) you can say so in a comment
 and set the ticket to ``needs_work`` (see :ref:`section-trac-ticket-status`).
 

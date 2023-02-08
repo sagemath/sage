@@ -308,7 +308,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             ...
             ArithmeticError: self must be a square matrix
         """
-# see trac ticket 4502 --- there is an issue with the "#random" pragma that needs to be fixed
+# see github issue 4502 --- there is an issue with the "#random" pragma that needs to be fixed
 #                          as for the mathematical side, scipy v0.7 is expected to fix the invertibility failures
 #
 #            sage: A = Matrix(RDF, [[1, 0], [0, 0]])

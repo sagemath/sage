@@ -1933,7 +1933,7 @@ def plot(funcs, *args, **kwds):
         Traceback (most recent call last):
         ...
         RuntimeError: error in line(): option 'foo' not valid
-        sage: P = plot(x, (x,1,1)) # trac ticket #11753
+        sage: P = plot(x, (x,1,1)) # github issue #11753
         Traceback (most recent call last):
         ...
         ValueError: plot start point and end point must be different

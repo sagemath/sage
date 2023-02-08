@@ -161,7 +161,7 @@ want to add it to Sage. You would first open a ticket for that::
     Ticket URL: https://github.com/sagemath/sage/issues/12345
     Local branch: t/12345/last_twin_prime
 
-This will create a new trac ticket titled "Last Twin Prime" with a
+This will create a new github issue titled "Last Twin Prime" with a
 *remote branch* ``u/user/last_twin_prime`` attached to it. The remote
 branch name is automatically derived from the ticket title; If you
 don't like this then you can use the ``-b`` switch to specify it
@@ -194,7 +194,7 @@ local branch to make your edits, you would just run::
     Checking out Trac #13744 remote branch u/user/last_twin_prime -> local branch t/12345/last_twin_prime...
 
 The ``git trac checkout`` command downloads an existing branch (as
-specified in the "Branch:" field on the trac ticket) or creates a new
+specified in the "Branch:" field on the github issue) or creates a new
 one if there is none yet. Just like the create command, you can
 specify the remote branch name explicitly using the ``-b`` switch if
 you want.
@@ -204,7 +204,7 @@ you want.
 Note on Branch Names
 --------------------
 
-The "Branch:" field of a trac ticket (see :ref:`section-trac-fields`) indicates
+The "Branch:" field of a github issue (see :ref:`section-trac-fields`) indicates
 the git branch containing its code. Our git server implements the following
 access restrictions for **remote branch names**:
 
@@ -218,7 +218,7 @@ other. The ``git trac`` subcommands defaults to the former.
 
 As a convention, the ``git trac`` subcommand uses **local branch
 names** of the form ``t/12345/description``, where the number is the
-trac ticket number. The script uses this number to figure out the
+github issue number. The script uses this number to figure out the
 ticket from the local branch name. You can rename the local branches
 if you want, but if they don't contain the ticket number then you will
 have to specify the ticket number manually when you are uploading your
@@ -263,7 +263,7 @@ This uploads your changes to a remote branch on the `Sage git server
 the following logic to find out the remote branch name:
 
 * By default, the remote branch name will be whatever is already on
-  the trac ticket.
+  the github issue.
 
 * If there is no remote branch yet, the branch will be called
   ``u/user/description`` (``u/user/last_twin_prime`` in the example).
@@ -397,7 +397,7 @@ initial code::
     [alice@laptop sage]$ git commit
     [alice@laptop sage]$ git trac push
 
-The trac ticket now has "Branch:" set to
+The github issue now has "Branch:" set to
 ``u/alice/a_and_b_ticket``. Bob downloads the branch and works some
 more on it::
 
@@ -407,7 +407,7 @@ more on it::
     [bob@home sage]$ git commit
     [bob@home sage]$ git trac push
 
-The trac ticket now has "Branch:" set to ``u/bob/a_and_b_ticket``,
+The github issue now has "Branch:" set to ``u/bob/a_and_b_ticket``,
 since Bob cannot write to ``u/alice/...``. Now the two authors just
 pull/push in their collaboration::
 
@@ -568,7 +568,7 @@ The ``git trac`` command gives you two commands that might be handy
 (replace ``12345`` with the actual ticket number) if you do not want
 to use the web interface:
 
-* ``git trac print 12345`` displays the trac ticket directly in your
+* ``git trac print 12345`` displays the github issue directly in your
   terminal.
 
 * ``git trac review 12345`` downloads the branch from the ticket and

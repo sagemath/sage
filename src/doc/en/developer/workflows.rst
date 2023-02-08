@@ -197,6 +197,6 @@ server::
 
     $ git push trac HEAD:u/user/description
 
-and then fill in the "Branch" field in the trac ticket description as
+and then fill in the "Branch" field in the github issue description as
 explained in :ref:`section-git-push`.
 

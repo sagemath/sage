@@ -502,7 +502,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
                                   "coefficient ring (=%s) of Q" % base_ring)
 
         # CommutativeAlgebra.__init__ tries to establish a coercion
-        # from the base ring, by trac ticket #9138. The corresponding
+        # from the base ring, by github issue #9138. The corresponding
         # hom set is cached.  In order to use self as cache key, its
         # string representation is used. In otder to get the string
         # representation, we need to know the attributes _a and

@@ -272,7 +272,7 @@ local branch.
 Pushing Your Changes to a Ticket
 --------------------------------
 
-To add your local branch to a trac ticket, you should first decide on
+To add your local branch to a github issue, you should first decide on
 a name on the Sage trac repository.
 
 For read/write permissions on git branches, see
@@ -282,7 +282,7 @@ In order to avoid name clashes, you can use
 ``u/your_username/a_description_of_your_branch`` (the description can contain
 slashes, but no spaces). Then:
 
-- **Fill** the ``Branch`` field of the trac ticket with that name.
+- **Fill** the ``Branch`` field of the github issue with that name.
 
 - **Push** your branch to trac with either::
 
@@ -299,7 +299,7 @@ Here, ``HEAD`` means that you are pushing the most recent commit (and, by
 extension, all of its parent commits) of the current local branch to the remote
 branch.
 
-The ``Branch`` field on the trac ticket can appear in red/green. See
+The ``Branch`` field on the github issue can appear in red/green. See
 :ref:`section-trac-fields` to learn what it means.
 
 
@@ -311,7 +311,7 @@ Getting Changes
 A common task during development is to synchronize your local copy of
 the branch with the branch on trac. In particular, assume you
 downloaded somebody else's branch and made some suggestions for
-improvements on the trac ticket. Now the original author incorporated
+improvements on the github issue. Now the original author incorporated
 your suggestions into his branch, and you want to get the added
 changesets to complete your review. Assuming that you originally got
 your local branch as in :ref:`section-git-checkout`, you can just

@@ -984,7 +984,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             if isinstance(other, Polynomial):
                 # we have a univariate polynomial.
                 # That case had only been implemented
-                # in trac ticket #9138:
+                # in github issue #9138:
                 for i in range(len(coefs)):
                     if self._base(coefs[i]).is_one():
                         p += var_mapping[0]

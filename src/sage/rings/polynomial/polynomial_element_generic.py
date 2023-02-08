@@ -100,7 +100,7 @@ class Polynomial_generic_sparse(Polynomial):
                 w = {}
                 for n, c in x.dict().items():
                     w[n] = R(c)
-                # The following line has been added in trac ticket #9944.
+                # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):

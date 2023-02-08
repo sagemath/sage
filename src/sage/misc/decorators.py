@@ -580,7 +580,7 @@ class rename_keyword():
 
         INPUT:
 
-        - ``deprecation`` -- integer. The trac ticket number where the
+        - ``deprecation`` -- integer. The github issue number where the
           deprecation was introduced.
 
         - the rest of the arguments is a list of keyword arguments in the

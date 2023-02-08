@@ -74,9 +74,9 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 ###################################
 # Use the weak "triple" dictionary
-# introduced in trac ticket #715
+# introduced in github issue #715
 # with weak values, as introduced in
-# trac ticket #14159
+# github issue #14159
 
 from sage.structure.coerce_dict import TripleDict
 _cache = TripleDict(weak_values=True)

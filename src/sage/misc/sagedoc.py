@@ -501,7 +501,7 @@ def process_dollars(s):
     return s
 
 
-# Sage trac ticket shortcuts. For example, :trac:`7549` .
+# Sage github issue shortcuts. For example, :trac:`7549` .
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),

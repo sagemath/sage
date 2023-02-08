@@ -2475,7 +2475,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 p = self.parent().characteristic()
             except (AttributeError, NotImplementedError):
                 # some quotients do not implement characteristic
-                # see trac ticket 24308
+                # see github issue 24308
                 p = -1
             if 0 < p <= right and (self.base_ring() in sage.categories.integral_domains.IntegralDomains() or p.is_prime()):
                 x = self.parent().gen()
