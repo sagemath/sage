@@ -355,12 +355,12 @@ if [ "$PYTHON_EGG_CACHE" = "" ]; then
 fi
 
 # Set PYTHONUSERBASE to avoid picking up non-Sage versions of
-# Matplotlib, numpy, etc. See http://trac.sagemath.org/ticket/19612.
+# Matplotlib, numpy, etc. See https://github.com/sagemath/sage/issues/19612.
 #
 # For more history (it used to be PYTHONNOUSERSITE=yes which killed
 # the ability to do "sage -pip install PACKAGE --user"), see
-# http://trac.sagemath.org/ticket/14243 and
-# http://trac.sagemath.org/ticket/18955.
+# https://github.com/sagemath/sage/issues/14243 and
+# https://github.com/sagemath/sage/issues/18955.
 
 if [ "$PYTHONUSERBASE" = "" ]; then
     PYTHONUSERBASE="$DOT_SAGE/local"
