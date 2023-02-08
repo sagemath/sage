@@ -20,6 +20,7 @@ from sage.misc.callable_dict import CallableDict
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
 
+
 def from_list(l):
     """
     Returns a ranker from the list l.
@@ -106,6 +107,7 @@ def rank_from_list(l):
     """
     return CallableDict((x,i) for i,x in enumerate(l))
 
+
 def unrank_from_list(l):
     """
     Returns an unrank function from a list.
@@ -122,6 +124,7 @@ def unrank_from_list(l):
     """
     unrank = lambda j: l[j]
     return unrank
+
 
 def on_fly():
     """
@@ -172,6 +175,7 @@ def on_fly():
         return None
 
     return [rank, unrank]
+
 
 def unrank(L, i):
     r"""

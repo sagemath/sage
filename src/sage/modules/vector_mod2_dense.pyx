@@ -135,7 +135,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         self._entries = NULL
         self._is_immutable = 0
-        if not parent is None:
+        if parent is not None:
             self._init(parent.degree(), parent)
 
     def __init__(self, parent, x, coerce=True, copy=True):

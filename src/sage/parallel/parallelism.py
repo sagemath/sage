@@ -28,6 +28,7 @@ from sage.misc.fast_methods import Singleton
 from sage.parallel.ncpus import ncpus
 from sage.rings.integer import Integer
 
+
 class Parallelism(Singleton, SageObject):
     r"""
     Singleton class for managing the number of processes used in parallel
@@ -106,9 +107,12 @@ class Parallelism(Singleton, SageObject):
             sage: TestSuite(par).run()
 
         """
-        self._default = ncpus()  # default number of proc. used in parallelizations
-        self._nproc = {'tensor' : 1, 'linbox' : 1}  # dict. of number of processes to be used
-                                      # (keys: computational field)
+        self._default = ncpus()
+        # default number of proc. used in parallelizations
+
+        self._nproc = {'tensor': 1, 'linbox': 1}
+        # dict. of number of processes to be used
+        # (keys: computational field)
 
     def _repr_(self):
         r"""
@@ -242,7 +246,7 @@ class Parallelism(Singleton, SageObject):
             if nproc is None:
                 self._nproc[field] = self._default
             else:
-                if not isinstance(nproc, (int,Integer)):
+                if not isinstance(nproc, (int, Integer)):
                     raise TypeError("nproc must be integer")
                 self._nproc[field] = nproc
 
@@ -281,7 +285,6 @@ class Parallelism(Singleton, SageObject):
                            "implemented in Parallelism()")
         return self._nproc[field]
 
-
     def get_all(self):
         r"""
         Return the number of processes which will be used in parallel
@@ -306,7 +309,6 @@ class Parallelism(Singleton, SageObject):
 
         """
         return self._nproc
-
 
     def set_default(self, nproc=None):
         r"""
@@ -343,7 +345,7 @@ class Parallelism(Singleton, SageObject):
         if nproc is None:
             self._default = ncpus()
         else:
-            if not isinstance(nproc,(int,Integer)):
+            if not isinstance(nproc, (int, Integer)):
                 raise TypeError("nproc must be integer")
             self._default = nproc
 

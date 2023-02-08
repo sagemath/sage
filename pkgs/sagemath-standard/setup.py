@@ -39,28 +39,20 @@ from sage.env import *
 ### Configuration
 #########################################################
 
-if len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"]):
-    sdist = True
-else:
-    sdist = False
+from sage_setup.excepthook import excepthook
+sys.excepthook = excepthook
 
-if sdist:
-    cmdclass = {}
-else:
-    from sage_setup.excepthook import excepthook
-    sys.excepthook = excepthook
+from sage_setup.setenv import setenv
+setenv()
 
-    from sage_setup.setenv import setenv
-    setenv()
+from sage_setup.command.sage_build_cython import sage_build_cython
+from sage_setup.command.sage_build_ext import sage_build_ext
+from sage_setup.command.sage_install import sage_develop, sage_install_and_clean
 
-    from sage_setup.command.sage_build_cython import sage_build_cython
-    from sage_setup.command.sage_build_ext import sage_build_ext
-    from sage_setup.command.sage_install import sage_develop, sage_install_and_clean
-
-    cmdclass = dict(build_cython=sage_build_cython,
-                    build_ext=sage_build_ext,
-                    develop=sage_develop,
-                    install=sage_install_and_clean)
+cmdclass = dict(build_cython=sage_build_cython,
+                build_ext=sage_build_ext,
+                develop=sage_develop,
+                install=sage_install_and_clean)
 
 #########################################################
 ### Testing related stuff
@@ -75,41 +67,39 @@ if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
 ### Discovering Sources
 #########################################################
 
-if sdist:
-    # No need to compute distributions.  This avoids a dependency on Cython
-    # just to make an sdist.
-    distributions = None
-    python_packages = []
-    python_modules = []
-    cython_modules = []
-else:
+if any(x in sys.argv
+       for x in ['build', 'bdist_wheel', 'install']):
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    # TODO: This should be quiet by default
-    print("Discovering Python/Cython source code....")
-    t = time.time()
-    from sage.misc.package import is_package_installed_and_updated
-    distributions = ['']
-    optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
-                                         'coxeter3', 'sirocco', 'meataxe']
-    distributions += ['sagemath-{}'.format(pkg)
-                      for pkg in optional_packages_with_extensions
-                      if is_package_installed_and_updated(pkg)]
-    log.warn('distributions = {0}'.format(distributions))
-    from sage_setup.find import find_python_sources
-    python_packages, python_modules, cython_modules = find_python_sources(
-        SAGE_SRC, ['sage'], distributions=distributions)
+# TODO: This should be quiet by default
+print("Discovering Python/Cython source code....")
+t = time.time()
+distributions = ['']
+from sage.misc.package import is_package_installed_and_updated
+optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
+                                     'coxeter3', 'sirocco', 'meataxe']
+distributions += ['sagemath-{}'.format(pkg)
+                  for pkg in optional_packages_with_extensions
+                  if is_package_installed_and_updated(pkg)]
+log.warn('distributions = {0}'.format(distributions))
+from sage_setup.find import find_python_sources, find_extra_files
+python_packages, python_modules, cython_modules = find_python_sources(
+    SAGE_SRC, ['sage'], distributions=distributions)
 
-    log.debug('python_packages = {0}'.format(python_packages))
-    print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
+log.debug('python_packages = {0}'.format(python_packages))
+log.debug('python_modules = {0}'.format(python_modules))
+log.debug('cython_modules = {0}'.format(cython_modules))
+
+print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
 #########################################################
 ### Distutils
 #########################################################
 
 code = setup(
-      packages = python_packages,
-      cmdclass = cmdclass,
-      ext_modules = cython_modules)
+      packages=python_packages,
+      cmdclass=cmdclass,
+      ext_modules=cython_modules,
+)

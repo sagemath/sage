@@ -6,6 +6,17 @@
 The Sage Trac Server
 ====================
 
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.** The exact
+    date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
+    the transition, some parts of this guide (especially those related with `the
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    GitHub
+    <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
+    for the preliminary version of the workflow.
+
 Sometimes you will only want to work on local changes to Sage, for
 your own private needs.  However, typically it is beneficial to
 share code and ideas with others; the manner in which the
@@ -32,6 +43,13 @@ you have corrections for the documentation, you should post on the
 trac server. Items on the server are called *tickets*, and anyone may
 search or browse the tickets. For a list of recent changes, just visit
 the :trac:`Sage trac timeline <timeline>`.
+
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.**
+    All functions of our Trac server will be taken over by our main repository,
+    https://github.com/sagemath/sage.
+
 
 .. _section-trac-account:
 
@@ -288,11 +306,6 @@ After pushing a branch to a ticket, the ticket will show badges
 linking to results of automated tests that run on the patchbot and
 other tests that run on GitHub Actions.
 
-* The Patch buildbot will automatically test your ticket. See :trac:`wiki/patchbot`
-  for more information about its features and limitations. Make sure that you
-  look at the log, especially if the patch buildbot did not give you
-  the green blob.
-
 * A `linting workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/lint.yml>`_
   runs on all pushes to a branch on Trac. It checks that the code of
@@ -334,6 +347,17 @@ other tests that run on GitHub Actions.
   <https://github.com/sagemath/sagetrac-mirror/actions/workflows/doc-build.yml>`_
   and choose the particular branch to see what went wrong.
 
+* The patch buildbot will automatically test your ticket. See :trac:`wiki/patchbot`
+  for more information about its features and limitations. Make sure that you
+  look at the log, especially if the patch buildbot did not give you
+  the green blob.
+
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.**
+    After the move, the patch buildbot will no longer be available; the three
+    workflows above are considered a full replacement. If you miss any features
+    of the patch buildbot, please report this in :trac:`33457`.
 
 The following are some other relevant issues:
 

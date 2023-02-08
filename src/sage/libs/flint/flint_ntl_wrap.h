@@ -8,7 +8,7 @@
 
 #include <gmp.h>
 
-/* Save previous definition of ulong if any, as zn_poly and pari also use it */
+/* Save previous definition of ulong if any, as pari also uses it */
 #pragma push_macro("ulong")
 #undef ulong
 

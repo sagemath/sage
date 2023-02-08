@@ -1013,6 +1013,7 @@ class OrderedTrees_size(OrderedTrees):
         sage: S.list()
         [[[], []], [[[]]]]
     """
+
     def __init__(self, size):
         """
         TESTS::
@@ -1348,6 +1349,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         sage: y.parent() is LOT
         True
     """
+
     def __init__(self, category=None):
         """
         TESTS::

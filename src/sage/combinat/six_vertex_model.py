@@ -13,6 +13,7 @@ class SixVertexConfiguration(ClonableArray):
     """
     A configuration in the six vertex model.
     """
+
     def check(self):
         """
         Check if ``self`` is a valid 6 vertex configuration.
@@ -289,6 +290,7 @@ class SixVertexConfiguration(ClonableArray):
         if len(epsilon) != 6:
             raise ValueError("there must be 6 energy constants")
         return sum(epsilon[entry] for row in self for entry in row)
+
 
 class SixVertexModel(UniqueRepresentation, Parent):
     """
@@ -658,6 +660,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         from sage.functions.log import exp
         return sum(exp(-beta * nu.energy(epsilon)) for nu in self)
 
+
 class SquareIceModel(SixVertexModel):
     r"""
     The square ice model.
@@ -670,6 +673,7 @@ class SquareIceModel(SixVertexModel):
     Configurations of the 6 vertex model with domain wall boundary conditions
     are in bijection with alternating sign matrices.
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.

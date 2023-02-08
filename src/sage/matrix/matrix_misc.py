@@ -287,7 +287,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         a = A[i]   # the i-th row of A
         for j in range(len(a)):
             if a[j]:
-                p1[1<<j] = a[j] * t
+                p1[1 << j] = a[j] * t
 
         # make the product with the preceding polynomials, taking care of
         # variables that can be integrated

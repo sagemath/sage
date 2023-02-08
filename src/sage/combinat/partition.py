@@ -5812,26 +5812,7 @@ class Partitions(UniqueRepresentation, Parent):
         """
         if n == infinity:
             raise ValueError("n cannot be infinite")
-        if n is None or n is NN or n is NonNegativeIntegers():
-            if len(kwargs) > 0:
-                if len(kwargs) == 1:
-                    if 'max_part' in kwargs:
-                        return Partitions_all_bounded(kwargs['max_part'])
-                    if 'regular' in kwargs:
-                        return RegularPartitions_all(kwargs['regular'])
-                    if 'restricted' in kwargs:
-                        return RestrictedPartitions_all(kwargs['restricted'])
-                elif len(kwargs) == 2:
-                    if 'regular' in kwargs:
-                        if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
-                            raise ValueError("the regularity must be a positive integer")
-                        if 'max_part' in kwargs:
-                            return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
-                        if 'max_length' in kwargs:
-                            return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
-                raise ValueError("the size must be specified with any keyword argument")
-            return Partitions_all()
-        elif isinstance(n, (int,Integer)):
+        if isinstance(n, (int,Integer)):
             if len(kwargs) == 0:
                 return Partitions_n(n)
 
@@ -5885,6 +5866,25 @@ class Partitions(UniqueRepresentation, Parent):
                                            kwargs.get('min_length',0))
                 del kwargs['inner']
             return Partitions_with_constraints(n, **kwargs)
+        elif n is None or n is NN or n is NonNegativeIntegers():
+            if len(kwargs) > 0:
+                if len(kwargs) == 1:
+                    if 'max_part' in kwargs:
+                        return Partitions_all_bounded(kwargs['max_part'])
+                    if 'regular' in kwargs:
+                        return RegularPartitions_all(kwargs['regular'])
+                    if 'restricted' in kwargs:
+                        return RestrictedPartitions_all(kwargs['restricted'])
+                elif len(kwargs) == 2:
+                    if 'regular' in kwargs:
+                        if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
+                            raise ValueError("the regularity must be a positive integer")
+                        if 'max_part' in kwargs:
+                            return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
+                        if 'max_length' in kwargs:
+                            return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
+                raise ValueError("the size must be specified with any keyword argument")
+            return Partitions_all()
 
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")
@@ -7691,6 +7691,7 @@ class Partitions_constraints(IntegerListsLex):
     For unpickling old constrained ``Partitions_constraints`` objects created
     with sage <= 3.4.1. See :class:`Partitions`.
     """
+
     def __setstate__(self, data):
         r"""
         TESTS::
@@ -7763,6 +7764,7 @@ class RegularPartitions(Partitions):
     - ``is_infinite`` -- boolean; if the subset of `\ell`-regular
       partitions is infinite
     """
+
     def __init__(self, ell, is_infinite=False):
         """
         Initialize ``self``.
@@ -7855,6 +7857,7 @@ class RegularPartitions_all(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell):
         """
         Initialize ``self``.
@@ -7924,6 +7927,7 @@ class RegularPartitions_truncated(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell, max_len):
         """
         Initialize ``self``.
@@ -8046,6 +8050,7 @@ class RegularPartitions_bounded(RegularPartitions):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, ell, k):
         """
         Initialize ``self``.
@@ -8124,6 +8129,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
 
         :class:`~sage.combinat.partition.RegularPartitions`
     """
+
     def __init__(self, n, ell):
         """
         Initialize ``self``.
@@ -8580,6 +8586,7 @@ class RestrictedPartitions_generic(Partitions):
     - ``is_infinite`` -- boolean; if the subset of `\ell`-restricted
       partitions is infinite
     """
+
     def __init__(self, ell, is_infinite=False):
         """
         Initialize ``self``.
@@ -8691,6 +8698,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
 
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
+
     def __init__(self, ell):
         """
         Initialize ``self``.
@@ -8744,6 +8752,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
 
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
+
     def __init__(self, n, ell):
         """
         Initialize ``self``.

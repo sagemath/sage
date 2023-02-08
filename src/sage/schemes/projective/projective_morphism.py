@@ -2705,7 +2705,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: k = GF(11)
             sage: E = EllipticCurve(k,[1,1])
             sage: Q = E(6,5)
-            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: phi = E.scalar_multiplication(2)
             sage: mor = phi.as_morphism()
             sage: mor.projective_degrees()
             (12, 3)
@@ -2747,7 +2747,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: k = GF(11)
             sage: E = EllipticCurve(k,[1,1])
             sage: Q = E(6,5)
-            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: phi = E.scalar_multiplication(2)
             sage: mor = phi.as_morphism()
             sage: mor.degree()
             4

@@ -239,7 +239,6 @@ class TateAlgebraFactory(UniqueFactory):
     AUTHORS:
 
     - Xavier Caruso, Thibaut Verron (2018-09)
-
     """
     def create_key(self, base, prec=None, log_radii=ZZ(0), names=None, order='degrevlex'):
         """
@@ -251,7 +250,7 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``prec`` -- an integer or ``None`` (default: ``None``)
 
-        - ``log_radii`` -- an integer or a list or a tuple of integers 
+        - ``log_radii`` -- an integer or a list or a tuple of integers
           (default: ``0``)
 
         - ``names`` -- names of the indeterminates
@@ -1148,7 +1147,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
         """
         Return the precision cap of this Tate algebra.
 
-        NOTE::
+        .. NOTE::
 
             The precision cap is the truncation precision
             used for arithmetic operations computed by

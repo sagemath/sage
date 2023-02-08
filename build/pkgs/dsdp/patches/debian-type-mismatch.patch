@@ -1,0 +1,39 @@
+Description: Use correct integer type for Fortran prototypes and variables
+ GNU Fortran's default integer width is 32-bit, the same as GCC, therefore use
+ int rather than long int when interfacing with Fortran. This was an issue on
+ 64-bit big-endian systems, since the upper 32 bits of the long would be set,
+ which would also be lost when truncating to a 32-bit integer.
+Author: James Clarke <jrtc27@debian.org>
+Bug-Debian: https://bugs.debian.org/857067
+Last-Update: 2017-03-28
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/include/dsdplapack.h
++++ b/include/dsdplapack.h
+@@ -4,11 +4,11 @@
+ \file dsdplapack.h
+ \brief DSDP uses BLAS and LAPACK for many of its operations.
+ */
+-
+-typedef long int ffinteger;
+ /*
+-typedef int ffinteger;
++typedef long int ffinteger;
+ */
++typedef int ffinteger;
++
+ /*
+ #define  __DSDP_NONAMEMANGLING
+ #undef  __DSDP_NONAMEMANGLING
+--- a/src/vecmat/dtrsm2.c
++++ b/src/vecmat/dtrsm2.c
+@@ -1,7 +1,7 @@
+ #include "dsdplapack.h"
+ 
+-typedef long int integer;
+-typedef long int logical;
++typedef int integer;
++typedef int logical;
+ 
+ #define max(a,b) ((a) >= (b) ? (a) : (b))
+ #define dmax(a,b) (double)max(a,b)

@@ -2287,8 +2287,8 @@ def _plot(funcs, xrange, parametric=False,
             elif legend_color_temp is not None:
                 legend_color_entry = legend_color_temp
 
-            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry, \
-                      rgbcolor=color_entry, linestyle=linestyle_entry, \
+            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry,
+                      rgbcolor=color_entry, linestyle=linestyle_entry,
                       legend_label=legend_label_entry, legend_color=legend_color_entry, **options_temp)
         return G
 

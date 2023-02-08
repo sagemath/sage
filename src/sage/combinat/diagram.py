@@ -39,6 +39,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 
+
 class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Combinatorial diagrams with positions indexed by rows in columns.
@@ -507,6 +508,7 @@ class Diagrams(UniqueRepresentation, Parent):
         Combinatorial diagrams
 
     """
+
     def __init__(self, category=None):
         r"""
         Initialize ``self``.
@@ -856,7 +858,7 @@ class NorthwestDiagram(Diagram, metaclass=InheritComparisonClasscallMetaclass):
 
         For a fixed northwest diagram `D`, we say that a Young tableau `T` is
         `D`-peelable if:
-        
+
         1. the row indices of the cells in the first column of `D` are
            the entries in an initial segment in the first column of `T` and
         2. the tableau `Q` obtained by removing those cells from `T` and playing
@@ -1465,7 +1467,6 @@ def RotheDiagram(w):
     winv = w.inverse()
     from sage.misc.mrange import cartesian_product_iterator
     cells = [c for c in cartesian_product_iterator((range(N), range(N)))
-             if c[0]+1 < winv(c[1]+1) and c[1]+1 < w(c[0]+1)]
+             if c[0] + 1 < winv(c[1] + 1) and c[1] + 1 < w(c[0] + 1)]
 
     return NorthwestDiagram(cells, n_rows=N, n_cols=N, check=False)
-

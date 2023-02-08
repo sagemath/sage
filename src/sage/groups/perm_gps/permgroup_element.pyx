@@ -122,8 +122,9 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.coerce cimport coercion_model
-from sage.interfaces.gap import GapElement as PExpectGapElement
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
+
+import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
@@ -478,7 +479,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 self._set_list_images(g.sage(), convert)
             else:
                 raise ValueError("invalid data to initialize a permutation")
-        elif isinstance(g, PExpectGapElement):
+        elif isinstance(g, sage.interfaces.abc.GapElement):
             if g.IsPerm():
                 self._set_list_images(g.ListPerm(), False)
             else:

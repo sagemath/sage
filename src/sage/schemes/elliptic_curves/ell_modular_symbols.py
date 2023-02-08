@@ -8,7 +8,7 @@ is known to be modular.  The space is two-dimensional and contains a
 subspace on which complex conjugation acts as multiplication by `+1`
 and one on which it acts by `-1`.
 
-There are three implementations of modular symbols, two within 
+There are three implementations of modular symbols, two within
 ``Sage`` and one in Cremona's ``eclib`` library.
 One can choose here which one is used.
 
@@ -95,7 +95,7 @@ from sage.arith.all import next_prime, kronecker_symbol, prime_divisors, valuati
 from sage.rings.infinity import unsigned_infinity as infinity
 from sage.rings.integer import Integer
 from sage.modular.cusps import Cusps
-from sage.rings.integer_ring import   ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.verbose import verbose
 
