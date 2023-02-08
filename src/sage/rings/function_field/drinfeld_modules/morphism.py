@@ -243,6 +243,24 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
 
+    def __hash__(self):
+        r"""
+        Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: Fq = GF(2)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z6, 1, 1])
+            sage: psi = DrinfeldModule(A, [z6, z6^4 + z6^2 + 1, 1])
+            sage: t = phi.ore_polring().gen()
+            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: hash(morphism)  # random
+            -4214883752078138009
+        """
+        return hash((self._domain, self._codomain, self._ore_polynomial))
+
     def is_zero(self):
         r"""
         Return ``True`` whether the morphism is the zero morphism.

@@ -853,6 +853,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         tester.assertTrue(isinstance(self, category.parent_class),
                 _LazyString("category of %s improperly initialized", (self,), {}))
 
+    def __hash__(self):
+        r"""
+        Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: hash(phi)  # random
+            -6894299335185957188
+        """
+        return hash((self.base(), self._gen))
+
     def action(self):
         r"""
         Return the action object
