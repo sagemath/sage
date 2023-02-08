@@ -1386,7 +1386,7 @@ class BipartiteGraph(Graph):
 
         TESTS:
 
-        Ticket :trac:`25985` is fixed::
+        Issue :trac:`25985` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
             sage: B.project_left().vertices(sort=True)

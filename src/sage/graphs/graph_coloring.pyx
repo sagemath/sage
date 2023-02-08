@@ -2037,7 +2037,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     TESTS:
 
-    Ticket :trac:`24991` is fixed::
+    Issue :trac:`24991` is fixed::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: sorted(acyclic_edge_coloring(G, value_only=True) for G in graphs(4))
