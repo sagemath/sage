@@ -257,4 +257,3 @@ def prod_with_derivative(pairs):
             yield self.df
 
     return tuple(prod(_aux(*tup) for tup in pairs))
-
