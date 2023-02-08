@@ -29,7 +29,7 @@ Accordingly, :class:`TensorFreeModule` is a Sage *parent* class, whose
 `T^{(k,l)}(M)` is itself a free module over `R`, of rank `n^{k+l}`, `n`
 being the rank of `M`. Accordingly the class :class:`TensorFreeModule`
 inherits from the class
-:class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+:class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
 .. TODO::
 

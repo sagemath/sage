@@ -266,6 +266,7 @@ def unpickle_class_value(cls, x):
     """
     return cls(x)
 
+
 def unpickle_class_args(cls, x):
     """
     Here for unpickling.
@@ -278,4 +279,3 @@ def unpickle_class_args(cls, x):
         <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
-

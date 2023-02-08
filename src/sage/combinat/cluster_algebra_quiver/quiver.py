@@ -212,6 +212,7 @@ class ClusterQuiver(SageObject):
         ...
         ValueError: the input data was not recognized
     """
+
     def __init__(self, data, frozen=None, user_labels=None):
         """
         TESTS::
@@ -235,7 +236,6 @@ class ClusterQuiver(SageObject):
                 print('The input specifies a mutation type, so the'
                       ' additional parameter frozen is ignored.'
                       ' Use set_frozen to freeze vertices.')
-
 
             mutation_type = data
             self.__init__( mutation_type.standard_quiver() )
@@ -274,11 +274,11 @@ class ClusterQuiver(SageObject):
                 else:
                     self.__init__( mutation_type.standard_quiver() )
             elif len(data) == 3 and isinstance(data[0], str):
-                if (data[0] == 'F' and data[1] == 4 and data[2] == [2,1])   or (data[0] == 'G' and data[1] == 2 and data[2] == [3,1]):
+                if (data[0] == 'F' and data[1] == 4 and data[2] == [2,1]) or (data[0] == 'G' and data[1] == 2 and data[2] == [3,1]):
                     quiv = ClusterQuiver( QuiverMutationType_Irreducible( data[0], data[1], tuple(data[2]) )._digraph )
                     quiv._mutation_type = mutation_type
                     self.__init__( quiv )
-                elif (data[0] == 'F' and data[1] == 4 and data[2] == (2,1) )   or (data[0] == 'G' and data[1] == 2 and data[2] == (3,1) ):
+                elif (data[0] == 'F' and data[1] == 4 and data[2] == (2,1) ) or (data[0] == 'G' and data[1] == 2 and data[2] == (3,1) ):
                     quiv = ClusterQuiver( QuiverMutationType_Irreducible( data[0], data[1], data[2] )._digraph )
                     quiv._mutation_type = mutation_type
                     self.__init__( quiv )

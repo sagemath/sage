@@ -283,7 +283,7 @@ def Curve(F, A=None):
             raise TypeError("ambient space must be either an affine or projective space")
         if not isinstance(F, (list, tuple)):
             F = [F]
-        if  not all(f.parent() == A.coordinate_ring() for f in F):
+        if not all(f.parent() == A.coordinate_ring() for f in F):
             raise TypeError("need a list of polynomials of the coordinate ring of {}".format(A))
 
     n = A.dimension_relative()

@@ -160,6 +160,7 @@ from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
 
+
 class SkewPartition(CombinatorialElement):
     r"""
     A skew partition.
@@ -268,8 +269,16 @@ class SkewPartition(CombinatorialElement):
             &\lr{\ast}&\lr{\ast}\\\cline{2-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_diagram())
+            {\emptyset}
+
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         char = self.parent().options.latex_diagram_str
@@ -295,8 +304,15 @@ class SkewPartition(CombinatorialElement):
             &\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{2-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_young_diagram())
+            {\emptyset}
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         from sage.combinat.output import tex_from_array
@@ -320,8 +336,15 @@ class SkewPartition(CombinatorialElement):
             \lr{X}&\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-3}
             \end{array}$}
             }
+
+        TESTS:
+
+        Check that :trac:`34760` is fixed::
+
+            sage: print(SkewPartition([[],[]])._latex_marked())
+            {\emptyset}
         """
-        if len(self._list) == 0:
+        if not any(self._list):
             return "{\\emptyset}"
 
         from sage.combinat.output import tex_from_array
@@ -1252,6 +1275,7 @@ class SkewPartition(CombinatorialElement):
         """
         return self.outer().outside_corners()
 
+
 def row_lengths_aux(skp):
     """
     EXAMPLES::
@@ -1266,6 +1290,7 @@ def row_lengths_aux(skp):
         return []
     else:
         return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+
 
 class SkewPartitions(UniqueRepresentation, Parent):
     """
@@ -1573,6 +1598,7 @@ class SkewPartitions_all(SkewPartitions):
     """
     Class of all skew partitions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -1849,6 +1875,8 @@ class SkewPartitions_n(SkewPartitions):
 ######################################
 # Skew Partitions (from row lengths) #
 ######################################
+
+
 class SkewPartitions_rowlengths(SkewPartitions):
     """
     All skew partitions with given row lengths.
@@ -1965,6 +1993,6 @@ class SkewPartitions_rowlengths(SkewPartitions):
             for sp in self._from_row_lengths_aux(sskp, self.co[-2], self.co[-1], self.overlap):
                 yield self.element_class(self, sp)
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)
-

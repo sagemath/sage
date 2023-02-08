@@ -1056,7 +1056,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
              + Place (x^2 + 4*x + 1, y)
         """
         if isinstance(S, PlaceSet):
-            func =  lambda place: prime_divisor(self._field, place)
+            func = lambda place: prime_divisor(self._field, place)
             return SetMorphism(Hom(S,self), func)
 
     def function_field(self):

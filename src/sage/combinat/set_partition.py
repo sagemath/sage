@@ -61,6 +61,7 @@ class AbstractSetPartition(ClonableArray,
     r"""
     Methods of set partitions which are independent of the base set
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -2663,6 +2664,7 @@ class SetPartitions_all(SetPartitions):
     r"""
     All set partitions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -3111,7 +3113,6 @@ class SetPartitions_setparts(SetPartitions_set):
         if not SetPartitions_set.__contains__(self, x):
             return False
         return sorted(map(len, x), reverse=True) == self._parts
-
 
     def random_element(self):
         r"""

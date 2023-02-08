@@ -1815,7 +1815,7 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
         """
         factor = self.parent().codomain()(factor)
         base_derivation = factor * self._base_derivation
-        im = [ factor*x  for x in self._images ]
+        im = [ factor*x for x in self._images ]
         return type(self)(self.parent(), [base_derivation] + im)
 
     def _lmul_(self, factor):

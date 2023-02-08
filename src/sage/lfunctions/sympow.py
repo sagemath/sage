@@ -1,5 +1,5 @@
 r"""
-Watkins Symmetric Power `L`-function Calculator
+Watkins symmetric power `L`-function calculator
 
 SYMPOW is a package to compute special values of symmetric power
 elliptic curve L-functions. It can compute up to about 64 digits of

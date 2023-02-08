@@ -78,7 +78,7 @@ class LazyFormat(str):
         ....:               LazyFormat("%s is wrong")%IDontLikeBeingPrinted())
         Traceback (most recent call last):
         ...
-        AssertionError: <unprintable AssertionError object>
+        AssertionError: ...
     """
 
     def __mod__(self, args):

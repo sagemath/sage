@@ -114,7 +114,6 @@ from sage.cpython.type cimport can_assign_class
 cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
-from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute

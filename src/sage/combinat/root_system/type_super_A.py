@@ -33,6 +33,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
          1: (0, 0, 0, 1, 0),
          2: (0, 0, 0, 0, 1)}
     """
+
     def __init__(self, root_system, base_ring, index_set=None):
         """
         Initialize ``self``.
@@ -446,12 +447,14 @@ class AmbientSpace(ambient_space.AmbientSpace):
             return all(l[i] * self.inner_product(alpha[i]) in NN
                        for i in self.parent().index_set())
 
+
 class CartanType(SuperCartanType_standard):
     """
     Cartan Type `A(m|n)`.
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, m, n):
         """
         EXAMPLES::

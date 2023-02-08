@@ -206,6 +206,7 @@ from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.combinat.misc import IterableFunctionCall
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+
 @cached_function
 def fq(n, q=None):
     r"""

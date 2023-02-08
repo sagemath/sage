@@ -1031,7 +1031,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             return P, L, U
 
         PLU = self.fetch('PLU_factors')
-        if not PLU is None:
+        if PLU is not None:
             return PLU
         if scipy is None:
             import scipy
@@ -2351,7 +2351,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
         key = 'unitary_{0}_{1}'.format(algorithm, tol)
         b = self.fetch(key)
-        if not b is None:
+        if b is not None:
             return b
         if not self.is_square():
             self.cache(key, False)
@@ -2479,7 +2479,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         key = ("_is_hermitian_orthonormal", tol, skew)
         h = self.fetch(key)
-        if not h is None:
+        if h is not None:
             return h
         if not self.is_square():
             self.cache(key, False)
@@ -2910,7 +2910,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         key = 'normal_{0}_{1}'.format(algorithm, tol)
         b = self.fetch(key)
-        if not b is None:
+        if b is not None:
             return b
         if not self.is_square():
             self.cache(key, False)
@@ -3214,7 +3214,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             format = 'real'
 
         schur = self.fetch('schur_factors_' + format)
-        if not schur is None:
+        if schur is not None:
             return schur
         if scipy is None:
             import scipy

@@ -1,9 +1,9 @@
 r"""
 Ribbon Graphs
 
-This file implements objects called *ribbon graphs*. These are graphs 
-together with a cyclic ordering of the darts adjacent to each 
-vertex. This data allows us to unambiguously "thicken" the ribbon 
+This file implements objects called *ribbon graphs*. These are graphs
+together with a cyclic ordering of the darts adjacent to each
+vertex. This data allows us to unambiguously "thicken" the ribbon
 graph to an orientable surface with boundary. Also, every orientable
 surface with non-empty boundary is the thickening of a ribbon graph.
 
@@ -103,10 +103,10 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     **Brief introduction**
 
-    Let `\Sigma` be an orientable surface with non-empty boundary and let 
-    `\Gamma` be the topological realization of a graph that is embedded in 
+    Let `\Sigma` be an orientable surface with non-empty boundary and let
+    `\Gamma` be the topological realization of a graph that is embedded in
     `\Sigma` in such a way that the graph is a strong deformation retract of
-    the surface. 
+    the surface.
 
     Let `v(\Gamma)` be the set of vertices of `\Gamma`, suppose that these
     are white vertices. Now we mark black vertices in an interior point
@@ -121,7 +121,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
     `\Gamma` and suppose that we enumerate the set `D(\Gamma)` and that it
     has `n` elements.
 
-    With the orientation of the surface and the embedding of the graph in 
+    With the orientation of the surface and the embedding of the graph in
     the surface we can produce two permutations:
 
     - A permutation that we denote by `\sigma`. This permutation is a
@@ -139,13 +139,13 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     .. RUBRIC:: Abstract definition
 
-    Consider a graph `\Gamma` (not a priori embedded in any surface). 
-    Now we can again consider one vertex in the interior of each edge 
+    Consider a graph `\Gamma` (not a priori embedded in any surface).
+    Now we can again consider one vertex in the interior of each edge
     splitting each edge in two darts. We label the darts with numbers.
 
-    We say that a ribbon structure on `\Gamma` is a set of two 
+    We say that a ribbon structure on `\Gamma` is a set of two
     permutations `(\sigma, \rho)`. Where `\sigma` is formed by as many
-    disjoint cycles as vertices had `\Gamma`. And each cycle is a 
+    disjoint cycles as vertices had `\Gamma`. And each cycle is a
     cyclic ordering of the darts adjacent to a vertex. The permutation
     `\rho` just tell us which two darts belong to the same edge.
 
@@ -210,7 +210,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         sage: R2.sigma()
         (1,3,5,8)(2,4,6)
 
-    This example is constructed by taking the bipartite graph of 
+    This example is constructed by taking the bipartite graph of
     type `(3,3)`::
 
         sage: s3 = PermutationGroupElement('(1,2,3)(4,5,6)(7,8,9)(10,11,12)(13,14,15)(16,17,18)')
@@ -384,7 +384,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             sage: R1.number_boundaries()
             1
 
-        This example is constructed by taking the bipartite graph of 
+        This example is constructed by taking the bipartite graph of
         type `(3,3)`::
 
             sage: s2 = PermutationGroupElement('(1,2,3)(4,5,6)(7,8,9)(10,11,12)(13,14,15)(16,17,18)')
@@ -409,7 +409,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the position in `\rho` of the 
+        - ``k`` -- non-negative integer; the position in `\rho` of the
           transposition that is going to be contracted
 
         OUTPUT:
@@ -441,7 +441,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             ValueError: the edge is a loop and cannot be contracted
 
         In this example, we consider a graph that has one edge ``(19,20)``
-        such that one of its ends is a vertex of valency 1. This is 
+        such that one of its ends is a vertex of valency 1. This is
         the vertex ``(20)`` that is not specified when defining `\sigma`.
         We contract precisely this edge and get a ribbon graph with no
         vertices of valency 1::
@@ -514,7 +514,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        A ribbon graph resulting from extruding a new edge that 
+        A ribbon graph resulting from extruding a new edge that
         pulls from ``vertex`` a new vertex that is, now, adjacent
         to all the darts from ``dart1``to ``dart2`` (not including
         ``dart2``) in the cyclic ordering given by the cycle corresponding
@@ -553,7 +553,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             (1,2)(3,4)(5,6)(7,8)
 
         In the following example we first extrude one edge from a vertex
-        of valency 3 generating a new vertex of valency 2. Then we 
+        of valency 3 generating a new vertex of valency 2. Then we
         extrude a new edge from this vertex of valency 2::
 
             sage: s1 = PermutationGroupElement('(1,3,5)(2,4,6)')
@@ -674,7 +674,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        A list of lists. The number of inner lists is the number of 
+        A list of lists. The number of inner lists is the number of
         boundary components of the surface. Each list in the list
         consists of an ordered tuple of numbers, each number comes
         from the number assigned to the corresponding dart before
@@ -878,7 +878,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     def homology_basis(self):
         r"""
-        Return an oriented basis of the first homology group of the 
+        Return an oriented basis of the first homology group of the
         graph.
 
         OUTPUT:
@@ -1098,8 +1098,8 @@ def make_ribbon(g, r):
 
     OUTPUT:
 
-    - a ribbon graph that has 2 vertices (two non-trivial cycles 
-      in its sigma permutation) of valency `2g + r` and it has 
+    - a ribbon graph that has 2 vertices (two non-trivial cycles
+      in its sigma permutation) of valency `2g + r` and it has
       `2g + r` edges (and hence `4g + 2r` darts)
 
     EXAMPLES::

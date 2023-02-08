@@ -1,8 +1,8 @@
 Noncommutative Polynomials
 ==========================
 
-Univariate Ore polynomial rings
--------------------------------
+Univariate Ore Polynomials
+--------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -13,13 +13,6 @@ Univariate Ore polynomial rings
    sage/rings/polynomial/skew_polynomial_element
    sage/rings/polynomial/skew_polynomial_finite_order
    sage/rings/polynomial/skew_polynomial_finite_field
-
-Fraction field of Ore polynomial rings
---------------------------------------
-
-.. toctree::
-   :maxdepth: 1
-
    sage/rings/polynomial/ore_function_field
    sage/rings/polynomial/ore_function_element
 

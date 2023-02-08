@@ -1578,4 +1578,3 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         assert f.denominator() == 1
         assert self._x.denominator() == 1
         return self.parent()(self._x.numerator().inverse_mod(f.numerator()))
-

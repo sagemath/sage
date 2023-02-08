@@ -5,8 +5,8 @@ The Matrix of Frobenius on Hyperelliptic Curves
 Sage has a highly optimized implementation of the Harvey-Kedlaya
 algorithm for computing the matrix of Frobenius associated to a curve
 over a finite field. This is an implementation by David Harvey, which
-is GPL'd and depends only on NTL and zn_poly (a C library in Sage for
-fast arithmetic in :math:`(\ZZ/n\ZZ)[x]`).
+is GPL'd and depends only on NTL (a C library in Sage for fast
+arithmetic in :math:`(\ZZ/n\ZZ)[x]`).
 
 We import the hypellfrob function and call it on a polynomial over
 :math:`\ZZ`.

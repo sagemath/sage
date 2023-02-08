@@ -3074,4 +3074,3 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
     mpz_clear(denom)
 
     return ret
-

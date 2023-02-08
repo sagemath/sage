@@ -87,7 +87,7 @@ from sage.arith.misc import prod
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
 
 # TODO: Implement sparse strategies? (cf. the SIKE cryptosystem)
 
@@ -272,7 +272,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         self._phis = _compute_factored_isogeny(kernel)
 
         if not self._phis:
-            self._phis = [WeierstrassIsomorphism(E, (1, 0, 0, 0))]
+            self._phis = [identity_morphism(E)]
 
         if model is not None:
             if codomain is not None:
@@ -350,7 +350,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         TESTS::
 
             sage: E = EllipticCurve('4730k1')
-            sage: EllipticCurveHom_composite.from_factors([], E) == E.multiplication_by_m_isogeny(1)
+            sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)
             True
 
         ::
@@ -375,7 +375,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             E = phi.codomain()
 
         if not maps:
-            maps = (WeierstrassIsomorphism(E, (1,0,0,0)),)
+            maps = (identity_morphism(E),)
 
         if len(maps) == 1 and not strict:
             return maps[0]
@@ -563,7 +563,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: psi = phi.codomain().isogeny(phi(Q))
             sage: psi = psi.codomain().isomorphism_to(E) * psi
             sage: comp = psi * phi
-            sage: mu = E.multiplication_by_m_isogeny(phi.degree())
+            sage: mu = E.scalar_multiplication(phi.degree())
             sage: sum(a*comp == mu for a in E.automorphisms())
             1
 
@@ -680,9 +680,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             Composite morphism of degree 9 = 3^2:
               From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 28339*x + 59518 over Finite Field of size 65537
               To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 65537
-            sage: psi * phi == phi.domain().multiplication_by_m_isogeny(phi.degree())
+            sage: psi * phi == phi.domain().scalar_multiplication(phi.degree())
             True
-            sage: phi * psi == psi.domain().multiplication_by_m_isogeny(psi.degree())
+            sage: phi * psi == psi.domain().scalar_multiplication(psi.degree())
             True
         """
         phis = (phi.dual() for phi in self._phis[::-1])
