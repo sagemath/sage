@@ -1095,7 +1095,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             1 - sqrt(2)*Z^(-1/2) + 2/3*Z^(-1) - 11/36*sqrt(2)*Z^(-3/2) +
             43/135*Z^(-2) - 769/4320*sqrt(2)*Z^(-5/2) + 1768/8505*Z^(-3) + O(Z^(-7/2))
 
@@ -1277,7 +1277,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             2 - 2*Z^(-1/2) + 2*Z^(-1) - 2*Z^(-3/2) + 2*Z^(-2) - 2*Z^(-5/2) + O(Z^(-3))
             sage: def g(z):
             ....:     return (1 - sqrt(1 - 4*z))/(2*z)

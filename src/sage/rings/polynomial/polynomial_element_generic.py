@@ -440,7 +440,7 @@ class Polynomial_generic_sparse(Polynomial):
 
             sage: f[1:3]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             73.500*x^2 - 42.000*x
             sage: f[1:3:2]
             Traceback (most recent call last):

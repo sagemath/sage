@@ -2377,7 +2377,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) + RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2398,7 +2398,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(2) - RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2419,7 +2419,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) * RIF(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2440,7 +2440,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1) / RIF(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -6102,7 +6102,7 @@ def create_RealField(*args, **kwds):
         sage: from sage.rings.real_mpfr import create_RealField
         sage: create_RealField()
         doctest:...: DeprecationWarning: Please import create_RealField from sage.rings.real_field
-        See http://trac.sagemath.org/24511 for details.
+        See https://github.com/sagemath/sage/issues/24511 for details.
         Real Field with 53 bits of precision
     """
     #deprecation has already been imported in this file

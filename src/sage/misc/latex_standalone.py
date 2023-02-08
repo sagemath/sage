@@ -1243,7 +1243,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_graph(g) # optional sage.graphs dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
             sage: _ = tikz.pdf()      # not tested
 
         Using ``prog``::
@@ -1372,7 +1372,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_graph_with_pos(g)       # optional sage.graphs
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 
@@ -1500,7 +1500,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_poset(P) # optional sage.combinat dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 

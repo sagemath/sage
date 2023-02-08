@@ -214,7 +214,7 @@ def init_sage(controller=None):
     debug.refine_category_hash_check = True
 
     # We import readline before forking, otherwise Pdb doesn't work
-    # on OS X: http://trac.sagemath.org/14289
+    # on OS X: https://github.com/sagemath/sage/issues/14289
     try:
         import readline
     except ModuleNotFoundError:

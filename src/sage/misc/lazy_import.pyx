@@ -1043,7 +1043,7 @@ def lazy_import(module, names, as_=None, *,
         sage: my_Qp(5)
         doctest:...: DeprecationWarning:
         Importing my_Qp from here is deprecated; please use "from sage.all import Qp as my_Qp" instead.
-        See http://trac.sagemath.org/14275 for details.
+        See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
     An example of deprecation with a message::
@@ -1051,7 +1051,7 @@ def lazy_import(module, names, as_=None, *,
         sage: lazy_import('sage.all', 'Qp', 'my_Qp_msg', deprecation=(14275, "This is an example."))
         sage: my_Qp_msg(5)
         doctest:...: DeprecationWarning: This is an example.
-        See http://trac.sagemath.org/14275 for details.
+        See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
     An example of an import relying on a feature::

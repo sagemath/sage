@@ -641,7 +641,7 @@ class rename_keyword():
             () {'new_option': 1}
             sage: f(deprecated_option=1)
             doctest:...: DeprecationWarning: use the option 'new_option' instead of 'deprecated_option'
-            See http://trac.sagemath.org/13109 for details.
+            See https://github.com/sagemath/sage/issues/13109 for details.
             () {'new_option': 1}
         """
         @sage_wraps(func)

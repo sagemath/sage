@@ -9936,7 +9936,7 @@ cdef class Matrix(Matrix1):
 
             sage: M.adjoint()
             ...: DeprecationWarning: adjoint is deprecated. Please use adjugate instead.
-            See http://trac.sagemath.org/10501 for details.
+            See https://github.com/sagemath/sage/issues/10501 for details.
             [ 41/10  -1/28]
             [-33/13    5/3]
             sage: M.adjoint_classical()

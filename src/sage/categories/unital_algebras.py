@@ -109,7 +109,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 sage: Bar(category=Algebras(QQ))
                 doctest:warning...:
                 DeprecationWarning: the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead
-                See http://trac.sagemath.org/19225 for details.
+                See https://github.com/sagemath/sage/issues/19225 for details.
                 <__main__.Bar_with_category object at 0x...>
             """
             if getattr(self, '_no_generic_basering_coercion', False):

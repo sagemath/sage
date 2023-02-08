@@ -11253,7 +11253,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.vertices()
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See http://trac.sagemath.org/22349 for details.
+            See https://github.com/sagemath/sage/issues/22349 for details.
             [0, 1, 2, 3, 4]
         """
         if sort is None:

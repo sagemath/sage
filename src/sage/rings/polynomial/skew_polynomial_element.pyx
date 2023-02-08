@@ -22,7 +22,7 @@ for a Ore polynomial without twisting derivation.
         sage: a(t^2)
         doctest:...: FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/13215 for details.
+        See https://github.com/sagemath/sage/issues/13215 for details.
         2*t^3 + 3*t^2 + 4*t + 2
         sage: a(t)
         2*t^2 + 3*t + 2
