@@ -787,7 +787,7 @@ class PolynomialRing_general(ring.Algebra):
                 # Ideally, we should avoid cyclic coercions (a coercion
                 # from A to B and also from B to A), but this is
                 # currently hard to do:
-                # see https://trac.sagemath.org/ticket/24319
+                # see https://github.com/sagemath/sage/issues/24319
                 if not self_sparse and P_sparse:
                     # Always allow coercion sparse -> dense
                     pass

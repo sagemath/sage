@@ -5,18 +5,18 @@
 
 # Make sure that the correct zlib library is loaded. This is needed
 # to prevent the system zlib to be loaded instead of the Sage one.
-# See https://trac.sagemath.org/ticket/23122
+# See https://github.com/sagemath/sage/issues/23122
 import zlib as _zlib
 del _zlib
 
 # Monkey-patch ExtensionFileLoader to allow IPython to find the sources
-# of Cython files. See https://trac.sagemath.org/ticket/24681
+# of Cython files. See https://github.com/sagemath/sage/issues/24681
 from importlib.machinery import ExtensionFileLoader as _ExtensionFileLoader
 del _ExtensionFileLoader.get_source
 del _ExtensionFileLoader
 
 # Work around a Cygwin-specific bug caused by sqlite3; see
-# https://trac.sagemath.org/ticket/30157 and the docstring for
+# https://github.com/sagemath/sage/issues/30157 and the docstring for
 # fix_for_ticket_30157
 # Here we monkey-patch the sqlite3 module to ensure the fix is
 # applied the very first time a connection is made to a sqlite3

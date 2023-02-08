@@ -3486,7 +3486,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         if self._poly.degree() == 0:
             # Factorization is broken for polynomials, see
-            # https://trac.sagemath.org/ticket/20214
+            # https://github.com/sagemath/sage/issues/20214
             return pf
 
         u = self.parent(pf.unit())

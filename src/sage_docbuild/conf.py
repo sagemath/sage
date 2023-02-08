@@ -71,7 +71,7 @@ jupyter_sphinx_thebelab_config = {
 plot_html_show_source_link = False
 plot_pre_code = r"""
 # Set locale to prevent having commas in decimal numbers
-# in tachyon input (see https://trac.sagemath.org/ticket/28971)
+# in tachyon input (see https://github.com/sagemath/sage/issues/28971)
 import locale
 locale.setlocale(locale.LC_NUMERIC, 'C')
 def sphinx_plot(graphics, **kwds):

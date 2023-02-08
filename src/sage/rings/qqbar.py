@@ -2854,7 +2854,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
     if not ar.overlaps(br):
         # NOTE: do not try to use "ar < br" here as it will coerce to a common
         # precision which is to be avoided. See
-        # https://trac.sagemath.org/ticket/29220
+        # https://github.com/sagemath/sage/issues/29220
         return 1 if ar._richcmp_(br, op_GT) else -1
 
     ai = a._value.imag()
@@ -2897,7 +2897,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
 
         # NOTE: do not try to use "ai < bi" here as it will coerce to a common
         # precision which is to be avoided. See
-        # https://trac.sagemath.org/ticket/29220
+        # https://github.com/sagemath/sage/issues/29220
         return 1 if ai._richcmp_(bi, op_GT) else -1
 
     # not able to determine equality
@@ -4910,7 +4910,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         if not ri1.overlaps(ri2):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return ri1._richcmp_(ri2, op)
 
         if op == op_EQ or op == op_NE:
@@ -5446,7 +5446,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         if not self._value.overlaps(other._value):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return self._value._richcmp_(other._value, op)
 
         if op == op_EQ or op == op_NE:
@@ -5487,7 +5487,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         if not self._value.overlaps(other._value):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return self._value._richcmp_(other._value, op)
 
         return rich_to_bool(op, (self - other).sign())

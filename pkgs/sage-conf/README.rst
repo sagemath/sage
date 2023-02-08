@@ -22,7 +22,7 @@ sage_conf sdist on PyPI
 -----------------------
 
 This implementation of the ``sage_conf`` distribution package comes from
-https://trac.sagemath.org/ticket/29039, which added the directory
+https://github.com/sagemath/sage/issues/29039, which added the directory
 `pkgs/sage-conf_pypi <https://github.com/sagemath/sage/tree/develop/pkgs/sage-conf_pypi/>`_.
 
 To install, use ``pip install -v sage_conf``.  Using ``-v`` ensures that diagnostic
@@ -48,7 +48,7 @@ sage_conf wheels
 Prebuilt binary wheels of the ``sage_conf`` distribution package are available
 at https://github.com/sagemath/sage-wheels/releases/
 
-This implementation of ``sage_conf`` comes from https://trac.sagemath.org/ticket/31396,
+This implementation of ``sage_conf`` comes from https://github.com/sagemath/sage/issues/31396,
 which adds the directory ``pkgs/sage-conf_relocatable/``.
 
 On building a wheel, it invokes ``sage_bootstrap`` to establish a

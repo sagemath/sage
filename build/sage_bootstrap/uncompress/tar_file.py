@@ -42,7 +42,7 @@ class SageBaseTarFile(tarfile.TarFile):
     is meant to work around https://bugs.python.org/issue32773
 
     See https://github.com/sagemath/sage/issues/20218#comment:16 and
-    https://trac.sagemath.org/ticket/24567 for more background.
+    https://github.com/sagemath/sage/issues/24567 for more background.
     """
 
     umask = 0o022

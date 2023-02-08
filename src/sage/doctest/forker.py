@@ -170,7 +170,7 @@ def init_sage(controller=None):
 
     # Set the Python PRNG class to the Python 2 implementation for consistency
     # of 'random' test results that use it; see
-    # https://trac.sagemath.org/ticket/24508
+    # https://github.com/sagemath/sage/issues/24508
     # We use the baked in copy of the random module for both Python 2 and 3
     # since, although the upstream copy is unlikely to change, this further
     # ensures consistency of test results
@@ -731,7 +731,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     # exceptions), whereas on Python 2 does not, so we
                     # normalize Python 3 exceptions to match tests written to
                     # Python 2
-                    # See https://trac.sagemath.org/ticket/24271
+                    # See https://github.com/sagemath/sage/issues/24271
                     exc_cls = exception[0]
                     exc_name = exc_cls.__name__
                     if exc_cls.__module__:

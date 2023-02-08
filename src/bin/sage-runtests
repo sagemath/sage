@@ -41,8 +41,8 @@ if __name__ == "__main__":
                         type=float, default=-1.0, const=1.0, metavar="SECONDS",
                         help="warn if tests take more time than SECONDS")
     # By default, include all tests marked 'sagemath_doc_html' -- see
-    # https://trac.sagemath.org/ticket/25345 and
-    # https://trac.sagemath.org/ticket/26110:
+    # https://github.com/sagemath/sage/issues/25345 and
+    # https://github.com/sagemath/sage/issues/26110:
     parser.add_argument("--optional", metavar="FEATURES", default=_get_optional_defaults(),
         help='only run tests including one of the "# optional" tags listed in FEATURES (separated by commas); '
              'if "sage" is listed, will also run the standard doctests; '

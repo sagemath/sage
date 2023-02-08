@@ -545,7 +545,7 @@ If this all works, you can then make calls like:
         does *not* mark the process as terminated.  The same exception results,
         then, from any attempt to close the pexpect process.
 
-        See https://trac.sagemath.org/ticket/28354
+        See https://github.com/sagemath/sage/issues/28354
         """
         try:
             return self._expect is not None and self._expect.isalive()
