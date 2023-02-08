@@ -34,7 +34,7 @@ jobs:
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
       - name: Extract docs
-        run: unzip docs.zip && unzip docs/docs.zip
+        run: unzip docs.zip -d docs && unzip docs/docs.zip -d docs/docs
 
       - name: Deploy to Netlify production
         id: deploy-netlify
