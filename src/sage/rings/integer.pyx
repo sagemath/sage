@@ -2951,14 +2951,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return n
 
-    def prime_divisors(self, *, limit=None):
+    def prime_divisors(self, *args, **kwds):
         """
         Return the prime divisors of this integer, sorted in increasing order.
 
         If this integer is negative, we do *not* include -1 among
         its prime divisors, since -1 is not a prime number.
 
-        If ``limit`` is given, only primes up to the limit are returned.
+        INPUT:
+
+        - ``limit`` -- (integer, optional keyword argument)
+          Return only prime divisors up to this bound.
+
+        Any additional arguments are passed on to the :meth:`factor` method.
 
         EXAMPLES::
 
@@ -2971,7 +2976,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: a = 2004; a.prime_divisors()
             [2, 3, 167]
 
-        ::
+        Setting the optional ``limit`` argument works as expected::
 
             sage: a = 10^100 + 1
             sage: a.prime_divisors()
@@ -2982,7 +2987,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: a.prime_divisors(limit=10^7)
             [73, 137, 401, 1201, 1601, 1676321]
         """
-        res = [r[0] for r in self.factor(limit=limit)]
+        res = [r[0] for r in self.factor(*args, **kwds)]
+        limit = kwds.get('limit')
         if limit is not None:
             res = [r for r in res if r <= limit]
         return res
