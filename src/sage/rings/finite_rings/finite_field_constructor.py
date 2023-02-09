@@ -923,7 +923,7 @@ class FiniteFieldFactory(UniqueFactory):
         with WithProof('arithmetic', proof):
             if check_prime and not p.is_prime():
                 raise ValueError("the order of a finite field must be a prime power")
-            if check_irreducible and not modulus.is_irreducible():
+            if check_irreducible and modulus is not None and not modulus.is_irreducible():
                 raise ValueError("finite field modulus must be irreducible but it is not")
             if modulus is not None and base:
                 from .finite_field_relative import FiniteField_relative
