@@ -502,15 +502,20 @@ class DocTestReporter(SageObject):
                         stats[basename] = dict(failed=True, walltime=wall)
                     else:
                         stats[basename] = dict(walltime=wall)
-                        if options.use_asv:
-                            asv = []
-                            for label, time in result_dict.asv_times.items():
-                                name, code = label.split("|", 1)
-                                flags = list(options.optional)
-                                if options.long:
-                                    flags.append("long")
-                                asv.append([name, flags, code, time])
-                            self.asv_stats[basename] = asv
+                    if options.use_asv:
+                        asv = []
+                        for label, time in result_dict.asv_times.items():
+                            name, opts, code = label.split("|", 2)
+                            if name.startswith(basename):
+                                name = name[len(basename):]
+                            if name.startswith("."):
+                                name = name[1:]
+                            if opts:
+                                opts = opts.split(",")
+                            else:
+                                opts = []
+                            asv.append([name, opts, code, time])
+                        self.asv_stats[basename] = asv
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 

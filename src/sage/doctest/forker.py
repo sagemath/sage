@@ -1595,7 +1595,17 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 """
                 name = test.name
                 code = "".join([example.source for example in test.examples])
-                return f"{name}|{code}"
+                opts = set()
+                for example in test.examples:
+                    # The added sig_on_count() test has no tags
+                    if hasattr(example, "optional_tags"):
+                        opts = opts.union(example.optional_tags)
+                olist = []
+                if "long" in opts:
+                    olist = ["long"]
+                    opts.remove("long")
+                olist.extend(sorted(opts))
+                return f"{name}|{','.join(olist)}|{code}"
 
             D['asv_times'] = {}
             for test in doctests:
