@@ -55,15 +55,15 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_PRODUCTION: ${{ github.ref == 'refs/heads/develop' }}
-          NETLIFY_MESSAGE: ${{ source-run-info.outputs.pullRequestNumber }}
-          NETLIFY_ALIAS: deploy-preview-${{ source-run-info.outputs.pullRequestNumber }}
+          NETLIFY_MESSAGE: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+          NETLIFY_ALIAS: deploy-preview-${{ steps.source-run-info.outputs.pullRequestNumber }}
 
       # Add deployment as status check, PR comment and annotation
       # we could use the nwtgck/actions-netlify action for that, except for that it is not (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
       - name: Add/Update deployment status PR comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          number: ${{ source-run-info.outputs.pullRequestNumber }}
+          number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
           header: preview-comment
           recreate: true
           message: |
