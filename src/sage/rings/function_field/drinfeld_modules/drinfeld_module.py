@@ -589,6 +589,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             base_morphism = Hom(function_ring, base_field_noext)(gen[0])
             base_field = base_field_noext.over(base_morphism)
 
+        # This test is also done in the category. We put it here also 
+        # to have a friendlier error message
+        if not base_field.is_field():
+            raise ValueError('generator coefficients must live in a field')
+
         category = DrinfeldModules(base_field, name=name)
 
         # Check gen as Ore polynomial
