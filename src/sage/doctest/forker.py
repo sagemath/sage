@@ -1594,7 +1594,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 This information is hashed by asv to determine continuity for speed regressions
                 """
                 name = test.name
-                code = "".join([example.source for example in test.examples])
+                code = "".join([example.sage_source for example in test.examples])
                 opts = set()
                 for example in test.examples:
                     # The added sig_on_count() test has no tags
