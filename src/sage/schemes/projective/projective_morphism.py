@@ -1762,7 +1762,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 return self
         elif self.base_ring() != QQbar and K_pre.is_isomorphic(self.base_ring()):
             return self
-        # Trac 23808: The field K_pre returned above does not have its embedding set to be phi
+        # Issue 23808: The field K_pre returned above does not have its embedding set to be phi
         # and phi is forgotten, so we redefine K_pre to be a field K with phi as the specified
         # embedding:
         if K_pre is QQ:

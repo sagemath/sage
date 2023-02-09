@@ -217,7 +217,7 @@ def mpfr_prec_min():
     """
     return MPFR_PREC_MIN
 
-# see Trac #11666 for the origin of this magical constant
+# see Issue #11666 for the origin of this magical constant
 def mpfr_prec_max():
     """
     Return the mpfr variable ``MPFR_PREC_MAX``.
@@ -725,7 +725,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
             sage: 1.0 - ZZ(1) - int(1) - 1 - QQ(1) - RealField(100)(1) - AA(1) - RLF(1)
             -6.00000000000000
-            sage: R = RR['x']   # Hold reference to avoid garbage collection, see Trac #24709
+            sage: R = RR['x']   # Hold reference to avoid garbage collection, see Issue #24709
             sage: R.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         """

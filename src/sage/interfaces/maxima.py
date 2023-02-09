@@ -870,7 +870,7 @@ class Maxima(MaximaAbstract, Expect):
                 # process one interrupt (7.5 seconds on an idle system, but up
                 # to a minute on a loaded system) and gets confused by multiple
                 # interrupts.  Instead, send just one interrupt and wait.
-                # See Trac #9361.
+                # See Issue #9361.
                 self._sendstr(chr(3))
                 self._expect_expr(timeout=120)
         except pexpect.EOF:

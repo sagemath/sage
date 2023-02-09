@@ -1468,7 +1468,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         self._pari_bnf_certified = False
         self._integral_basis_dict = {}
         if embedding is not None:
-            # Since Trac #20827, an embedding is specified as a pair
+            # Since Issue #20827, an embedding is specified as a pair
             # (parent, x) with x the image of the distinguished
             # generator (previously, it was just given as x).  This
             # allows the UniqueFactory to distinguish embeddings into

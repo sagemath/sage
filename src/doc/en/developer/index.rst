@@ -9,8 +9,8 @@ Welcome to the Sage Developer's Guide!
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Issue to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -35,7 +35,7 @@ Here are brief overviews of each part; for more details, see the extended table
 of contents below.  No matter where you start, good luck and welcome to Sage
 development!
 
-- **Trac server:** all changes go through `the Sage Trac server
+- **Issue server:** all changes go through `the Sage Issue server
   <https://trac.sagemath.org>`_ at some point. It contains bug reports, upgrade
   requests, changes in progress, and those already part of Sage
   today. :ref:`Click here <chapter-sage-trac>` for more information.
@@ -74,7 +74,7 @@ development!
   - :ref:`How to configure it for use with Trac? <section-git-setup-name>`
   - :ref:`Here is <chapter-walkthrough>` an overview of our development flow.
 
-Git and Trac for Sage development
+Git and Issue for Sage development
 =================================
 
 First Steps with Git

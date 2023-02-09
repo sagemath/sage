@@ -1012,7 +1012,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         try:
             i = int(other)
         except Exception:
-            try:    # last chance: try Sage's conversions over GF(2), Trac #13284
+            try:    # last chance: try Sage's conversions over GF(2), Issue #13284
                 return self._convert(self.cover_ring()(other))
             except Exception:
                 raise TypeError("cannot convert %s to BooleanPolynomial" % (type(other)))

@@ -489,7 +489,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             # Because this parent class is a Cython class, the method
             # UnitalAlgebras.ParentMethods.__init_extra__(), which normally
             # registers the coercion map from the base ring, is called only
-            # when inheriting from this class in Python (cf. Trac #26958).
+            # when inheriting from this class in Python (cf. Issue #26958).
             return self._coerce_map_from_base_ring()
         f = self._coerce_map_via([base_ring], other)
         if f is not None:

@@ -363,7 +363,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         f = factor_trial_division(a, factor_limit)
     c = integer.smallInteger(1)
     # The sign is not handled by the loop below. We don't want to
-    # simplify (-1)^(2/3) to 1 (see Trac #15605), so we always move
+    # simplify (-1)^(2/3) to 1 (see Issue #15605), so we always move
     # the sign over to d. Note that the case (-1)^2 is already
     # handled by integer_rational_power() above.
     if a >= 0:

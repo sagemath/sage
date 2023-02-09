@@ -6746,7 +6746,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # maximum number of rays is unbounded, then r could be enormous
         # Ultimately that won't be a problem, because almost all of
         # those rays will be thrown out. However, as we discovered in
-        # Trac #24517, simply generating the random rays in the first
+        # Issue #24517, simply generating the random rays in the first
         # place (and storing them in a list) is problematic.
         #
         # Since the returns fall off around 2*d, we start with the

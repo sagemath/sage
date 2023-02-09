@@ -75,7 +75,7 @@ cdef inline bint _do_sig(fmpq_poly_t op):
         sage: g = 2/3 + t^2
         sage: _ = f * g      # indirect doctest
     """
-    # Trac #12173: check that the degree is greater than 1000 before computing
+    # Issue #12173: check that the degree is greater than 1000 before computing
     # the max limb size
     return (fmpq_poly_length(op) > 0 and
             (fmpq_poly_degree(op) > 1000 or

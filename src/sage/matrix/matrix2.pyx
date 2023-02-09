@@ -13327,7 +13327,7 @@ cdef class Matrix(Matrix1):
                 max_location = -1
                 if partial:
                     # abs() necessary to convert zero to the
-                    # correct type for comparisons (Trac #12208)
+                    # correct type for comparisons (Issue #12208)
                     max_entry = abs(zero)
                     for i in range(k,m):
                         entry = abs(M.get_unsafe(i,k))

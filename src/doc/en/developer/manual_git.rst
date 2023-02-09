@@ -3,7 +3,7 @@
 .. _chapter-manual-git:
 
 ===================================
-Using Git with the Sage Trac Server
+Using Git with the Sage Issue Server
 ===================================
 
 .. WARNING::
@@ -11,8 +11,8 @@ Using Git with the Sage Trac Server
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Issue to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -102,7 +102,7 @@ passphrase empty to be able to login without any human intervention.
 
 .. _section-trac-ssh-key:
 
-Linking your Public Key to your Trac Account
+Linking your Public Key to your Issue Account
 --------------------------------------------
 
 In order to push your code directly to a branch on the git repository
@@ -199,7 +199,7 @@ changes and ``git push`` to upload your local changes using::
 
 Note that write operations (``push``) use the ssh protocol (specified by the ``git@``
 part). For this to work, you need to have a trac account and to set up your ssh public
-key as described in `Trac authentication through ssh
+key as described in `Issue authentication through ssh
 <http://doc.sagemath.org/html/en/developer/trac.html#trac-authentication-through-ssh>`_.
 Authentication is necessary if you want to upload anything to ensure
 that it really is from you.

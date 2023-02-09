@@ -908,7 +908,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             #    norm_f = prod([numfield_f.map_coefficients(h)
             #                   for h in numfield.embeddings(QQbar)])
             #
-            # As nbruin pointed out during the review of Trac #25390,
+            # As nbruin pointed out during the review of Issue #25390,
             # this can be accomplished more efficiently using the resultant
             # of the polynomial with the number field's minimal polynomial.
             #
@@ -5299,7 +5299,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             TypeError: unsupported operand parent(s) for ^: 'Algebraic Real Field' and 'Algebraic Real Field'
         """
         # For some crazy unspecified reason, we must allow this if the
-        # base is QQbar(1). See Trac #22120 and #24490.
+        # base is QQbar(1). See Issue #22120 and #24490.
         if self == 1:
             return self
         raise TypeError("unsupported operand parent(s) for ^: '{0}' and '{0}'".format(self.parent()))
@@ -7482,7 +7482,7 @@ class ANRoot(ANDescr):
                 # This try/except can be triggered if ifield is Real
                 # but the entries in v have some imaginary part that
                 # is only known to be 0 to very low precision, e.g.,
-                # as in Trac #12727.  In such cases, we instead create
+                # as in Issue #12727.  In such cases, we instead create
                 # the polynomial over the appropriate complex interval
                 # field, which is mathematically safe, unlike taking
                 # real parts would be.

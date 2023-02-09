@@ -11,8 +11,8 @@ Sage Development Process
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Issue to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -30,10 +30,10 @@ desk.  We have some :ref:`recommended references and tutorials
 In the following sections on :ref:`chapter-sage-trac` and
 :ref:`section-git-tricks-and-tips` we will look at communicating these
 changes back to the Sage project.  All changes to Sage source code
-have to go through the `Sage Trac development server
+have to go through the `Sage Issue development server
 <https://trac.sagemath.org>`_.
 
-As an alternative to using the Trac server directly, you can fork and
+As an alternative to using the Issue server directly, you can fork and
 create a Merge Request (MR) at `GitLab <https://gitlab.com/sagemath/sage>`_
 which will automatically fetch your code and open a ticket on our trac
 server.

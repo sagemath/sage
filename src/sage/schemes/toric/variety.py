@@ -2437,7 +2437,7 @@ class ToricVariety_field(AmbientSpace):
             sage: sum(dP6.divisor(i) for i in range(3))
             V(x) + V(u) + V(y)
         """
-        # Divisor by a ray index - must be treated here, see Trac #12812.
+        # Divisor by a ray index - must be treated here, see Issue #12812.
         if arg in ZZ:
             arg = [(1, self.gen(arg))]
             check = True # 1 must be coerced into the coefficient ring

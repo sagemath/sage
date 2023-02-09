@@ -628,7 +628,7 @@ The comments may include links to Github issues, as in the following example:
 
     $ cat build/pkgs/packaging/install-requires.txt
     packaging >=18.0
-    # Trac #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+    # Issue #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
 
 The currently encoded version constraints are merely a starting point.
 Developers and downstream packagers are invited to refine the version
@@ -1079,7 +1079,7 @@ For Python packages available from PyPI, there is another shortcut::
     [...............................................................]
 
 The ``upstream_url`` information serves yet another purpose.
-Developers who wish to test a package update from a Trac branch before
+Developers who wish to test a package update from a Issue branch before
 the archive is available on a Sage mirror can do so by configuring
 their Sage tree using ``./configure
 --enable-download-from-upstream-url``.  Then Sage will fall back to

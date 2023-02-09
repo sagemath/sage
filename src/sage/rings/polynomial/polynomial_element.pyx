@@ -9666,7 +9666,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 content = self.content_ideal().gen()
                 self_1 = (self//content)
                 return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
-        else:  # The above method is not always correct (see Trac 8736)
+        else:  # The above method is not always correct (see Issue 8736)
             return self.factor().radical_value()
 
     def content_ideal(self):

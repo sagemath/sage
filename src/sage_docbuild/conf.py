@@ -711,7 +711,7 @@ def call_intersphinx(app, env, node, contnode):
     if res:
         # Replace absolute links to $SAGE_DOC by relative links: this
         # allows to copy the whole documentation tree somewhere else
-        # without breaking links, see Trac #20118.
+        # without breaking links, see Issue #20118.
         if res['refuri'].startswith(SAGE_DOC):
             here = os.path.dirname(os.path.join(builder.outdir,
                                                 node['refdoc']))

@@ -103,7 +103,7 @@ AUTHORS:
 
 - Javier Lopez Pena (2013): Added conjugacy classes.
 
-- Sebastian Oehms (2018): added _coerce_map_from_ in order to use isomorphism coming up with as_permutation_group method (Trac #25706)
+- Sebastian Oehms (2018): added _coerce_map_from_ in order to use isomorphism coming up with as_permutation_group method (Issue #25706)
 - Christian Stump (2018): Added alternative implementation of strong_generating_system directly using GAP.
 
 - Sebastian Oehms (2018): Added :meth:`PermutationGroup_generic._Hom_` to use :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and :meth:`PermutationGroup_generic.gap` and
@@ -367,7 +367,7 @@ def PermutationGroup(gens=None, *args, **kwds):
 
         sage: r = Permutation("(1,7,9,3)(2,4,8,6)")
         sage: f = Permutation("(1,3)(4,6)(7,9)")
-        sage: PermutationGroup([r,f]) #See Trac #12597
+        sage: PermutationGroup([r,f]) #See Issue #12597
         Permutation Group with generators [(1,3)(4,6)(7,9), (1,7,9,3)(2,4,8,6)]
 
         sage: PermutationGroup(SymmetricGroup(5))

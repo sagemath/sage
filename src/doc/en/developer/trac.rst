@@ -3,7 +3,7 @@
 .. _chapter-sage-trac:
 
 ====================
-The Sage Trac Server
+The Sage Issue Server
 ====================
 
 .. WARNING::
@@ -11,8 +11,8 @@ The Sage Trac Server
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Issue to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -22,7 +22,7 @@ your own private needs.  However, typically it is beneficial to
 share code and ideas with others; the manner in which the
 `Sage project <https://www.sagemath.org>`_ does this (as well as fixing
 bugs and upgrading components) is in a very collaborative and
-public setting on `the Sage Trac server <https://trac.sagemath.org>`_
+public setting on `the Sage Issue server <https://trac.sagemath.org>`_
 (the Sage bug and enhancement tracker).
 
 The purpose of the Sage trac server is to
@@ -47,7 +47,7 @@ the :trac:`Sage trac timeline <timeline>`.
 .. WARNING::
 
     **Sage development is scheduled to move to GitHub in February 2023.**
-    All functions of our Trac server will be taken over by our main repository,
+    All functions of our Issue server will be taken over by our main repository,
     https://github.com/sagemath/sage.
 
 
@@ -173,7 +173,7 @@ of fields that can be changed. Here is a comprehensive overview (for the
 * **Reported by:** The trac account name of whoever created the
   ticket. Cannot be changed.
 
-* **Owned by:** Trac account name of owner, by default the person in charge of
+* **Owned by:** Issue account name of owner, by default the person in charge of
   the Component (see below). Generally not used in the Sage trac.
 
 * **Type:** One of ``enhancement`` (e.g. a new feature), ``defect`` (e.g. a bug

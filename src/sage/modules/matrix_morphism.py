@@ -1770,7 +1770,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
         - Rob Beezer (2011-06-28)
         """
         # Testing equality of free modules over PIDs is unreliable
-        #   see Trac #11579 for explanation and status
+        #   see Issue #11579 for explanation and status
         # We test if image equals codomain with two inclusions
         #   reverse inclusion of below is trivially true
         return self.codomain().is_submodule(self.image())

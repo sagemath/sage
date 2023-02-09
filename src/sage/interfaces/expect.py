@@ -475,7 +475,7 @@ If this all works, you can then make calls like:
         # Unset some environment variables for the children to
         # reduce the chances they do something complicated breaking
         # the terminal interface.
-        # See Trac #12221 and #13859.
+        # See Issue #12221 and #13859.
         pexpect_env = dict(os.environ)
         pexpect_env.update(self._env)
         pexpect_del_vars = ['TERM', 'COLUMNS']
@@ -984,7 +984,7 @@ If this all works, you can then make calls like:
                     if sys.platform.startswith('sunos'):
                         # On (Open)Solaris, we might need to wait a
                         # while because the process might not die
-                        # immediately. See Trac #14371.
+                        # immediately. See Issue #14371.
                         for t in [0.5, 1.0, 2.0]:
                             if self._isalive():
                                 time.sleep(t)

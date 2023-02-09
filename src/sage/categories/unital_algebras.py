@@ -227,7 +227,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             elif isinstance(generic_from_base_ring, lazy_attribute):
                 # If the category implements from_base_ring() as lazy
                 # attribute, then we always use it.
-                # This is for backwards compatibility, see Trac #25181
+                # This is for backwards compatibility, see Issue #25181
                 use_from_base_ring = True
             else:
                 try:

@@ -152,10 +152,10 @@ def init_sage(controller=None):
     """
     try:
         # We need to ensure that the Matplotlib font cache is built to
-        # avoid spurious warnings (see Trac #20222).
+        # avoid spurious warnings (see Issue #20222).
         import matplotlib.font_manager
     except ImportError:
-        # Do not require matplotlib for running doctests (Trac #25106).
+        # Do not require matplotlib for running doctests (Issue #25106).
         pass
     else:
         # Make sure that the agg backend is selected during doctesting.
@@ -218,13 +218,13 @@ def init_sage(controller=None):
     try:
         import readline
     except ModuleNotFoundError:
-        # Do not require readline for running doctests (Trac #31160).
+        # Do not require readline for running doctests (Issue #31160).
         pass
 
     try:
         import sympy
     except ImportError:
-        # Do not require sympy for running doctests (Trac #25106).
+        # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
         # Disable SymPy terminal width detection
@@ -2144,7 +2144,7 @@ class DocTestWorker(multiprocessing.Process):
             sys.stdin = os.fdopen(0, "r")
         except OSError:
             # We failed to open stdin for reading, this might happen
-            # for example when running under "nohup" (Trac #14307).
+            # for example when running under "nohup" (Issue #14307).
             # Simply redirect stdin from /dev/null and try again.
             with open(os.devnull) as f:
                 os.dup2(f.fileno(), 0)

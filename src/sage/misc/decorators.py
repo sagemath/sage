@@ -168,7 +168,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         wrapper.__wrapped__ = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
-        #Getting the signature right in documentation by Sphinx (Trac 9976)
+        #Getting the signature right in documentation by Sphinx (Issue 9976)
         #The attribute _sage_argspec_() is read by Sphinx if present and used
         #as the argspec of the function instead of using reflection.
         wrapper._sage_argspec_ = lambda: sage_getargspec(wrapped)
@@ -413,7 +413,7 @@ class suboptions():
             return func(*args, **kwds)
 
         # Add the options specified by @options to the signature of the wrapped
-        # function in the Sphinx-generated documentation (Trac 9976), using the
+        # function in the Sphinx-generated documentation (Issue 9976), using the
         # special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
@@ -496,7 +496,7 @@ class options():
             return func(*args, **options)
 
         #Add the options specified by @options to the signature of the wrapped
-        #function in the Sphinx-generated documentation (Trac 9976), using the
+        #function in the Sphinx-generated documentation (Issue 9976), using the
         #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)

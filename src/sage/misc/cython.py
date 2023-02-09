@@ -287,7 +287,7 @@ def cython(filename, verbose=0, compile_message=False,
     shutil.copy(filename, pyxfile)
 
     # Add current working directory to includes. This is needed because
-    # we cythonize from a different directory. See Trac #24764.
+    # we cythonize from a different directory. See Issue #24764.
     standard_libs, standard_libdirs, standard_includes, aliases = _standard_libs_libdirs_incdirs_aliases()
     includes = [os.getcwd()] + standard_includes
 
