@@ -283,8 +283,6 @@ class LinearExtensionOfPoset(ClonableArray,
             sage: for l in Q.linear_extensions():
             ....:     if not l.is_supergreedy():
             ....:         print(l)
-            [0, 1, 2, 3, 4]
-            [0, 2, 3, 1, 4]
             [0, 2, 1, 3, 4]
 
         TESTS::
