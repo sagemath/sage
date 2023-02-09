@@ -183,7 +183,7 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: f = k.hom([b^2])
                 sage: L = l.over(f)
                 sage: L
-                Field in b with defining polynomial x^2 - a over its base
+                Field in b with defining polynomial x^2 - a noncanonically over its base
                 sage: L.base_ring()
                 Number Field in a with defining polynomial x^2 - 2
 
@@ -192,11 +192,11 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: K = k.over()
                 sage: L = l.over(Hom(K,l)(f))
                 sage: L
-                Field in b with defining polynomial x^2 - a over its base
+                Field in b with defining polynomial x^2 - a noncanonically over its base
                 sage: L.base_ring()
                 Field in a with defining polynomial x^2 - 2 over its base
                 sage: L.bases()
-                [Field in b with defining polynomial x^2 - a over its base,
+                [Field in b with defining polynomial x^2 - a noncanonically over its base,
                  Field in a with defining polynomial x^2 - 2 over its base,
                  Rational Field]
             """

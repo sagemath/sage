@@ -47,7 +47,7 @@ cpdef backend_parent(R, map=False):
             return R._backend
     else:
         if map:
-            return R, R, R
+            return R, IdentityMorphism(R), IdentityMorphism(R)
         else:
             return R
 
@@ -192,129 +192,6 @@ cpdef from_backend_element(x, E):
 # For morphisms
 ###############
 
-cdef _backend_morphism(f):
-    r"""
-    Return the backend morphism of ``f``.
-
-    INPUT:
-
-    - ``f`` -- a map
-
-    TESTS::
-
-        sage: from sage.rings.ring_extension_conversion import backend_morphism
-
-        sage: Frob = GF(7^3).frobenius_endomorphism()
-        sage: backend_morphism(Frob) is Frob   # indirect doctest
-        True
-
-        sage: K.<a> = GF(7^3).over()
-        sage: f = End(K)(Frob)
-        sage: type(f)
-        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
-        sage: backend_morphism(f) == Frob   # indirect doctest
-        True
-
-        sage: L.<b> = GF(7^6).over(K)
-        sage: g = f.extend_codomain(L)
-        sage: bg = backend_morphism(g); bg
-        Composite map:
-          From: Finite Field in z3 of size 7^3
-          To:   Finite Field in z6 of size 7^6
-          Defn:   Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
-                then
-                  Ring morphism:
-                  From: Finite Field in z3 of size 7^3
-                  To:   Finite Field in z6 of size 7^6
-                  Defn: z3 |--> 2*z6^4 + 6*z6^3 + 2*z6^2 + 3*z6 + 2
-        sage: backend_morphism(bg) == bg
-        True
-
-        sage: iota = End(K).identity()
-        sage: type(iota)
-        <class 'sage.categories.morphism.IdentityMorphism'>
-        sage: backend_morphism(iota)
-        Identity endomorphism of Finite Field in z3 of size 7^3
-    """
-    domain = f.domain()
-    from sage.rings.ring_extension_morphism import RingExtensionHomomorphism
-    from sage.rings.ring_extension import RingExtension_generic
-    if not isinstance(f.domain(), RingExtension_generic) and not isinstance(f.codomain(), RingExtension_generic):
-        return f
-    elif isinstance(f, RingExtensionHomomorphism):
-        return f._backend
-    elif isinstance(f, FormalCompositeMap):
-        return _backend_morphism(f.then()) * _backend_morphism(f.first())
-    elif isinstance(f, IdentityMorphism):
-        ring = backend_parent(domain)
-        return ring.Hom(ring).identity()
-    elif domain is domain.base_ring():
-        ring = f.codomain()
-        if isinstance(ring, RingExtension_generic):
-            ring = ring._backend
-        if ring.has_coerce_map_from(domain):
-            return ring.coerce_map_from(domain)
-    raise NotImplementedError
-
-cpdef backend_morphism(f, forget="all"):
-    r"""
-    Return the backend morphism of ``f``.
-
-    INPUT:
-
-    - ``f`` -- a map
-
-    - ``forget`` -- a string, either ``all`` or ``domain`` or ``codomain``
-      (default: ``all``); whether to switch to the backend for the domain,
-      the codomain or both of them.
-
-    EXAMPLES::
-
-        sage: from sage.rings.ring_extension_conversion import backend_morphism
-
-        sage: K.<a> = GF(7^3).over()   # over GF(7)
-        sage: f = K.hom([a^7])
-        sage: f
-        Ring endomorphism of Field in a with defining polynomial x^3 + 6*x^2 + 4 over its base
-          Defn: a |--> 5*a + 3*a^2
-
-        sage: backend_morphism(f)
-        Ring endomorphism of Finite Field in z3 of size 7^3
-          Defn: z3 |--> 3*z3^2 + 5*z3
-
-        sage: backend_morphism(f, forget="domain")
-        Ring morphism:
-          From: Finite Field in z3 of size 7^3
-          To:   Field in a with defining polynomial x^3 + 6*x^2 + 4 over its base
-          Defn: z3 |--> 5*a + 3*a^2
-
-        sage: backend_morphism(f, forget="codomain")
-        Ring morphism:
-          From: Field in a with defining polynomial x^3 + 6*x^2 + 4 over its base
-          To:   Finite Field in z3 of size 7^3
-          Defn: a |--> 3*z3^2 + 5*z3
-    """
-    from sage.rings.ring_extension import RingExtension_generic
-    from sage.rings.ring_extension_morphism import RingExtensionHomomorphism, RingExtensionBackendIsomorphism, RingExtensionBackendReverseIsomorphism
-
-    try:
-        g = _backend_morphism(f)
-        if forget is None and (isinstance(f.domain(), RingExtension_generic) or isinstance(f.codomain(), RingExtension_generic)):
-            g = RingExtensionHomomorphism(f.domain().Hom(f.codomain()), g)
-        if forget == "domain" and isinstance(f.codomain(), RingExtension_generic):
-            g = RingExtensionHomomorphism(g.domain().Hom(f.codomain()), g)
-        if forget == "codomain" and isinstance(f.domain(), RingExtension_generic):
-            g = RingExtensionHomomorphism(f.domain().Hom(g.codomain()), g)
-    except NotImplementedError:
-        g = f
-        if (forget == "all" or forget == "domain") and isinstance(f.domain(), RingExtension_generic):
-            ring = f.domain()._backend
-            g = g * RingExtensionBackendIsomorphism(ring.Hom(f.domain()))
-        if (forget == "all" or forget == "codomain") and isinstance(f.codomain(), RingExtension_generic):
-            ring = f.codomain()._backend
-            g = RingExtensionBackendReverseIsomorphism(f.codomain().Hom(ring)) * g
-    return g
-
 cpdef from_backend_morphism(f, E):
     r"""
     Try to reconstruct a morphism between ring extensions
@@ -324,7 +201,7 @@ cpdef from_backend_morphism(f, E):
 
     - ``x`` -- a morphism
 
-    - ``E`` -- a ring extension 
+    - ``E`` -- a ring extension
 
     EXAMPLES::
 
@@ -376,15 +253,19 @@ cpdef to_backend(arg):
 
         sage: f = K.hom([a^5])
         sage: to_backend(f)
-        Ring endomorphism of Finite Field in z2 of size 5^2
-          Defn: z2 |--> 4*z2 + 1
+        Ring morphism:
+          From: Finite Field in z2 of size 5^2
+          To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
+          Defn: z2 |--> 1 - a
 
     list/tuple of them::
 
         sage: to_backend(([K, a], f))
         ([Finite Field in z2 of size 5^2, z2],
-         Ring endomorphism of Finite Field in z2 of size 5^2
-           Defn: z2 |--> 4*z2 + 1)
+         Ring morphism:
+           From: Finite Field in z2 of size 5^2
+           To:   Field in a with defining polynomial x^2 + 4*x + 2 over its base
+           Defn: z2 |--> 1 - a)
 
     and dictionaries::
 

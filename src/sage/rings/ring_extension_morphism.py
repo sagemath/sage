@@ -99,7 +99,7 @@ class RingExtensionHomomorphism(RingMap):
                 a |--> 1 - a
 
         sage: type(phi)
-        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism_with_category'>
 
         sage: TestSuite(phi).run()
 
@@ -161,11 +161,24 @@ class RingExtensionHomomorphism(RingMap):
                 raise TypeError(f"the codomain of the backend morphism is not correct, expected {codomain} but found {dcodom}")
             self._backend = defn
             self._im_gens = None
+            self._base_map_construction = False
             self._base_map = None
         elif isinstance(defn, (list, tuple)):
+            # We figure out what is the base
+            if base_map is not None:
+                base = base_map.domain()
+                gens = domain.gens(base)
+            else:
+                base = domain
+                gens = tuple()
+                while len(gens) != len(defn):
+                    if len(gens) > len(defn) or base is base.base_ring():
+                        raise ValueError("the number of images does not match the number of generators")
+                    gens += base.gens()
+                    base = base.base_ring()
             im_gens = []
             for x in backend_domain.gens():
-                pol = from_backend_domain(x).polynomial()
+                pol = from_backend_domain(x).polynomial(base=base)
                 if base_map is not None:
                     pol = pol.map_coefficients(base_map)
                 elif check and not codomain.has_coerce_map_from(pol.base_ring()):
@@ -174,107 +187,24 @@ class RingExtensionHomomorphism(RingMap):
             # There is no base map on the backend by assumption that the backends in a tower all have the same base and that base coerces into the absolute base of the tower
             self._backend = backend_domain.hom(im_gens, codomain=codomain, check=check)
             if check:
-                for x, y in zip(domain.gens(), defn):
+                for x, y in zip(domain.gens(base=base), defn):
                     if self._backend(x._backend) != y:
                         raise ValueError("images do not define a valid homomorphism")
             self._im_gens = defn
-            self._base_map = base_map
+            if base_map is None:
+                if base is domain or base is domain.base_ring():
+                    self._base_map_construction = None
+                else:
+                    self._base_map_construction = (None,)
+            else:
+                if base is domain:
+                    # This is really the same as the isinstance(defn, Map) case
+                    self._base_map_construction = False
+                else:
+                    # At least one generator provided
+                    self._base_map_construction = (base_map,)
         else:
             raise TypeError(f"Unsupported type for hom: {type(im_gens)}")
-
-            # We figure out what is the base
-        #     if base_map is not None:
-        #         base = base_map.domain()
-        #         gens = domain.gens(base=base)
-        #     else:
-        #         base = domain
-        #         gens = tuple([])
-        #         while True:
-        #             if len(gens) == len(defn):
-        #                 break
-        #             if len(gens) > len(defn) or base is base.base_ring():
-        #                 raise ValueError("the number of images does not match the number of generators")
-        #             gens += base.gens()
-        #             base = base.base_ring()
-        #     # We construct the backend morphism
-        #     im_gens = [ codomain(x) for x in defn ]
-        #     backend_bases = [ backend_domain ]
-        #     b = backend_domain.base_ring()
-        #     while b is not b.base_ring():
-        #         backend_bases.append(b)
-        #         b = b.base_ring()
-        #     backend_bases.reverse()
-        #     current_morphism = None
-        #     for current_domain in backend_bases:
-        #         current_im_gens = [ ]
-        #         for x in current_domain.gens():
-        #             pol = from_backend_domain(backend_domain(x)).polynomial(base=base)
-        #             if base_map is not None:
-        #                 pol = pol.map_coefficients(base_map)
-        #             y = pol(im_gens)
-        #             # Multivariate polynomials can have the wrong parent
-        #             assert all(g.parent() is y.parent() for g in im_gens)
-        #             current_im_gens.append(backend_element(y))
-        #         current_morphism = current_domain.hom(current_im_gens, base_map=current_morphism, check=check)
-        #     # We check that everything went well
-        #     if check:
-        #         for i in range(len(gens)):
-        #             x = backend_element(domain(gens[i]))
-        #             y = backend_element(im_gens[i])
-        #             if current_morphism(x) != y:
-        #                 raise ValueError("images do not define a valid homomorphism")
-        #         coercion_morphism = backend_morphism(domain.defining_morphism(base))
-        #         restriction_current_morphism = current_morphism * coercion_morphism
-        #         if base_map is None:
-        #             backend_base_map = coercion_morphism
-        #         else:
-        #             backend_base_map = backend_morphism(base_map)
-        #             # the base map might be an automorphism of the base
-        #             if backend_base_map.codomain() is coercion_morphism.domain():
-        #                 backend_base_map = coercion_morphism * backend_base_map
-        #             if backend_base_map.domain() is not restriction_current_morphism.domain():
-        #                 phi = backend_base_map.domain().coerce_map_from(restriction_current_morphism.domain())
-        #                 if phi is None:
-        #                     msg = "Cannot coerce base map into correct domain:\n"
-        #                     msg += f" Domain is {backend_base_map.domain()}\n"
-        #                     msg += f" Needs to be {restriction_current_morphism.domain()}"
-        #                     raise ValueError(msg)
-        #                 backend_base_map = backend_base_map * phi
-        #             if backend_base_map.codomain() is not restriction_current_morphism.codomain():
-        #                 R = backend_base_map.codomain()
-        #                 phi = restriction_current_morphism.codomain().coerce_map_from(R)
-        #                 if phi is None:
-        #                     # Try into the backend
-        #                     back, from_back, to_back = backend_parent(R, map=True)
-        #                     if back is not R and to_back is not None and restriction_current_morphism.codomain().has_coerce_map_from(back):
-        #                         phi = restriction_current_morphism.codomain().coerce_map_from(back) * to_back
-        #                 if phi is None:
-        #                     msg = "Cannot coerce base map into correct codomain:\n"
-        #                     msg += f" Codomain is {backend_base_map.codomain()}\n"
-        #                     msg += f" Needs to be {restriction_current_morphism.codomain()}"
-        #                     raise ValueError(msg)
-        #                 backend_base_map = phi * backend_base_map
-        #         differing = are_different_morphisms(restriction_current_morphism, backend_base_map)
-        #         if differing:
-        #             msg = "images do not define a valid homomorphism:\n"
-        #             for x, y, z in differing:
-        #                 if isinstance(x, str):
-        #                     msg += f" different {x}:\n  {y}\n  {z}"
-        #                 else:
-        #                     msg += f" f({x}) = {y}\n g({x}) = {z}\n"
-        #             raise ValueError(msg)
-        #     self._backend = current_morphism
-        #     self._im_gens = im_gens[:domain.ngens()]
-        #     if base is domain.base_ring():
-        #         self._base_map_construction = base_map
-        #     else:
-        #         self._base_map_construction = {
-        #             'im_gens': defn[domain.ngens():],
-        #             'base_map': base_map,
-        #             'check': False
-        #         }
-        # else:
-        #     raise TypeError("%s has type %s" % (defn, type(defn)))
 
     def _repr_type(self):
         r"""
@@ -341,6 +271,7 @@ class RingExtensionHomomorphism(RingMap):
 
         # return x
 
+    @cached_method
     def base_map(self):
         r"""
         Return the base map of this morphism
@@ -376,30 +307,35 @@ class RingExtensionHomomorphism(RingMap):
             sage: phi.base_map()
 
         """
-        return self._base_map
-
-        # domain = self.domain()
-        # codomain = self.codomain()
-        # base = domain.base_ring()
-        # if base is base.base_ring():
-        #     return None
-        # base_map = self._base_map_construction
-        # if base_map is False:
-        #     if base is domain:
-        #         base_map = None
-        #     else:
-        #         base_map = self * domain.coerce_map_from(base)
-        # elif isinstance(base_map, dict):
-        #     base_map = base.hom(**self._base_map_construction)
-        # if base_map is None:
-        #     return None
-        # if (codomain.has_coerce_map_from(base) and
-        #     not are_different_morphisms(backend_morphism(base_map),
-        #                                 backend_morphism(codomain.coerce_map_from(base)))):
-        #     return None
-        # if base_map.codomain() is not self.codomain():
-        #     base_map = base_map.extend_codomain(self.codomain())
-        # return base_map
+        domain = self.domain()
+        codomain = self.codomain()
+        base = domain.base_ring()
+        base_map = self._base_map_construction
+        if base_map is None:
+            # User provided images of generators and just relied on coercion for mapping the base
+            return None
+        elif base_map is False:
+            # User provided an explicit morphism
+            if base is domain:
+                return None
+            else:
+                base_map = self * domain.coerce_map_from(base)
+                if (codomain.has_coerce_map_from(base) and not are_different_morphisms(base_map, None)):
+                    return None
+        else:
+            if base is base.base_ring():
+                # User provided images of generators, and there's no way it could have gone below base
+                return None
+            # User provided images of generators, and they do affect the map on the base ring
+            # (otherwise _base_map_construction would be set to None)
+            n = domain.ngens()
+            base_map = base_map[0]
+            if len(self._im_gens) > n:
+                base_map = base.hom(self._im_gens[n:], codomain=codomain, base_map=self._base_map_construction[0], category=self.category_for())
+            if (codomain.has_coerce_map_from(base) and
+                not are_different_morphisms(base_map._backend, None)):
+                return None
+        return base_map
 
     def _richcmp_(self, other, op):
         r"""
@@ -425,9 +361,7 @@ class RingExtensionHomomorphism(RingMap):
             sage: FrobL^6 == End(L).identity()
             True
         """
-        if isinstance(other, RingExtensionHomomorphism):
-            other = other._backend
-        eq = not are_different_morphisms(self._backend, other)
+        eq = not are_different_morphisms(self, other)
         if op == op_EQ:
             return eq
         if op == op_NE:
@@ -516,11 +450,30 @@ class RingExtensionHomomorphism(RingMap):
         for x, y in zip(gens, self._im_gens):
             s += f"{x} |--> {y}\n"
         if self.base_map() is not None:
-            s += "with map on base ring"
-            ss = self.base_map()._repr_defn()
-            ss = re.sub('\nwith map on base ring:?$', '', ss, 0, re.MULTILINE)
-            if ss != "":
-                s += ":\n" + ss
+            # Give images of generators as long as they're relevant
+            base = self.domain().base_ring()
+            codomain = self.codomain()
+            gens = []
+            imgs = []
+            coimgs = []
+            while base is not base._base:
+                bgens = base.gens()
+                gens.append(bgens)
+                imgs.append([self(x) for x in bgens])
+                co = codomain.coerce_map_from(base)
+                if co is None:
+                    coimgs.append([None] * len(bgens))
+                else:
+                    coimgs.append([co(x) for x in bgens])
+                base = base._base
+            i = len(gens)
+            while i > 0 and imgs[i-1] == coimgs[i-1]:
+                i -= 1
+            if i > 0: # should always happen since base_map wasn't None
+                s += "with map on base ring:"
+                for X, Y in zip(gens[:i], imgs[:i]):
+                    for x, y in zip(X, Y):
+                        s += f"\n{x} |--> {y}"
         if s != "" and s[-1] == "\n":
             s = s[:-1]
         return s
@@ -545,23 +498,57 @@ class RingExtensionHomomorphism(RingMap):
         domain = right.domain()
         middle = self.domain()
         codomain = self.codomain()
+        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(right, RingExtensionHomomorphism):
             backend_right = right._backend
+        elif isinstance(domain, RingExtension_generic):
+            backend_right = right * domain._from_backend_morphism
         else:
             backend_right = right
         backend_middle, from_backend_middle, to_backend_middle = backend_parent(middle, map=True)
         backend = self._backend * to_backend_middle * backend_right
-        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(domain, RingExtension_generic):
             return RingExtensionHomomorphism(domain.Hom(codomain), backend)
         else:
             return backend
 
 class RingExtensionHomomorphism_baseinclusion(RingMap):
+    """
+    Class for the maps from the base ring of a ring extension to the top ring.
+
+    EXAMPLES::
+
+        sage: K.<a> = GF(5^2).over()  # over GF(5)
+        sage: TestSuite(K.defining_morphism()).run()
+    """
     def _repr_type(self):
+        """
+        Return a string that describes the type of this morphism.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(5^2).over()  # over GF(5)
+            sage: K.defining_morphism()._repr_type()
+            'Base injection'
+        """
         return "Base injection"
 
     def _repr_defn(self):
+        """
+        The definintion of this morphism, either empty (canonical case) or
+        given by its action on generators (noncanonical case)
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(5^2).over()  # over GF(5)
+            sage: K.defining_morphism()._repr_defn()
+            ''
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: E = F.extension_constant_field(GF(2^4))
+            sage: E.defining_morphism()._repr_defn()
+            'y |--> y\nx |--> x\n1 |--> 1'
+        """
         if self.codomain()._canonical_backend:
             return ""
         gens = self.domain().gens()
@@ -571,6 +558,21 @@ class RingExtensionHomomorphism_baseinclusion(RingMap):
         return s
 
     def _call_(self, x):
+        """
+        Return the image of ``x`` under this morphism.
+
+        INPUT:
+
+        - ``x`` -- an element in the domain of this morphism
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(5^2).over()  # over GF(5)
+            sage: L.<b> = GF(5^4).over(K)
+            sage: f = L.defining_morphism()
+            sage: f(a).parent() is L
+            True
+        """
         codomain = self.codomain()
         y = codomain._backend_defining_morphism(x)
         return codomain.element_class(codomain, y)
@@ -641,7 +643,7 @@ class RingExtensionBackendIsomorphism(RingMap):
           To:   Field in z9 with defining polynomial x^3 + (9*z3^2 + 5*z3 + 1)*x^2 + (4*z3 + 3)*x + 10*z3 over its base
 
         sage: type(f)
-        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendIsomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendIsomorphism_with_category'>
 
         sage: TestSuite(f).run()
     """
@@ -731,7 +733,7 @@ class RingExtensionBackendReverseIsomorphism(RingMap):
           To:   Finite Field in z9 of size 11^9
 
         sage: type(f)
-        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism_with_category'>
 
         sage: TestSuite(f).run()
 
@@ -806,18 +808,17 @@ class MapFreeModuleToRelativeRing(Map):
         sage: K = GF(5^2).over()
         sage: V, i, j = K.free_module()
         sage: type(i)
-        <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
+        <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing_with_category'>
+        sage: TestSuite(i).run()
 
     """
-    def __init__(self, E, K):
+    def __init__(self, parent):
         r"""
         Initialize this morphism.
 
         INPUT:
 
-        - ``E`` -- a ring extension
-
-        - ``K`` -- a commutative ring; one base of ``E``
+        - ``parent`` -- the homset to a ring extension ``E`` from a free module over a base of ``E``.
 
         TESTS::
 
@@ -828,11 +829,11 @@ class MapFreeModuleToRelativeRing(Map):
               From: Vector space of dimension 2 over Finite Field in z3 of size 11^3
               To:   Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
         """
-        self._degree = E.degree(K)
+        K = parent.domain().base_ring()
+        E = parent.codomain()
+        self._degree = parent.domain().dimension()
         self._basis = [ x._backend for x in E.basis_over(K) ]
         self._f = E._to_backend_morphism * E.defining_morphism(K)
-        domain = K ** self._degree
-        parent = domain.Hom(E)
         Map.__init__(self, parent)
 
     def is_injective(self):
@@ -882,6 +883,32 @@ class MapFreeModuleToRelativeRing(Map):
 
         return self.codomain()._from_backend_morphism(elt)
 
+    def _richcmp_(self, other, op):
+        r"""
+        Compare this element with ``other`` according to
+        the rich comparison operator ``op``.
+
+        INPUT:
+
+        - ``other`` -- a morphism with the same codomain and codomain
+
+        - ``op`` -- the comparison operator
+
+        TESTS::
+
+            sage: K = GF(5^2).over()
+            sage: V, i, j = K.free_module()
+            sage: i == i
+            True
+            sage: i == j
+            False
+        """
+        eq = type(other) == type(self)
+        if op == op_EQ:
+            return eq
+        if op == op_NE:
+            return not eq
+        return NotImplemented
 
 class MapRelativeRingToFreeModule(Map):
     """
@@ -893,18 +920,16 @@ class MapRelativeRingToFreeModule(Map):
         sage: K = GF(5^2).over()
         sage: V, i, j = K.free_module()
         sage: type(j)
-        <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
-
+        <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule_with_category'>
+        sage: TestSuite(j).run()
     """
-    def __init__(self, E, K):
+    def __init__(self, parent):
         r"""
         Initialize this morphism.
 
         INPUT:
 
-        - ``E`` -- a ring extension
-
-        - ``K`` -- a commutative ring; one base of ``E``
+        - ``parent`` -- the homset from a ring extension ``E`` to a free module over a base of ``E``.
 
         TESTS::
 
@@ -915,12 +940,12 @@ class MapRelativeRingToFreeModule(Map):
               From: Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
               To:   Vector space of dimension 2 over Finite Field in z3 of size 11^3
         """
-
-        self._degree = E._degree_over(K)
+        E = parent.domain()
+        K = parent.codomain().base_ring()
+        self._degree = parent.codomain().dimension()
         self._basis = [ x._backend for x in E.basis_over(K) ]
         defining_morphism = E._to_backend_morphism * E.defining_morphism(K)
-        codomain = K ** self._degree
-        Map.__init__(self, E.Hom(codomain))
+        Map.__init__(self, parent)
 
         K_backend, K_backend_to_K, K_to_K_backend = backend_parent(K, map=True)
         E_backend = E._backend
@@ -1014,3 +1039,30 @@ class MapRelativeRingToFreeModule(Map):
             coeff = self._iK(w[i*dK:(i+1)*dK])
             coeffs.append(coeff)
         return coeffs
+
+    def _richcmp_(self, other, op):
+        r"""
+        Compare this element with ``other`` according to
+        the rich comparison operator ``op``.
+
+        INPUT:
+
+        - ``other`` -- a morphism with the same codomain and codomain
+
+        - ``op`` -- the comparison operator
+
+        TESTS::
+
+            sage: K = GF(5^2).over()
+            sage: V, i, j = K.free_module()
+            sage: j == j
+            True
+            sage: i == j
+            False
+        """
+        eq = type(other) == type(self)
+        if op == op_EQ:
+            return eq
+        if op == op_NE:
+            return not eq
+        return NotImplemented
