@@ -3,7 +3,7 @@
 .. _chapter-git_trac:
 
 ====================================
-Optional: Using the Git-Issue Command
+Optional: Using the Git-Trac Command
 ====================================
 
 .. WARNING::
@@ -11,8 +11,8 @@ Optional: Using the Git-Issue Command
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Issue to
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -25,7 +25,7 @@ perform every development task with just git and a web browser.
 
 .. _section-git_trac-install:
 
-Installing the Git-Issue Command
+Installing the Git-Trac Command
 ===============================
 
 ::
@@ -58,7 +58,7 @@ there whenever you need to update the ``git-trac`` command.
 
 .. _section-git_trac-setup:
 
-Git and Issue Configuration
+Git and Trac Configuration
 ==========================
 
 .. NOTE::
@@ -75,7 +75,7 @@ authentication mechanism is needed. To set up ``git trac``, first go
 to the Sage directory and tell ``git trac`` about your trac account::
 
     [user@localhost sage]$ git trac config --user USERNAME --pass 'PASSWORD'
-    Issue xmlrpc URL:
+    Trac xmlrpc URL:
         https://trac.sagemath.org/xmlrpc (anonymous)
         https://trac.sagemath.org/login/xmlrpc (authenticated)
         realm sage.math.washington.edu
@@ -98,8 +98,8 @@ a generated token by passing ``--token=<token>`` instead of ``--pass``::
 
     [user@localhost sage]$ git trac config --user=<username> --token=<token>
 
-This is required if you authenticate to Issue with your GitHub account, as
-you do not have a Issue password.  Logged in users can find their token
+This is required if you authenticate to Trac with your GitHub account, as
+you do not have a Trac password.  Logged in users can find their token
 under :trac:`the token tab in preferences on the trac site <prefs/token>`.
 
 .. NOTE::
@@ -142,7 +142,7 @@ secured with SSH keys, which you must have set up as in
 fetch url and does not require SSH.
 
 
-Issue Tickets and Git Branches
+Trac Tickets and Git Branches
 =============================
 
 Now let's start adding code to Sage!
@@ -191,7 +191,7 @@ local branch to make your edits, you would just run::
 
     [user@localhost sage]$ git trac checkout 12345
     Loading ticket #12345...
-    Checking out Issue #13744 remote branch u/user/last_twin_prime -> local branch t/12345/last_twin_prime...
+    Checking out Trac #13744 remote branch u/user/last_twin_prime -> local branch t/12345/last_twin_prime...
 
 The ``git trac checkout`` command downloads an existing branch (as
 specified in the "Branch:" field on the trac ticket) or creates a new
@@ -250,7 +250,7 @@ someone and want to share your changes "up until now". This is simply
 done by::
 
     [user@localhost sage]$ git trac push
-    Pushing to Issue #12345...
+    Pushing to Trac #12345...
     Guessed remote branch: u/user/last_twin_prime
 
     To git@trac.sagemath.org:sage.git

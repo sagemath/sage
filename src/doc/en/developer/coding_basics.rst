@@ -473,7 +473,7 @@ information. You can use the existing functions of Sage as templates.
   Note the trailing underscores which makes the citations into hyperlinks. See
   below for more about the master bibliography file. For more about citations,
   see the `Sphinx/reST markup for citations
-  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to github issues
+  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
 
 - A **TESTS** block (highly recommended).

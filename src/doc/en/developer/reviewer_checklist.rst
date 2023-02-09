@@ -11,8 +11,8 @@ The reviewer's check list
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Issue to
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -37,7 +37,7 @@ ready for inclusion into Sage.
 You can now begin the review by reading the diff code.
 
 **Read the diff:** the diff (i.e. the ticket's content) can be obtained by
-clicking on the (green) branch's name that appears on the github issue. If that
+clicking on the (green) branch's name that appears on the trac ticket. If that
 name appears in red (see :ref:`section-trac-fields`) you can say so in a comment
 and set the ticket to ``needs_work`` (see :ref:`section-trac-ticket-status`).
 
@@ -133,6 +133,6 @@ For more advice on reviewing, see [WSblog]_.
 
 REFERENCES:
 
-.. [WSblog] William Stein, How to Referee Sage Issue Tickets,
+.. [WSblog] William Stein, How to Referee Sage Trac Tickets,
    http://sagemath.blogspot.com/2010/10/how-to-referee-sage-trac-tickets.html
    (Caveat: mercurial was replaced with git)

@@ -11,8 +11,8 @@ Advanced Git
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Issue to
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -70,7 +70,7 @@ usual ``git checkout my_branch``) and back to your detached head.
 
 Detached heads can be used to your advantage when reviewing
 tickets. Just check out the commit (look at the "Commit:" field on the
-github issue) that you are reviewing as a detached head. Then you can
+trac ticket) that you are reviewing as a detached head. Then you can
 look at the changes and run tests in the detached head. When you are
 finished with the review, you just abandon the detached head. That way
 you never create a new local branch, so you don't have to type ``git

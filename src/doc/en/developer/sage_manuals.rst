@@ -107,7 +107,7 @@ by Sage, you can link toward it without specifying its full path:
    :widths: 4 4 4
    :header-rows: 0
 
-   * - Issue server
+   * - Trac server
      - ``:trac:`17596```
      - :trac:`17596`
 

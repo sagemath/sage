@@ -38,7 +38,7 @@ For this to work, you first have to authorize Gitpod with Trac:
  2. Save the private key as a secure environment variable in Gitpod using
     ``gp env PRIVATE_SSH_KEY="$(<tempkey)"``,
     or by using the `Gitpod UI <https://www.gitpod.io/docs/environment-variables#using-the-account-settings>`_.
- 3. Register the public key with Issue following the instructions in :ref:`section-trac-ssh-key`.
+ 3. Register the public key with Trac following the instructions in :ref:`section-trac-ssh-key`.
  4. Close this Gitpod workspace.
 
 After following this procedure, every new Gitpod workspace will have a

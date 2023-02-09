@@ -22,7 +22,7 @@ Sage patchbots
 ==============
 
 The `Sage patchbots <https://wiki.sagemath.org/patchbot>`_ will
-automatically test your Github issue by attempting an incremental build
+automatically test your Trac ticket by attempting an incremental build
 of Sage and running doctests.
 
 Sage buildbots

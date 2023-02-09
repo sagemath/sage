@@ -3,7 +3,7 @@
 .. _chapter-manual-git:
 
 ===================================
-Using Git with the Sage Issue Server
+Using Git with the Sage Trac Server
 ===================================
 
 .. WARNING::
@@ -11,8 +11,8 @@ Using Git with the Sage Issue Server
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Issue to
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -102,7 +102,7 @@ passphrase empty to be able to login without any human intervention.
 
 .. _section-trac-ssh-key:
 
-Linking your Public Key to your Issue Account
+Linking your Public Key to your Trac Account
 --------------------------------------------
 
 In order to push your code directly to a branch on the git repository
@@ -199,7 +199,7 @@ changes and ``git push`` to upload your local changes using::
 
 Note that write operations (``push``) use the ssh protocol (specified by the ``git@``
 part). For this to work, you need to have a trac account and to set up your ssh public
-key as described in `Issue authentication through ssh
+key as described in `Trac authentication through ssh
 <http://doc.sagemath.org/html/en/developer/trac.html#trac-authentication-through-ssh>`_.
 Authentication is necessary if you want to upload anything to ensure
 that it really is from you.
@@ -230,7 +230,7 @@ following commands instead::
 Checking Out Tickets
 --------------------
 
-Github issues that are finished or in the process of being worked on
+Trac tickets that are finished or in the process of being worked on
 can have a git branch attached to them. This is the "Branch:" field in
 the ticket description. The branch name is generally of the form
 ``u/user/description``, where ``user`` is the name of the user who
@@ -272,7 +272,7 @@ local branch.
 Pushing Your Changes to a Ticket
 --------------------------------
 
-To add your local branch to a github issue, you should first decide on
+To add your local branch to a trac ticket, you should first decide on
 a name on the Sage trac repository.
 
 For read/write permissions on git branches, see
@@ -282,7 +282,7 @@ In order to avoid name clashes, you can use
 ``u/your_username/a_description_of_your_branch`` (the description can contain
 slashes, but no spaces). Then:
 
-- **Fill** the ``Branch`` field of the github issue with that name.
+- **Fill** the ``Branch`` field of the trac ticket with that name.
 
 - **Push** your branch to trac with either::
 
@@ -299,7 +299,7 @@ Here, ``HEAD`` means that you are pushing the most recent commit (and, by
 extension, all of its parent commits) of the current local branch to the remote
 branch.
 
-The ``Branch`` field on the github issue can appear in red/green. See
+The ``Branch`` field on the trac ticket can appear in red/green. See
 :ref:`section-trac-fields` to learn what it means.
 
 
@@ -311,7 +311,7 @@ Getting Changes
 A common task during development is to synchronize your local copy of
 the branch with the branch on trac. In particular, assume you
 downloaded somebody else's branch and made some suggestions for
-improvements on the github issue. Now the original author incorporated
+improvements on the trac ticket. Now the original author incorporated
 your suggestions into his branch, and you want to get the added
 changesets to complete your review. Assuming that you originally got
 your local branch as in :ref:`section-git-checkout`, you can just

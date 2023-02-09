@@ -11,8 +11,8 @@ Distributed Development
     **Sage development is scheduled to move to GitHub in February 2023.** The exact
     date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
     the transition, some parts of this guide (especially those related with `the
-    Sage Issue server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Issue to
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
     GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
@@ -197,6 +197,6 @@ server::
 
     $ git push trac HEAD:u/user/description
 
-and then fill in the "Branch" field in the github issue description as
+and then fill in the "Branch" field in the trac ticket description as
 explained in :ref:`section-git-push`.
 
