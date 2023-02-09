@@ -64,6 +64,7 @@ jobs:
       stage: ii-e
       previous_stages: i-*
       targets: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs sympow
+    env:
       LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
 
