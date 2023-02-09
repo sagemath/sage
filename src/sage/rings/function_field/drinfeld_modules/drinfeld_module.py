@@ -27,6 +27,7 @@ AUTHORS:
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.misc.latex import latex
+from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
@@ -173,13 +174,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
         sage: phi(1)  # phi_1
         1
-
-    One can give a LaTeX name to be used for LaTeX representation::
-
-        sage: sigma = DrinfeldModule(A, [z, 1, 1], latexname='\sigma')
-        ...
-        sage: latex(sigma)
-        \sigma
 
     .. RUBRIC:: The category of Drinfeld modules
 
@@ -507,7 +501,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall_private__(cls, function_ring, gen, name='t', latexname=None):
+    def __classcall_private__(cls, function_ring, gen, name='t'):
         """
         Check input validity and return a ``DrinfeldModule`` or
         ``FiniteDrinfeldModule`` object accordingly.
@@ -522,9 +516,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
-
-        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
-          module
 
         OUTPUT:
 
@@ -586,10 +577,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 base_field_noext.has_coerce_map_from(function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base field')
 
-        # Check LaTeX name
-        if latexname is not None and type(latexname) is not str:
-            raise ValueError('LaTeX name should be a string')
-
         # Build the category
         T = function_ring.gen()
         if isinstance(base_field_noext, RingExtension_generic):
@@ -613,10 +600,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Instantiate the appropriate class
         if base_field.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-            return FiniteDrinfeldModule(gen, category, latexname)
-        return cls.__classcall__(cls, gen, category, latexname)
+            return FiniteDrinfeldModule(gen, category)
+        return cls.__classcall__(cls, gen, category)
 
-    def __init__(self, gen, category, latexname=None):
+    def __init__(self, gen, category):
         """
         Initialize ``self``.
 
@@ -633,9 +620,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
-
-        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
-          module
 
         TESTS::
 
@@ -656,8 +640,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             True
             sage: phi._morphism == Hom(A, ore_polring)(phi._gen)
             True
-            sage: phi._latexname is None
-            True
 
         ::
 
@@ -666,7 +648,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         self._base = category.base()
         self._function_ring = category.function_ring()
         self._gen = gen
-        self._latexname = latexname
         self._morphism = category._function_ring.hom([gen])
         self._ore_polring = gen.parent()
         self._Fq = self._function_ring.base_ring()  # Must be last
@@ -776,8 +757,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return a LaTeX representation of the Drinfeld module.
 
-        If a LaTeX name was given at initialization, we use it.
-        Otherwise, we create a representation.
+        If a representation name is given with meth:`rename`, it is
+        taken into account for LaTeX representation.
 
         EXAMPLES::
 
@@ -791,20 +772,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         ::
 
-            sage: psi = DrinfeldModule(A, [p_root, z12^3, z12^5], latexname='\psi')
-            ...
-            sage: latex(psi)
-            \psi
-
-        ::
-
-            sage: psi = DrinfeldModule(A, [p_root, z12^3, z12^5], latexname=1729)
-            Traceback (most recent call last):
-            ...
-            ValueError: LaTeX name should be a string
+            sage: phi.rename('phi')
+            sage: latex(phi)
+            \phi
+            sage: phi.reset_name()
         """
-        if self._latexname is not None:
-            return self._latexname
+        if hasattr(self, '__custom_name'):
+            return latex_variable_name(getattr(self, '__custom_name'))
         else:
             return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'
