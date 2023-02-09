@@ -79,6 +79,7 @@ AUTHORS:
 from cpython cimport *
 from cysignals.signals cimport sig_check
 
+from sage.misc.lazy_string import lazy_string
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
@@ -4856,7 +4857,7 @@ cdef class Matrix(Matrix1):
             return K
 
         R = self.base_ring()
-        tm = verbose("computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1)
+        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1)
 
         # Sanitize basis format
         #   'computed' is OK in right_kernel_matrix(), but not here
