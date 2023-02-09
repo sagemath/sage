@@ -865,14 +865,17 @@ class TachyonRT(SageObject):
 
         TESTS::
 
-            sage: tachyon_rt.version()  # not tested
+            sage: tachyon_rt.version()  # random
             0.98.9
             sage: tachyon_rt.version() >= '0.98.9'
             True
         """
         with os.popen('tachyon') as f:
-            r = f.read()
-        return re.search(r"Version ([\d.]*)", r)[1]
+            r = f.readline()
+        res = re.search(r"Version ([\d.]*)", r)
+        # debian patches tachyon so it won't report the version
+        # we hardcode '0.99' since that's indeed the version they ship
+        return res[1] if res else '0.99'
 
     def help(self, use_pager=True):
         """
