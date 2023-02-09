@@ -4853,7 +4853,6 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('right_kernel')
         if K is not None:
-            verbose("retrieving cached right kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         R = self.base_ring()
@@ -5029,7 +5028,6 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('left_kernel')
         if K is not None:
-            verbose("retrieving cached left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
@@ -7886,11 +7884,11 @@ cdef class Matrix(Matrix1):
             [ 1.00 0.000  10.0]
             [0.000  1.00  1.00]
         """
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         cdef Py_ssize_t start_row, c, r, nr, nc, i, best_r
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
+        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         self.check_mutability()
         cdef Matrix A
 
