@@ -936,9 +936,29 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         return self._vector(base)
 
     def _vector_(self, reverse=False, base=None):
+        """
+        Return the vector of coordinates of this element over a base ring.
+
+        The arguments are chosen for compatibility with the analogous methods of finite fields.
+
+        INPUT:
+
+        - ``reverse`` -- a boolean, whether to reverse the coordinates of the output
+        - ``base`` -- a commutative ring; if specified it must be an explicit base over which
+            this extension has been defined.
+
+        TESTS::
+
+            sage: K = GF(11^10).over(GF(11^2))
+            sage: x = K.random_element()
+            sage: coeffs = x._vector_()
+            sage: rcoeffs = x._vector_(reverse=True)
+            sage: list(coeffs) == list(reversed(rcoeffs))
+            True
+        """
         v = self.vector(base)
         if reverse:
-            v = v.parent()(reversed(v))
+            v = v.parent()(list(reversed(v)))
         return v
 
     cdef _vector(self, CommutativeRing base):
@@ -1529,6 +1549,26 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         The image of this element under the morphism defined by
         ``im_gens`` in ``codomain``, where elements of the
         base ring are mapped by ``base_map``.
+
+        INPUT:
+
+        - ``codomain`` -- another ring
+
+        - ``im_gens`` -- a list of elements in the codomain, giving the images of the generators of the parent
+
+        - ``base_map`` -- a homomorphism on the base ring
+
+        EXAMPLES::
+
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: B.<b> = QQ.extension(x^6 - 2)
+            sage: f = A.hom([b^3])
+            sage: E = B.over(f)
+            sage: c = b^2 + b + 1
+            sage: R.<x> = QQ[]
+            sage: K.<z> = NumberField(x^6 - 2)
+            sage: c._im_gens_(K, [-z], base_map=A.hom([-z^3]))
+            z^2 - z + 1
         """
         if base_map is None:
             R = self._parent.base_ring()
