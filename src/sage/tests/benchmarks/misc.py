@@ -1,6 +1,6 @@
 "Benchmarks"
 
-from .misc import cputime
+from sage.misc.misc import cputime
 
 from sage.all import *
 
@@ -21,7 +21,7 @@ def benchmark(n=-1):
 
     EXAMPLES::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: _ = benchmark()
         Running benchmark 0
         Benchmark 0: Factor the following polynomial over
@@ -84,7 +84,7 @@ def bench0():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench0()[0])
         Benchmark 0: Factor the following polynomial over
             the rational numbers: (x^97+19*x+1)*(x^103-19*x^97+14)*(x^100-1)
@@ -104,7 +104,7 @@ def bench1():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench1()[0])
         Find the Mordell-Weil group of the elliptic curve 5077A using mwrank
 
@@ -121,7 +121,7 @@ def bench2():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench2()[0])
         Some basic arithmetic with very large Integer numbers: '3^1000001 * 19^100001
 
@@ -137,7 +137,7 @@ def bench3():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench3()[0])
         Some basic arithmetic with very large Rational numbers: '(2/3)^100001 * (17/19)^100001
 
@@ -153,7 +153,7 @@ def bench4():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench4()[0])
         Rational polynomial arithmetic using Sage. Compute (x^29+17*x-5)^200.
 
@@ -171,7 +171,7 @@ def bench5():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench5()[0])
         Rational polynomial arithmetic using Sage. Compute (x^19 - 18*x + 1)^50 one hundred times.
 
@@ -189,7 +189,7 @@ def bench6():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench6()[0])
         Compute the p-division polynomials of y^2 = x^3 + 37*x - 997 for primes p < 40.
 
@@ -207,7 +207,7 @@ def bench7():
 
     BENCHMARK::
 
-        sage: from sage.misc.benchmark import *
+        sage: from sage.tests.benchmarks.misc import *
         sage: print(bench7()[0])
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.
 

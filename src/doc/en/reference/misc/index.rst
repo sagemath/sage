@@ -299,11 +299,11 @@ Benchmarking and Profiling
 .. toctree::
    :maxdepth: 1
 
-   sage/misc/benchmark
    sage/misc/sage_timeit
    sage/misc/sage_timeit_class
    sage/misc/profiler
    sage/misc/gperftools
+   sage/tests/benchmarks/misc.py
 
 Miscellaneous Inspection and Development Tools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
