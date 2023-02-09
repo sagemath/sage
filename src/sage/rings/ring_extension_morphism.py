@@ -534,7 +534,7 @@ class RingExtensionHomomorphism_baseinclusion(RingMap):
         return "Base injection"
 
     def _repr_defn(self):
-        """
+        r"""
         The definintion of this morphism, either empty (canonical case) or
         given by its action on generators (noncanonical case)
 
