@@ -1594,7 +1594,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 This information is hashed by asv to determine continuity for speed regressions
                 """
                 name = test.name
-                code = "\n".join([example.source for example in test.examples])
+                code = "".join([example.source for example in test.examples])
                 return f"{name}|{code}"
 
             D['asv_times'] = {}
