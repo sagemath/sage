@@ -2389,8 +2389,9 @@ class DocTestTask():
         sage: sorted(results.keys())
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
-
     extra_globals = {}
+
+    runner = SageDocTestRunner
     """
     Extra objects to place in the global namespace in which tests are run.
     Normally this should be empty but there are special cases where it may
@@ -2467,7 +2468,7 @@ class DocTestTask():
         """
         result = None
         try:
-            runner = SageDocTestRunner(
+            runner = DocTestTask.runner(
                     SageOutputChecker(),
                     verbose=options.verbose,
                     outtmpfile=outtmpfile,
