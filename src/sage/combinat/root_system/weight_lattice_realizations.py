@@ -231,7 +231,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                                        codomain = self
                                        ).register_as_coercion()
 
-
         def _test_weight_lattice_realization(self, **options):
             """
             Runs sanity checks on this weight lattice realization

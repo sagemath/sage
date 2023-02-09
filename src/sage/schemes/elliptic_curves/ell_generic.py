@@ -3424,8 +3424,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: K.<a> = QuadraticField(2)
             sage: E = EllipticCurve([1,a])
             sage: E.pari_curve()
-            [Mod(0, y^2 - 2), Mod(0, y^2 - 2), Mod(0, y^2 - 2), Mod(1, y^2 - 2),
-            Mod(y, y^2 - 2), Mod(0, y^2 - 2), Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
+            [0, 0, 0, Mod(1, y^2 - 2),
+            Mod(y, y^2 - 2), 0, Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
             Mod(-1, y^2 - 2), Mod(-48, y^2 - 2), Mod(-864*y, y^2 - 2),
             Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2), Vecsmall([5]),
             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310;

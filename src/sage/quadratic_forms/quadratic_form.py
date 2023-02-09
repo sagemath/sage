@@ -1,5 +1,5 @@
 """
-Quadratic Forms Overview
+Quadratic forms overview
 
 AUTHORS:
 
@@ -1300,6 +1300,46 @@ class QuadraticForm(SageObject):
         P = (V*M).dot_product(V)
         return P
 
+    @staticmethod
+    def from_polynomial(poly):
+        r"""
+        Construct a :class:`QuadraticForm` from a multivariate
+        polynomial. Inverse of :meth:`polynomial`.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = ZZ[]
+            sage: f = 5*x^2 - x*z - 3*y*z - 2*y^2 + 9*z^2
+            sage: Q = QuadraticForm.from_polynomial(f); Q
+            Quadratic form in 3 variables over Integer Ring with coefficients:
+            [ 5 0 -1 ]
+            [ * -2 -3 ]
+            [ * * 9 ]
+            sage: Q.polynomial()
+            5*x0^2 - 2*x1^2 - x0*x2 - 3*x1*x2 + 9*x2^2
+            sage: Q.polynomial()(R.gens()) == f
+            True
+
+        The method fails if the given polynomial is not a quadratic form::
+
+            sage: QuadraticForm.from_polynomial(x^3 + x*z + 5*y^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial has monomials of degree != 2
+        """
+        R = poly.parent()
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        if not isinstance(R, MPolynomialRing_base):
+            raise TypeError(f'not a multivariate polynomial ring: {R}')
+        if not all(mon.degree() == 2 for mon in poly.monomials()):
+            raise ValueError(f'polynomial has monomials of degree != 2')
+        base = R.base_ring()
+        vs = R.gens()
+        coeffs = []
+        for i,v in enumerate(vs):
+            for w in vs[i:]:
+                coeffs.append(poly.monomial_coefficient(v*w))
+        return QuadraticForm(base, len(vs), coeffs)
 
 
 

@@ -74,6 +74,7 @@ from sage.combinat.rigged_configurations.kr_tableaux import KirillovReshetikhinT
 
 from sage.rings.integer import Integer
 
+
 class HighestWeightTensorKRT(UniqueRepresentation):
     """
     Class so we do not have to build the module generators for
@@ -84,6 +85,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
 
         This class is for internal use only!
     """
+
     def __init__(self, tp_krt):
         """
         Initialize ``self``.
@@ -170,6 +172,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
         return Integer(count)
 
     __len__ = cardinality
+
 
 class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCrystals):
     r"""
@@ -490,5 +493,6 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
                     dims.append([B._r, B._s])
             return TensorProductOfKirillovReshetikhinTableaux(ct, dims)
         return super(TensorProductOfKirillovReshetikhinTableaux, self).tensor(*crystals, **options)
+
 
 TensorProductOfKirillovReshetikhinTableaux.Element = TensorProductOfKirillovReshetikhinTableauxElement
