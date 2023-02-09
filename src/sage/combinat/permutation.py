@@ -5270,6 +5270,277 @@ class Permutation(CombinatorialElement):
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
 
 
+    def kth_roots(self,k=2):
+        r"""
+        Return all k-th roots of self (as a generator).
+        
+        A k-th root of the permutation self is a permutation Gamma such that Gamma^k == self.
+        
+        INPUT:
+        
+        - k -- optional integer (default 2), at least 1
+        
+        EXAMPLES::
+        
+            sage: Sigma = Permutations(5).identity()
+            sage: list(Sigma.kth_roots(3))
+            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1], [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5], [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
+            
+            sage: Sigma = Permutation('(1,3)')
+            sage: list(Sigma.kth_roots())
+            []
+        
+        For n >= 6, this algorithm begins to be more efficient than naive search (look at all permutations and test its k-th power).
+        
+        .. SEEALSO::
+        
+                * :meth:`has_kth_root`
+                * :meth:`number_of_kth_roots`
+        
+        TESTS:
+            
+        We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`)::
+            
+            sage: [len(list(Permutations(n).identity().kth_roots())) for n in range(2,8)]
+            [2, 4, 10, 26, 76, 232]
+            
+            sage: list(Permutation('(1)').kth_roots())
+            [[1]]
+            
+            sage: list(Permutations(4).identity().kth_roots(-1))
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be at least 1
+        """
+        
+        from sage.combinat.partition import integer_partitions_with_given_parts
+        from sage.combinat.set_partition import SetPartitions
+        from sage.categories.cartesian_product import cartesian_product
+        from sage.arith.misc import divisors, gcd
+
+        def merging_cycles(list_of_cycles):
+            """
+            Generate all l-cycles such that its k-th power is the product of cycles in Cycles (which conctains gcd(l,k) cycles of lenght l/gcd(l,k))
+            """
+            lC = len(list_of_cycles)
+            lperm = len(list_of_cycles[0])
+            l = lC*lperm
+            Perm = [0 for i in range(l)]
+            for j in range(lperm):
+                Perm[j*lC] = list_of_cycles[0][j]
+            for p in Permutations(lC-1):
+                for indexes in cartesian_product([range(lperm) for _ in range(lC-1)]):
+                    new_Perm = list(Perm)
+                    for i in range(lC-1):
+                        for j in range(lperm):
+                            new_Perm[(p[i] + (indexes[i]+j)*lC) %l] = list_of_cycles[i+1][j]
+                    gamma = Permutation(tuple(new_Perm))
+                    yield gamma
+
+        def rewind(L,k):
+            """
+            Construct the list M such that M[(j*k)%(len(M))] == L[j].
+            """
+            M = [0 for _ in L]
+            m = len(M)
+            for j in range(m):
+                M[(j*k)%m] = L[j]
+            return M
+        
+        if k < 1:
+            raise ValueError('k must be at least 1')
+        
+        P = Permutations(self.size())
+        
+        # Creating dict {length: cycles of this length in the cycle decomposition of Sigma}
+        Cycles = {}
+        for c in self.cycle_tuples(singletons=True):
+            lc = len(c)
+            if lc not in Cycles:
+                Cycles[lc] = []
+            Cycles[lc].append(c)
+        
+        # for each length m, collects all product of cycles which k-th power gives the product prod(Cycles[l])
+        Possibilities = {m: [] for m in Cycles}
+        for m in Cycles:
+            N = len(Cycles[m])
+            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
+            b = False
+            for X in integer_partitions_with_given_parts(N,parts):
+                for partition in SetPartitions(N,X):
+                    b = True
+                    poss = [P.identity()]
+                    for pa in partition:
+                            poss = [p*q for p in poss for q in merging_cycles([rewind(Cycles[m][i-1],k//len(pa)) for i in pa])]
+                    Possibilities[m] += poss
+            if not b:
+                return
+        
+        #Product of Possibilities (i.e. final result)
+        for L in cartesian_product(Possibilities.values()):
+            yield P.prod(L)
+
+    def has_kth_root(self,k=2):
+        r"""
+        Decide if ``self`` has a k-th roots.
+        
+        A k-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^k = self`.
+        
+        INPUT:
+        
+        - k -- optional integer (default 2), at least 1
+        
+        EXAMPLES::
+        
+            sage: Sigma = Permutations(5).identity()
+            sage: Sigma.has_kth_root(3)
+            True
+            
+            sage: Sigma = Permutation('(1,3)')
+            sage: Sigma.has_kth_root()
+            False
+        
+        .. SEEALSO::
+        
+                * :meth:`kth_roots`
+                * :meth:`number_of_kth_roots`
+        
+        TESTS:
+            
+        We compute the number of permutations that have square roots (i.e. squares in `S_n`, :oeis:`A003483`)::
+            
+            sage: [len([p for p in Permutations(n) if p.has_kth_root()]) for n in range(2,7)]
+            [1, 3, 12, 60, 270]
+            
+            sage: Permutation('(1)').has_kth_root()
+            True
+            
+            sage: Permutations(4).identity().has_kth_root(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be at least 1
+        """
+
+        from sage.arith.misc import divisors, gcd
+
+        def has_integer_partitions_with_given_parts(N,Parts):
+            """
+            Generate all lists L with sum(L) == N and L[i] in Parts. If decreasing_order, then L with be non-increasing.
+            """
+            parts = list(Parts)
+            front = [(N,[],0)]
+            lp = len(parts)
+            while len(front) != 0:
+                M,L,i = front.pop()
+                for j in range(i,lp):
+                    new_M = M - parts[j]
+                    if new_M > 0:
+                        front.insert(0,(new_M, L+[parts[j]], j))
+                    elif new_M == 0:
+                        return True
+            return False
+        
+        if k < 1:
+            raise ValueError('k must be at least 1')
+        
+        P = Permutations(self.size())
+        
+        # Creating dict {length: number of cycles of this length in the cycle decomposition of self}
+        Cycles = {}
+        for c in self.cycle_tuples(singletons=True):
+            lc = len(c)
+            if lc not in Cycles:
+                Cycles[lc] = 0
+            Cycles[lc] += 1
+        
+        # for each length m, check if the number of m-cycles can come from a k-th power (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l,k))
+        for m in Cycles:
+            N = Cycles[m]
+            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
+            if not has_integer_partitions_with_given_parts(N,parts):
+                return False
+        return True
+
+    def number_of_kth_roots(self,k=2):
+        r"""
+        Return the number of k-th roots of ``self``.
+        
+        A k-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^k = self`.
+        
+        INPUT:
+        
+        - k -- optional integer (default 2), at least 1
+        
+        EXAMPLES::
+        
+            sage: Sigma = Permutations(5).identity()
+            sage: Sigma.number_of_kth_roots(3)
+            21
+            
+            sage: Sigma = Permutation('(1,3)')
+            sage: Sigma.number_of_kth_roots()
+            0
+        
+        .. SEEALSO::
+        
+                * :meth:`kth_roots`
+                * :meth:`has_kth_root`
+        
+        TESTS:
+            
+        We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`), then the number of cubic roots::
+            
+            sage: [Permutations(n).identity().number_of_kth_roots() for n in range(2,10)]
+            [2, 4, 10, 26, 76, 232, 764, 2620]
+            
+            sage: [Permutations(n).identity().number_of_kth_roots(3) for n in range(2,10)]
+            [1, 3, 9, 21, 81, 351, 1233, 5769]
+            
+            sage: Permutation('(1)').number_of_kth_roots()
+            1
+            
+            sage: Permutations(4).identity().number_of_kth_roots(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be at least 1
+        """
+        
+        from sage.combinat.partition import integer_partitions_with_given_parts
+        from sage.combinat.set_partition import SetPartitions
+        from sage.arith.misc import divisors, gcd
+        from sage.misc.misc_c import prod
+
+        if k < 1:
+            raise ValueError('k must be at least 1')
+        
+        P = Permutations(self.size())
+        
+        # Creating dict {length: number of cycles of this length in the cycle decomposition of Sigma}
+        Cycles = {}
+        for c in self.cycle_tuples(singletons=True):
+            lc = len(c)
+            if lc not in Cycles:
+                Cycles[lc] = 0
+            Cycles[lc] += 1
+        
+        # for each length m, count the number of products of cycles which k-th power gives the product prod(Cycles[l])
+        Counts = {m: 0 for m in Cycles}
+        for m in Cycles:
+            N = Cycles[m]
+            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
+            b = False
+            for partition in integer_partitions_with_given_parts(N,parts,decreasing_order=True):
+                b = True
+                count = SetPartitions(N,partition).cardinality()
+                for x in partition:
+                    count *= factorial(x-1) * m**(x-1)
+                Counts[m] += count
+            if not b:
+                return 0
+        
+        #Product of Possibilities (i.e. final result)
+        return prod(Counts.values())
+
 def _tableau_contribution(T):
     r"""
     Get the number of SYT of shape(``T``).
