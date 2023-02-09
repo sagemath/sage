@@ -1,4 +1,4 @@
-# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
 # distutils: library_dirs = NTL_LIBDIR
@@ -62,13 +62,6 @@ include "sage/libs/flint/nmod_poly_linkage.pxi"
 
 # and then the interface
 include "polynomial_template.pxi"
-
-cdef extern from "zn_poly/zn_poly.h":
-    ctypedef struct zn_mod_struct:
-        pass
-    cdef void zn_mod_init(zn_mod_struct *mod, unsigned long m)
-    cdef void zn_mod_clear(zn_mod_struct *mod)
-    cdef void zn_array_mul(unsigned long* res, unsigned long* op1, size_t n1, unsigned long* op2, size_t n2, zn_mod_struct *mod)
 
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
@@ -419,66 +412,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             nmod_poly_set_coeff_ui(&self.x, n, int(value)%nmod_poly_modulus(&self.x))
         else:
             raise IndexError("Polynomial coefficient index must be nonnegative.")
-
-    def _mul_zn_poly(self, other):
-        r"""
-        Returns the product of two polynomials using the zn_poly library.
-
-        See http://www.math.harvard.edu/~dmharvey/zn_poly/ for details
-        on zn_poly.
-
-        INPUT:
-
-        - self: Polynomial
-        - right: Polynomial (over same base ring as self)
-
-        OUTPUT: (Polynomial) the product self*right.
-
-
-        EXAMPLES::
-
-            sage: P.<x> = PolynomialRing(GF(next_prime(2^30)))
-            sage: f = P.random_element(1000)
-            sage: g = P.random_element(1000)
-            sage: f*g == f._mul_zn_poly(g)
-            True
-
-            sage: P.<x> = PolynomialRing(Integers(100))
-            sage: P
-            Univariate Polynomial Ring in x over Ring of integers modulo 100
-            sage: r = (10*x)._mul_zn_poly(10*x); r
-            0
-            sage: r.degree()
-            -1
-
-        ALGORITHM:
-
-           uses David Harvey's zn_poly library.
-
-        NOTE: This function is a technology preview. It might
-        disappear or be replaced without a deprecation warning.
-        """
-        cdef Polynomial_zmod_flint _other = <Polynomial_zmod_flint>self._parent.coerce(other)
-
-        cdef type t = type(self)
-        cdef Polynomial_zmod_flint r = <Polynomial_zmod_flint>t.__new__(t)
-        r._parent = (<Polynomial_zmod_flint>self)._parent
-        r._cparent = (<Polynomial_zmod_flint>self)._cparent
-
-        cdef unsigned long p = self._parent.modulus()
-        cdef unsigned long n1 = self.x.length
-        cdef unsigned long n2 = _other.x.length
-
-        cdef zn_mod_struct zn_mod
-
-        nmod_poly_init2(&r.x, p, n1 + n2 -1 )
-
-        zn_mod_init(&zn_mod, p)
-        zn_array_mul(<unsigned long *> r.x.coeffs, <unsigned long *> self.x.coeffs, n1, <unsigned long*> _other.x.coeffs, n2, &zn_mod)
-        r.x.length = n1 + n2 -1
-        _nmod_poly_normalise(&r.x)
-        zn_mod_clear(&zn_mod)
-        return r
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """

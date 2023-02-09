@@ -75,6 +75,7 @@ class CartanType(SageObject, CartanType_abstract):
         11   12   13
         A4xBC5~xC3
     """
+
     def __init__(self, types):
         """
         Initialize ``self``.
@@ -454,6 +455,7 @@ class CartanType(SageObject, CartanType_abstract):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     EXAMPLES::
@@ -462,6 +464,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         Ambient space of the Root system of type A2xB2
 
     """
+
     def cartan_type(self):
         """
         EXAMPLES::

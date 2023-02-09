@@ -270,6 +270,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         sage: b._repr_()
         '[[1]]'
     """
+
     def classical_weight(self):
         """
         Return the classical weight corresponding to ``self``.

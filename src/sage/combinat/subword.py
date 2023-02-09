@@ -162,6 +162,7 @@ class Subwords_w(Parent):
     r"""
     Subwords of a given word.
     """
+
     def __init__(self, w, element_constructor):
         """
         TESTS::
@@ -318,6 +319,7 @@ class Subwords_wk(Subwords_w):
     r"""
     Subwords with fixed length of a given word.
     """
+
     def __init__(self, w, k, element_constructor):
         """
         TESTS::

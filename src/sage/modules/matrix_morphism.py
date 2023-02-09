@@ -817,8 +817,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             T^2 - 3*T + 2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("charpoly only defined for endomorphisms " +\
-                    "(i.e., domain = range)")
+            raise ArithmeticError("charpoly only defined for endomorphisms "
+                                  "(i.e., domain = range)")
         return self.matrix().charpoly(var)
 
     charpoly = characteristic_polynomial

@@ -1,5 +1,5 @@
 r"""
-Brandt Modules
+Brandt modules
 
 Introduction
 ------------

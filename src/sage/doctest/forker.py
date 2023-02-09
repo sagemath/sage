@@ -1316,8 +1316,6 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         If debugging is turned on this function starts an IPython
         prompt when a test returns an incorrect answer::
 
-            sage: import os
-            sage: os.environ['SAGE_PEXPECT_LOG'] = "1"
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -1473,8 +1471,6 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         EXAMPLES::
 
-            sage: import os
-            sage: os.environ['SAGE_PEXPECT_LOG'] = "1"
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")

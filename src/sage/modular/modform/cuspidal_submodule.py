@@ -1,5 +1,5 @@
 """
-The Cuspidal Subspace
+The cuspidal subspace
 
 EXAMPLES::
 

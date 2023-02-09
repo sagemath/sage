@@ -272,7 +272,7 @@ class NewtonPolygon_element(Element):
 
         This Newton polygon scaled by a factor ``exp``.
 
-        NOTE::
+        .. NOTE::
 
             If ``self`` is the Newton polygon of a polynomial `f`, then
             ``self^exp`` is the Newton polygon of `f^{exp}`.

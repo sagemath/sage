@@ -44,8 +44,8 @@ EXAMPLES::
     Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
     sage: QM.gens()
     [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
-    1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-    1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+     1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+     1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
     sage: E2 = QM.0; E4 = QM.1; E6 = QM.2
     sage: E2 * E4 + E6
     2 - 288*q - 20304*q^2 - 185472*q^3 - 855216*q^4 - 2697408*q^5 + O(q^6)
@@ -74,6 +74,71 @@ the `i`-th coefficient of the polynomial in `E_2`::
     sage: F == Delta + E4 * E2 + (Delta + E4) * E2^2
     True
 
+One may also create rings of quasimodular forms for certain congruence subgroups::
+
+    sage: QM = QuasiModularForms(Gamma0(5)); QM
+    Ring of Quasimodular Forms for Congruence Subgroup Gamma0(5) over Rational Field
+    sage: QM.ngens()
+    4
+
+The first generator is the weight 2 Eisenstein series::
+
+    sage: E2 = QM.0; E2
+    1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+
+The other generators correspond to the generators given by the method
+:meth:`sage.modular.modform.ring.ModularFormsRing.gens`::
+
+    sage: QM.gens()
+    [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+     1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
+     1 + 240*q^5 + O(q^6),
+     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+    sage: QM.modular_forms_subring().gens()
+    [1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
+     1 + 240*q^5 + O(q^6),
+     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+
+It is possible to convert a graded quasimodular form into a polynomial where
+each variable corresponds to a generator of the ring::
+
+    sage: QM = QuasiModularForms(1)
+    sage: E2, E4, E6 = QM.gens()
+    sage: F = E2*E4*E6 + E6^2; F
+    2 - 1296*q + 91584*q^2 + 14591808*q^3 + 464670432*q^4 + 6160281120*q^5 + O(q^6)
+    sage: p = F.polynomial('E2, E4, E6'); p
+    E2*E4*E6 + E6^2
+    sage: P = p.parent(); P
+    Multivariate Polynomial Ring in E2, E4, E6 over Rational Field
+
+The generators of the polynomial ring have degree equal to the weight of the
+corresponding form::
+
+    sage: P.inject_variables()
+    Defining E2, E4, E6
+    sage: E2.degree()
+    2
+    sage: E4.degree()
+    4
+    sage: E6.degree()
+    6
+
+This works also for congruence subgroup::
+
+    sage: QM = QuasiModularForms(Gamma1(4))
+    sage: QM.ngens()
+    5
+    sage: QM.polynomial_ring()
+    Multivariate Polynomial Ring in E2, E2_0, E2_1, E3_0, E3_1 over Rational Field
+    sage: (QM.0 + QM.1*QM.0^2 + QM.3 + QM.4^3).polynomial()
+    E3_1^3 + E2^2*E2_0 + E3_0 + E2
+
+One can also convert a multivariate polynomial into a quasimodular form::
+
+    sage: QM.polynomial_ring().inject_variables()
+    Defining E2, E2_0, E2_1, E3_0, E3_1
+    sage: QM.from_polynomial(E3_1^3 + E2^2*E2_0 + E3_0 + E2)
+    3 - 72*q + 396*q^2 + 2081*q^3 + 19752*q^4 + 98712*q^5 + O(q^6)
 
 .. NOTE::
 
@@ -100,6 +165,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import product, chain
+
 from sage.categories.graded_algebras import GradedAlgebras
 
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
@@ -109,7 +176,6 @@ from sage.modular.modform.space import ModularFormsSpace
 from sage.modular.modform.ring import ModularFormsRing
 
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -134,8 +200,8 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
         sage: QM.gens()
         [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
-        1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-        1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+         1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
 
     It is possible to access the weight 2 Eisenstein series::
 
@@ -526,53 +592,142 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.__polynomial_subring.gen()
 
-    def polynomial_ring(self, names='E2, E4, E6'):
+    def polynomial_ring(self, names=None):
         r"""
-        Return a multivariate polynomial ring isomorphic to the given graded
-        quasimodular forms ring.
+        Return a multivariate polynomial ring of which the quasimodular forms
+        ring is a quotient.
 
-        In the case of the full modular group, this
-        ring is `R[E_2, E_4, E_6]` where `E_2`, `E_4` and `E_6` have degrees 2,
-        4 and 6 respectively.
+        In the case of the full modular group, this ring is `R[E_2, E_4, E_6]`
+        where `E_2`, `E_4` and `E_6` have degrees 2, 4 and 6 respectively.
 
         INPUT:
 
-        - ``names`` (str, default: ``'E2, E4, E6'``) -- a list or tuple of names
-          (strings), or a comma separated string. Correspond to the names of the
-          variables.
+        - ``names`` (str, default: ``None``) -- a list or tuple of names
+          (strings), or a comma separated string. Defines the names for the
+          generators of the multivariate polynomial ring. The default names are
+          of the following form:
+
+          - ``E2`` denotes the weight 2 Eisenstein series;
+
+          - ``Ek_i`` and ``Sk_i`` denote the `i`-th basis element of the weight
+            `k` Eisenstein subspace and cuspidal subspace respectively;
+
+          - If the level is one, the default names are ``E2``, ``E4`` and
+            ``E6``;
+
+          - In any other cases, we use the letters ``Fk``, ``Gk``, ``Hk``, ...,
+            ``FFk``, ``FGk``, ... to denote any generator of weight `k`.
 
         OUTPUT: A multivariate polynomial ring in the variables ``names``
 
         EXAMPLES::
 
             sage: QM = QuasiModularForms(1)
-            sage: P.<E2, E4, E6> = QM.polynomial_ring(); P
+            sage: P = QM.polynomial_ring(); P
             Multivariate Polynomial Ring in E2, E4, E6 over Rational Field
+            sage: P.inject_variables()
+            Defining E2, E4, E6
             sage: E2.degree()
             2
             sage: E4.degree()
             4
             sage: E6.degree()
             6
-            sage: P.<x, y, z, w> = QQ[]
-            sage: QM.from_polynomial(x+y+z+w)
-            Traceback (most recent call last):
-            ...
-            ValueError: the number of variables (4) of the given polynomial cannot exceed the number of generators (3) of the quasimodular forms ring
+
+        Example when the level is not one::
+
+            sage: QM = QuasiModularForms(Gamma0(29))
+            sage: P_29 = QM.polynomial_ring()
+            sage: P_29
+            Multivariate Polynomial Ring in E2, F2, S2_0, S2_1, E4_0, F4, G4, H4 over Rational Field
+            sage: P_29.inject_variables()
+            Defining E2, F2, S2_0, S2_1, E4_0, F4, G4, H4
+            sage: F2.degree()
+            2
+            sage: E4_0.degree()
+            4
+
+        The name ``Sk_i`` stands for the `i`-th basis element of the cuspidal subspace of weight `k`::
+
+            sage: F2 = QM.from_polynomial(S2_0)
+            sage: F2.qexp(10)
+            q - q^4 - q^5 - q^6 + 2*q^7 - 2*q^8 - 2*q^9 + O(q^10)
+            sage: CuspForms(Gamma0(29), 2).0.qexp(10)
+            q - q^4 - q^5 - q^6 + 2*q^7 - 2*q^8 - 2*q^9 + O(q^10)
+            sage: F2 == CuspForms(Gamma0(29), 2).0
+            True
+
+        The name ``Ek_i`` stands for the `i`-th basis element of the Eisenstein subspace of weight `k`::
+
+            sage: F4 = QM.from_polynomial(E4_0)
+            sage: F4.qexp(30)
+            1 + 240*q^29 + O(q^30)
+            sage: EisensteinForms(Gamma0(29), 4).0.qexp(30)
+            1 + 240*q^29 + O(q^30)
+            sage: F4 == EisensteinForms(Gamma0(29), 4).0
+            True
+
+        One may also choose the name of the variables::
+
+            sage: QM = QuasiModularForms(1)
+            sage: QM.polynomial_ring(names="P, Q, R")
+            Multivariate Polynomial Ring in P, Q, R over Rational Field
         """
-        return PolynomialRing(self.base_ring(), 3, names, order=TermOrder('wdeglex', [ZZ(2), ZZ(4), ZZ(6)]))
+        gens = self.__modular_forms_subring.gen_forms()
+        weights = [f.weight() for f in gens]
+        gens = iter(gens)
+        if names is None:
+            if self.group() == Gamma0(1):
+                names = ["E2", "E4", "E6"]
+            else:
+                names = ["E2"]
+                letters = "FGHIJK"
+                for unique_weight in set(weights):
+                    same_weights = [k for k in weights if k == unique_weight]
+                    # create all the names of the form:
+                    #     F, G, H, I, J, K, FF, FG, FH,..., FFF, FFG,...
+                    # the letters E and S are reserved for basis elements of the
+                    # Eisenstein subspaces and cuspidal subspaces respectively.
+                    iter_names = (product(letters, repeat=r)
+                                    for r in range(1, len(same_weights)//len(letters) + 2))
+                    iter_names = chain(*iter_names)
+                    for k in same_weights:
+                        form = next(gens)
+                        Mk = self.__modular_forms_subring.modular_forms_of_weight(k)
+                        if form.is_eisenstein():
+                            Ek_basis = Mk.eisenstein_subspace().basis()
+                            # check if form is a basis element of the Eisenstein subspace of weight k
+                            try:
+                                n = Ek_basis.index(form)
+                                name = f"E{str(k)}_{str(n)}"
+                            except ValueError:
+                                name = "".join(next(iter_names)) + str(k)
+                        elif form.is_cuspidal():
+                            Sk_basis = Mk.cuspidal_subspace().basis()
+                            # check if form is a basis element of the cuspidal subspace of weight k
+                            try:
+                                n = Sk_basis.index(form)
+                                name = f"S{str(k)}_{str(n)}"
+                            except ValueError:
+                                name = "".join(next(iter_names)) + str(k)
+                        else:
+                            name = "".join(next(iter_names)) + str(k)
+                        names.append(name)
+        weights.insert(0, 2) # add the weight 2 Eisenstein series
+        return PolynomialRing(self.base_ring(), len(weights), names,
+                              order=TermOrder('wdeglex', weights))
 
     def from_polynomial(self, polynomial):
         r"""
-        Convert the given polynomial `P(X, Y, Z)` to the graded quasiform
-        `P(E_2, E_4, E_6)` where `E_2`, `E_4` and `E_6` are the generators given
+        Convert the given polynomial `P(x,\ldots, y)` to the graded quasiform
+        `P(g_0, \ldots, g_n)` where the `g_i` are the generators given
         by :meth:`~sage.modular.quasimodform.ring.QuasiModularForms.gens`.
 
         INPUT:
 
-        - ``plynomial`` -- A multivariate polynomial
+        - ``polynomial`` -- A multivariate polynomial
 
-        OUTPUT: the graded quasimodular forms `P(E_2, E_4, E_6)`
+        OUTPUT: the graded quasimodular forms `P(g_0, \ldots, g_n)`
 
         EXAMPLES::
 
@@ -588,6 +743,25 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             True
             sage: QM.from_polynomial(x^2 + y + x*z + 1)
             4 - 336*q - 2016*q^2 + 322368*q^3 + 3691392*q^4 + 21797280*q^5 + O(q^6)
+            sage: QM = QuasiModularForms(Gamma0(2))
+            sage: P = QM.polynomial_ring()
+            sage: P.inject_variables()
+            Defining E2, E2_0, E4_0
+            sage: QM.from_polynomial(E2)
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+            sage: QM.from_polynomial(E2 + E4_0*E2_0) == QM.0 + QM.2*QM.1
+            True
+
+        Naturally, the number of variable must not exceed the number of generators::
+
+            sage: P = PolynomialRing(QQ, 'F', 4)
+            sage: P.inject_variables()
+            Defining F0, F1, F2, F3
+            sage: QM.from_polynomial(F0 + F1 + F2 + F3)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of variables (4) of the given polynomial cannot exceed the number of generators (3) of the quasimodular forms ring
+
 
         TESTS::
 

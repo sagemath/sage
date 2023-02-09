@@ -52,15 +52,15 @@ AUTHORS:
 
 from . import constructor
 from . import BSD
-from   .ell_generic import is_EllipticCurve
+from .ell_generic import is_EllipticCurve
 from . import ell_modular_symbols
-from   .ell_number_field import EllipticCurve_number_field
+from .ell_number_field import EllipticCurve_number_field
 from . import ell_point
 from . import ell_tate_curve
 from . import ell_torsion
 from . import heegner
 from . import mod5family
-from   .modular_parametrization import ModularParameterization
+from .modular_parametrization import ModularParameterization
 from . import padics
 
 from sage.modular.modsym.modsym import ModularSymbols
@@ -1827,7 +1827,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a1')
             sage: E._known_points = []  # clear cached points
             sage: E.simon_two_descent()
-            (2, 2, [(1 : 0 : 1), (-11/9 : 28/27 : 1)])
+            (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
             sage: E = EllipticCurve('5077a1')
             sage: E.simon_two_descent()
             (3, 3, [(1 : 0 : 1), (2 : 0 : 1), (0 : 2 : 1)])
@@ -4791,7 +4791,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if not proof:
             return True
         else:
-            return  E2 in E1.isogeny_class().curves
+            return E2 in E1.isogeny_class().curves
 
     def isogeny_degree(self, other):
         """

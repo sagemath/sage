@@ -942,7 +942,7 @@ class SymmetricIdeal(Ideal_generic):
                 CommonR = PolynomialRing(PARENT._base, VarList, order=PARENT._order)
 
             try: # working around one libsingular bug and one libsingular oddity
-                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens()!=P._p.parent().ngens()) else CommonR(repr(P._p))  for P in OUT.gens()]*CommonR
+                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens()!=P._p.parent().ngens()) else CommonR(repr(P._p)) for P in OUT.gens()]*CommonR
             except Exception:
                 if report is not None:
                     print("working around a libsingular bug")

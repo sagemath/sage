@@ -203,10 +203,12 @@ class GenericSpeciesStructure(CombinatorialObject):
         else:
             return False
 
+
 #For backward compatibility.  This should be removed in the near
 #future since I doubt that there is any code that depends directly on
 #SpeciesStructure.
 SpeciesStructure = GenericSpeciesStructure
+
 
 class SpeciesStructureWrapper(GenericSpeciesStructure):
     def __init__(self, parent, s, **options):
@@ -407,6 +409,7 @@ class SpeciesWrapper(CombinatorialClass):
         """
         return getattr(self._species, self._generating_series)().count(len(self._labels))
 
+
 class StructuresWrapper(SpeciesWrapper):
     def __init__(self, species, labels, structure_class):
         """
@@ -426,6 +429,7 @@ class StructuresWrapper(SpeciesWrapper):
                                 "generating_series",
                                 "Structures",
                                 structure_class)
+
 
 class IsotypesWrapper(SpeciesWrapper):
     def __init__(self, species, labels, structure_class):

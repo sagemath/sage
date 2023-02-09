@@ -209,7 +209,6 @@ from io import StringIO
 from copy import copy
 
 from sage.cpython.string import bytes_to_str
-from sage.interfaces.gap import gap
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
@@ -885,6 +884,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: C = codes.HammingCode(GF(2), 5)
             sage: C.covering_radius()  # optional - gap_packages (Guava package)
+            ...
             1
 
             sage: C = codes.random_linear_code(GF(263), 5, 1)
@@ -893,15 +893,16 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             ...
             NotImplementedError: the GAP algorithm that Sage is using is limited to computing with fields of size at most 256
         """
+        from sage.libs.gap.libgap import libgap
         GapPackage("guava", spkg="gap_packages").require()
-        gap.load_package("guava")
+        libgap.LoadPackage("guava")
         F = self.base_ring()
         if F.cardinality() > 256:
             raise NotImplementedError("the GAP algorithm that Sage is using "
                                       "is limited to computing with fields "
                                       "of size at most 256")
-        gapG = gap(self.generator_matrix())
-        C = gapG.GeneratorMatCode(gap(F))
+        gapG = libgap(self.generator_matrix())
+        C = gapG.GeneratorMatCode(libgap(F))
         r = C.CoveringRadius()
         try:
             return ZZ(r)
@@ -1342,7 +1343,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: C.minimum_distance(algorithm="gap")
             3
+            sage: libgap.SetAllInfoLevels(0)             # to suppress extra info messages
             sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+            ...
             3
 
         TESTS::
@@ -1381,8 +1384,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         G = self.generator_matrix()
         if (q == 2 or q == 3) and algorithm == "guava":
-            gap.load_package("guava")
-            C = gap(G).GeneratorMatCode(gap(F))
+            from sage.libs.gap.libgap import libgap
+            libgap.LoadPackage("guava")
+            C = libgap(G).GeneratorMatCode(libgap(F))
             d = C.MinimumWeight()
             return ZZ(d)
         return self._minimum_weight_codeword(algorithm).hamming_weight()
@@ -1425,33 +1429,29 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - David Joyner (11-2005)
         """
+        from sage.libs.gap.libgap import libgap
         n, k = self.length(), self.dimension()
         F = self.base_field()
-        Gmat = self.generator_matrix()._gap_init_()
+        Gmat = libgap(self.generator_matrix())
 
         current_randstate().set_seed_gap()
 
         if algorithm == "guava":
             GapPackage("guava", spkg="gap_packages").require()
-            gap.load_package("guava")
-            from sage.interfaces.gap import gfq_gap_to_sage
-            gap.eval("G:="+Gmat)
-            C = gap(Gmat).GeneratorMatCode(F)
+            libgap.LoadPackage("guava")
+            C = Gmat.GeneratorMatCode(F)
             cg = C.MinimumDistanceCodeword()
-            c = [gfq_gap_to_sage(cg[j],F) for j in range(1,n+1)]
+            c = [cg[j].sage(ring=F) for j in range(n)]
             return vector(F, c)
 
         q = F.order()
         ans = None
-        dist_min = n + 1
-        gap.eval('Gmat:='+Gmat)
-        gap.eval('K:=GF({})'.format(q))
-        gap.eval('v:=Z({})*{}'.format(q,[0]*n))
+        dist_min = libgap(n + 1)
+        K = libgap.GF(q)
+        v0 = (K**n).Zero()
         for i in range(1,k+1):
-            gap.eval("P:=AClosestVectorCombinationsMatFFEVecFFECoords(Gmat,K,v,{},1)".format(i))
-            gap.eval("d:=WeightVecFFE(P[1])")
-            v = gap("P[1]")
-            dist = gap("d")
+            v = Gmat.AClosestVectorCombinationsMatFFEVecFFECoords(K,v0,i,1)[0]
+            dist = v.WeightVecFFE()
             if dist and dist < dist_min:
                 dist_min = dist
                 ans = list(v)
@@ -1486,7 +1486,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         F = self.base_ring()
         gens = gp.gens()
         G = self.generator_matrix()
-        n = len(G.columns())
+        n = G.ncols()
         MS = MatrixSpace(F, n, n)
         mats = []  # initializing list of mats by which the gens act on self
         Fn = VectorSpace(F, n)
@@ -1497,8 +1497,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             mats.append(m)
         mats_gap = libgap(mats)
         M_gap = mats_gap.GModuleByMats(F)
-        compo = libgap.function_factory('MTX.CompositionFactors')
-        print(compo(M_gap))
+        # our parser does not grok "foo.MTX.Bar" yet;so we cannot do
+        # M_gap.MTX.CompositionFactors() yet
+        return libgap.eval('MTX.CompositionFactors('+str(M_gap)+')')
 
     def permutation_automorphism_group(self, algorithm="partition"):
         r"""
@@ -1603,15 +1604,16 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         G = self.generator_matrix() if 2*self.dimension() <= self.length() else self.dual_code().generator_matrix()
         n = len(G.columns())
         if "gap" in algorithm:
+            from sage.libs.gap.libgap import libgap
             GapPackage("guava", spkg="gap_packages").require()
-            gap.load_package('guava')
+            libgap.LoadPackage('guava')
             wts = self.weight_distribution()                          # bottleneck 1
             nonzerowts = [i for i in range(len(wts)) if wts[i]!=0]
-            Sn = SymmetricGroup(n)
-            Gp = gap("SymmetricGroup(%s)"%n)               # initializing G in gap
-            Gstr = str(gap(G))
-            gap.eval("C:=GeneratorMatCode("+Gstr+",GF("+str(q)+"))")
-            gap.eval("eltsC:=Elements(C)")
+            Sn = libgap.SymmetricGroup(n)
+            Sn_sage = SymmetricGroup(n)
+            Gp = Sn               # initializing G in gap
+            C = libgap(G).GeneratorMatCode(libgap.GF(q))
+            eltsC = C.Elements()
             if algorithm=="gap+verbose":
                 print("\n Minimum distance: %s \n Weight distribution: \n %s" % (nonzerowts[1], wts))
             stop = 0                                          # only stop if all gens are autos
@@ -1622,22 +1624,20 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 if algorithm=="gap+verbose":
                     size = Gp.Size()
                     print("\n Using the %s codewords of weight %s \n Supergroup size: \n %s\n " % (wts[wt], wt, size))
-                gap.eval("Cwt:=Filtered(eltsC,c->WeightCodeword(c)=%s)"%wt)   # bottleneck 2 (repeated
-                gap.eval("matCwt:=List(Cwt,c->VectorCodeword(c))")            # for each i until stop = 1)
-                if gap("Length(matCwt)") > 0:
-                    A = gap("MatrixAutomorphisms(matCwt)")
-                    G2 = gap("Intersection2(%s,%s)"%(str(A).replace("\n",""),str(Gp).replace("\n","")))  #  bottleneck 3
-                    Gp = G2
+                Cwt=filter(lambda c: c.WeightCodeword()==wt, eltsC)   # bottleneck 2 (repeated
+                matCwt=list(map(lambda c: c.VectorCodeword(), Cwt))            # for each i until stop = 1)
+                if len(matCwt) > 0:
+                    A = libgap(matCwt).MatrixAutomorphisms()
+                    Gp = A.Intersection2(Gp)  #  bottleneck 3
                     if Gp.Size()==1:
                         return PermutationGroup([()])
-                    autgp_gens = Gp.GeneratorsOfGroup()
-                    gens = [Sn(str(x).replace("\n","")) for x in autgp_gens]
+                    gens = Gp.GeneratorsOfGroup()
                     stop = 1                    # get ready to stop
                     for x in gens:              # if one of these gens is not an auto then don't stop
-                        if not(self.is_permutation_automorphism(x)):
+                        if not(self.is_permutation_automorphism(Sn_sage(x))):
                             stop = 0
                             break
-            G = PermutationGroup(gens)
+            G = PermutationGroup(list(map(Sn_sage, gens)))
             return G
         if algorithm=="partition":
             if q == 2:
@@ -1825,6 +1825,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             True
 
         """
+        from sage.libs.gap.libgap import libgap
         if algorithm is None:
             if self.base_ring().order() == 2:
                 algorithm = "binary"
@@ -1833,12 +1834,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         F = self.base_ring()
         n = self.length()
         if algorithm=="gap":
-            Gmat = self.generator_matrix()._gap_init_()
+            Gmat = self.generator_matrix()
             q = self.base_ring().order()
-            z = 'Z(%s)*%s'%(q, [0]*self.length())     # GAP zero vector as a string
-            _ = gap.eval("w:=DistancesDistributionMatFFEVecFFE("+Gmat+", GF("+str(q)+"),"+z+")")
-            v = [eval(gap.eval("w["+str(i)+"]")) for i in range(1,self.length()+2)]  # because GAP returns vectors in compressed form
-            return v
+            z = 0*libgap.Z(q)*([0]*self.length())     # GAP zero vector
+            w=libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q),z)
+            return w.sage()
         elif algorithm=="binary":
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
@@ -1847,8 +1847,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
             # version of the Guava libraries, so gives us the location of the Guava binaries too.
-            guava_bin_dir = gap.eval('DirectoriesPackagePrograms("guava")[1]')
-            guava_bin_dir = guava_bin_dir[guava_bin_dir.index('"') + 1:guava_bin_dir.rindex('"')]
+            guava_bin_dir = libgap.DirectoriesPackagePrograms("guava")[0].Filename("").sage()
             input = _dump_code_in_leon_format(self) + "::code"
             lines = subprocess.check_output([os.path.join(guava_bin_dir, 'wtdist'), input])
             # to use the already present output parser

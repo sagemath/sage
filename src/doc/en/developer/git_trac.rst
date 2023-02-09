@@ -6,6 +6,17 @@
 Optional: Using the Git-Trac Command
 ====================================
 
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.** The exact
+    date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
+    the transition, some parts of this guide (especially those related with `the
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    GitHub
+    <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
+    for the preliminary version of the workflow.
+
 Git is a separate project from trac, and the two do not know how to
 talk to each other. To simplify the development, we have a special
 ``git trac`` subcommand for the git suite. Note that this really is
@@ -40,7 +51,7 @@ do this by symlinking::
     [user@localhost git-trac-command]$ ln -s `pwd`/git-trac ~/bin/
 
 See the `git-trac README <https://github.com/sagemath/git-trac-command>`_ for
-more details. At this point you leave ``git-trac-command`` subdirectory, and only go 
+more details. At this point you leave ``git-trac-command`` subdirectory, and only go
 there whenever you need to update the ``git-trac`` command.
 
 

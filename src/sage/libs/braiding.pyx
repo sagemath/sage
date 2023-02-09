@@ -384,7 +384,6 @@ def sliding_circuits(braid):
         [[[0], [2, 1], [1, 2], [2]]],
         [[[0], [1, 2], [2], [2, 1]]],
         [[[0], [2, 1], [1], [1, 2]]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -392,4 +391,3 @@ def sliding_circuits(braid):
     cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
     sig_off()
     return rop
-

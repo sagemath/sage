@@ -899,7 +899,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         ValueError: degree of a random vector must be non-negative, not -9
     """
     if isinstance(ring, (Integer, int)):
-        if not degree is None:
+        if degree is not None:
             arglist = list(args)
             arglist.insert(0, degree)
             args = tuple(arglist)
@@ -1536,10 +1536,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = vector(QQ['x,y'], [1..5]); v.change_ring(GF(3))
             (1, 2, 0, 1, 2)
+
+        TESTS:
+
+        Check for :trac:`29630`::
+
+            sage: v = vector(QQ, 4, {0:1}, sparse=True)
+            sage: v.change_ring(AA).is_sparse()
+            True
         """
         if self.base_ring() is R:
             return self
         M = self._parent.change_ring(R)
+        if M.is_sparse():
+            return M(self.dict(), coerce=True)
         return M(self.list(), coerce=True)
 
     def coordinate_ring(self):
@@ -4371,7 +4381,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: w.pairwise_product(v)
             (2*x^2, x^3, 3*x^2 + 9*x)
         """
-        if not right._parent is left._parent:
+        if right._parent is not left._parent:
             right = left.parent().ambient_module()(right)
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
