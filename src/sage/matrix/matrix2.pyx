@@ -4879,7 +4879,7 @@ cdef class Matrix(Matrix1):
         else:
             K = ambient.submodule_with_basis(M.rows(), already_echelonized=False, check=False)
 
-        verbose("done computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1, t=tm)
+        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1, t=tm)
         self.cache('right_kernel', K)
         return K
 
