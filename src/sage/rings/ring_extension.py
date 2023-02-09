@@ -429,7 +429,8 @@ class RingExtensionFactory(UniqueFactory):
             if defining_morphism is None and isinstance(base, RingExtension_generic):
                 backend_base = base._backend
                 if ring.has_coerce_map_from(backend_base):
-                    defining_morphism = RingExtensionHomomorphism(base.Hom(ring), ring.coerce_map_from(backend_base))
+                    bHr = base.Hom(ring)
+                    defining_morphism = bHr.__make_element_class__(RingExtensionHomomorphism)(bHr, ring.coerce_map_from(backend_base))
             if defining_morphism is None:
                 raise ValueError(f"No coercion map from {base} to {ring}")
             if canonical_backend is None:
@@ -592,7 +593,8 @@ class RingExtension_generic(CommutativeAlgebra):
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
-        self._defining_morphism = RingExtensionHomomorphism_baseinclusion(base.Hom(self))
+        bHs = base.Hom(self)
+        self._defining_morphism = bHs.__make_element_class__(RingExtensionHomomorphism_baseinclusion)(bHs)
         self._print_options = print_options.copy()
         if 'over' not in self._print_options:
             self._print_options['over'] = ZZ(0)
@@ -610,8 +612,10 @@ class RingExtension_generic(CommutativeAlgebra):
 
         self.register_coercion(self._defining_morphism.__copy__())
 
-        self._from_backend_morphism = RingExtensionBackendIsomorphism(ring.Hom(self))
-        self._to_backend_morphism = RingExtensionBackendReverseIsomorphism(self.Hom(ring))
+        rHs = ring.Hom(self)
+        sHr = self.Hom(ring)
+        self._from_backend_morphism = rHs.__make_element_class__(RingExtensionBackendIsomorphism)(rHs)
+        self._to_backend_morphism = sHr.__make_element_class__(RingExtensionBackendReverseIsomorphism)(sHr)
 
         if canonical_backend:
             self.register_coercion(self._from_backend_morphism)
@@ -807,7 +811,7 @@ class RingExtension_generic(CommutativeAlgebra):
         TESTS::
 
             sage: E = QQ.over(ZZ)
-            sage: E.print_options(over=-2)
+            sage: E.print_options(over=-2) # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: 'over' must be nonnegative
@@ -1056,7 +1060,8 @@ class RingExtension_generic(CommutativeAlgebra):
                 g = self._backend_defining_morphism * base_map
                 if not are_different_morphisms(f, g):
                     back_map = self._from_backend_morphism * back_map
-                    return RingExtensionHomomorphism(right.Hom(self), back_map)
+                    rHs = right.Hom(self)
+                    return rHs.__make_element_class__(RingExtensionHomomorphism)(rHs, back_map)
 
     def base(self):
         r"""
@@ -1419,7 +1424,7 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: K = GF(625, 'a').over()
             sage: a = K.gen()
             sage: R.<x> = K[]
-            sage: (x^2 - a^14).factor()
+            sage: (x^2 - a^14).factor() # indirect doctest
             (x + 2 + a + 3*a^2 + a^3) * (x + 3 - a + 2*a^2 - a^3)
             sage: a^7
             3 - a + 2*a^2 - a^3
@@ -1808,13 +1813,15 @@ class RingExtension_generic(CommutativeAlgebra):
             if isinstance(self._base, RingExtension_generic):
                 base = self._base.fraction_field(extend_base)
                 backend = defining_morphism.codomain()
-                defining_morphism = RingExtensionHomomorphism(base.Hom(backend), defining_morphism)
+                bHb = base.Hom(backend)
+                defining_morphism = bHb.__make_element_class__(RingExtensionHomomorphism)(bHb, defining_morphism)
         else:
             if self.is_field():
                 defining_morphism = None
             else:
                 backend = self._backend.fraction_field()
-                defining_morphism = RingExtensionHomomorphism(self.Hom(backend), backend.coerce_map_from(self._backend))
+                sHb = self.Hom(backend)
+                defining_morphism = sHb.__make_element_class__(RingExtensionHomomorphism)(sHb, backend.coerce_map_from(self._backend))
         return defining_morphism
 
     def _Hom_(self, codomain, category):
@@ -1905,7 +1912,7 @@ class RingExtension_generic(CommutativeAlgebra):
             ...
             ValueError: There is no coercion from base ring to codomain; try specifying base_map
 
-        What we need is to specify a base map::
+        What we need is to specify a base map which is compatible with our choice of img::
 
             sage: imga = a.minpoly().any_root(M)
             sage: base_map = K.hom([imga])
@@ -2000,14 +2007,6 @@ class RingExtension_generic(CommutativeAlgebra):
             Frobenius endomorphism x |--> x^11 of Fraction Field of Univariate Polynomial Ring in X over Finite Field of size 11 over its base
         """
         return self._backend.characteristic()
-
-    def hom_backend(self, im_gens, codomain=None, base_map=None, category=None, check=True):
-        """
-        """
-        backend, from_backend, to_backend = backend_parent(self, map=True)
-        mor = backend.hom(im_gens, codomain=codomain, base_map=base_map, category=category, check=check)
-        parent = self.Hom(codomain, category=category)
-        return RingExtensionHomomorphism(parent, mor)
 
 # Fraction fields
 #################
@@ -2249,6 +2248,48 @@ class RingExtensionWithBasis(RingExtension_generic):
         else:
             return len(self._basis) * self._base._degree_over(base)
 
+    def dimension(self, base=None):
+        """
+        The dimension of this ring extension over ``base``.
+
+        INPUT:
+
+        - ``base`` -- a commutative ring (which might be itself an
+          extension) or ``None`` (default: ``None``)
+
+        EXAMPLES::
+
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: B.<b> = QQ.extension(x^6 - 2)
+            sage: f = A.hom([b^3])
+            sage: E = B.over(f)
+            sage: E.dimension()
+            3
+        """
+        if base is None:
+            base = self._base
+        return self._degree_over(base)
+
+    def rank(self, base=None):
+        """
+        The dimension of this ring extension over ``base``.
+
+        INPUT:
+
+        - ``base`` -- a commutative ring (which might be itself an
+          extension) or ``None`` (default: ``None``)
+
+        EXAMPLES::
+
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: B.<b> = QQ.extension(x^6 - 2)
+            sage: f = A.hom([b^3])
+            sage: E = B.over(f)
+            sage: E.rank()
+            3
+        """
+        return self.dimension()
+
     def _is_finite_over(self, base):
         r"""
         Return whether or not this extension is finite over ``base``.
@@ -2344,7 +2385,7 @@ class RingExtensionWithBasis(RingExtension_generic):
 
             sage: A.<a> = QQ.extension(x^3 - 2)
             sage: K.<u> = A.over()
-            sage: K.basis_over()
+            sage: K.basis_over() # indirect doctest
             [1, u, u^2]
         """
         if base is self:
@@ -2467,16 +2508,44 @@ class RingExtensionWithBasis(RingExtension_generic):
             sage: K = GF(7^5).over()
             sage: L = GF(7^15).over(K)
             sage: for base in L.bases():
-            ....:     V, i, j = L.free_module(base)
+            ....:     V, i, j = L.free_module(base) # indirect doctest
             ....:     assert([ i(v) for v in V.basis() ] == L.basis_over(base))
             ....:     assert([ j(x) for x in L.basis_over(base) ] == V.basis())
 
         """
         d = self._degree_over(base)
         if map:
-            return base**d, MapFreeModuleToRelativeRing(self, base), MapRelativeRingToFreeModule(self, base)
+            V = base**d
+            VHs = V.Hom(self)
+            sHV = self.Hom(V)
+            return (V,
+                    VHs.__make_element_class__(MapFreeModuleToRelativeRing)(VHs),
+                    sHV.__make_element_class__(MapRelativeRingToFreeModule)(sHV))
         else:
             return base**d
+
+    def coordinates(self, x, base=None):
+        """
+        The coordinates of an element in terms of the basis.
+
+        INPUT:
+
+        - ``x`` -- an element of this ring extension
+
+        - ``base`` -- a commutative ring, one of the (iterative) bases of this ring extension
+
+        EXAMPLES::
+
+            sage: K = GF(7^5).over()
+            sage: L = GF(7^15).over(K)
+            sage: x = L.random_element()
+            sage: coords = L.coordinates(x)
+            sage: basis = L.basis_over()
+            sage: x == sum(c*v for (c, v) in zip(coords, basis))
+            True
+        """
+        V, from_V, to_V = self.free_module(base, map=True)
+        return list(to_V(x))
 
     @cached_method
     def fraction_field(self, extend_base=False):
