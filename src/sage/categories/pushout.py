@@ -2880,7 +2880,7 @@ class QuotientFunctor(ConstructionFunctor):
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + 2, y^2 + 3*x)
 
         Note that the ``quo()`` method of a field used to return the
-        integer zero. That strange behaviour was removed in trac
+        integer zero. That strange behaviour was removed in github
         issue :trac:`9138`. It now returns a trivial quotient ring
         when applied to a field::
 
