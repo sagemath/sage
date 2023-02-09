@@ -1,6 +1,6 @@
 cd src/
 
-# Use newer version of config.guess and config.sub (see Trac #19713)
+# Use newer version of config.guess and config.sub (see Github issue #19713)
 cp "$SAGE_ROOT"/config/config.* .
 
 # Note: The following doesn't work with spaces in `$SAGE_LOCAL`, but we don't

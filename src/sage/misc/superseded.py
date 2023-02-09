@@ -49,7 +49,7 @@ def _check_issue_number(issue_number):
         Traceback (most recent call last):
         ...
         ValueError: 0 is not a valid github issue number
-        sage: _vcheck_issue_number(int(10))
+        sage: _check_issue_number(int(10))
         sage: _check_issue_number(10.0)
         Traceback (most recent call last):
         ...

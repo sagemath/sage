@@ -187,7 +187,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-repl/requirements.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
-# same for old locations - before Trac #31577
+# same for old locations - before Issue #31577
 /build/pkgs/*/src/build
 /build/pkgs/*/src/dist
 /build/pkgs/*/src/MANIFEST
