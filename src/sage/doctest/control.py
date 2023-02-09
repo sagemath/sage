@@ -131,6 +131,7 @@ class DocTestDefaults(SageObject):
         self.target_walltime = -1
         self.baseline_stats_path = None
         self.asv_stats_path = None
+        self.use_asv = False
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
