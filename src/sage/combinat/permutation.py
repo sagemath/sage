@@ -5275,6 +5275,8 @@ class Permutation(CombinatorialElement):
         Return all k-th roots of self (as a generator).
         
         A k-th root of the permutation self is a permutation Gamma such that Gamma^k == self.
+
+        Note that the number of k-th roots only depend on the cyclic type of `self`.
         
         INPUT:
         
@@ -5385,6 +5387,8 @@ class Permutation(CombinatorialElement):
         Decide if ``self`` has a k-th roots.
         
         A k-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^k = self`.
+
+        Note that the number of k-th roots only depend on the cyclic type of `self`.
         
         INPUT:
         
@@ -5441,7 +5445,7 @@ class Permutation(CombinatorialElement):
         for m in Cycles:
             N = Cycles[m]
             parts = [x for x in divisors(k) if gcd(m*x, k) == x]
-            if len(Partitions(N, parts_in=parts)):
+            if not len(Partitions(N, parts_in=parts)):
                 return False
         return True
 
@@ -5450,7 +5454,9 @@ class Permutation(CombinatorialElement):
         Return the number of k-th roots of ``self``.
         
         A k-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^k = self`.
-        
+
+        Note that the number of k-th roots only depend on the cyclic type of `self`.
+
         INPUT:
         
         - k -- optional integer (default 2), at least 1
