@@ -5270,7 +5270,7 @@ class Permutation(CombinatorialElement):
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
 
 
-    def kth_roots(self,k=2):
+    def kth_roots(self, k=2):
         r"""
         Return all k-th roots of self (as a generator).
         
@@ -5286,7 +5286,7 @@ class Permutation(CombinatorialElement):
             sage: list(Sigma.kth_roots(3))
             [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1], [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5], [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
             
-            sage: Sigma = Permutation('(1,3)')
+            sage: Sigma = Permutation('(1, 3)')
             sage: list(Sigma.kth_roots())
             []
         
@@ -5313,14 +5313,14 @@ class Permutation(CombinatorialElement):
             ValueError: k must be at least 1
         """
         
-        from sage.combinat.partition import integer_partitions_with_given_parts
+        from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
         from sage.categories.cartesian_product import cartesian_product
         from sage.arith.misc import divisors, gcd
 
         def merging_cycles(list_of_cycles):
             """
-            Generate all l-cycles such that its k-th power is the product of cycles in Cycles (which conctains gcd(l,k) cycles of lenght l/gcd(l,k))
+            Generate all l-cycles such that its k-th power is the product of cycles in Cycles (which conctains gcd(l, k) cycles of lenght l/gcd(l, k))
             """
             lC = len(list_of_cycles)
             lperm = len(list_of_cycles[0])
@@ -5329,15 +5329,15 @@ class Permutation(CombinatorialElement):
             for j in range(lperm):
                 Perm[j*lC] = list_of_cycles[0][j]
             for p in Permutations(lC-1):
-                for indexes in cartesian_product([range(lperm) for _ in range(lC-1)]):
+                for indices in cartesian_product([range(lperm) for _ in range(lC-1)]):
                     new_Perm = list(Perm)
                     for i in range(lC-1):
                         for j in range(lperm):
-                            new_Perm[(p[i] + (indexes[i]+j)*lC) %l] = list_of_cycles[i+1][j]
+                            new_Perm[(p[i] + (indices[i]+j)*lC) %l] = list_of_cycles[i+1][j]
                     gamma = Permutation(tuple(new_Perm))
                     yield gamma
 
-        def rewind(L,k):
+        def rewind(L, k):
             """
             Construct the list M such that M[(j*k)%(len(M))] == L[j].
             """
@@ -5364,14 +5364,14 @@ class Permutation(CombinatorialElement):
         Possibilities = {m: [] for m in Cycles}
         for m in Cycles:
             N = len(Cycles[m])
-            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
+            parts = [x for x in divisors(k) if gcd(m*x, k) == x]
             b = False
-            for X in integer_partitions_with_given_parts(N,parts):
-                for partition in SetPartitions(N,X):
+            for X in Partitions(N, parts_in=parts):
+                for partition in SetPartitions(N, X):
                     b = True
                     poss = [P.identity()]
                     for pa in partition:
-                            poss = [p*q for p in poss for q in merging_cycles([rewind(Cycles[m][i-1],k//len(pa)) for i in pa])]
+                            poss = [p*q for p in poss for q in merging_cycles([rewind(Cycles[m][i-1], k//len(pa)) for i in pa])]
                     Possibilities[m] += poss
             if not b:
                 return
@@ -5380,7 +5380,7 @@ class Permutation(CombinatorialElement):
         for L in cartesian_product(Possibilities.values()):
             yield P.prod(L)
 
-    def has_kth_root(self,k=2):
+    def has_kth_root(self, k=2):
         r"""
         Decide if ``self`` has a k-th roots.
         
@@ -5396,7 +5396,7 @@ class Permutation(CombinatorialElement):
             sage: Sigma.has_kth_root(3)
             True
             
-            sage: Sigma = Permutation('(1,3)')
+            sage: Sigma = Permutation('(1, 3)')
             sage: Sigma.has_kth_root()
             False
         
@@ -5409,7 +5409,7 @@ class Permutation(CombinatorialElement):
             
         We compute the number of permutations that have square roots (i.e. squares in `S_n`, :oeis:`A003483`)::
             
-            sage: [len([p for p in Permutations(n) if p.has_kth_root()]) for n in range(2,7)]
+            sage: [len([p for p in Permutations(n) if p.has_kth_root()]) for n in range(2, 7)]
             [1, 3, 12, 60, 270]
             
             sage: Permutation('(1)').has_kth_root()
@@ -5421,25 +5421,9 @@ class Permutation(CombinatorialElement):
             ValueError: k must be at least 1
         """
 
+        from sage.combinat.partition import Partitions
         from sage.arith.misc import divisors, gcd
 
-        def has_integer_partitions_with_given_parts(N,Parts):
-            """
-            Generate all lists L with sum(L) == N and L[i] in Parts. If decreasing_order, then L with be non-increasing.
-            """
-            parts = list(Parts)
-            front = [(N,[],0)]
-            lp = len(parts)
-            while len(front) != 0:
-                M,L,i = front.pop()
-                for j in range(i,lp):
-                    new_M = M - parts[j]
-                    if new_M > 0:
-                        front.insert(0,(new_M, L+[parts[j]], j))
-                    elif new_M == 0:
-                        return True
-            return False
-        
         if k < 1:
             raise ValueError('k must be at least 1')
         
@@ -5456,12 +5440,12 @@ class Permutation(CombinatorialElement):
         # for each length m, check if the number of m-cycles can come from a k-th power (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l,k))
         for m in Cycles:
             N = Cycles[m]
-            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
-            if not has_integer_partitions_with_given_parts(N,parts):
+            parts = [x for x in divisors(k) if gcd(m*x, k) == x]
+            if (Partitions(N, parts_in=parts)):
                 return False
         return True
 
-    def number_of_kth_roots(self,k=2):
+    def number_of_kth_roots(self, k=2):
         r"""
         Return the number of k-th roots of ``self``.
         
@@ -5477,7 +5461,7 @@ class Permutation(CombinatorialElement):
             sage: Sigma.number_of_kth_roots(3)
             21
             
-            sage: Sigma = Permutation('(1,3)')
+            sage: Sigma = Permutation('(1, 3)')
             sage: Sigma.number_of_kth_roots()
             0
         
@@ -5490,10 +5474,10 @@ class Permutation(CombinatorialElement):
             
         We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`), then the number of cubic roots::
             
-            sage: [Permutations(n).identity().number_of_kth_roots() for n in range(2,10)]
+            sage: [Permutations(n).identity().number_of_kth_roots() for n in range(2, 10)]
             [2, 4, 10, 26, 76, 232, 764, 2620]
             
-            sage: [Permutations(n).identity().number_of_kth_roots(3) for n in range(2,10)]
+            sage: [Permutations(n).identity().number_of_kth_roots(3) for n in range(2, 10)]
             [1, 3, 9, 21, 81, 351, 1233, 5769]
             
             sage: Permutation('(1)').number_of_kth_roots()
@@ -5505,7 +5489,7 @@ class Permutation(CombinatorialElement):
             ValueError: k must be at least 1
         """
         
-        from sage.combinat.partition import integer_partitions_with_given_parts
+        from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
         from sage.arith.misc import divisors, gcd
         from sage.misc.misc_c import prod
@@ -5527,11 +5511,11 @@ class Permutation(CombinatorialElement):
         Counts = {m: 0 for m in Cycles}
         for m in Cycles:
             N = Cycles[m]
-            parts = [x for x in divisors(k) if gcd(m*x,k) == x]
+            parts = [x for x in divisors(k) if gcd(m*x, k) == x]
             b = False
-            for partition in integer_partitions_with_given_parts(N,parts,decreasing_order=True):
+            for partition in Partitions(N, parts_in=parts):
                 b = True
-                count = SetPartitions(N,partition).cardinality()
+                count = SetPartitions(N, partition).cardinality()
                 for x in partition:
                     count *= factorial(x-1) * m**(x-1)
                 Counts[m] += count
