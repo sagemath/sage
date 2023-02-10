@@ -884,6 +884,7 @@ def contour_plot(f, xrange, yrange, **options):
         Graphics object consisting of 1 graphics primitive
 
     """
+    print("******my changes are being reflected******")
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
 
