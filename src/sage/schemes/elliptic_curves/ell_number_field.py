@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-r"""Elliptic curves over number fields
+r"""
+Elliptic curves over number fields
 
 An elliptic curve `E` over a number field `K` can be given
 by a Weierstrass equation whose coefficients lie in `K` or by
@@ -4069,8 +4070,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return [E(pt) for pt in Curve(self).rational_points(**kwds)]
 
     def is_modular(self, verbose=False):
-        r"""Returns `True` if the base field is totally real and modularity of
-        this curve can be proved, otherwise `False`.
+        r"""
+        Return ``True`` if the base field is totally real or imaginary
+        quadratic and modularity of this curve can be proved,
+        otherwise ``False``.
 
         INPUT:
 
@@ -4078,15 +4081,15 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         .. NOTE::
 
-            When `False` is returned, it does not mean that the curve
+            When ``False`` is returned, it does not mean that the curve
             is not modular!  Only that modularity cannot be proved
             with current knowledge and implemented methods.  It is
-            expected that the return value will be `True` for all
+            expected that the return value will be ``True`` for all
             curves defined over totally real fields, and for all
             defined over imaginary quadratic fields over which the
-            modular curve $X_0(15)$ (with label `15a1`) has rank
+            modular curve `X_0(15)` (with label `15a1`) has rank
             zero.  Any curve defined over totally real fields for
-            which the return value is `False` is of interest, as its
+            which the return value is ``False`` is of interest, as its
             mod `p` Galois representations for the primes 3, 5 and 7
             are simultaneously nonmaximal.
 
@@ -4107,7 +4110,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
         real case, and relies on theorems in the following papers:
         [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_.
 
-        EXAMPLES.  Set ``verbose=True`` to see a reason for the conclusion::
+        EXAMPLES:
+
+        Set ``verbose=True`` to see a reason for the conclusion::
 
             sage: E = EllipticCurve('11a1')
             sage: E.is_modular(verbose=True)
@@ -4173,7 +4178,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         """
         def not_from(group, p, j):
-            return len(_modular_polynomial(group, p, j).roots()) == 0
+            return not _modular_polynomial(group, p, j).roots()
 
         K = self.base_field()
         d = K.degree()
@@ -4233,14 +4238,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return False # We've run out of tricks!
 
 def _modular_polynomial(group, p, j):
-    r"""Helper function for the method :meth:`is_modular`.
+    r"""
+    Helper function for the method :meth:`is_modular`.
 
     INPUT:
 
-    - ``group`` (string) -- one of 'borel', 'split', 'nonsplit'.
-
+    - ``group`` (string) -- one of ``'borel'``, ``'split'``, ``'nonsplit'``.
     - ``p`` (int) -- a prime number, either 3 or 5 or 7.
-
     - ``j`` -- an(algebraic number, the `j`-invariant of an elliptic curve.
 
     OUTPUT:
@@ -4264,15 +4268,30 @@ def _modular_polynomial(group, p, j):
         sage: _modular_polynomial('borel', 5, j)
         x^6 + 30*x^5 + 315*x^4 + 1300*x^3 + 1575*x^2 + 242812186/161051*x + 125
         sage: _modular_polynomial('split', 5, j)
-        x^15 + 30*x^14 + 390*x^13 + 2800*x^12 + 11175*x^11 + 2658577186/161051*x^10 - 8545073600/161051*x^9 - 3318236600/14641*x^8 + 79768901125/161051*x^7 + 950952612750/161051*x^6 + 3261066516250/161051*x^5 + 5917349970000/161051*x^4 + 5381326371875/161051*x^3 + 45039331250/14641*x^2 - 3377861937500/161051*x - 2135097075000/161051
+        x^15 + 30*x^14 + 390*x^13 + 2800*x^12 + 11175*x^11 + 2658577186/161051*x^10 - 8545073600/161051*x^9
+        - 3318236600/14641*x^8 + 79768901125/161051*x^7 + 950952612750/161051*x^6 + 3261066516250/161051*x^5
+        + 5917349970000/161051*x^4 + 5381326371875/161051*x^3 + 45039331250/14641*x^2 - 3377861937500/161051*x
+        - 2135097075000/161051
         sage: _modular_polynomial('nonsplit', 5, j)
-        43605793936/161051*x^10 + 609382899680/161051*x^9 + 3805439994680/161051*x^8 + 13957069930640/161051*x^7 + 33226111304085/161051*x^6 + 4866186482686/14641*x^5 + 58961494233415/161051*x^4 + 43734191948140/161051*x^3 + 20843516212195/161051*x^2 + 5741876955930/161051*x + 690283481689/161051
+        43605793936/161051*x^10 + 609382899680/161051*x^9 + 3805439994680/161051*x^8 + 13957069930640/161051*x^7
+        + 33226111304085/161051*x^6 + 4866186482686/14641*x^5 + 58961494233415/161051*x^4 + 43734191948140/161051*x^3
+        + 20843516212195/161051*x^2 + 5741876955930/161051*x + 690283481689/161051
         sage: _modular_polynomial('borel', 7, j)
         x^8 + 28*x^7 + 322*x^6 + 1904*x^5 + 5915*x^4 + 8624*x^3 + 4018*x^2 + 242490084/161051*x + 49
         sage: _modular_polynomial('split', 7, j)
-        x^28 - 42*x^27 + 819*x^26 - 9842*x^25 + 81543*x^24 - 493416*x^23 + 2251424*x^22 - 1268191320692/161051*x^21 + 3410611518671/161051*x^20 - 6947130862854/161051*x^19 + 10098387132407/161051*x^18 - 8011521604618/161051*x^17 - 509395128662/14641*x^16 + 32582181402218/161051*x^15 - 62691210143713/161051*x^14 + 73259301822126/161051*x^13 - 46379791168053/161051*x^12 - 6277600417172/161051*x^11 + 46742832789352/161051*x^10 - 49641085864608/161051*x^9 + 2343504014803/14641*x^8 - 861578737314/161051*x^7 - 12167703919007/161051*x^6 + 14278547318070/161051*x^5 - 9423834664881/161051*x^4 + 3112085963896/161051*x^3 - 457632005824/161051*x^2 + 30845635072/161051*x + 122023936/161051
+        x^28 - 42*x^27 + 819*x^26 - 9842*x^25 + 81543*x^24 - 493416*x^23 + 2251424*x^22 - 1268191320692/161051*x^21
+        + 3410611518671/161051*x^20 - 6947130862854/161051*x^19 + 10098387132407/161051*x^18 - 8011521604618/161051*x^17
+        - 509395128662/14641*x^16 + 32582181402218/161051*x^15 - 62691210143713/161051*x^14 + 73259301822126/161051*x^13
+        - 46379791168053/161051*x^12 - 6277600417172/161051*x^11 + 46742832789352/161051*x^10 - 49641085864608/161051*x^9
+        + 2343504014803/14641*x^8 - 861578737314/161051*x^7 - 12167703919007/161051*x^6 + 14278547318070/161051*x^5
+        - 9423834664881/161051*x^4 + 3112085963896/161051*x^3 - 457632005824/161051*x^2 + 30845635072/161051*x + 122023936/161051
         sage: _modular_polynomial('nonsplit', 7, j)
-        400320064/161051*x^21 + 13029623152/161051*x^20 + 228088753900/161051*x^19 + 2408913460821/161051*x^18 + 16642817648786/161051*x^17 + 80889087315407/161051*x^16 + 291040779803200/161051*x^15 + 801917686416123/161051*x^14 + 1729396406547138/161051*x^13 + 2959141014912537/161051*x^12 + 4049663724749832/161051*x^11 + 4450611572214360/161051*x^10 + 3931865527421272/161051*x^9 + 2786855392905248/161051*x^8 + 1576387623537152/161051*x^7 + 704811439294144/161051*x^6 + 22297037611520/14641*x^5 + 5896572491264/14641*x^4 + 12558313746944/161051*x^3 + 152158103552/14641*x^2 + 136821293056/161051*x + 5155295232/161051
+        400320064/161051*x^21 + 13029623152/161051*x^20 + 228088753900/161051*x^19 + 2408913460821/161051*x^18
+        + 16642817648786/161051*x^17 + 80889087315407/161051*x^16 + 291040779803200/161051*x^15 + 801917686416123/161051*x^14
+        + 1729396406547138/161051*x^13 + 2959141014912537/161051*x^12 + 4049663724749832/161051*x^11
+        + 4450611572214360/161051*x^10 + 3931865527421272/161051*x^9 + 2786855392905248/161051*x^8
+        + 1576387623537152/161051*x^7 + 704811439294144/161051*x^6 + 22297037611520/14641*x^5 + 5896572491264/14641*x^4
+        + 12558313746944/161051*x^3 + 152158103552/14641*x^2 + 136821293056/161051*x + 5155295232/161051
 
     TESTS::
 
