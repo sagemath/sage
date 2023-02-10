@@ -51,7 +51,6 @@ from dis import findlinestarts
 from queue import Empty
 import gc
 import IPython.lib.pretty
-import base64
 
 import sage.misc.randstate as randstate
 from sage.misc.misc import walltime
@@ -796,9 +795,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         if self.options.use_asv:
             if failures == 0:
                 # We record the timing for this test for speed regression purposes
-                test._sage_walltime = sum(example.walltime for example in test.examples)
+                test.walltime = sum(example.walltime for example in test.examples)
             else:
-                test._sage_walltime = -1
+                test.walltime = -1
 
         # Record and return the number of failures and tries.
         self._DocTestRunner__record_outcome(test, failures, tries)
@@ -1600,19 +1599,18 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 for example in test.examples:
                     # The added sig_on_count() test has no tags
                     if hasattr(example, "optional_tags"):
-                        opts = opts.union(example._sage_optional_tags)
+                        opts = opts.union(example.optional_tags)
                 olist = []
                 if "long" in opts:
                     olist = ["long"]
                     opts.remove("long")
                 olist.extend(sorted(opts))
-                label = "%s|%s|%s" % (name, ','.join(olist), code)
-                return base64.b64encode(label.encode('utf-8')).decode('ascii')
+                return f"{name}|{','.join(olist)}|{code}"
 
             D['asv_times'] = {}
             for test in doctests:
-                if test._sage_walltime > 0: # -1 indicates a failure, 0 means nothing was actually run
-                    D['asv_times'][asv_label(test)] = test._sage_walltime
+                if test.walltime > 0: # -1 indicates a failure, 0 means nothing was actually run
+                    D['asv_times'][asv_label(test)] = test.walltime
         if hasattr(self, 'failures'):
             D['failures'] = self.failures
             return self.failures
