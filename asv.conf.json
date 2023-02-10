@@ -1,10 +1,16 @@
 {
     "version": 1,
-    "project": "sage",
+    "project": "sagemath",
     "project_url": "https://sagemath.org",
     "repo": ".",
-    "plugins": ["sage_asv"],
-    "environment_type": "sage",
+    "environment_type": "conda",
+    "matrix": {},
+    "conda_channels": ["conda-forge", "default"],
+    "build_command": [
+      "echo 'Rebuilding sage for benchmarks is not supported yet. Use `asv run --environment existing --quick` in an environment with a built SageMath instead. Add --set-commit-hash `git rev-parse HEAD` to store timings in the database in .asv/. Note that o actually make this work, the entire installation workflow with conda would need to be added to asv.conf.json and the matrix there populated.'"
+    ],
+    "install_command": [],
+    "uninstall_command": [],
     "env_dir": ".asv/env",
     "results_dir": ".asv/results",
     "html_dir": ".asv/html",

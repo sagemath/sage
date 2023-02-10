@@ -1,128 +1,169 @@
-from sage.all import *
+r"""
+Benchmarks for SageMath
 
-from sage.doctest.control import DocTestDefaults, DocTestController
-from sage.doctest.forker import SageDocTestRunner, DocTestTask
-from sage.doctest.parsing import parse_optional_tags
+This module searches for doctest timings created with ``sage -t
+--asv_stats_path=$SAGE_ASV_STATS`` if the ``$SAGE_ASV_STATS`` environment
+variable is set. For each timing, it dynamically creates a method in a class in
+this module to report that timing to airspeed velocity as configured in
+``asv.conf.json``.
 
-import timeit
-import doctest
+EXAMPLES:
 
-DEFAULTS = DocTestDefaults()
-DEFAULTS.serial = True
-DEFAULTS.long = True
+Since this variable is usually not set, this module does nothing::
 
-PREFIX = 'track__'
+    sage: import sage.benchmark
+    sage: dir(sage.benchmark)
+    ['__builtins__',
+     '__cached__',
+     '__doc__',
+     '__file__',
+     '__loader__',
+     '__name__',
+     '__package__',
+     '__path__',
+     '__spec__',
+     'create_benchmark_class',
+     'create_track_method',
+     'create_trackers_from_doctest_stats',
+     'json',
+     'os']
 
-def myglob(path, pattern):
-    # python 2 does not have support for ** in glob patterns
-    import fnmatch
-    import os
-    
-    matches = []
-    for root, dirnames, filenames in os.walk(path):
-        for filename in fnmatch.filter(filenames, pattern):
-            matches.append(os.path.join(root, filename))
-    return matches
+"""
+# ****************************************************************************
+#       Copyright (C) 2023 Julian Rueth <julian.rueth@fsfe.org>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-class BenchmarkMetaclass(type):
-    _dir = None
+import json
+import os
 
-    def _run(cls, fname=[SAGE_SRC + '/sage/']):
-        old_runner = DocTestTask.runner
-        DocTestTask.runner = BenchmarkRunner
-        try:
-            DocTestController(DEFAULTS, fname).run()
-        finally:
-            DocTestTask.runner = old_runner
 
-    def __dir__(cls):
-        if cls._dir is None:
-            cls._dir = set()
-            BenchmarkRunner._dir = cls._dir
-            cls._run()
-        return list(cls._dir)
+def create_trackers_from_doctest_stats():
+    r"""
+    Create asv-compatible benchmark classes that contain a `track_…` method
+    for each doctest block reported in the log produced by ``sage -t
+    --asv_stats_path=$SAGE_ASV_STATS``
 
-    def __getattr__(cls, name):
-        if not name.startswith(PREFIX):
-            raise AttributeError
-        cls.create_timer(name)
-        return getattr(cls, name)
+    We export these wrappers in this module. These get picked up by asv which
+    will then run these as "benchmarks". Instead of running the doctests to
+    benchmark them, we are just reporting the timings that we collected in a
+    previous doctest run instead.
 
-    def create_timer(cls, name):
-        try:
-            type.__getattr__(cls, name)
-        except AttributeError:
-            def time_doctest(self):
-                BenchmarkRunner._selected = name
-                BenchmarkRunner._time = 0
-                cls._run(myglob(os.path.join(SAGE_SRC,'sage'), BenchmarkRunner.decode(name)+"*.*"))
-                return BenchmarkRunner._time
+    EXAMPLES:
 
-            time_doctest.__name__ = name
-            setattr(cls, name, time_doctest)
+    When ``SAGE_ASV_STATS`` is not set, this creates an empty dict::
 
-class Benchmarks(object):
-    __metaclass__ = BenchmarkMetaclass
+        sage: from sage.benchmark import create_trackers_from_doctest_stats
+        sage: create_trackers_from_doctest_stats()
+        {}
 
-    def __getattr__(self, name):
-        if not name.startswith(PREFIX):
-            raise AttributeError
-        type(self).create_timer(name)
-        return getattr(self, name)
+    """
+    stats_file = os.environ.get("SAGE_ASV_STATS", None)
+    if not stats_file:
+        return {}
 
-class BenchmarkRunner(SageDocTestRunner):
-    _selected = None
-    _dir = set()
-    _time = None
+    runs_by_module = json.load(open(stats_file))
 
-    @classmethod
-    def encode(cls, prefix, filename, name, digest):
-        module = os.path.splitext(os.path.basename(filename))[0]
-        method = name.split('.')[-1]
-        return PREFIX+module+"__"+method+"__"+digest
+    return {
+        module: create_benchmark_class(module, runs)
+        for (module, runs) in runs_by_module.items()
+    }
 
-    @classmethod
-    def decode(cls, name):
-        # This is not the full file name but only the bit up to the first _.
-        # But that's good enough as we later seach for this with a glob pattern
-        return name.split("__")[1]
 
-    def run(self, test, clear_globs=True, *args, **kwargs):
-        self._do_not_run_tests = True
-        super(BenchmarkRunner, self).run(test, *args, clear_globs=False, **kwargs)
+def create_benchmark_class(name, runs):
+    r"""
+    Return an ASV compatible benchmark class called `name` that pretends to
+    perform the ``runs`` representing all the doctests of a module.
 
-        name = BenchmarkRunner.encode(PREFIX, test.filename, test.name, self.running_doctest_digest.hexdigest())
-        if name not in BenchmarkRunner._dir:
-            for example in test.examples:
-                if isinstance(example, doctest.Example):
-                    if "long time" in parse_optional_tags(example.source):
-                        BenchmarkRunner._dir.add(name)
-                        break
+    EXAMPLES::
 
-        self._do_not_run_tests = False
-        if type(self)._selected is not None:
-            if name == type(self)._selected:
-                pass
-            else:
-                self._do_not_run_tests = True
-            if not self._do_not_run_tests:
-                super(BenchmarkRunner, self).run(test, *args, clear_globs=clear_globs, **kwargs)
-                return 
+        sage: from sage.benchmark import create_benchmark_class
+        sage: benchmark = create_benchmark_class("sage.rings.padics.padic_generic", [
+        ....:     ["", [], "pass", 1.337],
+        ....:     ["pAdicGeneric.some_elements", ["long", "meataxe"], "pass\npass", 13.37]
+        ....: ])
+        sage: dir(benchmark)
+        [...
+         'track_[sage.rings.padics.padic_generic]',
+         'track_pAdicGeneric.some_elements[long,meataxe]']
 
-    def compile_and_execute(self, example, compiler, globs, *args, **kwargs):
-        if self._do_not_run_tests:
-            compiler = lambda example: compile("print(%s.encode('utf8'))"%(repr(example.want),), "want.py", "single")
-            super(BenchmarkRunner, self).compile_and_execute(example, compiler, globs, *args, **kwargs)
-        else:
-            compiled = compiler(example)
-            # TODO: According to https://asv.readthedocs.io/en/latest/writing_benchmarks.html, time.process_time would be better here but it's not available in Python 2
-            start = timeit.default_timer()
-            exec(compiled, globs)
-            end = timeit.default_timer()
-            type(self)._time += end-start
+    """
+    class Benchmark:
+        pass
 
-class BenchmarkRunningRunner(SageDocTestRunner):
-    def run(self, test, *args, **kwargs):
-        print(test,BenchmarkRunningRunner._test)
-        if test == BenchmarkRunningRunner._test:
-            super(BenchmarkRunningRunner).run(test, *args, **kwargs)
+    # asv groups entries by top-level package name, so everything goes into "sage".
+    # To break this logic, we replace "." with a One Dot Leader character that
+    # looks similar.
+    Benchmark.__name__ = name.replace(".", "․")
+
+    for identifier, flags, source, time in runs:
+        method = "track_" + (identifier or f"[{name}]")
+        if flags:
+            method += "[" + ",".join(flags) + "]"
+
+        if hasattr(Benchmark, method):
+            raise NotImplementedError(f"cannot merge duplicate results for {identifier} with {flags}")
+
+        setattr(Benchmark, method, create_track_method(name, identifier, flags, source, time))
+
+    return Benchmark
+
+
+def create_track_method(module, identifier, flags, source, time):
+    r"""
+    Return a function that can be added as a method of a benchmark class.
+
+    The method returns tracking results that will be picked up by asv as timing
+    benchmark results.
+
+    EXAMPLES::
+
+        sage: from sage.benchmark import create_track_method
+        sage: method = create_track_method("sage.rings.padics.padic_generic", "", [], "pass", 1.337)
+        sage: method.pretty_name
+        '[sage.rings.padics.padic_generic]'
+        sage: method.pretty_source
+        'pass'
+        sage: method(None)
+        1337.00000000000
+
+    ::
+
+        sage: method = create_track_method("sage.rings.padics.padic_generic", "pAdicGeneric.some_elements", ["long", "meataxe"], "pass\npass", 13.37)
+        sage: method.pretty_name
+        'pAdicGeneric.some_elements'
+        sage: print(method.pretty_source)
+        # with long, meataxe
+        pass
+        pass
+        sage: method(None)
+        13370.0000000000
+
+    """
+    def method(self):
+        return time * 1e3
+
+    method.unit = "ms"
+
+    # We do not need to run this "benchmark" more than once; we are just
+    # reporting the same static data every time.
+    method.repeat = 1
+    method.number = 1
+    method.min_run_count = 1
+
+    # The doctest of a module itself has no identifier, so we write the module name instead.
+    method.pretty_name = identifier or f"[{module}]"
+
+    method.pretty_source=source
+    if flags:
+        method.pretty_source = f"# with {', '.join(flags)}\n" + method.pretty_source
+
+    return method
+
+
+locals().update(create_trackers_from_doctest_stats())
