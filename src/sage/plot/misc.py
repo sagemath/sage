@@ -136,9 +136,13 @@ def setup_for_eval_on_grid(funcs,
         ranges = [r[1:] for r in ranges]
         if len(set(vars)) < len(vars):
             raise ValueError("range variables should be distinct, but there are duplicates")
-    print("is this working?")
-    if (ranges[0][-2]>ranges[0][-1]) or (ranges[1][-2]>ranges[1][-1]):
-        raise ValueError("xmin>xmax or ymin>ymax")
+    
+    #to check if range is correctly defined by user. gives error is xmin>xmax or ymin>ymax
+    if (ranges[0][-2]>ranges[0][-1]):
+        raise ValueError("Range not correctly defined. xmin>xmax")
+
+    if (ranges[1][-2]>ranges[1][-1]):
+        raise ValueError("Range not correctly defined. ymin>ymax")
     
     else:
         vars, free_vars = unify_arguments(funcs)
