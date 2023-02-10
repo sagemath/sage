@@ -849,7 +849,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         z = [ring.zero()] * nrays
         for i, value in zip(nonzero_coordinates, z_nonzero):
             z[i] = value
-        return [poly(z) for poly in self.polynomials]
+        return [poly.change_ring(ring)(z) for poly in self.polynomials]
 
     def solutions_serial(self, inhomogeneous_equations, log_range):
         """
