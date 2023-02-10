@@ -1,4 +1,4 @@
-from sage.structure.element cimport AlgebraElement, Vector
+from sage.structure.element cimport AlgebraElement, Element, Vector
 from sage.matrix.matrix cimport Matrix
 
 cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
