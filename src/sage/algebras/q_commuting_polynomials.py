@@ -627,7 +627,6 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
 
         # This could be made more efficient
         B = self._B
-        n = len(y)
         qpow = sum(exp * sum(B[j, i] * y[j] for j in range(i)) for i, exp in enumerate(x) if exp)
         ret = x + y
         ret.set_immutable()
