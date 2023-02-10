@@ -5441,7 +5441,7 @@ class Permutation(CombinatorialElement):
         for m in Cycles:
             N = Cycles[m]
             parts = [x for x in divisors(k) if gcd(m*x, k) == x]
-            if (Partitions(N, parts_in=parts)):
+            if len(Partitions(N, parts_in=parts)):
                 return False
         return True
 
