@@ -1605,7 +1605,14 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     olist = ["long"]
                     opts.remove("long")
                 olist.extend(sorted(opts))
-                return f"{name}|{','.join(olist)}|{code}"
+
+                import tempfile
+                tmp, fname = tempfile.mkstemp()
+                import os
+                tmp = os.fdopen(tmp, 'w')
+                tmp.write(f"{name}|{','.join(olist)}|{code}")
+                tmp.close()
+                return fname
 
             D['asv_times'] = {}
             for test in doctests:
