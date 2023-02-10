@@ -38,6 +38,7 @@ AUTHORS:
 from sys import stdout
 from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
                     SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
+import base64
 from sage.structure.sage_object import SageObject
 from sage.doctest.util import count_noun
 from sage.doctest.sources import DictAsObject
@@ -505,6 +506,9 @@ class DocTestReporter(SageObject):
                     if options.use_asv:
                         asv = []
                         for label, time in result_dict.asv_times.items():
+                            # We encoded the label in weird ways
+                            label = base64.b64decode(label.encode('ascii')).decode('utf-8')
+                            #print(label)
                             name, opts, code = label.split("|", 2)
                             if name.startswith(basename):
                                 name = name[len(basename):]
