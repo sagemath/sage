@@ -8,6 +8,11 @@ on:
     types:
       - completed
 
+permissions:
+  statuses: write
+  checks: write
+  pull-requests: write
+
 jobs:
   upload-docs:
     runs-on: ubuntu-latest
