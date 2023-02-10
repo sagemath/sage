@@ -1994,7 +1994,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))

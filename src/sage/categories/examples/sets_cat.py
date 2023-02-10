@@ -160,7 +160,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     datastructure will then be constructed by inheriting from
     :class:`PrimeNumbers_Abstract`.
 
-    This is used by:
+    This is used by::
 
         sage: P = Sets().example("facade")
         sage: P = Sets().example("inherits")

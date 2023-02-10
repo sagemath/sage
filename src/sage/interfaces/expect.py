@@ -1181,15 +1181,13 @@ If this all works, you can then make calls like:
             sage: singular._sendstr('def abc = 10 + 15;\n')
 
         Then we tell singular to print 10, which is an arbitrary number
-        different from the expected result 35.
+        different from the expected result 35::
 
             sage: singular._sendstr('10;\n')
 
         Here an exception is raised because 25 hasn't appeared yet in the
         output stream. The key thing is that this doesn't lock, but instead
-        quickly raises an exception.
-
-        ::
+        quickly raises an exception::
 
             sage: t = walltime()
             sage: try:
@@ -1203,21 +1201,15 @@ If this all works, you can then make calls like:
             sage: w = walltime(t); 0.3 < w < 10
             True
 
-        We tell Singular to print abc, which equals 25.
-
-        ::
+        We tell Singular to print abc, which equals 25::
 
             sage: singular._sendstr('abc;\n')
 
-        Now 25 is in the output stream, so we can wait for it.
-
-        ::
+        Now 25 is in the output stream, so we can wait for it::
 
             sage: singular._expect_expr('25')
 
-        This gives us everything before the 25, including the 10 we printed earlier.
-
-        ::
+        This gives us everything before the 25, including the 10 we printed earlier::
 
             sage: singular._expect.before.decode('ascii')
             '...10\r\n> '

@@ -3783,7 +3783,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0,  0, 0)
             in 3-d lattice M
 
-        Only two of the above points:
+        Only two of the above points::
 
             sage: p.points(1, 3)                                                # optional - palp
             M(0,  1, 0),

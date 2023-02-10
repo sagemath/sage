@@ -1935,7 +1935,7 @@ def sqrt(x, *args, **kwds):
         sage: sqrt(2).n(prec=100)
         1.4142135623730950488016887242
 
-    Or one can input a numerical type.
+    Or one can input a numerical type::
 
         sage: sqrt(2.)
         1.41421356237310

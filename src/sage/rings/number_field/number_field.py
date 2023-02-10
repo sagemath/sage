@@ -1708,7 +1708,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             a^2
 
         An error is raised when a PARI element with an incorrect
-        modulus is given:
+        modulus is given::
 
             sage: K(pari("Mod(-5/3*q^2 + 5/3*q - 1/6, q^3 - 999)"))
             Traceback (most recent call last):
@@ -8693,8 +8693,8 @@ class NumberField_absolute(NumberField_generic):
             (Number Field in a0 with defining polynomial x^2 - 23 with a0 = -4.795831523312720?,
              -4.795831523312719)
 
-            If we take a different embedding of the large field, we get a
-            different embedding of the degree 2 subfield::
+        If we take a different embedding of the large field, we get a
+        different embedding of the degree 2 subfield::
 
             sage: K.<a> = NumberField(x^4 - 23, embedding=-50)
             sage: L2, _, _ = K.subfields(2)[0]; L2, CDF(L2.gen()) # indirect doctest

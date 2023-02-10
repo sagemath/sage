@@ -1413,7 +1413,7 @@ def inject_variable(name, value, warn=True):
         sage: a
         272
 
-    That's because warn seem to not reissue twice the same warning:
+    That's because warn seem to not reissue twice the same warning::
 
         sage: from warnings import warn
         sage: warn("blah")

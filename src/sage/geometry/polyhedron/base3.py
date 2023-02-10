@@ -604,7 +604,7 @@ class Polyhedron_base3(Polyhedron_base2):
               A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
               A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices]
 
-        Check that we catch incorrect algorithms:
+        Check that we catch incorrect algorithms::
 
              sage: list(P.face_generator(2, algorithm='integrate'))[:4]
              Traceback (most recent call last):

@@ -158,7 +158,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x, y) to
                     ((5*x^3 + 3*x*y^2 - y^3)/(x^3 - 1), (x^2*y + 3)/(x^3 - 1))
 
-            If you pass in quotient ring elements, they are reduced::
+        If you pass in quotient ring elements, they are reduced::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: X = A.subscheme([x-y])
@@ -171,7 +171,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x, y, z) to
                     (y, y, 2*y)
 
-            You must use the ambient space variables to create rational functions::
+        You must use the ambient space variables to create rational functions::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: X = A.subscheme([x^2-y^2])
