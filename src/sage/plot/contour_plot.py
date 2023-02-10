@@ -891,18 +891,6 @@ def contour_plot(f, xrange, yrange, **options):
     region = options.pop('region')
     ev = [f] if region is None else [f, region]
 
-    #check for range correctnes
-    #xmin<xmax, ymin<ymax
-    #if not satisfied, give error
-
-    xmin, xmax = xrange[-2:][0], xrange[-2:][1]
-    ymin, ymax = xrange[-2:][0], xrange[-2:][1]
-
-    if xmin>xmax:
-        raise ValueError('xmin < xmax not satisfied')
-    if ymin>ymax:
-        raise ValueError('ymin < ymax not satisfied')
-
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
     h = F[0]
@@ -1410,7 +1398,7 @@ def implicit_plot(f, xrange, yrange, **options):
          legend_label=None, aspect_ratio=1, alpha=1)
 def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
                 borderstyle, borderwidth, alpha, **options):
-    print("******my changes are being reflected******")
+    
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
@@ -1695,17 +1683,6 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
         return implicit_plot(feqs[0], xrange, yrange, plot_points=plot_points,
                              fill=False, linewidth=borderwidth,
                              linestyle=borderstyle, color=bordercol, **options)
-    #check for range correctnes
-    #xmin<xmax, ymin<ymax
-    #if not satisfied, give error
-
-    xmin, xmax = xrange[-2:][0], xrange[-2:][1]
-    ymin, ymax = xrange[-2:][0], xrange[-2:][1]
-
-    if xmin>xmax:
-        raise ValueError('xmin < xmax not satisfied')
-    if ymin>ymax:
-        raise ValueError('ymin < ymax not satisfied')
     
 
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
