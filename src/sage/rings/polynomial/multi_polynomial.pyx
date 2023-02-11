@@ -2701,14 +2701,18 @@ cdef class MPolynomial(CommutativeRingElement):
         [HMMS2019]_.  The second reference gives the characterization of
         Lorentzian polynomials applied in this implementation explicitly.
         """
+        from sage.rings.imaginary_unit import I
+
         # function to handle return value when reason requested
         def result(val, explanation=None):
-            if explain:
-                return (val, explanation)
-            else:
-                return val
+            return (val, explanation) if explain else val
 
-        if not self.base_ring().is_subring(RealField()):
+        try:
+            # this would better be handled by a category of RealFields()
+            self.base_ring()(I)
+        except (ValueError, TypeError):
+            pass
+        else:
             raise NotImplementedError("is_lorentzian only implemented for real polynomials")
 
         if self.is_zero():
@@ -2811,8 +2815,7 @@ def _is_M_convex_(points):
     points_set = set(map(tuple, points))
     if not points_set:
         return True
-    elt = next(islice(points_set, 0, 1)))
-    dim = len(elt)
+    dim = len(next(iter(points_set)))
     if any(len(p) != dim for p in points_set):
         raise ValueError("input points are not the same dimension")
     if any(entry not in ZZ for p in points_set for entry in p):
