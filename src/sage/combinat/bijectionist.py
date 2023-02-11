@@ -36,319 +36,313 @@ Quick reference
 A guided tour
 =============
 
-    EXAMPLES:
+EXAMPLES:
 
-    We find a statistic `s` such that
-    `(s, wex, fix) \sim (llis, des, adj)`::
+We find a statistic `s` such that `(s, wex, fix) \sim (llis, des, adj)`::
 
-        sage: N = 3
-        sage: A = B = [pi for n in range(N+1) for pi in Permutations(n)]
-        sage: alpha1 = lambda p: len(p.weak_excedences())
-        sage: alpha2 = lambda p: len(p.fixed_points())
-        sage: beta1 = lambda p: len(p.descents(final_descent=True)) if p else 0
-        sage: beta2 = lambda p: len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
-        sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: def rotate_permutation(p):
-        ....:     cycle = Permutation(tuple(range(1, len(p)+1)))
-        ....:     return Permutation([cycle.inverse()(p(cycle(i))) for i in range(1, len(p)+1)])
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((len, len), (alpha1, beta1), (alpha2, beta2))
-        sage: a, b = bij.statistics_table()
-        sage: table(a, header_row=True, frame=True)
-        +-----------+--------+--------+--------+
-        | a         | α_1(a) | α_2(a) | α_3(a) |
-        +===========+========+========+========+
-        | []        | 0      | 0      | 0      |
-        +-----------+--------+--------+--------+
-        | [1]       | 1      | 1      | 1      |
-        +-----------+--------+--------+--------+
-        | [1, 2]    | 2      | 2      | 2      |
-        +-----------+--------+--------+--------+
-        | [2, 1]    | 2      | 1      | 0      |
-        +-----------+--------+--------+--------+
-        | [1, 2, 3] | 3      | 3      | 3      |
-        +-----------+--------+--------+--------+
-        | [1, 3, 2] | 3      | 2      | 1      |
-        +-----------+--------+--------+--------+
-        | [2, 1, 3] | 3      | 2      | 1      |
-        +-----------+--------+--------+--------+
-        | [2, 3, 1] | 3      | 2      | 0      |
-        +-----------+--------+--------+--------+
-        | [3, 1, 2] | 3      | 1      | 0      |
-        +-----------+--------+--------+--------+
-        | [3, 2, 1] | 3      | 2      | 1      |
-        +-----------+--------+--------+--------+
+    sage: N = 3
+    sage: A = B = [pi for n in range(N+1) for pi in Permutations(n)]
+    sage: alpha1 = lambda p: len(p.weak_excedences())
+    sage: alpha2 = lambda p: len(p.fixed_points())
+    sage: beta1 = lambda p: len(p.descents(final_descent=True)) if p else 0
+    sage: beta2 = lambda p: len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: tau = Permutation.longest_increasing_subsequence_length
+    sage: def rotate_permutation(p):
+    ....:     cycle = Permutation(tuple(range(1, len(p)+1)))
+    ....:     return Permutation([cycle.inverse()(p(cycle(i))) for i in range(1, len(p)+1)])
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((len, len), (alpha1, beta1), (alpha2, beta2))
+    sage: a, b = bij.statistics_table()
+    sage: table(a, header_row=True, frame=True)
+    +-----------+--------+--------+--------+
+    | a         | α_1(a) | α_2(a) | α_3(a) |
+    +===========+========+========+========+
+    | []        | 0      | 0      | 0      |
+    +-----------+--------+--------+--------+
+    | [1]       | 1      | 1      | 1      |
+    +-----------+--------+--------+--------+
+    | [1, 2]    | 2      | 2      | 2      |
+    +-----------+--------+--------+--------+
+    | [2, 1]    | 2      | 1      | 0      |
+    +-----------+--------+--------+--------+
+    | [1, 2, 3] | 3      | 3      | 3      |
+    +-----------+--------+--------+--------+
+    | [1, 3, 2] | 3      | 2      | 1      |
+    +-----------+--------+--------+--------+
+    | [2, 1, 3] | 3      | 2      | 1      |
+    +-----------+--------+--------+--------+
+    | [2, 3, 1] | 3      | 2      | 0      |
+    +-----------+--------+--------+--------+
+    | [3, 1, 2] | 3      | 1      | 0      |
+    +-----------+--------+--------+--------+
+    | [3, 2, 1] | 3      | 2      | 1      |
+    +-----------+--------+--------+--------+
 
-        sage: table(b, header_row=True, frame=True)
-        +-----------+---+--------+--------+--------+
-        | b         | τ | β_1(b) | β_2(b) | β_3(b) |
-        +===========+===+========+========+========+
-        | []        | 0 | 0      | 0      | 0      |
-        +-----------+---+--------+--------+--------+
-        | [1]       | 1 | 1      | 1      | 1      |
-        +-----------+---+--------+--------+--------+
-        | [1, 2]    | 2 | 2      | 1      | 0      |
-        +-----------+---+--------+--------+--------+
-        | [2, 1]    | 1 | 2      | 2      | 2      |
-        +-----------+---+--------+--------+--------+
-        | [1, 2, 3] | 3 | 3      | 1      | 0      |
-        +-----------+---+--------+--------+--------+
-        | [1, 3, 2] | 2 | 3      | 2      | 1      |
-        +-----------+---+--------+--------+--------+
-        | [2, 1, 3] | 2 | 3      | 2      | 1      |
-        +-----------+---+--------+--------+--------+
-        | [2, 3, 1] | 2 | 3      | 2      | 1      |
-        +-----------+---+--------+--------+--------+
-        | [3, 1, 2] | 2 | 3      | 2      | 0      |
-        +-----------+---+--------+--------+--------+
-        | [3, 2, 1] | 1 | 3      | 3      | 3      |
-        +-----------+---+--------+--------+--------+
+    sage: table(b, header_row=True, frame=True)
+    +-----------+---+--------+--------+--------+
+    | b         | τ | β_1(b) | β_2(b) | β_3(b) |
+    +===========+===+========+========+========+
+    | []        | 0 | 0      | 0      | 0      |
+    +-----------+---+--------+--------+--------+
+    | [1]       | 1 | 1      | 1      | 1      |
+    +-----------+---+--------+--------+--------+
+    | [1, 2]    | 2 | 2      | 1      | 0      |
+    +-----------+---+--------+--------+--------+
+    | [2, 1]    | 1 | 2      | 2      | 2      |
+    +-----------+---+--------+--------+--------+
+    | [1, 2, 3] | 3 | 3      | 1      | 0      |
+    +-----------+---+--------+--------+--------+
+    | [1, 3, 2] | 2 | 3      | 2      | 1      |
+    +-----------+---+--------+--------+--------+
+    | [2, 1, 3] | 2 | 3      | 2      | 1      |
+    +-----------+---+--------+--------+--------+
+    | [2, 3, 1] | 2 | 3      | 2      | 1      |
+    +-----------+---+--------+--------+--------+
+    | [3, 1, 2] | 2 | 3      | 2      | 0      |
+    +-----------+---+--------+--------+--------+
+    | [3, 2, 1] | 1 | 3      | 3      | 3      |
+    +-----------+---+--------+--------+--------+
 
-        sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
-        sage: bij.set_constant_blocks(orbit_decomposition(A, rotate_permutation))
-        sage: bij.constant_blocks()
-        {{[1, 3, 2], [2, 1, 3], [3, 2, 1]}}
-        sage: next(bij.solutions_iterator())
-        {[]: 0,
-         [1]: 1,
-         [1, 2]: 1,
-         [1, 2, 3]: 1,
-         [1, 3, 2]: 2,
-         [2, 1]: 2,
-         [2, 1, 3]: 2,
-         [2, 3, 1]: 2,
-         [3, 1, 2]: 3,
-         [3, 2, 1]: 2}
+    sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
+    sage: bij.set_constant_blocks(orbit_decomposition(A, rotate_permutation))
+    sage: bij.constant_blocks()
+    {{[1, 3, 2], [2, 1, 3], [3, 2, 1]}}
+    sage: next(bij.solutions_iterator())
+    {[]: 0,
+     [1]: 1,
+     [1, 2]: 1,
+     [1, 2, 3]: 1,
+     [1, 3, 2]: 2,
+     [2, 1]: 2,
+     [2, 1, 3]: 2,
+     [2, 3, 1]: 2,
+     [3, 1, 2]: 3,
+     [3, 2, 1]: 2}
 
-    There is no rotation invariant statistic on non crossing set partitions which is equidistributed
-    with the Strahler number on ordered trees::
+There is no rotation invariant statistic on non crossing set partitions which
+is equidistributed with the Strahler number on ordered trees::
 
-        sage: N = 8;
-        sage: A = [SetPartition(d.to_noncrossing_partition()) for n in range(N) for d in DyckWords(n)]
-        sage: B = [t for n in range(1, N+1) for t in OrderedTrees(n)]
-        sage: theta = lambda m: SetPartition([[i % m.size() + 1 for i in b] for b in m])
+    sage: N = 8;
+    sage: A = [SetPartition(d.to_noncrossing_partition()) for n in range(N) for d in DyckWords(n)]
+    sage: B = [t for n in range(1, N+1) for t in OrderedTrees(n)]
+    sage: theta = lambda m: SetPartition([[i % m.size() + 1 for i in b] for b in m])
 
-    The following code is equivalent to ``tau = findstat(397)``::
+The following code is equivalent to ``tau = findstat(397)``::
 
-        sage: def tau(T):
-        ....:     if len(T) == 0:
-        ....:         return 1
-        ....:     else:
-        ....:         l = [tau(S) for S in T]
-        ....:         m = max(l)
-        ....:         if l.count(m) == 1:
-        ....:             return m
-        ....:         else:
-        ....:             return m+1
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((lambda a: a.size(), lambda b: b.node_number()-1))
-        sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
-        sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
-        sage: list(bij.solutions_iterator())
-        []
+    sage: def tau(T):
+    ....:     if len(T) == 0:
+    ....:         return 1
+    ....:     else:
+    ....:         l = [tau(S) for S in T]
+    ....:         m = max(l)
+    ....:         if l.count(m) == 1:
+    ....:             return m
+    ....:         else:
+    ....:             return m+1
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((lambda a: a.size(), lambda b: b.node_number()-1))
+    sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
+    sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
+    sage: list(bij.solutions_iterator())
+    []
 
-    An example identifying `s` and `S`::
+An example identifying `s` and `S`::
 
-        sage: N = 4
-        sage: A = [dyck_word for n in range(1, N) for dyck_word in DyckWords(n)]
-        sage: B = [binary_tree for n in range(1, N) for binary_tree in BinaryTrees(n)]
-        sage: concat_path = lambda D1, D2: DyckWord(list(D1) + list(D2))
-        sage: concat_tree = lambda B1, B2: concat_path(B1.to_dyck_word(),
-        ....:                                          B2.to_dyck_word()).to_binary_tree()
-        sage: bij = Bijectionist(A, B)
-        sage: bij.set_intertwining_relations((2, concat_path, concat_tree))
-        sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.node_number()))
-        sage: for D in sorted(bij.minimal_subdistributions_iterator(), key=lambda x: (len(x[0][0]), x)):
-        ....:     ascii_art(D)
-        ( [ /\ ], [ o ] )
-        (           [ o   ] )
-        (           [  \  ] )
-        ( [ /\/\ ], [   o ] )
-        (           [   o ] )
-        ( [  /\  ]  [  /  ] )
-        ( [ /  \ ], [ o   ] )
-        (             [ o     ] )
-        (             [  \    ] )
-        (             [   o   ] )
-        (             [    \  ] )
-        ( [ /\/\/\ ], [     o ] )
-        (             [ o   ] )
-        (             [  \  ] )
-        (             [   o ] )
-        ( [    /\  ]  [  /  ] )
-        ( [ /\/  \ ], [ o   ] )
-        (             [   o   ] )
-        ( [  /\    ]  [  / \  ] )
-        ( [ /  \/\ ], [ o   o ] )
-        (                     [   o,     o ] )
-        (                     [  /      /  ] )
-        ( [           /\   ]  [ o      o   ] )
-        ( [  /\/\    /  \  ]  [  \    /    ] )
-        ( [ /    \, /    \ ], [   o  o     ] )
+    sage: N = 4
+    sage: A = [dyck_word for n in range(1, N) for dyck_word in DyckWords(n)]
+    sage: B = [binary_tree for n in range(1, N) for binary_tree in BinaryTrees(n)]
+    sage: concat_path = lambda D1, D2: DyckWord(list(D1) + list(D2))
+    sage: concat_tree = lambda B1, B2: concat_path(B1.to_dyck_word(),
+    ....:                                          B2.to_dyck_word()).to_binary_tree()
+    sage: bij = Bijectionist(A, B)
+    sage: bij.set_intertwining_relations((2, concat_path, concat_tree))
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda t: t.node_number()))
+    sage: for D in sorted(bij.minimal_subdistributions_iterator(), key=lambda x: (len(x[0][0]), x)):
+    ....:     ascii_art(D)
+    ( [ /\ ], [ o ] )
+    (           [ o   ] )
+    (           [  \  ] )
+    ( [ /\/\ ], [   o ] )
+    (           [   o ] )
+    ( [  /\  ]  [  /  ] )
+    ( [ /  \ ], [ o   ] )
+    (             [ o     ] )
+    (             [  \    ] )
+    (             [   o   ] )
+    (             [    \  ] )
+    ( [ /\/\/\ ], [     o ] )
+    (             [ o   ] )
+    (             [  \  ] )
+    (             [   o ] )
+    ( [    /\  ]  [  /  ] )
+    ( [ /\/  \ ], [ o   ] )
+    (             [   o   ] )
+    ( [  /\    ]  [  / \  ] )
+    ( [ /  \/\ ], [ o   o ] )
+    (                     [   o,     o ] )
+    (                     [  /      /  ] )
+    ( [           /\   ]  [ o      o   ] )
+    ( [  /\/\    /  \  ]  [  \    /    ] )
+    ( [ /    \, /    \ ], [   o  o     ] )
 
-    The output is in a form suitable for FindStat::
+The output is in a form suitable for FindStat::
 
-        sage: findmap(list(bij.minimal_subdistributions_iterator()))            # optional -- internet
-        0: Mp00034 (quality [100])
-        1: Mp00061oMp00023 (quality [100])
-        2: Mp00018oMp00140 (quality [100])
+    sage: findmap(list(bij.minimal_subdistributions_iterator()))            # optional -- internet
+    0: Mp00034 (quality [100])
+    1: Mp00061oMp00023 (quality [100])
+    2: Mp00018oMp00140 (quality [100])
 
-    TESTS::
+TESTS::
 
-        sage: N = 4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
-        sage: theta = lambda pi: Permutation([x+1 if x != len(pi) else 1 for x in pi[-1:]+pi[:-1]])
-        sage: def tau(pi):
-        ....:    n = len(pi)
-        ....:    return sum([1 for i in range(1, n+1) for j in range(1, n+1)
-        ....:                if i<j <= pi(i)<pi(j) or pi(i)<pi(j)<i<j])
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((len, len))
-        sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
-        sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
-        sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(solution)
-        {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 0, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 0, [3, 1, 2]: 1}
-        {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 0, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 1, [3, 1, 2]: 0}
-        {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 0, [3, 1, 2]: 0}
+    sage: N = 4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
+    sage: theta = lambda pi: Permutation([x+1 if x != len(pi) else 1 for x in pi[-1:]+pi[:-1]])
+    sage: def tau(pi):
+    ....:    n = len(pi)
+    ....:    return sum([1 for i in range(1, n+1) for j in range(1, n+1)
+    ....:                if i<j <= pi(i)<pi(j) or pi(i)<pi(j)<i<j])
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((len, len))
+    sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
+    sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
+    sage: for solution in sorted(bij.solutions_iterator(), key=lambda d: sorted(d.items())):
+    ....:     print(solution)
+    {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 0, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 0, [3, 1, 2]: 1}
+    {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 0, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 1, [3, 1, 2]: 0}
+    {[]: 0, [1]: 0, [1, 2]: 0, [2, 1]: 0, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 0, [3, 2, 1]: 0, [2, 3, 1]: 0, [3, 1, 2]: 0}
 
-    A test including intertwining relations::
+A test including intertwining relations::
 
-        sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
-        sage: alpha = lambda D: (D.area(), D.bounce())
-        sage: beta = lambda D: (D.bounce(), D.area())
-        sage: tau = lambda D: D.number_of_touch_points()
+    sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
+    sage: alpha = lambda D: (D.area(), D.bounce())
+    sage: beta = lambda D: (D.bounce(), D.area())
+    sage: tau = lambda D: D.number_of_touch_points()
 
-    The following looks correct::
+The following looks correct::
 
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
-        sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(solution)
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
+    sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(solution)
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
-    The following looks correct, because `alpha = beta \circ S`
-    forces `S([1,0,1,0]) = [1,1,0,0]` and `s = tau \circ S` forces
-    therefore `s([1,0,1,0]) = \tau(S([1,0,1,0])) =
-    \tau([1,1,0,0]) = 1`::
+The following looks correct, because `alpha = beta \circ S` forces
+`S([1,0,1,0]) = [1,1,0,0]` and `s = tau \circ S` forces therefore `s([1,0,1,0])
+= \tau(S([1,0,1,0])) = \tau([1,1,0,0]) = 1`::
 
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((alpha, beta), (lambda d: d.semilength(), lambda d: d.semilength()))
-        sage: for solution in bij.solutions_iterator():
-        ....:     print(solution)
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((alpha, beta), (lambda d: d.semilength(), lambda d: d.semilength()))
+    sage: for solution in bij.solutions_iterator():
+    ....:     print(solution)
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
 
-    Now we introduce a intertwining relation::
+Now we introduce a intertwining relation::
 
-        sage: concat_path = lambda D1, D2: DyckWord(list(D1) + list(D2))
-        sage: pi_rho = (2, concat_path, lambda x, y: x+y)
+    sage: concat_path = lambda D1, D2: DyckWord(list(D1) + list(D2))
+    sage: pi_rho = (2, concat_path, lambda x, y: x+y)
 
-    Without `\alpha` and `\beta` but with `\pi` and `\rho` the other
-    values are forced because `s([1,0,1,0]) = s(\pi([1,0], [1,0])) =
-    \rho(s([1,0]), s([1,0])) = 2`::
+Without `\alpha` and `\beta` but with `\pi` and `\rho` the other values are
+forced because `s([1,0,1,0]) = s(\pi([1,0], [1,0])) = \rho(s([1,0]), s([1,0]))
+= 2`::
 
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_intertwining_relations(pi_rho)
-        sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
-        sage: for solution in bij.solutions_iterator():
-        ....:     print(solution)
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_intertwining_relations(pi_rho)
+    sage: bij.set_statistics((lambda d: d.semilength(), lambda d: d.semilength()))
+    sage: for solution in bij.solutions_iterator():
+    ....:     print(solution)
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
-    Thus the combination of both constraints should be infeasible::
+Thus the combination of both constraints should be infeasible::
 
-        sage: bij = Bijectionist(A, B, tau)
-        sage: bij.set_statistics((alpha, beta), (lambda d: d.semilength(), lambda d: d.semilength()))
-        sage: bij.set_intertwining_relations(pi_rho)
-        sage: list(bij.solutions_iterator())
-        []
+    sage: bij = Bijectionist(A, B, tau)
+    sage: bij.set_statistics((alpha, beta), (lambda d: d.semilength(), lambda d: d.semilength()))
+    sage: bij.set_intertwining_relations(pi_rho)
+    sage: list(bij.solutions_iterator())
+    []
 
-    Repeating some tests, but using the constructor instead of set_XXX() methods:
+Repeating some tests, but using the constructor instead of set_XXX() methods:
 
-        sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
-        sage: alpha = lambda D: (D.area(), D.bounce())
-        sage: beta = lambda D: (D.bounce(), D.area())
-        sage: tau = lambda D: D.number_of_touch_points()
+    sage: N = 2; A = B = [dyck_word for n in range(N+1) for dyck_word in DyckWords(n)]
+    sage: alpha = lambda D: (D.area(), D.bounce())
+    sage: beta = lambda D: (D.bounce(), D.area())
+    sage: tau = lambda D: D.number_of_touch_points()
 
-        sage: bij = Bijectionist(A, B, tau, alpha_beta=((lambda d: d.semilength(), lambda d: d.semilength()),))
-        sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(solution)
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
-        {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
+    sage: bij = Bijectionist(A, B, tau, alpha_beta=((lambda d: d.semilength(), lambda d: d.semilength()),))
+    sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(solution)
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
+    {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
 
+Constant blocks::
 
-    Constant blocks::
+    sage: A = B = 'abcd'
+    sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
+    sage: rho = lambda s1, s2: (s1 + s2) % 2
+    sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, P=[['a', 'c']], pi_rho=((2, pi, rho),))
+    sage: list(bij.solutions_iterator())
+    [{'a': 0, 'b': 1, 'c': 0, 'd': 1}]
+    sage: bij.constant_blocks()
+    {{'a', 'c'}, {'b', 'd'}}
 
-        sage: A = B = 'abcd'
-        sage: pi = lambda p1, p2: 'abcdefgh'[A.index(p1) + A.index(p2)]
-        sage: rho = lambda s1, s2: (s1 + s2) % 2
-        sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, P=[['a', 'c']], pi_rho=((2, pi, rho),))
-        sage: list(bij.solutions_iterator())
-        [{'a': 0, 'b': 1, 'c': 0, 'd': 1}]
-        sage: bij.constant_blocks()
-        {{'a', 'c'}, {'b', 'd'}}
+Distributions::
 
+    sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
+    sage: tau = Permutation.longest_increasing_subsequence_length
+    sage: bij = Bijectionist(A, B, tau, alpha_beta=((len, len),), elements_distributions=(([Permutation([1, 2, 3]), Permutation([1, 3, 2])], [1, 3]),))
+    sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(sol)
+    {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 3, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
+    {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
+    {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 1, [1, 2, 3]: 1, [1, 3, 2]: 3, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
+    {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 1, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
 
-    Distributions::
+Intertwining relations::
 
-        sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
-        sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: bij = Bijectionist(A, B, tau, alpha_beta=((len, len),), elements_distributions=(([Permutation([1, 2, 3]), Permutation([1, 3, 2])], [1, 3]),))
-        sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(sol)
-        {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 3, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
-        {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
-        {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 1, [1, 2, 3]: 1, [1, 3, 2]: 3, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
-        {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 1, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 2}
+    sage: concat = lambda p1, p2: Permutation(p1 + [i + len(p1) for i in p2])
 
+    sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
+    sage: bij = Bijectionist(A, B, Permutation.number_of_fixed_points, alpha_beta=((len, len),), pi_rho=((2, concat, lambda x, y: x + y),))
+    sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(solution)
+    {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 0, [3, 2, 1]: 1}
+    {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 1, [3, 2, 1]: 0}
+    {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 1, [3, 1, 2]: 0, [3, 2, 1]: 0}
 
-    Intertwining relations::
+Statistics::
 
-        sage: concat = lambda p1, p2: Permutation(p1 + [i + len(p1) for i in p2])
+    sage: N = 4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
+    sage: wex = lambda p: len(p.weak_excedences())
+    sage: fix = lambda p: len(p.fixed_points())
+    sage: des = lambda p: len(p.descents(final_descent=True)) if p else 0
+    sage: bij = Bijectionist(A, B, fix, alpha_beta=((wex, des), (len, len)))
+    sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(solution)
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 0, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 1}
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 1}
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 1, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 0}
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 0, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 1}
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 0, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 0}
+    {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 0}
 
-        sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
-        sage: bij = Bijectionist(A, B, Permutation.number_of_fixed_points, alpha_beta=((len, len),), pi_rho=((2, concat, lambda x, y: x + y),))
-        sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(solution)
-        {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 0, [3, 2, 1]: 1}
-        {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 1, [3, 2, 1]: 0}
-        {[]: 0, [1]: 1, [1, 2]: 2, [2, 1]: 0, [1, 2, 3]: 3, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 1, [3, 1, 2]: 0, [3, 2, 1]: 0}
+Value restrictions::
 
+    sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
+    sage: tau = Permutation.longest_increasing_subsequence_length
+    sage: alpha_beta = [(len, len)]
+    sage: value_restrictions = [(Permutation([1, 2]), [1]), (Permutation([3, 2, 1]), [2, 3, 4])]
+    sage: bij = Bijectionist(A, B, tau, alpha_beta=alpha_beta, value_restrictions=value_restrictions)
+    sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+    ....:     print(sol)
+    {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 3}
+    ...
+    {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 1, [3, 2, 1]: 2}
 
-    Statistics::
-
-        sage: N = 4; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
-        sage: wex = lambda p: len(p.weak_excedences())
-        sage: fix = lambda p: len(p.fixed_points())
-        sage: des = lambda p: len(p.descents(final_descent=True)) if p else 0
-        sage: bij = Bijectionist(A, B, fix, alpha_beta=((wex, des), (len, len)))
-        sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(solution)
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 0, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 1}
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 1}
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 0, [2, 1, 3]: 1, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 0}
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 0, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 1}
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 0, [2, 3, 1]: 1, [3, 1, 2]: 3, [3, 2, 1]: 0}
-        {[]: 0, [1]: 1, [1, 2]: 0, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 1, [2, 1, 3]: 1, [2, 3, 1]: 0, [3, 1, 2]: 3, [3, 2, 1]: 0}
-
-    Value restrictions::
-
-        sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
-        sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: alpha_beta = [(len, len)]
-        sage: value_restrictions = [(Permutation([1, 2]), [1]), (Permutation([3, 2, 1]), [2, 3, 4])]
-        sage: bij = Bijectionist(A, B, tau, alpha_beta=alpha_beta, value_restrictions=value_restrictions)
-        sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
-        ....:     print(sol)
-        {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 3}
-        ...
-        {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 1, [3, 2, 1]: 2}
-
-        sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
-        sage: tau = Permutation.longest_increasing_subsequence_length
-        sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
-        Traceback (most recent call last):
-        ...
-        ValueError: No possible values found for singleton block [[1, 2]]
+    sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
+    sage: tau = Permutation.longest_increasing_subsequence_length
+    sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
+    Traceback (most recent call last):
+    ...
+    ValueError: No possible values found for singleton block [[1, 2]]
 
 """
 # ****************************************************************************
@@ -381,51 +375,47 @@ from sage.misc.verbose import get_verbose
 
 class Bijectionist(SageObject):
     r"""
-    A toolbox to list all possible bijections between two finite
-    sets under various constraints.
+    A toolbox to list all possible bijections between two finite sets
+    under various constraints.
 
     INPUT:
 
     - ``A``, ``B`` -- sets of equal size, given as a list
 
-    - ``tau`` (optional, default: ``None``) -- a function from ``B``
-      to ``Z``, in case of ``None``, the identity map ``lambda x: x``
-      is used
+    - ``tau`` -- (optional) a function from ``B`` to ``Z``, in case of
+      ``None``, the identity map ``lambda x: x`` is used
 
-    - ``alpha_beta`` (optional) -- a list of pairs of statistics
-      ``alpha`` from ``A`` to ``W`` and ``beta`` from ``B`` to ``W``
+    - ``alpha_beta`` -- (optional) a list of pairs of statistics ``alpha`` from
+      ``A`` to ``W`` and ``beta`` from ``B`` to ``W``
 
-    - ``P`` (optional) -- a partition of ``A``
+    - ``P`` -- (optional) a partition of ``A``
 
-    - ``pi_rho`` (optional) -- a list of triples ``(k, pi, rho)``
-      where
+    - ``pi_rho`` -- (optional) a list of triples ``(k, pi, rho)``, where
 
-        - ``pi`` is a ``k``-ary operation composing objects in ``A``
-          and
+        - ``pi`` -- a ``k``-ary operation composing objects in ``A`` and
 
-        - ``rho`` is a ``k``-ary function composing statistic values
-          in `Z`
+        - ``rho`` -- a ``k``-ary function composing statistic values in `Z`
 
-    - ``elements_distributions`` (optional) -- a list of pairs ``(tA,
-      tZ)``, specifying the distributions of ``tA``
+    - ``elements_distributions`` -- (optional) a list of pairs ``(tA, tZ)``,
+      specifying the distributions of ``tA``
 
-    - ``value_restrictions`` (optional) -- a list of pairs ``(a,
-      tZ)``, restricting the possible values of ``a``
+    - ``value_restrictions`` -- (optional) a list of pairs ``(a, tZ)``,
+      restricting the possible values of ``a``
 
-    - ``solver`` (optional) -- the backend used to solve the mixed
-      integer linear programs
+    - ``solver`` -- (optional) the backend used to solve the mixed integer
+      linear programs
 
-    ``W`` and ``Z`` can be arbitrary sets.  As a natural example we
-    may think of the natural numbers or tuples of integers.
+    ``W`` and ``Z`` can be arbitrary sets.  As a natural example we may think
+    of the natural numbers or tuples of integers.
 
-    We are looking for a statistic `s: A\to Z` and a bijection `S:
-    A\to B` such that
+    We are looking for a statistic `s: A\to Z` and a bijection `S: A\to B` such
+    that
 
-    - `s = \tau \circ S`: the statistics `s` and `\tau` are
+    - `s = \tau \circ S`: the statistics `s` and `\tau` are equidistributed and
+      `S` is an intertwining bijection.
+
+    - `\alpha = \beta \circ S`: the statistics `\alpha` and `\beta` are
       equidistributed and `S` is an intertwining bijection.
-
-    - `\alpha = \beta \circ S`: the statistics `\alpha` and `\beta`
-      are equidistributed and `S` is an intertwining bijection.
 
     - `s` is constant on the blocks of `P`.
 
@@ -435,21 +425,21 @@ class Bijectionist(SageObject):
 
     - `s(a)\in Z_a` for specified sets `Z_a\subseteq Z`, and
 
-    - `s|_{\tilde A}` has a specified distribution for specified sets
-      `\tilde A \subset A`.
+    - `s|_{\tilde A}` has a specified distribution for specified sets `\tilde A
+      \subset A`.
 
-    If `\tau` is the identity, the two unknown functions `s` and `S`
-    coincide.  Although we do not exclude other bijective choices for
-    `\tau`, they probably do not make sense.
+    If `\tau` is the identity, the two unknown functions `s` and `S` coincide.
+    Although we do not exclude other bijective choices for `\tau`, they
+    probably do not make sense.
 
-    If we want that `S` is graded, i.e. if elements of `A` and `B`
-    have a notion of size and `S` should preserve this size, we can
-    add grading statistics as `\alpha` and `\beta`.  Since `\alpha`
-    and `\beta` will be equidistributed with `S` as an intertwining
-    bijection, `S` will then also be graded.
+    If we want that `S` is graded, i.e. if elements of `A` and `B` have a
+    notion of size and `S` should preserve this size, we can add grading
+    statistics as `\alpha` and `\beta`.  Since `\alpha` and `\beta` will be
+    equidistributed with `S` as an intertwining bijection, `S` will then also
+    be graded.
 
-    In summary, we have the following two commutative diagrams, where
-    `s` and `S` are unknown functions.
+    In summary, we have the following two commutative diagrams, where `s` and
+    `S` are unknown functions.
 
     .. MATH::
 
@@ -467,17 +457,15 @@ class Bijectionist(SageObject):
 
     .. NOTE::
 
-        If `\tau` is the identity map, the partition `P` of `A`
-        necessarily consists only of singletons.
+        If `\tau` is the identity map, the partition `P` of `A` necessarily
+        consists only of singletons.
 
     .. NOTE::
 
-        The order of invocation of the methods with prefix ``set``,
-        i.e., :meth:`set_statistics`,
-        :meth:`set_intertwining_relations`,
-        :meth:`set_constant_blocks`, etc., is irrelevant.  Calling
-        any of these methods a second time overrides the previous
-        specification.
+        The order of invocation of the methods with prefix ``set``, i.e.,
+        :meth:`set_statistics`, :meth:`set_intertwining_relations`,
+        :meth:`set_constant_blocks`, etc., is irrelevant.  Calling any of these
+        methods a second time overrides the previous specification.
 
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[],
@@ -618,11 +606,11 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``singletons`` (optional, default: ``False``) -- whether or
-          not to include singleton blocks in the output
+        - ``singletons`` -- (optional, default: ``False``) whether or not to
+          include singleton blocks in the output
 
-        - ``optimal`` (optional, default: ``False``) -- whether or
-          not to compute the coarsest possible partition
+        - ``optimal`` -- (optional, default: ``False``) whether or not to
+          compute the coarsest possible partition
 
         .. NOTE::
 
@@ -717,7 +705,7 @@ class Bijectionist(SageObject):
 
         TESTS:
 
-        Calling ``set_statistics`` without arguments should restore the previous state.::
+        Calling ``set_statistics`` without arguments should restore the previous state::
 
             sage: N = 3; A = B = [permutation for n in range(N) for permutation in Permutations(n)]
             sage: wex = lambda p: len(p.weak_excedences())
@@ -822,8 +810,8 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``header`` (optional, default: ``True``) -- whether to
-          include a header with the standard greek letters.
+        - ``header`` -- (optional, default: ``True``) whether to include a
+          header with the standard greek letters.
 
         OUTPUT:
 
@@ -994,7 +982,7 @@ class Bijectionist(SageObject):
             sage: bij.set_statistics((len, len))
             sage: bij.set_value_restrictions((Permutation([1, 2]), [1]),
             ....:                            (Permutation([3, 2, 1]), [2, 3, 4]))
-            sage: for sol in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
+            sage: for sol in sorted(bij.solutions_iterator(), key=lambda d: sorted(d.items())):
             ....:     print(sol)
             {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 2, [3, 2, 1]: 3}
             {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 1, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 3, [3, 2, 1]: 2}
@@ -1175,9 +1163,8 @@ class Bijectionist(SageObject):
 
         TESTS:
 
-        Because of the current implementation of the output
-        calculation, we do not improve our solution if we do not gain
-        any unique solutions.::
+        Because of the current implementation of the output calculation, we do
+        not improve our solution if we do not gain any unique solutions::
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1401,8 +1388,8 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``phi_psi`` (optional) -- a list of pairs `(\phi, \rho)`
-          where `\phi: A\to Z` and `\psi: Z\to A`
+        - ``phi_psi`` -- (optional) a list of pairs `(\phi, \rho)` where `\phi:
+          A\to Z` and `\psi: Z\to A`
 
         ALGORITHM:
 
@@ -1455,7 +1442,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``Q``, a set partition of ``A``.
+        - ``Q`` -- a set partition of ``A``.
 
         EXAMPLES::
 
@@ -1711,10 +1698,10 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``p`` (optional, default: ``None``) -- a block of `P`, or
+        - ``p`` -- (optional, default: ``None``) -- a block of `P`, or
           an element of a block of `P`, or a list of these
 
-        - ``optimal`` (optional, default: ``False``) -- whether or
+        - ``optimal`` -- (optional, default: ``False``) whether or
           not to compute the minimal possible set of statistic values.
 
         .. NOTE::
@@ -1886,7 +1873,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D, convert=bool, tolerance=0.1)  # a dict from A to {0, 1}
-            new_s = self._find_counter_example(self._A, s, d, False)
+            new_s = self._find_counterexample(self._A, s, d, False)
             if new_s is None:
                 values = self._sorter["Z"](s[a] for a in self._A if d[a])
                 yield ([a for a in self._A if d[a]], values)
@@ -1902,7 +1889,7 @@ class Bijectionist(SageObject):
             else:
                 s = new_s
 
-    def _find_counter_example(self, P, s0, d, on_blocks):
+    def _find_counterexample(self, P, s0, d, on_blocks):
         r"""
         Return a solution `s` such that ``d`` is not a subdistribution of
         `s0`.
@@ -1931,7 +1918,7 @@ class Bijectionist(SageObject):
 
             sage: s0 = {'a': 1, 'b': 1, 'c': 2, 'd': 3, 'e': 2}
             sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
-            sage: bij._find_counter_example(bij._A, s0, d, False)
+            sage: bij._find_counterexample(bij._A, s0, d, False)
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
         """
         bmilp = self._bmilp
@@ -2103,7 +2090,7 @@ class Bijectionist(SageObject):
             except MIPSolverException:
                 return
             d = minimal_subdistribution.get_values(D, convert=ZZ, tolerance=0.1)  # a dict from P to multiplicities
-            new_s = self._find_counter_example(P, s, d, True)
+            new_s = self._find_counterexample(P, s, d, True)
             if new_s is None:
                 yield ([p for p in P for _ in range(ZZ(d[p]))],
                        self._sorter["Z"](s[p]
@@ -2471,10 +2458,10 @@ class _BijectionistMILP():
 
         - ``bijectionist`` -- an instance of :class:`Bijectionist`.
 
-        - ``solutions`` (optional, default: ``None``) -- a list of
-          solutions of the problem, each provided as a dictionary
-          mapping `(a, z)` to a Boolean, such that at least one
-          element from each block of `P` appears as `a`.
+        - ``solutions`` -- (optional, default: ``None``) a list of solutions of
+          the problem, each provided as a dictionary mapping `(a, z)` to a
+          Boolean, such that at least one element from each block of `P`
+          appears as `a`.
 
         .. TODO::
 
