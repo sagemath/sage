@@ -579,11 +579,7 @@ class QuadraticForm(SageObject):
         elif is_Polynomial(R) or is_MPolynomial(R):
             p = R
             
-            if p.is_zero():
-                pass
-            elif p.is_homogeneous() and p.degree() == 2:
-                pass
-            else:
+            if not p.is_zero() and not (p.is_homogeneous() and p.degree() == 2):
                 raise ValueError("polynomial is neither zero nor homogeneous of degree 2")
 
             P = p.parent()
