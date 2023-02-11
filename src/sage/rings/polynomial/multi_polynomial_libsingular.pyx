@@ -247,7 +247,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
 from sage.rings.fraction_field import FractionField
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 
 import sage.interfaces.abc
 

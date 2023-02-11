@@ -578,7 +578,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import NumberField, GaussianField, CyclotomicField
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
-from sage.arith.all import factor
+from sage.arith.misc import factor
 from . import infinity
 from sage.categories.action import Action
 

@@ -12,7 +12,7 @@ Cell modules
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.data_structures.blas_dict import linear_combination
