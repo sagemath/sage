@@ -19,11 +19,13 @@ Groups
    sage/groups/cubic_braid
    sage/groups/indexed_free_group
    sage/groups/raag
+   sage/groups/cactus_group
    sage/groups/group_exp
    sage/groups/group_semidirect_product
    sage/groups/misc_gps/misc_groups
    sage/groups/semimonomial_transformations/semimonomial_transformation_group
    sage/groups/semimonomial_transformations/semimonomial_transformation
+   sage/groups/kernel_subgroup
    sage/groups/class_function
    sage/groups/conjugacy_classes
 
