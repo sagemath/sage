@@ -2809,8 +2809,7 @@ def _is_M_convex_(points):
     See [BrHu2019]_ for a definition of M-convexity.
     """
     points_set = set(map(tuple, points))
-    n_points = len(points_set)
-    if n_points == 0:
+    if not points_set:
         return True
     elt = next(islice(points_set, 0, 1)))
     dim = len(elt)
