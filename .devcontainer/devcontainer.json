@@ -17,5 +17,19 @@
             "version": "latest",
 			"addCondaForge": "true"
         }
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"guyskk.language-cython",
+				"ms-python.isort",
+				"ms-toolsai.jupyter",
+				"ms-python.vscode-pylance",
+				"ms-python.pylint",
+				"ms-python.python",
+				"lextudio.restructuredtext",
+				"trond-snekvik.simple-rst"
+			]
+		}
 	}
 }
