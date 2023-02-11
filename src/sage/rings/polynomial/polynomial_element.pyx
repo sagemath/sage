@@ -8869,7 +8869,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         - ``explain`` -- boolean (default: ``False``); if ``True``
           return a tuple whose first element is the boolean result of the test,
           and the second element is a string describing the reason the test failed,
-          or ``None`` if the test succeeded.
+          or ``None`` if the test succeeded
 
         EXAMPLES::
 
