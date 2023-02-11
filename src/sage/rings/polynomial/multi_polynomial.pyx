@@ -2812,7 +2812,7 @@ def _is_M_convex_(points):
     n_points = len(points_set)
     if n_points == 0:
         return True
-    elt = list(islice(points_set, 0, 1))[0]
+    elt = next(islice(points_set, 0, 1)))
     dim = len(elt)
     if any(len(p) != dim for p in points_set):
         raise ValueError("input points are not the same dimension")
