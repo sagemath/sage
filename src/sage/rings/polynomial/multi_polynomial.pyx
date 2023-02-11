@@ -2764,7 +2764,7 @@ def _is_M_convex_(points):
     INPUT:
 
     - ``points`` -- iterable for a list of integer lattice points of the
-      same dimension.
+      same dimension
 
     Examples of M-convex sets include the vertices of a matroid polytope, and the
     support sets of Schur polynomials.
