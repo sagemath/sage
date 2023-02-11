@@ -43,6 +43,10 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef int _algorithm_to_dual(self, algorithm) except -2
 
     # Methods to initialize the combinatorial polyhedron.
+    cdef _init_from_polyhedron(self, data)
+    cdef _init_from_lattice_polytope(self, data)
+    cdef _init_from_cone(self, data)
+    cdef _init_facet_names(self, facets)
     cdef _init_from_incidence_matrix(self, data)
     cdef _init_from_list_of_facets(self, data)
     cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep)

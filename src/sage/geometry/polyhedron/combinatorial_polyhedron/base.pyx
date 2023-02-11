@@ -360,75 +360,29 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron).run()
         """
+        self._equations = ()
+        self._far_face_tuple = ()
+
         if isinstance(data, Polyhedron_base):
-            # input is ``Polyhedron``
-            Vrep = data.Vrepresentation()
-            facets = tuple(inequality for inequality in data.Hrepresentation())
-            self._dimension = data.dimension()
-
-            if not data.is_compact():
-                self._bounded = False
-                far_face = tuple(i for i in range(data.n_Vrepresentation()) if not data.Vrepresentation()[i].is_vertex())
-            else:
-                self._bounded = True
-
-            data = data.incidence_matrix()
+            self._init_from_polyhedron(data)
+            return
         elif isinstance(data, LatticePolytopeClass):
-            # input is ``LatticePolytope``
-            self._bounded = True
-            Vrep = data.vertices()
-            self._n_Vrepresentation = len(Vrep)
-            facets = tuple(data.facet_normals())
-            self._n_Hrepresentation = len(facets)
-            data = data.incidence_matrix()
+            self._init_from_lattice_polytope(data)
+            return
         elif isinstance(data, ConvexRationalPolyhedralCone):
-            # input is ``Cone``
-            self._bounded = False
-            Vrep = tuple(data.rays()) + (data.lattice().zero(),)
-            self._n_Vrepresentation = len(Vrep)
-            facets = tuple(data.facet_normals())
-            self._n_Hrepresentation = len(facets)
-            far_face = tuple(i for i in range(len(Vrep) - 1))
-            self._dimension = data.dim()
-            from sage.matrix.constructor import matrix
-            from sage.rings.integer_ring  import ZZ
-            data = matrix(ZZ, data.incidence_matrix().rows()
-                              + [[ZZ.one() for _ in range(len(facets))]])
-        else:
-            # Input is different from ``Polyhedron`` and ``LatticePolytope``.
-            if unbounded and not far_face:
-                raise ValueError("must specify far face for unbounded polyhedron")
+            self._init_from_cone(data)
+            return
 
-            self._bounded = not unbounded
+        self._bounded = not unbounded
+        if unbounded:
+            if not far_face:
+                raise ValueError("must specify far face for unbounded polyhedron")
+            self._far_face_tuple = tuple(far_face)
 
         if Vrep:
-            # store vertices names
             self._Vrep = tuple(Vrep)
-        else:
-            self._Vrep = None
 
-        if facets:
-            # store facets names and compute equations
-            facets = tuple(facets)
-
-            test = [1] * len(facets)  # 0 if that facet is an equation
-            for i in range(len(facets)):
-                if hasattr(facets[i], "is_inequality"):
-                    # We remove equations.
-                    # At the moment only equations with this attribute ``True``
-                    # will be detected.
-                    if not facets[i].is_inequality():
-                        test[i] = 0
-            self._facet_names = tuple(facets[i] for i in range(len(facets)) if test[i])
-
-            self._equations = tuple(facets[i] for i in range(len(facets)) if not test[i])
-        else:
-            self._facet_names = None
-
-        if not self._bounded:
-            self._far_face_tuple = tuple(far_face)
-        else:
-            self._far_face_tuple = ()
+        self._init_facet_names(facets)
 
         if data == [] or data == ():
             self._init_as_trivial_polyhedron(-1)
@@ -444,6 +398,69 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         else:
             self._init_from_list_of_facets(data)
+
+    cdef _init_from_polyhedron(self, data):
+        r'''
+        Initialize from :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
+        '''
+        self._Vrep = data.Vrepresentation()
+        self._facet_names = data.inequalities()
+        self._equations = data.equations()
+        self._dimension = data.dimension()
+
+        if not data.is_compact():
+            self._bounded = False
+            self._far_face_tuple = tuple(i for i in range(data.n_Vrepresentation()) if not data.Vrepresentation()[i].is_vertex())
+        else:
+            self._bounded = True
+
+        return self._init_from_incidence_matrix(data.incidence_matrix())
+
+    cdef _init_from_lattice_polytope(self, data):
+        r'''
+        Initialize from :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`.
+        '''
+        self._bounded = True
+        self._Vrep = tuple(data.vertices())
+        self._facet_names = tuple(data.facet_normals())
+        self._dimension = data.dimension()
+        return self._init_from_incidence_matrix(data.incidence_matrix())
+
+    cdef _init_from_cone(self, data):
+        r'''
+        Initialize from :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`.
+        '''
+        self._bounded = False
+        self._Vrep = tuple(data.rays()) + (data.lattice().zero(),)
+        self._facet_names = tuple(data.facet_normals())
+        self._far_face_tuple = tuple(i for i in range(len(self._Vrep) - 1))
+        self._dimension = data.dim()
+        from sage.matrix.constructor import matrix
+        from sage.rings.integer_ring import ZZ
+        incidence_matrix = matrix(ZZ, data.incidence_matrix().rows()
+                                      + [[ZZ.one() for _ in range(len(data.facet_normals()))]])
+        return self._init_from_incidence_matrix(incidence_matrix)
+
+    cdef _init_facet_names(self, facets):
+        '''
+        Store facet names and compute equations.
+        '''
+        if facets is not None:
+            facets = tuple(facets)
+
+            test = [1] * len(facets)  # 0 if that facet is an equation
+            for i in range(len(facets)):
+                if hasattr(facets[i], "is_inequality"):
+                    # We remove equations.
+                    # At the moment only equations with this attribute ``True``
+                    # will be detected.
+                    if not facets[i].is_inequality():
+                        test[i] = 0
+            self._facet_names = tuple(facets[i] for i in range(len(facets)) if test[i])
+
+            self._equations = tuple(facets[i] for i in range(len(facets)) if not test[i])
+        else:
+            self._facet_names = None
 
     cdef _init_from_incidence_matrix(self, data):
         """
