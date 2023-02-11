@@ -160,6 +160,7 @@ from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
 
+
 class SkewPartition(CombinatorialElement):
     r"""
     A skew partition.
@@ -1274,6 +1275,7 @@ class SkewPartition(CombinatorialElement):
         """
         return self.outer().outside_corners()
 
+
 def row_lengths_aux(skp):
     """
     EXAMPLES::
@@ -1288,6 +1290,7 @@ def row_lengths_aux(skp):
         return []
     else:
         return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+
 
 class SkewPartitions(UniqueRepresentation, Parent):
     """
@@ -1595,6 +1598,7 @@ class SkewPartitions_all(SkewPartitions):
     """
     Class of all skew partitions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -1871,6 +1875,8 @@ class SkewPartitions_n(SkewPartitions):
 ######################################
 # Skew Partitions (from row lengths) #
 ######################################
+
+
 class SkewPartitions_rowlengths(SkewPartitions):
     """
     All skew partitions with given row lengths.
@@ -1986,6 +1992,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
         for sskp in SkewPartitions(row_lengths=self.co[:-1], overlap=self.overlap):
             for sp in self._from_row_lengths_aux(sskp, self.co[-2], self.co[-1], self.overlap):
                 yield self.element_class(self, sp)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)

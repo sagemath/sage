@@ -22,7 +22,7 @@ cdef object _check_schubert(object a, OP ca):
         br = a.parent().base_ring()
         if (br == QQ or br == ZZ):
             _op_schubert_sp(a, ca)
-            return min([max(i.reduced_word()+[0]) for i in a.support()])
+            return min(max(i.reduced_word(), default=0) for i in a.support())
         else:
             raise ValueError("a must be a Schubert polynomial over ZZ or QQ")
     else:

@@ -35,6 +35,7 @@ AUTHORS:
 from copy import deepcopy
 from sage.misc.abstract_method import abstract_method
 
+
 class KRTToRCBijectionAbstract:
     """
     Root abstract class for the bijection from KR tableaux to rigged configurations.
@@ -289,6 +290,7 @@ class KRTToRCBijectionAbstract:
             2
         """
         return r + 1
+
 
 class RCToKRTBijectionAbstract:
     """

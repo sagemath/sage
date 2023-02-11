@@ -42,6 +42,7 @@ from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.root_system import RootSystem
 
+
 class GeneralizedYoungWall(CombinatorialElement):
     r"""
     A generalized Young wall.
@@ -59,6 +60,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         0|1|
            |
     """
+
     def __init__(self, parent, data):
         r"""
         EXAMPLES::

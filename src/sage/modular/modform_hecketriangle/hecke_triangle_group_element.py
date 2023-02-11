@@ -43,7 +43,7 @@ def coerce_AA(p):
         sage: AA(p)._exact_field()
         Number Field in a with defining polynomial y^8 ... with a in ...
         sage: coerce_AA(p)._exact_field()
-        Number Field in a with defining polynomial y^4 - 1910*y^2 - 3924*y + 681058 with a in 39.710518724...?
+        Number Field in a with defining polynomial y^4 - 1910*y^2 - 3924*y + 681058 with a in ...?
     """
     el = AA(p)
     el.simplify()

@@ -356,7 +356,7 @@ Constructors::
     [2, 4]~*x + [1, 3]~
 
     sage: pari(3).Qfb(7, 1)
-    Qfb(3, 7, 1, 0.E-19)
+    Qfb(3, 7, 1)
     sage: pari(3).Qfb(7, 2)
     Traceback (most recent call last):
     ...
@@ -512,7 +512,7 @@ Basic functions::
     sage: pari('sqrt(-2)').frac()
     Traceback (most recent call last):
     ...
-    PariError: incorrect type in gfloor (t_COMPLEX)
+    PariError: incorrect type in gfrac (t_COMPLEX)
 
     sage: pari('1+2*I').imag()
     2

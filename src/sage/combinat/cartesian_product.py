@@ -74,6 +74,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: elt.parent() is c
         True
     """
+
     def __init__(self, *iters):
         """
         TESTS::
