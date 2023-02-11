@@ -398,7 +398,7 @@ in the Installation Guide.
 Alternative Installation using PiPy
 ---------------
 
-You can find `sage` and `sagemath` pip packages but it is worth noting that they are not at all related to this `sage`. Indeed `pip install sage` installs `sage 0.0.0` which is literally an empty package. For installation of this `sage` you need to install `sagemath-standard`. First, activate your python virtual environment and follow these steps:
+For installation of `sage` in python using `pip` you need to install `sagemath-standard`. First, activate your python virtual environment and follow these steps:
 
             $ python3 -m pip install sage_conf
             $ ls $(sage-config SAGE_SPKG_WHEELS)
@@ -406,6 +406,8 @@ You can find `sage` and `sagemath` pip packages but it is worth noting that they
             $ python3 -m pip install sagemath-standard
 
 You need to install the `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
+
+**NOTE:** You can find `sage` and `sagemath` pip packages but it is worth noting that they are not at all related to this `sage`. Indeed `pip install sage` installs `sage 0.0.0` which is literally an empty package. 
 
 Troubleshooting
 ---------------
