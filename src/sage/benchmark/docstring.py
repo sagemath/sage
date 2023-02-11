@@ -42,6 +42,10 @@ Since this variable is usually not set, this module does nothing::
 import json
 import os
 
+# TODO: Explain here what this is for and put the replacement logic in a central space
+# TODO: Can we load a plugin that undoes this replacement on the client?
+DOT = "․"
+
 
 def create_trackers_from_doctest_stats():
     r"""
@@ -70,7 +74,7 @@ def create_trackers_from_doctest_stats():
     runs_by_module = json.load(open(stats_file))
 
     return {
-        module: create_benchmark_class(module, runs)
+        module.replace(".", DOT): create_benchmark_class(module, runs)
         for (module, runs) in runs_by_module.items()
     }
 
@@ -99,10 +103,10 @@ def create_benchmark_class(name, runs):
     # asv groups entries by top-level package name, so everything goes into "sage".
     # To break this logic, we replace "." with a One Dot Leader character that
     # looks similar.
-    Benchmark.__name__ = name.replace(".", "․")
+    Benchmark.__name__ = name.replace(".", DOT)
 
     for identifier, flags, source, time in runs:
-        method = "track_" + (identifier or f"[{name}]")
+        method = "track_" + (identifier or f"[{name}]").replace(".", DOT)
         if flags:
             method += "[" + ",".join(flags) + "]"
 
