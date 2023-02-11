@@ -395,7 +395,7 @@ in the Installation Guide.
     "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
     in the installation manual.
     
-Alternative Installation using PyPi
+Alternative Installation using PyPI
 ---------------
 
 For installation of `sage` in python using `pip` you need to install `sagemath-standard`. First, activate your python virtual environment and follow these steps:
