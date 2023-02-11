@@ -884,7 +884,7 @@ def contour_plot(f, xrange, yrange, **options):
         Graphics object consisting of 1 graphics primitive
 
     """
-    
+
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
 
@@ -1398,7 +1398,6 @@ def implicit_plot(f, xrange, yrange, **options):
          legend_label=None, aspect_ratio=1, alpha=1)
 def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
                 borderstyle, borderwidth, alpha, **options):
-    
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
@@ -1683,8 +1682,6 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
         return implicit_plot(feqs[0], xrange, yrange, plot_points=plot_points,
                              fill=False, linewidth=borderwidth,
                              linestyle=borderstyle, color=bordercol, **options)
-    
-
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
                                            [xrange, yrange],
                                            plot_points)

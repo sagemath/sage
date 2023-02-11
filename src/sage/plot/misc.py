@@ -139,10 +139,10 @@ def setup_for_eval_on_grid(funcs,
     
     #to check if range is correctly defined by user. gives error is xmin>xmax or ymin>ymax
     if (ranges[0][-2]>ranges[0][-1]):
-        raise ValueError("Range not correctly defined. xmin>xmax")
+        raise ValueError("xrange not correctly defined: xmin(={}) > xmax(={})".format(ranges[0][-2], ranges[0][-1]))
 
     if (ranges[1][-2]>ranges[1][-1]):
-        raise ValueError("Range not correctly defined. ymin>ymax")
+        raise ValueError("xrange not correctly defined: xmin(={}) > xmax(={})".format(ranges[0][-2], ranges[0][-1]))
     
     else:
         vars, free_vars = unify_arguments(funcs)
