@@ -3566,7 +3566,7 @@ class Graph(GenericGraph):
             sage: list(Graph(5).acyclic_orientations())
             []
         """
-        from sage.graphs.acyclic_orientations import AcyclicOrientations
+        from sage.graphs.orientations import AcyclicOrientations
         return AcyclicOrientations(self, as_reorientations)
 
     # Coloring
