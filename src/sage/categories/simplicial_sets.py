@@ -372,7 +372,7 @@ class SimplicialSets(Category_singleton):
                 G = FG.quotient(rels)
                 char = {g : G.gen(i) for i,g in enumerate(gens)}
                 for e in edges:
-                    if not e in gens:
+                    if e not in gens:
                         char[e] = G.one()
                 return (G, char)
 
@@ -464,7 +464,7 @@ class SimplicialSets(Category_singleton):
 
                 for d in range(1, self.dimension() + 1):
                     for s in self.n_cells(d):
-                        if not s in char.keys():
+                        if s not in char.keys():
                             if d==1 and  s.is_degenerate():
                                 char[s] = G.one()
                             elif s.is_degenerate():
