@@ -1267,14 +1267,14 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             V = []
         for kw in kwargs:
             value = kwargs[kw]
-            if isinstance(value, InfinitePolynomial_sparse):
+            if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
                 V.append(kw)
                 if hasattr(value._p, 'variables'):
                     V.extend([str(x) for x in value._p.variables()])
         args = list(args)
         for i, arg in enumerate(args):
-            if isinstance(arg, InfinitePolynomial_sparse):
+            if isinstance(arg, InfinitePolynomial):
                 args[i] = arg._p
                 if hasattr(arg._p, 'variables'):
                     V.extend([str(x) for x in arg._p.variables()])
@@ -1550,11 +1550,11 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         # Replace any InfinitePolynomials by their underlying polynomials
         for kw in kwargs:
             value = kwargs[kw]
-            if isinstance(value, InfinitePolynomial_sparse):
+            if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
         args = list(args)
         for i, arg in enumerate(args):
-            if isinstance(arg, InfinitePolynomial_sparse):
+            if isinstance(arg, InfinitePolynomial):
                 args[i] = arg._p
         self._p = self.parent().polynomial_ring()(self._p)
         res = self._p(*args, **kwargs)
