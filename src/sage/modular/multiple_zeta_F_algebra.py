@@ -31,6 +31,7 @@ from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2 as shuffle
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.integer_range import IntegerRange
@@ -721,3 +722,24 @@ class F_algebra(CombinatorialFreeModule):
             """
             F = self.parent()
             return F._from_dict({(0, w): cf for (p, w), cf in self if not p})
+
+        def single_valued(self):
+            """
+            Return the single-valued version of ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
+                sage: F = F_algebra(QQ)
+                sage: t = 4*F("2")+F("3")
+                sage: t.single_valued()
+                2*f3
+                sage: t = 4*F("35")+F("27")
+                sage: t.single_valued()
+                8*f3f5 + 8*f5f3
+            """
+            F = self.parent()
+            no_f2 = self.without_f2()
+            return F.sum_of_terms(((0, w), cf)
+                                  for (a, b), cf in no_f2.coproduct()
+                                  for w in shuffle(a[1], b[1].reversal(), False))
