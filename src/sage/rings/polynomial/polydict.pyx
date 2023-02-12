@@ -178,8 +178,8 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):0}, remove_zero=False)
             sage: f
             PolyDict with representation {(2, 3): 0}
-            sage: f.coerce_coefficients(QQ)
-            ?
+            sage: f.coerce_coefficients(QQ); f
+            PolyDict with representation {(2, 3): 0}
         """
         for k, v in self.__repn.items():
             self.__repn[k] = A.coerce(v)
@@ -402,7 +402,7 @@ cdef class PolyDict:
             sage: f[(2,1)]
             4
         """
-        if not isintance(e, ETuple):
+        if not isinstance(e, ETuple):
             e = ETuple(e)
         return self.__repn[e]
 

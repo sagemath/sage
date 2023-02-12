@@ -300,7 +300,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = QQbar[]
             sage: x * y
-            x y
+            x*y
         """
         elt = self.__element * right.__element
         elt.remove_zeros()
