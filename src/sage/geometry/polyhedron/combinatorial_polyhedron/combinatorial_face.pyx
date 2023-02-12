@@ -177,7 +177,7 @@ cdef class CombinatorialFace(SageObject):
             self.atoms              = it.atoms
             self.coatoms            = it.coatoms
 
-            if it.structure.face_status == FaceStatus.not_initialized:
+            if it.structure.face_status == FaceStatus.NOT_INITIALIZED:
                 raise LookupError("face iterator not set to a face")
 
             face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())

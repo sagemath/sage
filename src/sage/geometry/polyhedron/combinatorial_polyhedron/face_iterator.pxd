@@ -6,10 +6,10 @@ from .face_list_data_structure  cimport face_list_t
 from .combinatorial_face        cimport CombinatorialFace
 
 cdef enum FaceStatus:
-    not_initialized
-    initialized
-    ignore_subsets
-    only_visit_subsets
+    NOT_INITIALIZED
+    INITIALIZED
+    IGNORE_SUBSETS
+    ONLY_VISIT_SUBSETS
 
 cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
