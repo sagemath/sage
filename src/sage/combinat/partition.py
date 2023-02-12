@@ -9016,6 +9016,7 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
     from sage.libs.gap.libgap import libgap
     return ZZ(libgap.NrPartitions(ZZ(n), ZZ(k)))
 
+
 ##########
 # trac 14225: Partitions() is frequently used, but only weakly cached. Hence,
 # establish a strong reference to it.
