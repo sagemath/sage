@@ -255,13 +255,15 @@ class LinearExtensionOfPoset(ClonableArray,
     def is_supergreedy(self):
         r""""
         Return ``True`` if the linear extension is supergreedy.
-
-        A linear extension `[e_1, e_2, \ldots, e_n]` is *supergreedy* if
-        for every `i`, either if there is a minimal element `e_{i+1}` in
-        `[e_{i+1}, \ldots, e_n]` which is in the upper cover of `e_j` in
-        `[e_1, \ldots, e_i]` for which j is maximum or if no such element
-        exist `e_{i+1}` is the any of the minimal element in
-        `[e_i+1,\dots, e_n]`.
+        
+        A linear extension $[x_1<x_2<...<x_t]$ of a finite ordered
+        set $P=(P, <)$ is super greedy if it can be obtained using
+        the following procedure: Choose $x_1$ to be a minimal
+        element of $P$; suppose $x_1,...,x_i$ have been chosen;
+        define $p(x)$ to be the largest $j\leq i$ such that $x_j<x$
+        if such a $j$ exists and $0$ otherwise; choose $x_{i+1}$
+        to be a minimal element of $P-\{x_1,...,x_i\}$ which
+        maximizes $p$..
 
         Informally said a linear extension is supergreedy if it "always
         goes up and receedes the least" loosely speaking, supergreedy
