@@ -2300,7 +2300,7 @@ def supplementary_difference_set(n, existence=False, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set
-        sage: S1, S2, S3, S4 = supplementary_difference_set(191)
+        sage: S1, S2, S3, S4 = supplementary_difference_set(191) # long time
 
     If existence is ``True``, the function returns a boolean ::
 
@@ -2313,7 +2313,7 @@ def supplementary_difference_set(n, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
         sage: S1, S2, S3, S4 = supplementary_difference_set(191, check=False)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 191, len(S1)+len(S2)+len(S3)+len(S4)-191)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], 191, len(S1)+len(S2)+len(S3)+len(S4)-191) # long time
         True
         sage: S1, S2, S3, S4 = supplementary_difference_set(37, check=False)
         sage: supplementary_difference_set(7)
