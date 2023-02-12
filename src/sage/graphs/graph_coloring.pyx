@@ -1270,13 +1270,16 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     - ``vizing`` -- boolean (default: ``False``):
 
-      - When set to ``True``, tries to find a `\Delta + 1`-edge-coloring, where
-        `\Delta` is equal to the maximum degree in the graph
+      - When set to ``True``, finds an edge coloring using the algorithm
+        described at [MG1992]_. This always results in a coloring with `\Delta + 1`
+        colors, where `\Delta` is equal to the maximum degree in the graph, even
+        if one of the colors is empty, for the sake of consistency.
 
-      - When set to ``False``, tries to find a `\Delta`-edge-coloring, where
-        `\Delta` is equal to the maximum degree in the graph. If impossible,
-        tries to find and returns a `\Delta + 1`-edge-coloring. This implies
-        that ``value_only=False``
+      - When set to ``False``, tries to find a `\Delta`-edge-coloring using
+        Mixed Integer Linear Programming (MILP). If impossible, returns a
+        `(\Delta + 1)`-edge-coloring.  Please note that determinating if the
+        chromatic index of a graph equals `\Delta` is computationally difficult,
+        and could take a long time.
 
     - ``hex_colors`` -- boolean (default: ``False``); when set to ``True``, the
       partition returned is a dictionary whose keys are colors and whose values
@@ -1339,16 +1342,18 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
        sage: g = graphs.PetersenGraph()
        sage: edge_coloring(g, value_only=True, solver='GLPK')
        4
-       sage: edge_coloring(g, value_only=False, solver='GLPK')
-       [[(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)],
-        [(0, 4), (1, 2), (3, 8), (6, 9)],
-        [(0, 5), (2, 7)],
-        [(1, 6), (3, 4), (5, 8), (7, 9)]]
-       sage: edge_coloring(g, value_only=False, hex_colors=True, solver='GLPK')
-       {'#00ffff': [(0, 5), (2, 7)],
-        '#7f00ff': [(1, 6), (3, 4), (5, 8), (7, 9)],
-        '#7fff00': [(0, 4), (1, 2), (3, 8), (6, 9)],
-        '#ff0000': [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]}
+       sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')
+       sage: len(color_classes)
+       4
+       sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
+       True
+       sage: all(g.has_edge(e) for C in color_classes for e in C)
+       True
+       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)
+       True
+       sage: color_classes = edge_coloring(g, value_only=False, hex_colors=True, solver='GLPK')
+       sage: sorted(color_classes.keys())
+       ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
 
     Complete graphs are colored using the linear-time round-robin coloring::
 
@@ -1383,9 +1388,6 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
             return 0
         return dict() if hex_colors else list()
 
-    if vizing:
-        value_only = False
-
     # The chromatic index of g is the maximum value over its connected
     # components, and the edge coloring is the union of the edge
     # coloring of its connected components
@@ -1393,87 +1395,259 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
     cdef int chi = 0
     cdef list classes = [], vertices
     cdef list values
-    for h in L:
 
-        if not h.size():
-            continue
-
-        # We get the vertex of maximum degree and its degree
-        Delta, X = max([(d, v) for v, d in h.degree_iterator(labels=True)], key=lambda x: x[0])
-
-        if value_only:
-            if Delta + 1 <= chi:
-                continue
-            if h.is_overfull():
-                chi = max(chi, Delta + 1)
-                continue
-
-        if h.is_clique():
-            if value_only:
-                chi = max(chi, h.order() if h.order() % 2 else (h.order() - 1))
-                continue
-            vertices = list(h)
-            r = round_robin(h.order())
+    if vizing:
+        classes = _vizing_edge_coloring(g)
+        if len(classes) == max(g.degree()):
+            # guaranteeing that vizing=True always returns Delta+1 colors
+            # for backward compatibility
+            classes.append([])
+    else:
+        def extend_color_classes(classes, coloring):
             # create missing color classes, if any
-            for i in range(len(classes), max(r.edge_labels()) + 1):
+            for _ in range(len(classes), len(coloring)):
                 classes.append([])
             # add edges to classes
-            r.relabel(perm=vertices, inplace=True)
-            for u, v, c in r.edge_iterator():
-                classes[c].append((u, v))
-            continue
+            for i, edges in enumerate(coloring):
+                classes[i].extend(edges)
 
-        # Vizing's coloring uses Delta + 1 colors. Otherwise, we try both.
-        values = [Delta + 1] if vizing else [Delta, Delta + 1]
+        for h in L:
 
-        for k in values:
+            if not h.size():
+                continue
+
+            # We get the vertex of maximum degree and its degree
+            Delta, X = max([(d, v) for v, d in h.degree_iterator(labels=True)], key=lambda x: x[0])
+
+            if Delta + 1 <= chi:
+                c = _vizing_edge_coloring(h)
+                extend_color_classes(classes, c)
+                continue
+
+            if value_only:
+                if Delta + 1 <= chi:
+                    continue
+                if h.is_overfull():
+                    chi = max(chi, Delta + 1)
+                    continue
+
+            if h.is_clique():
+                if value_only:
+                    chi = max(chi, h.order() if h.order() % 2 else (h.order() - 1))
+                    continue
+                vertices = list(h)
+                r = round_robin(h.order())
+                # create missing color classes, if any
+                for i in range(len(classes), max(r.edge_labels()) + 1):
+                    classes.append([])
+                # add edges to classes
+                r.relabel(perm=vertices, inplace=True)
+                for u, v, c in r.edge_iterator():
+                    classes[c].append((u, v))
+                continue
+
             p = MixedIntegerLinearProgram(maximization=True, solver=solver)
             color = p.new_variable(binary=True)
             # A vertex cannot have two incident edges with the same color.
             for v in h:
-                for i in range(k):
+                for i in range(Delta):
                     p.add_constraint(p.sum(color[frozenset((u, v)), i] for u in h.neighbor_iterator(v)) <= 1)
             # An edge must have a color
             for u, v in h.edge_iterator(labels=False):
-                p.add_constraint(p.sum(color[frozenset((u, v)), i] for i in range(k)) == 1)
+                p.add_constraint(p.sum(color[frozenset((u, v)), i] for i in range(Delta)) == 1)
             # We color the edges of the vertex of maximum degree
             for i, v in enumerate(h.neighbor_iterator(X)):
                 p.add_constraint(color[frozenset((v, X)), i] == 1)
             try:
                 p.solve(objective_only=value_only, log=verbose)
-                break
             except MIPSolverException:
-                if k == Delta + 1:
-                    raise RuntimeError("Something is wrong! Certainly a problem in the"
-                                       " algorithm... please contact sage-devel@googlegroups.com")
                 # The coloring fails with Delta colors
-                if value_only:
-                    k = k + 1
-                    break
+                chi = max(chi, Delta + 1)
+                if not value_only:
+                    c = _vizing_edge_coloring(h)
+                    extend_color_classes(classes, c)
+                continue
+
+            chi = max(chi, Delta)
+            if not value_only:
+                # create missing color classes, if any
+                for i in range(len(classes), Delta):
+                    classes.append([])
+                # add edges to color classes
+                color = p.get_values(color, convert=bool, tolerance=integrality_tolerance)
+                for e in h.edge_iterator(labels=False):
+                    fe = frozenset(e)
+                    for i in range(Delta):
+                        if color[fe, i]:
+                            classes[i].append(e)
+                            break
 
         if value_only:
-            chi = max(chi, k)
-        else:
-            # create missing color classes, if any
-            for i in range(len(classes), k):
-                classes.append([])
-            # add edges to color classes
-            color = p.get_values(color, convert=bool, tolerance=integrality_tolerance)
-            for e in h.edge_iterator(labels=False):
-                fe = frozenset(e)
-                for i in range(k):
-                    if color[fe, i]:
-                        classes[i].append(e)
-                        break
+            return chi
 
-    if value_only:
-        return chi
     # if needed, builds a dictionary from the color classes adding colors
     if hex_colors:
         return dict(zip(rainbow(len(classes)), classes))
     else:
         return classes
 
+
+def _vizing_edge_coloring(g):
+    r"""
+    Compute an edge coloring with at most `\Delta + 1` colors.
+
+    INPUT:
+
+    - ``g`` -- a graph.
+
+    OUTPUT:
+
+    - Returns a partition of the edge set into at most `\Delta + 1` matchings.
+
+    .. SEEALSO::
+
+        - :wikipedia:`Edge_coloring` for further details on edge coloring
+        - :wikipedia:`Vizing's_theorem` for further details on Vizing's theorem
+
+    ALGORITHM:
+
+    This function's implementation is based on the algorithm described at [MG1992]_
+    
+    EXAMPLES:
+
+    Coloring the edges of the Petersen Graph::
+
+       sage: from sage.graphs.graph_coloring import _vizing_edge_coloring
+       sage: g = graphs.PetersenGraph()
+       sage: color_classes = _vizing_edge_coloring(g)
+       sage: len(color_classes) == max(g.degree()) + 1
+       True
+       sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
+       True
+       sage: all(g.has_edge(e) for C in color_classes for e in C)
+       True
+       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)
+       True
+
+    Coloring the edges of the Star Graph::
+
+       sage: from sage.graphs.graph_coloring import _vizing_edge_coloring
+       sage: g = graphs.StarGraph(5)
+       sage: len(_vizing_edge_coloring(g))
+       5
+
+    TESTS:
+
+    Graph without edge::
+
+       sage: g = Graph(2)
+       sage: _vizing_edge_coloring(g)
+       []
+
+    Random graphs::
+
+       sage: from sage.graphs.generators.random import RandomGNP
+       sage: g = RandomGNP(randint(1, 20), random())
+       sage: colors = _vizing_edge_coloring(g)
+       sage: Delta = max(g.degree())
+       sage: len(colors) in [Delta, Delta + 1]
+       True
+       sage: len(set(frozenset(e) for C in colors for e in C)) == g.size()
+       True
+       sage: all(g.has_edge(e) for C in colors for e in C)
+       True
+       sage: all(len(Graph(C).matching()) == len(C) for C in colors)
+       True
+    """
+    # This implementation was discussed in trac ticket #34809
+
+    # dictionary mapping edges to colors
+    e_colors = {frozenset(e): None for e in g.edge_iterator(labels=False, sort_vertices=False)}
+
+    # finds every color adjacent to vertex v
+    def colors_of(v):
+        colors = {e_colors[frozenset((u, v))] for u in g.neighbor_iterator(v)}
+        colors.discard(None)
+        return colors
+
+    # constructs a maximal fan <f..l> of X where X is edge[0] and f is edge[1]
+    def maximal_fan(edge):
+        fan_center, rear = edge
+        cdef set rear_colors = colors_of(rear)
+        cdef list neighbors = [n for n in g.neighbor_iterator(fan_center)
+                                   if e_colors[frozenset((n, fan_center))] is not None]
+        cdef list fan = [rear]
+        cdef bint can_extend_fan = True
+        while can_extend_fan:
+            can_extend_fan = False
+            new_neighbors = []
+            for n in neighbors:
+                if e_colors[frozenset((fan_center, n))] not in rear_colors:
+                    fan.append(n)
+                    rear = n
+                    rear_colors = colors_of(rear)
+                    can_extend_fan = True
+                else:
+                    new_neighbors.append(n)
+            neighbors = new_neighbors
+        return fan
+
+    # gives each edge Xu in the fan <f..w> the color of Xu+ and uncolors Xw
+    def rotate_fan(fan_center, fan):
+        for i in range(1, len(fan)):
+            e_colors[frozenset((fan_center, fan[i - 1]))] = e_colors[frozenset((fan_center, fan[i]))]
+        e_colors[frozenset((fan_center, fan[-1]))] = None
+
+    # computes the maximal ab-path starting at v
+    def find_path(v, a, b):
+        cdef list path = [v]
+        cdef bint stop = False
+        while not stop:
+            stop = True
+            for u in g.neighbor_iterator(v):
+                if e_colors[frozenset((u, v))] == a:
+                    path.append(u)
+                    # exchange the role of colors a and b and go to next vertex
+                    a, b = b, a
+                    v = u
+                    stop = False
+                    break
+        return path
+
+    # exchanges the color of every edge on the ab-path starting at v
+    def invert_path(v, a, b):
+        cdef list path = find_path(v, a, b)
+        for e in zip(path[:-1], path[1:]):
+            f = frozenset(e)
+            e_colors[f] = a if e_colors[f] == b else b
+
+    # returns the ´smallest´ color free at v
+    def find_free_color(v):
+        colors = colors_of(v)
+        for c in range(g.degree(v) + 1):
+            if c not in colors:
+                return c
+
+    for e in g.edge_iterator(labels=False, sort_vertices=False):
+        fan = maximal_fan(e)
+        fan_center = e[0]
+        rear = fan[-1]
+        c = find_free_color(fan_center)
+        d = find_free_color(rear)
+        invert_path(fan_center, d, c)
+        for i, v in enumerate(fan):
+            if d not in colors_of(v):
+                fan = fan[:i + 1]
+                break
+        rotate_fan(fan_center, fan)
+        e_colors[frozenset((fan_center, fan[-1]))] = d
+
+    matchings = dict()
+    for edge, c in e_colors.items(): 
+        matchings[c] = matchings.get(c, []) + [tuple(edge)]
+    classes = list(matchings.values())
+
+    return classes
 
 def round_robin(n):
     r"""

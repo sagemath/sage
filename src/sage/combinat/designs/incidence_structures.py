@@ -182,8 +182,7 @@ class IncidenceStructure():
             assert blocks is None, "'blocks' cannot be defined when 'points' is a matrix"
             incidence_matrix = points
             points = blocks = None
-        elif (points is not None and
-              blocks is     None):
+        elif points is not None and blocks is None:
             blocks = points
             points = set().union(*blocks)
         if points:

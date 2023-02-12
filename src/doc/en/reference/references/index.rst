@@ -620,6 +620,11 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
+.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+              *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
+              Journal of Combinatorial Designs 21(1) (2013): 24-35.
+              :doi:`10.1002/jcd.21318`
+
 .. [BDLV2006] \S. Brlek, S. Dulucq, A. Ladouceur, L. Vuillon, *Combinatorial
               properties of smooth infinite words*, Theoret. Comput. Sci. 352
               (2006) 306--317.
@@ -2027,6 +2032,15 @@ REFERENCES:
              and some constructions of de Luca and Rauzy*,
              Theoret. Comput. Sci.  255 (2001) 539--553.
 
+.. [Djo1992] \D. Đoković.
+             *Construction of some new Hadamard matrices*,
+             Bulletin of the Australian Mathematical Society 45(2) (1992): 327-332.
+             :doi:`10.1017/S0004972700030185`
+
+.. [Djo1994] \D. Đoković.
+             *Five New Orders for Hadamard Matrices of Skew Type*,
+             Australasian Journal of Combinatorics  10 (1994): 259-264.
+
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
 
@@ -2181,6 +2195,11 @@ REFERENCES:
 
 .. [Early2017] Nick Early. *Canonical bases for permutohedral plates*.
                Preprint (2017). :arxiv:`1712.08520v3`.
+
+.. [EB1966] \J. Elliot and A. Butson.
+            *Relative difference sets*,
+            Illinois Journal of Mathematics 10(3) (1966): 517-531.
+            :doi:`10.1215/ijm/1256055004`
 
 .. [Eb1989] \W. Eberly, "Computations for algebras and group
             representations". Ph.D. Thesis, University of
@@ -3784,6 +3803,11 @@ REFERENCES:
 .. [KT2013] \K. Tsukazaki, Explicit Isogenies of Elliptic Curves,
             PhD thesis, University of Warwick, 2013.
 
+.. [KTR2005] \H. Kharaghani and B. Tayfeh-Rezaie.
+            *A Hadamard matrix of order 428*,
+            Journal of Combinatorial Designs 13(6) (2005): 435-440.
+            :doi:`10.1002/jcd.20043`
+
 .. [KTT2006] \A. Kuniba, T. Takagi, and A. Takenouchi,
              *Bethe ansatz and inverse scattering transform in a periodic
              box-ball system*, Nuclear Phys. B **747**, no. 3 (2006), 354--397.
@@ -4394,6 +4418,10 @@ REFERENCES:
              leurs modules*. Effective methods in algebraic geometry (Castiglioncello,
              1990), 313--334, Progr. Math., 94, Birkhauser Boston, Boston, MA, 1991.
 
+.. [MG1992] \J. Misra and D. Gries. *A constructive proof of Vizing's theorem*.
+            Information Processing Letters, (3) 41 (1992), 131-133.
+            :doi:`10.1016/0020-0190(92)90041-S`.
+
 .. [Mil1958] \J. W. Milnor, *The Steenrod algebra and its dual*,
              Ann. of Math. (2) 67 (1958), 150-171.
 
@@ -4417,6 +4445,9 @@ REFERENCES:
 
 .. [MirMor2009] \R. Miranda, D.R. Morrison, "Embeddings of Integral Quadratic Forms"
                 http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf .
+
+.. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
+             International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
 
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
@@ -5356,6 +5387,12 @@ REFERENCES:
              automorphic functions*. Publications of the Mathematical
              Society of Japan and Princeton University Press, 1971.
 
+.. [Sho1999] Victor Shoup: *Efficient computation of minimal polynomials in
+             algebraic extensions of finite fields*.
+             In ISSAC '99, pp. 53–58. ACM, 1999.
+             :doi:`10.1145/309831.309859`,
+             https://shoup.net/papers/mpol.pdf
+
 .. [Shr2004] \S. Shreve, *Stochastic Calculus for Finance II:
              Continuous-Time Models*.  New York: Springer, 2004
 
@@ -5572,6 +5609,11 @@ REFERENCES:
 .. [Sei2002] \T. R. Seifullin, *Computation of determinants, adjoint
              matrices, and characteristic polynomials without division*
              :doi:`10.1023/A:1021878507303`
+
+.. [Spe1975] \E. Spence.
+            *Hadamard matrices from relative difference sets*,
+            Journal of Combinatorial Theory, Series A 19(3) (1975): 287-300.
+            :doi:`10.1016/0097-3165(75)90054-0`
 
 .. [ST1981] \J. J. Seidel and D. E. Taylor,
             *Two-graphs, a second survey*.
@@ -6232,6 +6274,10 @@ REFERENCES:
 .. [ZF2012] Jin-Xin Zhou and Yan-Quan Feng. *Cubic Vertex-Transitive
             Non-Cayley Graphs of Order 8p*. The Electronic Journal of
             Combinatorics, 19(1), P53, 2012. :doi:`10.37236/2087`
+
+.. [Zie1959] \N. Zierler. *Linear Recurring Sequences*.
+             Journal of the Society for Industrial and Applied Mathematics 7(1) 
+             (1959): 31-48. :doi:`10.1137/0107003`
 
 .. [Zie1998] \G. M. Ziegler. *Shelling polyhedral 3-balls and
              4-polytopes*. Discrete Comput. Geom. 19 (1998), 159-174.

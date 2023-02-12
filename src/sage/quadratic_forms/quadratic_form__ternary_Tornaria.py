@@ -1,5 +1,5 @@
 """
-Tornaria Methods for Computing with Quadratic Forms
+Tornaria methods for computing with quadratic forms
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Gonzalo Tornaria

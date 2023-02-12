@@ -80,6 +80,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
         from sage.groups.all import SymmetricGroup
         return SymmetricGroup(max(1,len(self._labels)))
 
+
 class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     @staticmethod
     @accept_size

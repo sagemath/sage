@@ -4075,13 +4075,13 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             try:
                 M = self.change_ring(base_ring)
             except TypeError:
-                raise ValueError("Argument base_ring (= %s) is not compatible "%base_ring + \
-                    "with the base ring (= %s)."%self.base_ring())
+                raise ValueError("Argument base_ring (= %s) is not compatible " % base_ring +
+                    "with the base ring (= %s)." % self.base_ring())
             try:
                 return M.span_of_basis(basis)
             except TypeError:
-                raise ValueError("Argument gens (= %s) is not compatible "%basis + \
-                    "with base_ring (= %s)."%base_ring)
+                raise ValueError("Argument gens (= %s) is not compatible "%basis +
+                    "with base_ring (= %s)." % base_ring)
 
     def submodule_with_basis(self, basis, check=True, already_echelonized=False):
         r"""

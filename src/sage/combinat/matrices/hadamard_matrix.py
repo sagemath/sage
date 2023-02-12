@@ -51,17 +51,18 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from urllib.request import urlopen
+from sage.combinat.designs.difference_family import skew_supplementary_difference_set
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
 from sage.arith.all import is_square, is_prime_power, divisors
 from math import sqrt
 from sage.matrix.constructor import identity_matrix as I
-from sage.matrix.constructor import ones_matrix     as J
+from sage.matrix.constructor import ones_matrix as J
 from sage.matrix.constructor import zero_matrix
 from sage.misc.unknown import Unknown
 from sage.cpython.string import bytes_to_str
@@ -333,6 +334,14 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     """
     db = {
         1: ([1], [1], [1], [1]),
+        7: ([1, -1, -1, 1, 1, -1, -1],
+            [1, -1, 1, -1, -1, 1, -1],
+            [1, 1, -1, -1, -1, -1, 1],
+            [1, -1, -1, -1, -1, -1, -1]),
+        9: ([1, -1, -1, -1, 1, 1, -1, -1, -1],
+            [1, -1, -1, 1, -1, -1, 1, -1, -1],
+            [1, -1, 1, -1, -1, -1, -1, 1, -1],
+            [1, 1, -1, -1, -1, -1, -1, -1, 1]),
         29: ([1, 1, 1,-1,-1,-1, 1, 1,-1,-1, 1,-1, 1,-1,-1,-1,-1, 1,-1, 1,-1,-1, 1, 1,-1,-1,-1, 1, 1],
             [1,-1, 1,-1,-1,-1, 1, 1,-1,-1, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1,-1,-1, 1, 1,-1,-1,-1, 1,-1],
             [1, 1, 1, 1,-1, 1, 1,-1, 1,-1,-1,-1, 1, 1, 1, 1, 1, 1,-1,-1,-1, 1,-1, 1, 1,-1, 1, 1, 1],
@@ -795,7 +804,7 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     This function calls the function :func:`hadamard_matrix_cooper_wallis_construction`
     with the appropriate arguments.
     It constructs the matrices `X_1`, `X_2`, `X_3`, `X_4` using either
-    T-matrices or the T-sequences from :func:`sage.combinat.t_sequences.t_sequences_smallcases`.
+    T-matrices or the T-sequences from :func:`sage.combinat.t_sequences.T_sequences_smallcases`.
     The matrices `A`, `B`, `C`, `D` are taken from :func:`williamson_type_quadruples_smallcases`.
 
     Data for T-matrices of order 67 is taken from [Saw1985]_.
@@ -1088,6 +1097,94 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
         return False
     raise ValueError("The Turyn type construction for Hadamard matrices of order %s is not yet implemented." % n)
 
+def hadamard_matrix_spence_construction(n, existence=False, check=True):
+    r"""Create an Hadamard matrix of order `n` using Spence construction.
+
+    This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set` to create the
+    desired matrix.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
+
+    - ``check`` -- bolean: if True (default), check the the matrix is an Hadamard matrix before returning.
+
+    OUTPUT:
+
+    If ``existence`` is true, returns a boolean representing whether the Hadamard matrix can
+    be constructed. Otherwise, returns the Hadamard matrix, or raises an error if it cannot be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_spence_construction
+        sage: hadamard_matrix_spence_construction(36)
+        36 x 36 dense matrix over Integer Ring...
+
+    If ``existence`` is ``True``, the function returns a boolean ::
+
+        sage: hadamard_matrix_spence_construction(52, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_spence_construction(100))
+        True
+        sage: hadamard_matrix_spence_construction(48, existence=True)
+        False
+        sage: hadamard_matrix_spence_construction(48)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 48 is not covered by Spence construction.
+        sage: hadamard_matrix_spence_construction(5)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: hadamard_matrix_spence_construction(0)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    from sage.combinat.designs.difference_family import supplementary_difference_set
+
+    assert n%4 == 0 and n > 0
+
+    q = n//4
+
+    if existence:
+        return supplementary_difference_set(q, existence=True)
+
+    if not supplementary_difference_set(q, existence=True):
+        raise ValueError(f'The order {n} is not covered by Spence construction.')
+
+    S1, S2, S3, S4 = supplementary_difference_set(q, check=False)
+
+    A1 = matrix.circulant([1 if j in S1 else -1 for j in range(q-1)])
+    A2 = matrix.circulant([1 if j in S4 else -1 for j in range(q-1)])
+    A3 = matrix.circulant([1 if j in S3 else -1 for j in range(q-1)])
+    A4 = matrix.circulant([1 if j in S2 else -1 for j in range(q-1)])
+
+    P = matrix(ZZ, [[1 if (i + j)%(q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
+
+    e = matrix([1]*(q-1))
+    m1 = matrix([-1])
+    p1 = matrix([1])
+    H = block_matrix([[  p1,   m1,   p1,   p1,     e,       e,       e,       e],
+                      [  p1,   p1,   m1,   p1,    -e,       e,      -e,       e],
+                      [  m1,   p1,   p1,   p1,    -e,       e,       e,      -e],
+                      [  m1,   m1,   m1,   p1,    -e,      -e,       e,       e],
+                      [-e.T,  e.T,  e.T, -e.T,    A1,    A2*P,    A3*P,    A4*P],
+                      [-e.T, -e.T,  e.T,  e.T, -A2*P,      A1, -A4.T*P,  A3.T*P],
+                      [-e.T, -e.T, -e.T, -e.T, -A3*P,  A4.T*P,      A1, -A2.T*P],
+                      [ e.T, -e.T,  e.T, -e.T, -A4*P, -A3.T*P,  A2.T*P,      A1]])
+    if check:
+        assert is_hadamard_matrix(H, verbose=True)
+
+    return H
+
 def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
     r"""
     Test if `M` is a Hadamard matrix.
@@ -1196,8 +1293,7 @@ from sage.matrix.constructor import matrix_method
 @matrix_method
 def hadamard_matrix(n,existence=False, check=True):
     r"""
-    Tries to construct a Hadamard matrix using a combination of Paley
-    and Sylvester constructions.
+    Tries to construct a Hadamard matrix using the available methods.
 
     INPUT:
 
@@ -1270,7 +1366,7 @@ def hadamard_matrix(n,existence=False, check=True):
         False
         sage: matrix.hadamard(12,existence=True)
         True
-        sage: matrix.hadamard(476,existence=True)
+        sage: matrix.hadamard(668,existence=True)
         Unknown
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
@@ -1329,6 +1425,10 @@ def hadamard_matrix(n,existence=False, check=True):
         if existence:
             return True
         M = turyn_type_hadamard_matrix_smallcases(n, check=False)
+    elif hadamard_matrix_spence_construction(n ,existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_spence_construction(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
         if existence:
             return True
@@ -1526,21 +1626,21 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
         if existence:
             return true()
         M = RSHCD_324(e)
-    elif (  e  == 1                 and
-          n%16 == 0                 and
-          sqn is not None           and
-          is_prime_power(sqn-1) and
-          is_prime_power(sqn+1)):
+    elif (e == 1 and
+          n % 16 == 0 and
+          sqn is not None and
+          is_prime_power(sqn - 1) and
+          is_prime_power(sqn + 1)):
         if existence:
             return true()
         M = -rshcd_from_close_prime_powers(sqn)
 
-    elif (  e  == 1                 and
-          sqn is not None           and
-          sqn%4 == 2            and
+    elif (e == 1 and
+          sqn is not None and
+          sqn % 4 == 2 and
           strongly_regular_graph(sqn-1,(sqn-2)//2,(sqn-6)//4,
             existence=True) is True and
-          is_prime_power(ZZ(sqn+1))):
+          is_prime_power(ZZ(sqn + 1))):
         if existence:
             return true()
         M = rshcd_from_prime_power_and_conference_matrix(sqn+1)
@@ -1829,6 +1929,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     Matrices for `n=36` and `52` are given in [GS70s]_. Matrices for `n=92` are given
     in [Wall71]_.
 
+    Additional data is obtained from skew supplementary difference sets contained in
+    :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the
+    construction described in [Djo1992]_.
+
     INPUT:
 
     - ``n`` -- the order of the matrix
@@ -1854,7 +1958,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         return [1 if x == '+' else -1 for x in s]
 
     if existence:
-        return n in [36, 52, 92]
+        return n in [36, 52, 92] or skew_supplementary_difference_set(n//4, existence=True)
 
     if n == 36:
         a = [ 1,  1, 1, -1,  1, -1,  1, -1, -1]
@@ -1875,6 +1979,16 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         c = [1, 1,-1,-1,-1, 1,-1, 1,-1, 1,-1, 1, 1,-1, 1,-1, 1,-1, 1,-1,-1,-1, 1]
         d = [1,-1,-1,-1,-1, 1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,-1,-1, 1,-1,-1,-1,-1]
         return WGS(a, b, c, d, check=check)
+
+    if skew_supplementary_difference_set(n//4, existence=True):
+        t = n//4
+        S1, S2, S3, S4 = skew_supplementary_difference_set(t, check=False)
+        a = [-1 if i in S1 else 1 for i in range(t)]
+        b = [-1 if i in S2 else 1 for i in range(t)]
+        c = [-1 if i in S3 else 1 for i in range(t)]
+        d = [-1 if i in S4 else 1 for i in range(t)]
+        return WGS(a, b, c, d, check=check)
+
     return None
 
 _skew_had_cache={}

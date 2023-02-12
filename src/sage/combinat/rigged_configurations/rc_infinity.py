@@ -300,6 +300,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             sage: elt = RC(partition_list=[[1,1]]*4, rigging_list=[[1,1], [0,0], [0,0], [-1,-1]])
             sage: TestSuite(elt).run()
         """
+
         def weight(self):
             """
             Return the weight of ``self``.
@@ -315,10 +316,12 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             alpha = list(P.simple_roots())
             return -sum(sum(x) * alpha[i] for i, x in enumerate(self))
 
+
 class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
     r"""
     Rigged configurations for `\mathcal{B}(\infty)` in non-simply-laced types.
     """
+
     def __init__(self, vct):
         """
         Initialize ``self``.
@@ -506,6 +509,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: elt = RC(partition_list=[[1],[1,1],[1]])
             sage: TestSuite(elt).run()
         """
+
         def weight(self):
             """
             Return the weight of ``self``.

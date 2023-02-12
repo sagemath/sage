@@ -2324,6 +2324,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve('11a1')
             sage: E.multiplication_by_m_isogeny(7)
+            doctest:warning ... DeprecationWarning: ...
             Isogeny of degree 49 from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
         TESTS:
@@ -2363,6 +2364,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: all(mu(-m) == -mu(m) for m in (1,2,3,5,7))
             True
         """
+        from sage.misc.superseded import deprecation
+        deprecation(32826, 'The .multiplication_by_m_isogeny() method is superseded by .scalar_multiplication().')
+
         mx, my = self.multiplication_by_m(m)
 
         torsion_poly = self.torsion_polynomial(abs(m)).monic()
@@ -2376,6 +2380,60 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return psi
 
         assert False, 'bug in multiplication_by_m_isogeny()'
+
+    def scalar_multiplication(self, m):
+        r"""
+        Return the scalar-multiplication map `[m]` on this elliptic
+        curve as a
+        :class:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`
+        object.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('77a1')
+            sage: m = E.scalar_multiplication(-7); m
+            Scalar-multiplication endomorphism [-7] of Elliptic Curve defined by y^2 + y = x^3 + 2*x over Rational Field
+            sage: m.degree()
+            49
+            sage: P = E(2,3)
+            sage: m(P)
+            (-26/225 : -2132/3375 : 1)
+            sage: m.rational_maps() == E.multiplication_by_m(-7)
+            True
+        """
+        from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
+        return EllipticCurveHom_scalar(self, m)
+
+    def frobenius_isogeny(self, n=1):
+        r"""
+        Return the `n`-power Frobenius isogeny from this curve to
+        its Galois conjugate.
+
+        The Frobenius *endo*\morphism is the special case where `n`
+        is divisible by the degree of the base ring of the curve.
+
+        .. SEEALSO::
+
+            :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.frobenius_endomorphism`
+
+        EXAMPLES::
+
+            sage: z3, = GF(13^3).gens()
+            sage: E = EllipticCurve([z3,z3^2])
+            sage: E.frobenius_isogeny()
+            Frobenius isogeny of degree 13:
+              From: Elliptic Curve defined by y^2 = x^3 + z3*x + z3^2 over Finite Field in z3 of size 13^3
+              To:   Elliptic Curve defined by y^2 = x^3 + (5*z3^2+7*z3+11)*x + (5*z3^2+12*z3+1) over Finite Field in z3 of size 13^3
+            sage: E.frobenius_isogeny(3)
+            Frobenius endomorphism of degree 2197 = 13^3:
+              From: Elliptic Curve defined by y^2 = x^3 + z3*x + z3^2 over Finite Field in z3 of size 13^3
+              To:   Elliptic Curve defined by y^2 = x^3 + z3*x + z3^2 over Finite Field in z3 of size 13^3
+        """
+        p = self.base_ring().characteristic()
+        if not p:
+            raise ValueError('Frobenius isogeny only exists in positive characteristic')
+        from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+        return EllipticCurveHom_frobenius(self, n)
 
     def isomorphism_to(self, other):
         """
@@ -2489,9 +2547,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:         continue
             ....:     break
             sage: Aut = E.automorphisms()
-            sage: Aut[0] == E.multiplication_by_m_isogeny(1)
+            sage: Aut[0] == E.scalar_multiplication(1)
             True
-            sage: Aut[1] == E.multiplication_by_m_isogeny(-1)
+            sage: Aut[1] == E.scalar_multiplication(-1)
             True
             sage: sorted(Aut) == Aut
             True
@@ -3366,8 +3424,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: K.<a> = QuadraticField(2)
             sage: E = EllipticCurve([1,a])
             sage: E.pari_curve()
-            [Mod(0, y^2 - 2), Mod(0, y^2 - 2), Mod(0, y^2 - 2), Mod(1, y^2 - 2),
-            Mod(y, y^2 - 2), Mod(0, y^2 - 2), Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
+            [0, 0, 0, Mod(1, y^2 - 2),
+            Mod(y, y^2 - 2), 0, Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
             Mod(-1, y^2 - 2), Mod(-48, y^2 - 2), Mod(-864*y, y^2 - 2),
             Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2), Vecsmall([5]),
             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310;

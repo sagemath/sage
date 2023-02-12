@@ -27,6 +27,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     """
     Abstract base class for a basis of `NCSym` or its dual.
     """
+
     def _element_constructor_(self, x):
         """
         Construct an element of ``self``.
@@ -53,6 +54,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
     Base category for the category of bases of symmetric functions
     in non-commuting variables or its Hopf dual for the common code.
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of (the Hopf dual of) the
@@ -340,6 +342,7 @@ class NCSymBases(Category_realization_of_parent):
         sage: NCSymBases(NCSym)
         Category of bases of symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the
@@ -741,6 +744,7 @@ class MultiplicativeNCSymBases(Category_realization_of_parent):
         sage: MultiplicativeNCSymBases(NCSym)
         Category of multiplicative bases of symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the
@@ -845,6 +849,7 @@ class NCSymDualBases(Category_realization_of_parent):
         sage: NCSymDualBases(DNCSym)
         Category of bases of dual symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the

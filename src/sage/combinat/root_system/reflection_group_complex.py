@@ -225,6 +225,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         :func:`ReflectionGroup`
     """
+
     def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
         r"""
         TESTS::
@@ -2029,6 +2030,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 assert w in self.parent().conjugacy_classes_representatives()
                 return w.reflection_length(in_unitary_group=in_unitary_group)
 
+
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
     def _repr_(self):
@@ -2201,6 +2203,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                         return True
             return False
 
+
 def multi_partitions(n, S, i=None):
     r"""
     Return all vectors as lists of the same length as ``S`` whose
@@ -2238,6 +2241,7 @@ def multi_partitions(n, S, i=None):
         coeff[i] += 1
     coeffs = coeffs1 + coeffs2
     return coeffs
+
 
 @cached_function
 def power(f, k):

@@ -104,6 +104,7 @@ class LocalOptions:
     sage.structure.global_options.py. We should split global_option in two
     classes LocalOptions and GlobalOptions.
     """
+
     def __init__(self, name='', **options):
         r"""
         Construct a new LocalOptions.
@@ -455,6 +456,7 @@ class LocalOptions:
         f = getattr(obj, dispatch_to + "_" + str(self._options[option]))
         return f(*get_values, **set_values)
 
+
 default_tikz_options = dict(
     scale=1, line_size=1, point_size=3.5, color_line='black',
     color_point='black', color_bounce_0='red', color_bounce_1='blue',
@@ -595,6 +597,7 @@ class _drawing_tool:
         (1.000000, -1.000000);'
 
     """
+
     def __init__(self, options, XY=lambda v: v):
         r"""
         Construct a drawing tools to produce some TIKZ drawing.
@@ -2308,6 +2311,7 @@ class ParallelogramPolyomino(ClonableList,
             sage: row
             [0, 1, 1]
         """
+
         def __init__(self, polyomino, row):
             r"""
             The constructor of the class
@@ -3997,6 +4001,7 @@ class ParallelogramPolyominoesFactory(SetFactory):
         sage: PPS.cardinality()
         +Infinity
     """
+
     def __call__(self, size=None, policy=None):
         r"""
         Return a family of parallelogram polyominoes enumerated with the
@@ -4097,6 +4102,7 @@ class ParallelogramPolyominoes_size(
          [[0, 1, 0, 1], [1, 1, 0, 0]],
          [[0, 1, 1, 1], [1, 1, 1, 0]]]
     """
+
     def __init__(self, size, policy):
         r"""
         Construct a set of Parallelogram Polyominoes of a given size.
@@ -4265,6 +4271,7 @@ class ParallelogramPolyominoes_all(
         sage: PPS
         Parallelogram polyominoes
     """
+
     def __init__(self, policy):
         r"""
         Construct the set of all parallelogram polyominoes.

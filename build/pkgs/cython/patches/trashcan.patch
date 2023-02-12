@@ -1,5 +1,7 @@
 See https://github.com/cython/cython/pull/2842
 
+and https://github.com/cython/cython/pull/4475
+
 commit c47c4ef735c4b7f1863b21bbe6f112b06c4aad05
 Author: Jeroen Demeyer <J.Demeyer@UGent.be>
 Date:   Thu Feb 14 10:02:41 2019 +0100
@@ -128,7 +130,7 @@ diff --git a/Cython/Utility/ExtensionTypes.c b/Cython/Utility/ExtensionTypes.c
 index 50d0e21..ca2adbe 100644
 --- a/Cython/Utility/ExtensionTypes.c
 +++ b/Cython/Utility/ExtensionTypes.c
-@@ -74,6 +74,49 @@ static int __Pyx_PyType_Ready(PyTypeObject *t) {
+@@ -74,6 +74,54 @@ static int __Pyx_PyType_Ready(PyTypeObject *t) {
      return r;
  }
  
@@ -140,7 +142,12 @@ index 50d0e21..ca2adbe 100644
 +
 +// This requires CPython version >= 2.7.4
 +// (or >= 3.2.4 but we don't support such old Python 3 versions anyway)
-+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x02070400
++#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x03080000
++// https://github.com/python/cpython/pull/11841 merged so Cython reimplementation
++// is no longer necessary
++#define __Pyx_TRASHCAN_BEGIN Py_TRASHCAN_BEGIN
++#define __Pyx_TRASHCAN_END Py_TRASHCAN_END
++#elif CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x02070400
 +#define __Pyx_TRASHCAN_BEGIN_CONDITION(op, cond) \
 +    do { \
 +        PyThreadState *_tstate = NULL; \

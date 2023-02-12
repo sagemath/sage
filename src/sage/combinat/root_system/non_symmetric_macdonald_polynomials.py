@@ -1233,7 +1233,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             Traceback (most recent call last):
             ...
             AssertionError: The weight lattice needs to be extended!
-
         """
         # TODO: check all the choices!
         self._KL = KL
@@ -1243,9 +1242,9 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         self._q1 = q1
         self._q2 = q2
         assert self.L_prime().classical() is self.L().classical()
-        T   = KL.twisted_demazure_lusztig_operators     (   q1, q2, convention="dominant")
+        T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
         T_Y = KL.demazure_lusztig_operators_on_classical(q, q1, q2, convention="dominant")
-        CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized = normalized)
+        CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized=normalized)
 
     def _repr_(self):
         r"""

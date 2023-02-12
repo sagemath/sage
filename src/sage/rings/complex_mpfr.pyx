@@ -206,7 +206,7 @@ def ComplexField(prec=53, names=None):
     if prec in cache:
         X = cache[prec]
         C = X()
-        if not C is None:
+        if C is not None:
             return C
     C = ComplexField_class(prec)
     cache[prec] = weakref.ref(C)
@@ -2066,7 +2066,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             return Integer(4)
         elif self == -self._parent.gen():
             return Integer(4)
-        elif not self._multiplicative_order is None:
+        elif self._multiplicative_order is not None:
             return Integer(self._multiplicative_order)
         elif abs(abs(self) - 1) > 0.1:  # clearly not a root of unity
             return infinity.infinity

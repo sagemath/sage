@@ -23,6 +23,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 class SumSpeciesStructure(SpeciesStructureWrapper):
     pass
 
+
 class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
@@ -217,6 +218,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [node1 + (-2*z)]
         """
         return sum(var_mapping[operand] for operand in self._state_info)
+
 
 #Backward compatibility
 SumSpecies_class = SumSpecies

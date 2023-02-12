@@ -1756,16 +1756,26 @@ class ExteriorAlgebra(CliffordAlgebra):
         EXAMPLES::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: E.interior_product_on_basis((0,), (0,))
+            sage: k = list(E.basis().keys())
+            sage: E.interior_product_on_basis(k[1], k[1])
             1
-            sage: E.interior_product_on_basis((0,2), (0,))
+            sage: E.interior_product_on_basis(k[5], k[1])
             z
-            sage: E.interior_product_on_basis((1,), (0,2))
+            sage: E.interior_product_on_basis(k[2], k[5])
             0
-            sage: E.interior_product_on_basis((0,2), (1,))
+            sage: E.interior_product_on_basis(k[5], k[2])
             0
-            sage: E.interior_product_on_basis((0,1,2), (0,2))
+            sage: E.interior_product_on_basis(k[7], k[5])
             -y
+
+        Check :trac:`34694`::
+
+            sage: E = ExteriorAlgebra(SR,'e',3)
+            sage: E.inject_variables()
+            Defining e0, e1, e2
+            sage: a = (e0*e1).interior_product(e0)
+            sage: a * e0
+            -e0*e1
         """
         sgn = True
         t = list(a)
@@ -1776,7 +1786,9 @@ class ExteriorAlgebra(CliffordAlgebra):
                 sgn = not sgn
             t.remove(i)
         R = self.base_ring()
-        return self.term(tuple(t), (R.one() if sgn else - R.one()))
+        if not t:  # catch empty sets
+            t = None
+        return self.term(FrozenBitset(t), (R.one() if sgn else - R.one()))
 
     def lifted_bilinear_form(self, M):
         r"""

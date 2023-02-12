@@ -71,6 +71,7 @@ class AmbientSpace(CombinatorialFreeModule):
         sage: e1 == e2
         False
     """
+
     def __init__(self, root_system, base_ring, index_set=None):
         """
         EXAMPLES::
@@ -193,7 +194,6 @@ class AmbientSpace(CombinatorialFreeModule):
             return self._from_dict(dict((i,K(c)) for i,c in enumerate(v) if c))
         else:
             return CombinatorialFreeModule.__call__(self, v)
-
 
     def __getitem__(self,i):
         """
@@ -353,6 +353,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         return End(self).identity()
 
+
 class AmbientSpaceElement(CombinatorialFreeModule.Element):
     # For backward compatibility
     def _repr_(self):
@@ -487,7 +488,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         v0 = self.parent()._v0
         v1 = self.parent()._v1
         x = x - (x.inner_product(v0)/2)*v0
-        return  x - (x.inner_product(v1)/6)*v1
+        return x - (x.inner_product(v1)/6)*v1
 
     def to_ambient(self):
         r"""
@@ -505,5 +506,6 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
 
         """
         return self
+
 
 AmbientSpace.Element = AmbientSpaceElement

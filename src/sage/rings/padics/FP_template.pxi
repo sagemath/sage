@@ -618,7 +618,7 @@ cdef class FPElement(pAdicTemplateElement):
         cdef Integer right
         cdef FPElement base, pright, ans
         cdef bint exact_exp
-        if isinstance(_right, (Integer, int, long, Rational)):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 self = ~self
                 _right = -_right
