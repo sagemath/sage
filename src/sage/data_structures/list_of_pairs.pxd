@@ -5,7 +5,7 @@ cdef struct pair_s:
     size_t second
 
 @cython.final
-cdef class BinaryList:
+cdef class ListOfPairs:
     cdef pair_s** _lists
     cdef size_t length
 

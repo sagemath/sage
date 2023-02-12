@@ -1,10 +1,10 @@
 cimport cython
-from sage.data_structures.binary_list cimport BinaryList
-from sage.structure.sage_object       cimport SageObject
-from .face_iterator                   cimport FaceIterator, CombinatorialFace
-from .list_of_faces                   cimport ListOfFaces
-from .face_data_structure             cimport face_t
-from .polyhedron_face_lattice         cimport PolyhedronFaceLattice
+from sage.data_structures.list_of_pairs cimport ListOfPairs
+from sage.structure.sage_object         cimport SageObject
+from .face_iterator                     cimport FaceIterator, CombinatorialFace
+from .list_of_faces                     cimport ListOfFaces
+from .face_data_structure               cimport face_t
+from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
@@ -25,9 +25,9 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple _far_face_tuple
     cdef tuple _f_vector
 
-    cdef BinaryList _edges                    # stores edges labeled by vertex indices
-    cdef BinaryList _ridges                   # stores ridges labeled by facet indices
-    cdef BinaryList _face_lattice_incidences  # stores incidences in Hasse diagram labeled indices of the faces
+    cdef ListOfPairs _edges                    # stores edges labeled by vertex indices
+    cdef ListOfPairs _ridges                   # stores ridges labeled by facet indices
+    cdef ListOfPairs _face_lattice_incidences  # stores incidences in Hasse diagram labeled indices of the faces
     cdef PolyhedronFaceLattice _all_faces     # class to generate Hasse diagram incidences
 
     cdef tuple Vrep(self)
@@ -58,6 +58,6 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef int _compute_edges_or_ridges(self, int dual, bint do_edges) except -1
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
-            BinaryList edges, size_t* f_vector) except -1
+            ListOfPairs edges, size_t* f_vector) except -1
 
     cdef int _compute_face_lattice_incidences(self) except -1

@@ -102,9 +102,9 @@ from .conversions \
 from .conversions cimport Vrep_list_to_bit_rep
 from sage.misc.cachefunc            import cached_method
 
-from sage.data_structures.binary_list  cimport pair_s
-from sage.rings.integer                cimport smallInteger
-from cysignals.signals                 cimport sig_check
+from sage.data_structures.list_of_pairs cimport pair_s
+from sage.rings.integer                 cimport smallInteger
+from cysignals.signals                  cimport sig_check
 
 from .face_data_structure cimport face_len_atoms, face_init, face_free
 from .face_iterator cimport iter_t, parallel_f_vector
@@ -3575,7 +3575,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef FaceIterator face_iter
         cdef int dim = self.dimension()
 
-        cdef BinaryList edges = BinaryList()
+        cdef ListOfPairs edges = ListOfPairs()
         cdef int output_dim_init = 1 if do_edges else dim - 2
 
         cdef bint do_f_vector = False
@@ -3644,7 +3644,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
-            BinaryList edges, size_t* f_vector) except -1:
+            ListOfPairs edges, size_t* f_vector) except -1:
         r"""
         See :meth:`CombinatorialPolyhedron._compute_edges`.
         """
@@ -3714,7 +3714,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # For ``dimension_one`` we add:
         cdef size_t already_seen_next  # = sum(f_vector[j] for j in range(dimension_two + 2))
 
-        cdef BinaryList incidences = BinaryList()
+        cdef ListOfPairs incidences = ListOfPairs()
 
         if all_faces is None:
             raise ValueError("could not determine a list of all faces")

@@ -19,7 +19,7 @@ from sage.rings.integer cimport smallInteger
 # Should be neither exposed nor modified.
 cdef size_t length_per_list = 16348
 
-cdef class BinaryList:
+cdef class ListOfPairs:
     def __dealloc__(self):
         cdef size_t n_lists = self.length // length_per_list
         cdef size_t i
@@ -55,8 +55,8 @@ cdef class BinaryList:
 
         EXAMPLES::
 
-            sage: from sage.data_structures.binary_list import BinaryList
-            sage: l = BinaryList()
+            sage: from sage.data_structures.list_of_pairs import ListOfPairs
+            sage: l = ListOfPairs()
             sage: l[0] = [1, 5]
             sage: l[0]
             (1, 5)
@@ -80,8 +80,8 @@ cdef class BinaryList:
 
         EXAMPLES::
 
-            sage: from sage.data_structures.binary_list import BinaryList
-            sage: l = BinaryList()
+            sage: from sage.data_structures.list_of_pairs import ListOfPairs
+            sage: l = ListOfPairs()
             sage: l[0] = (2, 1)
             sage: l[1] = (1, 2)
             sage: l[0]
