@@ -1604,9 +1604,10 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     return True
 
-def is_supplementary_difference_set(G, Ks, lmbda):
+
+def is_supplementary_difference_set(G, Ks, lmbda, verbose=False):
     r"""Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary difference sets over group `G` of order `v`.
-    
+
     From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of a group `G` of order `v`
     such that `|S_i| = k_i`. If, for each `g \in G`, `g \neq 0`, the total number of solutions of `a_i - a'_i = g`, with
     `a_i, a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1, ..., k_n; \lambda\}` supplementary difference sets.
@@ -1619,34 +1620,43 @@ def is_supplementary_difference_set(G, Ks, lmbda):
 
     - ``lmbda`` -- integer, the parameter `\lambda` of the supplementary difference sets.
 
+    - ``verbose`` -- boolean (default False). If true the function will be verbose
+      when the sets do not satisfy the contraints.
+
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set, is_supplementary_difference_set
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(17)
         sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], 16)
         True
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], 14)
+        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], 14, verbose=True)
+        Number of pairs with difference (1) is 16 != 14
         False
         sage: is_supplementary_difference_set(AdditiveAbelianGroup([20]), [S1, S2, S3, S4], 16)
         False
+
+    TESTS::
+
+        sage: is_supplementary_difference_set(Zmod(3), [[1], [1]], 0)
+        True
 
     .. SEEALSO::
 
         :func:`supplementary_difference_set_from_rel_diff_set`
     """
-    differences_counter = {}
+    differences_counter = {el: 0 for el in G}
     for K in Ks:
         for el1 in K:
             for el2 in K:
                 diff = G(el1) - G(el2)
-                if diff not in differences_counter:
-                    differences_counter[diff] = 0
                 differences_counter[diff] += 1
 
-    for el in G:
-        if el == 0:
+    for key, diff in differences_counter.items():
+        if key == 0:
             continue
-        elif el not in differences_counter or lmbda != differences_counter[el]:
+        if diff != lmbda:
+            if verbose:
+                print(f'Number of pairs with difference {key} is {diff} != {lmbda}')
             return False
 
     return True
