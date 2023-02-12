@@ -1014,6 +1014,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
         subgraphs = self.dynkin_diagram().connected_components_subgraphs()
         return tuple(CartanMatrix(subg._matrix_().rows()) for subg in subgraphs)
 
+
 def is_borcherds_cartan_matrix(M):
     """
     Return ``True`` if ``M`` is an even, integral Borcherds-Cartan matrix.
@@ -1054,6 +1055,7 @@ def is_borcherds_cartan_matrix(M):
                 return False
     return True
 
+
 def is_generalized_cartan_matrix(M):
     """
     Return ``True`` if ``M`` is a generalized Cartan matrix. For a definition
@@ -1082,6 +1084,7 @@ def is_generalized_cartan_matrix(M):
         return False
     n = M.ncols()
     return all(M[i,i] == 2 for i in range(n))
+
 
 def find_cartan_type_from_matrix(CM):
     r"""

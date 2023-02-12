@@ -20,6 +20,7 @@ from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 
 
+
 class CycleSpeciesStructure(GenericSpeciesStructure):
     def __repr__(self):
         """
@@ -165,7 +166,6 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         for c in CyclicPermutations(range(1, len(labels)+1)):
             yield structure_class(self, labels, c)
 
-
     def _isotypes(self, structure_class, labels):
         """
         EXAMPLES::
@@ -278,6 +278,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             res += euler_phi(k)*p([k])**(n//k)
         res /= n
         return self._weight * res
+
 
 #Backward compatibility
 CycleSpecies_class = CycleSpecies

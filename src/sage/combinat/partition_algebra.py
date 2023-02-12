@@ -76,6 +76,7 @@ class SetPartitionsXkElement(SetPartition):
     An element for the classes of ``SetPartitionXk`` where ``X`` is some
     letter.
     """
+
     def check(self):
         """
         Check to make sure this is a set partition.

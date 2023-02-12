@@ -1046,6 +1046,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         sage: L.category()
         Category of facade finite enumerated lattice posets
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -1657,6 +1658,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         sage: all(A.from_monotone_triangle(m).to_monotone_triangle() == m for m in M)
         True
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.

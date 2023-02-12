@@ -30,6 +30,8 @@ from . import multiplicative, classical
 # Elementary Symmetric Functions  #
 #                                 #
 ###################################
+
+
 class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
         """
@@ -309,7 +311,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             condition = lambda part: max(part) > n
             return self._expand(condition, n, alphabet)
 
-
         def principal_specialization(self, n=infinity, q=None):
             r"""
             Return the principal specialization of a symmetric function.
@@ -406,7 +407,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                                            for part in partition)
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
-
 
         def exponential_specialization(self, t=None, q=1):
             r"""

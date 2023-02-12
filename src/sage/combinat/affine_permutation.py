@@ -42,6 +42,7 @@ class AffinePermutation(ClonableArray):
         sage: p
         Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
     """
+
     def __init__(self, parent, lst, check=True):
         r"""
         Initialize ``self``
@@ -407,7 +408,6 @@ class AffinePermutation(ClonableArray):
             return (fin, gr)
 
 
-
 class AffinePermutationTypeA(AffinePermutation):
     #----------------------
     #Type-specific methods.
@@ -447,7 +447,6 @@ class AffinePermutationTypeA(AffinePermutation):
         l = sorted([i % (k+1) for i in self])
         if l != list(range(k+1)):
             raise ValueError("entries must have distinct residues")
-
 
     def value(self, i, base_window=False):
         r"""
@@ -729,7 +728,6 @@ class AffinePermutationTypeA(AffinePermutation):
         if side[0] == 'r':
             best_T.reverse()
         return best_T
-
 
     def maximal_cyclic_decomposition(self, typ='decreasing', side='right', verbose=False):
         r"""
@@ -1065,6 +1063,8 @@ class AffinePermutationTypeA(AffinePermutation):
         return tab
 
 #-------------------------------------------------------------------------------
+
+
 class AffinePermutationTypeC(AffinePermutation):
     #----------------------
     #Type-specific methods.
@@ -1320,7 +1320,6 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
         if s % 2:
             raise ValueError("type B affine permutations have an even number of "
                              "entries less than 0 to the right of the 0th position")
-
 
     def apply_simple_reflection_right(self, i):
         r"""
@@ -1841,8 +1840,6 @@ class AffinePermutationTypeG(AffinePermutation):
         """
         A = AffinePermutationGroup(['A', 5, 1])
         return A(self)
-
-
 
 
 #-------------------------------------------------------------------------

@@ -1098,6 +1098,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
 
 ##############################################################
 
+
 class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
     r"""
     Ordered Multiset Partitions into Sets.
@@ -1961,6 +1962,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartitionsIntoSets):
     r"""
     All ordered multiset partitions into sets (with or without constraints).
@@ -1996,6 +1998,7 @@ class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartition
         sage: Set(C) == Set(E)
         False
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -2012,10 +2015,12 @@ class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartition
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
     """
     Ordered multiset partitions into sets of a fixed integer `n`.
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -2144,11 +2149,13 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         for co in _iterator_size(self._n):
             yield self.element_class(self, co)
 
+
 class OrderedMultisetPartitionsIntoSets_n_constraints(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of a fixed integer `n`
     satisfying constraints.
     """
+
     def __init__(self, n, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_n`` to initialize.
@@ -2182,10 +2189,12 @@ class OrderedMultisetPartitionsIntoSets_n_constraints(OrderedMultisetPartitionsI
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of a fixed multiset `X`.
     """
+
     def __init__(self, X):
         """
         Initialize ``self``.
@@ -2356,6 +2365,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
     Class of ordered multiset partitions into sets of a fixed multiset `X`
     satisfying constraints.
     """
+
     def __init__(self, X, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_X`` to initialize.
@@ -2391,11 +2401,13 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of specified order `d`
     over a fixed alphabet `A`.
     """
+
     def __init__(self, A, d):
         """
         Initialize ``self``.
@@ -2521,11 +2533,13 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
                 deg += prod(binomial(len(self._alphabet), a) for a in alpha)
         return ZZ(deg)
 
+
 class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of specified order `d`
     over a fixed alphabet `A` satisfying constraints.
     """
+
     def __init__(self, A, d, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_alph_d`` to initialize.
@@ -2574,6 +2588,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartit
 
 ###############
 
+
 def _get_multiset(co):
     """
     Construct the multiset (as a sorted tuple) suggested by the lists
@@ -2587,6 +2602,7 @@ def _get_multiset(co):
         (1, 1, 1, 1, 3, 6, 6, 7)
     """
     return tuple(sorted(_concatenate(co), key=str))
+
 
 def _get_weight(lst):
     """
@@ -2604,6 +2620,7 @@ def _get_weight(lst):
     for k in lst:
         out[k] = out.get(k,0) + 1
     return out
+
 
 def _has_nonempty_sets(x):
     """
@@ -2652,6 +2669,7 @@ def _concatenate(list_of_iters):
     """
     return tuple([val for block in list_of_iters for val in block])
 
+
 def _is_finite(constraints):
     """
     Return ``True`` if the dictionary ``constraints`` corresponds to
@@ -2681,6 +2699,7 @@ def _is_finite(constraints):
         # Assume the alphabet is finite
         Bounds = set(["length", "max_length", "order", "max_order"])
         return Bounds.intersection(set(constraints)) != set()
+
 
 def _base_iterator(constraints):
     """
@@ -2951,6 +2970,7 @@ def _iterator_order(A, d, lengths=None):
                 for co in cartesian_product([Subsets_sk(A, a) for a in alpha]):
                     yield tuple(frozenset(X) for X in co)
 
+
 def _descents(w):
     r"""
     Return descent positions in the word ``w``.
@@ -2964,6 +2984,7 @@ def _descents(w):
         []
     """
     return [j for j in range(len(w)-1) if w[j] > w[j+1]]
+
 
 def _break_at_descents(alpha, weak=True):
     r"""
@@ -3005,6 +3026,7 @@ def _break_at_descents(alpha, weak=True):
     if block:
         Blocks.append(block)
     return Blocks
+
 
 def _refine_block(S, strong=False):
     r"""
@@ -3065,6 +3087,7 @@ def _refine_block(S, strong=False):
             out.append(tuple(a))
     return out
 
+
 def _is_initial_segment(lst):
     r"""
     Return True if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
@@ -3080,6 +3103,7 @@ def _is_initial_segment(lst):
         True
     """
     return list(range(max(lst)+1)) == lst
+
 
 def _split_block(S, k=2):
     """
@@ -3116,6 +3140,7 @@ def _split_block(S, k=2):
             a[w[pos]] = a[w[pos]].union({X[pos]})
         out.append(tuple(a))
     return out
+
 
 def _to_minimaj_blocks(T):
     r"""
@@ -3184,6 +3209,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         ((2, 3, 1), (1, 3))
         sage: b.e(2)
     """
+
     def __init__(self, n, ell, k):
         """
         Initialize ``self``.
@@ -3395,6 +3421,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             The pair ``(w, breaks)`` may be recovered via ``b.value``.
         """
+
         def _repr_(self):
             """
             Return the string representation of ``self``.

@@ -39,6 +39,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 
+
 class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Combinatorial diagrams with positions indexed by rows in columns.
@@ -507,6 +508,7 @@ class Diagrams(UniqueRepresentation, Parent):
         Combinatorial diagrams
 
     """
+
     def __init__(self, category=None):
         r"""
         Initialize ``self``.

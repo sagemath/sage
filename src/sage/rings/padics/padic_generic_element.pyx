@@ -2078,7 +2078,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             ...
             ValueError: Ring (5-adic Field with capped relative precision 4) residue field of the wrong characteristic.
         """
-        if not p is None and p != self.parent().prime():
+        if p is not None and p != self.parent().prime():
             raise ValueError('Ring (%s) residue field of the wrong characteristic.' % self.parent())
         cdef long v = self.valuation_c()
         if v == maxordp:

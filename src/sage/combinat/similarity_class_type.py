@@ -208,6 +208,7 @@ from .misc import IterableFunctionCall
 from .partition import Partitions, Partition
 
 
+
 @cached_function
 def fq(n, q=None):
     r"""

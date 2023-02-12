@@ -1,5 +1,5 @@
 """
-Some Extras
+Constructions of quadratic forms
 """
 ##
 # Some extra routines to make the QuadraticForm class more useful.

@@ -307,7 +307,6 @@ class WeightSpace(CombinatorialFreeModule):
         else:
             return Family([])
 
-
     @cached_method
     def simple_root(self, j):
         r"""
@@ -454,6 +453,7 @@ class WeightSpace(CombinatorialFreeModule):
             return basis[i]
         return self.module_morphism(on_basis = functools.partial(basis_value, basis), codomain=L)
 
+
 class WeightSpaceElement(CombinatorialFreeModule.Element):
 
     def scalar(self, lambdacheck):
@@ -575,5 +575,6 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             2*Lambda[1] + 2*Lambda[2]
         """
         return self
+
 
 WeightSpace.Element = WeightSpaceElement

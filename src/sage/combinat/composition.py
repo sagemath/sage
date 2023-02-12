@@ -1871,6 +1871,7 @@ class Compositions_all(Compositions):
     """
     Class of all compositions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.

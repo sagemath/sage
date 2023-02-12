@@ -1893,6 +1893,7 @@ class DyckWord_complete(DyckWord):
     For further information on Dyck words, see
     :class:`DyckWords_class<sage.combinat.dyck_word.DyckWord>`.
     """
+
     def semilength(self) -> int:
         r"""
         Return the semilength of ``self``.
@@ -3542,6 +3543,7 @@ class DyckWords_all(DyckWords):
     """
     All Dyck words.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -3616,6 +3618,7 @@ class DyckWordBacktracker(GenericBacktracker):
 
     - Dan Drake (2008-05-30)
     """
+
     def __init__(self, k1, k2):
         r"""
         TESTS::
@@ -3679,6 +3682,7 @@ class DyckWords_size(DyckWords):
     """
     Dyck words with `k_1` openers and `k_2` closers.
     """
+
     def __init__(self, k1, k2):
         r"""
         TESTS:
@@ -3955,6 +3959,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
     """
     All complete Dyck words.
     """
+
     def _repr_(self) -> str:
         r"""
         TESTS::
@@ -3998,6 +4003,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
 
         This is implemented by comparison of area sequences.
         """
+
         def __init__(self):
             r"""
             TESTS::
@@ -4064,6 +4070,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
     """
     All complete Dyck words of a given size.
     """
+
     def __init__(self, k):
         """
         Initialize ``self``.

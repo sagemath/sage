@@ -1782,6 +1782,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
     r"""
     Class of all skew tableaux.
     """
+
     def __init__(self, category=None):
         """
         Initialize ``self``.
@@ -1993,6 +1994,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
     """
     Class of all standard skew tableaux.
     """
+
     def __init__(self):
         """
         EXAMPLES::
@@ -2037,6 +2039,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
     """
     Standard skew tableaux of a fixed size `n`.
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -2359,6 +2362,7 @@ class SemistandardSkewTableaux_all(SemistandardSkewTableaux):
     Class of all semistandard skew tableaux, possibly with a given
     maximum entry.
     """
+
     def __init__(self, max_entry):
         """
         Initialize ``self``.
@@ -2447,6 +2451,7 @@ class SemistandardSkewTableaux_size(SemistandardSkewTableaux):
     Class of all semistandard skew tableaux of a fixed size `n`,
     possibly with a given maximum entry.
     """
+
     def __init__(self, n, max_entry):
         """
         EXAMPLES::
@@ -2720,6 +2725,7 @@ class SkewTableau_class(SkewTableau):
     """
     This exists solely for unpickling ``SkewTableau_class`` objects.
     """
+
     def __setstate__(self, state):
         r"""
         Unpickle old ``SkewTableau_class`` objects.

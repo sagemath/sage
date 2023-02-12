@@ -253,7 +253,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     if mykey in cache:
         X = cache[mykey]
         C = X()
-        if not C is None:
+        if C is not None:
             return C
     C = MPComplexField_class(prec, rnd)
     cache[mykey] = weakref.ref(C)

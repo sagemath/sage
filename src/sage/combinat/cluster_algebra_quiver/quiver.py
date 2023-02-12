@@ -212,6 +212,7 @@ class ClusterQuiver(SageObject):
         ...
         ValueError: the input data was not recognized
     """
+
     def __init__(self, data, frozen=None, user_labels=None):
         """
         TESTS::
@@ -235,7 +236,6 @@ class ClusterQuiver(SageObject):
                 print('The input specifies a mutation type, so the'
                       ' additional parameter frozen is ignored.'
                       ' Use set_frozen to freeze vertices.')
-
 
             mutation_type = data
             self.__init__( mutation_type.standard_quiver() )

@@ -70,6 +70,7 @@ class BaxterPermutations_size(BaxterPermutations):
         sage: BaxterPermutations_size(5)
         Baxter permutations of size 5
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -252,6 +253,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         sage: BaxterPermutations_all()
         Baxter permutations
     """
+
     def __init__(self, n=None):
         r"""
         EXAMPLES::

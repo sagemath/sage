@@ -2980,6 +2980,7 @@ class RowStandardTableauTuples_all(RowStandardTableauTuples, DisjointUnionEnumer
     Default class of all :class:`RowStandardTableauTuples` with an arbitrary
     :meth:`~TableauTuples.level` and :meth:`~TableauTuples.size`.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all row standard tableaux.
@@ -3030,6 +3031,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
     Class of all :class:`RowStandardTableauTuples` with a fixed ``level``
     and arbitrary ``size``.
     """
+
     def __init__(self, level):
         r"""
         Initializes the class of row standard tableaux of level
@@ -3127,6 +3129,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
     Class of all :class:`RowStandardTableauTuples` with an arbitrary ``level``
     and a fixed ``size``.
     """
+
     def __init__(self, size):
         r"""
         Initializes the class of row standard tableaux of size ``size`` of
@@ -3226,6 +3229,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
     Class of all :class:`RowStandardTableauTuples` with a fixed ``level``
     and a fixed ``size``.
     """
+
     def __init__(self, level, size):
         r"""
         Initializes the class of row standard tableaux of level ``level``
@@ -3339,6 +3343,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
     """
     Class of all :class:`RowStandardTableauTuples` of a fixed shape.
     """
+
     def __init__(self, shape):
         r"""
         Initializes the class of row standard tableaux of shape ``p``
@@ -3563,6 +3568,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
         sage: RowStandardTableauTuple([[[5,6],[7]],[[1,2,3],[4]]]).residue_sequence(3,(0,1)).row_standard_tableaux()
         Row standard tableaux with 3-residue sequence (1,2,0,0,0,1,2) and multicharge (0,1)
     """
+
     def __init__(self, residue):
         r"""
         Initialize ``self``.
@@ -3804,6 +3810,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
          ([[5, 6], [4]], [[3, 7], [1], [2]]),
          ([[5, 6], [1]], [[3, 7], [4], [2]])]
     """
+
     def __init__(self, residue, shape):
         r"""
         Initialize ``self``.
@@ -5071,6 +5078,7 @@ class StandardTableaux_residue(StandardTableauTuples):
         sage: StandardTableauTuple([[[5,6],[7]],[[1,2,3],[4]]]).residue_sequence(3,(0,1)).standard_tableaux()
         Standard tableaux with 3-residue sequence (1,2,0,0,0,1,2) and multicharge (0,1)
     """
+
     def __init__(self, residue):
         r"""
         Initialize ``self``.
@@ -5206,6 +5214,7 @@ class StandardTableaux_residue_shape(StandardTableaux_residue):
          ([[2, 5], [6]], [[1, 3], [4], [7]]),
          ([[1, 5], [6]], [[2, 3], [4], [7]])]
     """
+
     def __init__(self, residue, shape):
         r"""
         Initialize ``self``.

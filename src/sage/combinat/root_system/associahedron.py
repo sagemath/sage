@@ -261,17 +261,22 @@ class Associahedron_class_base():
         return tuple(root_space.from_vector(vector(V))
                      for V in self.vertex_generator())
 
+
 class Associahedron_class_ppl(Associahedron_class_base, Polyhedron_QQ_ppl):
     pass
+
 
 class Associahedron_class_normaliz(Associahedron_class_base, Polyhedron_QQ_normaliz):
     pass
 
+
 class Associahedron_class_cdd(Associahedron_class_base, Polyhedron_QQ_cdd):
     pass
 
+
 class Associahedron_class_polymake(Associahedron_class_base, Polyhedron_polymake):
     pass
+
 
 class Associahedron_class_field(Associahedron_class_base, Polyhedron_field):
     pass
@@ -338,6 +343,7 @@ class Associahedra_base():
         ...
         ValueError: V-representation data requires a list of length ambient_dim
     """
+
     def _element_constructor_(self, cartan_type, **kwds):
         """
         The element constructor.
@@ -444,17 +450,22 @@ class Associahedra_base():
         if hasattr(super(), '_pushout_'):
             return super()._pushout_(other)
 
+
 class Associahedra_ppl(Associahedra_base, Polyhedra_QQ_ppl):
     Element = Associahedron_class_ppl
+
 
 class Associahedra_normaliz(Associahedra_base, Polyhedra_QQ_normaliz):
     Element = Associahedron_class_normaliz
 
+
 class Associahedra_cdd(Associahedra_base, Polyhedra_QQ_cdd):
     Element = Associahedron_class_cdd
 
+
 class Associahedra_polymake(Associahedra_base, Polyhedra_polymake):
     Element = Associahedron_class_polymake
+
 
 class Associahedra_field(Associahedra_base, Polyhedra_field):
     Element = Associahedron_class_field

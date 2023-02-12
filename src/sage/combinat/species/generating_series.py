@@ -75,6 +75,7 @@ class OrdinaryGeneratingSeries(LazyPowerSeries):
         sage: f
         z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
     """
+
     def count(self, n):
         """
         Return the number of structures on a set of size ``n``.
@@ -136,6 +137,7 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
         sage: R is OrdinaryGeneratingSeriesRing(QQ)
         True
     """
+
     def __init__(self, base_ring):
         """
         Initialize ``self``.
@@ -170,6 +172,7 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
         sage: f
         z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
     """
+
     def count(self, n):
         """
         Return the number of structures of size ``n``.
@@ -235,6 +238,7 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
         P = self.parent()
         return P(lambda n: self.count(y.count(n)) / factorial(n), 0)
 
+
 class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
     r"""
     Return the ring of exponential generating series over ``R``.
@@ -260,6 +264,7 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
         sage: R is ExponentialGeneratingSeriesRing(QQ)
         True
     """
+
     def __init__(self, base_ring):
         """
         Initialize ``self``.
@@ -638,6 +643,7 @@ def _cl_term(n, R=QQ):
         res = 1/n * ((-1)**(n-1) * p([1])**n - sum(d * p([n // d]).plethysm(_cl_term(d, R)) for d in divisors(n)[:-1]))
 
     return res
+
 
 @cached_function
 def LogarithmCycleIndexSeries(R=QQ):

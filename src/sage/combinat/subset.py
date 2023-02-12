@@ -169,6 +169,7 @@ def Subsets(s, k=None, submultiset=False):
         else:
             return Subsets_sk(s, k)
 
+
 class Subsets_s(Parent):
     r"""
     Subsets of a given set.
@@ -559,6 +560,7 @@ class Subsets_s(Parent):
         S = self.underlying_set()
         return S.subsets_lattice()
 
+
 class Subsets_sk(Subsets_s):
     r"""
     Subsets of fixed size of a set.
@@ -584,6 +586,7 @@ class Subsets_sk(Subsets_s):
         ...
         ValueError: {0} not in Subsets of {0, 1, 2, 5, 7} of size 3
     """
+
     def __init__(self, s, k):
         """
         TESTS::
@@ -1163,7 +1166,6 @@ class SubMultiset_s(Parent):
         return e
 
 
-
 class SubMultiset_sk(SubMultiset_s):
     """
     The combinatorial class of the subsets of size k of a multiset s.  Note
@@ -1185,6 +1187,7 @@ class SubMultiset_sk(SubMultiset_s):
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
         """
+
     def __init__(self, s, k):
         """
         TESTS::

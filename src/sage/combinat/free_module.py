@@ -1603,6 +1603,7 @@ class CartesianProductWithFlattening():
     """
     A class for Cartesian product constructor, with partial flattening
     """
+
     def __init__(self, flatten):
         """
         INPUT:

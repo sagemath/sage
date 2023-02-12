@@ -33,6 +33,8 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.dyck_word import DyckWords
 
 #@add_metaclass(InheritComparisonClasscallMetaclass)
+
+
 class BlobDiagram(Element):
     r"""
     A blob diagram.
@@ -45,6 +47,7 @@ class BlobDiagram(Element):
     those without. The blobed pairs must either be either the leftmost
     propagating strand or to the left of it and not nested.
     """
+
     def __init__(self, parent, marked, unmarked):
         r"""
         Initialize ``self``.
@@ -148,10 +151,12 @@ class BlobDiagram(Element):
         """
         return self.parent()._TL_diagrams(self.marked + self.unmarked)
 
+
 class BlobDiagrams(Parent, UniqueRepresentation):
     r"""
     The set of all blob diagrams.
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -369,6 +374,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
                 yield self.element_class(self, X, unmarked + list(markable.difference(X)))
 
     Element = BlobDiagram
+
 
 class BlobAlgebra(CombinatorialFreeModule):
     r"""
