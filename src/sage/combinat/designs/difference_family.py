@@ -2498,6 +2498,64 @@ def is_complementary_difference_set(G, A, B, verbose=False):
     return True
 
 
+def complementary_difference_setI(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n \cong 3 \mod 4`, `n` a prime power.
+
+    Let `G` be a Galois Field of order `n`, where `n` satisfies the requirements
+    above. Let `A` be the set of non-zero quadratic elements in `G`, and `B = A`.
+    Then `A` and `B` are complementary difference sets over a group of order `n`.
+    This construction is described in [Sze1971]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the group `G`.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are
+      complementary difference sets before returning them.
+
+    OUTPUT:
+
+    The function returns a Galois Field of order `n` and a list containing
+    the 2 sets, or raises an error if `n` does not satisfies the requirements
+    of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setI
+        sage: complementary_difference_setI(19)
+        (Finite Field of size 19,
+         [[1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17]])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import is_complementary_difference_set
+        sage: G, [A, B] = complementary_difference_setI(23, check=False)
+        sage: is_complementary_difference_set(G, A, B)
+        True
+        sage: complementary_difference_setI(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 17 is not valid
+        sage: complementary_difference_setI(15)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 15 is not valid
+    """
+    if not (n % 4 == 3 and is_prime_power(n)):
+        raise ValueError(f'The parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    G = GF(n, 'a')
+    A = list({x**2 for x in G if x**2 != 0})
+    B = A
+    if check:
+        assert is_complementary_difference_set(G, A, B)
+
+    return G, [A, B]
+
+
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
     Return a (``k``, ``l``)-difference family on an Abelian group of cardinality ``v``.
