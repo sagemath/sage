@@ -271,16 +271,37 @@ class MPolynomial_element(MPolynomial):
         return self.__class__(self.parent(), -self.__element)
 
     def _add_(self, right):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y> = QQbar[]
+            sage: x + y
+            x + y
+        """
         elt = self.__element + right.__element
         elt.remove_zeros()
         return self.__class__(self.parent(), elt)
 
     def _sub_(self, right):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y> = QQbar[]
+            sage: x - y
+            x - y
+        """
         elt = self.__element - right.__element
         elt.remove_zeros()
         return self.__class__(self.parent(), elt)
 
     def _mul_(self, right):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y> = QQbar[]
+            sage: x * y
+            x y
+        """
         elt = self.__element * right.__element
         elt.remove_zeros()
         return self.__class__(self.parent(), elt)
@@ -1860,7 +1881,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def integral(self, var=None):
         r"""
-        Integrates ``self`` with respect to variable ``var``.
+        Integrate ``self`` with respect to variable ``var``.
 
         .. NOTE::
 
@@ -1935,15 +1956,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             S = P.change_ring(Q)
 
         if P is not S:
-            return S.coerce(self).derivative(var)
+            return S.coerce(self).integral(var)
 
         # check if var is one of the generators
         index = polydict.gen_index(P(var).element())
         if index == -1:
             # var is not a generator; do term-by-term integration recursively
             # var may be, for example, a generator of the base ring
-            d = dict([(e, x.integral(var))
-                      for (e, x) in self.dict().items()])
+            d = {e: x.integral(var)
+                 for e, x in self.dict().items()}
             d = polydict.PolyDict(d, remove_zero=True)
         else:
             # integrate w.r.t. indicated variable

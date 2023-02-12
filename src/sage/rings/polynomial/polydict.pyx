@@ -133,8 +133,7 @@ cdef class PolyDict:
 
         if isinstance(pdict, list):
             v = {}
-            L = <list> pdict
-            for w in L:
+            for w in pdict:
                 v[ETuple(w[1])] = w[0]
         elif isinstance(pdict, dict):
             v = <dict> pdict.copy()
@@ -172,6 +171,15 @@ cdef class PolyDict:
     def coerce_coefficients(self, Parent A):
         r"""
         Coerce the coefficients in the parent ``A``
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: f = PolyDict({(2,3):0}, remove_zero=False)
+            sage: f
+            PolyDict with representation {(2, 3): 0}
+            sage: f.coerce_coefficients(QQ)
+            ?
         """
         for k, v in self.__repn.items():
             self.__repn[k] = A.coerce(v)
@@ -199,9 +207,29 @@ cdef class PolyDict:
         return hash(frozenset(self.__repn.items()))
 
     def __bool__(self):
+        """
+        Return whether the PolyDict is empty.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: PD1 = PolyDict({(2,3):0, (1,2):3, (2,1):4})
+            sage: bool(PD1)
+            True
+        """
         return bool(self.__repn)
 
     def __len__(self):
+        """
+        Return the length.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: PD1 = PolyDict({(2,3):0, (1,2):3, (2,1):4})
+            sage: len(PD1)
+            3
+        """
         return len(self.__repn)
 
     def __richcmp__(PolyDict left, PolyDict right, int op):
@@ -307,7 +335,9 @@ cdef class PolyDict:
 
     def list(self):
         """
-        Return a list that defines ``self``. It is safe to change this.
+        Return a list that defines ``self``.
+
+        It is safe to change this.
 
         EXAMPLES::
 
@@ -316,15 +346,13 @@ cdef class PolyDict:
             sage: sorted(f.list())
             [[2, [2, 3]], [3, [1, 2]], [4, [2, 1]]]
         """
-        ret = []
-        for e, c in self.__repn.items():
-            ret.append([c, list(e)])
-        return ret
+        return [[c, list(e)] for e, c in self.__repn.items()]
 
     def dict(self):
         """
-        Return a copy of the dict that defines self.  It is
-        safe to change this.  For a reference, use dictref.
+        Return a copy of the dict that defines ``self``.
+
+        It is safe to change this. For a reference, use dictref.
 
         EXAMPLES::
 
@@ -337,7 +365,7 @@ cdef class PolyDict:
 
     def coefficients(self):
         """
-        Return the coefficients of self.
+        Return the coefficients of ``self``.
 
         EXAMPLES::
 
@@ -350,7 +378,7 @@ cdef class PolyDict:
 
     def exponents(self):
         """
-        Return the exponents of self.
+        Return the exponents of ``self``.
 
         EXAMPLES::
 
@@ -374,7 +402,7 @@ cdef class PolyDict:
             sage: f[(2,1)]
             4
         """
-        if type(e) is not ETuple:
+        if not isintance(e, ETuple):
             e = ETuple(e)
         return self.__repn[e]
 
@@ -832,7 +860,6 @@ cdef class PolyDict:
             PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
         """
         cdef dict D = self.__repn
-        cdef bint clean = False
         if self is other:
             for e in D:
                 v = D[e]
