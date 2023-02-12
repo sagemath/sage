@@ -5907,6 +5907,11 @@ REFERENCES:
             Hall-Littlewood vertex operators and generalized Kostka polynomials.
             Adv. Math. 158 (2001), no. 1, 66-85.
 
+.. [Sze1971] \G. Szekeres.
+            *Cyclotomy and complementary difference sets*,
+            Acta Arithmetica 18 (1971): 349-353.
+            :doi:`10.4064/aa-18-1-349-353`
+
 .. [Sze1988] \G. Szekeres.
             *A note on skew type orthogonal ±1 matrices*,
             Combinatorics, Colloquia Mathematica Societatis, Janos Bolyai, 52 (1988): 489-498.

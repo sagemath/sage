@@ -2425,6 +2425,79 @@ def _is_skew_set(G, S):
             return False
     return True
 
+
+def is_complementary_difference_set(G, A, B, verbose=False):
+    r"""Check if `A, B` are complementary difference sets over the group `G`.
+
+    According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
+    difference sets over a group `G` of size `2m+1` if:
+
+    1. they are `2-\{2m+1; m, m; m-1\}` supplementary difference sets
+    2. `A` is skew, i.e. `a \in A` implies `-a \not \in A`
+
+    INPUT:
+
+    - ``G`` -- a group of odd order.
+
+    - ``A`` -- a set of elements of ``G``.
+
+    - ``B`` -- a set of elements of ``G``.
+
+    - ``verbose`` -- boolean (default False). If true the function will be verbose
+      when the sets do not satisfy the contraints.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import is_complementary_difference_set
+        sage: is_complementary_difference_set(Zmod(7), [1, 2, 4], [1, 2, 4])
+        True
+
+    If ``verbose`` is set to True, the function will be verbose::
+
+        sage: is_complementary_difference_set(Zmod(7), [1, 2, 5], [1, 2, 4], verbose=True)
+        The sets are not supplementary difference sets with lambda = 2
+        False
+
+    TESTS::
+
+        sage: is_complementary_difference_set(Zmod(16), [1, 2, 4], [1, 2, 4])
+        False
+        sage: is_complementary_difference_set(Zmod(7), [1, 2, 4], [1, 2, 3, 4])
+        False
+        sage: is_complementary_difference_set(Zmod(19), [1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17])
+        True
+
+    .. SEEALSO::
+
+        :func: `is_supplementary_difference_set`
+    """
+    n = G.order()
+
+    if n % 2 != 1:
+        if verbose:
+            print('G must have odd order')
+        return False
+
+    m = (n - 1) // 2
+
+    if len(A) != m or len(B) != m:
+        if verbose:
+            print(f'A and B must have size {m}')
+        return False
+
+    if not is_supplementary_difference_set(G, [A, B], m-1):
+        if verbose:
+            print(f'The sets are not supplementary difference sets with lambda = {m-1}')
+        return False
+
+    if not _is_skew_set(G, A):
+        if verbose:
+            print('The set A is not skew')
+        return False
+
+    return True
+
+
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
     Return a (``k``, ``l``)-difference family on an Abelian group of cardinality ``v``.
