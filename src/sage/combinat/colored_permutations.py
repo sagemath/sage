@@ -1361,7 +1361,7 @@ class SignedPermutations(ColoredPermutations):
             True
 
         """
-        if isinstance(x, list):
+        if isinstance(x, list) or isinstance(x, range):
             if x and isinstance(x[0], tuple):
                 c = []
                 p = []
