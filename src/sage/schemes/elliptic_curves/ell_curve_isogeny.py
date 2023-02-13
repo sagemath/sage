@@ -3145,7 +3145,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         return NotImplemented
 
 
-def compute_isogeny_starks(E1, E2, ell):
+def compute_isogeny_stark(E1, E2, ell):
     r"""
     Return the kernel polynomial of an isogeny of degree ``ell``
     from ``E1`` to ``E2``.
@@ -3170,7 +3170,7 @@ def compute_isogeny_starks(E1, E2, ell):
 
     ALGORITHM:
 
-    This function uses Starks' algorithm as presented in Section 6.2
+    This function uses Stark's algorithm as presented in Section 6.2
     of [BMSS2006]_.
 
     .. NOTE::
@@ -3181,14 +3181,14 @@ def compute_isogeny_starks(E1, E2, ell):
 
     EXAMPLES::
 
-        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_starks, compute_sequence_of_maps
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_stark, compute_sequence_of_maps
 
         sage: E = EllipticCurve(GF(97), [1,0,1,1,0])
         sage: R.<x> = GF(97)[]; f = x^5 + 27*x^4 + 61*x^3 + 58*x^2 + 28*x + 21
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
         sage: (isom1, isom2, E1pr, E2pr, ker_poly) = compute_sequence_of_maps(E, E2, 11)
-        sage: compute_isogeny_starks(E1pr, E2pr, 11)
+        sage: compute_isogeny_stark(E1pr, E2pr, 11)
         x^10 + 37*x^9 + 53*x^8 + 66*x^7 + 66*x^6 + 17*x^5 + 57*x^4 + 6*x^3 + 89*x^2 + 53*x + 8
 
         sage: E = EllipticCurve(GF(37), [0,0,0,1,8])
@@ -3196,7 +3196,7 @@ def compute_isogeny_starks(E1, E2, ell):
         sage: f = (x + 14) * (x + 30)
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
-        sage: compute_isogeny_starks(E, E2, 5)
+        sage: compute_isogeny_stark(E, E2, 5)
         x^4 + 14*x^3 + x^2 + 34*x + 21
         sage: f**2
         x^4 + 14*x^3 + x^2 + 34*x + 21
@@ -3206,7 +3206,7 @@ def compute_isogeny_starks(E1, E2, ell):
         sage: f = x
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
-        sage: compute_isogeny_starks(E, E2, 2)
+        sage: compute_isogeny_stark(E, E2, 2)
         x
     """
     K = E1.base_field()
@@ -3252,6 +3252,9 @@ def compute_isogeny_starks(E1, E2, ell):
     qn /= qn.leading_coefficient()
     return qn
 
+from sage.misc.superseded import deprecated_function_alias
+compute_isogeny_starks = deprecated_function_alias(34871, compute_isogeny_stark)
+
 def split_kernel_polynomial(poly):
     r"""
     Obsolete internal helper function formerly used by
@@ -3292,7 +3295,7 @@ def split_kernel_polynomial(poly):
     from sage.misc.misc_c import prod
     return prod([p for p,e in poly.squarefree_decomposition()])
 
-def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="starks"):
+def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="stark"):
     r"""
     Return the kernel polynomial of an isogeny of degree ``ell``
     from ``E1`` to ``E2``.
@@ -3305,7 +3308,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="starks"):
 
     - ``ell``       -- the degree of an isogeny from ``E1`` to ``E2``
 
-    - ``algorithm`` -- currently only ``"starks"`` (default) is implemented
+    - ``algorithm`` -- currently only ``"stark"`` (default) is implemented
 
     OUTPUT:
 
@@ -3347,8 +3350,8 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="starks"):
         sage: f = (x + 10) * (x + 12) * (x + 16)
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
-        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_starks
-        sage: ker_poly = compute_isogeny_starks(E, E2, 7); ker_poly
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_stark
+        sage: ker_poly = compute_isogeny_stark(E, E2, 7); ker_poly
         x^6 + 2*x^5 + 20*x^4 + 11*x^3 + 36*x^2 + 35*x + 16
         sage: ker_poly.factor()
         (x + 10)^2 * (x + 12)^2 * (x + 16)^2
@@ -3357,9 +3360,13 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="starks"):
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
     """
-    if algorithm != "starks":
-        raise NotImplementedError
-    return compute_isogeny_starks(E1, E2, ell).radical()
+    if algorithm == 'starks':
+        from sage.misc.superseded import deprecation
+        deprecation(34871, 'The "starks" algorithm is being renamed to "stark".')
+        algorithm = 'stark'
+    if algorithm != "stark":
+        raise NotImplementedError(f'unknown algorithm {algorithm}')
+    return compute_isogeny_stark(E1, E2, ell).radical()
 
 def compute_intermediate_curves(E1, E2):
     r"""

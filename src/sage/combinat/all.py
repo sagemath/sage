@@ -88,6 +88,7 @@ from sage.combinat.designs.all import *
 from .debruijn_sequence import DeBruijnSequences
 
 from .schubert_polynomial import SchubertPolynomialRing
+lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
 from .symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
 from .symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
 from .yang_baxter_graph import YangBaxterGraph

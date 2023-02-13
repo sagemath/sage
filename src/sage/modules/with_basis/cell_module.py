@@ -357,7 +357,7 @@ class CellModule(CombinatorialFreeModule):
                 # Temporary needed by coercion (see Polynomial/FractionField tests).
                 if not P._algebra.has_coerce_map_from(scalar.parent()):
                     return None
-                scalar = P._algebra( scalar )
+                scalar = P._algebra(scalar)
 
             if self_on_left:
                 raise NotImplementedError
