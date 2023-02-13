@@ -22,7 +22,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.rings.integer cimport Integer
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.combinat.permutation import Permutation
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
