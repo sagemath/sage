@@ -949,49 +949,74 @@ Automatic testing on multiple platforms on GitHub Actions
 =========================================================
 
 The Sage source tree includes a default configuration for GitHub
-Actions that runs our portability tests with tox on a multitude of
-platforms on every pull request and on every push of a tag (but not of
-a branch) to a repository for which GitHub Actions are enabled.
+Actions that runs our portability tests on a multitude of platforms on
+every push of a tag (but not of a branch) to a repository for which
+GitHub Actions are enabled.
 
-In particular, it automatically runs on our main repository on every
-release tag.
+In particular, it automatically runs on our main repository sagemath/sage
+on every release tag.
 
-This is defined in the files `$SAGE_ROOT/.github/workflows/tox*.yml
-<https://github.com/sagemath/sage/tree/develop/.github/workflows/tox.yml>`_.
-
-An additional GitHub Actions workflow for testing on Cygwin, not based
-on tox, is defined in the files
-`$SAGE_ROOT/.github/workflows/ci-cygwin*.yml
-<https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_.
+This is defined in the files
+- `$SAGE_ROOT/.github/workflows/ci-linux.yml
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
+  (which calls `$SAGE_ROOT/.github/workflows/docker.yml
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_),
+- `$SAGE_ROOT/.github/workflows/ci-macos.yml
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
+- `$SAGE_ROOT/.github/workflows/ci-cygwin-standard.yml
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_
+  (which calls `$SAGE_ROOT/.github/workflows/cygwin.yml
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/cygwin.yml>`_).
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
 `here <https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#supported-runners-and-hardware-resources>`_,
-and has a time limit of 6h per job. This is just barely enough for a
-typical ``minimal`` build followed by ``make ptest`` to succeed; and
-plenty of time for a typical ``standard`` build to succeed.
+and has a time limit of 6h per job. This could be just barely enough for a
+typical ``minimal`` build followed by ``make ptest`` to succeed; for
+added robustness, we split it into two jobs. Our workflow stores
+Docker images corresponding to various build phases within these two
+jobs on `GitHub Packages <https://github.com/features/packages>`_ (ghcr.io).
 
-Build logs become available as "artifacts" when all jobs of the
-workflow have finished.  Each job generates one tarball.
-"Annotations" highlight certain top-level errors or warnings issued
-during the build.
+Build logs can be inspected during the run and become available as
+"artifacts" when all jobs of the workflow have finished.  Each job
+generates one tarball.  "Annotations" highlight certain top-level
+errors or warnings issued during the build.
 
-The following procedure triggers a run of tests with the default set of
-system configurations.
+In addition to these automatic runs in our main repository, all Sage
+developers can run the same tests on GitHub Actions in their personal
+forks of the Sage repository. To prepare this, use the following steps:
 
-- Push your changes to trac.
-- Go to the `Actions page on the GitHub mirror <https://github.com/sagemath/sagetrac-mirror/actions>`_ and select the workflow you would like to run.
-- Click on "Run workflow" above the list of workflow runs and select the branch where the workflow will run.
+- `Enable GitHub Actions
+  <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#managing-github-actions-permissions-for-your-repository>`_
+  in your fork of the Sage repository.
 
-For more information, see the `GitHub documentation <https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/manually-running-a-workflow>`_.
+- Given read/write privileges for packages to GitHub Actions in your
+  fork of the Sage repository. See `Permissions for the GITHUB_TOKEN
+  <https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token>`_
 
-Alternatively, you can create and push a custom tag in order to trigger a run of tests as follows.
-Let's assume that ``my-github`` is the name of
-the remote corresponding to your GitHub fork of the Sage repository::
+As usual we assume that ``origin`` is the name of the remote
+corresponding to your GitHub fork of the Sage repository::
 
-  $ git remote -v | grep /my-github
-  my-github      https://github.com/mkoeppe/sage.git (fetch)
-  my-github      https://github.com/mkoeppe/sage.git (push)
+  $ git remote -v | grep origin
+  origin         https://github.com/mkoeppe/sage.git (fetch)
+  origin         https://github.com/mkoeppe/sage.git (push)
+
+Then the following procedure triggers a run of tests with the default set
+of system configurations.
+
+- Push your branch to ``origin`` (your fork).
+
+- Go to the Actions tab of your fork and select the workflow you would like to run,
+  for example "CI Linux".
+
+- Click on "Run workflow" above the list of workflow runs and select
+  your branch as the branch on which the workflow will run.
+
+For more information, see the `GitHub documentation
+<https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/manually-running-a-workflow>`_.
+
+Alternatively, you can trigger a run of tests by creating and pushing
+a custom tag as follows.
 
 - Create a ("lightweight", not "annotated") tag with an arbitrary
   name, say ``ci`` (for "Continuous Integration")::
@@ -1000,28 +1025,13 @@ the remote corresponding to your GitHub fork of the Sage repository::
 
 - Then push the tag to your GitHub repository::
 
-    git push -f my-github ci
+    git push -f origin ci
 
 (In both commands, the "force" option (``-f``) allows overwriting a
 previous tag of that name.)
 
-For testing branches against a custom set of system configurations
-during development, the following procedure seems to work well.  It
-avoids changing the CI configuration on your development branch:
-
-- Create a branch from a recent beta release that contains the default
-  GitHub Actions configuration; name it ``TESTER``, say.
-
-- Edit ``$SAGE_ROOT/.github/workflows/tox.yml`` to include the system
-  config you wish to test.
-
-- Commit and push the branch to your GitHub fork of sage.
-
-- Push your development branch to your GitHub repository and create a
-  pull request against the ``TESTER`` branch. This will trigger the
-  GitHub Actions workflow.
-
-You will find a workflow status page in the "Actions" tab of your
+Either way, when the workflow has been triggered, you can inspect it
+by using the workflow status page in the "Actions" tab of your
 repository.
 
 Here is how to read it.  Each of the items in the left pane represents
@@ -1029,7 +1039,7 @@ a full build of Sage on a particular system configuration.  A test
 item in the left pane is marked with a green checkmark in the left
 pane if ``make build doc-html`` finished without error.  (It also runs
 package testsuites and the Sage doctests but failures in these are not
-in reflected in the left pane; see below.)
+reflected in the left pane; see below.)
 
 The right pane ("Artifacts") offers archives of the logs for download.
 
