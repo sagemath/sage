@@ -1,0 +1,95 @@
+# Triggers after the documentation build has finished, 
+# taking the artifact and uploading it to netlify
+name: Publish documentation
+
+on:
+  workflow_run:
+    workflows: ["Build documentation"]
+    types:
+      - completed
+
+permissions:
+  statuses: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  upload-docs:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Get information about workflow origin
+        uses: potiuk/get-workflow-origin@v1_5
+        id: source-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
+      # Once https://github.com/actions/download-artifact/issues/172 and/or https://github.com/actions/download-artifact/issues/60 is implemented, we can use the official download-artifact action
+      # For now use the solution from https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
+      - name: Download docs
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "docs"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
+      
+      - name: Extract docs
+        run: unzip docs.zip -d docs && unzip docs/docs.zip -d docs/docs
+
+      - name: Deploy to Netlify
+        id: deploy-netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=docs/docs/docs ${NETLIFY_PRODUCTION:+"--prod"} --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_PRODUCTION: ${{ github.ref == 'refs/heads/develop' }}
+          NETLIFY_MESSAGE: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+          NETLIFY_ALIAS: deploy-preview-${{ steps.source-run-info.outputs.pullRequestNumber }}
+
+      # Add deployment as status check, PR comment and annotation
+      # we could use the nwtgck/actions-netlify action for that, except for that it is not (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
+      - name: Add/Update deployment status PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+          header: preview-comment
+          recreate: true
+          message: |
+            [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) is ready! :tada:
+            Built with commit: ${{ steps.source-run-info.outputs.sourceHeadSha }}
+      
+      - name: Update deployment status PR check
+        uses: myrotvorets/set-commit-status-action@1.1.6
+        if: ${{ always() }}
+        env:
+          DEPLOY_SUCCESS: Successfully deployed preview.
+          DEPLOY_FAILURE: Failed to deploy preview.
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status == 'success' && 'success' || 'failure' }}
+          sha: ${{ github.event.workflow_run.head_sha }}
+          context: Deploy Documentation
+          targetUrl: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}
+          description: ${{ job.status == 'success' && env.DEPLOY_SUCCESS || env.DEPLOY_FAILURE }}
+
+      - name: Report deployment url
+        run: |
+          echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
+
