@@ -388,7 +388,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             RR = RealField()
         else:
             RR = RealField(precision)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(RR, r)
         mat = M()
         for j in range(r):
@@ -3892,7 +3892,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             raise ValueError("points not linearly independent in saturation()")
         sat_reg = reg
 
-        from sage.rings.all import prime_range
+        from sage.rings.fast_arith import prime_range
         if full_saturation:
             if lower_ht_bound is None:
                 # TODO (robertwb): verify this for rank > 1

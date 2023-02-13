@@ -16,7 +16,7 @@ from sage.structure.sage_object import SageObject
 
 import sage.misc.misc as misc
 import sage.rings.all as rings
-from sage.rings.all import O
+from sage.rings.big_oh import O
 
 
 class EllipticCurveFormalGroup(SageObject):
