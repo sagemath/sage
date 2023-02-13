@@ -499,4 +499,3 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             X[4, 2, 1, 3]
         """
         return symmetrica.mult_schubert_schubert(left, right)
-
