@@ -960,6 +960,7 @@ class MultiSkewTableaux(UniqueRepresentation, Parent):
     r"""
     Multiskew tableaux.
     """
+
     def __init__(self, category=None):
         """
         EXAMPLES::
@@ -1132,6 +1133,7 @@ class RibbonTableau_class(RibbonTableau):
     """
     This exists solely for unpickling ``RibbonTableau_class`` objects.
     """
+
     def __setstate__(self, state):
         r"""
         Unpickle old ``RibbonTableau_class`` objects.

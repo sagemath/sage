@@ -21,7 +21,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 from sage.combinat.integer_vector import IntegerVectors
 
@@ -444,7 +444,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
-        
+
             :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
         """
         # get ring and number of variables

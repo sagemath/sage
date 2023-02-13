@@ -16,6 +16,7 @@ from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.combinat.root_system import ambient_space
 
+
 class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crystallographic):
     r"""
     A class for dual Cartan types.
@@ -75,6 +76,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
 
     .. NOTE:: F4d is pickled by construction as F4.dual() hence the above failure.
     """
+
     def __init__(self, type):
         """
         INPUT:
@@ -345,6 +347,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
 
 ###########################################################################
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     Ambient space for a dual finite Cartan type.
@@ -516,6 +519,8 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
     AmbientSpace = AmbientSpace
 
 ###########################################################################
+
+
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     def classical(self):
         """

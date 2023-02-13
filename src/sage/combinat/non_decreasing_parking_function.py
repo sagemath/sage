@@ -173,6 +173,7 @@ class NonDecreasingParkingFunction(Element):
         ...
         ValueError: [1, 1, 4] is not a non-decreasing parking function
     """
+
     def __init__(self, lst):
         """
         TESTS::
@@ -466,6 +467,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
 
     - Florent Hivert
     """
+
     def __init__(self, n):
         """
         TESTS::

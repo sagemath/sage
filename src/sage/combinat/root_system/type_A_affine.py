@@ -9,6 +9,8 @@ Root system data for (untwisted) type A affine
 #*****************************************************************************
 
 from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """

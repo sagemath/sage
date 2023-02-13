@@ -36,6 +36,7 @@ translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM',
 
 conversion_functions = {}
 
+
 def init():
     """
     Set up the conversion functions between the classical bases.

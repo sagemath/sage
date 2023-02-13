@@ -1100,8 +1100,8 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 def hadamard_matrix_spence_construction(n, existence=False, check=True):
     r"""Create an Hadamard matrix of order `n` using Spence construction.
 
-    This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in 
-    :func:`sage.combinat.designs.difference_family.supplementary_difference_set` to create the 
+    This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set` to create the
     desired matrix.
 
     INPUT:
@@ -1153,10 +1153,10 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     assert n%4 == 0 and n > 0
 
     q = n//4
-    
-    if existence: 
+
+    if existence:
         return supplementary_difference_set(q, existence=True)
-    
+
     if not supplementary_difference_set(q, existence=True):
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
@@ -1166,7 +1166,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     A2 = matrix.circulant([1 if j in S4 else -1 for j in range(q-1)])
     A3 = matrix.circulant([1 if j in S3 else -1 for j in range(q-1)])
     A4 = matrix.circulant([1 if j in S2 else -1 for j in range(q-1)])
-    
+
     P = matrix(ZZ, [[1 if (i + j)%(q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
 
     e = matrix([1]*(q-1))
@@ -1928,9 +1928,9 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     :func:`sage.combinat.matrices.hadamard_matrix.williamson_goethals_seidel_skew_hadamard_matrix`
     Matrices for `n=36` and `52` are given in [GS70s]_. Matrices for `n=92` are given
     in [Wall71]_.
-    
-    Additional data is obtained from skew supplementary difference sets contained in 
-    :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the 
+
+    Additional data is obtained from skew supplementary difference sets contained in
+    :func:`sage.combinat.designs.difference_family.skew_supplementary_difference_set`, using the
     construction described in [Djo1992]_.
 
     INPUT:
@@ -1979,7 +1979,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         c = [1, 1,-1,-1,-1, 1,-1, 1,-1, 1,-1, 1, 1,-1, 1,-1, 1,-1, 1,-1,-1,-1, 1]
         d = [1,-1,-1,-1,-1, 1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,-1,-1, 1,-1,-1,-1,-1]
         return WGS(a, b, c, d, check=check)
-    
+
     if skew_supplementary_difference_set(n//4, existence=True):
         t = n//4
         S1, S2, S3, S4 = skew_supplementary_difference_set(t, check=False)
@@ -1988,7 +1988,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         c = [-1 if i in S3 else 1 for i in range(t)]
         d = [-1 if i in S4 else 1 for i in range(t)]
         return WGS(a, b, c, d, check=check)
-        
+
     return None
 
 _skew_had_cache={}

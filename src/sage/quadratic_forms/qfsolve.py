@@ -70,7 +70,7 @@ def qfsolve(G):
 
         sage: M = Matrix(QQ, [[3, 0, 0, 0], [0, 5, 0, 0], [0, 0, -7, 0], [0, 0, 0, -11]])
         sage: qfsolve(M)
-        (3, -4, -3, -2)
+        (3, 4, -3, -2)
     """
     ret = G.__pari__().qfsolve()
     if ret.type() == 't_COL':

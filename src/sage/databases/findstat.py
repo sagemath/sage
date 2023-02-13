@@ -1799,7 +1799,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\r\n    return randint(1,1000)")      # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1,1000)")        # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
                 return randint(1,1000)
@@ -1918,8 +1918,8 @@ class FindStatCombinatorialStatistic(SageObject):
             sage: len(st.cache)                                                 # optional -- internet
             100
         """
-        return "\r\n".join(key + " => " + str(val)
-                           for key, val in self._first_terms_raw(max_values=max_values))
+        return "\n".join(key + " => " + str(val)
+                         for key, val in self._first_terms_raw(max_values=max_values))
 
     def _fetch_first_terms(self):
         r"""
@@ -2213,10 +2213,10 @@ class FindStatStatistic(Element,
               'MathSciNet:1418763': {'Author': 'Simion, R., Stanton, D.',
                'Title': 'Octabasic Laguerre polynomials and permutation statistics'}},
              'Code': 'def statistic(x):\r\n    return len(x.nestings())',
-             'Description': 'The number of nestings of a perfect matching. \r\n\r\n\r\nThis is the number of pairs of edges $((a,b), (c,d))$ such that $a\\le c\\le d\\le b$. i.e., the edge $(c,d)$ is nested inside $(a,b)$.',
+             'Description': 'The number of nestings of a perfect matching.\r\n\r\nThis is the number of pairs of edges $((a,b), (c,d))$ such that $a\\le c\\le d\\le b$. i.e., the edge $(c,d)$ is nested inside $(a,b)$.',
              'Domain': 'Cc0012',
              'Name': 'The number of nestings of a perfect matching.',
-             'References': '[1]  [[MathSciNet:1288802]]\n[2]  [[MathSciNet:1418763]]',
+             'References': '[1]  [[MathSciNet:1288802]]\r\n[2]  [[MathSciNet:1418763]]',
              'SageCode': 'def statistic(x):\r\n    return len(x.nestings())'}
         """
         fields = "Bibliography,Code,Description,Domain,Name,References,SageCode"
@@ -2337,7 +2337,7 @@ class FindStatStatistic(Element,
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])    # optional -- internet
-            sage: q.set_code("def statistic(x):\r\n    return randint(1,1000)") # optional -- internet
+            sage: q.set_code("def statistic(x):\n    return randint(1,1000)")   # optional -- internet
             sage: print(q.code())                                               # optional -- internet
             def statistic(x):
                 return randint(1,1000)

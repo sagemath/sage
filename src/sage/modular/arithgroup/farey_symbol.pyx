@@ -1,7 +1,7 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 
 r"""
-Farey Symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
+Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
 
 AUTHORS:
 

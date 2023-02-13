@@ -275,7 +275,7 @@ class Polyhedron_field(Polyhedron_base):
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
              An inequality (0.3001973109753594?, 0.600394621950719?) x - 0.4245431085692869? >= 0)
             sage: p.Vrepresentation()                                           # optional - sage.rings.number_field
-            (A vertex at (0.?e-15, 0.707106781186548?),
+            (A vertex at (0.?e-16, 0.7071067811865475?),
              A vertex at (1.414213562373095?, 0),
              A vertex at (4.000000000000000?, 0.372677996249965?))
         """
@@ -318,7 +318,7 @@ class Polyhedron_field(Polyhedron_base):
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
              An inequality (0.3001973109753594?, 0.600394621950719?) x - 0.4245431085692869? >= 0)
             sage: p.Vrepresentation()                                           # optional - sage.rings.number_field
-            (A vertex at (0.?e-15, 0.707106781186548?),
+            (A vertex at (0.?e-16, 0.7071067811865475?),
              A vertex at (1.414213562373095?, 0),
              A vertex at (4.000000000000000?, 0.372677996249965?))
         """

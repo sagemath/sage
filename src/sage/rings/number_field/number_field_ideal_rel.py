@@ -204,8 +204,6 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         r"""
         Convert the absolute ideal id to a relative number field ideal.
 
-        Assumes id.number_field() == self.absolute_field('a').
-
         WARNING:  This is an internal helper function.
 
         TESTS::
@@ -218,18 +216,18 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
             sage: J.absolute_norm()
             22584817
-            sage: J.absolute_ideal()
-            Fractional ideal (22584817, -1473/812911*a^5 + 8695/4877466*a^4 - 1308209/4877466*a^3 + 117415/443406*a^2 - 22963264/2438733*a - 13721081784272/2438733)
-            sage: J.absolute_ideal().norm()
+            sage: Labs.<c> = L.absolute_field(); Labs # random (polynomial not unique)
+            Number Field in c with defining polynomial x^6 + 217*x^4 - 2*x^3 + 15127*x^2 + 422*x + 338032
+            sage: Jabs = J.absolute_ideal(names='c')
+            sage: Jabs == Labs.ideal(22584817, -1473/812911*c^5 + 8695/4877466*c^4 - 1308209/4877466*c^3 + 117415/443406*c^2 - 22963264/2438733*c - 13721081784272/2438733)
+            True
+            sage: Jabs.norm()
             22584817
-
-            sage: J._from_absolute_ideal(J.absolute_ideal()) == J
+            sage: J._from_absolute_ideal(Jabs) == J
             True
         """
-        L = self.number_field()
-        K = L.absolute_field('a')
-        to_L = K.structure()[0]
-        return L.ideal([to_L(_) for _ in id.gens()])
+        f, _ = id.number_field().structure()
+        return self.number_field().ideal([f(_) for _ in id.gens()])
 
     def free_module(self):
         r"""
@@ -272,7 +270,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
             sage: P.gens_reduced()
-            (2, 15*a*b + 3*a + 1)
+            (2, -15*a*b + 3*a + 1)
         """
         try:
             # Compute the single generator, if it exists
@@ -401,7 +399,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
             sage: P.relative_norm()
-            Fractional ideal (-6*a + 2)
+            Fractional ideal (6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()
@@ -518,7 +516,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
             sage: P.ideal_below()
-            Fractional ideal (-6*a + 2)
+            Fractional ideal (6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()

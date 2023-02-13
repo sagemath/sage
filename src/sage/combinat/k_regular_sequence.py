@@ -1275,6 +1275,7 @@ class RecurrenceParser():
     This is used by :meth:`kRegularSequenceSpace.from_recurrence`
     to construct a :class:`kRegularSequence`.
     """
+
     def __init__(self, k, coefficient_ring):
         r"""
         See :class:`RecurrenceParser`.

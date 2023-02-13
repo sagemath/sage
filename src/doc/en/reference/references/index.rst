@@ -450,6 +450,10 @@ REFERENCES:
 .. [BCDM2019] \T. Beyne, Y. L. Chen, C. Dobraunig, B. Mennink. *Elephant v1* (2019)
               https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/elephant-spec.pdf
 
+.. [BCL2022] Paolo Bellingeri, Hugo Chemin, and Victoria Lebed.
+             *Cactus groups, twin groups, and right-angled Artin groups*.
+             Preprint, :arxiv:`2209.08813` (2022).
+
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
 
@@ -1874,6 +1878,11 @@ REFERENCES:
 .. [Dav1997] B.A. Davey, H.A. Priestley,
              *Introduction to Lattices and Order*,
              Cambridge University Press, 1997.
+
+.. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
+             *Fundamental groups of blow-ups*. Selecta Math.,
+             Adv. Math. ***177** no. 1 (2002) pp. 115-179.
+             :arxiv:`math/0203127`.
 
 .. [DB1996] K. Duggal, A. Bejancu,
             *Lightlike Submanifolds of Semi-Riemannian Manifolds and Applications*,
@@ -4418,6 +4427,10 @@ REFERENCES:
              leurs modules*. Effective methods in algebraic geometry (Castiglioncello,
              1990), 313--334, Progr. Math., 94, Birkhauser Boston, Boston, MA, 1991.
 
+.. [MG1992] \J. Misra and D. Gries. *A constructive proof of Vizing's theorem*.
+            Information Processing Letters, (3) 41 (1992), 131-133.
+            :doi:`10.1016/0020-0190(92)90041-S`.
+
 .. [Mil1958] \J. W. Milnor, *The Steenrod algebra and its dual*,
              Ann. of Math. (2) 67 (1958), 150-171.
 
@@ -4475,6 +4488,11 @@ REFERENCES:
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119–131.
+
+.. [Most2019] Jacob Mostovoy.
+              *The pure cactus group is residually nilpotent*.
+              Archiv der Math., **113** (2019). pp. 229-235.
+              :arxiv:`1804.09165`.
 
 .. [MNO1994] Alexander Molev, Maxim Nazarov, and Grigori Olshanski.
              *Yangians and classical Lie algebras*. (1994)
@@ -5383,6 +5401,12 @@ REFERENCES:
              automorphic functions*. Publications of the Mathematical
              Society of Japan and Princeton University Press, 1971.
 
+.. [Sho1999] Victor Shoup: *Efficient computation of minimal polynomials in
+             algebraic extensions of finite fields*.
+             In ISSAC '99, pp. 53–58. ACM, 1999.
+             :doi:`10.1145/309831.309859`,
+             https://shoup.net/papers/mpol.pdf
+
 .. [Shr2004] \S. Shreve, *Stochastic Calculus for Finance II:
              Continuous-Time Models*.  New York: Springer, 2004
 
@@ -6089,6 +6113,11 @@ REFERENCES:
              pages 150--168, 1932,
              `available on JSTOR <http://www.jstor.org/stable/2371086>`_
 
+.. [White2015] Noah White.
+               *The monodromy of real Bethe vectors for the Gaudin model*.
+               J. Combin. Algebra, **2** no. 3 (2018). pp. 259-300.
+               :arxiv:`1511.04740`.
+
 .. [Wich1997] Tim Wichmann. Der FGLM Algorithmus - verallgemeinert und implementiert in Singular
               Diploma Thesis (University of Kaiserslautern), 1997.
 
@@ -6202,6 +6231,9 @@ REFERENCES:
 
 .. [Yu2007] \K. Yu, *p-adic logarithmic forms and group varieties. III.*
             Forum Math., 19(2):187–280, 2007.
+
+.. [Yu2022] Runze Yu. *linearity of generalized cactus groups*.
+            Preprint, :arxiv:`2202.00860` (2022).
 
 .. [Yun1976] Yun, David YY. On square-free decomposition
              algorithms. In Proceedings of the third ACM symposium on

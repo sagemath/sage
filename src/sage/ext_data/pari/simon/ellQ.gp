@@ -40,7 +40,7 @@
   gp > \r ellcommon.gp
   gp > \r ellQ.gp
 
-  The main function is ellrank(), which takes as an argument
+  The main function is ellQ_ellrank(), which takes as an argument
   any elliptic curve in the form [a1,a2,a3,a4,a6]
   the result is a vector [r,s,v], where
     r is a lower bound for the rank,
@@ -50,7 +50,7 @@
   Example:
 
   gp > ell = [1,2,3,4,5];
-  gp > ellrank(ell)
+  gp > ellQ_ellrank(ell)
   %1 = [1, 1, [[1,2]]
   In this example, the rank is exactly 1, and [1,2] has infinite order.
 
@@ -92,7 +92,7 @@
   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   Explications succintes :
-  La fonction ellrank() accepte toutes les courbes sous la forme
+  La fonction ellQ_ellrank() accepte toutes les courbes sous la forme
   [a1,a2,a3,a4,a6]
   Les coefficients peuvent etre entiers ou non.
   L'algorithme utilise est celui de la 2-descente.
@@ -100,7 +100,7 @@
   Il suffit de taper : 
 
   gp > ell = [a1,a2,a3,a4,a6];
-  gp > ellrank(ell)
+  gp > ellQ_ellrank(ell)
 
   Retourne un vecteur [r,s,v] ou
     r est le rang probable (c'est toujours une minoration du rang),
@@ -110,7 +110,7 @@
   Exemple :
 
   gp > ell = [1,2,3,4,5];
-  gp > ellrank(ell)
+  gp > ellQ_ellrank(ell)
   %1 = [1, 1, [[1,2]]
   Ici, le rang est exactement 1, et le point [1,2] est d'ordre infini.
 
@@ -1571,12 +1571,12 @@ if( DEBUGLEVEL_ell >= 4, print("    end of ell2descent_gen"));
     print("rank(E/Q)    >= ",m1)
   );
 }
-{ellrank(ell,help=[]) =
+{ellQ_ellrank(ell,help=[]) =
 \\ Algorithm of 2-descent on the elliptic curve ell.
 \\ help is a list of known points on ell.
 my(urst,urst1,den,eqell,tors2,bnf,rang,time1);
 
-if( DEBUGLEVEL_ell >= 3, print("   starting ellrank"));
+if( DEBUGLEVEL_ell >= 3, print("   starting ellQ_ellrank"));
   if( #ell < 13, ell = ellinit(ell));
 
 \\ kill the coefficients a1 and a3
@@ -1630,7 +1630,7 @@ if( DEBUGLEVEL_ell >= 1, print(" Elliptic curve: Y^2 = ",eqell));
   ));
 
   rang[3] = ellchangepoint(rang[3],ellinverturst(urst));
-if( DEBUGLEVEL_ell >= 3, print("   end of ellrank"));
+if( DEBUGLEVEL_ell >= 3, print("   end of ellQ_ellrank"));
 
   return(rang);
 }
@@ -2106,13 +2106,13 @@ if( DEBUGLEVEL_ell >= 3, print("   end of ell2descent_viaisog"));
 {
 \\                  functions for elliptic curves
   addhelp(ell2descent_complete,
-    "ell2descent_complete(e1,e2,e3): Performs a complete 2-descent on the elliptic curve y^2 = (x-e1)*(x-e2)*(x-e3). See ?ellrank for the format of the output.");
+    "ell2descent_complete(e1,e2,e3): Performs a complete 2-descent on the elliptic curve y^2 = (x-e1)*(x-e2)*(x-e3). See ?ellQ_ellrank for the format of the output.");
   addhelp(ell2descent_gen,
-    "ell2descent_gen((E,bnf,k=1,help=[]): E is a vector of the form [0,A,0,B,C], (or the result of ellinit of such a vector) A,B,C integers such that x^3+A*x^2+B*x+C; bnf is the corresponding bnfinit(,1); Performs 2-descent on the elliptic curve Ek: k*y^2=x^3+A*x^2+B*x+C. See ?ellrank for the format of the output.");
+    "ell2descent_gen((E,bnf,k=1,help=[]): E is a vector of the form [0,A,0,B,C], (or the result of ellinit of such a vector) A,B,C integers such that x^3+A*x^2+B*x+C; bnf is the corresponding bnfinit(,1); Performs 2-descent on the elliptic curve Ek: k*y^2=x^3+A*x^2+B*x+C. See ?ellQ_ellrank for the format of the output.");
   addhelp(ell2descent_viaisog,
-    "ell2descent_viaisog(E,help=[]): E is an elliptic curve of the form [0,a,0,b,0], with a, b integers. Performs a 2-descent via isogeny on E. See ?ellrank for the format of the output.");
-  addhelp(ellrank,
-    "ellrank(E,help=[]): E is any elliptic curve defined over Q. Returns a vector [r,s,v], where r is a lower bound for the rank of E, s is the rank of its 2-Selmer group and v is a list of independant points in E(Q)/2E(Q). If help is a vector of nontrivial points on E, the result might be faster. This function might be used in conjunction with elltors2(E). See also ?default_ellQ");
+    "ell2descent_viaisog(E,help=[]): E is an elliptic curve of the form [0,a,0,b,0], with a, b integers. Performs a 2-descent via isogeny on E. See ?ellQ_ellrank for the format of the output.");
+  addhelp(ellQ_ellrank,
+    "ellQ_ellrank(E,help=[]): E is any elliptic curve defined over Q. Returns a vector [r,s,v], where r is a lower bound for the rank of E, s is the rank of its 2-Selmer group and v is a list of independant points in E(Q)/2E(Q). If help is a vector of nontrivial points on E, the result might be faster. This function might be used in conjunction with elltors2(E). See also ?default_ellQ");
   addhelp(ellhalf,
     "ellhalf(E,P): returns the vector of all points Q on the elliptic curve E such that 2Q = P");
   addhelp(ellredgen,
@@ -2143,7 +2143,7 @@ if( DEBUGLEVEL_ell >= 3, print("   end of ell2descent_viaisog"));
 
 \\                  others
   addhelp(default_ellQ,
-    "default_ellQ(DEBUGLEVEL_ell, LIM1, LIM3, LIMTRIV, ELLREDGENFLAG, COMPLETE, MAXPROB, LIMBIGPRIME): set the value of the global variables used for ellrank() and other related functions. DEBUGLEVEL_ell: 0-5: choose the quantity of information printed during the computation (default=0: print nothing); LIM1 (resp LIM3): search limit for easy (resp hard) points on quartics; LIMTRIV: search limit for trivial points on elliptic curves; ELLREDGENFLAG: if != 0, try to reduce the generators at the end; COMPLETE: if != 0 and full 2-torsion, use complete 2-descent, otherwise via 2-isogeny; MAXPROB, LIMBIGPRIME: technical.");
+    "default_ellQ(DEBUGLEVEL_ell, LIM1, LIM3, LIMTRIV, ELLREDGENFLAG, COMPLETE, MAXPROB, LIMBIGPRIME): set the value of the global variables used for ellQ_ellrank() and other related functions. DEBUGLEVEL_ell: 0-5: choose the quantity of information printed during the computation (default=0: print nothing); LIM1 (resp LIM3): search limit for easy (resp hard) points on quartics; LIMTRIV: search limit for trivial points on elliptic curves; ELLREDGENFLAG: if != 0, try to reduce the generators at the end; COMPLETE: if != 0 and full 2-torsion, use complete 2-descent, otherwise via 2-isogeny; MAXPROB, LIMBIGPRIME: technical.");
 /*  addhelp(DEBUGLEVEL_ell,
     "DEBUGLEVEL_ell: Choose a higher value of this global variable to have more details of the computations printed during the 2-descent algorithm. 0 = don't print anything; 1 = (default) just print the result; 2 = print more details including the Selmer group and the nontrivial quartics.");
 */
