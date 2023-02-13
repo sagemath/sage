@@ -935,8 +935,7 @@ def solve(f, *args, **kwds):
 
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...
-        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
 
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-4,x*y-3],[x,y],algorithm='giac')
@@ -1440,19 +1439,15 @@ def _giac_solver(f, x, solution_dict=False):
     EXAMPLES::
 
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...
-        [[-log(2)/(log(3) - log(2))]]
+        ...[[-log(2)/(log(3) - log(2))]]
         sage: solve([(2/3)^x-2], [x], algorithm='giac', solution_dict=True)
-        ...
-        [{x: -log(2)/(log(3) - log(2))}]
+        ...[{x: -log(2)/(log(3) - log(2))}]
 
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...
-        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
         sage: solve(f, x, algorithm='giac', solution_dict=True)
-        ...
-        [{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
+        ...[{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
 
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-7,x*y-10],[x,y],algorithm='giac')

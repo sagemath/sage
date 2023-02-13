@@ -207,7 +207,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         res = pari_prime_range(start, stop, py_ints)
 
     elif (algorithm == "pari_isprime") or (algorithm == "pari_primes"):
-        from sage.arith.all import primes
+        from sage.arith.misc import primes
         res = list(primes(start, stop))
     else:
         raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')

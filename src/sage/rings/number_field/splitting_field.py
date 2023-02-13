@@ -19,7 +19,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer import Integer
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.number_field.all import NumberField
 from sage.rings.polynomial.all import PolynomialRing
 from sage.rings.rational_field import RationalField, is_RationalField
