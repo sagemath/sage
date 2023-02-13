@@ -1492,7 +1492,7 @@ class _TransformMod(_TransformHrepresentation):
             sage: _TransformMod.generate_mods([(0, 1, 1, -2)])
             ({0: (2, 0), 1: (2, 0)}, {0: (2, 1), 1: (2, 1)})
         """
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ

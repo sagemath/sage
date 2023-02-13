@@ -891,10 +891,10 @@ http://fricas.sourceforge.net.
         """
         EXAMPLES::
 
-            sage: fricas.__reduce__()                                           # optional - fricas
+            sage: FriCAS().__reduce__()
             (<function reduce_load_fricas at 0x...>, ())
-            sage: f, args = _                                                   # optional - fricas
-            sage: f(*args)                                                      # optional - fricas
+            sage: f, args = _
+            sage: f(*args)
             FriCAS
         """
         return reduce_load_fricas, tuple([])
@@ -2132,8 +2132,8 @@ def reduce_load_fricas():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import reduce_load_fricas             # optional - fricas
-        sage: reduce_load_fricas()                                              # optional - fricas
+        sage: from sage.interfaces.fricas import reduce_load_fricas
+        sage: reduce_load_fricas()
         FriCAS
     """
     return fricas
