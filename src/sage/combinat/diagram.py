@@ -1013,15 +1013,28 @@ class NorthwestDiagram(Diagram, metaclass=InheritComparisonClasscallMetaclass):
 
         This implementation uses the algorithm suggested in Remark 25
         of [RS1995]_.
+
+        TESTS:
+
+        Corner case::
+
+            sage: from sage.combinat.diagram import NorthwestDiagram
+            sage: D = NorthwestDiagram([])
+            sage: D.peelable_tableaux()
+            {[]}
         """
         # TODO: There is a condition on the first column (if the rows in Dhat
         # are a subset of the rows in the first column) which simplifies the
         # description without performing JDT, so we should implement that
 
+        # empty diagram case
+        if not self:
+            return set([Tableau([])])
+
         # if there is a single column in the diagram then there is only
         # one posslbe peelable tableau.
         if self._n_nonempty_cols == 1:
-            return {Tableau([[i+1] for i, j in self.cells()])}
+            return set([Tableau([[i+1] for i, j in self.cells()])])
 
         first_col = min(j for i, j in self._cells)
 
