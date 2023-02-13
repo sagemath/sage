@@ -423,6 +423,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     return ExtendedAffineWeylGroup_Class(cartan_type, general_linear, **print_options)
 
+
 class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
     r"""
     The parent-with-realization class of an extended affine Weyl group.
@@ -1030,6 +1031,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         r"""
         The category of the realizations of an extended affine Weyl group
         """
+
         def super_categories(self):
             r"""
             EXAMPLES::
@@ -2059,6 +2061,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         r"""
         The element class for the W0P realization.
         """
+
         def has_descent(self, i, side='right', positive=False):
             r"""
             Return whether ``self`` has `i` as a descent.
@@ -2141,6 +2144,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             sage: ExtendedAffineWeylGroup(['A',2,1]).W0P()
             Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice) acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
         """
+
         def __init__(self, E):
             r"""
             EXAMPLES::
@@ -2402,6 +2406,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         r"""
         The element class for the "FW" realization.
         """
+
         def has_descent(self, i, side='right', positive=False):
             r"""
             Return whether ``self`` has descent at `i`.
@@ -2489,6 +2494,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             sage: ExtendedAffineWeylGroup(['A',2,1]).FW()
             Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
         """
+
         def __init__(self, E):
             r"""
 
@@ -2558,6 +2564,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         r"""
         The element class for the "PvW0" realization.
         """
+
         def has_descent(self, i, side='right', positive=False):
             r"""
             Return whether ``self`` has `i` as a descent.
@@ -2657,6 +2664,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             sage: ExtendedAffineWeylGroup(['A',2,1]).PvW0()
             Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
         """
+
         def __init__(self, E):
             r"""
 
@@ -2728,6 +2736,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         r"""
         The element class for the "W0Pv" realization.
         """
+
         def dual_action(self, la):
             r"""
             Return the action of ``self`` on an element ``la`` of the dual version of the translation lattice.
@@ -2888,6 +2897,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 (s1*s2, t[0])
             """
             return self((w,self.cartesian_factors()[1].one()))
+
 
 ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupPW0.Element = ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupPW0Element
 ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupW0P.Element = ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupW0PElement

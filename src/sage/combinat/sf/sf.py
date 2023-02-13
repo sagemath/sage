@@ -40,6 +40,7 @@ from . import jack
 from . import macdonald
 from . import llt
 
+
 class SymmetricFunctions(UniqueRepresentation, Parent):
     r"""
     The abstract algebra of commutative symmetric functions
@@ -1077,7 +1078,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     ht = induced_trivial_character
 
-
     def forgotten(self):
         r"""
         The forgotten basis of the Symmetric Functions (or the basis dual to
@@ -1576,6 +1576,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         from sage.combinat.sf.k_dual import KBoundedQuotient
         return KBoundedQuotient(self, k, t)
+
 
 class SymmetricaConversionOnBasis:
     def __init__(self, t, domain, codomain):

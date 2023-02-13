@@ -111,7 +111,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: RF13 = K.residue_field(pp)
             sage: RF13.hom([GF(13)(1)])
             Ring morphism:
-             From: Residue field of Fractional ideal (w + 18)
+             From: Residue field of Fractional ideal (-w - 18)
              To:   Finite Field of size 13
              Defn: 1 |--> 1
 

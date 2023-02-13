@@ -80,7 +80,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``x`` -- data defining a `p`-adic element: int, long,
+        - ``x`` -- data defining a `p`-adic element: int,
           Integer, Rational, other `p`-adic element...
 
         - ``val`` -- the valuation of the resulting element
@@ -672,7 +672,7 @@ cdef class CRElement(pAdicTemplateElement):
         cdef Integer right
         cdef CRElement base, pright, ans
         cdef bint exact_exp
-        if (isinstance(_right, Integer) or isinstance(_right, (int, long)) or isinstance(_right, Rational)):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 base = ~self
                 return base.__pow__(-_right, dummy)
@@ -702,7 +702,7 @@ cdef class CRElement(pAdicTemplateElement):
         ans = self._new_c()
         if self.relprec == 0:
             # If a positive integer exponent, return an inexact zero of valuation right * self.ordp.  Otherwise raise an error.
-            if isinstance(_right, (int, long)):
+            if isinstance(_right, int):
                 _right = Integer(_right)
             if isinstance(_right, Integer):
                 right = <Integer>_right

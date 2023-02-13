@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Congruence Subgroup `\Gamma_H(N)`
+Congruence subgroup `\Gamma_H(N)`
 
 AUTHORS:
 
