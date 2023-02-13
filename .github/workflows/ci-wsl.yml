@@ -1,8 +1,6 @@
 name: Build & Test WSL
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'

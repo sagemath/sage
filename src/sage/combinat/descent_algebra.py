@@ -126,6 +126,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         sage: all(I(B(b)) == b for b in I.basis())
         True
     """
+
     def __init__(self, R, n):
         r"""
         EXAMPLES::
@@ -193,6 +194,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             sage: list(D.basis())
             [D{}]
         """
+
         def __init__(self, alg, prefix="D"):
             r"""
             Initialize ``self``.
@@ -410,6 +412,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [B[1, 1, 1, 1], B[1, 1, 2], B[1, 2, 1], B[1, 3],
              B[2, 1, 1], B[2, 2], B[3, 1], B[4]]
         """
+
         def __init__(self, alg, prefix="B"):
             r"""
             Initialize ``self``.
@@ -642,6 +645,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             sage: list(I.basis())
             [I[1, 1, 1, 1], I[1, 1, 2], I[1, 2, 1], I[1, 3], I[2, 1, 1], I[2, 2], I[3, 1], I[4]]
         """
+
         def __init__(self, alg, prefix="I"):
             r"""
             Initialize ``self``.
@@ -813,6 +817,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
     r"""
     The category of bases of a descent algebra.
     """
+
     def __init__(self, base):
         r"""
         Initialize the bases of a descent algebra.

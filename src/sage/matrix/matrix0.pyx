@@ -204,7 +204,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t i, j
 
         x = self.fetch('list')
-        if not x is None:
+        if x is not None:
             return x
         x = []
         for i from 0 <= i < self._nrows:
@@ -309,7 +309,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [   3    4   10]
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j
@@ -4612,7 +4612,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (0, 1)
         """
         x = self.fetch('pivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
         self.echelon_form()
         x = self.fetch('pivots')
         if x is None:
@@ -4650,10 +4651,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:                 [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16] ])
             sage: m.rank()
             2
-
         """
         x = self.fetch('rank')
-        if not x is None: return x
+        if x is not None:
+            return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
         r = len(self.pivots())
@@ -4681,12 +4682,13 @@ cdef class Matrix(sage.structure.element.Matrix):
             (2,)
         """
         x = self.fetch('nonpivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
 
         X = set(self.pivots())
         np = []
         for j in xrange(self.ncols()):
-            if not (j in X):
+            if j not in X:
                 np.append(j)
         np = tuple(np)
         self.cache('nonpivots',np)
@@ -4777,7 +4779,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(0, 0), (1, 0), (1, 1), (0, 2)]
         """
         x = self.fetch('nonzero_positions_by_column')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x

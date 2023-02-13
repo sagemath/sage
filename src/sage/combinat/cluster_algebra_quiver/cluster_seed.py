@@ -130,6 +130,7 @@ class ClusterSeed(SageObject):
         sage: S = ClusterSeed(['D', 4],user_labels = [-1, 0, 1, 2]);S
         A seed for a cluster algebra of rank 4 of type ['D', 4]
     """
+
     def __init__(self, data, frozen=None, is_principal=False, user_labels=None, user_labels_prefix='x'):
         r"""
 
@@ -3443,7 +3444,6 @@ class ClusterSeed(SageObject):
         else:
             yield self
 
-
         # instantiate the variables
         clusters = {}
         clusters[ cl ] = [ self, list(range(n)), [] ]
@@ -4628,6 +4628,7 @@ def coeff_recurs(p, q, a1, a2, b, c):
             return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
                        for k in range(1, q+1))
 
+
 def PathSubset(n, m):
     r"""
     Encodes a *maximal* Dyck path from (0,0) to (n,m) (for n >= m >= 0) as a subset of {0,1,2,..., 2n-1}.
@@ -4686,6 +4687,7 @@ def SetToPath(T):
     if 2*n-2 in T:
         ans.append(2*n-2)
     return ans
+
 
 def is_LeeLiZel_allowable(T,n,m,b,c):
     """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Manin Relations for overconvergent modular symbols
+Manin relations for overconvergent modular symbols
 
 Code to create the Manin Relations class, which solves the "Manin relations".
 That is, a description of `Div^0(P^1(\QQ))` as a `\ZZ[\Gamma_0(N)]`-module in
@@ -599,29 +599,29 @@ class ManinRelations(PollackStevensModularDomain):
         self._N = N
         SN = Sigma0(N)
 
-        ## Creates and stores the Sage representation of P^1(Z/NZ)
+        # Creates and stores the Sage representation of P^1(Z/NZ)
         P = P1List(N)
         self._P = P
         IdN = SN([1, 0, 0, 1])
 
-        ## Creates a fundamental domain for Gamma_0(N) whose boundary
-        ## is a union of unimodular paths (except in the case of
-        ## 3-torsion).  We will call the intersection of this domain
-        ## with the real axis the collection of cusps (even if some
-        ## are Gamma_0(N) equivalent to one another).
+        # Creates a fundamental domain for Gamma_0(N) whose boundary
+        # is a union of unimodular paths (except in the case of
+        # 3-torsion).  We will call the intersection of this domain
+        # with the real axis the collection of cusps (even if some
+        # are Gamma_0(N) equivalent to one another).
         cusps = self.form_list_of_cusps()
 
-        ## Takes the boundary of this fundamental domain and finds
-        ## SL_2(Z) matrices whose associated unimodular path gives
-        ## this boundary.  These matrices form the beginning of our
-        ## collection of coset reps for Gamma_0(N) / SL_2(Z).
+        # Takes the boundary of this fundamental domain and finds
+        # SL_2(Z) matrices whose associated unimodular path gives
+        # this boundary.  These matrices form the beginning of our
+        # collection of coset reps for Gamma_0(N) / SL_2(Z).
         coset_reps = self.fd_boundary(cusps)
 
-        ## Takes the bottom row of each of our current coset reps,
-        ## thinking of them as distinct elements of P^1(Z/NZ)
+        # Takes the bottom row of each of our current coset reps,
+        # thinking of them as distinct elements of P^1(Z/NZ)
         p1s = [(coset_reps[j])[1] for j in range(len(coset_reps))]
 
-        ## Initializes relevant Manin data
+        # Initializes relevant Manin data
         gens_index = []
         twotor_index = []
         twotorrels = []
@@ -630,219 +630,219 @@ class ManinRelations(PollackStevensModularDomain):
         rels = [0] * len(coset_reps)
         gammas = {}
 
-        ## the list rels (above) will give Z[Gamma_0(N)] relations between
-        ## the associated divisor of each coset representatives in terms
-        ## of our chosen set of generators.
-        ## entries of rels will be lists of elements of the form (c,A,r)
-        ## with c a constant, A a Gamma_0(N) matrix, and r the index of a
-        ## generator.  The meaning is that the divisor associated to the
-        ## j-th coset rep will equal the sum of:
+        # the list rels (above) will give Z[Gamma_0(N)] relations between
+        # the associated divisor of each coset representatives in terms
+        # of our chosen set of generators.
+        # entries of rels will be lists of elements of the form (c,A,r)
+        # with c a constant, A a Gamma_0(N) matrix, and r the index of a
+        # generator.  The meaning is that the divisor associated to the
+        # j-th coset rep will equal the sum of:
         ##
-        ##   c * A^(-1) * (divisor associated to r-th coset rep)
+        #   c * A^(-1) * (divisor associated to r-th coset rep)
         ##
-        ## as one varies over all (c,A,r) in rels[j].
-        ## (Here r must be in self.generator_indices().)
+        # as one varies over all (c,A,r) in rels[j].
+        # (Here r must be in self.generator_indices().)
         ##
-        ## This will be used for modular symbols as then the value of a
-        ## modular symbol phi on the (associated divisor) of the j-th
-        ## element of coset_reps will be the sum of c * phi (r-th generator) | A
-        ## as one varies over the tuples in rels[j]
+        # This will be used for modular symbols as then the value of a
+        # modular symbol phi on the (associated divisor) of the j-th
+        # element of coset_reps will be the sum of c * phi (r-th generator) | A
+        # as one varies over the tuples in rels[j]
 
         boundary_checked = [False] * len(coset_reps)
 
-        ## The list boundary_checked keeps track of which boundary pieces of the
-        ## fundamental domain have been already used as we are picking
-        ## our generators
+        # The list boundary_checked keeps track of which boundary pieces of the
+        # fundamental domain have been already used as we are picking
+        # our generators
 
-        ## The following loop will choose our generators by picking one edge
-        ## out of each pair of edges that are glued to each other and picking
-        ## each edge glued to itself (arising from two-torsion)
-        ## ------------------------------------------------------------------
+        # The following loop will choose our generators by picking one edge
+        # out of each pair of edges that are glued to each other and picking
+        # each edge glued to itself (arising from two-torsion)
+        # ------------------------------------------------------------------
         for r in range(len(coset_reps)):
             if not boundary_checked[r]:
 
-                ## We now check if this boundary edge is glued to itself by
-                ## Gamma_0(N)
+                # We now check if this boundary edge is glued to itself by
+                # Gamma_0(N)
 
                 if P.normalize(p1s[r][0], p1s[r][1]) == P.normalize(-p1s[r][1], p1s[r][0]):
-                    ## This edge is glued to itself and so coset_reps[r]
-                    ## needs to be added to our generator list.
+                    # This edge is glued to itself and so coset_reps[r]
+                    # needs to be added to our generator list.
 
-                    ## this relation expresses the fact that
-                    ## coset_reps[r] is one of our basic generators
+                    # this relation expresses the fact that
+                    # coset_reps[r] is one of our basic generators
                     rels[r] = [(1, IdN, r)]
 
-                    ## the index r is adding to our list
-                    ## of indexes of generators
+                    # the index r is adding to our list
+                    # of indexes of generators
                     gens_index.append(r)
 
-                    ## the index r is adding to our list of indexes of
-                    ## generators which satisfy a 2-torsion relation
+                    # the index r is adding to our list of indexes of
+                    # generators which satisfy a 2-torsion relation
                     twotor_index.append(r)
 
                     # we use the adjugate instead of the inverse for speed
                     gam = SN(coset_reps[r] * sig * coset_reps[r].adjugate())
-                    ## gam is 2-torsion matrix and in Gamma_0(N).
-                    ## if D is the divisor associated to coset_reps[r]
-                    ## then gam * D = - D and so (1+gam)D=0.
+                    # gam is 2-torsion matrix and in Gamma_0(N).
+                    # if D is the divisor associated to coset_reps[r]
+                    # then gam * D = - D and so (1+gam)D=0.
 
-                    ## This gives a restriction to the possible values of
-                    ## modular symbols on D
+                    # This gives a restriction to the possible values of
+                    # modular symbols on D
 
-                    ## The 2-torsion matrix gam is recorded in our list of
-                    ## 2-torsion relations.
+                    # The 2-torsion matrix gam is recorded in our list of
+                    # 2-torsion relations.
                     twotorrels.append(gam)
 
-                    ## We have now finished with this edge.
+                    # We have now finished with this edge.
                     boundary_checked[r] = True
 
                 else:
                     c = coset_reps[r][t10]
                     d = coset_reps[r][t11]
 
-                    ## In the following case the ideal triangle below
-                    ## the unimodular path described by coset_reps[r]
-                    ## contains a point fixed by a 3-torsion element.
+                    # In the following case the ideal triangle below
+                    # the unimodular path described by coset_reps[r]
+                    # contains a point fixed by a 3-torsion element.
                     if (c ** 2 + d ** 2 + c * d) % N == 0:
 
-                        ## the index r is adding to our list of indexes
-                        ## of generators
+                        # the index r is adding to our list of indexes
+                        # of generators
                         gens_index.append(r)
 
-                        ## this relation expresses the fact that coset_reps[r]
-                        ## is one of our basic generators
+                        # this relation expresses the fact that coset_reps[r]
+                        # is one of our basic generators
                         rels[r] = [(1, IdN, r)]
 
-                        ## the index r is adding to our list of indexes of
-                        ## generators which satisfy a 3-torsion relation
+                        # the index r is adding to our list of indexes of
+                        # generators which satisfy a 3-torsion relation
                         threetor_index.append(r)
 
                         # Use the adjugate instead of the inverse for speed.
                         gam = SN(coset_reps[r] * tau * coset_reps[r].adjugate())
-                        ## gam is 3-torsion matrix and in Gamma_0(N).
-                        ## if D is the divisor associated to coset_reps[r]
-                        ## then (1+gam+gam^2)D=0.
-                        ## This gives a restriction to the possible values of
-                        ## modular symbols on D
+                        # gam is 3-torsion matrix and in Gamma_0(N).
+                        # if D is the divisor associated to coset_reps[r]
+                        # then (1+gam+gam^2)D=0.
+                        # This gives a restriction to the possible values of
+                        # modular symbols on D
 
-                        ## The 3-torsion matrix gam is recorded in our list of
-                        ## 3-torsion relations.
+                        # The 3-torsion matrix gam is recorded in our list of
+                        # 3-torsion relations.
                         threetorrels.append(gam)
 
-                        ## The reverse of the unimodular path associated to
-                        ## coset_reps[r] is not Gamma_0(N) equivalent to it, so
-                        ## we need to include it in our list of coset
-                        ## representatives and record the relevant relations.
+                        # The reverse of the unimodular path associated to
+                        # coset_reps[r] is not Gamma_0(N) equivalent to it, so
+                        # we need to include it in our list of coset
+                        # representatives and record the relevant relations.
 
                         a = coset_reps[r][t00]
                         b = coset_reps[r][t01]
 
                         A = M2Z([-b, a, -d, c])
                         coset_reps.append(A)
-                        ## A (representing the reversed edge) is included in
-                        ## our list of coset reps
+                        # A (representing the reversed edge) is included in
+                        # our list of coset reps
 
                         rels.append([(-1, IdN, r)])
-                        ## This relation means that phi on the reversed edge
-                        ## equals -phi on original edge
+                        # This relation means that phi on the reversed edge
+                        # equals -phi on original edge
 
                         boundary_checked[r] = True
-                        ## We have now finished with this edge.
+                        # We have now finished with this edge.
 
                     else:
-                        ## This is the generic case where neither 2 or
-                        ## 3-torsion intervenes.
-                        ## The below loop searches through the remaining edges
-                        ## and finds which one is equivalent to the reverse of
-                        ## coset_reps[r]
-                        ## ---------------------------------------------------
+                        # This is the generic case where neither 2 or
+                        # 3-torsion intervenes.
+                        # The below loop searches through the remaining edges
+                        # and finds which one is equivalent to the reverse of
+                        # coset_reps[r]
+                        # ---------------------------------------------------
                         for s in range(r + 1, len(coset_reps)):
                             if boundary_checked[s]:
                                 continue
                             if P.normalize(p1s[s][0], p1s[s][1]) == P.normalize(-p1s[r][1], p1s[r][0]):
-                                ## the reverse of coset_reps[r] is
-                                ## Gamma_0(N)-equivalent to coset_reps[s]
-                                ## coset_reps[r] will now be made a generator
-                                ## and we need to express phi(coset_reps[s])
-                                ## in terms of phi(coset_reps[r])
+                                # the reverse of coset_reps[r] is
+                                # Gamma_0(N)-equivalent to coset_reps[s]
+                                # coset_reps[r] will now be made a generator
+                                # and we need to express phi(coset_reps[s])
+                                # in terms of phi(coset_reps[r])
 
                                 gens_index.append(r)
-                                ## the index r is adding to our list of
-                                ## indexes of generators
+                                # the index r is adding to our list of
+                                # indexes of generators
 
                                 rels[r] = [(1, IdN, r)]
-                                ## this relation expresses the fact that
-                                ## coset_reps[r] is one of our basic generators
+                                # this relation expresses the fact that
+                                # coset_reps[r] is one of our basic generators
 
                                 A = coset_reps[s] * sig
-                                ## A corresponds to reversing the orientation
-                                ## of the edge corr. to coset_reps[r]
+                                # A corresponds to reversing the orientation
+                                # of the edge corr. to coset_reps[r]
                                 # Use adjugate instead of inverse for speed
                                 gam = SN(coset_reps[r] * A.adjugate())
-                                ## gam is in Gamma_0(N) (by assumption of
-                                ## ending up here in this if statement)
+                                # gam is in Gamma_0(N) (by assumption of
+                                # ending up here in this if statement)
 
                                 rels[s] = [(-1, gam, r)]
-                                ## this relation means that phi evaluated on
-                                ## coset_reps[s] equals -phi(coset_reps[r])|gam
-                                ## To see this, let D_r be the divisor
-                                ## associated to coset_reps[r] and D_s to
-                                ## coset_reps[s]. Then gam D_s = -D_r and so
-                                ## phi(gam D_s) = - phi(D_r) and thus
-                                ## phi(D_s) = -phi(D_r)|gam
-                                ## since gam is in Gamma_0(N)
+                                # this relation means that phi evaluated on
+                                # coset_reps[s] equals -phi(coset_reps[r])|gam
+                                # To see this, let D_r be the divisor
+                                # associated to coset_reps[r] and D_s to
+                                # coset_reps[s]. Then gam D_s = -D_r and so
+                                # phi(gam D_s) = - phi(D_r) and thus
+                                # phi(D_s) = -phi(D_r)|gam
+                                # since gam is in Gamma_0(N)
 
                                 gammas[coset_reps[r]] = gam
-                                ## this is a dictionary whose keys are the
-                                ## non-torsion generators and whose values
-                                ## are the corresponding gamma_i. It is
-                                ## eventually stored as self.gammas.
+                                # this is a dictionary whose keys are the
+                                # non-torsion generators and whose values
+                                # are the corresponding gamma_i. It is
+                                # eventually stored as self.gammas.
 
                                 boundary_checked[r] = True
                                 boundary_checked[s] = True
                                 break
 
-        ## We now need to complete our list of coset representatives by
-        ## finding all unimodular paths in the interior of the fundamental
-        ## domain, as well as express these paths in terms of our chosen set
-        ## of generators.
-        ## -------------------------------------------------------------------
+        # We now need to complete our list of coset representatives by
+        # finding all unimodular paths in the interior of the fundamental
+        # domain, as well as express these paths in terms of our chosen set
+        # of generators.
+        # -------------------------------------------------------------------
 
         for r in range(len(cusps) - 2):
-            ## r is the index of the cusp on the left of the path.  We only run
-            ## thru to the number of cusps - 2 since you cannot start an
-            ## interior path on either of the last two cusps
+            # r is the index of the cusp on the left of the path.  We only run
+            # thru to the number of cusps - 2 since you cannot start an
+            # interior path on either of the last two cusps
 
             for s in range(r + 2, len(cusps)):
-            ## s is in the index of the cusp on the right of the path
+            # s is in the index of the cusp on the right of the path
                 cusp1 = cusps[r]
                 cusp2 = cusps[s]
                 if self.is_unimodular_path(cusp1, cusp2):
                     A, B = self.unimod_to_matrices(cusp1, cusp2)
-                    ## A and B are the matrices whose associated paths
-                    ## connect cusp1 to cusp2 and cusp2 to cusp1 (respectively)
+                    # A and B are the matrices whose associated paths
+                    # connect cusp1 to cusp2 and cusp2 to cusp1 (respectively)
                     coset_reps.extend([A, B])
-                    ## A and B are added to our coset reps
+                    # A and B are added to our coset reps
                     vA = []
                     vB = []
 
-                    ## This loop now encodes the relation between the
-                    ## unimodular path A and our generators.  This is done
-                    ## simply by accounting for all of the edges that lie
-                    ## below the path attached to A (as they form a triangle)
-                    ## Similarly, this is also done for B.
+                    # This loop now encodes the relation between the
+                    # unimodular path A and our generators.  This is done
+                    # simply by accounting for all of the edges that lie
+                    # below the path attached to A (as they form a triangle)
+                    # Similarly, this is also done for B.
 
-                    ## Running between the cusps between cusp1 and cusp2
+                    # Running between the cusps between cusp1 and cusp2
                     for rel in rels[r + 2: s + 2]:
-                        ## Add edge relation
+                        # Add edge relation
                         vA.append(rel[0])
-                        ## Add negative of edge relation
+                        # Add negative of edge relation
                         vB.append((-rel[0][0], rel[0][1], rel[0][2]))
-                    ## Add relations for A and B to relations list
+                    # Add relations for A and B to relations list
                     rels.extend([vA, vB])
 
-        ## Make the translation table between the Sage and Geometric
-        ## descriptions of P^1
+        # Make the translation table between the Sage and Geometric
+        # descriptions of P^1
         equiv_ind = {}
         for i, rep in enumerate(coset_reps):
             ky = P.normalize(rep[t10], rep[t11])
@@ -852,28 +852,28 @@ class ManinRelations(PollackStevensModularDomain):
         PollackStevensModularDomain.__init__(self, N, coset_reps, gens_index,
                                         rels, equiv_ind)
 
-        ## A list of indices of the (geometric) coset representatives whose
-        ## paths are identified by some 2-torsion element (which switches the
-        ## path orientation)
+        # A list of indices of the (geometric) coset representatives whose
+        # paths are identified by some 2-torsion element (which switches the
+        # path orientation)
         self._indices_with_two_torsion = twotor_index
         self._reps_with_two_torsion = [coset_reps[i] for i in twotor_index]
 
-        ## A dictionary of (2-torsion in PSL_2(Z)) matrices in
-        ## Gamma_0(N) that give the orientation identification in the
-        ## paths listed in twotor_index above!
+        # A dictionary of (2-torsion in PSL_2(Z)) matrices in
+        # Gamma_0(N) that give the orientation identification in the
+        # paths listed in twotor_index above!
         self._two_torsion = {}
         for j, tor_elt in zip(twotor_index, twotorrels):
             self._two_torsion[coset_reps[j]] = tor_elt
 
-        ## A list of indices of the (geometric) coset representatives that
-        ## form one side of an ideal triangle with an interior fixed point of
-        ## a 3-torsion element of Gamma_0(N)
+        # A list of indices of the (geometric) coset representatives that
+        # form one side of an ideal triangle with an interior fixed point of
+        # a 3-torsion element of Gamma_0(N)
         self._indices_with_three_torsion = threetor_index
         self._reps_with_three_torsion = [coset_reps[i] for i in threetor_index]
 
-        ## A dictionary of (3-torsion in PSL_2(Z)) matrices in
-        ## Gamma_0(N) that give the interior fixed point described in
-        ## threetor_index above!
+        # A dictionary of (3-torsion in PSL_2(Z)) matrices in
+        # Gamma_0(N) that give the interior fixed point described in
+        # threetor_index above!
         self._three_torsion = {}
         for j, tor_elt in zip(threetor_index, threetorrels):
             self._three_torsion[coset_reps[j]] = tor_elt
@@ -1144,118 +1144,118 @@ class ManinRelations(PollackStevensModularDomain):
             -4/9, -3/7, -5/12, -7/17, -2/5, -3/8, -4/11, -1/3, -2/7, -3/11,
             -1/4, -2/9, -1/5, -1/6, 0]
         """
-        ## Get the level
+        # Get the level
         N = self.level()
 
-        ## Some convenient shortcuts
+        # Some convenient shortcuts
         P = self.P1()
         sP = len(P.list())   # Size of P^1(Z/NZ)
 
-        ## Initialize some lists
+        # Initialize some lists
 
         C = [QQ(-1), "?", QQ(0)]
 
-        ## Initialize the list of cusps at the bottom of the fund. domain.
-        ## The ? denotes that it has not yet been checked if more cusps need
-        ## to be added between the surrounding cusps.
+        # Initialize the list of cusps at the bottom of the fund. domain.
+        # The ? denotes that it has not yet been checked if more cusps need
+        # to be added between the surrounding cusps.
 
         full_domain = False     # Says that we are not done yet!
 
         v = [False for r in range(sP)]
-        ## This initializes a list indexed by P^1(Z/NZ) which keeps track of
-        ## which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
-        ## thru the construction of a fundamental domain
+        # This initializes a list indexed by P^1(Z/NZ) which keeps track of
+        # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
+        # thru the construction of a fundamental domain
 
-        ## Includeds the coset repns formed by the original ideal triangle
-        ## (with corners at -1, 0, infty)
+        # Includeds the coset repns formed by the original ideal triangle
+        # (with corners at -1, 0, infty)
 
         v[P.index(0, 1)] = True
         v[P.index(1, -1)] = True
         v[P.index(-1, 0)] = True
 
-        ## Main Loop -- Ideal Triangle Flipping
-        ## ====================================
+        # Main Loop -- Ideal Triangle Flipping
+        # ====================================
         while (not full_domain):
             full_domain = True
 
-            ## This loop runs through the current set of cusps
-            ## and checks to see if more cusps should be added
-            ## -----------------------------------------------
+            # This loop runs through the current set of cusps
+            # and checks to see if more cusps should be added
+            # -----------------------------------------------
             for s in range(1, len(C), 2):  # range over odd indices in the
                                            # final list C
                 if C[s] == "?":
 
-                    ## Single out our two cusps (path from cusp2 to cusp1)
+                    # Single out our two cusps (path from cusp2 to cusp1)
                     cusp1 = C[s - 1]
                     cusp2 = C[s + 1]
 
-                    ## Makes the unimodular transform for the path from cusp2
-                    ## to cusp1
+                    # Makes the unimodular transform for the path from cusp2
+                    # to cusp1
 
                     b1 = cusp1.denominator()
                     b2 = cusp2.denominator()
 
-                    ## This is the point where it is determined whether
-                    ## or not the adjacent triangle should be added
-                    ## ------------------------------------------------
+                    # This is the point where it is determined whether
+                    # or not the adjacent triangle should be added
+                    # ------------------------------------------------
                     pos = P.index(b2, b1)   # The Sage index of the bottom
-                                                 ## row of our unimodular
-                                           ## transformation gam
+                                                 # row of our unimodular
+                                           # transformation gam
 
-                    ## Check if we need to flip (since this P1 element has not
-                    ## yet been accounted for!)
+                    # Check if we need to flip (since this P1 element has not
+                    # yet been accounted for!)
                     if not v[pos]:
                         v[pos] = True      # Say this P1 element now occurs
                         v[P.index(b1, -(b1 + b2))] = True
-                        ## Say that the other two ideal triangle edges
-                        ## also occur!
+                        # Say that the other two ideal triangle edges
+                        # also occur!
 
                         v[P.index(-(b1 + b2), b2)] = True
 
-                        ## Check to see if this triangle contains a fixed
-                        ## point by an element of Gamma_0(N).  If such an
-                        ## element is present, the fundamental domain can be
-                        ## extended no further.
+                        # Check to see if this triangle contains a fixed
+                        # point by an element of Gamma_0(N).  If such an
+                        # element is present, the fundamental domain can be
+                        # extended no further.
 
                         if (b1 ** 2 + b2 ** 2 + b1 * b2) % N != 0:
 
-                        ## this congruence is exactly equivalent to
-                        ## gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
-                        ## where gam is the matrix corresponding to the
-                        ## unimodular path connecting cusp1 to cusp2
+                        # this congruence is exactly equivalent to
+                        # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
+                        # where gam is the matrix corresponding to the
+                        # unimodular path connecting cusp1 to cusp2
 
                             C[s] = "i"  # The '?' is changed to an 'i'
-                             ## indicating that a new cusp needs to
-                                        ##  be inserted here
+                             # indicating that a new cusp needs to
+                                        #  be inserted here
                             full_domain = False
                         else:
                             C[s] = "x"  # The '?' is changed to an 'x' and no
                                         # more checking below is needed! =)
                     else:
                         C[s] = "x"  # The '?' is changed to an 'x' and no more
-                                           ## checking below is needed! =)
+                                           # checking below is needed! =)
 
-            ## Now insert the missing cusps (where there is an 'i' in
-            ## the final list)
-            ## This will keep the fundamental domain as flat as possible!
-            ## ---------------------------------------------------------------
+            # Now insert the missing cusps (where there is an 'i' in
+            # the final list)
+            # This will keep the fundamental domain as flat as possible!
+            # ---------------------------------------------------------------
             s = 1
             while s < len(C):   # range over odd indices in the final list C
                 if C[s] == "i":
                     C[s] = "?"
 
-                    ## Single out our two cusps (path from cusp2 to cusp1)
+                    # Single out our two cusps (path from cusp2 to cusp1)
                     cusp1 = C[s - 1]
                     cusp2 = C[s + 1]
 
-                    ## Makes the unimodular transform for the path
-                    ## from cusp2 to cusp1
+                    # Makes the unimodular transform for the path
+                    # from cusp2 to cusp1
                     a1 = cusp1.numerator()
                     b1 = cusp1.denominator()
                     a2 = cusp2.numerator()
                     b2 = cusp2.denominator()
 
-                    ## Inserts the Farey center of these two cusps!
+                    # Inserts the Farey center of these two cusps!
                     a = a1 + a2
                     b = b1 + b2
                     C.insert(s + 1, a / b)
@@ -1263,8 +1263,8 @@ class ManinRelations(PollackStevensModularDomain):
                     s += 2
                 s += 2
 
-        ## Remove the (now superfluous) extra string characters that appear
-        ## in the odd list entries
+        # Remove the (now superfluous) extra string characters that appear
+        # in the odd list entries
         C = [QQ(C[ss]) for ss in range(0, len(C), 2)]
         return C
 
@@ -1401,12 +1401,12 @@ class ManinRelations(PollackStevensModularDomain):
         """
         C.reverse()  # Reverse here to get clockwise orientation of boundary
 
-        ## These matrices correspond to the paths from infty to 0 and
-        ## -1 to infty
+        # These matrices correspond to the paths from infty to 0 and
+        # -1 to infty
         mats = [Id, minone_inf_path]
 
-        ## Now find SL_2(Z) matrices whose associated unimodular paths
-        ## connect the cusps listed in C.
+        # Now find SL_2(Z) matrices whose associated unimodular paths
+        # connect the cusps listed in C.
         for j in range(len(C) - 1):
             a = C[j].numerator()
             b = C[j + 1].numerator()

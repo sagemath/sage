@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
 
+
 class KRTToRCBijectionTypeC(KRTToRCBijectionTypeA):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -155,6 +156,7 @@ class KRTToRCBijectionTypeC(KRTToRCBijectionTypeA):
                 partition._list[j+1] += 1
                 partition.rigging[j+1] = None
                 return
+
 
 class RCToKRTBijectionTypeC(RCToKRTBijectionTypeA):
     r"""

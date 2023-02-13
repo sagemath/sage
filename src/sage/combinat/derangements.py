@@ -50,6 +50,7 @@ class Derangement(CombinatorialElement):
         sage: elt = D([4,3,2,1])
         sage: TestSuite(elt).run()
     """
+
     def to_permutation(self):
         """
         Return the permutation corresponding to ``self``.

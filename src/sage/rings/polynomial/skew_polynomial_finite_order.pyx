@@ -521,7 +521,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             return center(self)
         except ValueError:
             pass
-        if not self._optbound is None:
+        if self._optbound is not None:
             return center(self._optbound)
         return self.reduced_norm()
 

@@ -301,7 +301,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         be dangerous if you change entries of the returned dict.
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -337,10 +337,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M.nonzero_positions()
             [(0, 3), (1, 1), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -520,7 +519,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
 
         x = self.fetch('in_echelon_form')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
         self.check_mutability()
 
         pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
@@ -557,9 +557,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         label = 'echelon_form_%s'%algorithm
         x = self.fetch(label)
-        if not x is None:
+        if x is not None:
             return x
-        if self.fetch('in_echelon_form'): return self
+        if self.fetch('in_echelon_form'):
+            return self
 
         E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
 

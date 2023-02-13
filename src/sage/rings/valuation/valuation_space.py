@@ -115,7 +115,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         from .value_group import DiscreteValuationCodomain
         # A valuation is a map from an additive semigroup to an additive semigroup, however, it
         # does not preserve that structure. It is therefore only a morphism in the category of sets.
-        from sage.categories.all import Sets
+        from sage.categories.sets_cat import Sets
 
         UniqueRepresentation.__init__(self)
         Homset.__init__(self, domain, DiscreteValuationCodomain(), category=Sets())
@@ -343,7 +343,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 False
 
             """
-            from sage.categories.all import Fields
+            from sage.categories.fields import Fields
             if self.is_discrete_valuation():
                 return False
             elif self.domain() in Fields():
@@ -1175,7 +1175,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 y = self.shift(x, s)
                 if s >= 0:
                     tester.assertGreaterEqual(self(y),self(x))
-                from sage.categories.all import Fields
+                from sage.categories.fields import Fields
                 if self.domain().is_exact() and self.domain() in Fields():
                     # the shift here sometimes fails if elements implement
                     # __floordiv__ incorrectly, see #23971

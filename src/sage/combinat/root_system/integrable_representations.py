@@ -175,6 +175,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Lambda[0] + 2*Lambda[2] - 2*delta: 3 54 499 3349 18166 84836 353092 1341250 4725259 15625727 48938396 146190544
         Lambda[0] + 2*Lambda[3] - 4*delta: 15 195 1539 9186 45804 200073 789201 2866560 9723582 31120281 94724550 275919741
     """
+
     def __init__(self, Lam):
         """
         Initialize ``self``.

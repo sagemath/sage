@@ -75,7 +75,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
     """
-    from sage.arith.all import euler_phi
+    from sage.arith.misc import euler_phi
     from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():

@@ -644,6 +644,7 @@ class GrowthDiagram(SageObject):
         0  0  0  1
         1  0
     """
+
     def __init__(self, rule, filling=None, shape=None, labels=None):
         r"""
         Initialize ``self``.
@@ -1610,6 +1611,7 @@ class GrowthDiagram(SageObject):
 # ABC for rules of growth diagrams
 ######################################################################
 
+
 class Rule(UniqueRepresentation):
     r"""
     Generic base class for a rule for a growth diagram.
@@ -2293,6 +2295,7 @@ class RuleShiftedShapes(Rule):
                                 return (0, t, 3, 0)
                     raise ValueError("this should not happen")
 
+
 class RuleLLMS(Rule):
     r"""
     A rule modelling the Schensted correspondence for affine
@@ -2611,6 +2614,7 @@ class RuleLLMS(Rule):
 
         return g, z, h
 
+
 class RuleBinaryWord(Rule):
     r"""
     A rule modelling a Schensted-like correspondence for binary words.
@@ -2871,6 +2875,7 @@ class RuleBinaryWord(Rule):
                 return (x, 1)
             else:
                 return (x[:-1], 0)
+
 
 class RuleSylvester(Rule):
     r"""
@@ -3156,7 +3161,6 @@ class RuleSylvester(Rule):
             L = add_label(L, S, T, i)
         return L
 
-
     @staticmethod
     def _delete_right_most_node(b):
         r"""
@@ -3352,6 +3356,7 @@ class RuleSylvester(Rule):
             else:
                 t = RuleSylvester._delete_right_most_node(y)
                 return (t, 0)
+
 
 class RuleYoungFibonacci(Rule):
     r"""
@@ -3596,6 +3601,7 @@ class RuleYoungFibonacci(Rule):
             elif z[0] == 2:
                 return (z[1:], 0)
 
+
 class RulePartitions(Rule):
     r"""
     A rule for growth diagrams on Young's lattice on integer
@@ -3680,6 +3686,7 @@ class RulePartitions(Rule):
         """
         return SkewTableau(chain=Q_chain)
 
+
 class RuleRSK(RulePartitions):
     r"""
     A rule modelling Robinson-Schensted-Knuth insertion.
@@ -3743,6 +3750,7 @@ class RuleRSK(RulePartitions):
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
     """
+
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -3894,6 +3902,7 @@ class RuleBurge(RulePartitions):
     sequences of cells with weakly decreasing row indices and weakly
     increasing column indices.
     """
+
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -3986,6 +3995,7 @@ class RuleBurge(RulePartitions):
             carry += -s + la_i - max(mu_i, nu_i)
         t.reverse()
         return (_make_partition(t), carry)
+
 
 class RuleDomino(Rule):
     r"""
@@ -4331,6 +4341,7 @@ class RuleDomino(Rule):
 ## Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
 
+
 class Rules():
     """
     Catalog of rules for growth diagrams.
@@ -4343,5 +4354,6 @@ class Rules():
     RSK = RuleRSK
     Burge = RuleBurge
     Domino = RuleDomino
+
 
 GrowthDiagram.rules = Rules
