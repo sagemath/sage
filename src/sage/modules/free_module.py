@@ -4611,7 +4611,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                 M = self.change_ring(base_ring)
             except TypeError:
                 raise ValueError("Argument base_ring (= %s) is not compatible with the base field (= %s)." % (
-                    base_ring, self.base_field() ))
+                    base_ring, self.base_field()))
             try:
                 return M.span_of_basis(basis)
             except TypeError:
@@ -5653,7 +5653,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         try:
             return self.__basis
-        except  AttributeError:
+        except AttributeError:
             ZERO = self(0)
             one = self.coordinate_ring().one()
             w = []
@@ -6600,7 +6600,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         lx = self.ambient_vector_space()
         rx = other.ambient_vector_space()
         if lx != rx:
-            return lx._echelon_matrix_richcmp( rx, op)
+            return lx._echelon_matrix_richcmp(rx, op)
 
         lx = self.dimension()
         rx = other.dimension()
@@ -6718,7 +6718,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if not B:
             return 1
         d = B[0].denominator()
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         for x in B[1:]:
             d = lcm(d,x.denominator())
         return d
