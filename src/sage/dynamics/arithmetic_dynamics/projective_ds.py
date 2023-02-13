@@ -52,7 +52,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing_extensions import final
 from sage.arith.misc import is_prime
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
@@ -6168,7 +6167,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 raise NotImplementedError("smallest coeff only over ZZ or QQ")
             check_min = kwds.get('check_minimal', True)
             from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import smallest_dynamical
-            sm_f, m = smallest_dynamical(self, dynatomic=dynatomic, start_n=start_n,\
+            sm_f, m = smallest_dynamical(self, dynatomic=dynatomic, start_n=start_n,
                  prec=prec, emb=emb, algorithm=algorithm, check_minimal=check_min)
         else:
             #reduce via covariant
@@ -6853,7 +6852,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
                 if alg != 'lifting':
                     for i in periods[:]:
-                        if (alg == 'dynatomic') or ((N == 1) \
+                        if (alg == 'dynatomic') or ((N == 1)
                                 and i <= pd_bounds[0] and DS.degree() <= pd_bounds[1]):
                             periodic.update(DS.periodic_points(i))
                             periods.remove(i)
@@ -7544,7 +7543,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 #else is_similar went to algebraic closure
                 if base in NumberFields():
                     from sage.rings.qqbar import number_field_elements_from_algebraics
-                    K,mK,phi = number_field_elements_from_algebraics([u for t in list(m) for u in t],\
+                    K,mK,phi = number_field_elements_from_algebraics([u for t in list(m) for u in t],
                                 minimal=True)
                     if K == base:
                         return [matrix(K, M, M, mK)]
@@ -8225,15 +8224,15 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 hom = old_parent.hom([new_parent.gens()[0]])
                 L = field_of_definition_periodic
                 if hom(K.defining_polynomial()) != L.defining_polynomial():
-                    raise ValueError('prime ideal of %s ' % K + \
-                        'but field of definition of fixed points is %s. ' % L + \
+                    raise ValueError('prime ideal of %s ' % K +
+                        'but field of definition of fixed points is %s. ' % L +
                         'see documentation for examples')
                 embedding = K.embeddings(field_of_definition_periodic)[0]
                 prime = embedding(prime)
         else:
             if field_of_definition_periodic is not QQ:
-                raise ValueError('field of definition of fixed ' + \
-                    'points is %s but prime is in QQ. ' %field_of_definition_periodic)
+                raise ValueError('field of definition of fixed ' +
+                    'points is %s but prime is in QQ. ' % field_of_definition_periodic)
 
         system = self.change_ring(field_of_definition_periodic)
         fixed_points = system.periodic_points(1)
@@ -8314,9 +8313,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(3))*y^2, y^2, QQbar(sqrt(2))*z^2])
             sage: f.reduce_base_field()
             Dynamical System of Projective Space of dimension 2 over Number Field in a with
-            defining polynomial y^4 - 4*y^2 + 1 with a = 1.931851652578137?
+            defining polynomial y^4 - 4*y^2 + 1 with a = -0.5176380902050415?
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x^2 + (a^2 - 2)*y^2 : y^2 : (a^3 - 3*a)*z^2)
+                    (x^2 + (-a^2 + 2)*y^2 : y^2 : (a^3 - 3*a)*z^2)
 
         ::
 

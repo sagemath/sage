@@ -6,6 +6,17 @@
 Using Git with the Sage Trac Server
 ===================================
 
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.** The exact
+    date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
+    the transition, some parts of this guide (especially those related with `the
+    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
+    updated according to the new workflow on GitHub. See our `transition guide from Trac to
+    GitHub
+    <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
+    for the preliminary version of the workflow.
+
 Now we continue our introduction to git from :ref:`chapter-walkthrough`.
 We discuss how to push your local changes to a remote repository
 so that your changes can be reviewed for inclusion in Sage.
@@ -154,6 +165,13 @@ repository, use these commands::
     [user@localhost sage]$ git remote add trac https://github.com/sagemath/sagetrac-mirror.git -t master
     [user@localhost sage]$ git remote set-url --push trac git@trac.sagemath.org:sage.git
 
+.. WARNING::
+
+    **Sage development is scheduled to move to GitHub in February 2023.** After the
+    move, the Sage trac server git@trac.sagemath.org:sage.git will no longer be
+    available, but all branches will be available (in read-only mode) on
+    https://github.com/sagemath/sagetrac-mirror.git.
+
 Instead of ``trac`` you can use any other name you want, of course.
 To verify that it is set up correctly::
 
@@ -201,12 +219,16 @@ following commands instead::
     trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
+* The Patch buildbot will automatically test your ticket. See :trac:`wiki/patchbot`
+  for more information about its features and limitations. Make sure that you
+  look at the log, especially if the patch buildbot did not give you
+  the green blob.
+
 
 .. _section-git-checkout:
 
 Checking Out Tickets
 --------------------
-
 
 Trac tickets that are finished or in the process of being worked on
 can have a git branch attached to them. This is the "Branch:" field in
@@ -279,6 +301,7 @@ branch.
 
 The ``Branch`` field on the trac ticket can appear in red/green. See
 :ref:`section-trac-fields` to learn what it means.
+
 
 .. _section-git-pull:
 

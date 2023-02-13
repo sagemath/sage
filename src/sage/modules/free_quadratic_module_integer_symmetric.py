@@ -349,7 +349,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     basis = [matrix.block(1, 3, [matrix.zero(dims[i], sum_degree[i]),
                                  Lattices[i].basis_matrix(),
                                  matrix.zero(dims[i], sum_degree[-1] - sum_degree[i+1])
-                                ])  for i in range(N)]
+                                ]) for i in range(N)]
     basis_matrix = matrix.block(N, 1, basis)
     ipm = ambient.inner_product_matrix()
     direct_sum = FreeQuadraticModule_integer_symmetric(ambient=ambient,
@@ -362,6 +362,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     phi = [Lattices[i].hom(direct_sum.basis()[sum_dims[i]:sum_dims[i+1]])
            for i in range(N)]
     return [direct_sum, phi]
+
 
 def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     r"""
@@ -1092,7 +1093,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                 for t in D:
                     if t != 0 and t.q() == 0:
                         break
-                if t.q() != 0 :
+                if t.q() != 0:
                     # no isotropic vector left
                     break
                 L = L.overlattice([t.lift()])
@@ -1168,11 +1169,11 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A4 = IntegralLattice("A4")
             sage: Aut = A4.orthogonal_group()
             sage: Aut
-            Group of isometries with 5 generators (
-            [-1  0  0  0]  [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
-            [ 0 -1  0  0]  [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
-            [ 0  0 -1  0]  [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
-            [ 0  0  0 -1], [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
+            Group of isometries with 4 generators (
+            [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
+            [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
+            [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
+            [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
             )
 
         The group acts from the right on the lattice and its discriminant group::
@@ -1180,19 +1181,19 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: x = A4.an_element()
             sage: g = Aut.an_element()
             sage: g
-            [ 1  1  1  0]
-            [ 0  0 -1  0]
-            [ 0  0  1  1]
-            [ 0 -1 -1 -1]
+            [-1 -1 -1  0]
+            [ 0  0  1  0]
+            [ 0  0 -1 -1]
+            [ 0  1  1  1]
             sage: x*g
-            (1, 1, 1, 0)
+            (-1, -1, -1, 0)
             sage: (x*g).parent()==A4
             True
             sage: (g*x).parent()
             Vector space of dimension 4 over Rational Field
             sage: y = A4.discriminant_group().an_element()
             sage: y*g
-            (1)
+            (4)
 
         If the group is finite we can compute the usual things::
 
@@ -1208,10 +1209,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: A2 = IntegralLattice(matrix.identity(3),Matrix(ZZ,2,3,[1,-1,0,0,1,-1]))
             sage: A2.orthogonal_group()
-            Group of isometries with 3 generators (
-            [-1/3  2/3  2/3]  [ 2/3  2/3 -1/3]  [1 0 0]
-            [ 2/3 -1/3  2/3]  [ 2/3 -1/3  2/3]  [0 0 1]
-            [ 2/3  2/3 -1/3], [-1/3  2/3  2/3], [0 1 0]
+            Group of isometries with 2 generators (
+            [ 2/3  2/3 -1/3]  [1 0 0]
+            [ 2/3 -1/3  2/3]  [0 0 1]
+            [-1/3  2/3  2/3], [0 1 0]
             )
 
         It can be negative definite as well::

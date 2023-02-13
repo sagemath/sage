@@ -1466,6 +1466,7 @@ class ParkingFunctions_n(ParkingFunctions):
         sage: PF3(PF3([1,1,1]))
         [1, 1, 1]
     """
+
     def __init__(self, n):
         """
         TESTS::

@@ -319,6 +319,7 @@ class Subcrystal(UniqueRepresentation, Parent):
         """
         An element of a subcrystal. Wraps an element in the ambient crystal.
         """
+
         def _richcmp_(self, other, op):
             """
             EXAMPLES:

@@ -474,7 +474,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             return "Affine Berkovich line over Cp(%s) of precision %s" %(self.prime(),\
                 self.base().precision_cap())
         else:
-            return  "Affine Berkovich line over Cp(%s), with base %s" %(self.prime(),\
+            return "Affine Berkovich line over Cp(%s), with base %s" %(self.prime(),\
                 self.base())
 
     def _latex_(self):
@@ -704,7 +704,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             return "Projective Berkovich line over Cp(%s) of precision %s" %(self.prime(),\
                 self.base().base_ring().precision_cap())
         else:
-            return  "Projective Berkovich line over Cp(%s), with base %s" %(self.prime(),\
+            return "Projective Berkovich line over Cp(%s), with base %s" %(self.prime(),\
                 self.base().base_ring())
 
     def _latex_(self):

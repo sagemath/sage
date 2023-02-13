@@ -22,6 +22,7 @@ class BraidMoveCalculator():
     """
     Helper class to compute braid moves.
     """
+
     def __init__(self, coxeter_group):
         """
         Initialize ``self``.

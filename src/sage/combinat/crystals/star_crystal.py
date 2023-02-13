@@ -85,6 +85,7 @@ class StarCrystal(UniqueRepresentation, Parent):
         sage: mg.f_string([1,2,1,2,2])
         [[1, 1, 1, 1, 1, 2, 2], [2, 3, 3, 3]]
     """
+
     def __init__(self, Binf):
         r"""
         Initialize ``self``.

@@ -592,8 +592,6 @@ if [ "${MAKEFLAGS-__unset__}" != "__unset__" ]; then
 fi
 export MAKE
 
-export PIP_FORMAT="columns"
-
 # Set the cysignals crash logs directory
 if [ -z "$CYSIGNALS_CRASH_LOGS" ]; then
     export CYSIGNALS_CRASH_LOGS="$DOT_SAGE/crash_logs"

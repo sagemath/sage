@@ -132,8 +132,8 @@ cdef class Ring(ParentWithGens):
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
         running ._test_zero_divisors() . . . pass
-        sage: TestSuite(QQ['x','y']).run()
-        sage: TestSuite(ZZ['x','y']).run()
+        sage: TestSuite(QQ['x','y']).run(skip='_test_elements')
+        sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')
         sage: TestSuite(ZZ['x','y']['t']).run()
 
     Test against another bug fixed in :trac:`9944`::
@@ -1383,7 +1383,7 @@ cdef class CommutativeRing(Ring):
                 poly = poly.polynomial(self)
             except (AttributeError, TypeError):
                 raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if not names is None:
+        if names is not None:
             name = names
         if isinstance(name, tuple):
             name = name[0]

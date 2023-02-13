@@ -680,6 +680,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
     """
     Class for a Weyl Group elements
     """
+
     def __init__(self, parent, g, check=False):
         """
         EXAMPLES::

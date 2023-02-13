@@ -21,7 +21,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 from sage.combinat.integer_vector import IntegerVectors
 
@@ -444,7 +444,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
-        
+
             :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
         """
         # get ring and number of variables
@@ -1298,6 +1298,27 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         C = [k.random_element(*args, **kwargs) for _ in range(len(M))]
 
         return self(dict(zip(M, C)))
+
+    def some_elements(self):
+        r"""
+        Return a list of polynomials.
+
+        This is typically used for running generic tests.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: R.some_elements()
+            [x, y, x + y, x^2 + x*y, 0, 1]
+
+        """
+        R = self.base_ring()
+        L = list(self.gens())
+        if L:
+            L.append(L[0] + L[-1])
+            L.append(L[0] * L[-1])
+        L.extend([self.zero(), self.one()])
+        return L
 
     def change_ring(self, base_ring=None, names=None, order=None):
         """

@@ -95,7 +95,7 @@ from sage.arith.all import next_prime, kronecker_symbol, prime_divisors, valuati
 from sage.rings.infinity import unsigned_infinity as infinity
 from sage.rings.integer import Integer
 from sage.modular.cusps import Cusps
-from sage.rings.integer_ring import   ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.verbose import verbose
 

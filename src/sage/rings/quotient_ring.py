@@ -115,17 +115,13 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 
+import sage.interfaces.abc
 
 _Rings = Rings()
 _CommRings = CommutativeRings()
 
 
 MPolynomialIdeal_quotient = None
-try:
-    from sage.interfaces.singular import singular as singular_default, is_SingularElement
-except ImportError:
-    is_singularElement = lambda x : False
-    singular_default = None
 
 
 def QuotientRing(R, I, names=None, **kwds):
@@ -959,7 +955,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if not (isinstance(self.__R, MPolynomialRing_base) and self.__R._has_singular):
             # pass through
             return super().ideal(gens, **kwds)
-        if is_SingularElement(gens):
+        if isinstance(gens, sage.interfaces.abc.SingularElement):
             gens = list(gens)
         elif not isinstance(gens, (list, tuple)):
             gens = [gens]
@@ -1015,7 +1011,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             if x.parent() is self:
                 return x
             x = x.lift()
-        if is_SingularElement(x):
+        if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x
@@ -1181,7 +1177,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self(self.__R.gen(i))
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Returns the Singular quotient ring of ``self`` if the base ring is
         coercible to Singular.
@@ -1213,7 +1209,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             _[1]=x2+y2
         """
         if singular is None:
-            raise ImportError("could not import singular")
+            from sage.interfaces.singular import singular
 
         try:
             Q = self.__singular

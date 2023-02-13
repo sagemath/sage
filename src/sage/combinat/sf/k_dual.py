@@ -453,6 +453,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         """
         return [ self.km(), self.kHLP(), self.affineSchur(), self.dual_k_Schur()]
 
+
 class KBoundedQuotientBases(Category_realization_of_parent):
     r"""
     The category of bases for the `k`-bounded subspace of symmetric functions.
@@ -495,7 +496,6 @@ class KBoundedQuotientBases(Category_realization_of_parent):
         R = self.base().base_ring()
         category = GradedHopfAlgebrasWithBasis(R)
         return [Realizations(self.base()), category.Quotients()]
-
 
     class ParentMethods:
 
@@ -879,10 +879,12 @@ class KBoundedQuotientBases(Category_realization_of_parent):
     class ElementMethods:
         pass
 
+
 class KBoundedQuotientBasis(CombinatorialFreeModule):
     r"""
     Abstract base class for the bases of the `k`-bounded quotient.
     """
+
     def __init__(self, kBoundedRing, prefix):
         r"""
         Initializes ``self``.
@@ -1037,6 +1039,7 @@ class kMonomial(KBoundedQuotientBasis):
         """
         m = self._kBoundedRing.ambient().m()
         return m._from_dict(dict(self(la)))
+
 
 class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
     r"""
@@ -1235,6 +1238,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         HLP = self._kBoundedRing.ambient().hall_littlewood(t=self.t).P()
         return HLP._from_dict(dict(self(la)))
 
+
 class DualkSchurFunctions(KBoundedQuotientBasis):
     r"""
     This basis is dual to the `k`-Schur functions.  The expansion is given
@@ -1357,6 +1361,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
         Qp = Sym.hall_littlewood(t=self.t).Qp()
         ks = kB.kschur()
         return sum( Qp(ks(x)).coefficient(la) * self(x) for x in PartitionsGreatestLE(sum(la), self.k))
+
 
 class AffineSchurFunctions(KBoundedQuotientBasis):
     r"""

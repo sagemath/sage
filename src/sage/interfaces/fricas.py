@@ -198,6 +198,9 @@ FriCAS does some limits right::
 
 import re
 import os
+
+import sage.interfaces.abc
+
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
@@ -888,10 +891,10 @@ http://fricas.sourceforge.net.
         """
         EXAMPLES::
 
-            sage: fricas.__reduce__()                                           # optional - fricas
+            sage: FriCAS().__reduce__()
             (<function reduce_load_fricas at 0x...>, ())
-            sage: f, args = _                                                   # optional - fricas
-            sage: f(*args)                                                      # optional - fricas
+            sage: f, args = _
+            sage: f(*args)
             FriCAS
         """
         return reduce_load_fricas, tuple([])
@@ -995,7 +998,7 @@ http://fricas.sourceforge.net.
 
 
 @instancedoc
-class FriCASElement(ExpectElement):
+class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     """
     Instances of this class represent objects in FriCAS.
 
@@ -2106,12 +2109,17 @@ def is_FriCASElement(x):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import is_FriCASElement               # optional - fricas
+        sage: from sage.interfaces.fricas import is_FriCASElement
+        sage: is_FriCASElement(2)
+        doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
+        See https://trac.sagemath.org/34804 for details.
+        False
         sage: is_FriCASElement(fricas(2))                                       # optional - fricas
         True
-        sage: is_FriCASElement(2)                                               # optional - fricas
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead")
+
     return isinstance(x, FriCASElement)
 
 
@@ -2120,13 +2128,12 @@ fricas = FriCAS()
 
 def reduce_load_fricas():
     """
-    Return the FriCAS interface object defined in
-    :sage.interfaces.fricas.
+    Return the FriCAS interface object defined in :mod:`sage.interfaces.fricas`.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import reduce_load_fricas             # optional - fricas
-        sage: reduce_load_fricas()                                              # optional - fricas
+        sage: from sage.interfaces.fricas import reduce_load_fricas
+        sage: reduce_load_fricas()
         FriCAS
     """
     return fricas

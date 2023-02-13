@@ -215,6 +215,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
         An element in the polyhedral realization of `B(\infty)`.
         """
         # For simplicity (and safety), we use the regular crystals implementation
+
         def epsilon(self, i):
             r"""
             Return `\varepsilon_i` of ``self``.
