@@ -43,7 +43,7 @@ from .ternary import (_basic_lemma,
                       _find_p_neighbor_from_vec,
                       _find_zeros_mod_p_2,
                       _find_zeros_mod_p_odd,
-                      _reduced_ternary_form_eisenstein_with_matrix
+                      _reduced_ternary_form_eisenstein_with_matrix,
                       _reduced_ternary_form_eisenstein_without_matrix)
 
 
