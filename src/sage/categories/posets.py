@@ -1,18 +1,18 @@
 r"""
 Posets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
+
 
 class Posets(Category):
     r"""
@@ -326,12 +326,20 @@ class Posets(Category):
                 [3, 7, 8, 9, 10, 11, 12, 13, 14, 15]
                 sage: B.directed_subset([7, 10], 'down')
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]
+
+            TESTS::
+
+                sage: B = posets.BooleanLattice(3)
+                sage: B.directed_subset([3, 1], 'banana')
+                Traceback (most recent call last):
+                ...
+                ValueError: direction must be either 'up' or 'down'
             """
             if direction == 'up':
                 return self.order_filter(elements)
             if direction == 'down':
                 return self.order_ideal(elements)
-            raise ValueError("Direction must be either 'up' or 'down'.")
+            raise ValueError("direction must be either 'up' or 'down'")
 
         def principal_order_ideal(self, x):
             r"""

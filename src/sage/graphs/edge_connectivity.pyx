@@ -61,14 +61,14 @@ cdef class GabowEdgeConnectivity:
         ....:     D = DiGraph(graphs.RandomRegular(6, 50))
         sage: GabowEdgeConnectivity(D).edge_connectivity()
         6
-    
+
     A complete digraph with `n` vertices is `n-1`-edge-connected::
 
         sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
         sage: D = DiGraph(digraphs.Complete(10))
         sage: GabowEdgeConnectivity(D, use_rec = True).edge_connectivity()
         9
-    
+
     Check that we get the same result when with and without the DFS-based
     speed-up initialization proposed in [GKLP2021]_::
 
@@ -79,7 +79,7 @@ cdef class GabowEdgeConnectivity:
         sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True, use_rec=True).edge_connectivity()
         sage: ec1 == ec2 and ec2 == ec3
         True
-        
+
     TESTS:
 
     :trac:`32169`::
@@ -158,9 +158,9 @@ cdef class GabowEdgeConnectivity:
     cdef int augmenting_root
     cdef bint* tree_flag  # indicate whether a tree Ti has been touched
     cdef int* root  # current root vertex of f_tree i
-    cdef int* L_roots  # L_roots of the trees 
+    cdef int* L_roots  # L_roots of the trees
     cdef bint* forests  # indicate whether the f_tree is active or inactive
-    cdef bint** labeled  # 
+    cdef bint** labeled  #
 
     cdef int** parent_1  # parent of v in tree/forest Ti
     cdef int** parent_2  # parent of v in tree/forest Ti
@@ -176,7 +176,7 @@ cdef class GabowEdgeConnectivity:
     cdef vector[int] A_path
     cdef vector[int] left_traverse
     cdef vector[int] right_traverse
-    
+
     cdef bint* seen  # for method re_init
     cdef int* stack  # stack of vertices for DFS in re_init
     cdef vector[vector[int]] tree_edges  # used to organise the edges of the trees
@@ -243,7 +243,7 @@ cdef class GabowEdgeConnectivity:
         self.n = G.order()
         self.m = G.size()
         self.mem = MemoryAllocator()
-        
+
         # Build compact graph data structure with out and in adjacencies.
         # Loops are removed from the graph.
         self.build_graph_data_structure()
@@ -420,7 +420,7 @@ cdef class GabowEdgeConnectivity:
         if self.dfs_preprocessing and self.num_start_f_trees < self.n - 1:
             self.re_init(tree)
 
-        # There are n f-trees, and we try to join them 
+        # There are n f-trees, and we try to join them
         while njoins < self.num_start_f_trees-1:
             # Get the root of an active subtree or INT_MAX if none exists
             z = self.choose_root()
@@ -469,7 +469,7 @@ cdef class GabowEdgeConnectivity:
             self.my_depth[tree] = <int*>self.mem.calloc(self.n, sizeof(int))
         if not self.my_parent_edge_id[tree]:
             self.my_parent_edge_id[tree] = <int*>self.mem.calloc(self.n, sizeof(int))
-            
+
         cdef int j
         for j in range(self.n):
             self.my_parent[tree][j] = 0
@@ -478,9 +478,9 @@ cdef class GabowEdgeConnectivity:
             self.labeled[tree][j] = False
             self.root[j] = j
             self.forests[j] = True
-        
+
         self.num_joins = 0
-        
+
         # Initialize T_k to be a DFS spanning forest of G \ T
         if self.dfs_preprocessing:
             self.compute_dfs_tree()
@@ -490,7 +490,7 @@ cdef class GabowEdgeConnectivity:
 
         self.L_roots[tree] = self.UNUSED
         self.tree_flag[tree] = False
-    
+
     cdef void compute_dfs_tree(self):
         r"""
         Find a DFS spanning forest of `G \backslash T`.
@@ -525,7 +525,7 @@ cdef class GabowEdgeConnectivity:
                     self.find_dfs_tree(r)
                 # Each call of find_dfs_tree creates an f-tree
                 self.num_start_f_trees += 1
-    
+
     cdef void find_dfs_tree(self, int r):
         r"""
         Find more vertices of the f-tree rooted at `r`.
@@ -604,7 +604,7 @@ cdef class GabowEdgeConnectivity:
                 self.num_joins += 1
                 # recursively find more vertices and grow the subtree rooted at r
                 self.find_dfs_tree_rec(v, r)
-        
+
     cdef int choose_root(self):
         """
         Return the root of an active f_tree, or INT_MAX if none exists.
