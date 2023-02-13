@@ -298,7 +298,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }   
+    already_pickled = { }
 
     if compress:
         return comp.compress(gherkin)
