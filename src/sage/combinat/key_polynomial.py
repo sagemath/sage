@@ -863,4 +863,3 @@ def sorting_word(alpha):
                 w.append(j+1)
                 L[j], L[j + 1] = L[j + 1], L[j]
     return reversed(w), L
-
