@@ -105,7 +105,6 @@ class BinaryRecurrenceSequence(SageObject):
     """
 
     def __init__(self, b, c, u0=0, u1=1):
-
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 
@@ -830,7 +829,6 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-
     """
     Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
     ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
@@ -1033,7 +1031,6 @@ def _is_p_power_mod(a, p, N):
 
 
 def _estimated_time(M2, M1, length, p):
-
     """
     Find the estimated time to extend congruences mod M1 to consistent congruences mod M2.
 

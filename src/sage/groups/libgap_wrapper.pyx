@@ -627,7 +627,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             True
         """
         P = (<ElementLibGAP> left)._parent
-        return P.element_class(P, (<ElementLibGAP> left)._libgap * \
+        return P.element_class(P, (<ElementLibGAP> left)._libgap *
                                   (<ElementLibGAP> right)._libgap)
 
     cpdef _richcmp_(left, right, int op):
@@ -669,7 +669,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             False
         """
         P = (<ElementLibGAP> left)._parent
-        return P.element_class(P, (<ElementLibGAP> left)._libgap / \
+        return P.element_class(P, (<ElementLibGAP> left)._libgap /
                                   (<ElementLibGAP> right)._libgap)
 
     def __pow__(self, n, dummy):

@@ -1200,6 +1200,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
     """
     Gelfand-Tsetlin patterns with a fixed top row.
     """
+
     def __init__(self, top_row, strict):
         """
         Initialize ``self``.

@@ -245,10 +245,10 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             sage: all(x*f==x*fbar for x in q.gens())
             True
             sage: L = IntegralLattice("A2").twist(3)
-            sage: q = L.discriminant_group()
             sage: OL = L.orthogonal_group()
+            sage: assert OL(OL.0.matrix()) == OL.0
+            sage: q = L.discriminant_group()
             sage: Oq = q.orthogonal_group()
-            sage: assert Oq(OL.0) == Oq(OL.0.matrix())
             sage: assert Oq(Oq.0.matrix()) == Oq.0
         """
         from sage.libs.gap.element import GapElement

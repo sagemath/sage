@@ -3088,8 +3088,8 @@ class GenusSymbol_global_ring():
             sage: G = Genus(matrix(ZZ, 3, [6,3,0, 3,6,0, 0,0,2]))
             sage: G.representatives()
             (
-            [2 0 0]  [ 2 -1  0]
-            [0 6 3]  [-1  2  0]
+            [2 0 0]  [ 2  1  0]
+            [0 6 3]  [ 1  2  0]
             [0 3 6], [ 0  0 18]
             )
 

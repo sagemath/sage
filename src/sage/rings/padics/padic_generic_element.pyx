@@ -1171,7 +1171,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             x^4 - x^3 + x^2 - x + 1
         """
         # TODO: figure out if this works for extension rings.  If not, move this to padic_base_generic_element.
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n)
 
     def algebraic_dependency(self, n):
@@ -2004,7 +2004,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``self`` -- a p-adic element
         - ``p`` -- a prime (default: None). If specified, will make sure that p==self.parent().prime()
 
-        NOTE: The optional argument p is used for consistency with the valuation methods on integer and rational.
+        .. NOTE::
+
+            The optional argument p is used for consistency with the valuation
+            methods on integer and rational.
 
         OUTPUT:
 
@@ -2075,7 +2078,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             ...
             ValueError: Ring (5-adic Field with capped relative precision 4) residue field of the wrong characteristic.
         """
-        if not p is None and p != self.parent().prime():
+        if p is not None and p != self.parent().prime():
             raise ValueError('Ring (%s) residue field of the wrong characteristic.' % self.parent())
         cdef long v = self.valuation_c()
         if v == maxordp:
@@ -2126,8 +2129,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``self`` -- a p-adic element
         - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()``
 
-        NOTE: The optional argument p is used for consistency with the valuation methods on integer and rational.
+        .. NOTE::
 
+            The optional argument p is used for consistency with the valuation
+            methods on integer and rational.
 
         OUTPUT:
 
@@ -2215,7 +2220,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         p = self.parent().prime()
         alpha = self.unit_part().lift()
         m = Integer(p**self.precision_relative())
-        from sage.arith.all import rational_reconstruction
+        from sage.arith.misc import rational_reconstruction
         r = rational_reconstruction(alpha, m)
         return (Rational(p)**self.valuation())*r
 
@@ -2456,7 +2461,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
           this valuation (and beyond) to see if they can contribute to the
           series.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             1 in the residue field. If this assumption is not fulfilled

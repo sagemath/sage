@@ -22,10 +22,10 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     INPUT:
 
 
-    -  ``source`` - a string or object with a _sage_
+    -  ``source`` - a string or object with a ``_sage_``
        method
 
-    -  ``locals`` - evaluate in namespace of sage.all plus
+    -  ``locals`` - evaluate in namespace of :mod:`sage.all` plus
        the locals dictionary
 
     -  ``cmds`` - string; sequence of commands to be run
@@ -59,10 +59,10 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         x^2 + 1
 
     This example illustrates that evaluation occurs in the context of
-    ``from sage.all import *``. Even though bernoulli has
+    ``from sage.all import *``. Even though ``bernoulli`` has
     been redefined in the local scope, when calling
-    ``sage_eval`` the default value meaning of bernoulli
-    is used. Likewise for QQ below.
+    :func:`sage_eval` the default value meaning of :func:`bernoulli`
+    is used. Likewise for ``QQ`` below.
 
     ::
 
@@ -125,7 +125,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         sage: vars['rt2']
         1.41421356237310
 
-    This example illustrates how ``sage_eval`` can be
+    This example illustrates how :mod:`sage_eval` can be
     useful when evaluating the output of other computer algebra
     systems.
 
@@ -144,8 +144,8 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         RuntimeError: Use ** for exponentiation, not '^', which means xor
         in Python, and has the wrong precedence.
 
-    Here you can see eval simply will not work but
-    ``sage_eval`` will.
+    Here you can see that :func:`eval` simply will not work but
+    :func:`sage_eval` will.
 
     TESTS:
 
@@ -201,14 +201,14 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
 def sageobj(x, vars=None):
     """
-    Return a native Sage object associated to x, if possible and
+    Return a native Sage object associated to ``x``, if possible and
     implemented.
 
-    If the object has an _sage_ method it is called and the value is
-    returned. Otherwise str is called on the object, and all preparsing
+    If the object has a ``_sage_`` method it is called and the value is
+    returned. Otherwise, :func:`str` is called on the object, and all preparsing
     is applied and the resulting expression is evaluated in the context
     of ``from sage.all import *``. To evaluate the
-    expression with certain variables set, use the vars argument, which
+    expression with certain variables set, use the ``vars`` argument, which
     should be a dictionary.
 
     EXAMPLES::

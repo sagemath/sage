@@ -22,7 +22,7 @@ from sage.misc.misc_c import prod
 from sage.combinat.combinat import stirling_number2
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.rings.polynomial.polynomial_ring import polygen
 
 from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements

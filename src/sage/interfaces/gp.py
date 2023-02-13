@@ -147,6 +147,7 @@ from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
 import sage.rings.complex_mpfr
 from sage.misc.instancedoc import instancedoc
+import sage.interfaces.abc
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -821,7 +822,7 @@ class Gp(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class GpElement(ExpectElement):
+class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
     """
     EXAMPLES: This example illustrates dumping and loading GP elements
     to compressed strings.
@@ -1036,16 +1037,24 @@ GpFunction = ExpectFunction
 
 def is_GpElement(x):
     """
-    Returns True of x is a GpElement.
+    Return True if ``x`` is of type :class:`GpElement`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.GpElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.gp import is_GpElement
         sage: is_GpElement(gp(2))
+        doctest:...: DeprecationWarning: the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead
+        See https://trac.sagemath.org/34804 for details.
         True
         sage: is_GpElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead")
+
     return isinstance(x, GpElement)
 
 

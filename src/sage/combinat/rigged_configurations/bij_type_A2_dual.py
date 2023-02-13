@@ -41,6 +41,7 @@ from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 
 from sage.rings.rational_field import QQ
 
+
 class KRTToRCBijectionTypeA2Dual(KRTToRCBijectionTypeC):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -198,6 +199,7 @@ class KRTToRCBijectionTypeA2Dual(KRTToRCBijectionTypeC):
                 if partition._list[i] == width_n:
                     partition.rigging[i] = partition.rigging[i] - QQ(1)/QQ(2)
                     break
+
 
 class RCToKRTBijectionTypeA2Dual(RCToKRTBijectionTypeC):
     r"""

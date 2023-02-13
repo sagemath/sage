@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Modular Forms with Character
+Modular forms with character
 
 EXAMPLES::
 

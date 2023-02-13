@@ -249,6 +249,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         :func:`ReflectionGroup`
     """
+
     def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
         r"""
         Initialize ``self``.
@@ -608,7 +609,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         EXAMPLES::
 
             sage: G = ReflectionGroup(['B',3])                          # optional - gap3
-            sage: sorted(G.coxeter_diagram().edges(labels=True))        # optional - gap3
+            sage: G.coxeter_diagram().edges(labels=True, sort=True)     # optional - gap3
             [(1, 2, 4), (2, 3, 3)]
         """
         from sage.graphs.graph import Graph

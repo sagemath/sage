@@ -142,8 +142,7 @@ from sage.misc.randstate import current_randstate
 from sage.groups.group import FiniteGroup
 
 from sage.rings.all import QQ, Integer
-from sage.interfaces.expect import is_ExpectElement
-from sage.interfaces.gap import GapElement
+from sage.interfaces.abc import ExpectElement, GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -385,7 +384,7 @@ def PermutationGroup(gens=None, *args, **kwds):
         See https://trac.sagemath.org/31510 for details.
 
     """
-    if not is_ExpectElement(gens) and hasattr(gens, '_permgroup_'):
+    if not isinstance(gens, ExpectElement) and hasattr(gens, '_permgroup_'):
         return gens._permgroup_()
     if gens is not None and not isinstance(gens, (tuple, list, GapElement)):
         raise TypeError("gens must be a tuple, list, or GapElement")
@@ -4666,17 +4665,23 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(2,)]])
             sage: G.molien_series()
             1/(x^2 - 2*x + 1)
+
+        TESTS:
+
+        Check that :trac:`34854` is fixed::
+
+            sage: PG = PermutationGroup(["(1,2,3,4,5,6,7)","(5,6,7)"])
+            sage: PG.molien_series()
+            (-x^18 + x^15 - x^12 + x^9 - x^6 + x^3 - 1)/(x^25 - x^24 - x^23 - x^22 + x^21 + 2*x^20 + x^19 - x^17 - x^16 - x^15 - x^13 + x^12 + x^10 + x^9 + x^8 - x^6 - 2*x^5 - x^4 + x^3 + x^2 + x - 1)
+
+        and 2 extra fixed points are correctly accounted for::
+
+            sage: PG1 = PermutationGroup(["(9,2,3,4,5,6,7)","(5,6,7)"])
+            sage: R.<x> = QQ[]
+            sage: PG.molien_series() == PG1.molien_series()*(1-x)^2
+            True
         """
-        pi = self._libgap_().NaturalCharacter()
-        # because NaturalCharacter forgets about fixed points:
-        pi += self._libgap_().TrivialCharacter() * len(self.fixed_points())
-
-        # TODO: pi is a Character from a CharacterTable on self, however libgap
-        # does not know about this type and when adding two Characters just
-        # returns a plain List; this needs to be fixed on the libgap side but
-        # in the meantime we can fix by converting pi back to the right type
-        pi = libgap.VirtualCharacter(self._libgap_().CharacterTable(), pi)
-
+        pi = self._libgap_().PermutationCharacter(list(self.domain()),libgap.OnPoints)
         M = pi.MolienSeries()
 
         R = QQ['x']

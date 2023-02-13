@@ -73,15 +73,18 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.all import GradedAlgebrasWithBasis
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.key_polynomial import KeyPolynomial
+from sage.combinat.permutation import Permutations, Permutation
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_sparse
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-from sage.combinat.permutation import Permutations, Permutation
+
 import sage.libs.symmetrica.all as symmetrica
-from sage.misc.cachefunc import cached_method
 
 
 def SchubertPolynomialRing(R):
@@ -414,6 +417,17 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: X(x1^2*x2)
             X[3, 2, 1]
 
+            sage: S.<x> = InfinitePolynomialRing(QQ)
+            sage: X(x[0]^2*x[1])
+            X[3, 2, 1]
+            sage: X(x[0]*x[1]^2*x[2]^2*x[3] + x[0]^2*x[1]^2*x[2]*x[3] + x[0]^2*x[1]*x[2]^2*x[3])
+            X[2, 4, 5, 3, 1]
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ)
+            sage: X(k([3,2,1]))
+            X[4, 3, 2, 1]
+
         TESTS:
 
         We check that :trac:`12924` is fixed::
@@ -429,6 +443,15 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
             sage: X([])
             X[1]
+
+        Check the round trip from key polynomials::
+
+            sage: k = KeyPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Permutations())
+            sage: for _ in range(50):
+            ....:     P = next(it)
+            ....:     assert X(k(X(P))) == X(P), P
         """
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
@@ -441,6 +464,14 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             return self._from_dict({perm: self.base_ring().one()})
         elif is_MPolynomial(x):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
+        elif isinstance(x, InfinitePolynomial_sparse):
+            R = x.polynomial().parent()
+            # massage the term order to be what symmetrica expects
+            S = PolynomialRing(R.base_ring(),
+                               names=list(map(repr, reversed(R.gens()))))
+            return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
+        elif isinstance(x, KeyPolynomial):
+            return self(x.expand())
         else:
             raise TypeError
 
@@ -468,3 +499,4 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             X[4, 2, 1, 3]
         """
         return symmetrica.mult_schubert_schubert(left, right)
+

@@ -20,6 +20,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.rsk import RSK
 
+
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):
     r"""
     The crystal on affine factorizations with a cut-point, as introduced
@@ -359,6 +360,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             """
             return self.parent()._tableaux_isomorphism(self)
 
+
 def affine_factorizations(w, l, weight=None):
     r"""
     Return all factorizations of ``w`` into ``l`` factors or of weight ``weight``.
@@ -447,6 +449,7 @@ def affine_factorizations(w, l, weight=None):
 
 #####################################################################
 ## Crystal isomorphisms
+
 
 class FactorizationToTableaux(CrystalMorphism):
     def _call_(self, x):

@@ -8,13 +8,14 @@ Parallel Iterator built using Python's multiprocessing module
 #  Distributed under the terms of (any version of) the GNU
 #  General Public License (GPL). The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ################################################################################
 
 from multiprocessing import Pool
 from functools import partial
 from sage.misc.fpickle import pickle_function, call_pickled_function
 from . import ncpus
+
 
 def pyprocessing(processes=0):
     """

@@ -122,7 +122,7 @@ def enum_product_projective_rational_field(X, B):
          (0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (0 : 1 : 0 , 0 : 1),
          (0 : 1 : 0 , 1 : 1), (1 : -1/2 : 1 , 0 : 1), (1 : -1/2 : 1 , 1 : 1)]
     """
-    if(is_Scheme(X)):
+    if is_Scheme(X):
         if (not is_ProductProjectiveSpaces(X.ambient_space())):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
@@ -225,7 +225,7 @@ def enum_product_projective_number_field(X, **kwds):
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
 
-    if(is_Scheme(X)):
+    if is_Scheme(X):
         if (not is_ProductProjectiveSpaces(X.ambient_space())):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
@@ -281,7 +281,7 @@ def enum_product_projective_finite_field(X):
         sage: len(enum_product_projective_finite_field(X))
         36
     """
-    if(is_Scheme(X)):
+    if is_Scheme(X):
         if (not is_ProductProjectiveSpaces(X.ambient_space())):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
