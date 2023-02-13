@@ -2272,18 +2272,18 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
 
 def supplementary_difference_set(n, existence=False, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_.
 
-    The data for `n=191` is taken from [Djo2008c]_, and date for `n=239` is from [Djo1994b]_.
+    The data for `n=191` is taken from [Djo2008c]_, and data for `n=239` is from [Djo1994b]_.
     Additional SDS are constructed using :func:`skew_supplementary_difference_set`.
 
     INPUT:
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
 
-    - ``existence`` -- boolean (dafault False). If true, only check whether the
+    - ``existence`` -- boolean (default False). If true, only check whether the
       supplementary difference sets can be constructed.
 
     - ``check`` -- boolean (default True). If true, check that the sets are

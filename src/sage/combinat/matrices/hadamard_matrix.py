@@ -180,7 +180,7 @@ def symmetric_conference_matrix_paley(n):
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`. This construction assumes
     that `q = n-1` is a prime power, with `q \cong 1 \mod 4`. See [Hora]_ or [Lon2013]_.
 
-    These matrices are used in the :func:`hadamard_matrix_paleyII`.
+    These matrices are used in :func:`hadamard_matrix_paleyII`.
 
     INPUT:
 
@@ -300,7 +300,7 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
     an error if no data is available to construct the matrix of the given order,
-    or if `n` is not a multiple of `4`.
+    or if `n` does not satisfies the constraints.
     If ``existence`` is true, returns a boolean representing whether the matrix
     can be constructed or not.
 
@@ -338,7 +338,7 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     q = n // 4
     if existence:
-        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)
+        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
 
     if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
         raise ValueError(f'The order {n} is not covered by Miyamoto construction.')
@@ -921,7 +921,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
     Given four SDS with parameters `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` with
     `n_1 + n_2 + n_3 + n_4 = n+\lambda` we can construct four (-1,+1) sequences `a_i = (a_{i,0},...,a_{i,n-1})`
-    where `a_{i,j} = -1` iff `j \in S_i`. This will be the fist rows of four circulant
+    where `a_{i,j} = -1` iff `j \in S_i`. These will be the fist rows of four circulant
     matrices `A_1, A_2, A_3, A_4` which, when plugged into the Goethals-Seidel array, create an
     Hadamard matrix of order `4n` (see [Djo1994b]_).
 
