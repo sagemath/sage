@@ -104,7 +104,9 @@ from sage.categories.sets_cat import Sets
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 
-from sage.rings.all import RR, QQ, ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 
 def is_RelativeNumberField(x):
@@ -2116,7 +2118,7 @@ class NumberField_relative(NumberField_generic):
             r1, r2 = K.signature()
             r = r1 + r2 - 1
 
-            from sage.rings.all import RealField
+            from sage.rings.real_mpfr import RealField
             Reals = RealField(prec)
 
             if x == 0:
