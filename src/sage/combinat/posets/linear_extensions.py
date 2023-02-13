@@ -268,6 +268,7 @@ class LinearExtensionOfPoset(ClonableArray,
         Informally, a linear extension is supergreedy if it "always
         goes up and receedes the least"; in other words, supergreedy
         linear extensions are depth-first linear extensions.
+        `Reference <https://link.springer.com/article/10.1007/BF00337892>`_
 
         EXAMPLES::
         
