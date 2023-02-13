@@ -4293,7 +4293,7 @@ cdef class NumberFieldElement(FieldElement):
 
     EXAMPLES::
 
-        sage: sage: k.<a> = NumberField(x^3 + x + 1)
+        sage: k.<a> = NumberField(x^3 + x + 1)
         sage: isinstance(a, sage.structure.element.NumberFieldElement)
         True
 
