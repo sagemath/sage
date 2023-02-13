@@ -1,7 +1,6 @@
 """
 Coercion via construction functors
 """
-
 # ****************************************************************************
 #       Copyright (C) 2007-2014 Robert Bradshaw
 #                     2007-2018 David Roe
@@ -1293,10 +1292,9 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             sage: R.construction()[0](f)     # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: Morphisms for infinite polynomial rings are not implemented yet.
-
+            NotImplementedError: morphisms for infinite polynomial rings are not implemented yet
         """
-        raise NotImplementedError("Morphisms for infinite polynomial rings are not implemented yet.")
+        raise NotImplementedError("morphisms for infinite polynomial rings are not implemented yet")
 
     def _apply_functor(self, R):
         """
@@ -3025,7 +3023,7 @@ class QuotientFunctor(ConstructionFunctor):
             # quotient by I would result in the trivial ring/group/...
             # Rather than create the zero ring, we claim they can't be merged
             # TODO: Perhaps this should be detected at a higher level...
-            raise TypeError("Trivial quotient intersection.")
+            raise TypeError("trivial quotient intersection")
         # GF(p) has a coercion from Integers(p). Hence, merging should
         # yield a field if either self or other yields a field.
         return QuotientFunctor(I, names=self.names, as_field=as_field,
@@ -4734,10 +4732,10 @@ def type_to_parent(P):
         sage: type_to_parent(list)
         Traceback (most recent call last):
         ...
-        TypeError: Not a scalar type.
+        TypeError: not a scalar type
     """
     from sage.structure.coerce import py_scalar_parent
     parent = py_scalar_parent(P)
     if parent is None:
-        raise TypeError("Not a scalar type.")
+        raise TypeError("not a scalar type")
     return parent

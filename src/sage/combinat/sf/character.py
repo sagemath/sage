@@ -201,6 +201,7 @@ class induced_trivial_character_basis(generic_character):
 
         sage: TestSuite(ht).run()
     """
+
     def __init__(self, Sym, pfix):
         r"""
         Initialize the basis and register coercions.
@@ -424,6 +425,7 @@ class irreducible_character_basis(generic_character):
 
         sage: TestSuite(st).run()
     """
+
     def __init__(self, Sym, pfix):
         r"""
         Initialize the basis and register coercions.

@@ -193,7 +193,7 @@ from sage.libs.singular.decl cimport (
     p_IsUnit, p_IsOne, p_Series, p_Head, idInit, fast_map_common_subexp, id_Delete,
     p_IsHomogeneous, p_Homogen, p_Totaldegree,pLDeg1_Totaldegree, singclap_pdivide, singclap_factorize,
     idLift, IDELEMS, On, Off, SW_USE_CHINREM_GCD, SW_USE_EZGCD,
-    p_LmIsConstant, pTakeOutComp1, singclap_gcd, pp_Mult_qq, p_GetMaxExp,
+    p_LmIsConstant, pTakeOutComp, singclap_gcd, pp_Mult_qq, p_GetMaxExp,
     pLength, kNF, p_Neg, p_Minus_mm_Mult_qq, p_Plus_mm_Mult_qq,
     pDiff, singclap_resultant, p_Normalize,
     prCopyR, prCopyR_NoSort)
@@ -247,7 +247,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
 from sage.rings.fraction_field import FractionField
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 
 import sage.interfaces.abc
 
@@ -1590,7 +1590,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             9/4
 
             sage: P.monomial_quotient(x,y) # Note the wrong result
-            x*y^65535*z^65535
+            x*y^65535*z^65535      # 32-bit
+            x*y^1048575*z^1048575  # 64-bit
 
             sage: P.monomial_quotient(x,P(1))
             x
@@ -2250,10 +2251,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
             9/4*x^2 - 1/4*y^2 - y - 1
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x^2^15) * x^2^15
+            sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2374,10 +2376,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
             ValueError: not a 2nd power
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x+y^2^15)^10
+            sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
 
         Test fractional powers (:trac:`22329`)::
 
@@ -2860,7 +2863,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         # Extract the monomials that match the specifications
         # this loop needs improvement
-        while(p):
+        while p:
             flag = 0
             for i from 0<=i<gens:
                 if exps[i] != -1 and p_GetExp(p,i+1,r)!=exps[i]:
@@ -2926,10 +2929,10 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef poly *m = mon._poly
         cdef ring *r = self._parent_ring
 
-        if not mon._parent is self._parent:
+        if mon._parent is not self._parent:
             raise TypeError("mon must have same parent as self.")
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 return si2sa(p_GetCoeff(p, r), r, self._parent._base)
             p = pNext(p)
@@ -3129,7 +3132,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             i += 1
         p_Setm(m, r)
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 p_Delete(&m,r)
                 return si2sa(p_GetCoeff(p, r), r, self._parent._base)
@@ -3464,7 +3467,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             x^10000
             no overflow
 
-            sage: n = 1000
+            sage: n = 100000
             sage: try:
             ....:     f = x^n
             ....:     f.subs(x = x^n)
@@ -4570,7 +4573,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         l = []
         for i from 0 <= i < IDELEMS(res):
             for j from 1 <= j <= IDELEMS(_I):
-                l.append( new_MP(parent, pTakeOutComp1(&res.m[i], j)) )
+                l.append( new_MP(parent, pTakeOutComp(&res.m[i], 1)) )
 
         id_Delete(&fI, r)
         id_Delete(&_I, r)
@@ -4638,7 +4641,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
             sage: f = 3*x
             sage: f.reduce([2*x,y])
-            3*x
+            x
 
         The reduction is not canonical when ``I`` is not a Groebner
         basis::
@@ -5058,9 +5061,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
          """
         cdef ring *r = self._parent_ring
 
-        if not self._parent is m._parent:
+        if self._parent is not m._parent:
             m = self._parent.coerce(m)
-        if not self._parent is q._parent:
+        if self._parent is not q._parent:
             q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
@@ -5148,9 +5151,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         """
         cdef ring *r = self._parent_ring
 
-        if not self._parent is m._parent:
+        if self._parent is not m._parent:
             m = self._parent.coerce(m)
-        if not self._parent is q._parent:
+        if self._parent is not q._parent:
             q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
@@ -5424,7 +5427,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: d = a.resultant(b,y); d
             2*x^3
 
-
             sage: P.<x,y> = PolynomialRing(ZZ,2)
             sage: f = x+y
             sage: g=y^2+x
@@ -5437,12 +5439,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
         if variable is None:
             variable = self.parent().gen(0)
 
-        if not self._parent is other._parent:
+        if self._parent is not other._parent:
             raise TypeError("first parameter needs to be an element of self.parent()")
 
         if not variable.parent() is self.parent():
             raise TypeError("second parameter needs to be an element of self.parent() or None")
-
 
         if n_GetChar(_ring.cf) > 1<<29:
             raise NotImplementedError("Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")

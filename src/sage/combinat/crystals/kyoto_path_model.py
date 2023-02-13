@@ -321,6 +321,7 @@ class KyotoPathModel(TensorProductOfCrystals):
         An element in the Kyoto path model.
         """
         # For simplicity (and safety), we use the regular crystals implementation
+
         def epsilon(self, i):
             r"""
             Return `\varepsilon_i` of ``self``.

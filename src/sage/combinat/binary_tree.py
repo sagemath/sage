@@ -4179,6 +4179,7 @@ class BinaryTrees_size(BinaryTrees):
         sage: from sage.combinat.binary_tree import BinaryTrees_size
         sage: for i in range(6): TestSuite(BinaryTrees_size(i)).run()
     """
+
     def __init__(self, size):
         """
         TESTS::
@@ -4318,6 +4319,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
     """
     All full binary trees.
     """
+
     def __init__(self):
         """
         TESTS::
@@ -4415,6 +4417,7 @@ class FullBinaryTrees_size(BinaryTrees):
     """
     Full binary trees of a fixed size (number of nodes).
     """
+
     def __init__(self, size):
         r"""
         TESTS::
@@ -5157,6 +5160,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
     This is a parent stub to serve as a factory class for trees with various
     labels constraints.
     """
+
     def _repr_(self):
         """
         TESTS::

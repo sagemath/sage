@@ -1,4 +1,6 @@
-"Quadratic form extras"
+"""
+Extra functions for quadratic forms
+"""
 
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
