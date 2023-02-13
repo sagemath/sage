@@ -90,6 +90,13 @@ def normalise_hadamard(H, skew=False):
         sage: H = normalise_hadamard(skew_hadamard_matrix(20, skew_normalize=False), skew=True)
         sage: is_hadamard_matrix(H, skew=True, normalized=True)
         True
+
+    If ``skew`` is True but the Hadamard matrix is not skew, the matrix returned
+    will not be normalized::
+
+        sage: H = normalise_hadamard(hadamard_matrix(92), skew=True)
+        sage: is_hadamard_matrix(H, normalized=True)
+        False
     """
 
     if skew:
