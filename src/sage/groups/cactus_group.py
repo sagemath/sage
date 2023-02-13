@@ -997,4 +997,3 @@ class PureCactusGroup(KernelSubgroup):
                     continue
                 gens.append(val)
         return tuple([self(g) for g in gens])
-
