@@ -667,4 +667,3 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
                 ret.set_immutable()
                 return P.term(ret, ~c * q**-qpow)
             return super().__invert__()
-
