@@ -14,6 +14,7 @@ from sage.combinat.root_system.root_lattice_realizations import RootLatticeReali
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
+
 class CartanType(cartan_type.CartanType_decorator):
     r"""
     A class for Cartan types with marked nodes.
@@ -448,6 +449,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
 ###########################################################################
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     Ambient space for a marked finite Cartan type.
@@ -554,6 +556,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 ###########################################################################
 
+
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
     AmbientSpace = AmbientSpace
 
@@ -590,6 +593,8 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         return self._type.affine().marked_nodes(self._marked_nodes)
 
 ###########################################################################
+
+
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     """
     TESTS::
@@ -604,6 +609,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         Ambient space of the Root system of type ['B', 3] with nodes (1, 3) marked
         sage: TestSuite(L).run()
     """
+
     def _latex_draw_node(self, x, y, label, position="below=4pt"):
         r"""
         Draw the possibly marked (crossed out) circular node ``i`` at the

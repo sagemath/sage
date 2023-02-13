@@ -20,6 +20,7 @@ from sage.groups.all import PermutationGroup, PermutationGroup_generic, Permutat
 from sage.misc.misc_c import prod
 from functools import wraps
 
+
 def change_support(perm, support, change_perm=None):
     """
     Changes the support of a permutation defined on [1, ..., n] to

@@ -253,7 +253,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     if mykey in cache:
         X = cache[mykey]
         C = X()
-        if not C is None:
+        if C is not None:
             return C
     C = MPComplexField_class(prec, rnd)
     cache[mykey] = weakref.ref(C)
@@ -1371,7 +1371,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n, **kwds)
 
     ################################

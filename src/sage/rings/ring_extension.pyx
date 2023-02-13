@@ -1801,7 +1801,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: L = GF(5^12).over(F)
 
             sage: K.Hom(L)  # indirect doctest
-            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base 
+            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
             to Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
 
             sage: K.Hom(L, category=Sets())

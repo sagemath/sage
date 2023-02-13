@@ -1,6 +1,7 @@
 name: Build & Test
 
 on:
+  pull_request:
   push:
   workflow_dispatch:
     # Allow to run manually

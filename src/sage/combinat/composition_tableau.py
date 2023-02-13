@@ -110,7 +110,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
         # Verify triple condition
         l = len(t)
-        m = max([len(r) for r in t] + [0])
+        m = max((len(r) for r in t), default=0)
         TT = [row+[0]*(m-len(row)) for row in t]
         for i in range(l):
             for j in range(i+1, l):
@@ -509,7 +509,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
         # for 1 <= i < j <= len(comp), for 2 <= k <= m,
         #   T[j,k] \neq 0 and T[j,k] >= T[i,k] ==> T[j,k] > T[i,k-1]
         l = len(T)
-        m = max([len(r) for r in T] + [0])
+        m = max((len(r) for r in T), default=0)
         TT = [row+[0]*(m-len(row)) for row in T]
         for i in range(l):
             for j in range(i+1, l):
@@ -523,6 +523,7 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
     r"""
     All composition tableaux.
     """
+
     def __init__(self, max_entry=None):
         r"""
         Initialize ``self``.
@@ -578,6 +579,7 @@ class CompositionTableaux_size(CompositionTableaux):
 
     - The class of composition tableaux of size ``n``.
     """
+
     def __init__(self, n, max_entry=None):
         r"""
         Initializes the class of composition tableaux of size ``n``.
@@ -762,6 +764,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
     r"""
     A backtracker class for generating sets of composition tableaux.
     """
+
     def __init__(self, shape, max_entry=None):
         """
         EXAMPLES::

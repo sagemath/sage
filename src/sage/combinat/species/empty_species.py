@@ -18,6 +18,7 @@ Empty Species
 from .species import GenericCombinatorialSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     """
     Returns the empty species. This species has no structure at all.
@@ -78,6 +79,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: Empt is Empt2
         True
     """
+
     def __init__(self, min=None, max=None, weight=None):
         """
         Initializer for the empty species.
@@ -147,5 +149,6 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             0
         """
         return 0
+
 
 EmptySpecies_class = EmptySpecies

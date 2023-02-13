@@ -1043,7 +1043,7 @@ class BipartiteGraph(Graph):
             sage: bg = BipartiteGraph()
             sage: bg.add_vertices([0, 1, 2], left=[True, False, True])
             sage: bg.add_edges([(0, 1), (2, 1)])
-            sage: bg.add_edges([[0, 2]])            
+            sage: bg.add_edges([[0, 2]])
             Traceback (most recent call last):
             ...
             ValueError: the specified set of edges cannot be added while still preserving the bipartition property
@@ -1055,7 +1055,7 @@ class BipartiteGraph(Graph):
 
         Loops will raise an error::
 
-            sage: bg.add_edges([[0, 3], [3, 3]])            
+            sage: bg.add_edges([[0, 3], [3, 3]])
             Traceback (most recent call last):
             ...
             ValueError: the specified set of edges cannot be added while still preserving the bipartition property

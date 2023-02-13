@@ -903,7 +903,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         full = int(reduced)
 
         x = self.fetch('in_echelon_form')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         self.check_mutability()
         self.clear_cache()
@@ -1335,7 +1336,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             0
         """
         x = self.fetch('rank')
-        if not x is None:
+        if x is not None:
             return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
@@ -1516,6 +1517,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzed_set_ui(self._entries, 0)
         mzed_cling(self._entries, v)
         mzd_slice_free(v)
+
 
 def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):
     r"""

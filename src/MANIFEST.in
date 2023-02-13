@@ -1,3 +1,7 @@
+include VERSION.txt
+
+global-include *.pxi *.pxd *.h *.hpp
+
 prune sage/ext/interpreters   # In particular, __init__.py must not be present in the distribution; or sage_setup.autogen.interpreters.rebuild will not generate the code
 prune sage_setup
 prune sage_docbuild
@@ -35,6 +39,10 @@ include sage/stats/distributions/dgs_bern.c
 include sage/stats/distributions/dgs_gauss_dp.c
 include sage/stats/distributions/dgs_gauss_mp.c
 include sage/symbolic/ginac/*.cpp
+# Also actual C++ source files.
+include sage/geometry/triangulation/triangulations.cc
+include sage/geometry/triangulation/data.cc
+include sage/geometry/triangulation/functions.cc
 
 global-exclude __pycache__
 global-exclude *.py[co]
