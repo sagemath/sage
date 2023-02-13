@@ -82,20 +82,20 @@ class TateAlgebraIdeal(Ideal_generic):
           of these algorithms.
 
         - ``options`` -- extra arguments that are passed in to the
-          algorithm; this notably include the keyword ``verbose`` (only 
+          algorithm; this notably include the keyword ``verbose`` (only
           available for ``PoTe`` and ``VaPoTe``) which is an integer
           defining the verbosity level:
 
           - ``0``: no verbosity (quiet)
 
-          - ``1``: print each new generator and a notification each time a 
+          - ``1``: print each new generator and a notification each time a
             J-pair is popped
 
           - ``2``: in addition, print the outcome of the treatment of a J-pair
 
           - ``3``: in addition, print all added J-pairs
 
-          - ``4``: print entire series instead of only their leading terms 
+          - ``4``: print entire series instead of only their leading terms
 
         OUTPUT:
 
@@ -142,7 +142,7 @@ class TateAlgebraIdeal(Ideal_generic):
             sage: h = 2*x^6*y^4 + 2*x^4 + 4*x^5*y^2 + 8*x^8*y^2 + 8*x^7*y^3 + 8*x^6*y
             sage: I = A.ideal([f,g,h])
             sage: I.groebner_basis(algorithm="buchberger-integral")
-            [...0001*x^4 + O(2^4 * <x, y>), 
+            [...0001*x^4 + O(2^4 * <x, y>),
              ...0001*x^2*y + O(2^4 * <x, y>),
              ...0001*y^2 + O(2^4 * <x, y>)]
             sage: I.groebner_basis(algorithm='buchberger')
@@ -487,7 +487,7 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
     # Main loop of Buchberger algorithm
     # Loop invariant:
-    # the S-polynomials of pairs of elements in rgb 
+    # the S-polynomials of pairs of elements in rgb
     # all reduce to zero modulo (rgb,S)
     while S:
         sig_check()
@@ -599,7 +599,7 @@ cdef Jpair(p1, p2):
     t2 = t // sv2
     su1 = t1*s1
     if s2 is None:
-        return su1, t1*v1 
+        return su1, t1*v1
     su2 = t2*s2
     if su1 > su2:
         return su1, t1*v1
@@ -773,7 +773,7 @@ def print_pair(p, verbose):
         sage: s = v.leading_term()
         sage: p = (s,v)
 
-    When ``verbose`` is less than 4, only the leading term of 
+    When ``verbose`` is less than 4, only the leading term of
     the series is printed::
 
         sage: print_pair(p, 0)
@@ -924,7 +924,7 @@ def groebner_basis_pote(I, prec, verbose=0):
                     print("| skip: sygyzy criterium; signature = %s" % syzygy)
                 continue
 
-            # We check if (s,v) is covered by 
+            # We check if (s,v) is covered by
             # the current strong Grobner basis
             cover = None
             for S, V in sgb:
@@ -1210,7 +1210,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
                     print("| skip: sygyzy criterium; signature = %s" % syzygy)
                 continue
 
-            # We check if (s,v) is covered by 
+            # We check if (s,v) is covered by
             # the current strong Grobner basis
             cover = None
             for S, V in sgb:
