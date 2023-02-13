@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Plane Partitions
 
@@ -44,9 +43,9 @@ from sage.functions.other import floor, ceil, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
-#from sage.categories.sets_cat import Sets
 
 PP = NewType('PP', 'PlanePartition')
+
 
 @richcmp_method
 class PlanePartition(ClonableArray,
@@ -59,7 +58,6 @@ class PlanePartition(ClonableArray,
     INPUT:
 
     - ``PP`` -- a list of lists which represents a tableau
-
     - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
       where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
       `y`-axis, `z`-axis, respectively; if this is not given, it is
@@ -119,7 +117,6 @@ class PlanePartition(ClonableArray,
             True
             sage: a is c
             False
-
         """
         if isinstance(pp, PlanePartition):
             ClonableArray.__init__(self, parent, pp, check=False)
@@ -130,7 +127,7 @@ class PlanePartition(ClonableArray,
                     while pp[i] and not pp[i][-1]:
                         del pp[i][-1]
                     if not pp[i]:
-                        pp.pop(i)        
+                        pp.pop(i)
             ClonableArray.__init__(self, parent, pp, check=check)
         if self.parent()._box is None:
             if pp:
@@ -162,11 +159,11 @@ class PlanePartition(ClonableArray,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
@@ -188,9 +185,9 @@ class PlanePartition(ClonableArray,
             True
         """
         if isinstance(other, PlanePartition):
-            return richcmp(list(self), list(other), op)
-        else:
-            return richcmp(list(self), other, op)
+            return self._richcmp_(other, op)
+
+        return richcmp(list(self), other, op)
 
     def check(self):
         """
@@ -202,7 +199,7 @@ class PlanePartition(ClonableArray,
             sage: a.check()
             sage: b = PlanePartition([[1,2],[1]])
             Traceback (most recent call last):
-            ...          
+            ...
             ValueError: not weakly decreasing along rows
             sage: c = PlanePartition([[1,1],[2]])
             Traceback (most recent call last):
@@ -257,8 +254,8 @@ class PlanePartition(ClonableArray,
         Return the projection of ``self`` in the `z` direction.
 
         If ``tableau`` is set to ``False``, then only the list of lists
-        consisting of the projection of boxes size onto the xy-plane
-        is returned instead of a Tableau object. This output will
+        consisting of the projection of boxes size onto the `xy`-plane
+        is returned instead of a :class:`Tableau` object. This output will
         not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
@@ -279,8 +276,8 @@ class PlanePartition(ClonableArray,
         Return the projection of ``self`` in the `y` direction.
 
         If ``tableau`` is set to ``False``, then only the list of lists
-        consisting of the projection of boxes size onto the xz-plane
-        is returned instead of a Tableau object. This output will
+        consisting of the projection of boxes size onto the `xz`-plane
+        is returned instead of a :class:`Tableau` object. This output will
         not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
@@ -301,8 +298,8 @@ class PlanePartition(ClonableArray,
         Return the projection of ``self`` in the `x` direction.
 
         If ``tableau`` is set to ``False``, then only the list of lists
-        consisting of the projection of boxes size onto the yz-plane
-        is returned instead of a Tableau object. This output will
+        consisting of the projection of boxes size onto the `yz`-plane
+        is returned instead of a :class:`Tableau` object. This output will
         not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
@@ -615,7 +612,6 @@ class PlanePartition(ClonableArray,
 
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
-
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
@@ -668,7 +664,6 @@ class PlanePartition(ClonableArray,
 
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
-
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
@@ -725,9 +720,9 @@ class PlanePartition(ClonableArray,
                     TP += add_leftside(self.x_tableau()[r][c], r, c)
         TP.axes(show=False)
         return TP
-        
+
     def contains(self, PP) -> bool:
-        """
+        r"""
         Return ``True`` if ``PP`` is a plane partition that fits
         inside ``self``.
 
@@ -737,9 +732,9 @@ class PlanePartition(ClonableArray,
 
         EXAMPLES::
 
-            sage: P1 = PlanePartition([[5,4,3],[3,2,2],[1]])
-            sage: P2 = PlanePartition([[3,2],[1,1],[0,0],[0,0]])
-            sage: P3 = PlanePartition([[5,5,5],[2,1,0]])
+            sage: P1 = PlanePartition([[5,4,3], [3,2,2], [1]])
+            sage: P2 = PlanePartition([[3,2], [1,1], [0,0], [0,0]])
+            sage: P3 = PlanePartition([[5,5,5], [2,1,0]])
             sage: P1.contains(P2)
             True
             sage: P2.contains(P1)
@@ -749,13 +744,16 @@ class PlanePartition(ClonableArray,
             sage: P3.contains(P2)
             True
         """
-        PP = PlanePartition(PP)
+        if not isinstance(PP, PlanePartition):
+            PP = PlanePartition(PP)
         if len(self) < len(PP):
             return False
-        for i in range(len(PP)):
-            if len(self[i]) < len(PP[i]):
+        for rowself, rowPP in zip(self, PP):
+            if len(rowself) < len(rowPP):
                 return False
-        return all(self[i][j] >= PP[i][j] for i,row in enumerate(PP) for j in range(len(row)))
+            if any(valself < valPP for valself, valPP in zip(rowself, rowPP)):
+                return False
+        return True
 
     def plot3d(self, colors=None):
         r"""
@@ -789,8 +787,8 @@ class PlanePartition(ClonableArray,
         The empty plane partition with no box specified is its own complement.
 
         If ``tableau_only`` is set to ``True``, then only the tableau
-        consisting of the projection of boxes size onto the xy-plane
-        is returned instead of a PlanePartition object. This output will
+        consisting of the projection of boxes size onto the `xy`-plane
+        is returned instead of a :class:`PlanePartition`. This output will
         not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
@@ -808,24 +806,23 @@ class PlanePartition(ClonableArray,
         z_tab = self.z_tableau()
         for r in range(A):
             for c in range(B):
-                T[A - 1 - r][B - 1 - c] = C - z_tab[r][c]
+                T[A-1-r][B-1-c] = C - z_tab[r][c]
         if tableau_only:
             return T
-        elif not self.parent()._box:
+        P = self.parent()
+        if not P._box:
             pp = PlanePartitions()
             return pp.element_class(pp, T)
-        else:
-            return type(self)(self.parent(), T, check=False)
+        return P.element_class(P, T, check=False)
 
     def transpose(self, tableau_only=False) -> PP:
         r"""
         Return the transpose of ``self``.
 
         If ``tableau_only`` is set to ``True``, then only the tableau
-        consisting of the projection of boxes size onto the xy-plane
-        is returned instead of a PlanePartition object. This will
+        consisting of the projection of boxes size onto the `xy`-plane
+        is returned instead of a :class:`PlanePartition`. This will
         not necessarily have trailing rows or trailing zeros removed.
-
 
         EXAMPLES::
 
@@ -834,18 +831,27 @@ class PlanePartition(ClonableArray,
             Plane partition [[4, 2, 1], [3, 1, 1], [3, 1], [1]]
             sage: PP.transpose(True)
             [[4, 2, 1], [3, 1, 1], [3, 1, 0], [1, 0, 0]]
+
+            sage: PPP = PlanePartitions([1, 2, 3])
+            sage: PP = PPP([[1, 1]])
+            sage: PT = PP.transpose(); PT
+            Plane partition [[1], [1]]
+            sage: PT.parent()
+            Plane partitions inside a 2 x 1 x 3 box
         """
         T = [[0 for i in range(self._max_x)] for j in range(self._max_y)]
         z_tab = self.z_tableau()
         for r in range(len(z_tab)):
             for c in range(len(z_tab[r])):
                 T[c][r] = z_tab[r][c]
+        P = self.parent()
         if tableau_only:
             return T
-        elif self.parent()._box is None or self.parent()._box[0] == self.parent()._box[1]:
-            return type(self)(self.parent(), T, check=False)
-        new_box = (self.parent()._box[1],self.parent()._box[0],self.parent()._box[2])
-        return PlanePartitions(new_box,symmetry=self.parent._symmetry)
+        elif P._box is None or P._box[0] == P._box[1]:
+            return P.element_class(P, T, check=False)
+        new_box = (P._box[1], P._box[0], P._box[2])
+        newP = PlanePartitions(new_box, symmetry=P._symmetry)
+        return newP.element_class(newP, T)
 
     def is_SPP(self) -> bool:
         r"""
@@ -928,12 +934,12 @@ class PlanePartition(ClonableArray,
     def is_SCPP(self) -> bool:
         r"""
         Return whether ``self`` is a self-complementary plane partition.
-        
+
         Note that the complement of a plane partition (and thus the property of
-        being self-complementary) is dependent on the choice of a box that it is 
-        contained in. If no parent/bounding box is specified,  the box is taken 
+        being self-complementary) is dependent on the choice of a box that it is
+        contained in. If no parent/bounding box is specified,  the box is taken
         to be the smallest box that contains the plane partition.
-        
+
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
@@ -1036,14 +1042,16 @@ class PlanePartition(ClonableArray,
         """
         return self.is_TSPP() and self.is_SCPP()
 
-    def to_order_ideal(self): 
-        """
+    def to_order_ideal(self):
+        r"""
         Return the order ideal corresponding to ``self``.
 
-        TODO: As many families of symmetric plane partitions are in bijection
-              with order ideals in an associated poset, this function could
-              feasibly have options to send symmetric plane partitions
-              to the associated order ideal in that poset, instead.
+        .. TODO::
+
+            As many families of symmetric plane partitions are in bijection
+            with order ideals in an associated poset, this function could
+            feasibly have options to send symmetric plane partitions
+            to the associated order ideal in that poset, instead.
 
         EXAMPLES::
 
@@ -1054,13 +1062,13 @@ class PlanePartition(ClonableArray,
         """
         from sage.combinat.posets.poset_examples import posets
         (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a,b,c])
+        Q = posets.ProductOfChains([a, b, c])
         count = 0
         generate = []
-        for i in range(len(self)):
-            for j in range(len(self[i])):
-                if (self[i][j] > 0):
-                    generate.append((i,j,self[i][j]-1))
+        for i, row in enumerate(self):
+            for j, val in enumerate(row):
+                if val > 0:
+                    generate.append((i, j, val-1))
             count += 1
         oi = Q.order_ideal(generate)
         return oi
@@ -1080,10 +1088,10 @@ class PlanePartition(ClonableArray,
             [[0, 0, 1], [0, 1, 0], [2, 0, 0]]
         """
         generate = []
-        for i,row in enumerate(self):
-            for j,entry in enumerate(row):
+        for i, row in enumerate(self):
+            for j, entry in enumerate(row):
                 if (i == len(self)-1 or len(self[i+1])-1 < j or self[i+1][j] < entry) and (j == len(row)-1 or row[j+1] < entry):
-                    generate.append([i,j,entry-1])
+                    generate.append([i, j, entry-1])
         return(generate)
 
     def cyclically_rotate(self, preserve_parent=False) -> PP:
@@ -1091,11 +1099,11 @@ class PlanePartition(ClonableArray,
         Return the cyclic rotation of ``self``.
 
         By default, if the parent of ``self`` consists of plane
-        partitions inside an `a \times b \times c` box, the result 
+        partitions inside an `a \times b \times c` box, the result
         will have a parent consisting of partitions inside
         a `c \times a \times b` box, unless the optional parameter
         ``preserve_parent`` is set to ``True``. Enabling this setting
-        may give an element that is NOT an element of its parent.
+        may give an element that is **not** an element of its parent.
 
         EXAMPLES::
 
@@ -1114,37 +1122,38 @@ class PlanePartition(ClonableArray,
             sage: PP_rotated in PP_rotated.parent()
             False
         """
-        b = self._max_y 
+        b = self._max_y
         c = self._max_z
         new_antichain = []
         for elem in self.maximal_boxes():
             new = (elem[1], elem[2], elem[0])
             new_antichain.append(new)
-        ppMatrix = [[0] * (c) for i in range(b)]
+        pp_matrix = [[0] * (c) for i in range(b)]
         for box in new_antichain:
             y = box[0]
             z = box[1]
             x = box[2]
-            ppMatrix[y][z] = x + 1
+            pp_matrix[y][z] = x + 1
         if new_antichain:
             for i in range(b):
                 i = b - (i+1)
                 for j in range(c):
                     j = c - (j+1)
-                    if (ppMatrix[i][j] == 0):
+                    if pp_matrix[i][j] == 0:
                         iValue = 0
                         jValue = 0
                         if i < b-1:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < c-1:
-                            jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue,jValue)
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
         # Start code for determining correct parent
         P = self.parent()
         if P._box is None or preserve_parent or (P._box[0] == P._box[1] == P._box[2]):
-            return type(self)(P, ppMatrix, check=False)
+            return P.element_class(P, pp_matrix, check=preserve_parent)
         new_box = (P._box[2], P._box[0], P._box[1])
-        return PlanePartitions(new_box,symmetry=P._symmetry)(ppMatrix)
+        newP = PlanePartitions(new_box, symmetry=P._symmetry)
+        return newP.element_class(newP, pp_matrix)
 
     def bounding_box(self):
         r"""
@@ -1160,7 +1169,6 @@ class PlanePartition(ClonableArray,
             return (0, 0, 0)
         return (len(self), len(self[0]), self[0][0])
 
-#PP = PlanePartition
 
 class PlanePartitions(UniqueRepresentation, Parent):
     r"""
@@ -1171,53 +1179,53 @@ class PlanePartitions(UniqueRepresentation, Parent):
     ``PlanePartitions(n)`` return the class of all plane partitions with
     precisely `n` boxes.
 
-    ``PlanePartitions([a,b,c]) returns the class of plane partitions that fit
-    inside an `a \times b \times c` box.
+    ``PlanePartitions([a, b, c])`` returns the class of plane partitions
+    that fit inside an `a \times b \times c` box.
 
-    ``PlanePartitions([a,b,c])`` has the optional keyword ``symmetry``, which
+    ``PlanePartitions([a, b, c])`` has the optional keyword ``symmetry``, which
     restricts the plane partitions inside a box of the specified size satisfying
     certain symmetry conditions.
 
-    - ``symmetry = 'SPP'`` gives the class of symmetric plane partitions. which
+    - ``symmetry='SPP'`` gives the class of symmetric plane partitions. which
       is all plane partitions fixed under reflection across the diagonal.
       Requires that `a = b`.
 
-    - ``symmetry = 'CSPP'`` gives the class of cyclic plane partitions, which
+    - ``symmetry='CSPP'`` gives the class of cyclic plane partitions, which
       is all plane partitions fixed under cyclic rotation of coordinates.
       Requires that `a = b = c`.
 
-    - ``symmetry = 'TSPP'`` gives the class of totally symmetric plane partitions,
+    - ``symmetry='TSPP'`` gives the class of totally symmetric plane partitions,
       which is all plane partitions fixed under any interchanging of coordinates.
       Requires that `a = b = c`.
 
-    - ``symmetry = 'SCPP'`` gives the class of self-complementary plane partitions.
+    - ``symmetry='SCPP'`` gives the class of self-complementary plane partitions.
       which is all plane partitions that are equal to their own complement
       in the specified box. Requires at least one of `a,b,c` be even.
 
-    - ``symmetry = 'TCPP'`` gives the class of transpose complement plane partitions,
-      which is all plane partitions whose complement in the box of the specified
-      size is equal to their transpose. Requires `a = b` and at least one of
-      `a,b,c` be even.
+    - ``symmetry='TCPP'`` gives the class of transpose complement plane
+      partitions, which is all plane partitions whose complement in the box
+      of the specified size is equal to their transpose. Requires `a = b` and
+      at least one of `a, b, c` be even.
 
-    - ``symmetry = 'SSCPP'`` gives the class of symmetric self-complementary 
+    - ``symmetry='SSCPP'`` gives the class of symmetric self-complementary
       plane partitions, which is all plane partitions that are both
       symmetric and self-complementary. Requires `a = b` and at least one of
-      `a,b,c` be even.
+      `a, b, c` be even.
 
-    - ``symmetry = 'CSTCPP'`` gives the class of cyclically symmetric transpose 
+    - ``symmetry='CSTCPP'`` gives the class of cyclically symmetric transpose
       complement plane partitions, which is all plane partitions that are
       both symmetric and equal to the transpose of their complement. Requires
       `a = b = c`.
 
-    - ``symmetry = 'CSSCPP'`` gives the class of cyclically symmetric 
+    - ``symmetry='CSSCPP'`` gives the class of cyclically symmetric
       self-complementary plane partitions, which is all plane partitions that
       are both cyclically symmetric and self-complementary. Requires `a = b = c`
-      and at least one of `a,b,c` be even.
+      and all `a, b, c` be even.
 
-    - ``symmetry = 'TSSCPP'`` gives the class of totally symmetric 
+    - ``symmetry='TSSCPP'`` gives the class of totally symmetric
       self-complementary plane partitions, which is all plane partitions that
       are totally symmetric and also self-complementary. Requires `a = b = c`
-      and at least one of `a,b,c` be even.
+      and all `a, b, c` be even.
 
     EXAMPLES:
 
@@ -1243,7 +1251,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
          Plane partition [[1], [1], [1]]]
 
     If a three-element tuple or list `[a,b,c]` is passed, then the class of all
-    plane partitions that fit inside and `a\times b\times c` box is returned::
+    plane partitions that fit inside and `a \times b \times c` box is returned::
 
         sage: PlanePartitions([2,2,2])
         Plane partitions inside a 2 x 2 x 2 box
@@ -1251,7 +1259,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         True
 
     If an additional keyword ``symmetry`` is pass along with a three-element
-    tuple or list `[a,b,c]`, then the class of all plane partitions that fit
+    tuple or list `[a, b,c ]`, then the class of all plane partitions that fit
     inside an `a \times b \times c` box with the specified symmetry is returned::
 
         sage: PlanePartitions([2,2,2], symmetry='CSPP')
@@ -1274,7 +1282,6 @@ class PlanePartitions(UniqueRepresentation, Parent):
         - :class:`PlanePartitions_CSTCPP`
         - :class:`PlanePartitions_CSSCPP`
         - :class:`PlanePartitions_TSSCPP`
-
     """
     @staticmethod
     def __classcall_private__(cls, *args, **kwds):
@@ -1359,7 +1366,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: [[3,2,1],[1,2]] in PlanePartitions()
             False
             sage: [[3,2,1],[3,3]] in PlanePartitions()
-            False        
+            False
         """
         if isinstance(pp, PlanePartition):
             return True
@@ -1411,6 +1418,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         """
         return self._symmetry
 
+
 class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     r"""
     All plane partitions.
@@ -1434,7 +1442,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
         # This is so DisjointUnionEnumeratedSets can make the Parent.__init__() call.
         self._box = None
         self._symmetry = None
-        #super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
+        # super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
 
         DisjointUnionEnumeratedSets.__init__(self,
                 Family(NonNegativeIntegers(), PlanePartitions_n),
@@ -1463,31 +1471,18 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
         """
         return self.element_class(self, [[2, 1], [1]])
 
+
 class PlanePartitions_box(PlanePartitions):
     r"""
     All plane partitions that fit inside a box of a specified size.
 
     By convention, a plane partition in an `a \times b \times c` box
-    will have at most 'a' rows, of lengths at most 'b', with entries
-    at most 'c'. 
+    will have at most `a` rows, of lengths at most `b`, with entries
+    at most `c`.
     """
-#    @staticmethod
-#    def __classcall_private__(cls, box_size):
-#        """
-#        Normalize input to ensure a unique representation.
-
-#        EXAMPLES::
-
-#            sage: P1 = PlanePartitions((4,3,2))
-#            sage: P2 = PlanePartitions([4,3,2])
-#            sage: P1 is P2
-#            True
-#        """
-#        return super(PlanePartitions_box, cls).__classcall__(cls, tuple(box_size))
-
     def __init__(self, box_size):
         r"""
-        Initializes the class of plane partitions that fit in a box of a 
+        Initializes the class of plane partitions that fit in a box of a
         specified size.
 
         EXAMPLES::
@@ -1537,10 +1532,10 @@ class PlanePartitions_box(PlanePartitions):
             Finite lattice containing 8 elements
         """
         a = self._box[0]
-        b = self._box[1]    
+        b = self._box[1]
         c = self._box[2]
         from sage.combinat.posets.poset_examples import posets
-        return posets.ProductOfChains([a,b,c])
+        return posets.ProductOfChains([a, b, c])
 
     def from_order_ideal(self, I) -> PP:
         r"""
@@ -1568,32 +1563,33 @@ class PlanePartitions_box(PlanePartitions):
         """
         a = self._box[0]
         b = self._box[1]
-        ppMatrix = [[0] * (b) for i in range(a)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        # Creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        pp_matrix = [[0] * (b) for i in range(a)]
 
-        #ac format ex: [x,y,z]
-        #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
+        # ac format ex: [x,y,z]
+        # iterate through each antichain, assigning the y,z position in pp_matrix = the height of the stack (x + 1)
         for ac in A:
             x = ac[0]
             y = ac[1]
             z = ac[2]
-            ppMatrix[x][y] = (z+1)
+            pp_matrix[x][y] = z + 1
 
-        #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # For each value in current antichain, fill in the rest of the matrix by
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
         if A:
             for i in range(a):
-                i = a-(i+1)
+                i = a - (i + 1)
                 for j in range(b):
-                    j = b-(j+1)
-                    if (ppMatrix[i][j] == 0):
+                    j = b - (j + 1)
+                    if pp_matrix[i][j] == 0:
                         iValue = 0
                         jValue = 0
                         if i < a-1:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < b-1:
-                            jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue,jValue)
-        return self.element_class(self, ppMatrix)            
-        
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
+        return self.element_class(self, pp_matrix)
 
     def __iter__(self) -> Iterator:
         r"""
@@ -1660,6 +1656,7 @@ class PlanePartitions_box(PlanePartitions):
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
         return self.element_class(self, Z, check=False)
 
+
 class PlanePartitions_n(PlanePartitions):
     """
     Plane partitions with a fixed number of boxes.
@@ -1671,7 +1668,7 @@ class PlanePartitions_n(PlanePartitions):
         .. WARNING::
 
             Input is not checked; please use :class:`PlanePartitions` to
-            ensure the options are properly parsed. (CHECK: does this make sense?)
+            ensure the options are properly parsed.
 
         TESTS::
 
@@ -1701,7 +1698,7 @@ class PlanePartitions_n(PlanePartitions):
             sage: [[2,1],[1]] in PlanePartitions(3)
             False
         """
-        return PlanePartitions.__contains__(self, x) and PlanePartition(x).number_of_boxes() ==  self._n
+        return PlanePartitions.__contains__(self, x) and PlanePartition(x).number_of_boxes() == self._n
 
     def __iter__(self) -> Iterator:
         r"""
@@ -1716,7 +1713,6 @@ class PlanePartitions_n(PlanePartitions):
 
         def P_in_shape_iter(n, la):
             if n < 0 or sum(la) < n:
-                yield
                 return
             if n == 0:
                 yield []
@@ -1724,44 +1720,37 @@ class PlanePartitions_n(PlanePartitions):
             if len(la) == 1:
                 if la[0] >= n:
                     yield [n]
-                    return
-                else:
-                    yield
-                    return
+                return
             if sum(la) == n:
                 yield la
                 return
-            for mu_0 in range(min(n,la[0]),0,-1):
-                new_la = [min(mu_0,la[i]) for i in range(1,len(la))]
+            for mu_0 in range(min(n, la[0]), 0, -1):
+                new_la = [min(mu_0, la[i]) for i in range(1, len(la))]
                 for mu in P_in_shape_iter(n-mu_0, new_la):
-                    if mu is not None:
-                        yield [mu_0]+mu
+                    yield [mu_0] + mu
 
         def PP_first_row_iter(n, la):
-            m = n-sum(la)
+            m = n - sum(la)
             if m < 0:
-                yield
                 return
             if m == 0:
                 yield [la]
                 return
-            for k in range(m,0,-1):
-                for mu in P_in_shape_iter(k,la):
-                    if mu is not None:
-                        for PP in PP_first_row_iter(m, mu):
-                            if PP is not None:
-                                yield [la] + PP
+            for k in range(m, 0, -1):
+                for mu in P_in_shape_iter(k, la):
+                    for PP in PP_first_row_iter(m, mu):
+                        yield [la] + PP
 
         n = self._n
-        if n == 0:
+        if not n:
             yield PlanePartition([])
             return
 
-        for m in range(n,0,-1):
+        for m in range(n, 0, -1):
             for la in Partitions(m):
-                for a in PP_first_row_iter(n,la):
+                for a in PP_first_row_iter(n, la):
                     yield self.element_class(self, a, check=False)
-            
+
     def cardinality(self) -> Integer:
         r"""
         Return the number of plane partitions with ``n`` boxes.
@@ -1770,10 +1759,10 @@ class PlanePartitions_n(PlanePartitions):
 
         .. MATH::
 
-            PL(n) = \sum_{k=1}^n PL(n-k)\sigma_2(k)
+            PL(n) = \sum_{k=1}^n PL(n-k) \sigma_2(k),
 
-        where `\sigma_k(n)` is the sum of the kth powers of
-        divisors of n.
+        where `\sigma_k(n)` is the sum of the `k`-th powers of
+        divisors of `n`.
 
         EXAMPLES::
 
@@ -1783,10 +1772,11 @@ class PlanePartitions_n(PlanePartitions):
 
         """
         PPn = [1]
-        for i in range(1,1+self._n):
-            nextPPn = sum(PPn[i-k]*Sigma()(k,2) for k in range(1,i+1))/i
+        for i in range(1, 1+self._n):
+            nextPPn = sum(PPn[i-k] * Sigma()(k, 2) for k in range(1, i+1)) / i
             PPn.append(nextPPn)
-        return(Integer(PPn[-1]))
+        return Integer(PPn[-1])
+
 
 # Symmetry classes are enumerated and labelled in order as in Proofs and
 # Confirmations/Stanley (with all plane partitions being the first class)
@@ -1800,6 +1790,8 @@ class PlanePartitions_SPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
@@ -1836,7 +1828,9 @@ class PlanePartitions_SPP(PlanePartitions):
         """
         P = PlanePartition(x)
         max = (P._max_x, P._max_y, P._max_z)
-        return PlanePartitions.__contains__(self, x) and P.is_SPP() and all( a<=b for a,b in zip(max,self._box))
+        return (PlanePartitions.__contains__(self, x)
+                and P.is_SPP()
+                and all(a <= b for a, b in zip(max, self._box)))
 
     def to_poset(self):
         r"""
@@ -1851,19 +1845,19 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
             True
         """
-        a = self._box[0]    
+        a = self._box[0]
         c = self._box[2]
 
-        def comp(x,y):
-            return all(a <= b for a,b in zip(x, y))
+        def comp(x, y):
+            return all(a <= b for a, b in zip(x, y))
 
-        pl = [(x,y,z) for x in range(a) for y in range(x+1) for z in range(c)]
+        pl = [(x, y, z) for x in range(a) for y in range(x+1) for z in range(c)]
         from sage.combinat.posets.posets import Poset
-        return Poset((pl,comp))
+        return Poset((pl, comp))
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the symmetric plane partition corresponding to an order ideal 
+        Return the symmetric plane partition corresponding to an order ideal
         in the poset given in :meth:`to_poset()`.
 
         EXAMPLES::
@@ -1877,7 +1871,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
     def from_antichain(self, A) -> PP:
         r"""
-        Return the symmetric plane partition corresponding to an antichain 
+        Return the symmetric plane partition corresponding to an antichain
         in the poset given in :meth:`to_poset()`.
 
         EXAMPLES::
@@ -1887,35 +1881,34 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: PP.from_antichain(A)
             Plane partition [[2, 2, 1], [2, 1, 1], [1, 1, 1]]
         """
-        #Initialize an empty plane partition
+        # Initialize an empty plane partition
         a = self._box[0]
         b = self._box[1]
-        ppMatrix = [[0] * (b) for i in range(a)]
-        #Antichain indicates where the 'corners' will be in the
-        #plane partition
+        pp_matrix = [[0] * (b) for i in range(a)]
+        # Antichain indicates where the 'corners' will be in the plane partition
         for ac in A:
             x = ac[0]
             y = ac[1]
             z = ac[2]
-            ppMatrix[x][y] = z + 1
-        #Fill out the rest of the plane partition using symmetry and the
-        #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
+            pp_matrix[x][y] = z + 1
+        # Fill out the rest of the plane partition using symmetry and the
+        # rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
         if A:
             for i in range(a):
-                i = a-(i+1)
+                i = a - (i + 1)
                 for j in range(b):
-                    j = b-(j+1)
-                    if ppMatrix[i][j] == 0 and i >= j:
+                    j = b - (j + 1)
+                    if pp_matrix[i][j] == 0 and i >= j:
                         iValue = 0
                         jValue = 0
                         if i < a - 1:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < b - 1:
-                            jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue, jValue)
-                    elif j>i:
-                        ppMatrix[i][j] = ppMatrix[j][i]
-        return self.element_class(self, ppMatrix)
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
+                    elif j > i:
+                        pp_matrix[i][j] = pp_matrix[j][i]
+        return self.element_class(self, pp_matrix)
 
     def __iter__(self) -> Iterator:
         """
@@ -1941,8 +1934,8 @@ class PlanePartitions_SPP(PlanePartitions):
 
         .. MATH::
 
-            \left(\prod_{i=1}^{a} \frac{2i + b - 1}{2i - 1}\right) 
-            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+b-1}{i+j-1}\right)
+            \left(\prod_{i=1}^{a} \frac{2i + b - 1}{2i - 1}\right)
+            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+b-1}{i+j-1}\right).
 
         EXAMPLES::
 
@@ -1952,11 +1945,11 @@ class PlanePartitions_SPP(PlanePartitions):
         """
         a = self._box[0]
         c = self._box[2]
-        leftProduct = (prod( (2*i + c - 1) / (2*i - 1) for i in range(1,a+1)))
-        rightProduct = (prod( (i + j + c - 1) / (i + j - 1) 
-                        for j in range(1, a+1) 
-                        for i in range(1, j) ))
-        return Integer(leftProduct * rightProduct)
+        left_prod = prod((2*i + c - 1) / (2*i - 1) for i in range(1, a+1))
+        right_prod = prod((i + j + c - 1) / (i + j - 1)
+                          for j in range(1, a+1)
+                          for i in range(1, j))
+        return Integer(left_prod * right_prod)
 
     def random_element(self) -> PP:
         r"""
@@ -1988,8 +1981,10 @@ class PlanePartitions_CSPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
-    
+
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
             sage: TestSuite(PP).run()
             sage: PlanePartitions([4,3,2], symmetry='CSPP')
@@ -1998,7 +1993,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             ValueError: x, y, and z dimensions (4,3,2) must all be equal
         """
         if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(*box_size))
         super().__init__(box_size, "CSPP", category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -2024,11 +2019,13 @@ class PlanePartitions_CSPP(PlanePartitions):
         """
         P = PlanePartition(x)
         max = (P._max_x, P._max_y, P._max_z)
-        return PlanePartitions.__contains__(self, x) and P.is_CSPP() and all( a<=b for a,b in zip(max,self._box))
+        return (PlanePartitions.__contains__(self, x)
+                and P.is_CSPP()
+                and all(a <= b for a, b in zip(max, self._box)))
 
     def to_poset(self):
         """
-        Return a partially ordered set whose order ideals are in bijection with 
+        Return a partially ordered set whose order ideals are in bijection with
         cyclically symmetric plane partitions.
 
         EXAMPLES::
@@ -2037,7 +2034,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             sage: PP.to_poset()
             Finite poset containing 11 elements
             sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()
-            True 
+            True
         """
         a = self._box[0]
         b = self._box[1]
@@ -2047,16 +2044,16 @@ class PlanePartitions_CSPP(PlanePartitions):
             return all(a <= b for a, b in zip(x, y))
 
         def comp2(x, y):
-            return(comp(x, y) or comp(x, (y[2],y[0],y[1])) or comp(x, (y[1],y[2],y[0])))
+            return comp(x, y) or comp(x, (y[2], y[0], y[1])) or comp(x, (y[1], y[2], y[0]))
 
-        pl = [(x,y,z) for x in range(a) for y in range(b) for z in range(x,c)
+        pl = [(x, y, z) for x in range(a) for y in range(b) for z in range(x, c)
               if y <= z  and (x != z or y == x)]
         from sage.combinat.posets.posets import Poset
         return Poset((pl, comp2))
 
     def from_antichain(self, acl) -> PP:
         r"""
-        Return the cyclically symmetric plane partition corresponding to an 
+        Return the cyclically symmetric plane partition corresponding to an
         antichain in the poset given in :meth:`to_poset()`.
 
         EXAMPLES::
@@ -2068,45 +2065,46 @@ class PlanePartitions_CSPP(PlanePartitions):
         """
         b = self._box[1]
         c = self._box[2]
-        ppMatrix = [[0] * (c) for i in range(b)] 
-        #creates a matrix for the plane partition populated by 0s 
-        #EX: [[0,0,0], [0,0,0], [0,0,0]]
-        #ac format ex: [x,y,z]
+        pp_matrix = [[0] * (c) for i in range(b)]
+        # creates a matrix for the plane partition populated by 0s
+        # EX: [[0,0,0], [0,0,0], [0,0,0]]
+        # ac format ex: [x,y,z]
         for ac in acl:
             x = ac[0]
             y = ac[1]
             z = ac[2]
-            ppMatrix[y][z] = (x+1)
-            ppMatrix[z][x] = (y+1)
-            ppMatrix[x][y] = (z+1)
+            pp_matrix[y][z] = (x+1)
+            pp_matrix[z][x] = (y+1)
+            pp_matrix[x][y] = (z+1)
 
-        #for each value in current antichain, fill in the rest of the 
-        #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
-        #now in plane partition format
+        # For each value in current antichain, fill in the rest of the
+        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is
+        # now in plane partition format.
         if acl != []:
             for i in range(b):
                 i = b - (i + 1)
                 for j in range(c):
                     j = c - (j + 1)
-                    if ppMatrix[i][j] == 0:
+                    if pp_matrix[i][j] == 0:
                         iValue = 0
                         jValue = 0
                         if i < b - 1:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < c - 1:
-                            jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue, jValue)
-        return self.element_class(self, ppMatrix)
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
+        return self.element_class(self, pp_matrix)
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding 
+        Return the cylically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: I = [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1), (0, 1, 2), (1, 0, 2), (0, 2, 2), (1, 1, 1), (1, 1, 2), (1, 2, 2)]
+            sage: I = [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1), (0, 1, 2),
+            ....:      (1, 0, 2), (0, 2, 2), (1, 1, 1), (1, 1, 2), (1, 2, 2)]
             sage: PP.from_order_ideal(I)
             Plane partition [[3, 3, 3], [3, 3, 3], [3, 3, 2]]
         """
@@ -2120,7 +2118,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         This uses the
         :meth:`~sage.combinat.posets.posets.FinitePoset.random_order_ideal`
-        method and the natural bijection between cyclically symmetric plane 
+        method and the natural bijection between cyclically symmetric plane
         partitions and order ideals in an associated poset.
 
         EXAMPLES::
@@ -2130,7 +2128,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             Plane partition [[3, 2, 2], [3, 1], [1, 1]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
-        return self.element_class(self, Z, check=False)  
+        return self.element_class(self, Z, check=False)
 
     def __iter__(self) -> Iterator:
         """
@@ -2152,13 +2150,13 @@ class PlanePartitions_CSPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of cyclically symmetric plane partitions inside an 
+        The number of cyclically symmetric plane partitions inside an
         `a \times a \times a` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=1}^{a} \frac{3i - 1}{3i - 2}\right)  
-            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+a-1}{2i+j-1}\right)
+            \left(\prod_{i=1}^{a} \frac{3i - 1}{3i - 2}\right)
+            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+a-1}{2i+j-1}\right).
 
         EXAMPLES::
 
@@ -2167,15 +2165,14 @@ class PlanePartitions_CSPP(PlanePartitions):
             132
         """
         a = self._box[0]
-        numerator = prod(3*i-1 
-                    for i in range(1, a+1)) * prod( (i+j+a-1) 
-                    for j in range(1,a+1) 
-                    for i in range(1,j+1))
-        denominator = prod(3*i-2 
-                      for i in range(1, a+1)) * prod( (2*i+j-1) 
-                      for j in range(1,a+1) 
-                      for i in range(1,j+1))
-        return Integer(numerator/denominator)
+        numerator = (prod(3*i - 1 for i in range(1, a+1))
+                     * prod(i + j + a - 1 for j in range(1, a+1)
+                            for i in range(1, j+1)))
+        denominator = (prod(3*i - 2 for i in range(1, a+1))
+                       * prod(2*i + j - 1 for j in range(1, a+1)
+                              for i in range(1, j+1)))
+        return Integer(numerator // denominator)
+
 
 # Class 4
 # Totally Symmetric Plane Partitions
@@ -2186,6 +2183,8 @@ class PlanePartitions_TSPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
@@ -2223,7 +2222,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         P = PlanePartition(x)
         maxval = (P._max_x, P._max_y, P._max_z)
         return (PlanePartitions.__contains__(self, x) and P.is_TSPP()
-                and all(a <= b for a,b in zip(maxval, self._box)))
+                and all(a <= b for a, b in zip(maxval, self._box)))
 
     def to_poset(self):
         r"""
@@ -2242,17 +2241,17 @@ class PlanePartitions_TSPP(PlanePartitions):
         b = self._box[1]
         c = self._box[2]
 
-        def comp(x,y):
+        def comp(x, y):
             return all(a <= b for a, b in zip(x, y))
 
-        pl = [(x,y,z) for x in range(a) for y in range(x, b) for z in range(y, c)]
+        pl = [(x, y, z) for x in range(a) for y in range(x, b) for z in range(y, c)]
         from sage.combinat.posets.posets import Poset
-        return Poset((pl,comp))
+        return Poset((pl, comp))
 
     def from_antichain(self, acl) -> PP:
         r"""
-        Return the totally symmetric plane partition corresponding to an antichain 
-        in the poset given in :meth:`to_poset()`.
+        Return the totally symmetric plane partition corresponding to an
+        antichain in the poset given in :meth:`to_poset()`.
 
         EXAMPLES::
 
@@ -2263,41 +2262,41 @@ class PlanePartitions_TSPP(PlanePartitions):
         """
         b = self._box[1]
         c = self._box[2]
-        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane 
-        #partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        pp_matrix = [[0] * (c) for i in range(b)]  # creates a matrix for the plane
+        # partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
         for ac in acl:
             x = ac[0]
             y = ac[1]
             z = ac[2]
 
-            ppMatrix[y][z] = x + 1 #x,y,z
-            ppMatrix[z][x] = y + 1 #y,z,x
-            ppMatrix[x][y] = z + 1 #z,x,y
+            pp_matrix[y][z] = x + 1  # x,y,z
+            pp_matrix[z][x] = y + 1  # y,z,x
+            pp_matrix[x][y] = z + 1  # z,x,y
 
-            ppMatrix[z][y] = x + 1 #x,z,y
-            ppMatrix[x][z] = y + 1 #y,x,z
-            ppMatrix[y][x] = z + 1 #z,y,x
+            pp_matrix[z][y] = x + 1  # x,z,y
+            pp_matrix[x][z] = y + 1  # y,x,z
+            pp_matrix[y][x] = z + 1  # z,y,x
 
-        #for each value in current antichain, fill in the rest of the matrix by
-        #rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # for each value in current antichain, fill in the rest of the matrix by
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
         if acl != []:
             for i in range(b):
                 i = b - (i + 1)
                 for j in range(c):
                     j = c - (j + 1)
-                    if ppMatrix[i][j] == 0:
+                    if pp_matrix[i][j] == 0:
                         iValue = 0
                         jValue = 0
                         if i < b - 1:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < c - 1:
-                            jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue, jValue)
-        return self.element_class(self, ppMatrix)
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
+        return self.element_class(self, pp_matrix)
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the totally symmetric plane partition corresponding 
+        Return the totally symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::
@@ -2307,7 +2306,7 @@ class PlanePartitions_TSPP(PlanePartitions):
             sage: PP.from_order_ideal(I)
             Plane partition [[3, 2, 1], [2, 1], [1]]
         """
-        return self.from_antichain(self.to_poset().order_ideal_generators(I)) 
+        return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
     def __iter__(self) -> Iterator:
         """
@@ -2329,12 +2328,12 @@ class PlanePartitions_TSPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of totally symmetric plane partitions inside an 
+        The number of totally symmetric plane partitions inside an
         `a \times a \times a` box is equal to
 
         .. MATH::
 
-            \prod_{1 \leq i \leq j \leq a} \frac{i+j+a-1}{i+2j-2}
+            \prod_{1 \leq i \leq j \leq a} \frac{i+j+a-1}{i+2j-2}.
 
         EXAMPLES::
 
@@ -2343,7 +2342,9 @@ class PlanePartitions_TSPP(PlanePartitions):
             66
         """
         a = self._box[0]
-        return Integer(prod((i + j + a - 1) / (i + 2*j - 2) for j in range(1,a+1) for i in range(1,j+1) ))
+        return Integer(prod((i + j + a - 1) / (i + 2*j - 2)
+                            for j in range(1, a+1) for i in range(1, j+1)))
+
 
 # Class 5
 # Self-complementary Plane Partitions
@@ -2354,6 +2355,8 @@ class PlanePartitions_SCPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
 
             sage: PP = PlanePartitions([4,3,2], symmetry='SCPP')
@@ -2364,7 +2367,7 @@ class PlanePartitions_SCPP(PlanePartitions):
             ValueError: dimensions (5,3,1) cannot all be odd
         """
         if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-            raise ValueError("dimensions ({},{},{}) cannot all be odd".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("dimensions ({},{},{}) cannot all be odd".format(*box_size))
         super().__init__(box_size, "SCPP", category=FiniteEnumeratedSets())
 
     def __contains__(self, x) -> bool:
@@ -2380,9 +2383,9 @@ class PlanePartitions_SCPP(PlanePartitions):
             sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='SCPP')
             False
         """
-        #P = PlanePartitions(self._box)(x)
-        #max = (P._max_x, P._max_y, P._max_z)
-        #return PlanePartitions.__contains__(self, x) and P.is_SCPP() and all( a<=b for a,b in zip(max,self._box))
+        # P = PlanePartitions(self._box)(x)
+        # max = (P._max_x, P._max_y, P._max_z)
+        # return PlanePartitions.__contains__(self, x) and P.is_SCPP() and all( a<=b for a,b in zip(max,self._box))
         return x in PlanePartitions(self._box) and PlanePartitions(self._box)(x).is_SCPP()
 
     def _repr_(self) -> str:
@@ -2414,55 +2417,54 @@ class PlanePartitions_SCPP(PlanePartitions):
         c = self._box[2]
 
         def Partitions_inside_lambda(la):
-            "Return the list of partitions contained in la with the same number of parts including 0s."
+            "Iterate over all partitions contained in la with the same number of parts including 0s."
             if not la:
                 yield []
                 return
-            for mu_0 in range(la[0],0,-1):
-                new_la = [min(mu_0,la[i]) for i in range(1,len(la))]
+            for mu_0 in range(la[0], 0, -1):
+                new_la = [min(mu_0, la[i]) for i in range(1, len(la))]
                 for mu in Partitions_inside_lambda(new_la):
                     yield [mu_0] + mu
             yield [0] * len(la)
             return
 
-        def Partitions_inside_lambda_with_smallest_at_least_k(la,k):
-            "Return the list of partitions contained in la with the smallest entry at least k"
+        def Partitions_inside_lambda_with_smallest_at_least_k(la, k):
+            "Iterate over all partitions contained in la with the smallest entry at least k."
             if not la:
                 yield []
                 return
             if la[-1] < k:
                 yield
                 return
-
             for mu in Partitions_inside_lambda([val-k for val in la]):
                 yield [mu[i] + k for i in range(len(la))]
             return
 
-        def possible_middle_row_for_b_odd(a,c):
-            "Return the list of possible middle row for SCPP inside box(a,b,c) when b is odd"
+        def possible_middle_row_for_b_odd(a, c):
+            "Iterate over all possible middle row for SCPP inside box(a,b,c) when b is odd."
             if a * c % 2 == 1:
                 yield
                 return
-            for mu in Partitions_inside_lambda([floor(c/2) for i in range(floor(a/2))]):
-                nu = [c-mu[len(mu)-1-i] for i in range(len(mu))]
-                if a % 2 == 0:
+            for mu in Partitions_inside_lambda([c // 2 for i in range(a // 2)]):
+                nu = [c - mu[len(mu)-1-i] for i in range(len(mu))]
+                if not a % 2:
                     la = nu + mu
                 else:
-                    la = nu + [c/2] + mu
+                    la = nu + [c//2] + mu
                 yield la
             return
 
-        def possible_middle_row_for_b_even(a,c):
-            "Return the list of possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even"
-            for mu in Partitions_inside_lambda([floor(c/2) for i in range(floor((a+1)/2))]):
-                nu = [c - mu[len(mu)-1-i] for i in range(floor(a/2))]
-                for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu,mu[0]):
+        def possible_middle_row_for_b_even(a, c):
+            "Iterate over all possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even."
+            for mu in Partitions_inside_lambda([c // 2 for i in range((a+1) // 2)]):
+                nu = [c - mu[len(mu)-1-i] for i in range(a // 2)]
+                for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu, mu[0]):
                     la = tau + mu
-                    yield (la)
+                    yield la
             return
 
-        def PPs_with_first_row_la_and_with_k_rows(la,k):
-            "Return PPs with first row la and with k rows in total"
+        def PPs_with_first_row_la_and_with_k_rows(la, k):
+            "Iterate over PPs with first row la and with k rows in total."
             if k == 0:
                 yield []
                 return
@@ -2471,26 +2473,26 @@ class PlanePartitions_SCPP(PlanePartitions):
                 return
             for mu in Partitions_inside_lambda(la):
                 for PP in PPs_with_first_row_la_and_with_k_rows(mu, k-1):
-                    yield ([la]+PP)
+                    yield [la] + PP
             return
 
-        def complement(PP,c):
+        def complement(PP, c):
             "Return the complement of PP with respect to height c"
-            if len(PP) == 0:
-                return []
             b = len(PP)
+            if not b:
+                return []
             a = len(PP[0])
-            return [[c-PP[b-1-i][a-1-j] for j in range(a)] for i in range(b)]
+            return [[c - PP[b-1-i][a-1-j] for j in range(a)] for i in range(b)]
 
         if b % 2 == 1:
             for la in possible_middle_row_for_b_odd(a, c):   # la is the middle row of SCPP
-                for PP in PPs_with_first_row_la_and_with_k_rows(la, (b+1)//2):
+                for PP in PPs_with_first_row_la_and_with_k_rows(la, (b+1) // 2):
                     PP_below = PP[1:]
                     PP_above = complement(PP_below, c)
                     yield self.element_class(self, PP_above + [la] + PP_below)
         else:
-            for la in possible_middle_row_for_b_even(a,c):   # la is the middle ((a/2)+1)st row of SCPP
-                for PP in PPs_with_first_row_la_and_with_k_rows(la, b//2):
+            for la in possible_middle_row_for_b_even(a, c):  # la is the middle ((a/2)+1)st row of SCPP
+                for PP in PPs_with_first_row_la_and_with_k_rows(la, b // 2):
                     PP_below = PP
                     PP_above = complement(PP_below, c)
                     yield self.element_class(self, PP_above + PP_below)
@@ -2500,28 +2502,29 @@ class PlanePartitions_SCPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of self complementary plane partitions inside a 
+        The number of self complementary plane partitions inside a
         `2a \times 2b \times 2c` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=1}^{r}\prod_{j=1}^{b} \frac{i + j + c - 1}{i + j - 1}\right)^2.
+            \left(\prod_{i=1}^{r}\prod_{j=1}^{b}
+            \frac{i + j + c - 1}{i + j - 1}\right)^2.
 
-        The number of self complementary plane partitions inside an 
+        The number of self complementary plane partitions inside an
         `(2a+1) \times 2b \times 2c` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=1}^{a}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
-            \left(\prod_{i=1}^{a+1}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right).
+            \left(\prod_{i=1}^{a} \prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
+            \left(\prod_{i=1}^{a+1} \prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right).
 
-        The number of self complementary plane partitions inside an 
+        The number of self complementary plane partitions inside an
         `(2a+1) \times (2b+1) \times 2c` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=1}^{a+1}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
-            \left(\prod_{i=1}^{a}\prod_{j=1}^{b+1} \frac{i+j+c-1}{i+j-1} \right).
+            \left(\prod_{i=1}^{a+1} \prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
+            \left(\prod_{i=1}^{a} \prod_{j=1}^{b+1} \frac{i+j+c-1}{i+j-1} \right).
 
         EXAMPLES::
 
@@ -2559,29 +2562,29 @@ class PlanePartitions_SCPP(PlanePartitions):
                 if t % 2 == 0:
                     T = t // 2
                     return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+1))
+                                        for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                    * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+1)))
+                                          for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1)))
                 else:
                     T = (t-1) // 2
                     return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+1))
+                                        for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                    * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+2)))
+                                          for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
             else:
                 S = (s-1) // 2
                 if t % 2 == 0:
                     T = t // 2
                     return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+1))
+                                        for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                    * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1,R+1) for j in range(1,S+2) for k in range(1,T+1)))
+                                          for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1)))
                 else:
                     T = (t-1) // 2
                     return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1,R+1) for j in range(1,S+2) for k in range(1,T+1))
+                                        for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1))
                                    * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+2)))
+                                          for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
         # r is odd
         R = (r-1) // 2
         if s % 2 == 0:
@@ -2589,26 +2592,27 @@ class PlanePartitions_SCPP(PlanePartitions):
             if t % 2 == 0:
                 T = t // 2
                 return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                    for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+1))
+                                    for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                      for i in range(1,R+2) for j in range(1,S+1) for k in range(1,T+1)))
+                                      for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1)))
             else:
                 T = (t-1) // 2
                 return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                    for i in range(1,R+2) for j in range(1,S+1) for k in range(1,T+1))
+                                    for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1))
                                * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                      for i in range(1,R+1) for j in range(1,S+1) for k in range(1,T+2)))
+                                      for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
         # r and s are both odd
         S = (s-1) // 2
         if t % 2 == 0:
             T = t // 2
             return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                for i in range(1,R+2) for j in range(1,S+1) for k in range(1,T+1))
+                                for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1))
                            * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                  for i in range(1,R+1) for j in range(1,S+2) for k in range(1,T+1)))
+                                  for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1)))
 
         # Should never reach here as r, s, t are all odd, which the constructor should reject
         return Integer(0)
+
 
 # Class 6
 # Transpose-complement Plane Partitions
@@ -2619,8 +2623,10 @@ class PlanePartitions_TCPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
-    
+
             sage: PP = PlanePartitions([3,3,2], symmetry='TCPP')
             sage: TestSuite(PP).run()
 
@@ -2634,10 +2640,10 @@ class PlanePartitions_TCPP(PlanePartitions):
             ...
             ValueError: x and y dimensions (4 and 3) must be equal
         """
-        if (box_size[2] % 2 == 1):
+        if box_size[2] % 2 == 1:
             raise ValueError("z dimension ({}) must be even".format(box_size[2]))
         if box_size[0] != box_size[1]:
-            raise ValueError("x and y dimensions ({} and {}) must be equal".format(box_size[0],box_size[1]))
+            raise ValueError("x and y dimensions ({} and {}) must be equal".format(box_size[0], box_size[1]))
         super().__init__(box_size, "TCPP", category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -2665,19 +2671,20 @@ class PlanePartitions_TCPP(PlanePartitions):
         """
         for p in PlanePartitions(self._box):
             if p.is_TCPP():
-                yield self.element_class(self,p)
+                yield self.element_class(self, p)
         return
 
     def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
-        The number of transpose complement plane partitions inside an 
+        The number of transpose complement plane partitions inside an
         `a \times a \times 2b` box is equal to
 
         .. MATH::
 
-            \binom{b+1-1}{a-1}\prod_{1\leq i,j \leq a-2} \frac{i + j + 2b - 1}{i + j - 1}
+            \binom{b+1-1}{a-1} \prod_{1\leq i,j \leq a-2}
+            \frac{i + j + 2b - 1}{i + j - 1}.
 
         EXAMPLES::
 
@@ -2687,7 +2694,10 @@ class PlanePartitions_TCPP(PlanePartitions):
         """
         a = self._box[0]
         c = self._box[2]
-        return Integer(binomial(c/2+a-1, a-1) * prod((c + i + j + 1)/(i + j + 1) for j in range(1,1+a-2) for i in range(1,1+j)))
+        return Integer(binomial(c//2 + a - 1, a - 1)
+                       * prod((c + i + j + 1) / (i + j + 1)
+                              for j in range(1, 1+a-2) for i in range(1, 1+j)))
+
 
 # Class 7
 # Symmetric Self-complementary Plane Partitions
@@ -2698,20 +2708,22 @@ class PlanePartitions_SSCPP(PlanePartitions):
     """
     def __init__(self, box_size):
         """
+        Initialize ``self``.
+
         TESTS::
 
-            sage: PP = PlanePartitions([2,2,4], symmetry='SSCPP')
+            sage: PP = PlanePartitions([2, 2, 4], symmetry='SSCPP')
             sage: TestSuite(PP).run()
 
-            sage: PP = PlanePartitions([4,4,2], symmetry='SSCPP')
+            sage: PP = PlanePartitions([4, 4, 2], symmetry='SSCPP')
             sage: TestSuite(PP).run()  # long time
 
-            sage: PlanePartitions([4,2,2], symmetry='SSCPP')
+            sage: PlanePartitions([4, 2, 2], symmetry='SSCPP')
             Traceback (most recent call last):
             ...
             ValueError: x and y dimensions (4 and 2) must be equal
 
-            sage: PlanePartitions([4,4,3], symmetry='SSCPP')
+            sage: PlanePartitions([4, 4, 3], symmetry='SSCPP')
             Traceback (most recent call last):
             ...
             ValueError: z dimension (3) must be even
@@ -2726,7 +2738,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         EXAMPLES::
 
-            sage: PlanePartitions([4,4,2], symmetry='SSCPP')
+            sage: PlanePartitions([4, 4, 2], symmetry='SSCPP')
             Symmetric self-complementary plane partitions inside a 4 x 4 x 2 box
         """
         return "Symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
@@ -2748,25 +2760,25 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         for p in PlanePartitions(self._box):
             if p.is_SSCPP():
-                yield self.element_class(self,p)
+                yield self.element_class(self, p)
 
     def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
-        The number of symmetric self-complementary plane partitions inside a 
+        The number of symmetric self-complementary plane partitions inside a
         `2a \times 2a \times 2b` box is equal to
 
         .. MATH::
 
-            \prod_{i=1}^{a}\prod_{j=1}^{a} \frac{i + j + b - 1}{i + j - 1}.
+            \prod_{i=1}^a \prod_{j=1}^a \frac{i + j + b - 1}{i + j - 1}.
 
-        The number of symmetric self-complementary plane partitions inside a 
+        The number of symmetric self-complementary plane partitions inside a
         `(2a+1) \times (2a+1) \times 2b` box is equal to
 
         .. MATH::
 
-            \prod_{i=1}^{a}\prod_{j=1}^{a+1} \frac{i + j + b - 1}{i + j - 1}.
+            \prod_{i=1}^a \prod_{j=1}^{a+1} \frac{i + j + b - 1}{i + j - 1}.
 
         EXAMPLES::
 
@@ -2779,13 +2791,14 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         a = self._box[0]
         c = self._box[2]
-        return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) 
-                        for i in range(1,1+floor(a/2)) 
-                        for j in range(1,1+ceil(a/2)) 
-                        for k in range(1,1+c/2))))
+        return Integer(prod(Integer(i + j + k - 1) / Integer(i + j + k - 2)
+                            for i in range(1, 1+a//2)
+                            for j in range(1, 1+ceil(a/2))
+                            for k in range(1, 1+c//2)))
+
 
 # Class 8
-#Cyclically Symmetric Transpose-complement Partitions
+# Cyclically Symmetric Transpose-complement Partitions
 class PlanePartitions_CSTCPP(PlanePartitions):
     r"""
     Plane partitions that fit inside a box of a specified size that are
@@ -2809,9 +2822,9 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             ValueError: x, y, and z dimensions (3,3,3) must all be even
         """
         if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(*box_size))
         if box_size[0] % 2 == 1:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(*box_size))
         super().__init__(box_size, "CSTPP", category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -2835,18 +2848,18 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         """
         for p in PlanePartitions(self._box):
             if p.is_CSTCPP():
-                yield self.element_class(self,p)
+                yield self.element_class(self, p)
 
     def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
-        The number of cyclically symmetric transpose complement plane partitions 
+        The number of cyclically symmetric transpose complement plane partitions
         inside a `2a \times 2a \times 2a` box is equal to
 
         .. MATH::
 
-            \prod_{i=0}^{a-1} \frac{(3i+1)(6i)!(2i)!}{(4i+1)!(4i)!}
+            \prod_{i=0}^{a-1} \frac{(3i+1)(6i)!(2i)!}{(4i+1)!(4i)!}.
 
         EXAMPLES::
 
@@ -2857,6 +2870,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         a = self._box[0] // 2
         return Integer(prod((3*i+1) * factorial(6*i) * factorial(2*i) / (factorial(4*i+1) * factorial(4*i)) for i in range(a)))
 
+
 # Class 9
 # Cyclically Symmetric Self-complementary Plane Partitions
 class PlanePartitions_CSSCPP(PlanePartitions):
@@ -2865,9 +2879,11 @@ class PlanePartitions_CSSCPP(PlanePartitions):
     cyclically symmetric self-complementary.
     """
     def __init__(self, box_size):
-        """
+        r"""
+        Initialize ``self``.
+
         TESTS::
-    
+
             sage: PP = PlanePartitions([2,2,2], symmetry='CSSCPP')
             sage: TestSuite(PP).run()
             sage: PlanePartitions([4,3,2], symmetry='CSSCPP')
@@ -2880,9 +2896,9 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             ValueError: x, y, and z dimensions (3,3,3) must all be even
         """
         if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(*box_size))
         if box_size[0] % 2 == 1:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(*box_size))
         super().__init__(box_size, "CSSCPP", category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -2906,18 +2922,18 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         """
         for p in PlanePartitions(self._box):
             if p.is_CSSCPP():
-                yield self.element_class(self,p)
+                yield self.element_class(self, p)
 
     def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
-        The number of cyclically symmetric self-complementary plane partitions 
+        The number of cyclically symmetric self-complementary plane partitions
         inside a `2a \times 2a \times 2a` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!}\right)^2
+            \left( \prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!} \right)^2.
 
         EXAMPLES::
 
@@ -2927,6 +2943,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         """
         a = self._box[0] // 2
         return Integer(prod(factorial(3*i+1)**2 / factorial(a+i)**2 for i in range(a)))
+
 
 # Class 10
 # Totally Symmetric Self-complementary Plane Partitions
@@ -2951,9 +2968,9 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             ValueError: x, y, and z dimensions (3,3,3) must all be even
         """
         if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be equal".format(*box_size))
         if box_size[0] % 2 == 1:
-            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(box_size[0],box_size[1],box_size[2]))
+            raise ValueError("x, y, and z dimensions ({},{},{}) must all be even".format(*box_size))
         super().__init__(box_size, "TSSCPP", category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -2990,13 +3007,13 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             return all(xx <= yy for xx, yy in zip(x, y))
 
         A = a // 2
-        pl = [(x,y,z) for x in range(A-1) for y in range(x, A-1)
+        pl = [(x, y, z) for x in range(A-1) for y in range(x, A-1)
               for z in range(A-1) if z <= A - 2 - y]
         return Poset((pl, comp))
-        
+
     def from_antichain(self, acl) -> PP:
         r"""
-        Return the totally symmetric self-complementary plane partition 
+        Return the totally symmetric self-complementary plane partition
         corresponding to an antichain in the poset given in :meth:`to_poset()`.
 
         EXAMPLES::
@@ -3006,15 +3023,15 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             sage: PP.from_antichain(A)
             Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 4, 3, 1], [6, 5, 4, 3, 2, 1], [5, 4, 3, 2, 1], [5, 3, 2, 1, 1], [3, 1, 1]]
         """
-        #ac format ex: [x,y,z]
+        # ac format ex: [x,y,z]
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
         n = a
         N = n // 2
-        ppMatrix = [[0] * (c) for i in range(b)] 
-        #creates a matrix for the plane parition populated by 0s 
-        #EX: [[0,0,0], [0,0,0], [0,0,0]]
+        pp_matrix = [[0] * (c) for i in range(b)]
+        # creates a matrix for the plane parition populated by 0s
+        # EX: [[0,0,0], [0,0,0], [0,0,0]]
         width = N - 1
         height = N - 1
 
@@ -3025,9 +3042,9 @@ class PlanePartitions_TSSCPP(PlanePartitions):
                 for ac in acl:
                     if ac[0] == i and ac[1] == j:
                         zVal = ac[2]
-                        matrixVal = ppMatrix[j+N][i+N]
+                        matrixVal = pp_matrix[j+N][i+N]
                         if zVal + 1 > matrixVal:
-                            ppMatrix[j+N][i+N] = zVal + 1
+                            pp_matrix[j+N][i+N] = zVal + 1
 
         # fill back
         for i in range(width):
@@ -3036,62 +3053,62 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             for j in range(height):
                 j = height - (j + 1)
                 j = j + N
-                if ppMatrix[i][j] == 0:
+                if pp_matrix[i][j] == 0:
                     if i >= j:
                         iValue = 0
                         jValue = 0
                         if i < n:
-                            iValue = ppMatrix[i+1][j]
+                            iValue = pp_matrix[i+1][j]
                         if j < n:
-                           jValue = ppMatrix[i][j+1]
-                        ppMatrix[i][j] = max(iValue,jValue)
+                            jValue = pp_matrix[i][j+1]
+                        pp_matrix[i][j] = max(iValue, jValue)
 
-        #fill half of triangle symmetrically
+        # fill half of triangle symmetrically
         for i in range(width):
             i += N
             for j in range(height):
                 j += N
                 if i >= j:
-                    ppMatrix[j][i] = ppMatrix[i][j]
+                    pp_matrix[j][i] = pp_matrix[i][j]
 
-        #upper left box
+        # upper left box
         for i in range(N):
             for j in range(N):
-                ppMatrix[i][j] = n - ppMatrix[n-(i+1)][n-(j+1)]
+                pp_matrix[i][j] = n - pp_matrix[n-(i+1)][n-(j+1)]
 
-        #fill in lower left cube with values n/2
+        # fill in lower left cube with values n/2
         for i in range(N):
             for j in range(N):
                 x = i
                 y = j
-                if ppMatrix[x][y+N] == 0:
-                    ppMatrix[x][y+N] = N
-                if ppMatrix[x+N][y] == 0:
-                    ppMatrix[x+N][y] = N
+                if pp_matrix[x][y+N] == 0:
+                    pp_matrix[x][y+N] = N
+                if pp_matrix[x+N][y] == 0:
+                    pp_matrix[x+N][y] = N
 
-        #add and subtract values from lower left cube to be rotation of lower right cube
+        # add and subtract values from lower left cube to be rotation of lower right cube
         for i in range(N):
             for j in range(N):
                 x = i + N
                 y = j + N
-                if ppMatrix[x][y] > 0:
-                    z = ppMatrix[x][y]
+                if pp_matrix[x][y] > 0:
+                    z = pp_matrix[x][y]
                     for cVal in range(z):
-                        #build onto lower left cube
-                        ppMatrix[x][0+cVal] += 1
-                        #carve out of lower left cube
-                        ppMatrix[n-(1+cVal)][N-(j+1)] -= 1
+                        # build onto lower left cube
+                        pp_matrix[x][0+cVal] += 1
+                        # carve out of lower left cube
+                        pp_matrix[n-(1+cVal)][N-(j+1)] -= 1
 
-        #fill in upper right cube symmetrically with lower left
+        # fill in upper right cube symmetrically with lower left
         for i in range(N):
             for j in range(N):
-                ppMatrix[j][i+N] = ppMatrix[i+N][j]
-        return self.element_class(self, ppMatrix)
+                pp_matrix[j][i+N] = pp_matrix[i+N][j]
+        return self.element_class(self, pp_matrix)
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the totally symmetric self-complementary plane partition corresponding 
-        to an order ideal in the poset given in :meth:`to_poset`.
+        Return the totally symmetric self-complementary plane partition
+        corresponding to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::
 
@@ -3120,7 +3137,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of totally symmetric self-complementary plane partitions 
+        The number of totally symmetric self-complementary plane partitions
         inside a `2a \times 2a \times 2a` box is equal to
 
         .. MATH::
@@ -3135,4 +3152,3 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         """
         a = self._box[0] // 2
         return Integer(prod(factorial(3*i+1) / factorial(a+i) for i in range(a)))
-
