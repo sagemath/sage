@@ -8,6 +8,7 @@ Colored Permutations
 """
 import itertools
 
+from collections.abc import Iterable
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1361,7 +1362,7 @@ class SignedPermutations(ColoredPermutations):
             True
 
         """
-        if isinstance(x, list) or isinstance(x, range):
+        if isinstance(x, Iterable):
             if x and isinstance(x[0], tuple):
                 c = []
                 p = []
