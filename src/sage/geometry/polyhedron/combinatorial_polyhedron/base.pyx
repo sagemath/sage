@@ -102,9 +102,8 @@ from .conversions \
 from .conversions cimport Vrep_list_to_bit_rep
 from sage.misc.cachefunc            import cached_method
 
-from sage.data_structures.list_of_pairs cimport pair_s
-from sage.rings.integer                 cimport smallInteger
-from cysignals.signals                  cimport sig_check
+from sage.rings.integer                cimport smallInteger
+from cysignals.signals                 cimport sig_check
 
 from .face_data_structure cimport face_len_atoms, face_init, face_free
 from .face_iterator cimport iter_t, parallel_f_vector
@@ -1232,15 +1231,10 @@ cdef class CombinatorialPolyhedron(SageObject):
             def f(size_t i):
                 return smallInteger(i)
 
-        # Getting the indices of the `i`-th edge.
-        cdef pair_s edge
-
-        def get_edge(size_t i):
-            edge = self._edges.get(i)[0]
-            return (f(edge.first), f(edge.second))
-
         cdef size_t j
-        return tuple(get_edge(j) for j in range(self._edges.length))
+        return tuple((f(self._edges.get(j).first),
+                      f(self._edges.get(j).second))
+                     for j in range(self._edges.length))
 
     def vertex_graph(self, names=True, algorithm=None):
         r"""
@@ -1328,14 +1322,14 @@ cdef class CombinatorialPolyhedron(SageObject):
         from sage.matrix.constructor import matrix
         cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
-        cdef size_t i
-        cdef pair_s edge
+        cdef size_t i, first, second
 
         self._compute_edges(self._algorithm_to_dual(algorithm))
         for i in range(self._edges.length):
-            edge = self._edges.get(i)[0]
-            adjacency_matrix.set_unsafe_int(edge.first, edge.second, 1)
-            adjacency_matrix.set_unsafe_int(edge.second, edge.first, 1)
+            first = self._edges.get(i).first
+            second = self._edges.get(i).second
+            adjacency_matrix.set_unsafe_int(first, second, 1)
+            adjacency_matrix.set_unsafe_int(second, first, 1)
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
@@ -1458,17 +1452,15 @@ cdef class CombinatorialPolyhedron(SageObject):
             def f(size_t i):
                 return smallInteger(i)
 
-        cdef pair_s ridge
-
         if add_equations and names:
             return tuple(
-                    ((f(self._ridges.get(i)[0].first),) + self.equations(),
-                     (f(self._ridges.get(i)[0].second),) + self.equations())
+                    ((f(self._ridges.get(i).first),) + self.equations(),
+                     (f(self._ridges.get(i).second),) + self.equations())
                     for i in range (n_ridges))
         else:
             return tuple(
-                    (f(self._ridges.get(i)[0].first),
-                     f(self._ridges.get(i)[0].second))
+                    (f(self._ridges.get(i).first),
+                     f(self._ridges.get(i).second))
                     for i in range (n_ridges))
 
     @cached_method
@@ -1514,13 +1506,13 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_facets(), self.n_facets(), 0)
         cdef size_t i
-        cdef pair_s ridge
 
         self._compute_ridges(self._algorithm_to_dual(algorithm))
         for i in range(self._ridges.length):
-            ridge = self._ridges.get(i)[0]
-            adjacency_matrix.set_unsafe_int(ridge.first, ridge.second, 1)
-            adjacency_matrix.set_unsafe_int(ridge.second, ridge.first, 1)
+            first = self._ridges.get(i).first
+            second = self._ridges.get(i).second
+            adjacency_matrix.set_unsafe_int(first, second, 1)
+            adjacency_matrix.set_unsafe_int(second, first, 1)
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 

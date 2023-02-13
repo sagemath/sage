@@ -72,7 +72,7 @@ cdef class ListOfPairs:
             ...
             OverflowError: can't convert negative value to size_t
         """
-        cdef pair_s pair = self.get(index)[0]
+        cdef pair_s* pair = self.get(index)
         return (smallInteger(pair.first), smallInteger(pair.second))
 
     def __setitem__(self, size_t index, value):
@@ -108,8 +108,8 @@ cdef class ListOfPairs:
             return
 
         cdef pair_s* pair_pt = self.get(index)
-        pair_pt[0].first = first
-        pair_pt[0].second = second
+        pair_pt.first = first
+        pair_pt.second = second
 
     cdef inline int add(self, size_t first, size_t second) except -1:
         """
@@ -117,5 +117,5 @@ cdef class ListOfPairs:
         """
         self.enlarge()
         cdef pair_s* last = self.get(self.length - 1)
-        last[0].first = first
-        last[0].second = second
+        last.first = first
+        last.second = second
