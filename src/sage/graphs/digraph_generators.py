@@ -388,13 +388,13 @@ class DiGraphGenerators():
         """
         from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
         from sage.matrix.constructor import ones_matrix, identity_matrix
-        if skew_hadamard_matrix(n+1, existence=True) is not True:
+        if skew_hadamard_matrix(n + 1, existence=True) is not True:
             raise ValueError(f'strongly regular digraph with {n} vertices not yet implemented')
 
-        H = skew_hadamard_matrix(n+1, skew_normalize=True)
+        H = skew_hadamard_matrix(n + 1, skew_normalize=True)
         M = H[1:, 1:]
         M = (M + ones_matrix(n)) / 2 - identity_matrix(n)
-        return DiGraph(M, format='adjacency_matrix', name=f'Strongly regular digraph')
+        return DiGraph(M, format='adjacency_matrix', name='Strongly regular digraph')
 
     def Paley(self, q):
         r"""
