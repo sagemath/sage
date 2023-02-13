@@ -1138,7 +1138,8 @@ cdef class Element(SageObject):
         We now create an ``Element`` class where we define ``_richcmp_``
         and check that comparison works::
 
-            sage: cython('''                                                # optional - sage.misc.cython
+            sage: cython(                                                   # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.richcmp cimport rich_to_bool
             ....: from sage.structure.element cimport Element
             ....: cdef class FloatCmp(Element):
@@ -2317,7 +2318,8 @@ cdef class ElementWithCachedMethod(Element):
 
         EXAMPLES::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport ElementWithCachedMethod
             ....: cdef class MyElement(ElementWithCachedMethod):
             ....:     cdef public object x
@@ -2330,7 +2332,7 @@ cdef class ElementWithCachedMethod(Element):
             ....: cdef class MyParent(Parent):
             ....:     Element = MyElement
             ....: from sage.misc.cachefunc import cached_method
-            ....: from sage.misc.cachefunc import cached_in_parent_method
+            ....: from sage.misc.lazy_attribute import lazy_attribute
             ....: from sage.categories.category import Category
             ....: from sage.categories.objects import Objects
             ....: class MyCategory(Category):
@@ -4137,7 +4139,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         EXAMPLES::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):
@@ -4167,7 +4170,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         ::
 
-            sage: cython('''                                                    # optional - sage.misc.cython
+            sage: cython(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):

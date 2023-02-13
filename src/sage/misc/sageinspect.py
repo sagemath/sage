@@ -1372,13 +1372,14 @@ def sage_getfile(obj):
 
     A problem fixed in :trac:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                           # optional - sage.misc.cython
+        ....: '''
         ....: class Bar: pass
         ....: cdef class Foo: pass
         ....: ''')
-        sage: sage_getfile(Bar)
+        sage: sage_getfile(Bar)                 # optional - sage.misc.cython
         '...pyx'
-        sage: sage_getfile(Foo)
+        sage: sage_getfile(Foo)                 # optional - sage.misc.cython
         '...pyx'
 
     By :trac:`18249`, we return an empty string for Python builtins. In that
