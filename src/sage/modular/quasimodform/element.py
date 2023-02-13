@@ -157,6 +157,18 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return str(self.q_expansion())
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        TESTS::
+
+            sage: QM = QuasiModularForms(1)
+            sage: latex(QM.0)
+            1 - 24 q - 72 q^{2} - 96 q^{3} - 168 q^{4} - 144 q^{5} + O(q^{6})
+        """
+        return self.q_expansion()._latex_()
+
     def _richcmp_(self, other, op):
         r"""
         Compare self with other.

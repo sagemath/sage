@@ -41,6 +41,7 @@ Combinatorial Representation Theory
 - :class:`~sage.combinat.symmetric_group_representations.SymmetricGroupRepresentation`
 - :ref:`sage.combinat.yang_baxter_graph`
 - :ref:`sage.combinat.hall_polynomial`
+- :ref:`sage.combinat.key_polynomial`
 
 Operads and their algebras
 --------------------------

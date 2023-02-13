@@ -878,7 +878,7 @@ class Triangulation(Element):
             raise NotImplementedError('Only base rings ZZ and QQ are supported')
         from ppl import Constraint_System, Linear_Expression, C_Polyhedron
         from sage.matrix.constructor import matrix
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         pc = self.point_configuration()
         cs = Constraint_System()
         for facet in self.interior_facets():
