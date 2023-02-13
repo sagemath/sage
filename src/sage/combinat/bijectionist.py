@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 A bijectionist's toolkit
 
@@ -36,9 +35,23 @@ Quick reference
 A guided tour
 =============
 
-EXAMPLES:
+Consider the following combinatorial statistics on a permutation:
 
-We find a statistic `s` such that `(s, wex, fix) \sim (llis, des, adj)`::
+    * `wex`, the number of weak excedences,
+    * `fix`, the number of fixed points,
+    * `des`, the number of descents (after appending `0`),
+    * `adj`, the number of adjacencies (after appending `0`), and
+    * `llis`, the length of a longest increasing subsequence.
+
+Moreover, let `rot` be action of rotation on a permutation, i.e., the
+conjugation with the long cycle.
+
+It is known that there must exist a statistic `s` on permutations,
+which is equidistributed with `llis` but additionally invariant under
+`rot`.  However, at least very small cases do not contradict the
+possibility that one can even find a statistic `s`, invariant under
+`rot` and such that `(s, wex, fix) \sim (llis, des, adj)`.  Let us
+check this for permutations of size at most `3`::
 
     sage: N = 3
     sage: A = B = [pi for n in range(N+1) for pi in Permutations(n)]
@@ -119,15 +132,17 @@ We find a statistic `s` such that `(s, wex, fix) \sim (llis, des, adj)`::
      [3, 1, 2]: 3,
      [3, 2, 1]: 2}
 
-There is no rotation invariant statistic on non crossing set partitions which
-is equidistributed with the Strahler number on ordered trees::
+On the other hand, we can check that there is no rotation invariant
+statistic on non-crossing set partitions which is equidistributed
+with the Strahler number on ordered trees::
 
-    sage: N = 8;
+    sage: N = 8
     sage: A = [SetPartition(d.to_noncrossing_partition()) for n in range(N) for d in DyckWords(n)]
     sage: B = [t for n in range(1, N+1) for t in OrderedTrees(n)]
     sage: def theta(m): return SetPartition([[i % m.size() + 1 for i in b] for b in m])
 
-The following code is equivalent to ``tau = findstat(397)``::
+Code for the Strahler number can be obtained from FindStat.  The
+following code is equivalent to ``tau = findstat(397)``::
 
     sage: def tau(T):
     ....:     if len(T) == 0:
@@ -146,7 +161,8 @@ The following code is equivalent to ``tau = findstat(397)``::
     sage: list(bij.solutions_iterator())
     []
 
-An example identifying `s` and `S`::
+Next we demonstrate how to search for a bijection, instead An example
+identifying `s` and `S`::
 
     sage: N = 4
     sage: A = [dyck_word for n in range(1, N) for dyck_word in DyckWords(n)]
@@ -342,7 +358,7 @@ Value restrictions::
     sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
     Traceback (most recent call last):
     ...
-    ValueError: No possible values found for singleton block [[1, 2]]
+    ValueError: no possible values found for singleton block [[1, 2]]
 
 """
 # ****************************************************************************
@@ -392,9 +408,8 @@ class Bijectionist(SageObject):
 
     - ``pi_rho`` -- (optional) a list of triples ``(k, pi, rho)``, where
 
-        - ``pi`` -- a ``k``-ary operation composing objects in ``A`` and
-
-        - ``rho`` -- a ``k``-ary function composing statistic values in `Z`
+      * ``pi`` -- a ``k``-ary operation composing objects in ``A`` and
+      * ``rho`` -- a ``k``-ary function composing statistic values in ``Z``
 
     - ``elements_distributions`` -- (optional) a list of pairs ``(tA, tZ)``,
       specifying the distributions of ``tA``
@@ -468,7 +483,7 @@ class Bijectionist(SageObject):
         methods a second time overrides the previous specification.
 
     """
-    def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=[],
+    def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=None,
                  pi_rho=tuple(), phi_psi=tuple(), Q=None,
                  elements_distributions=tuple(),
                  value_restrictions=tuple(), solver=None, key=None):
@@ -518,6 +533,8 @@ class Bijectionist(SageObject):
             except TypeError:
                 self._Z = list(self._Z)
                 self._sorter["Z"] = lambda x: list(x)
+        if P is None:
+            P = []
 
         # set optional inputs
         self.set_statistics(*alpha_beta)
@@ -701,7 +718,7 @@ class Bijectionist(SageObject):
             sage: bij.set_statistics((wex, fix))
             Traceback (most recent call last):
             ...
-            ValueError: Statistics alpha and beta are not equidistributed!
+            ValueError: statistics alpha and beta are not equidistributed
 
         TESTS:
 
@@ -750,13 +767,13 @@ class Bijectionist(SageObject):
         for b in self._B:
             v = self._beta(b)
             if v not in self._statistics_fibers:
-                raise ValueError(f"Statistics alpha and beta do not have the same image, {v} is not a value of alpha, but of beta!")
+                raise ValueError(f"statistics alpha and beta do not have the same image, {v} is not a value of alpha, but of beta")
             self._statistics_fibers[v][1].append(b)
 
         # check compatibility
         if not all(len(fiber[0]) == len(fiber[1])
                    for fiber in self._statistics_fibers.values()):
-            raise ValueError("Statistics alpha and beta are not equidistributed!")
+            raise ValueError("statistics alpha and beta are not equidistributed")
 
         self._W = list(self._statistics_fibers)
 
@@ -810,8 +827,8 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``header`` -- (optional, default: ``True``) whether to include a
-          header with the standard greek letters.
+        - ``header`` -- (default: ``True``) whether to include a
+          header with the standard Greek letters
 
         OUTPUT:
 
@@ -1023,7 +1040,7 @@ class Bijectionist(SageObject):
             sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: No possible values found for singleton block [[1, 2]]
+            ValueError: no possible values found for singleton block [[1, 2]]
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1033,7 +1050,7 @@ class Bijectionist(SageObject):
             sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: No possible values found for block [[1, 2], [2, 1]]
+            ValueError: no possible values found for block [[1, 2], [2, 1]]
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1041,7 +1058,7 @@ class Bijectionist(SageObject):
             sage: bij.set_value_restrictions(((1, 2), [4, 5, 6]))
             Traceback (most recent call last):
             ...
-            AssertionError: Element (1, 2) was not found in A
+            AssertionError: element (1, 2) was not found in A
 
         """
         # it might be much cheaper to construct the sets as subsets
@@ -1052,7 +1069,7 @@ class Bijectionist(SageObject):
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in value_restrictions:
-            assert a in self._A, f"Element {a} was not found in A"
+            assert a in self._A, f"element {a} was not found in A"
             self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)
 
     def _compute_possible_block_values(self):
@@ -1073,7 +1090,7 @@ class Bijectionist(SageObject):
             sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: No possible values found for singleton block [[1, 2]]
+            ValueError: no possible values found for singleton block [[1, 2]]
 
         """
         self._possible_block_values = {}  # P -> Power(Z)
@@ -1083,9 +1100,9 @@ class Bijectionist(SageObject):
             self._possible_block_values[p] = _non_copying_intersection(sets)
             if not self._possible_block_values[p]:
                 if len(block) == 1:
-                    raise ValueError(f"No possible values found for singleton block {block}")
+                    raise ValueError(f"no possible values found for singleton block {block}")
                 else:
-                    raise ValueError(f"No possible values found for block {block}")
+                    raise ValueError(f"no possible values found for block {block}")
 
     def set_distributions(self, *elements_distributions):
         r"""
@@ -1229,11 +1246,11 @@ class Bijectionist(SageObject):
             sage: bij.set_distributions(([Permutation([1, 2, 3, 4])], [1]))
             Traceback (most recent call last):
             ...
-            ValueError: Element [1, 2, 3, 4] was not found in A!
+            ValueError: element [1, 2, 3, 4] was not found in A
             sage: bij.set_distributions(([Permutation([1, 2, 3])], [-1]))
             Traceback (most recent call last):
             ...
-            ValueError: Value -1 was not found in tau(A)!
+            ValueError: value -1 was not found in tau(A)
 
         Note that the same error occurs when an element that is not the first element of the list is
         not in `A`.
@@ -1244,9 +1261,9 @@ class Bijectionist(SageObject):
             assert len(tA) == len(tZ), f"{tA} and {tZ} are not of the same size!"
             for a, z in zip(tA, tZ):
                 if a not in self._A:
-                    raise ValueError(f"Element {a} was not found in A!")
+                    raise ValueError(f"element {a} was not found in A")
                 if z not in self._Z:
-                    raise ValueError(f"Value {z} was not found in tau(A)!")
+                    raise ValueError(f"value {z} was not found in tau(A)")
         self._elements_distributions = tuple(elements_distributions)
 
     def set_intertwining_relations(self, *pi_rho):
@@ -1442,7 +1459,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``Q`` -- a set partition of ``A``.
+        - ``Q`` -- a set partition of ``A``
 
         EXAMPLES::
 
@@ -1698,15 +1715,15 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``p`` -- (optional, default: ``None``) -- a block of `P`, or
-          an element of a block of `P`, or a list of these
+        - ``p`` -- (optional) a block of `P`, or an element of a
+          block of `P`, or a list of these
 
-        - ``optimal`` -- (optional, default: ``False``) whether or
-          not to compute the minimal possible set of statistic values.
+        - ``optimal`` -- (default: ``False``) whether or not to
+          compute the minimal possible set of statistic values
 
         .. NOTE::
 
-            computing the minimal possible set of statistic values
+            Computing the minimal possible set of statistic values
             may be computationally expensive.
 
         .. TODO::
@@ -1758,6 +1775,7 @@ class Bijectionist(SageObject):
             {'a': {0, 1}, 'b': {0, 1}}
             sage: bij.possible_values(p="a", optimal=True)
             {'a': set(), 'b': set()}
+
         """
         # convert input to set of block representatives
         blocks = set()
@@ -1896,15 +1914,16 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``P``, the representatives of the blocks, or `A` if
-          ``on_blocks`` is ``False``.
+        - ``P`` -- the representatives of the blocks, or `A` if
+          ``on_blocks`` is ``False``
 
-        - ``s0``, a solution.
+        - ``s0`` -- a solution
 
-        - ``d``, a subset of `A`, in the form of a dict from `A` to `\{0, 1\}`.
+        - ``d`` -- a subset of `A`, in the form of a dict from `A` to
+          `\{0, 1\}`
 
-        - ``on_blocks``, whether to return the counter example on
-          blocks or on elements.
+        - ``on_blocks`` -- whether to return the counterexample on
+          blocks or on elements
 
         EXAMPLES::
 
@@ -1920,6 +1939,7 @@ class Bijectionist(SageObject):
             sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
             sage: bij._find_counterexample(bij._A, s0, d, False)
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
+
         """
         bmilp = self._bmilp
         for z in self._Z:
@@ -2446,8 +2466,9 @@ class Bijectionist(SageObject):
 
 class _BijectionistMILP():
     r"""
-    Wrapper class for the MixedIntegerLinearProgram (MILP).  This
-    class is used to manage the MILP, add constraints, solve the
+    Wrapper class for the MixedIntegerLinearProgram (MILP).
+
+    This class is used to manage the MILP, add constraints, solve the
     problem and check for uniqueness of solution values.
     """
     def __init__(self, bijectionist: Bijectionist, solutions=None):
@@ -2458,10 +2479,10 @@ class _BijectionistMILP():
 
         - ``bijectionist`` -- an instance of :class:`Bijectionist`.
 
-        - ``solutions`` -- (optional, default: ``None``) a list of solutions of
-          the problem, each provided as a dictionary mapping `(a, z)` to a
-          Boolean, such that at least one element from each block of `P`
-          appears as `a`.
+        - ``solutions`` -- (optional) a list of solutions of the
+          problem, each provided as a dictionary mapping `(a, z)` to
+          a boolean, such that at least one element from each block
+          of `P` appears as `a`.
 
         .. TODO::
 
@@ -2585,8 +2606,8 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``on_blocks``, whether to return the solution on blocks or
-          on all elements
+        - ``on_blocks`` -- whether to return the solution on blocks
+          or on all elements
 
         TESTS::
 
@@ -2621,10 +2642,10 @@ class _BijectionistMILP():
         INPUT:
 
         - ``additional_constraints`` -- a list of constraints for the
-          underlying MILP.
+          underlying MILP
 
         - ``on_blocks``, whether to return the solution on blocks or
-          on all elements.
+          on all elements
 
         TESTS::
 
@@ -2689,8 +2710,8 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``solution``, a dictionary from the indices of the MILP to
-          Boolean.
+        - ``solution`` -- a dictionary from the indices of the MILP to
+          a boolean
 
         EXAMPLES::
 
@@ -2727,10 +2748,10 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``constraint``, a
+        - ``constraint`` -- a
           :class:`sage.numerical.linear_functions.LinearConstraint`.
 
-        - ``values``, a candidate for a solution of the MILP as a
+        - ``values`` -- a candidate for a solution of the MILP as a
           dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,
           specifying whether `a` is mapped to `z`.
 
@@ -2750,7 +2771,7 @@ class _BijectionistMILP():
         """
         index_block_value_dict = {}
         for (p, z), v in self._x.items():
-            variable_index = next(iter(v.dict().keys()))
+            variable_index = next(iter(v.dict()))
             index_block_value_dict[variable_index] = (p, z)
 
         def evaluate(f):
@@ -2793,8 +2814,8 @@ class _BijectionistMILP():
         W = self._bijectionist._W
         Z = self._bijectionist._Z
         zero = self.milp.linear_functions_parent().zero()
-        AZ_matrix = [[zero]*len(W) for _ in range(len(Z))]
-        B_matrix = [[zero]*len(W) for _ in range(len(Z))]
+        AZ_matrix = [[zero] * len(W) for _ in range(len(Z))]
+        B_matrix = [[zero] * len(W) for _ in range(len(Z))]
 
         W_dict = {w: i for i, w in enumerate(W)}
         Z_dict = {z: i for i, z in enumerate(Z)}
@@ -2922,7 +2943,7 @@ class _BijectionistMILP():
         P = self._bijectionist._P
         for composition_index, pi_rho in enumerate(self._bijectionist._pi_rho):
             pi_blocks = set()
-            for a_tuple in itertools.product(*([A]*pi_rho.numargs)):
+            for a_tuple in itertools.product(A, repeat=pi_rho.numargs):
                 if pi_rho.domain is not None and not pi_rho.domain(*a_tuple):
                     continue
                 a = pi_rho.pi(*a_tuple)
@@ -3048,7 +3069,7 @@ def _invert_dict(d):
 
     INPUT:
 
-    - ``d``, a ``dict``.
+    - ``d`` -- a dict
 
     EXAMPLES::
 
@@ -3071,7 +3092,7 @@ def _disjoint_set_roots(d):
 
     INPUT:
 
-    - ``d``, a ``sage.sets.disjoint_set.DisjointSet_of_hashables``
+    - ``d`` -- a :class:`sage.sets.disjoint_set.DisjointSet_of_hashables`
 
     EXAMPLES::
 
@@ -3125,7 +3146,7 @@ TESTS::
     ....:            [(3,i,j) for i in [-2,-1,0,1,2] for j in [-1,1]]]
 
 Note that adding ``[(2,-2,-1), (2,2,-1), (2,-2,1), (2,2,1)]`` makes
-it take (seemingly) forever.::
+it take (seemingly) forever::
 
     sage: def c1(a, b): return (a[0]+b[0], a[1]*b[1], a[2]*b[2])
     sage: def c2(a): return (a[0], -a[1], a[2])
