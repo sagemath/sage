@@ -77,9 +77,9 @@ class SpechtModule(SubmoduleWithBasis):
         9
         sage: s(SM.frobenius_image())
         s[3, 2] + s[4, 1]
-        
+
     This carries a natural (left) action of the symmetric group (algebra)::
-    
+
         sage: S5 = SGA.group()
         sage: v = SM.an_element(); v
         2*B[0] + 2*B[1] + 3*B[2]
@@ -441,4 +441,3 @@ def specht_module_rank(D, base_ring=None):
     if base_ring is None:
         base_ring = QQ
     return matrix(base_ring, [v.to_vector() for v in span_set]).rank()
-
