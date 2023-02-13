@@ -37,8 +37,8 @@ from sage.monoids.string_monoid import BinaryStrings
 from sage.rings.finite_rings.integer_mod import Mod as mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 
-from .cryptosystem import PublicKeyCryptosystem
-from .util import is_blum_prime, least_significant_bits, random_blum_prime
+from ..cryptosystem import PublicKeyCryptosystem
+from ..util import is_blum_prime, least_significant_bits, random_blum_prime
 
 
 floor = Function_floor()
