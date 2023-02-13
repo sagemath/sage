@@ -510,7 +510,7 @@ class FGP_Homset_class(Homset):
                 from sage.categories.modules_with_basis import ModulesWithBasis
                 category = ModulesWithBasis(X.base_ring())
             else:
-                from sage.categories.all import Modules
+                from sage.categories.modules import Modules
                 category = Modules(X.base_ring())
         Homset.__init__(self, X, Y, category)
 
