@@ -80,7 +80,7 @@ from sage.combinat.permutation import Permutations, Permutation
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_sparse
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 import sage.libs.symmetrica.all as symmetrica
@@ -463,7 +463,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             return self._from_dict({perm: self.base_ring().one()})
         elif isinstance(x, MPolynomial):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
-        elif isinstance(x, InfinitePolynomial_sparse):
+        elif isinstance(x, InfinitePolynomial):
             R = x.polynomial().parent()
             # massage the term order to be what symmetrica expects
             S = PolynomialRing(R.base_ring(),
