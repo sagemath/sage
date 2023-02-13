@@ -1301,7 +1301,8 @@ cdef class OrePolynomial(AlgebraElement):
 
         TESTS::
 
-            sage: cython('''  # optional - sage.misc.cython
+            sage: cython(                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def left_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._left_lcm_cofactor(Q)
@@ -1315,8 +1316,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: P = S.random_element(degree=2) * D
             sage: Q = S.random_element(degree=2) * D
             sage: L = P.left_lcm(Q)
-            sage: U = left_lcm_cofactor(P, Q)
-            sage: (U*P).right_monic() == L
+            sage: U = left_lcm_cofactor(P, Q)                   # optional - sage.misc.cython
+            sage: (U*P).right_monic() == L                      # optional - sage.misc.cython
             True
         """
         cdef OrePolynomial Q, R, T
@@ -1378,7 +1379,8 @@ cdef class OrePolynomial(AlgebraElement):
 
         TESTS::
 
-            sage: cython('''  # optional - sage.misc.cython
+            sage: cython(                                       # optional - sage.misc.cython
+            ....: '''
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def right_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._right_lcm_cofactor(Q)
@@ -1392,8 +1394,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: P = D * S.random_element(degree=2)
             sage: Q = D * S.random_element(degree=2)
             sage: L = P.right_lcm(Q)
-            sage: U = right_lcm_cofactor(P, Q)
-            sage: (P*U).left_monic() == L
+            sage: U = right_lcm_cofactor(P, Q)                  # optional - sage.misc.cython
+            sage: (P*U).left_monic() == L                       # optional - sage.misc.cython
             True
         """
         cdef OrePolynomial Q, R, T
