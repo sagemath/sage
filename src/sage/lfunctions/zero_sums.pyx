@@ -1,5 +1,5 @@
 r"""
-Class file for computing sums over zeros of motivic L-functions.
+Class for computing sums over zeros of motivic `L`-functions
 
 All computations are done to double precision.
 

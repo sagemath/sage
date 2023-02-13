@@ -45,6 +45,7 @@ class MVPolytope(PBWCrystalElement):
         ....:     f.axes(False)
         sage: animate(frames).show(delay=60) # optional -- ImageMagick # long time
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -238,6 +239,7 @@ class MVPolytope(PBWCrystalElement):
             P = self.parent().weight_lattice_realization()
         return P.plot_mv_polytope(self, **options)
 
+
 class MVPolytopes(PBWCrystal):
     r"""
     The crystal of Mirković-Vilonen (MV) polytopes.
@@ -355,6 +357,7 @@ class MVPolytopes(PBWCrystal):
     - [Kam2007]_
     - [Kam2010]_
     """
+
     def __init__(self, cartan_type):
         """
         Initialize ``self``.

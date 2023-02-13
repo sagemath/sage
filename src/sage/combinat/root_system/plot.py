@@ -828,6 +828,7 @@ class PlotOptions():
         - :ref:`sage.combinat.root_system.plot` for a tutorial on root
           system plotting
     """
+
     def __init__(self, space,
                  projection=True,
                  bounding_box=3,

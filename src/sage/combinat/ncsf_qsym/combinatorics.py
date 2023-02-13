@@ -52,6 +52,7 @@ def coeff_pi(J, I):
     """
     return prod(prod(K.partial_sums()) for K in J.refinement_splitting(I))
 
+
 def coeff_lp(J,I):
     r"""
     Returns the coefficient `lp_{J,I}` as defined in [NCSF]_.
@@ -74,6 +75,7 @@ def coeff_lp(J,I):
         1
     """
     return prod(K[-1] for K in J.refinement_splitting(I))
+
 
 def coeff_ell(J,I):
     r"""
@@ -122,6 +124,7 @@ def coeff_sp(J, I):
     """
     return prod(factorial(len(K))*prod(K) for K in J.refinement_splitting(I))
 
+
 def coeff_dab(I, J):
     r"""
     Return the number of standard composition tableaux of shape `I` with
@@ -148,6 +151,7 @@ def coeff_dab(I, J):
         if (T.is_standard()) and (T.descent_composition() == J):
             d += 1
     return d
+
 
 def compositions_order(n):
     r"""
@@ -179,6 +183,7 @@ def compositions_order(n):
     def _keyfunction(I):
         return sorted(I, reverse=True), list(I)
     return sorted(Compositions(n), key=_keyfunction, reverse=True)
+
 
 def m_to_s_stat(R, I, K):
     r"""
@@ -256,6 +261,7 @@ def number_of_fCT(content_comp, shape_comp):
         if len(x) >= len(shape_comp)-1:
             s += number_of_fCT(Composition(content_comp[:-1]),x)
     return s
+
 
 @cached_function
 def number_of_SSRCT(content_comp, shape_comp):

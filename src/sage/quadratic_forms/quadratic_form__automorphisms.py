@@ -300,9 +300,9 @@ def automorphism_group(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.automorphism_group()
         Matrix group over Rational Field with 3 generators (
-        [-1  0  0]  [0 0 1]  [ 0  0  1]
-        [ 0 -1  0]  [0 1 0]  [-1  0  0]
-        [ 0  0 -1], [1 0 0], [ 0  1  0]
+        [ 0  0  1]  [1 0 0]  [ 1  0  0]
+        [-1  0  0]  [0 0 1]  [ 0 -1  0]
+        [ 0  1  0], [0 1 0], [ 0  0  1]
         )
 
     ::

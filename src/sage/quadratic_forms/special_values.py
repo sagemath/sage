@@ -1,5 +1,5 @@
 r"""
-Routines for computing special values of L-functions
+Routines for computing special values of `L`-functions
 
 - :func:`gamma__exact` -- Exact values of the `\Gamma` function at integers and half-integers
 - :func:`zeta__exact` -- Exact values of the Riemann `\zeta` function at critical values

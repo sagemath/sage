@@ -1458,8 +1458,17 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L(u).minpoly(F).degree() in [ 1, 3 ]
             True
         """
-        from sage.modules.free_module import FreeModule
         cdef RingExtensionWithBasis parent = self._parent
+
+        if base is None:
+            mod = parent.modulus()
+            S = mod.parent().quotient(mod)
+            try:
+                return S(list(self.vector())).minpoly()
+            except NotImplementedError:
+                pass  # fall back to generic code below
+
+        from sage.modules.free_module import FreeModule
         cdef MapRelativeRingToFreeModule j
 
         base = parent._check_base(base)

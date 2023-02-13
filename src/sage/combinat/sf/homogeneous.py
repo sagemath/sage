@@ -315,7 +315,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
 
-
         def exponential_specialization(self, t=None, q=1):
             r"""
             Return the exponential specialization of a

@@ -1,5 +1,5 @@
 r"""
-Normal forms for `p`-adic quadratic and bilinear forms.
+Normal forms for `p`-adic quadratic and bilinear forms
 
 We represent a quadratic or bilinear form by its `n \times n` Gram matrix `G`.
 Then two `p`-adic forms `G` and `G'` are integrally equivalent if and only if

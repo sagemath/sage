@@ -21,6 +21,7 @@ from sage.misc.functional import is_even
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
+
 class WeylCharacterRing(CombinatorialFreeModule):
     r"""
     A class for rings of Weyl characters.
@@ -1185,6 +1186,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         A class for Weyl characters.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type of ``self``.
@@ -2013,6 +2015,7 @@ class WeightRing(CombinatorialFreeModule):
         """
         A class for weight ring elements.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type.
