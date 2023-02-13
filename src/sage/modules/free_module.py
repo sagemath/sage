@@ -5653,7 +5653,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         try:
             return self.__basis
-        except  AttributeError:
+        except AttributeError:
             ZERO = self(0)
             one = self.coordinate_ring().one()
             w = []

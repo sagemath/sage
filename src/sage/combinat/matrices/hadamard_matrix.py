@@ -389,9 +389,9 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
         ...
         ValueError: The Williamson type Hadamard matrix of order 100 is not yet implemented.
     """
-    assert n%4 == 0
+    assert n % 4 == 0
 
-    if not  williamson_type_quadruples_smallcases(n//4, existence=True):
+    if not williamson_type_quadruples_smallcases(n // 4, existence=True):
         if existence:
             return False
         raise ValueError("The Williamson type Hadamard matrix of order %s is not yet implemented." % n)

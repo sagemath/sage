@@ -20933,7 +20933,7 @@ class GenericGraph(GenericGraph_pyx):
                     vertex_colors = {(1, 0, 0) : list(self)}
 
             if color_by_label:
-                if edge_colors is  None:
+                if edge_colors is None:
                     # do the coloring
                     edge_colors = self._color_by_label(format=color_by_label)
             elif edge_colors is None:
@@ -20975,7 +20975,7 @@ class GenericGraph(GenericGraph_pyx):
                                             vertex_size=vertex_size, pos3d=pos3d, **kwds)
 
             if color_by_label:
-                if edge_colors is  None:
+                if edge_colors is None:
                     # do the coloring
                     edge_colors = self._color_by_label(format=color_by_label)
 

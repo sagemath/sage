@@ -934,14 +934,14 @@ class Polyhedron_base5(Polyhedron_base4):
         new_vertices = (tuple(x) + tuple(y)
                         for x in self.vertex_generator() for y in other.vertex_generator())
 
-        self_zero  = tuple(0 for _ in range( self.ambient_dim()))
+        self_zero = tuple(0 for _ in range( self.ambient_dim()))
         other_zero = tuple(0 for _ in range(other.ambient_dim()))
 
-        rays = chain((tuple(r) + other_zero for r in  self.ray_generator()),
-                     (self_zero + tuple(r)  for r in other.ray_generator()))
+        rays = chain((tuple(r) + other_zero for r in self.ray_generator()),
+                     (self_zero + tuple(r) for r in other.ray_generator()))
 
-        lines = chain((tuple(l) + other_zero for l in  self.line_generator()),
-                      (self_zero + tuple(l)  for l in other.line_generator()))
+        lines = chain((tuple(l) + other_zero for l in self.line_generator()),
+                      (self_zero + tuple(l) for l in other.line_generator()))
 
         if self.n_vertices() == 0 or other.n_vertices() == 0:
             # In this case we obtain the empty polyhedron.
@@ -950,11 +950,15 @@ class Polyhedron_base5(Polyhedron_base4):
             rays = ()
             lines = ()
 
-        ieqs = chain((tuple(i) + other_zero               for i in  self.inequality_generator()),
-                     ((i.b(),) + self_zero + tuple(i.A()) for i in other.inequality_generator()))
+        ieqs = chain((tuple(i) + other_zero
+                      for i in self.inequality_generator()),
+                     ((i.b(),) + self_zero + tuple(i.A())
+                      for i in other.inequality_generator()))
 
-        eqns = chain((tuple(e) + other_zero               for e in  self.equation_generator()),
-                     ((e.b(),) + self_zero + tuple(e.A()) for e in other.equation_generator()))
+        eqns = chain((tuple(e) + other_zero
+                      for e in self.equation_generator()),
+                     ((e.b(),) + self_zero + tuple(e.A())
+                      for e in other.equation_generator()))
 
         pref_rep = 'Vrep' if self.n_vertices() + self.n_rays() + other.n_vertices() + other.n_rays() \
                              <= self.n_inequalities() + other.n_inequalities() else 'Hrep'

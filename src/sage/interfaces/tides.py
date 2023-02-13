@@ -37,10 +37,7 @@ REFERENCES:
 
 - [TIDES]_
 """
-
-
-
-from  sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealField
 from sage.calculus.all import symbolic_expression
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
@@ -48,8 +45,6 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.log import log, exp
 from sage.functions.other import floor, ceil
 from sage.misc.functional import sqrt
-
-
 
 
 def subexpressions_list(f, pars=None):

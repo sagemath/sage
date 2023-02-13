@@ -1032,7 +1032,7 @@ def secant_method(title, f, interval, d, maxn):
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
-        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for  (c,d) in intervals)
+        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for (c, d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
 

@@ -44,7 +44,7 @@ AUTHORS:
 from sage.structure.sequence import Sequence
 
 
-def  _nonperiodic_autocorrelation(sequences, j):
+def _nonperiodic_autocorrelation(sequences, j):
     r"""
     Compute the nonperiodic autocorrelation of a familiy of sequences.
 

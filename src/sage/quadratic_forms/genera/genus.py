@@ -676,10 +676,10 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
 
         trains = []
         new_train = [0]
-        for i in range(1,len(symbol)-1):
+        for i in range(1, len(symbol) - 1):
             # start a new train if there are two adjacent even symbols
             prev, cur = symbol[i-1:i+1]
-            if  cur[0] - prev[0] > 2:
+            if cur[0] - prev[0] > 2:
                 trains.append(new_train)
                 new_train = [i]    # create a new train starting at
             elif (cur[0] - prev[0] == 2) and cur[3]*prev[3] == 0:
