@@ -459,10 +459,11 @@ cdef ring* access_singular_ring(r) except <ring*> -1:
 cdef poly* copy_sage_polynomial_into_singular_poly(p):
     return p_Copy(access_singular_poly(p), access_singular_ring(p.parent()))
 
+
 def all_vectors(s):
     """
-    Checks if a sequence ``s`` consists of free module
-    elements over a singular ring.
+    Check if a sequence ``s`` consists of free module elements
+    over a singular ring.
 
     EXAMPLES::
 
@@ -478,11 +479,9 @@ def all_vectors(s):
         sage: all_vectors([M(0), M((x,y)),(0,0)])
         False
     """
-    for p in s:
-        if not (isinstance(p, FreeModuleElement_generic_dense)\
-            and is_sage_wrapper_for_singular_ring(p.parent().base_ring())):
-            return False
-    return True
+    return all(isinstance(p, FreeModuleElement_generic_dense)
+               and is_sage_wrapper_for_singular_ring(p.parent().base_ring())
+               for p in s)
 
 
 cdef class Converter(SageObject):
@@ -1200,8 +1199,8 @@ cdef class SingularFunction(SageObject):
 
         - ``args`` -- a list of arguments
         - ``ring`` -- a multivariate polynomial ring
-        - ``interruptible`` -- if ``True`` pressing Ctrl-C during the
-          execution of this function will interrupt the computation
+        - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C`
+          during the execution of this function will interrupt the computation
           (default: ``True``)
 
         - ``attributes`` -- a dictionary of optional Singular
@@ -1332,7 +1331,7 @@ INPUT:
 
 - ``args`` -- a list of arguments
 - ``ring`` -- a multivariate polynomial ring
-- ``interruptible`` -- if ``True`` pressing Ctrl-C during the
+- ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C` during the
   execution of this function will interrupt the computation
   (default: ``True``)
 - ``attributes`` -- a dictionary of optional Singular attributes
@@ -1394,9 +1393,7 @@ The Singular documentation for '%s' is given below.
                 ring2 = a.parent()
             elif is_sage_wrapper_for_singular_ring(a):
                 ring2 = a
-            elif isinstance(a, int) or\
-                isinstance(a, long) or\
-                isinstance(a, basestring):
+            elif isinstance(a, (int, str)):
                 continue
             elif isinstance(a, Matrix_integer_dense):
                 continue

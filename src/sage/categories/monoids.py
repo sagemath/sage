@@ -556,18 +556,17 @@ class Monoids(CategoryWithAxiom):
                     sage: Z12.semigroup_generators()
                     Family (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
                     sage: Z12.algebra(QQ).algebra_generators()
-                    Finite family {0: B[0], 1: B[1], 2: B[2], 3: B[3],  4: B[4],   5: B[5],
-                                   6: B[6], 7: B[7], 8: B[8], 9: B[9], 10: B[10], 11: B[11]}
+                    Family (B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], B[9], B[10], B[11])
 
 
                     sage: GroupAlgebras(QQ).example(AlternatingGroup(10)).algebra_generators()
-                    Finite family {0: (8,9,10), 1: (1,2,3,4,5,6,7,8,9)}
+                    Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
 
                     sage: A = DihedralGroup(3).algebra(QQ); A
                     Algebra of Dihedral group of order 6 as a permutation group
                      over Rational Field
                     sage: A.algebra_generators()
-                    Finite family {0: (1,2,3), 1: (1,3)}
+                    Family ((1,2,3), (1,3))
                 """
                 monoid = self.basis().keys()
                 try:

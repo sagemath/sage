@@ -1801,7 +1801,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: L = GF(5^12).over(F)
 
             sage: K.Hom(L)  # indirect doctest
-            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base 
+            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
             to Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
 
             sage: K.Hom(L, category=Sets())
@@ -1884,6 +1884,59 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             codomain = Sequence(im_gens).universe()
         parent = self.Hom(codomain, category=category)
         return RingExtensionHomomorphism(parent, im_gens, base_map, check)
+
+    def characteristic(self):
+        r"""
+        Return the characteristic of the extension as a ring.
+
+        OUTPUT:
+
+        A prime number or zero.
+
+        EXAMPLES::
+
+            sage: F = GF(5^2).over()   # over GF(5)
+            sage: K = GF(5^4).over(F)
+            sage: L = GF(5^12).over(K)
+            sage: F.characteristic()
+            5
+            sage: K.characteristic()
+            5
+            sage: L.characteristic()
+            5
+
+        ::
+
+            sage: F = RR.over(ZZ)
+            sage: F.characteristic()
+            0
+
+        ::
+
+            sage: F = GF(11)
+            sage: A.<x> = F[]
+            sage: K = Frac(F).over(F)
+            sage: K.characteristic()
+            11
+
+        ::
+
+            sage: E = GF(7).over(ZZ)
+            sage: E.characteristic()
+            7
+
+        TESTS:
+
+            Ensure ticket :trac:`34692` is fixed::
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: k = Frac(FqX)
+            sage: K = k.over(FqX)
+            sage: K.frobenius_endomorphism()
+            Frobenius endomorphism x |--> x^11 of Fraction Field of Univariate Polynomial Ring in X over Finite Field of size 11 over its base
+        """
+        return self._backend.characteristic()
 
 
 # Fraction fields

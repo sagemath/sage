@@ -190,9 +190,9 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: (P*point).polar(in_affine_span=True) == P.polar()*point
             True
 
-        TESTS::
+        TESTS:
 
-            Check that :trac:`25081` is fixed::
+        Check that :trac:`25081` is fixed::
 
             sage: C = polytopes.hypercube(4,backend='cdd')
             sage: C.polar().backend()
@@ -2440,7 +2440,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         if self.backend() == 'normaliz' and not self.base_ring() in (ZZ, QQ):
             # Speeds up the doctest for significantly.
-            self = self.change_ring(self._normaliz_field)
+            self = self.change_ring(self._internal_base_ring)
 
         if not self.is_compact():
             with tester.assertRaises(NotImplementedError):

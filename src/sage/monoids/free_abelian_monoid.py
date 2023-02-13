@@ -308,4 +308,3 @@ class FreeAbelianMonoid_class(Parent):
             return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity
-

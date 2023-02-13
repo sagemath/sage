@@ -1,5 +1,5 @@
 r"""
-2D Plotting
+2D plotting
 
 Sage provides extensive 2D plotting functionality. The underlying
 rendering is done using the matplotlib Python library.
@@ -1741,15 +1741,15 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex")
+        sage: plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot(2*x+1,(x,0,5),ticks=[[0,1,e,pi,sqrt(20)],2],tick_formatter="latex")
+        g = plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
         sphinx_plot(g)
 
-    This is particularly useful when setting custom ticks in multiples of `pi`.
+    This is particularly useful when setting custom ticks in multiples of `\pi`.
 
     ::
 
@@ -2287,8 +2287,8 @@ def _plot(funcs, xrange, parametric=False,
             elif legend_color_temp is not None:
                 legend_color_entry = legend_color_temp
 
-            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry, \
-                      rgbcolor=color_entry, linestyle=linestyle_entry, \
+            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry,
+                      rgbcolor=color_entry, linestyle=linestyle_entry,
                       legend_label=legend_label_entry, legend_color=legend_color_entry, **options_temp)
         return G
 

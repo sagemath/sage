@@ -1148,5 +1148,3 @@ def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, d
         num_codes += 2
 
     print("All passed: %d random tests on %d codes." % (num_tests, num_codes))
-
-

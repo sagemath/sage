@@ -1,5 +1,5 @@
 """
-Logarithmic Functions
+Logarithmic functions
 
 AUTHORS:
 

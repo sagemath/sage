@@ -2651,9 +2651,9 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             sage: M # indirect doctest
             Modular Symbols space of dimension 32 for Gamma_0(37) of weight 6 with sign 0 over Rational Field
         """
-        return ("Modular Symbols space of dimension %s for Gamma_0(%s) of weight %s with sign %s " + \
-                "over %s")%(self.dimension(), self.level(),self.weight(), self.sign(),
-                            self.base_ring())
+        return ("Modular Symbols space of dimension %s for Gamma_0(%s) of weight %s with sign %s " +
+                "over %s") % (self.dimension(), self.level(),self.weight(), self.sign(),
+                              self.base_ring())
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""
@@ -3014,7 +3014,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         P1 = self.p1list()
         mod2term = self._mod2term
         R = self.manin_gens_to_basis()
-        W = R.new_matrix(nrows=len(B), ncols = R.nrows())  # the 0 with given number of rows and cols.
+        W = R.new_matrix(nrows=len(B), ncols=R.nrows())  # the 0 with given number of rows and cols.
         j = 0
         tm = verbose("Matrix non-reduced", tm)
         for i in B:
@@ -3588,11 +3588,11 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
         """
         level = eps.modulus()
         ModularSymbolsAmbient.__init__(self,
-                weight = weight,
-                group = arithgroup.Gamma1(level),
-                sign = sign,
-                base_ring = base_ring,
-                character = eps.change_ring(base_ring),
+                weight=weight,
+                group=arithgroup.Gamma1(level),
+                sign=sign,
+                base_ring=base_ring,
+                character=eps.change_ring(base_ring),
                 custom_init=custom_init,
                 category=category)
 
@@ -3607,10 +3607,10 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
             sage: M # indirect doctest
             Modular Symbols space of dimension 2 and level 5, weight 3, character [zeta4], sign 0, over Cyclotomic Field of order 4 and degree 2
         """
-        return ("Modular Symbols space of dimension %s and level %s, weight %s, character %s, sign %s, " + \
-                "over %s")%(self.dimension(), self.level(), self.weight(),
-                    self.character()._repr_short_(), self.sign(), self.base_ring())
-
+        return ("Modular Symbols space of dimension %s and level %s, weight %s, character %s, sign %s, " +
+                "over %s") % (self.dimension(), self.level(), self.weight(),
+                              self.character()._repr_short_(), self.sign(),
+                              self.base_ring())
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""

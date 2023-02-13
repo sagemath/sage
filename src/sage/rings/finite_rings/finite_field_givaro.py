@@ -1,5 +1,5 @@
 """
-Givaro Finite Field
+Givaro finite fields
 
 Finite fields that are implemented using Zech logs and the
 cardinality must be less than `2^{16}`. By default, Conway polynomials are
@@ -23,6 +23,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
 from sage.libs.pari.all import pari
+from sage.misc.superseded import deprecated_function_alias
 
 
 class FiniteField_givaro(FiniteField):
@@ -119,7 +120,7 @@ class FiniteField_givaro(FiniteField):
             sage: TestSuite(GF(2^3, 'a')).run()
         """
         if repr not in ['int', 'log', 'poly']:
-            raise ValueError("Unknown representation %s"%repr)
+            raise ValueError("Unknown representation %s" % repr)
 
         q = Integer(q)
         if q < 2:
@@ -130,7 +131,7 @@ class FiniteField_givaro(FiniteField):
         p = F[0][0]
         k = F[0][1]
 
-        if q >= 1<<16:
+        if q >= 1 << 16:
             raise ValueError("q must be < 2^16")
 
         from .finite_field_constructor import GF
@@ -479,7 +480,7 @@ class FiniteField_givaro(FiniteField):
         """
         return self._cache.int_to_log(n)
 
-    def fetch_int(self, n):
+    def from_integer(self, n):
         r"""
         Given an integer `n` return a finite field element in ``self``
         which equals `n` under the condition that :meth:`gen()` is set to
@@ -488,14 +489,16 @@ class FiniteField_givaro(FiniteField):
         EXAMPLES::
 
             sage: k.<a> = GF(2^8)
-            sage: k.fetch_int(8)
+            sage: k.from_integer(8)
             a^3
-            sage: e = k.fetch_int(151); e
+            sage: e = k.from_integer(151); e
             a^7 + a^4 + a^2 + a + 1
             sage: 2^7 + 2^4 + 2^2 + 2 + 1
             151
         """
         return self._cache.fetch_int(n)
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

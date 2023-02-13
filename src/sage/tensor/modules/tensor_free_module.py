@@ -29,7 +29,7 @@ Accordingly, :class:`TensorFreeModule` is a Sage *parent* class, whose
 `T^{(k,l)}(M)` is itself a free module over `R`, of rank `n^{k+l}`, `n`
 being the rank of `M`. Accordingly the class :class:`TensorFreeModule`
 inherits from the class
-:class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+:class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
 .. TODO::
 
@@ -58,6 +58,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.modules import Modules
 from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
@@ -66,9 +67,11 @@ from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.tensor.modules.free_module_morphism import \
                                                    FiniteRankFreeModuleMorphism
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
+
 from .tensor_free_submodule_basis import TensorFreeSubmoduleBasis_sym
 
-class TensorFreeModule(FiniteRankFreeModule_abstract):
+class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
     r"""
     Class for the free modules over a commutative ring `R` that are
     tensor products of a given free module `M` over `R` with itself and its
@@ -126,7 +129,7 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
     ``T`` is a module (actually a free module) over `\ZZ`::
 
         sage: T.category()
-        Category of finite dimensional modules over Integer Ring
+        Category of tensor products of finite dimensional modules over Integer Ring
         sage: T in Modules(ZZ)
         True
         sage: T.rank()
@@ -336,7 +339,7 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
 
     Element = FreeModuleTensor
 
-    def __init__(self, fmodule, tensor_type, name=None, latex_name=None):
+    def __init__(self, fmodule, tensor_type, name=None, latex_name=None, category=None):
         r"""
         TESTS::
 
@@ -347,33 +350,24 @@ class TensorFreeModule(FiniteRankFreeModule_abstract):
         """
         self._fmodule = fmodule
         self._tensor_type = tuple(tensor_type)
+        ring = fmodule._ring
         rank = pow(fmodule._rank, tensor_type[0] + tensor_type[1])
         if self._tensor_type == (0,1):  # case of the dual
+            category = Modules(ring).FiniteDimensional().or_subcategory(category)
             if name is None and fmodule._name is not None:
                 name = fmodule._name + '*'
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = fmodule._latex_name + r'^*'
         else:
+            category = Modules(ring).FiniteDimensional().TensorProducts().or_subcategory(category)
             if name is None and fmodule._name is not None:
                 name = 'T^' + str(self._tensor_type) + '(' + fmodule._name + \
                        ')'
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = r'T^{' + str(self._tensor_type) + r'}\left(' + \
                              fmodule._latex_name + r'\right)'
-        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name)
+        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name, category=category)
         fmodule._all_modules.add(self)
-
-    def construction(self):
-        r"""
-        TESTS::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: T = M.tensor_module(2, 3)
-            sage: T.construction() is None
-            True
-        """
-        # No construction until https://trac.sagemath.org/ticket/31276 provides tensor_product methods
-        return None
 
     #### Parent Methods
 

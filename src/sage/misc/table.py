@@ -207,7 +207,7 @@ class table(SageObject):
         sage: table(rows=[[1,2,3], [4,5,6]], columns=[[0,0,0], [0,0,1024]])
         Traceback (most recent call last):
         ...
-        ValueError: Don't set both 'rows' and 'columns' when defining a table.
+        ValueError: do not set both 'rows' and 'columns' when defining a table
 
         sage: table(columns=[[0,0,0], [0,0,1024]])
         0 0
@@ -251,7 +251,7 @@ class table(SageObject):
         """
         # If both rows and columns are set, raise an error.
         if rows and columns:
-            raise ValueError("Don't set both 'rows' and 'columns' when defining a table.")
+            raise ValueError("do not set both 'rows' and 'columns' when defining a table")
         # If columns is set, use its transpose for rows.
         if columns:
             rows = list(zip(*columns))
@@ -268,7 +268,7 @@ class table(SageObject):
             self._options['header_column'] = True
         elif header_column:
             self._options['header_column'] = True
-            rows = [(a,) + tuple(x) for (a,x) in zip(header_column, rows)]
+            rows = [(a,) + tuple(x) for (a, x) in zip(header_column, rows)]
         else:
             self._options['header_column'] = False
 
@@ -442,7 +442,7 @@ class table(SageObject):
         if len(rows) == 0 or nc == 0:
             return ""
 
-        frame_line = "+" + "+".join("-" * (x+2) for x in self._widths()) + "+\n"
+        frame_line = "+" + "+".join("-" * (x + 2) for x in self._widths()) + "+\n"
 
         if self._options['header_column'] and self._options['frame']:
             frame_line = "+" + frame_line[1:].replace('+', '++', 1)
@@ -503,7 +503,7 @@ class table(SageObject):
         """
         frame = self._options['frame']
         widths = self._widths()
-        frame_line = "+" + "+".join("-" * (x+2) for x in widths) + "+\n"
+        frame_line = "+" + "+".join("-" * (x + 2) for x in widths) + "+\n"
 
         align = self._options['align']
         if align == 'right':
@@ -607,16 +607,16 @@ class table(SageObject):
         # table header
         s = "\\begin{tabular}{"
         s += frame_char + align_char + frame_char + head_col_char
-        s += frame_char.join([align_char] * (nc-1))
+        s += frame_char.join([align_char] * (nc - 1))
         s += frame_char + "}" + frame_str + "\n"
         # first row
         s += " & ".join(LatexExpr(x) if isinstance(x, (str, LatexExpr))
-                      else '$' + latex(x).strip() + '$' for x in rows[0])
+                        else '$' + latex(x).strip() + '$' for x in rows[0])
         s += " \\\\" + frame_str + head_row_str + "\n"
         # other rows
         for row in rows[1:]:
             s += " & ".join(LatexExpr(x) if isinstance(x, (str, LatexExpr))
-                          else '$' + latex(x).strip() + '$' for x in row)
+                            else '$' + latex(x).strip() + '$' for x in row)
             s += " \\\\" + frame_str + "\n"
         s += "\\end{tabular}"
         return s
@@ -724,7 +724,7 @@ class table(SageObject):
         if rows:
             s.writelines([
                 # If the table has < 100 rows, don't truncate the output in the notebook
-                '<div class="notruncate">\n' if len(rows) <= 100 else '<div class="truncate">' ,
+                '<div class="notruncate">\n' if len(rows) <= 100 else '<div class="truncate">',
                 '<table {} class="table_form">\n'.format(frame),
                 '<tbody>\n',
             ])
@@ -813,7 +813,7 @@ class table(SageObject):
         # first entry of row
         entry = row[0]
         if isinstance(entry, Graphics):
-            file.write(first_column_tag % entry.show(linkmode = True))
+            file.write(first_column_tag % entry.show(linkmode=True))
         elif isinstance(entry, str):
             file.write(first_column_tag % math_parse(entry))
         else:
@@ -822,7 +822,7 @@ class table(SageObject):
         # other entries
         for column in range(1, len(row)):
             if isinstance(row[column], Graphics):
-                file.write(column_tag % row[column].show(linkmode = True))
+                file.write(column_tag % row[column].show(linkmode=True))
             elif isinstance(row[column], str):
                 file.write(column_tag % math_parse(row[column]))
             else:

@@ -7,6 +7,14 @@ if [ `uname` = "Darwin" ]; then
     unset ATLAS
     unset BLAS
     unset LAPACK
+    # https://trac.sagemath.org/ticket/34110#comment:35
+    # The fix for "reciprocal" (affected by a clang compiler bug) in
+    # https://github.com/numpy/numpy/pull/19926 relies on -ftrapping-math
+    # being used when Apple clang v12+ is used.
+    # But numpy.distutils.ccompiler only sets this flag when
+    # $CC contains the string "clang" -- missing the case CC=/usr/bin/gcc.
+    # So we set it here explicitly if the compiler supports the flag.
+    export CFLAGS="$(testcflags.sh $CFLAGS -ftrapping-math)"
 else
     export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
     export LDFLAGS="${LDFLAGS} -shared"
@@ -27,15 +35,10 @@ fi
 export FFLAGS="$FFLAGS -fPIC"
 export FCFLAGS="$FCFLAGS -fPIC"
 
-# Numpy 1.20.3 enables some intrinsics on machines without support with `-march=native`.
-# We disable it until this is fixed.
-export CFLAGS="$CFLAGS_NON_NATIVE"
-
-export NUMPY_FCONFIG="config_fc --noopt --noarch"
 if [ "$SAGE_FAT_BINARY" = "yes" ]; then
     export NUMPY_FCONFIG="--cpu-baseline=NONE"
 else
-    export NUMPY_FCONFIG
+    export NUMPY_FCONFIG=""
 fi
 
 # Trac #32423: Fix 32-bit builds on x86_64

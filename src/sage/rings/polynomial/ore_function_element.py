@@ -1,11 +1,10 @@
 r"""
-An element in the fraction field of a Ore polynomial ring.
+Fraction field elements of Ore polynomial rings
 
 AUTHOR:
 
 - Xavier Caruso (2020-05)
 """
-
 
 # ***************************************************************************
 #    Copyright (C) 2020 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -16,7 +15,6 @@ AUTHOR:
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
 
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 from sage.misc.cachefunc import cached_method

@@ -19,7 +19,6 @@ import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from sage.rings.ring import CommutativeRing
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
@@ -121,6 +120,10 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         sage: SCR = SR.subring(no_variables=True)                             # optional - sage.symbolic
         sage: Polyhedra(SCR, 2, backend='normaliz')  # optional - pynormaliz  # optional - sage.symbolic
         Polyhedra in (Symbolic Constants Subring)^2
+
+        sage: Polyhedra(SCR, 2, backend='number_field')                       # optional - sage.symbolic
+        Polyhedra in (Symbolic Constants Subring)^2
+
     """
     if ambient_space_or_base_ring is not None:
         if ambient_space_or_base_ring in Rings():
@@ -180,6 +183,8 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         except TypeError:
             raise ValueError(f"the 'polymake' backend for polyhedron cannot be used with {base_field}")
         return Polyhedra_polymake(base_field, ambient_dim, backend)
+    elif backend == 'number_field':
+        return Polyhedra_number_field(base_ring.fraction_field(), ambient_dim, backend)
     elif backend == 'field':
         if not base_ring.is_exact():
             raise ValueError("the 'field' backend for polyhedron cannot be used with non-exact fields")
@@ -1006,7 +1011,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                                            extended_self._internal_coerce_map_from(self).__copy__())
             return action
 
-        if op is operator.mul and isinstance(other, CommutativeRing):
+        if op is operator.mul and other in Rings().Commutative():
             ring = self._coerce_base_ring(other)
             if ring is self.base_ring():
                 return ActedUponAction(other, self, not self_is_left)
@@ -1158,13 +1163,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         return obj
 
 
-
 from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
 lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd')
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_ZZ_ppl, Polyhedron_QQ_ppl
 from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz, Polyhedron_ZZ_normaliz, Polyhedron_QQ_normaliz
 from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
 from sage.geometry.polyhedron.backend_field import Polyhedron_field
+from sage.geometry.polyhedron.backend_number_field import Polyhedron_number_field
+
 
 class Polyhedra_ZZ_ppl(Polyhedra_base):
     Element = Polyhedron_ZZ_ppl
@@ -1244,6 +1250,9 @@ class Polyhedra_polymake(Polyhedra_base):
 
 class Polyhedra_field(Polyhedra_base):
     Element = Polyhedron_field
+
+class Polyhedra_number_field(Polyhedra_base):
+    Element = Polyhedron_number_field
 
 @cached_function
 def does_backend_handle_base_ring(base_ring, backend):

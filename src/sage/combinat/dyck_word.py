@@ -895,6 +895,61 @@ class DyckWord(CombinatorialElement):
         res += "\\end{tikzpicture}$}}"
         return res
 
+    def _repr_svg_(self) -> str:
+        """
+        Return the svg picture of ``self``.
+
+        This can be displayed by Jupyter.
+
+        EXAMPLES::
+
+            sage: PP = DyckWords(6).random_element()
+            sage: PP._repr_svg_()
+            '<?xml...</g></svg>'
+        """
+        N = self.length()
+        width = 0.1 if N < 20 else N / 200
+        resu = '<?xml version=\"1.0\" standalone=\"no\"?>'
+        resu += '<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" '
+        resu += '\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">'
+        resu += '<svg xmlns=\"http://www.w3.org/2000/svg\" '
+        resu += 'xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"500\" viewBox='
+
+        resu1 = '<g style=\"stroke-width:{};stroke-linejoin:bevel; '.format(width)
+        resu1 += 'stroke-linecap:butt; stroke:black; fill:snow\">'
+
+        resu3 = '<g style=\"stroke-width:{};stroke-linejoin:bevel;stroke-dasharray:0.25; '.format(width / 2)
+        resu3 += 'stroke-linecap:butt; stroke:gray; fill:none\">'
+
+        horizontal = "<line x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\"/>"
+        hori_lines = []
+        path = ['<polyline points=\"0,0']
+        x, y = 0, 0
+        max_y = 0
+        last_seen_level = [0]
+        for e in self:
+            x += 1
+            if e == open_symbol:
+                y += 1
+                last_seen_level.append(x - 1)
+                max_y = max(max_y, y)
+            else:
+                y -= 1
+                old_x = last_seen_level.pop()
+                hori_lines.append(horizontal.format(old_x, -y, x, -y))
+            path.append(f"{x},{-y}")
+        path.append('\"/>')
+        path.append('</g>')
+        resu1 += " ".join(path)
+        hori_lines.append('</g></svg>')
+        resu3 += "".join(hori_lines)
+
+        margin = 2 * width
+        resu += '\"{} {} {} {} \">'.format(-margin, -max_y - margin,
+                                           N + 2 * margin, max_y + 2 * margin)
+
+        return resu + resu1 + resu3
+
     def plot(self, **kwds):
         """
         Plot a Dyck word as a continuous path.
@@ -1838,6 +1893,7 @@ class DyckWord_complete(DyckWord):
     For further information on Dyck words, see
     :class:`DyckWords_class<sage.combinat.dyck_word.DyckWord>`.
     """
+
     def semilength(self) -> int:
         r"""
         Return the semilength of ``self``.
@@ -3487,6 +3543,7 @@ class DyckWords_all(DyckWords):
     """
     All Dyck words.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -3561,6 +3618,7 @@ class DyckWordBacktracker(GenericBacktracker):
 
     - Dan Drake (2008-05-30)
     """
+
     def __init__(self, k1, k2):
         r"""
         TESTS::
@@ -3624,6 +3682,7 @@ class DyckWords_size(DyckWords):
     """
     Dyck words with `k_1` openers and `k_2` closers.
     """
+
     def __init__(self, k1, k2):
         r"""
         TESTS:
@@ -3900,6 +3959,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
     """
     All complete Dyck words.
     """
+
     def _repr_(self) -> str:
         r"""
         TESTS::
@@ -3943,6 +4003,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
 
         This is implemented by comparison of area sequences.
         """
+
         def __init__(self):
             r"""
             TESTS::
@@ -4009,6 +4070,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
     """
     All complete Dyck words of a given size.
     """
+
     def __init__(self, k):
         """
         Initialize ``self``.

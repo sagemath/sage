@@ -95,6 +95,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
+            sage: NN = NonNegativeIntegers()
             sage: 1 in NN
             True
             sage: -1 in NN

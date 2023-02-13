@@ -27,7 +27,7 @@ language = "de"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = project + " v"+release
+html_title = project + " v" + release
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -35,7 +35,6 @@ htmlhelp_basename = name
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name+'.tex', project,
+  ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-

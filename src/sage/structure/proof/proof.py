@@ -253,4 +253,3 @@ class WithProof():
             True
         """
         _proof_prefs._require_proof[self._subsystem] = self._t_orig
-

@@ -207,11 +207,13 @@ cdef class ntl_ZZ_pX():
 
     def __setitem__(self, long i, a):
         r"""
-        sage: c = ntl.ZZ_pContext(23)
-        sage: x = ntl.ZZ_pX([2, 3, 4], c)
-        sage: x[1] = 5
-        sage: x
-        [2 5 4]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(23)
+            sage: x = ntl.ZZ_pX([2, 3, 4], c)
+            sage: x[1] = 5
+            sage: x
+            [2 5 4]
         """
         if i < 0:
             raise IndexError("index (i=%s) must be >= 0" % i)
@@ -276,7 +278,7 @@ cdef class ntl_ZZ_pX():
         """
         self.c.restore_c()
         cdef ZZ_p_c r
-        cdef long l
+        cdef long l = 0
         sig_on()
         r = ZZ_pX_coeff( self.x, i)
         ZZ_conv_to_long(l, ZZ_p_rep(r))
@@ -1152,7 +1154,7 @@ cdef class ntl_ZZ_pX():
         ZZ_pX_Modulus_build(mod, modulus.x)
         cdef ntl_ZZ_pX mod_prime
         cdef ntl_ZZ_pContext_class ctx
-        cdef long mini, minval
+        cdef long mini = 0, minval = 0
         if Integer(modulus[0].lift()).valuation(p) == 1:
             eisenstein = True
             for c in modulus.list()[1:-1]:

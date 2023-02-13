@@ -1,9 +1,9 @@
 r"""
-Symbolic Minimum and Maximum
+Symbolic minimum and maximum
 
-Sage provides a symbolic maximum and minimum due to the fact that the Python
-builtin max and min are not able to deal with variables as users might expect.
-These functions wait to evaluate if there are variables.
+Sage provides a symbolic maximum and minimum due to the fact that the
+Python builtin :func:`max` and :func:`min` are not able to deal with variables
+as users might expect. These functions wait to evaluate if there are variables.
 
 Here you can see some differences::
 
@@ -24,14 +24,13 @@ This works as expected for more than two entries::
    max(x, 5)
    sage: min_symbolic(3, 5, x)
    min(x, 3)
-
 """
 ###############################################################################
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2010 Burcin Erocal <burcin@erocal.org>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
 from sage.symbolic.function import BuiltinFunction
@@ -39,6 +38,7 @@ from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
 from builtins import max as builtin_max, min as builtin_min
+
 
 class MinMax_base(BuiltinFunction):
     def eval_helper(self, this_f, builtin_f, initial_val, args):
@@ -53,7 +53,6 @@ class MinMax_base(BuiltinFunction):
             min(x, 3)
             sage: min_symbolic([5.0r])   # indirect doctest
             5.0
-
         """
         # __call__ ensures that if args is a singleton, the element is iterable
         arg_is_iter = False
@@ -151,12 +150,13 @@ class MinMax_base(BuiltinFunction):
         except ValueError:
             pass
 
+
 class MaxSymbolic(MinMax_base):
     def __init__(self):
         r"""
         Symbolic `\max` function.
 
-        The Python builtin `\max` function doesn't work as expected when symbolic
+        The Python builtin :func:`max` function does not work as expected when symbolic
         expressions are given as arguments. This function delays evaluation
         until all symbolic arguments are substituted with values.
 
@@ -236,7 +236,6 @@ class MaxSymbolic(MinMax_base):
             ...
             sage: r.n()  # abs tol 1e-8
             0.873911256504955
-
         """
         return max_symbolic(args)
 
@@ -249,7 +248,7 @@ class MinSymbolic(MinMax_base):
         r"""
         Symbolic `\min` function.
 
-        The Python builtin `\min` function doesn't work as expected when symbolic
+        The Python builtin :func:`min` function does not work as expected when symbolic
         expressions are given as arguments. This function delays evaluation
         until all symbolic arguments are substituted with values.
 
@@ -322,5 +321,6 @@ class MinSymbolic(MinMax_base):
             TypeError: cannot evaluate symbolic expression numerically
         """
         return min_symbolic(args)
+
 
 min_symbolic = MinSymbolic()

@@ -197,7 +197,7 @@ AUTHORS:
   magma.functions...
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -210,8 +210,8 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
+from __future__ import annotations
 import re
 import sys
 
@@ -225,6 +225,7 @@ SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
 from sage.env import SAGE_EXTCODE, DOT_SAGE
 import sage.misc.misc
 import sage.misc.sage_eval
+import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
@@ -566,6 +567,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: magma = Magma()
             sage: magma._preparse_colon_equals = False
             sage: magma._preparse('a = 5')
             'a = 5'
@@ -1812,13 +1814,11 @@ class MagmaFunction(ExpectFunction):
 
 def is_MagmaElement(x):
     """
-    Return True if x is of type MagmaElement, and False otherwise.
+    Return True if ``x`` is of type :class:`MagmaElement`, and False otherwise.
 
     INPUT:
 
-
     -  ``x`` - any object
-
 
     OUTPUT: bool
 
@@ -1826,15 +1826,20 @@ def is_MagmaElement(x):
 
         sage: from sage.interfaces.magma import is_MagmaElement
         sage: is_MagmaElement(2)
+        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
+        See https://trac.sagemath.org/34804 for details.
         False
         sage: is_MagmaElement(magma(2))                    # optional - magma
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
+
     return isinstance(x, MagmaElement)
 
 
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular
@@ -2133,14 +2138,14 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
         """
         if n <= 0:
             raise IndexError("index must be positive since Magma indexes are 1-based")
-        return self.gens()[n-1]
+        return self.gens()[n - 1]
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return generators for self.
+        Return generators for ``self``.
 
         If self is named X in Magma, this function evaluates X.1, X.2,
-        etc., in Magma until an error occurs. It then returns a Sage list
+        etc., in Magma until an error occurs. It then returns a Sage tuple
         of the resulting X.i. Note - I don't think there is a Magma command
         that returns the list of valid X.i. There are numerous ad hoc
         functions for various classes but nothing systematic. This function
@@ -2154,9 +2159,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
         EXAMPLES::
 
             sage: magma("VectorSpace(RationalField(),3)").gens()         # optional - magma
-            [(1 0 0), (0 1 0), (0 0 1)]
+            ((1 0 0), (0 1 0), (0 0 1))
             sage: magma("AbelianGroup(EllipticCurve([1..5]))").gens()    # optional - magma
-            [$.1]
+            ($.1,)
         """
         try:
             return self._magma_gens
@@ -2172,8 +2177,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             except (RuntimeError, TypeError):
                 break
             i += 1
-        self._magma_gens = G
-        return G
+        tG = tuple(G)
+        self._magma_gens = tG
+        return tG
 
     def gen_names(self):
         """
@@ -2651,17 +2657,13 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
                 pass
         return True
 
-    
-
     def sub(self, gens):
         """
         Return the sub-object of self with given gens.
 
         INPUT:
 
-
-        -  ``gens`` - object or list/tuple of generators
-
+        -  ``gens`` -- object or list/tuple of generators
 
         EXAMPLES::
 

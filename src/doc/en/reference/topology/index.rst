@@ -8,7 +8,7 @@ also available, mainly for developers who want to use it as a base for
 other types of cell complexes.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/topology/simplicial_complex
    sage/topology/simplicial_complex_morphism

@@ -785,7 +785,7 @@ class RijndaelGF(SageObject):
                not GF.parent().order() == 2**8:
                 msg = "keyword 'GF' must be in"
                 raise TypeError(msg.format(self._F))
-            return hex(GF.integer_representation())[2:].zfill(2)
+            return hex(GF.to_integer())[2:].zfill(2)
 
     def _bin_to_GF(self, B, matrix=True):
         r"""
@@ -911,7 +911,7 @@ class RijndaelGF(SageObject):
                not GF.parent().order() == 2**8:
                 msg = "keyword 'GF' must be in"
                 raise TypeError(msg.format(self._F))
-            return bin(GF.integer_representation())[2:].zfill(8)
+            return bin(GF.to_integer())[2:].zfill(8)
 
     def encrypt(self, plain, key, format='hex'):
         r"""

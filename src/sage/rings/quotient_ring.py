@@ -97,7 +97,7 @@ easily::
     True
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -105,9 +105,7 @@ easily::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+# ****************************************************************************
 import sage.misc.latex as latex
 from . import ring, ideal, quotient_ring_element
 from sage.structure.category_object import normalize_names
@@ -117,13 +115,13 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 
+import sage.interfaces.abc
+
+_Rings = Rings()
+_CommRings = CommutativeRings()
+
 
 MPolynomialIdeal_quotient = None
-try:
-    from sage.interfaces.singular import singular as singular_default, is_SingularElement
-except ImportError:
-    is_singularElement = lambda x : False
-    singular_default = None
 
 
 def QuotientRing(R, I, names=None, **kwds):
@@ -276,20 +274,15 @@ def QuotientRing(R, I, names=None, **kwds):
     """
     # 1. Not all rings inherit from the base class of rings.
     # 2. We want to support quotients of free algebras by homogeneous two-sided ideals.
-    #if not isinstance(R, commutative_ring.CommutativeRing):
-    #    raise TypeError, "R must be a commutative ring."
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.integer_ring import ZZ
-    if R not in Rings():
-        raise TypeError("R must be a ring.")
-    try:
-        is_commutative = R.is_commutative()
-    except (AttributeError, NotImplementedError):
-        is_commutative = False
+    if R not in _Rings:
+        raise TypeError("R must be a ring")
+    is_commutative = R in _CommRings
     if names is None:
         try:
             names = tuple([x + 'bar' for x in R.variable_names()])
-        except ValueError: # no names are assigned
+        except ValueError:  # no names are assigned
             pass
     else:
         names = normalize_names(R.ngens(), names)
@@ -321,9 +314,10 @@ def QuotientRing(R, I, names=None, **kwds):
         if S == ZZ:
             return Integers((I_lift+J).gen(), **kwds)
         return R.__class__(S, I_lift + J, names=names)
-    if isinstance(R, ring.CommutativeRing):
+    if R in _CommRings:
         return QuotientRing_generic(R, I, names, **kwds)
     return QuotientRing_nc(R, I, names, **kwds)
+
 
 def is_QuotientRing(x):
     """
@@ -349,14 +343,12 @@ def is_QuotientRing(x):
         True
         sage: is_QuotientRing(F)
         False
-
     """
     return isinstance(x, QuotientRing_nc)
 
 
-_Rings = Rings()
-_RingsQuotients = Rings().Quotients()
-_CommutativeRingsQuotients = CommutativeRings().Quotients()
+_RingsQuotients = _Rings.Quotients()
+_CommutativeRingsQuotients = _CommRings.Quotients()
 from sage.structure.category_object import check_default_category
 
 
@@ -512,10 +504,13 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 names = self.cover_ring().variable_names()
             except ValueError:
                 names = None
-        if self in CommutativeRings():
-            return QuotientFunctor(self.__I, names=names, domain=CommutativeRings(), codomain=CommutativeRings(), as_field=isinstance(self, Field)), self.__R
+        if self in _CommRings:
+            return QuotientFunctor(self.__I, names=names, domain=_CommRings,
+                                   codomain=_CommRings,
+                                   as_field=isinstance(self, Field)), self.__R
         else:
-            return QuotientFunctor(self.__I, names=names, as_field=isinstance(self, Field)), self.__R
+            return QuotientFunctor(self.__I, names=names,
+                                   as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """
@@ -956,12 +951,11 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-        if not isinstance(self.__R, MPolynomialRing_libsingular) and \
-               (not hasattr(self.__R, '_has_singular') or not self.__R._has_singular):
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        if not (isinstance(self.__R, MPolynomialRing_base) and self.__R._has_singular):
             # pass through
             return super().ideal(gens, **kwds)
-        if is_SingularElement(gens):
+        if isinstance(gens, sage.interfaces.abc.SingularElement):
             gens = list(gens)
         elif not isinstance(gens, (list, tuple)):
             gens = [gens]
@@ -1017,7 +1011,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             if x.parent() is self:
                 return x
             x = x.lift()
-        if is_SingularElement(x):
+        if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x
@@ -1183,7 +1177,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self(self.__R.gen(i))
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Returns the Singular quotient ring of ``self`` if the base ring is
         coercible to Singular.
@@ -1215,7 +1209,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             _[1]=x2+y2
         """
         if singular is None:
-            raise ImportError("could not import singular")
+            from sage.interfaces.singular import singular
 
         try:
             Q = self.__singular
@@ -1224,7 +1218,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Q._check_valid()
             return Q
         except (AttributeError, ValueError):
-            return self._singular_init_(singular)
+            self.__singular = self._singular_init_(singular)
+            return self.__singular
 
     def _singular_init_(self, singular=None):
         """
@@ -1290,6 +1285,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self.__R.term_order()
 
+
 class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
     r"""
     Creates a quotient ring of a *commutative* ring `R` by the ideal `I`.
@@ -1316,13 +1312,14 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
 
         TESTS::
 
-            sage: isinstance(ZZ.quo(2), sage.rings.ring.CommutativeRing)  # indirect doctest
+            sage: ZZ.quo(2) in Rings().Commutative()  # indirect doctest
             True
         """
-        if not isinstance(R, ring.CommutativeRing):
+        if R not in _CommRings:
             raise TypeError("This class is for quotients of commutative rings only.\n    For non-commutative rings, use <sage.rings.quotient_ring.QuotientRing_nc>")
         if not self._is_category_initialized():
-            category = check_default_category(_CommutativeRingsQuotients,category)
+            category = check_default_category(_CommutativeRingsQuotients,
+                                              category)
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
     def _macaulay2_init_(self, macaulay2=None):

@@ -461,7 +461,7 @@ class FiniteSubgroup(Module):
         """
         lattice = self.lattice().scale(right)
         return FiniteSubgroup_lattice(self.abelian_variety(), lattice,
-                                      field_of_definition = self.field_of_definition())
+                                field_of_definition=self.field_of_definition())
 
     def __rmul__(self, left):
         """

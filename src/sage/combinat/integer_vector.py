@@ -44,8 +44,9 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.infinity import PlusInfinity
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
+
 
 def is_gale_ryser(r,s):
     r"""
@@ -121,6 +122,7 @@ def is_gale_ryser(r,s):
 
     #                                same number of 1s           domination
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
+
 
 def gale_ryser_theorem(p1, p2, algorithm="gale",
                        *, solver=None, integrality_tolerance=1e-3):
@@ -444,6 +446,7 @@ class IntegerVector(ClonableArray):
     """
     An integer vector.
     """
+
     def check(self):
         """
         Check to make sure this is a valid integer vector by making sure
@@ -477,6 +480,36 @@ class IntegerVector(ClonableArray):
             raise ValueError("all entries must be non-negative")
         if self not in self.parent():
             raise ValueError(f"{self} doesn't satisfy correct constraints")
+
+    def trim(self):
+        """
+        Remove trailing zeros from the integer vector.
+
+        EXAMPLES::
+
+            sage: IV = IntegerVectors()
+            sage: IV([5,3,5,1,0,0]).trim()
+            [5, 3, 5, 1]
+            sage: IV([5,0,5,1,0]).trim()
+            [5, 0, 5, 1]
+            sage: IV([4,3,3]).trim()
+            [4, 3, 3]
+            sage: IV([0,0,0]).trim()
+            []
+
+            sage: IV = IntegerVectors(k=4)
+            sage: v = IV([4,3,2,0]).trim(); v
+            [4, 3, 2]
+            sage: v.parent()
+            Integer vectors
+        """
+        P = IntegerVectors()
+        v = list(self)
+        if all(i == 0 for i in v):
+            return P.element_class(P, [], check=False)
+        while not v[-1]:
+            v = v[:-1]
+        return P.element_class(P, v, check=False)
 
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
@@ -712,6 +745,7 @@ class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -756,6 +790,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors that sum to `n`.
     """
+
     def __init__(self, n):
         """
         TESTS::
@@ -828,6 +863,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
     """
+
     def __init__(self, k):
         """
         TESTS::
@@ -902,6 +938,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     - Martin Albrecht
     - Mike Hansen
     """
+
     def __init__(self, n, k):
         """
         TESTS::
@@ -1212,6 +1249,7 @@ class IntegerVectorsConstraints(IntegerVectors):
     """
     Class of integer vectors subject to various constraints.
     """
+
     def __init__(self, n=None, k=None, **constraints):
         """
         Initialize ``self``.

@@ -26,8 +26,7 @@ command inside Sage::
      'alabaster',
      'arb',
      ...
-     'zlib',
-     'zn_poly']
+     'zlib']
 
 Functions
 ---------
@@ -265,7 +264,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
          'arb',
          'babel',
          ...
-         'zn_poly']
+         'zlib']
         sage: sage_conf_info = L['sage_conf']  # optional - sage_spkg
         sage: sage_conf_info.type              # optional - sage_spkg
         'standard'
@@ -498,8 +497,8 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)  # optional - sage_spkg
         sage: 'gap' in std  # optional - sage_spkg
         True
-        sage: std['zn_poly']  # optional - sage_spkg, random
-        ('0.9.p12', '0.9.p12')
+        sage: std['zlib']  # optional - sage_spkg, random
+        ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 

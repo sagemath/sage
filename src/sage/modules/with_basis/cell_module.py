@@ -12,7 +12,7 @@ Cell modules
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.data_structures.blas_dict import linear_combination
@@ -357,7 +357,7 @@ class CellModule(CombinatorialFreeModule):
                 # Temporary needed by coercion (see Polynomial/FractionField tests).
                 if not P._algebra.has_coerce_map_from(scalar.parent()):
                     return None
-                scalar = P._algebra( scalar )
+                scalar = P._algebra(scalar)
 
             if self_on_left:
                 raise NotImplementedError
@@ -473,4 +473,3 @@ class SimpleModule(QuotientModuleWithBasis):
         # For backward compatibility
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
-

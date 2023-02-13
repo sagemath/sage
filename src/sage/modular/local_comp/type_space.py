@@ -33,7 +33,7 @@ from .liftings import lift_gen_to_gamma1, lift_ramified
 
 
 @cached_function
-def example_type_space(example_no = 0):
+def example_type_space(example_no=0):
     r"""
     Quickly return an example of a type space. Used mainly to speed up
     doctesting.

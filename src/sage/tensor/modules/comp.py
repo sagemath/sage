@@ -4351,7 +4351,7 @@ class CompWithSym(Components):
             if len(pos) < 2:
                 raise ValueError("at least two index positions must be given")
             if len(pos) > self._nid:
-                raise ValueError("number of index positions larger than the " \
+                raise ValueError("number of index positions larger than the "
                                  "total number of indices")
             pos = tuple(pos)
         pos_set = set(pos)
@@ -4613,7 +4613,7 @@ class CompWithSym(Components):
             if len(pos) < 2:
                 raise ValueError("at least two index positions must be given")
             if len(pos) > self._nid:
-                raise ValueError("number of index positions larger than the " \
+                raise ValueError("number of index positions larger than the "
                                  "total number of indices")
             pos = tuple(pos)
         pos_set = set(pos)

@@ -18,8 +18,6 @@ name: CI Linux
 #on: [push, pull_request]
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -51,6 +49,7 @@ jobs:
     with:
       # Build incrementally from previous stage (pre)
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       docker_targets: "with-targets with-targets-optional"
@@ -82,6 +81,7 @@ jobs:
     with:
       # Build incrementally from previous stage (pre)
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       docker_targets: "with-targets with-targets-optional"
@@ -89,7 +89,7 @@ jobs:
       targets: build doc-html
       targets_optional: ptest
       tox_packages_factors: >-
-          ["minimal]
+          ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   maximal-pre:
@@ -97,6 +97,7 @@ jobs:
     needs: [minimal]
     uses: ./.github/workflows/docker.yml
     with:
+      free_disk_space: true
       # Build from scratch
       docker_targets: "with-system-packages configured with-targets-pre"
       # FIXME: duplicated from env.TARGETS
@@ -111,6 +112,7 @@ jobs:
     uses: ./.github/workflows/docker.yml
     with:
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       tox_packages_factors: >-
@@ -125,6 +127,7 @@ jobs:
     uses: ./.github/workflows/docker.yml
     with:
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       tox_packages_factors: >-
@@ -138,6 +141,7 @@ jobs:
     uses: ./.github/workflows/docker.yml
     with:
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       tox_packages_factors: >-
@@ -151,6 +155,7 @@ jobs:
     uses: ./.github/workflows/docker.yml
     with:
       incremental: true
+      free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       tox_packages_factors: >-
@@ -171,7 +176,7 @@ jobs:
       TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install test prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
@@ -185,7 +190,7 @@ jobs:
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v3
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

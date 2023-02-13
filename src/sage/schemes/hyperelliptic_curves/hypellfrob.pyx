@@ -1,8 +1,8 @@
 # distutils: language = c++
-# distutils: sources = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.cpp
-# distutils: depends = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.h
+# distutils: sources = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
+# distutils: depends = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.h
 # distutils: include_dirs = sage/libs/ntl/ sage/schemes/hyperelliptic_curves/hypellfrob/ NTL_INCDIR
-# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
@@ -59,7 +59,7 @@ cdef extern from "hypellfrob.h":
     void interval_products_wrapper \
         "hypellfrob::hypellfrob_interval_products_wrapper" \
         (mat_ZZ_p_c &output, const mat_ZZ_p_c &M0, const mat_ZZ_p_c &M1,
-         const vector[ZZ_c] target, int force_ntl)
+         const vector[ZZ_c] target)
 
 
 def interval_products(M0, M1, target):
@@ -146,7 +146,7 @@ def interval_products(M0, M1, target):
     numintervals = len(target)/2
     out.SetDims(dim, dim*numintervals)
 
-    interval_products_wrapper(out, mm0, mm1, targ, 1)
+    interval_products_wrapper(out, mm0, mm1, targ)
     sig_off()
 
     R = M0.matrix_space()

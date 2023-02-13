@@ -117,11 +117,9 @@ cdef class ntl_ZZ_p():
         if v is not None:
             if isinstance(v, ntl_ZZ_p):
                 self.x = (<ntl_ZZ_p>v).x
-            elif isinstance(v, long):
+            elif isinstance(v, int):
                 PyLong_to_ZZ(&temp, v)
                 self.x = ZZ_to_ZZ_p(temp)
-            elif isinstance(v, int):
-                self.x = int_to_ZZ_p(v)
             elif isinstance(v, Integer):
                 mpz_to_ZZ(&temp, (<Integer>v).value)
                 self.x = ZZ_to_ZZ_p(temp)
@@ -166,9 +164,11 @@ cdef class ntl_ZZ_p():
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_p(4,7)
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_p(4,7)
+            sage: loads(dumps(a)) == a
+            True
         """
         return unpickle_class_args, (ntl_ZZ_p, (self.lift(), self.modulus_context()))
 

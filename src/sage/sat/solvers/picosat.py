@@ -85,10 +85,11 @@ class PicoSAT(SatSolver):
 
     def nvars(self):
         r"""
-        Return the number of variables. Note that for compatibility with DIMACS
-        convention, the number of variables corresponds to the maximal index of
-        the variables used. 
-        
+        Return the number of variables.
+
+        Note that for compatibility with DIMACS convention, the number
+        of variables corresponds to the maximal index of the variables used.
+
         EXAMPLES::
 
             sage: from sage.sat.solvers.picosat import PicoSAT
@@ -220,7 +221,5 @@ class PicoSAT(SatSolver):
         """
         if filename is None:
             return self._clauses
-        else:
-            from sage.sat.solvers.dimacs import DIMACS
-            DIMACS.render_dimacs(self._clauses, filename, self.nvars())
-
+        from sage.sat.solvers.dimacs import DIMACS
+        DIMACS.render_dimacs(self._clauses, filename, self.nvars())

@@ -73,13 +73,13 @@ EXAMPLE:
     arb
     autotools
     [...]
-    zn_poly
+    zlib
 
     $ sage --package list :standard: | sort
     arb
     backports_ssl_match_hostname
     [...]
-    zn_poly
+    zlib
 """
 
 
@@ -312,7 +312,7 @@ def make_parser():
         'package_name', default=None, type=str,
         help='Package name.')
     parser_create.add_argument(
-        '--source', type=str, default='normal', help='Package source (one of normal, script, pip)')
+        '--source', type=str, default='normal', help='Package source (one of normal, wheel, script, pip)')
     parser_create.add_argument(
         '--version', type=str, default=None, help='Package version')
     parser_create.add_argument(

@@ -57,4 +57,3 @@ Sage example in ./sol/recequadiff.tex, line 80::
   -sqrt(2*_C + 2*log(x))*x
 
 """
-

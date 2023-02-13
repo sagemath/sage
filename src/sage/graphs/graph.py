@@ -440,7 +440,7 @@ class Graph(GenericGraph):
     pre-defined graphs, see the :mod:`~sage.graphs.graph_generators` module.
 
     A :class:`Graph` object has many methods whose list can be obtained by
-    typing ``g.<tab>`` (i.e. hit the 'tab' key) or by reading the documentation
+    typing ``g.<tab>`` (i.e. hit the :kbd:`Tab` key) or by reading the documentation
     of :mod:`~sage.graphs.graph`, :mod:`~sage.graphs.generic_graph`, and
     :mod:`~sage.graphs.digraph`.
 

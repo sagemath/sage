@@ -403,17 +403,18 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         mc = x.monomial_coefficients(copy=False)
         if self._is_module_with_basis_over_same_base_ring:
             return self.codomain().linear_combination(
-                    (self._on_basis(*(before+(index,)+after)), coeff )
-                    for (index, coeff) in mc.items())
+                (self._on_basis(*(before + (index,) + after)), coeff)
+                for (index, coeff) in mc.items())
         else:
-            return sum((coeff * self._on_basis(*(before+(index,)+after))
-                       for (index, coeff) in mc.items()), self._zero)
+            return sum((coeff * self._on_basis(*(before + (index,) + after))
+                        for (index, coeff) in mc.items()), self._zero)
 
     # As per the specs of Map, we should in fact implement _call_.
     # However we currently need to abuse Map.__call__ (which strict
     # type checking) for multi-parameter module morphisms
     # To be cleaned up
     _call_ = __call__
+
 
 class TriangularModuleMorphism(ModuleMorphism):
     r"""
@@ -683,10 +684,9 @@ class TriangularModuleMorphism(ModuleMorphism):
         self._inverse = inverse
 
         if inverse_on_support == "compute":
-            inverse_on_support = {
-                self._dominant_item(on_basis(i))[0] : i
-                for i in self.domain().basis().keys()
-            }.get
+            inverse_on_support = {self._dominant_item(on_basis(i))[0]: i
+                                  for i in self.domain().basis().keys()
+                                  }.get
 
         self._inverse_on_support = inverse_on_support
 
@@ -883,7 +883,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             sage: phi._invert_on_basis(2)
             B[2] - B[3]
         """
-        return self.preimage( self.codomain().monomial(i) )
+        return self.preimage(self.codomain().monomial(i))
 
     def preimage(self, f):
         r"""
@@ -1351,13 +1351,13 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             matrix = matrix.transpose()
         if matrix.nrows() != len(indices):
             raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the domain (%s)"
-                             %(matrix.nrows(), len(indices)))
+                             % (matrix.nrows(), len(indices)))
         if matrix.ncols() != codomain.dimension():
             raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the codomain (%s)"
-                             %(matrix.ncols(), codomain.dimension()))
+                             % (matrix.ncols(), codomain.dimension()))
         self._matrix = matrix
-        d = { xt: codomain.from_vector(matrix.row(rank_domain(xt)))
-              for xt in domain.basis().keys() }
+        d = {xt: codomain.from_vector(matrix.row(rank_domain(xt)))
+             for xt in domain.basis().keys()}
 
         ModuleMorphismByLinearity.__init__(self, on_basis=d.__getitem__,
                                            domain=domain, codomain=codomain,
@@ -1551,6 +1551,7 @@ def pointwise_inverse_function(f):
         return f.pointwise_inverse()
     return PointwiseInverseFunction(f)
 
+
 from sage.structure.sage_object import SageObject
 class PointwiseInverseFunction(SageObject):
     r"""
@@ -1630,4 +1631,3 @@ class PointwiseInverseFunction(SageObject):
             True
         """
         return self._pointwise_inverse
-

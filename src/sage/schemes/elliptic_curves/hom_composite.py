@@ -7,12 +7,6 @@ of smaller (prime) degree. This class implements such a decomposition
 while exposing (close to) the same interface as "normal", unfactored
 elliptic-curve isogenies.
 
-.. WARNING::
-
-    This module is currently considered experimental.
-    It may change in a future release without prior warning, or even
-    be removed altogether if things turn out to be unfixably broken.
-
 EXAMPLES:
 
 The following example would take quite literally forever with the
@@ -20,8 +14,6 @@ straightforward :class:`EllipticCurveIsogeny` implementation, but
 decomposing into prime steps is exponentially faster::
 
     sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-    doctest:warning
-    ...
     sage: p = 3 * 2^143 - 1
     sage: GF(p^2).inject_variables()
     Defining z2
@@ -32,7 +24,9 @@ decomposing into prime steps is exponentially faster::
     sage: EllipticCurveHom_composite(E, P)
     Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143:
       From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
-      To:   Elliptic Curve defined by y^2 = x^3 + (18676616716352953484576727486205473216172067*z2+32690199585974925193292786311814241821808308)*x + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722) over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
+      To:   Elliptic Curve defined by y^2 = x^3 + (18676616716352953484576727486205473216172067*z2+32690199585974925193292786311814241821808308)*x
+    + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722)
+    over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
 
 Yet, the interface provided by :class:`EllipticCurveHom_composite`
 is identical to :class:`EllipticCurveIsogeny` and other instantiations
@@ -48,10 +42,15 @@ of :class:`EllipticCurveHom`::
     sage: psi(E.lift_x(11))
     (352 : 73 : 1)
     sage: psi.rational_maps()
-    ((x^35 + 162*x^34 + 186*x^33 + 92*x^32 - ... + 44*x^3 + 190*x^2 + 80*x - 72)/(x^34 + 162*x^33 - 129*x^32 + 41*x^31 + ... + 66*x^3 - 191*x^2 + 119*x + 21),
-     (x^51*y - 176*x^50*y + 115*x^49*y - 120*x^48*y + ... + 72*x^3*y + 129*x^2*y + 163*x*y + 178*y)/(x^51 - 176*x^50 + 11*x^49 + 26*x^48 - ... - 77*x^3 + 185*x^2 + 169*x - 128))
+    ((x^35 + 162*x^34 + 186*x^33 + 92*x^32 - ... + 44*x^3 + 190*x^2 + 80*x -
+    72)/(x^34 + 162*x^33 - 129*x^32 + 41*x^31 + ... + 66*x^3 - 191*x^2 + 119*x
+    + 21), (x^51*y - 176*x^50*y + 115*x^49*y - 120*x^48*y + ... + 72*x^3*y +
+    129*x^2*y + 163*x*y + 178*y)/(x^51 - 176*x^50 + 11*x^49 + 26*x^48 - ... -
+    77*x^3 + 185*x^2 + 169*x - 128))
     sage: psi.kernel_polynomial()
-    x^17 + 81*x^16 + 7*x^15 + 82*x^14 + 49*x^13 + 68*x^12 + 109*x^11 + 326*x^10 + 117*x^9 + 136*x^8 + 111*x^7 + 292*x^6 + 55*x^5 + 389*x^4 + 175*x^3 + 43*x^2 + 149*x + 373
+    x^17 + 81*x^16 + 7*x^15 + 82*x^14 + 49*x^13 + 68*x^12 + 109*x^11 + 326*x^10
+    + 117*x^9 + 136*x^8 + 111*x^7 + 292*x^6 + 55*x^5 + 389*x^4 + 175*x^3 +
+    43*x^2 + 149*x + 373
     sage: psi.dual()
     Composite morphism of degree 35 = 7*5:
       From: Elliptic Curve defined by y^2 = x^3 + 101*x + 285 over Finite Field of size 419
@@ -88,12 +87,10 @@ from sage.arith.misc import prod
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
 
-from sage.misc.superseded import experimental_warning
-experimental_warning(32744, 'EllipticCurveHom_composite is experimental code.')
+# TODO: Implement sparse strategies? (cf. the SIKE cryptosystem)
 
-#TODO: implement sparse strategies? (cf. the SIKE cryptosystem)
 
 def _eval_factored_isogeny(phis, P):
     """
@@ -118,6 +115,7 @@ def _eval_factored_isogeny(phis, P):
     for phi in phis:
         P = phi(P)
     return P
+
 
 def _compute_factored_isogeny_prime_power(P, l, e):
     """
@@ -147,6 +145,7 @@ def _compute_factored_isogeny_prime_power(P, l, e):
         phis.append(phi)
     return phis
 
+
 def _compute_factored_isogeny_single_generator(P):
     """
     This method takes a point `P` and returns a sequence of
@@ -173,6 +172,7 @@ def _compute_factored_isogeny_single_generator(P):
         phis += psis
     return phis
 
+
 def _compute_factored_isogeny(kernel):
     """
     This method takes a set of points on an elliptic curve
@@ -198,6 +198,7 @@ def _compute_factored_isogeny(kernel):
         ker = [_eval_factored_isogeny(psis, P) for P in ker]
         phis += psis
     return phis
+
 
 class EllipticCurveHom_composite(EllipticCurveHom):
 
@@ -271,7 +272,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         self._phis = _compute_factored_isogeny(kernel)
 
         if not self._phis:
-            self._phis = [WeierstrassIsomorphism(E, (1, 0, 0, 0))]
+            self._phis = [identity_morphism(E)]
 
         if model is not None:
             if codomain is not None:
@@ -349,7 +350,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         TESTS::
 
             sage: E = EllipticCurve('4730k1')
-            sage: EllipticCurveHom_composite.from_factors([], E) == E.multiplication_by_m_isogeny(1)
+            sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)
             True
 
         ::
@@ -374,7 +375,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             E = phi.codomain()
 
         if not maps:
-            maps = (WeierstrassIsomorphism(E, (1,0,0,0)),)
+            maps = (identity_morphism(E),)
 
         if len(maps) == 1 and not strict:
             return maps[0]
@@ -397,6 +398,16 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: R = E.lift_x(15/4 * (a+3))
             sage: psi(R)    # indirect doctest
             (1033648757/303450 : 58397496786187/1083316500*a - 62088706165177/2166633000 : 1)
+
+        Check that copying the order over works::
+
+            sage: E = EllipticCurve(GF(431), [1,0])
+            sage: P, = E.gens()
+            sage: Q = 2^99*P; Q.order()
+            27
+            sage: phi = E.isogeny(3^99*P, algorithm='factored')
+            sage: phi(Q)._order
+            27
         """
         return _eval_factored_isogeny(self._phis, P)
 
@@ -479,7 +490,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         return self._phis
 
-
     # EllipticCurveHom methods
 
     @staticmethod
@@ -517,14 +527,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I) over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         if isinstance(left, EllipticCurveHom_composite):
-            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    #XXX bit of a hack
+            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    # XXX bit of a hack
                 return EllipticCurveHom_composite.from_factors((left.factors()[0] * right,) + left.factors()[1:], strict=False)
             if isinstance(right, EllipticCurveHom_composite):
                 return EllipticCurveHom_composite.from_factors(right.factors() + left.factors())
             if isinstance(right, EllipticCurveHom):
                 return EllipticCurveHom_composite.from_factors((right,) + left.factors())
         if isinstance(right, EllipticCurveHom_composite):
-            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  #XXX bit of a hack
+            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  # XXX bit of a hack
                 return EllipticCurveHom_composite.from_factors(right.factors()[:-1] + (left * right.factors()[-1],), strict=False)
             if isinstance(left, EllipticCurveHom):
                 return EllipticCurveHom_composite.from_factors(right.factors() + (left,))
@@ -553,7 +563,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: psi = phi.codomain().isogeny(phi(Q))
             sage: psi = psi.codomain().isomorphism_to(E) * psi
             sage: comp = psi * phi
-            sage: mu = E.multiplication_by_m_isogeny(phi.degree())
+            sage: mu = E.scalar_multiplication(phi.degree())
             sage: sum(a*comp == mu for a in E.automorphisms())
             1
 
@@ -670,9 +680,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             Composite morphism of degree 9 = 3^2:
               From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 28339*x + 59518 over Finite Field of size 65537
               To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 65537
-            sage: psi * phi == phi.domain().multiplication_by_m_isogeny(phi.degree())
+            sage: psi * phi == phi.domain().scalar_multiplication(phi.degree())
             True
-            sage: phi * psi == psi.domain().multiplication_by_m_isogeny(psi.degree())
+            sage: phi * psi == psi.domain().scalar_multiplication(psi.degree())
             True
         """
         phis = (phi.dual() for phi in self._phis[::-1])
@@ -776,52 +786,19 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         return all(phi.is_injective() for phi in self._phis)
 
-
     @staticmethod
     def make_default():
         r"""
-        Calling this method will override the composition method
-        of :class:`EllipticCurveHom` such that it constructs a
-        :class:`EllipticCurveHom_composite` object by default,
-        rather than a :class:`sage.categories.map.FormalCompositeMap`.
+        This method does nothing and will be removed.
 
-        .. WARNING::
-
-            This method exists only temporarily to make testing more
-            convenient while :class:`EllipticCurveHom_composite` is
-            experimental.
+        (It is a leftover from the time when :class:`EllipticCurveHom_composite`
+        wasn't the default yet.)
 
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: E = EllipticCurve(GF(587), [1,0])
-            sage: P = E(3,404)
-            sage: phi = E.isogeny(7*P)
-            sage: psi = phi.codomain().isogeny(phi(P))
-            sage: psi * phi
-            Composite map:
-              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 587
-              To:   Elliptic Curve defined by y^2 = x^3 + 296*x + 164 over Finite Field of size 587
-              Defn:   Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 587 to Elliptic Curve defined by y^2 = x^3 + 126*x + 500 over Finite Field of size 587
-                    then
-                      Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 126*x + 500 over Finite Field of size 587 to Elliptic Curve defined by y^2 = x^3 + 296*x + 164 over Finite Field of size 587
             sage: EllipticCurveHom_composite.make_default()
-            sage: psi * phi
-            Composite morphism of degree 49 = 7^2:
-              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 587
-              To:   Elliptic Curve defined by y^2 = x^3 + 296*x + 164 over Finite Field of size 587
-            sage: (psi * phi).factors()
-            (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 587 to Elliptic Curve defined by y^2 = x^3 + 126*x + 500 over Finite Field of size 587,
-             Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 126*x + 500 over Finite Field of size 587 to Elliptic Curve defined by y^2 = x^3 + 296*x + 164 over Finite Field of size 587)
+            doctest:warning ...
         """
-        def _composition_(self, other, homset):
-            if not isinstance(self, EllipticCurveHom) or not isinstance(other, EllipticCurveHom):
-                raise TypeError(f'cannot compose {type(self)} with {type(other)}')
-            ret = self._composition_impl(self, other)
-            if ret is not NotImplemented:
-                return ret
-            ret = other._composition_impl(self, other)
-            if ret is not NotImplemented:
-                return ret
-            return EllipticCurveHom_composite.from_factors([other, self])
-        EllipticCurveHom._composition_ = _composition_
+        from sage.misc.superseded import deprecation
+        deprecation(34410, 'calling EllipticCurveHom_composite.make_default() is no longer necessary')

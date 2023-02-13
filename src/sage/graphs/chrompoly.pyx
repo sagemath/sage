@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-Chromatic Polynomial
+Chromatic polynomial
 
 AUTHORS:
 

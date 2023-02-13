@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Eisenstein Series
+Eisenstein series
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
@@ -26,7 +26,7 @@ from sage.rings.rational_field import QQ
 from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
 
 
-def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
+def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
     `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
@@ -125,8 +125,8 @@ def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
     - David Loeffler (2012-03-15): add options for alternative normalizations
       (motivated by :trac:`12043`)
     """
-    ## we use this to prevent computation if it would fail anyway.
-    if k <= 0 or k % 2 == 1 :
+    # we use this to prevent computation if it would fail anyway.
+    if k <= 0 or k % 2 == 1:
         raise ValueError("k must be positive and even")
 
     a0 = - bernoulli(k) / (2*k)
@@ -420,27 +420,28 @@ def eisenstein_series_lseries(weight, prec=53,
         sage: L(2)
         -5.0235535164599797471968418348135050804419155747868718371029
     """
-    f = eisenstein_series_qexp(weight,prec)
+    f = eisenstein_series_qexp(weight, prec)
     from sage.lfunctions.all import Dokchitser
     j = weight
-    L = Dokchitser(conductor = 1,
-                   gammaV = [0,1],
-                   weight = j,
-                   eps = (-1)**Integer(j/2),
-                   poles = [j],
+    L = Dokchitser(conductor=1,
+                   gammaV=[0, 1],
+                   weight=j,
+                   eps=(-1)**Integer(j // 2),
+                   poles=[j],
                    # Using a string for residues is a hack but it works well
                    # since this will make PARI/GP compute sqrt(pi) with the
                    # right precision.
-                   residues = '[sqrt(Pi)*(%s)]'%((-1)**Integer(j/2)*bernoulli(j)/j),
-                   prec = prec)
+                   residues='[sqrt(Pi)*(%s)]'%((-1)**Integer(j/2)*bernoulli(j)/j),
+                   prec=prec)
 
     s = 'coeff = %s;'%f.list()
-    L.init_coeffs('coeff[k+1]',pari_precode = s,
+    L.init_coeffs('coeff[k+1]',pari_precode=s,
                   max_imaginary_part=max_imaginary_part,
                   max_asymp_coeffs=max_asymp_coeffs)
     L.check_functional_equation()
     L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)'%(j,f))
     return L
+
 
 def compute_eisenstein_params(character, k):
     r"""

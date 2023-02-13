@@ -94,10 +94,11 @@ class CryptoMiniSat(SatSolver):
 
     def nvars(self):
         r"""
-        Return the number of variables. Note that for compatibility with DIMACS
-        convention, the number of variables corresponds to the maximal index of
-        the variables used. 
-        
+        Return the number of variables.
+
+        Note that for compatibility with DIMACS convention, the number
+        of variables corresponds to the maximal index of the variables used.
+
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
@@ -276,11 +277,9 @@ class CryptoMiniSat(SatSolver):
             1 2 -4 0
             x1 2 3 0
             x1 2 -5 0
-            <BLANKLINE> 
+            <BLANKLINE>
         """
         if filename is None:
             return self._clauses
-        else:
-            from sage.sat.solvers.dimacs import DIMACS
-            DIMACS.render_dimacs(self._clauses, filename, self.nvars())
-
+        from sage.sat.solvers.dimacs import DIMACS
+        DIMACS.render_dimacs(self._clauses, filename, self.nvars())

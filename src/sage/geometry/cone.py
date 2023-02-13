@@ -205,7 +205,8 @@ from collections.abc import Hashable, Iterable, Container
 from copy import copy
 from warnings import warn
 
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -3017,6 +3018,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N( 2, 5)
             in 2-d lattice N
 
+        The intersection can also be expressed using the operator ``&``::
+
+            sage: (cone1 & cone2).rays()
+            N(-1, 3),
+            N( 2, 5)
+            in 2-d lattice N
+
         It is OK to intersect cones living in sublattices of the same ambient
         lattice::
 
@@ -3042,7 +3050,18 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(3, 1),
             N(0, 1)
             in 2-d lattice N
+
+        An intersection with a polyhedron returns a polyhedron::
+
+            sage: cone = Cone([(1,0), (-1,0), (0,1)])
+            sage: p = polytopes.hypercube(2)
+            sage: cone & p
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+            sage: sorted(_.vertices_list())
+            [[-1, 0], [-1, 1], [1, 0], [1, 1]]
         """
+        if not isinstance(other, ConvexRationalPolyhedralCone):
+            return self.polyhedron().intersection(other)
         if self._ambient is other._ambient:
             # Cones of the same ambient cone or fan intersect nicely/quickly.
             # Can we maybe even return an element of the cone lattice?..
@@ -3057,6 +3076,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         p = C_Polyhedron(self._PPL_cone())
         p.add_constraints(other._PPL_cone().constraints())
         return _Cone_from_PPL(p, self.lattice().intersection(other.lattice()))
+
+    __and__ = intersection
 
     def is_equivalent(self, other):
         r"""
@@ -3495,7 +3516,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         result += tp.plot_walls(walls)
         return result
 
-    def polyhedron(self):
+    def polyhedron(self, **kwds):
         r"""
         Return the polyhedron associated to ``self``.
 
@@ -3523,7 +3544,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             A 0-dimensional polyhedron in ZZ^2 defined as the convex hull
             of 1 vertex
         """
-        return Polyhedron(rays=self.rays(), vertices=[self.lattice()(0)])
+        return Polyhedron(rays=self.rays(), vertices=[self.lattice()(0)], **kwds)
 
     def an_affine_basis(self):
         r"""

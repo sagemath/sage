@@ -103,12 +103,12 @@ def random_sublist_of_size(k, n):
         w = random_sublist_of_size(k, k - n)
         m = set(w)
         w = [z for z in range(k) if z not in m]
-        assert(len(w) == n)
+        assert len(w) == n
         return w
 
     randrange = current_randstate().python_random().randrange
 
-    w = set([])
+    w = set()
     while len(w) < n:
         z = randrange(k)
         if z not in w:
@@ -339,13 +339,11 @@ def index_in_saturation(A, proof=True):
     """
     r = A.rank()
     if r == 0:
-        return ZZ(1)
+        return ZZ.one()
     if r < A.nrows():
         A = A.hermite_form(proof=proof, include_zero_rows=False)
     if A.is_square():
         return abs(A.determinant(proof=proof))
     A = A.transpose()
-    A = A.hermite_form(proof=proof,include_zero_rows=False)
+    A = A.hermite_form(proof=proof, include_zero_rows=False)
     return abs(A.determinant(proof=proof))
-
-

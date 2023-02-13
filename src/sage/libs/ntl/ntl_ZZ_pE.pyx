@@ -117,11 +117,9 @@ cdef class ntl_ZZ_pE():
                 tmp_zzpx = <ntl_ZZ_pX>ntl_ZZ_pX(v, self.c.pc)
                 self.c.restore_c()   # allocating tmp_zzpx can change the current modulus trac #25790
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)
-            elif isinstance(v, long):
+            elif isinstance(v, int):
                 PyLong_to_ZZ(&temp, v)
                 self.x = ZZ_to_ZZ_pE(temp)
-            elif isinstance(v, int):
-                self.x = long_to_ZZ_pE(v)
             elif isinstance(v, ntl_ZZ_p):
                 self.x = ZZ_p_to_ZZ_pE((<ntl_ZZ_p>v).x)
             elif isinstance(v, ntl_ZZ):
@@ -166,9 +164,11 @@ cdef class ntl_ZZ_pE():
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
+            sage: loads(dumps(a)) == a
+            True
         """
         return make_ZZ_pE, (self.get_as_ZZ_pX(), self.get_modulus_context())
 

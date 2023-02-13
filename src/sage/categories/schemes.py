@@ -137,11 +137,11 @@ class Schemes(Category):
         from sage.schemes.generic.morphism import is_SchemeMorphism
         if is_SchemeMorphism(x):
             return x
-        from sage.rings.ring import CommutativeRing
+        from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
         from sage.categories.map import Map
         from sage.categories.all import Rings
-        if isinstance(x, CommutativeRing):
+        if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings

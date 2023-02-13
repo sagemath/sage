@@ -1,5 +1,5 @@
 r"""
-Morphisms between modular abelian varieties, including Hecke operators acting on modular abelian varieties
+Hecke operators and morphisms between modular abelian varieties
 
 Sage can compute with Hecke operators on modular abelian varieties.
 A Hecke operator is defined by given a modular abelian variety and
@@ -546,7 +546,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         B = G._relative_basis_matrix() * self.restrict_domain(G.abelian_variety()).matrix() * self.codomain().lattice().basis_matrix()
         lattice = B.row_module(ZZ)
         return self.codomain().finite_subgroup(lattice,
-                             field_of_definition = G.field_of_definition())
+                             field_of_definition=G.field_of_definition())
 
     def _image_of_abvar(self, A):
         """

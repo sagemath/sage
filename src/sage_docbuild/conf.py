@@ -187,6 +187,24 @@ highlighting.lexers['ipycon'] = IPythonConsoleLexer(in1_regex=r'sage: ', in2_reg
 highlighting.lexers['ipython'] = IPyLexer()
 highlight_language = 'ipycon'
 
+# Create table of contents entries for domain objects (e.g. functions, classes,
+# attributes, etc.). Default is True.
+toc_object_entries = True
+
+# A string that determines how domain objects (e.g. functions, classes,
+# attributes, etc.) are displayed in their table of contents entry.
+#
+# Use "domain" to allow the domain to determine the appropriate number of parents
+# to show. For example, the Python domain would show Class.method() and
+# function(), leaving out the module. level of parents. This is the default
+# setting.
+#
+# Use "hide" to only show the name of the element without any parents (i.e. method()).
+#
+# Use "all" to show the fully-qualified name for the object (i.e. module.Class.method()),
+# displaying all parents.
+toc_object_entries_show_parents = 'hide'
+
 # Extension configuration
 # -----------------------
 
@@ -195,6 +213,7 @@ todo_include_todos = True
 
 # Cross-links to other project's online documentation.
 python_version = sys.version_info.major
+
 
 def set_intersphinx_mappings(app, config):
     """
@@ -207,7 +226,7 @@ def set_intersphinx_mappings(app, config):
         app.config.intersphinx_mapping = {}
         return
 
-    app.config.intersphinx_mapping =  {
+    app.config.intersphinx_mapping = {
     'python': ('https://docs.python.org/',
                 os.path.join(SAGE_DOC_SRC, "common",
                              "python{}.inv".format(python_version))),
@@ -231,6 +250,7 @@ def set_intersphinx_mappings(app, config):
             app.config.intersphinx_mapping[src] = dst
 
     intersphinx.normalize_intersphinx_mapping(app, config)
+
 
 # By default document are not master.
 multidocs_is_master = True
@@ -819,6 +839,7 @@ skip_picklability_check_modules = [
     '__builtin__',
 ]
 
+
 def check_nested_class_picklability(app, what, name, obj, skip, options):
     """
     Print a warning if pickling is broken for nested classes.
@@ -878,6 +899,7 @@ def skip_member(app, what, name, obj, skip, options):
 
     return skip
 
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -904,4 +926,3 @@ def setup(app):
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('builder-inited', nitpick_patch_config)
         app.connect('html-page-context', add_page_context)
-

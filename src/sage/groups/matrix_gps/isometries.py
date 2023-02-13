@@ -11,11 +11,11 @@ EXAMPLES::
     sage: L = IntegralLattice("D4")
     sage: O = L.orthogonal_group()
     sage: O
-    Group of isometries with 5 generators (
-    [-1  0  0  0]  [0 0 0 1]  [-1 -1 -1 -1]  [ 1  1  0  0]  [ 1  0  0  0]
-    [ 0 -1  0  0]  [0 1 0 0]  [ 0  0  1  0]  [ 0  0  1  0]  [-1 -1 -1 -1]
-    [ 0  0 -1  0]  [0 0 1 0]  [ 0  1  0  1]  [ 0  1  0  1]  [ 0  0  1  0]
-    [ 0  0  0 -1], [1 0 0 0], [ 0 -1 -1  0], [ 0 -1 -1  0], [ 0  0  0  1]
+    Group of isometries with 3 generators (
+    [0 0 0 1]  [ 1  1  0  0]  [ 1  0  0  0]
+    [0 1 0 0]  [ 0  0  1  0]  [-1 -1 -1 -1]
+    [0 0 1 0]  [ 0  1  0  1]  [ 0  0  1  0]
+    [1 0 0 0], [ 0 -1 -1  0], [ 0  0  0  1]
     )
 
 Basic functionality is provided by GAP::

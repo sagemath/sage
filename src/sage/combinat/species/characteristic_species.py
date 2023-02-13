@@ -44,7 +44,6 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         else:
             return "{" + s[1:-1] + "}"
 
-
     def canonical_label(self):
         """
         EXAMPLES::
@@ -58,7 +57,6 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         P = self.parent()
         rng = list(range(1, P._n + 1))
         return CharacteristicSpeciesStructure(P, self._labels, rng)
-
 
     def transport(self, perm):
         """
@@ -109,15 +107,15 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [1]
             sage: X.structures([1,2]).list()
             []
-            sage: X.generating_series().coefficients(4)
+            sage: X.generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.isotype_generating_series().coefficients(4)
+            sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series().coefficients(4)
+            sage: X.cycle_index_series()[0:4]
             [0, p[1], 0, 0]
 
             sage: F = species.CharacteristicSpecies(3)
-            sage: c = F.generating_series().coefficients(4)
+            sage: c = F.generating_series()[0:4]
             sage: F._check()
             True
             sage: F == loads(dumps(F))
@@ -163,7 +161,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(2)
-            sage: F.generating_series().coefficients(5)
+            sage: F.generating_series()[0:5]
             [0, 0, 1/2, 0, 0]
             sage: F.generating_series().count(2)
             1
@@ -187,7 +185,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(2)
-            sage: F.isotype_generating_series().coefficients(5)
+            sage: F.isotype_generating_series()[0:5]
             [0, 0, 1, 0, 0]
 
         Here we test out weighting each structure by q.
@@ -196,7 +194,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: R.<q> = ZZ[]
             sage: Fq = species.CharacteristicSpecies(2, weight=q)
-            sage: Fq.isotype_generating_series().coefficients(5)
+            sage: Fq.isotype_generating_series()[0:5]
             [0, 0, q, 0, 0]
         """
         return base_ring(self._weight)
@@ -207,7 +205,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: F = species.CharacteristicSpecies(2)
             sage: g = F.cycle_index_series()
-            sage: g.coefficients(5)
+            sage: g[0:5]
             [0, 0, 1/2*p[1, 1] + 1/2*p[2], 0, 0]
         """
         cis = SetSpecies(weight=self._weight).cycle_index_series(base_ring)
@@ -230,8 +228,10 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return var_mapping['z']**(self._n)
 
+
 #Backward compatibility
 CharacteristicSpecies_class = CharacteristicSpecies
+
 
 class EmptySetSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
@@ -248,11 +248,11 @@ class EmptySetSpecies(CharacteristicSpecies):
             [{}]
             sage: X.structures([1,2]).list()
             []
-            sage: X.generating_series().coefficients(4)
+            sage: X.generating_series()[0:4]
             [1, 0, 0, 0]
-            sage: X.isotype_generating_series().coefficients(4)
+            sage: X.isotype_generating_series()[0:4]
             [1, 0, 0, 0]
-            sage: X.cycle_index_series().coefficients(4)
+            sage: X.cycle_index_series()[0:4]
             [p[], 0, 0, 0]
 
         TESTS::
@@ -272,8 +272,10 @@ class EmptySetSpecies(CharacteristicSpecies):
         self._name = "Empty set species"
         self._state_info = []
 
+
 #Backward compatibility
 EmptySetSpecies_class = EmptySetSpecies._cached_constructor = EmptySetSpecies
+
 
 class SingletonSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
@@ -290,11 +292,11 @@ class SingletonSpecies(CharacteristicSpecies):
             [1]
             sage: X.structures([1,2]).list()
             []
-            sage: X.generating_series().coefficients(4)
+            sage: X.generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.isotype_generating_series().coefficients(4)
+            sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series().coefficients(4)
+            sage: X.cycle_index_series()[0:4]
             [0, p[1], 0, 0]
 
         TESTS::
@@ -313,6 +315,7 @@ class SingletonSpecies(CharacteristicSpecies):
         CharacteristicSpecies_class.__init__(self, 1, min=min, max=max, weight=weight)
         self._name = "Singleton species"
         self._state_info = []
+
 
 #Backward compatibility
 SingletonSpecies_class = SingletonSpecies

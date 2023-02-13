@@ -22,11 +22,12 @@ classifiers =
     Programming Language :: Python :: 3.8
     Programming Language :: Python :: 3.9
     Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.11
     Programming Language :: Python :: Implementation :: CPython
     Topic :: Scientific/Engineering :: Mathematics
 
 [options]
-python_requires = >=3.8, <3.11
+python_requires = >=3.8, <3.12
 install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sage_conf \
@@ -68,7 +69,6 @@ dnl From Makefile.in: DOC_DEPENDENCIES
         | sed "2,\$s/^/    /;"')dnl'
 dnl Other Python packages that are standard spkg, used in doctests
     esyscmd(`sage-get-system-packages install-requires \
-        rpy2           \
         fpylll         \
         | sed "2,\$s/^/    /;"')dnl'
 dnl pycryptosat  # Sage distribution installs it as part of cryptominisat. According to its README on https://pypi.org/project/pycryptosat/: "The pycryptosat python package compiles while compiling CryptoMiniSat. It cannot be compiled on its own, it must be compiled at the same time as CryptoMiniSat."
@@ -160,3 +160,8 @@ sage =
     ext_data/magma/sage/*
     ext_data/valgrind/*
     ext_data/threejs/*
+
+[options.extras_require]
+R = esyscmd(`sage-get-system-packages install-requires \
+        rpy2           \
+        | sed "2,\$s/^/    /;"')dnl'

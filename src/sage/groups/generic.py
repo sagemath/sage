@@ -130,7 +130,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
     a Python object on which a group operation such as addition or
     multiplication is defined.  Uses the standard binary algorithm.
 
-    INPUT:  See the documentation for ``discrete_logarithm()``.
+    INPUT: See the documentation for ``discrete_logarithm()``.
 
     EXAMPLES::
 
@@ -691,11 +691,13 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     arguments are provided automatically; otherwise they must be
     provided by the caller.
 
-    OUTPUT: Returns an integer `n` such that `b^n = a` (or `nb = a`),
+    OUTPUT:
+
+    This returns an integer `n` such that `b^n = a` (or `nb = a`),
     assuming that ``ord`` is a multiple of the order of the base `b`.
     If ``ord`` is not specified, an attempt is made to compute it.
 
-    If no such `n` exists, this function raises a ValueError exception.
+    If no such `n` exists, this function raises a ``ValueError`` exception.
 
     .. warning::
 

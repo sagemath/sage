@@ -410,7 +410,7 @@ Each **worker** is a process (:class:`RESetMapReduceWorker` inherits from
 - ``worker._request`` -- a :class:`~multiprocessing.queues.SimpleQueue` storing
   steal request submitted to ``worker``.
 - ``worker._read_task``, ``worker._write_task`` -- a
-  :class:`~multiprocessing.queues.Pipe` used to transfert node during steal.
+  :class:`~multiprocessing.queues.Pipe` used to transfer node during steal.
 - ``worker._thief`` -- a :class:`~threading.Thread` which is in charge of
   stealing from ``worker._todo``.
 
@@ -1196,9 +1196,9 @@ class RESetMapReduce():
         active_proc = self._nprocess
         while active_proc > 0:
             try:
-                logger.debug('Waiting on results; active_proc: %s, '
-                             'timeout: %s, aborted: %s' %
-                             (active_proc, timeout, self._aborted.value))
+                logger.debug('Waiting on results; active_proc: {}, '
+                             'timeout: {}, aborted: {}'.format(
+                                 active_proc, timeout, self._aborted.value))
                 newres = self._results.get(timeout=timeout)
             except queue.Empty:
                 logger.debug('Timed out waiting for results; aborting')
@@ -1249,13 +1249,13 @@ class RESetMapReduce():
         if not self._aborted.value:
             logger.debug("Joining worker processes...")
             for worker in self._workers:
-                logger.debug("Joining %s" % worker.name)
+                logger.debug(f"Joining {worker.name}")
                 worker.join()
             logger.debug("Joining done")
         else:
             logger.debug("Killing worker processes...")
             for worker in self._workers:
-                logger.debug("Terminating %s" % worker.name)
+                logger.debug(f"Terminating {worker.name}")
                 worker.terminate()
             logger.debug("Killing done")
 
@@ -1527,9 +1527,9 @@ class RESetMapReduce():
         # local function (see e.g:
         # https://stackoverflow.com/questions/2609518/python-nested-function-scopes).
 
-        def pstat(name, start, end, ist):
+        def pstat(name, start, end, istat):
             res[0] += ("\n" + name + " ".join(
-                "%4i" % (self._stats[i][ist]) for i in range(start, end)))
+                "%4i" % (self._stats[i][istat]) for i in range(start, end)))
         for start in range(0, self._nprocess, blocksize):
             end = min(start + blocksize, self._nprocess)
             res[0] = ("#proc:     " +
@@ -1613,17 +1613,17 @@ class RESetMapReduceWorker(mp.Process):
             for ireq in iter(self._request.get, AbortError):
                 reqs += 1
                 target = self._mapred._workers[ireq]
-                logger.debug("Got a Steal request from %s" % target.name)
+                logger.debug(f"Got a Steal request from {target.name}")
                 self._mapred._signal_task_start()
                 try:
                     work = self._todo.popleft()
                 except IndexError:
                     target._write_task.send(None)
-                    logger.debug("Failed Steal %s" % target.name)
+                    logger.debug(f"Failed Steal {target.name}")
                     self._mapred._signal_task_done()
                 else:
                     target._write_task.send(work)
-                    logger.debug("Succesful Steal %s" % target.name)
+                    logger.debug(f"Successful Steal {target.name}")
                     thefts += 1
         except AbortError:
             logger.debug("Thief aborted")
@@ -1668,10 +1668,10 @@ class RESetMapReduceWorker(mp.Process):
         while node is None:
             victim = self._mapred.random_worker()
             if victim is not self:
-                logger.debug("Trying to steal from %s" % victim.name)
+                logger.debug(f"Trying to steal from {victim.name}")
                 victim._request.put(self._iproc)
                 self._stats[0] += 1
-                logger.debug("waiting for steal answer from %s" % victim.name)
+                logger.debug(f"waiting for steal answer from {victim.name}")
                 node = self._read_task.recv()
                 # logger.debug("Request answer: %s" % (node,))
                 if node is AbortError:
@@ -1713,7 +1713,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn("Profiling in %s ..." % output)
+            logger.warn(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()

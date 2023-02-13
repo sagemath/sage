@@ -762,7 +762,7 @@ class ManinMap():
         return self.__class__(self._codomain.specialize(*args), self._manin,
                               D, check=False)
 
-    def hecke(self, ell, algorithm = 'prep'):
+    def hecke(self, ell, algorithm='prep'):
         r"""
         Return the image of this Manin map under the Hecke operator `T_{\ell}`.
 
@@ -796,7 +796,7 @@ class ManinMap():
         M = self._manin
 
         if algorithm == 'prep':
-            ## psi will denote self | T_ell
+            # psi will denote self | T_ell
             psi = {}
             for g in M.gens():
                 psi_g = sum((self[h] * A for h, A in M.prep_hecke_on_gen_list(ell, g)), self._codomain(0))

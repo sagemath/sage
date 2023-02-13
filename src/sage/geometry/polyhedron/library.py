@@ -391,38 +391,28 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
 
     One can specify the base ring::
 
-        sage: gale_transform_to_primal(
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)])
+        sage: p = [(1,1), (-1,-1), (1,0), (-1,0), (1,-1), (-2,1)]
+        sage: gtpp = gale_transform_to_primal(p); gtpp
         [(16, -35, 54),
          (24, 10, 31),
          (-15, 50, -60),
          (-25, 0, 0),
          (0, -25, 0),
          (0, 0, -25)]
-        sage: gale_transform_to_primal(
-        ....:     [(1,1),(-1,-1),(1,0),(-1,0),(1,-1),(-2,1)], base_ring=RDF)
-        [(-0.6400000000000001, 1.4, -2.1600000000000006),
-         (-0.9600000000000002, -0.39999999999999997, -1.2400000000000002),
-         (0.6000000000000001, -2.0, 2.4000000000000004),
-         (1.0, 0.0, 0.0),
-         (0.0, 1.0, 0.0),
-         (0.0, 0.0, 1.0)]
+        sage: (matrix(RDF, gtpp)/25 +
+        ....:  matrix(gale_transform_to_primal(p, base_ring=RDF))).norm() < 1e-15
+        True
 
     One can also specify the backend to be used internally::
 
-        sage: gale_transform_to_primal(
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)], backend='field')
+        sage: gale_transform_to_primal(p, backend='field')
         [(48, -71, 88),
          (84, -28, 99),
          (-77, 154, -132),
          (-55, 0, 0),
          (0, -55, 0),
          (0, 0, -55)]
-        sage: gale_transform_to_primal(                          # optional - pynormaliz
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)], backend='normaliz')
+        sage: gale_transform_to_primal(p, backend='normaliz') # optional - pynormaliz
         [(16, -35, 54),
          (24, 10, 31),
          (-15, 50, -60),
@@ -2575,7 +2565,6 @@ class Polytopes():
             return parent([verts, [], []], [ieqs, eqns],
                           Vrep_minimal=True, Hrep_minimal=True, pref_rep="Hrep")
 
-
     def generalized_permutahedron(self, coxeter_type, point=None, exact=True, regular=False, backend=None):
         r"""
         Return the generalized permutahedron of type ``coxeter_type`` as the
@@ -2638,38 +2627,19 @@ class Polytopes():
              A vertex at (1, 0),
              A vertex at (1, 1))
 
+        It works also with Coxeter types that lead to non-rational coordinates::
+
+            sage: perm_b3 = polytopes.generalized_permutahedron(['B',3]); perm_b3  # long time                                      # optional - sage.rings.number_field
+            A 3-dimensional polyhedron
+             in (Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)^3
+            defined as the convex hull of 48 vertices
+
         Setting ``regular=True`` applies a linear transformation to get
-        isometric vertex figures and the result is inscribed. Even though there
-        are traces of small numbers, the internal computations are done using
-        an exact embedded NumberField::
+        isometric vertex figures and the result is inscribed. This cannot be done using
+        rational coordinates. We first do the computations using floating point
+        approximations (``RDF``)::
 
-            sage: perm_a2_reg = polytopes.generalized_permutahedron(['A',2],regular=True)
-            sage: V = sorted(perm_a2_reg.vertices()); V         # random
-            [A vertex at (-1, 0),
-             A vertex at (-1/2, -0.866025403784439?),
-             A vertex at (-1/2, 0.866025403784439?),
-             A vertex at (1/2, -0.866025403784439?),
-             A vertex at (1/2, 0.866025403784439?),
-             A vertex at (1.000000000000000?, 0.?e-18)]
-            sage: for v in V:
-            ....:     for x in v:
-            ....:         x.exactify()
-            sage: V
-            [A vertex at (-1, 0),
-             A vertex at (-1/2, -0.866025403784439?),
-             A vertex at (-1/2, 0.866025403784439?),
-             A vertex at (1/2, -0.866025403784439?),
-             A vertex at (1/2, 0.866025403784439?),
-             A vertex at (1, 0)]
-            sage: perm_a2_reg.is_inscribed()
-            True
-            sage: perm_a3_reg = polytopes.generalized_permutahedron(['A',3],regular=True)  # long time
-            sage: perm_a3_reg.is_inscribed()                                               # long time
-            True
-
-        The same is possible with vertices in ``RDF``::
-
-            sage: perm_a2_inexact = polytopes.generalized_permutahedron(['A',2],exact=False)
+            sage: perm_a2_inexact = polytopes.generalized_permutahedron(['A',2], exact=False)
             sage: sorted(perm_a2_inexact.vertices())
             [A vertex at (-1.0, -1.0),
              A vertex at (-1.0, 0.0),
@@ -2678,7 +2648,7 @@ class Polytopes():
              A vertex at (1.0, 0.0),
              A vertex at (1.0, 1.0)]
 
-            sage: perm_a2_inexact_reg = polytopes.generalized_permutahedron(['A',2],exact=False,regular=True)
+            sage: perm_a2_inexact_reg = polytopes.generalized_permutahedron(['A',2], exact=False, regular=True)
             sage: sorted(perm_a2_inexact_reg.vertices())
             [A vertex at (-1.0, 0.0),
              A vertex at (-0.5, -0.8660254038),
@@ -2687,29 +2657,77 @@ class Polytopes():
              A vertex at (0.5, 0.8660254038),
              A vertex at (1.0, 0.0)]
 
-        It works also with types with non-rational coordinates::
+        We can do the same computation using exact arithmetic with the field ``AA``::
 
-            sage: perm_b3 = polytopes.generalized_permutahedron(['B',3]); perm_b3  # long time
-            A 3-dimensional polyhedron in (Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)^3 defined as the convex hull of 48 vertices
+            sage: perm_a2_reg = polytopes.generalized_permutahedron(['A',2], regular=True)                                          # optional - sage.rings.number_field
+            sage: V = sorted(perm_a2_reg.vertices()); V         # random                                                            # optional - sage.rings.number_field
+            [A vertex at (-1, 0),
+             A vertex at (-1/2, -0.866025403784439?),
+             A vertex at (-1/2, 0.866025403784439?),
+             A vertex at (1/2, -0.866025403784439?),
+             A vertex at (1/2, 0.866025403784439?),
+             A vertex at (1.000000000000000?, 0.?e-18)]
 
-            sage: perm_b3_reg = polytopes.generalized_permutahedron(['B',3],regular=True); perm_b3_reg # not tested - long time (12sec on 64 bits).
+        Even though the numbers look like floating point approximations, the computation is
+        actually exact. We can clean up the display a bit using ``exactify``::
+
+            sage: for v in V:                                                                                                       # optional - sage.rings.number_field
+            ....:     for x in v:
+            ....:         x.exactify()
+            sage: V                                                                                                                 # optional - sage.rings.number_field
+            [A vertex at (-1, 0),
+             A vertex at (-1/2, -0.866025403784439?),
+             A vertex at (-1/2, 0.866025403784439?),
+             A vertex at (1/2, -0.866025403784439?),
+             A vertex at (1/2, 0.866025403784439?),
+             A vertex at (1, 0)]
+            sage: perm_a2_reg.is_inscribed()                                                                                        # optional - sage.rings.number_field
+            True
+
+        Larger examples take longer::
+
+            sage: perm_a3_reg = polytopes.generalized_permutahedron(['A',3], regular=True); perm_a3_reg  # long time                # optional - sage.rings.number_field
+            A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
+            sage: perm_a3_reg.is_inscribed()                                                             # long time                # optional - sage.rings.number_field
+            True
+            sage: perm_b3_reg = polytopes.generalized_permutahedron(['B',3], regular=True); perm_b3_reg  # not tested - long time (12sec on 64 bits).
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 48 vertices
 
-        It is faster with the backend ``'normaliz'``::
+        It is faster with the backend ``'number_field'``, which internally uses an embedded
+        number field instead of doing the computations directly with the base ring (``AA``)::
 
-            sage: perm_b3_reg_norm = polytopes.generalized_permutahedron(['B',3],regular=True,backend='normaliz') # optional - pynormaliz
-            sage: perm_b3_reg_norm # optional - pynormaliz
+            sage: perm_a3_reg_nf = polytopes.generalized_permutahedron(                                                             # optional - sage.rings.number_field
+            ....:    ['A',3], regular=True, backend='number_field'); perm_a3_reg_nf
+            A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
+            sage: perm_a3_reg_nf.is_inscribed()                                                                                     # optional - sage.rings.number_field
+            True
+            sage: perm_b3_reg_nf = polytopes.generalized_permutahedron(                     # long time                             # optional - sage.rings.number_field
+            ....:    ['B',3], regular=True, backend='number_field'); perm_b3_reg_nf
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 48 vertices
 
-        The backend ``'normaliz'`` allows further faster computation in the
-        non-rational case::
+        It is even faster with the backend ``'normaliz'``::
 
-            sage: perm_h3 = polytopes.generalized_permutahedron(['H',3],backend='normaliz')  # optional - pynormaliz
-            sage: perm_h3                                                                    # optional - pynormaliz
-            A 3-dimensional polyhedron in (Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?)^3 defined as the convex hull of 120 vertices
-            sage: perm_f4 = polytopes.generalized_permutahedron(['F',4],backend='normaliz')  # optional - pynormaliz, long time
-            sage: perm_f4                                                                    # optional - pynormaliz, long time
-            A 4-dimensional polyhedron in (Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)^4 defined as the convex hull of 1152 vertices
+            sage: perm_a3_reg_norm = polytopes.generalized_permutahedron(                                 # optional - pynormaliz
+            ....:    ['A',3], regular=True, backend='normaliz'); perm_a3_reg_norm
+            A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
+            sage: perm_a3_reg_norm.is_inscribed()                                                         # optional - pynormaliz
+            True
+            sage: perm_b3_reg_norm = polytopes.generalized_permutahedron(                                 # optional - pynormaliz
+            ....:    ['B',3], regular=True, backend='normaliz'); perm_b3_reg_norm
+            A 3-dimensional polyhedron in AA^3 defined as the convex hull of 48 vertices
+
+        The speedups from using backend ``'normaliz'`` allow us to go even further::
+
+            sage: perm_h3 = polytopes.generalized_permutahedron(['H',3], backend='normaliz')              # optional - pynormaliz
+            sage: perm_h3                                                                                 # optional - pynormaliz
+            A 3-dimensional polyhedron
+             in (Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?)^3
+             defined as the convex hull of 120 vertices
+            sage: perm_f4 = polytopes.generalized_permutahedron(['F',4], backend='normaliz')  # long time # optional - pynormaliz
+            sage: perm_f4                                                                     # long time # optional - pynormaliz
+            A 4-dimensional polyhedron
+             in (Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)^4
+             defined as the convex hull of 1152 vertices
 
         .. SEEALSO::
 

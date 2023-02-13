@@ -1,5 +1,5 @@
 r"""
-Bessel Functions
+Bessel functions
 
 This module provides symbolic Bessel and Hankel functions, and their
 spherical versions. These functions use the `mpmath library`_ for numerical
@@ -1434,6 +1434,8 @@ class Function_Struve_L(BuiltinFunction):
 
     def _print_latex_(self, a, z):
         """
+        EXAMPLES::
+
             sage: latex(struve_L(2,x))
             L_{{2}}({x})
         """

@@ -98,7 +98,7 @@ fi
 
 if [ "$1" = '-package' -o "$1" = "--package" ]; then
     shift
-    exec sage-package $@
+    exec sage-package "$@"
 fi
 
 if [ "$1" = '-optional' -o "$1" = "--optional" ]; then

@@ -1,9 +1,8 @@
 """
 Homogeneous ideals of free algebras
 
-For twosided ideals and when the base ring is a field, this
-implementation also provides Groebner bases and ideal containment
-tests.
+For twosided ideals and when the base ring is a field, this implementation
+also provides Groebner bases and ideal containment tests.
 
 EXAMPLES::
 
@@ -31,9 +30,7 @@ forms and can test containment in the ideal::
 AUTHOR:
 
 - Simon King (2011-03-22):  See :trac:`7797`.
-
 """
-
 # ****************************************************************************
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
 #
@@ -43,7 +40,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.libs.singular.function import lib, singular_function
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace, FreeAlgebra_letterplace_libsingular
@@ -53,8 +49,9 @@ from sage.rings.infinity import Infinity
 #####################
 # Define some singular functions
 lib("freegb.lib")
-singular_twostd=singular_function("twostd")
-poly_reduce=singular_function("NF")
+singular_twostd = singular_function("twostd")
+poly_reduce = singular_function("NF")
+
 
 class LetterplaceIdeal(Ideal_nc):
     """
@@ -159,7 +156,6 @@ class LetterplaceIdeal(Ideal_nc):
         0
         sage: (z*I.0-x*y*z).normal_form(I)
         -y*x*z + z*z
-
     """
     def __init__(self, ring, gens, coerce=True, side="twosided"):
         """
@@ -198,6 +194,7 @@ class LetterplaceIdeal(Ideal_nc):
         Ideal_nc.__init__(self, ring, gens, coerce=coerce, side=side)
         self.__GB = self
         self.__uptodeg = 0
+
     def groebner_basis(self, degbound=None):
         """
         Twosided Groebner basis with degree bound.
@@ -287,17 +284,18 @@ class LetterplaceIdeal(Ideal_nc):
             return self.__GB
         if not A.base().is_field():
             raise TypeError("Currently, we can only compute Groebner bases if the ring of coefficients is a field")
-        if self.side()!='twosided':
+        if self.side() != 'twosided':
             raise TypeError("This ideal is not two-sided. We can only compute two-sided Groebner bases")
         if degbound == Infinity:
-            while self.__uptodeg<Infinity:
-                test_bound = 2*max([x._poly.degree() for x in self.__GB.gens()])
+            while self.__uptodeg < Infinity:
+                test_bound = 2 * max([x._poly.degree()
+                                      for x in self.__GB.gens()])
                 self.groebner_basis(test_bound)
             return self.__GB
         # Set the options required by letterplace
         from sage.libs.singular.option import LibSingularOptions
         libsingular_options = LibSingularOptions()
-        bck = (libsingular_options['redTail'],libsingular_options['redSB'])
+        bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
         A.set_degbound(degbound)
@@ -330,14 +328,14 @@ class LetterplaceIdeal(Ideal_nc):
 
         libsingular_options['redTail'] = bck[0]
         libsingular_options['redSB'] = bck[1]
-        self.__GB = A.ideal(out,side='twosided',coerce=False)
-        if degbound >= 2*max([x._poly.degree() for x in out]):
+        self.__GB = A.ideal(out, side='twosided', coerce=False)
+        if degbound >= 2 * max([x._poly.degree() for x in out]):
             degbound = Infinity
         self.__uptodeg = degbound
         self.__GB.__uptodeg = degbound
         return self.__GB
 
-    def __contains__(self,x):
+    def __contains__(self, x):
         """
         The containment test is based on a normal form computation.
 
@@ -349,7 +347,6 @@ class LetterplaceIdeal(Ideal_nc):
             True
             sage: 1 in I
             False
-
         """
         R = self.ring()
         return (x in R) and R(x).normal_form(self).is_zero()
@@ -384,25 +381,26 @@ class LetterplaceIdeal(Ideal_nc):
             Twosided Ideal (y*z, x*x - y*x - y*y) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
             sage: I.reduce(F*[x^2+x*y,y^2+y*z]*F)
             Twosided Ideal (x*y + y*z, -y*x + y*z) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
-
         """
         P = self.ring()
-        if not isinstance(G,(list,tuple)):
-            if G==P:
+        if not isinstance(G, (list, tuple)):
+            if G == P:
                 return P.ideal([P.zero()])
             if G in P:
                 return G.normal_form(self)
             G = G.gens()
         C = P.current_ring()
-        sI = C.ideal([C(X.letterplace_polynomial()) for X in self.gens()], coerce=False)
+        sI = C.ideal([C(X.letterplace_polynomial()) for X in self.gens()],
+                     coerce=False)
         selfdeg = max([x.degree() for x in sI.gens()])
         gI = P._reductor_(G, selfdeg)
         from sage.libs.singular.option import LibSingularOptions
         libsingular_options = LibSingularOptions()
-        bck = (libsingular_options['redTail'],libsingular_options['redSB'])
+        bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
-        sI = poly_reduce(sI,gI, ring=C, attributes={gI:{"isSB":1}})
+        sI = poly_reduce(sI, gI, ring=C, attributes={gI: {"isSB": 1}})
         libsingular_options['redTail'] = bck[0]
         libsingular_options['redSB'] = bck[1]
-        return P.ideal([FreeAlgebraElement_letterplace(P,x,check=False) for x in sI], coerce=False)
+        return P.ideal([FreeAlgebraElement_letterplace(P, x, check=False)
+                        for x in sI], coerce=False)

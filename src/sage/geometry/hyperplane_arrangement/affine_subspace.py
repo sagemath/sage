@@ -131,7 +131,7 @@ class AffineSubspace(SageObject):
         """
         # note that the point is not canonically chosen, but the linear part is
         return hash(self._linear_part)
-    
+
     def _repr_(self):
         r"""
         String representation for an :class:`AffineSubspace`.

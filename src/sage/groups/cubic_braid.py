@@ -527,13 +527,13 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
             min_pol_root_bur = min_pol_root_bur.change_ring(domain)
             if not min_pol_root_bur(root_bur).is_zero():
-                raise ValueError('root_bur must vanish on %s' %(min_pol_root_bur))
+                raise ValueError('root_bur must vanish on %s' % (min_pol_root_bur))
 
-        def conv2domain (laur_pol):
+        def conv2domain(laur_pol):
             l1, l2 = laur_pol.polynomial_construction()
             p1 = l1.change_ring(domain)
             p2 = root_bur**(l2)
-            res = p1(root_bur)*p2
+            res = p1(root_bur) * p2
             return res
 
         from sage.matrix.constructor import matrix
@@ -2028,19 +2028,17 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             True
         """
         if nstrands is None:
-            nstrands = self.strands() -1
+            nstrands = self.strands() - 1
 
         n = self.strands()
 
         nstrands = Integer(nstrands)
 
         if nstrands >= n or nstrands <= 0:
-            raise ValueError("nstrands must be positive and less than %s" %(self.strands()))
-
+            raise ValueError("nstrands must be positive and less than %s" % (self.strands()))
 
         names = self.variable_names()
-        names_red = names[:nstrands-1]
+        names_red = names[:nstrands - 1]
         subgrp = CubicBraidGroup(names=names_red, cbg_type=self._cbg_type)
         subgrp._ambient = self
         return subgrp
-

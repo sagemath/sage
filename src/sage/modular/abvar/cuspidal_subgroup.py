@@ -241,9 +241,10 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
         try:
             return self.__lattice
         except AttributeError:
-            lattice = self._compute_lattice(rational_only = False)
+            lattice = self._compute_lattice(rational_only=False)
             self.__lattice = lattice
             return lattice
+
 
 class RationalCuspSubgroup(CuspidalSubgroup_generic):
     """
@@ -292,9 +293,10 @@ class RationalCuspSubgroup(CuspidalSubgroup_generic):
         try:
             return self.__lattice
         except AttributeError:
-            lattice = self._compute_lattice(rational_only = True)
+            lattice = self._compute_lattice(rational_only=True)
             self.__lattice = lattice
             return lattice
+
 
 class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
     """
@@ -342,7 +344,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
         try:
             return self.__lattice
         except AttributeError:
-            lattice = self._compute_lattice(rational_subgroup = True)
+            lattice = self._compute_lattice(rational_subgroup=True)
             self.__lattice = lattice
             return lattice
 

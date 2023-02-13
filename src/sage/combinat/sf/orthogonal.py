@@ -157,6 +157,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
         sage: o.one().counit()
         1
     """
+
     def __init__(self, Sym):
         """
         Initialize ``self``.

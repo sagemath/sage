@@ -87,6 +87,7 @@ from sage.homology.free_resolution import (FiniteFreeResolution,
                                            FiniteFreeResolution_free_module,
                                            FiniteFreeResolution_singular)
 
+
 class GradedFiniteFreeResolution(FiniteFreeResolution):
     r"""
     Graded finite free resolutions.
@@ -573,3 +574,6 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         self._res_shifts = res_shifts
         return res_mats
 
+
+from sage.misc.superseded import deprecated_function_alias
+GradedFreeResolution = deprecated_function_alias(34873, GradedFiniteFreeResolution_singular)

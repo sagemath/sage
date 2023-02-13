@@ -233,4 +233,3 @@ Sage example in ./lp.tex, line 906::
   ....:                   if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
 
 """
-

@@ -149,7 +149,7 @@ class FreeMonoidElement(MonoidElement):
             \alpha b
             sage: latex(b*alpha)
             b \alpha
-            sage: "%s"%latex(alpha*b)                                                                                                                                                                                       
+            sage: "%s" % latex(alpha*b)
             '\\alpha b'
         """
         s = ""
@@ -159,10 +159,10 @@ class FreeMonoidElement(MonoidElement):
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
-                s += "%s "%(g,)
+                s += "%s " % (g,)
             else:
-                s += "%s^{%s}"%(g,e)
-        s = s.rstrip(" ") # strip the trailing whitespace caused by adding a space after each element name
+                s += "%s^{%s}" % (g, e)
+        s = s.rstrip(" ")  # strip the trailing whitespace caused by adding a space after each element name
         if len(s) == 0:
             s = "1"
         return s
@@ -408,7 +408,6 @@ class FreeMonoidElement(MonoidElement):
             :meth:`to_word`
         """
         if not indices:
-            return sum( ([i[0]] * i[1] for i in list(self)), [])
+            return sum(([i[0]] * i[1] for i in list(self)), [])
         gens = self.parent().gens()
-        return sum( ([gens.index(i[0])] * i[1] for i in list(self)), [])
-
+        return sum(([gens.index(i[0])] * i[1] for i in list(self)), [])

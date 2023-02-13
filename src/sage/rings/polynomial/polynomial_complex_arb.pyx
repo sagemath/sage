@@ -717,6 +717,44 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
+    def _lgamma_series(self, long n):
+        r"""
+        Return the series expansion of the log-gamma function composed
+        with this polynomial, truncated before degree ``n``.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = CBF[]
+            sage: (1000 + x)._lgamma_series(3)
+            ([0.00050025008333331...])*x^2 + ([6.9072551956488...])*x + [5905.2204232091...]
+        """
+        cdef Polynomial_complex_arb res = self._new()
+        if n < 0:
+            n = 0
+        sig_on()
+        acb_poly_lgamma_series(res.__poly, self.__poly, n, prec(self))
+        sig_off()
+        return res
+
+    def _rgamma_series(self, long n):
+        r"""
+        Return the series expansion of the reciprocal gamma function composed
+        with this polynomial, truncated before degree ``n``.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = CBF[]
+            sage: (-1 + x)._rgamma_series(4)
+            ([1.23309373642178...])*x^3 + ([0.422784335098467...])*x^2 - x
+        """
+        cdef Polynomial_complex_arb res = self._new()
+        if n < 0:
+            n = 0
+        sig_on()
+        acb_poly_rgamma_series(res.__poly, self.__poly, n, prec(self))
+        sig_off()
+        return res
+
     def _lambert_w_series(self, long n, branch=0):
         r"""
         Return the series expansion of the specified branch of the Lambert W

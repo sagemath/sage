@@ -37,7 +37,7 @@ from memory_allocator  cimport MemoryAllocator
 from memory_allocator.memory_allocator cimport align
 from cython.operator import preincrement as preinc
 
-from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 from sage.libs.gmp.mpn cimport *
 from sage.libs.gmp.types cimport *
 from sage.data_structures.sparse_bitset cimport sparse_bitset_t

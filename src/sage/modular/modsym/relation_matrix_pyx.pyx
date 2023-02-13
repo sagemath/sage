@@ -1,5 +1,5 @@
 """
-Optimized Cython code for computing relation matrices in certain cases
+Optimized computing of relation matrices in certain cases
 """
 
 #############################################################################

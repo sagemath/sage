@@ -1,5 +1,5 @@
 """
-Indexed Face Sets
+Indexed face sets
 
 Graphics3D object that consists of a list of polygons, also used for
 triangulations of other objects.

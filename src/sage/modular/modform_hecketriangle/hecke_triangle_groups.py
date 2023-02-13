@@ -834,7 +834,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             return L
 
         if len(L) > 1:
-            L.sort(key = emb_key)
+            L.sort(key=emb_key)
         return L[-1]
 
     def _elliptic_conj_reps(self):

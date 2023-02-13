@@ -88,7 +88,7 @@ We create element of a permutation group of large degree::
     (1,30)(2,29)(3,28)(4,27)(5,26)(6,25)(7,24)(8,23)(9,22)(10,21)(11,20)(12,19)(13,18)(14,17)(15,16)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 David Joyner
 #       Copyright (C) 2019 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -97,8 +97,8 @@ We create element of a permutation group of large degree::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import copy
 import random
@@ -122,8 +122,9 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.coerce cimport coercion_model
-from sage.interfaces.gap import GapElement as PExpectGapElement
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
+
+import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
@@ -478,7 +479,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 self._set_list_images(g.sage(), convert)
             else:
                 raise ValueError("invalid data to initialize a permutation")
-        elif isinstance(g, PExpectGapElement):
+        elif isinstance(g, sage.interfaces.abc.GapElement):
             if g.IsPerm():
                 self._set_list_images(g.ListPerm(), False)
             else:
@@ -944,7 +945,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
             sage: S = SymmetricGroup(['a', 'b'])
             sage: latex(S.gens())
-            \left[(\text{\texttt{a}},\text{\texttt{b}})\right]
+            \left((\text{\texttt{a}},\text{\texttt{b}})\right)
         """
         from sage.misc.latex import latex
         return "".join(("(" + ",".join(latex(x) for x in cycle) + ")")
@@ -1061,11 +1062,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             # current behavior where if you pass in an integer which
             # is not in the domain of the permutation group, then that
             # integer itself will be returned.
-            if isinstance(i, (long, int, Integer)):
+            if isinstance(i, (int, Integer)):
                 return i
 
-
-            if not isinstance(i,(list,tuple,str)):
+            if not isinstance(i, (list, tuple, str)):
                 raise ValueError("must be in the domain or a list, tuple or string")
 
             permuted = [i[self.perm[j]] for j from 0 <= j < self.n]

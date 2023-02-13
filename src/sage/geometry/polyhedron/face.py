@@ -750,7 +750,7 @@ class PolyhedronFace(ConvexSet_closed):
                        for V in self.ambient_Vrepresentation())
 
     @cached_method
-    def as_polyhedron(self):
+    def as_polyhedron(self, **kwds):
         """
         Return the face as an independent polyhedron.
 
@@ -774,7 +774,12 @@ class PolyhedronFace(ConvexSet_closed):
         P = self._polyhedron
         parent = P.parent()
         Vrep = (self.vertices(), self.rays(), self.lines())
-        return P.__class__(parent, Vrep, None)
+        result = P.__class__(parent, Vrep, None)
+        if any(kwds.get(kwd) is not None
+               for kwd in ('base_ring', 'backend')):
+            from .constructor import Polyhedron
+            return Polyhedron(result, **kwds)
+        return result
 
     def _some_elements_(self):
         r"""
@@ -1066,7 +1071,7 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
         # Equations before inequalities in Hrep.
         H_indices = tuple(range(n_equations))
         H_indices += tuple(x+n_equations for x in combinatorial_face.ambient_H_indices(add_equations=False))
-    elif polyhedron.backend() in ('normaliz', 'cdd', 'field', 'polymake'):
+    elif polyhedron.backend() in ('normaliz', 'cdd', 'field', 'number_field', 'polymake'):
         # Equations after the inequalities in Hrep.
         n_ieqs = polyhedron.n_inequalities()
         H_indices = tuple(x for x in combinatorial_face.ambient_H_indices(add_equations=False))

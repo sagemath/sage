@@ -117,7 +117,7 @@ from sage.matrix.all import MatrixSpace, matrix
 from sage.modular.modsym.p1list import P1List
 
 
-##################################################################################
+###############################################################################
 #
 # The exported functions, which are in most cases enough to get the
 # user going working with Heegner points:
@@ -125,7 +125,7 @@ from sage.modular.modsym.p1list import P1List
 #    heegner_points -- all of them with given level, discriminant, conductor
 #    heegner_point -- a specific one
 #
-##################################################################################
+###############################################################################
 
 def heegner_points(N, D=None, c=None):
     """
@@ -135,11 +135,11 @@ def heegner_points(N, D=None, c=None):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (negative integer)
+    - `D` -- discriminant (negative integer)
 
-        - `c` -- conductor (positive integer)
+    - `c` -- conductor (positive integer)
 
     EXAMPLES::
 
@@ -155,8 +155,9 @@ def heegner_points(N, D=None, c=None):
     if D is not None and c is None:
         return HeegnerPoints_level_disc(N, D)
     if D is not None and c is not None:
-        return HeegnerPoints_level_disc_cond(N,D,c)
+        return HeegnerPoints_level_disc_cond(N, D, c)
     raise TypeError
+
 
 def heegner_point(N, D=None, c=1):
     """
@@ -167,11 +168,11 @@ def heegner_point(N, D=None, c=1):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (optional: default first valid `D`)
+    - `D` -- discriminant (optional: default first valid `D`)
 
-        - `c` -- conductor (positive integer, optional, default: 1)
+    - `c` -- conductor (positive integer, optional, default: 1)
 
     EXAMPLES::
 
@@ -185,20 +186,20 @@ def heegner_point(N, D=None, c=1):
         Heegner point 1/778*sqrt(-20) - 165/389 of discriminant -20 on X_0(389)
     """
     if D is not None:
-        return heegner_points(N,D,c)[0]
+        return heegner_points(N, D, c)[0]
     H = heegner_points(N)
     D = H.discriminants(1)[0]
-    return heegner_points(N,D,c)[0]
+    return heegner_points(N, D, c)[0]
 
 
-##################################################################################
+###############################################################################
 #
 # Ring class fields, represented as abstract objects.  These do not
 # derive from number fields, since we do not need to work with their
 # elements, and explicitly representing them as number fields would be
 # far too difficult.
 #
-##################################################################################
+###############################################################################
 
 class RingClassField(SageObject):
     """
@@ -352,9 +353,8 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return "Hilbert class field of QQ[sqrt(%s)]"%self.__D
-        else:
-            return "Ring class field extension of QQ[sqrt(%s)] of conductor %s"%(self.__D, self.__c)
+            return "Hilbert class field of QQ[sqrt(%s)]" % self.__D
+        return "Ring class field extension of QQ[sqrt(%s)] of conductor %s" % (self.__D, self.__c)
 
     @cached_method
     def degree_over_K(self):
@@ -6533,7 +6533,8 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
         return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
 
 
-def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mwrank=False, check_rank=True):
+def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
+                  verbose_mwrank=False, check_rank=True):
     r"""
     Return an interval that contains the index of the Heegner
     point `y_K` in the group of `K`-rational points modulo torsion
@@ -6745,7 +6746,7 @@ def _adjust_heegner_index(self, a):
     return a.sqrt()
 
 
-def heegner_index_bound(self, D=0,  prec=5, max_height=None):
+def heegner_index_bound(self, D=0, prec=5, max_height=None):
     r"""
     Assume ``self`` has rank 0.
 

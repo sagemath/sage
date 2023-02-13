@@ -1518,7 +1518,7 @@ class Function_factorial(GinacFunction):
             sage: type(factorial(float(3.2)))
             <class 'float'>
         """
-        if isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             try:
                 return x.factorial()
             except OverflowError:
