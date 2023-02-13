@@ -1351,6 +1351,19 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         from sage.rings.infinity import Infinity
         return Infinity
 
+    # Other bases
+    def key_basis(self):
+        r"""
+        Return the basis of ``self`` given by key polynomials.
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(GF(2))
+            sage: R.key_basis()
+            Key polynomial basis over Finite Field of size 2
+        """
+        from sage.combinat.key_polynomial import KeyPolynomialBasis
+        return KeyPolynomialBasis(self)
 
 class InfinitePolynomialGen(SageObject):
     """

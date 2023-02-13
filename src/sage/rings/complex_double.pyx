@@ -2482,7 +2482,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: CDF(1,5).algdep(2)
             x^2 - 2*x + 26
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n)
 
 cdef class FloatToCDF(Morphism):
