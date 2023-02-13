@@ -92,19 +92,6 @@ The above is consistent with the following analytic computation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-<<<<<<< HEAD
-
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.element import NumberFieldElement
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import (richcmp_method, richcmp,
-                                    richcmp_not_equal, rich_to_bool)
-
-=======
->>>>>>> t/34201/meta_ticket__replace_imports_from_sage___all_for_namespace_packages
 import sage.rings.abc
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
@@ -130,6 +117,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.quadratic_forms.all import (BinaryQF,
                                       BinaryQF_reduced_representatives)
+from sage.structure.element import NumberFieldElement
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
