@@ -1725,15 +1725,15 @@ class KnotInfoBase(Enum):
             visible on the website as of October 30, 2022. Instead, data
             computed with `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
             are now displayed. The latter program is more accurate in terms of
-            orientation and reflection as it is based on `PD` code.
+            orientation and reflection as it is based on ``PD`` code.
 
             Even if they are not visible on the website, the data produced by
-            `KhoHo` are still available in the database. But maybe this will be
+            ``KhoHo`` are still available in the database. But maybe this will be
             discontinued (check out the `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for updated information).
             This interface will be adapted to the changes in an upcoming
             release.
 
-            Since the results of `KhoHo` were computed using the `DT` notation,
+            Since the results of ``KhoHo`` were computed using the ``DT`` notation,
             the Khovanov polynomial returned by this method belongs to the
             mirror image of the given knot for a `list of 140 exceptions
             <https://raw.githubusercontent.com/soehms/database_knotinfo/ main /hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
