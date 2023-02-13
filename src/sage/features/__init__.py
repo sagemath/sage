@@ -767,8 +767,8 @@ class CythonFeature(Feature):
             from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
-        from sage.misc.cython import cython_import
         try:
+            from sage.misc.cython import cython_import
             cython_import(pyx.name, verbose=-1)
         except CCompilerError:
             return FeatureTestResult(self, False, reason="Failed to compile test code.")

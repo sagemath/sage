@@ -1125,17 +1125,22 @@ class Maxima(MaximaAbstract, Expect):
 
 def is_MaximaElement(x):
     """
-    Returns True if x is of type MaximaElement.
+    Returns True if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 
         sage: from sage.interfaces.maxima import is_MaximaElement
+        sage: is_MaximaElement(1)
+        doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
+        See https://trac.sagemath.org/34804 for details.
+        False
         sage: m = maxima(1)
         sage: is_MaximaElement(m)
         True
-        sage: is_MaximaElement(1)
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead")
+
     return isinstance(x, MaximaElement)
 
 

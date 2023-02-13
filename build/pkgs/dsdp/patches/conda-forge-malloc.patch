@@ -1,0 +1,11 @@
+diff -ruN DSDP5.8/src/sys/dsdploginfo.c DSDP5.8_patched/src/sys/dsdploginfo.c
+--- DSDP5.8/src/sys/dsdploginfo.c	2005-10-21 21:31:15.000000000 +0200
++++ DSDP5.8_patched/src/sys/dsdploginfo.c	2018-04-30 09:34:52.000000000 +0200
+@@ -6,7 +6,6 @@
+ #include <stdarg.h>
+ #include <sys/types.h>
+ #include <stdlib.h>
+-#include <malloc.h>
+ #include "dsdpsys.h"
+ #include "dsdpbasictypes.h"
+ 

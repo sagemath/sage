@@ -412,7 +412,7 @@ def is_RingHomomorphism(phi):
     sage.misc.superseded.deprecation(23204, "is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.")
     # We use the category framework to determine whether something is a ring homomorphism.
     from sage.categories.map import Map
-    from sage.categories.all import Rings
+    from sage.categories.rings import Rings
     return isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())
 
 

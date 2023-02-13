@@ -86,7 +86,6 @@ from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
-from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.libs.pari.all import pari, pari_gen, PariError
 
 cimport sage.rings.abc
@@ -98,6 +97,8 @@ from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 import sage.rings.abc
+
+import sage.interfaces.abc
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import coerce_binop
@@ -115,8 +116,8 @@ from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
 
-from sage.arith.all import (sort_complex_numbers_for_display,
-        power_mod, lcm, is_prime)
+from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
+from sage.arith.functions import lcm
 
 from . import polynomial_fateman
 
@@ -7216,7 +7217,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             return x - c
         if k > n - k:  # use (n-k)'th symmetric power
             g = self.symmetric_power(n - k, monic=monic)
-            from sage.arith.all import binomial
+            from sage.arith.misc import binomial
             g = ((-x)**binomial(n,k) * g(c/x) / c**binomial(n-1,k)).numerator()
             if monic:
                 g = g.monic()

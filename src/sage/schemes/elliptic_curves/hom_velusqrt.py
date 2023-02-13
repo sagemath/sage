@@ -128,6 +128,7 @@ from sage.structure.all import coercion_model as cm
 from sage.misc.cachefunc import cached_method
 
 from sage.misc.misc_c import prod
+from sage.rings.generic import ProductTree, prod_with_derivative
 
 from sage.structure.richcmp import op_EQ
 
@@ -137,199 +138,6 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 
-
-# TODO: This is general. It should be elsewhere.
-class ProductTree:
-    r"""
-    A simple product tree.
-
-    INPUT:
-
-    - ``leaves`` -- a sequence of elements in a common ring
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.hom_velusqrt import ProductTree
-        sage: R.<x> = GF(101)[]
-        sage: vs = [x - i for i in range(1,10)]
-        sage: tree = ProductTree(vs)
-        sage: tree.value()
-        x^9 + 56*x^8 + 62*x^7 + 44*x^6 + 47*x^5 + 42*x^4 + 15*x^3 + 11*x^2 + 12*x + 13
-        sage: tree.remainders(x^7 + x + 1)
-        [3, 30, 70, 27, 58, 72, 98, 98, 23]
-        sage: tree.remainders(x^100)
-        [1, 1, 1, 1, 1, 1, 1, 1, 1]
-
-    ::
-
-        sage: vs = prime_range(100)
-        sage: tree = ProductTree(vs)
-        sage: tree.value().factor()
-        2 * 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41 * 43 * 47 * 53 * 59 * 61 * 67 * 71 * 73 * 79 * 83 * 89 * 97
-        sage: tree.remainders(3599)
-        [1, 2, 4, 1, 2, 11, 12, 8, 11, 3, 3, 10, 32, 30, 27, 48, 0, 0, 48, 49, 22, 44, 30, 39, 10]
-
-    We can access the individual layers of the tree::
-
-        sage: tree.layers
-        [(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97),
-         (6, 35, 143, 323, 667, 1147, 1763, 2491, 3599, 4757, 5767, 7387, 97),
-         (210, 46189, 765049, 4391633, 17120443, 42600829, 97),
-         (9699690, 3359814435017, 729345064647247, 97),
-         (32589158477190044730, 70746471270782959),
-         (2305567963945518424753102147331756070,)]
-
-    .. NOTE::
-
-        Use this class if you need the :meth:`remainders` method.
-        To compute just the product, :func:`prod` is likely faster.
-    """
-    def __init__(self, leaves):
-        r"""
-        Initialize a product tree having the given ring elements
-        as its leaves.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_velusqrt import ProductTree
-            sage: vs = prime_range(100)
-            sage: tree = ProductTree(vs)
-        """
-        V = tuple(leaves)
-        self.layers = [V]
-        while len(V) > 1:
-            V = tuple(prod(V[i:i+2]) for i in range(0,len(V),2))
-            self.layers.append(V)
-
-    def __len__(self):
-        r"""
-        Return the number of leaves of this product tree.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_velusqrt import ProductTree
-            sage: R.<x> = GF(101)[]
-            sage: vs = [x - i for i in range(1,10)]
-            sage: tree = ProductTree(vs)
-            sage: len(tree)
-            9
-            sage: len(tree) == len(vs)
-            True
-            sage: len(tree.remainders(x^2))
-            9
-        """
-        return len(self.layers[0])
-
-    def value(self):
-        r"""
-        Return the value represented by this product tree
-        (i.e., the product of all leaves).
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_velusqrt import ProductTree
-            sage: R.<x> = GF(101)[]
-            sage: vs = [x - i for i in range(1,10)]
-            sage: tree = ProductTree(vs)
-            sage: tree.value()
-            x^9 + 56*x^8 + 62*x^7 + 44*x^6 + 47*x^5 + 42*x^4 + 15*x^3 + 11*x^2 + 12*x + 13
-            sage: tree.value() == prod(vs)
-            True
-        """
-        assert len(self.layers[-1]) == 1
-        return self.layers[-1][0]
-
-    def remainders(self, x):
-        r"""
-        Given a value `x`, return a list of all remainders of `x`
-        modulo the leaves of this product tree.
-
-        The base ring must support the ``%`` operator for this
-        method to work.
-
-        INPUT:
-
-        - ``x`` -- an element of the base ring of this product tree
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_velusqrt import ProductTree
-            sage: vs = prime_range(100)
-            sage: tree = ProductTree(vs)
-            sage: n = 1085749272377676749812331719267
-            sage: tree.remainders(n)
-            [1, 1, 2, 1, 9, 1, 7, 15, 8, 20, 15, 6, 27, 11, 2, 6, 0, 25, 49, 5, 51, 4, 19, 74, 13]
-            sage: [n % v for v in vs]
-            [1, 1, 2, 1, 9, 1, 7, 15, 8, 20, 15, 6, 27, 11, 2, 6, 0, 25, 49, 5, 51, 4, 19, 74, 13]
-        """
-        X = [x]
-        for V in reversed(self.layers):
-            X = [X[i//2] % V[i] for i in range(len(V))]
-        return X
-
-# TODO: This is general. It should be elsewhere.
-def prod_with_derivative(pairs):
-    r"""
-    Given a list of pairs `(f, \partial f)` of ring elements, return
-    the pair `(\prod f, \partial \prod f)`, assuming `\partial` is an
-    operator obeying the standard product rule.
-
-    This function is entirely algebraic, hence still works when the
-    elements `f` and `\partial f` are all passed through some ring
-    homomorphism first. (See the polynomial-evaluation example below.)
-
-    INPUT:
-
-    - ``pairs`` -- a sequence of tuples `(f, \partial f)` of elements
-      of a common ring
-
-    ALGORITHM:
-
-    This function wraps the given pairs in a thin helper class that
-    automatically applies the product rule whenever multiplication
-    is invoked, then calls :func:`prod` on the wrapped pairs.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.hom_velusqrt import prod_with_derivative
-        sage: R.<x> = ZZ[]
-        sage: fs = [x^2 + 2*x + 3, 4*x + 5, 6*x^7 + 8*x + 9]
-        sage: prod(fs)
-        24*x^10 + 78*x^9 + 132*x^8 + 90*x^7 + 32*x^4 + 140*x^3 + 293*x^2 + 318*x + 135
-        sage: prod(fs).derivative()
-        240*x^9 + 702*x^8 + 1056*x^7 + 630*x^6 + 128*x^3 + 420*x^2 + 586*x + 318
-        sage: F, dF = prod_with_derivative((f, f.derivative()) for f in fs)
-        sage: F
-        24*x^10 + 78*x^9 + 132*x^8 + 90*x^7 + 32*x^4 + 140*x^3 + 293*x^2 + 318*x + 135
-        sage: dF
-        240*x^9 + 702*x^8 + 1056*x^7 + 630*x^6 + 128*x^3 + 420*x^2 + 586*x + 318
-
-    The main reason for this function to exist is that it allows us to
-    *evaluate* the derivative of a product of polynomials at a point
-    `\alpha` without ever fully expanding the product *as a polynomial*::
-
-        sage: alpha = 42
-        sage: F(alpha)
-        442943981574522759
-        sage: dF(alpha)
-        104645261461514994
-        sage: us = [f(alpha) for f in fs]
-        sage: vs = [f.derivative()(alpha) for f in fs]
-        sage: prod_with_derivative(zip(us, vs))
-        (442943981574522759, 104645261461514994)
-    """
-    class _aux:
-        def __init__(self, f, df):
-            self.f, self.df = f, df
-
-        def __mul__(self, other):
-            return _aux(self.f * other.f, self.df * other.f + self.f * other.df)
-
-        def __iter__(self):
-            yield self.f
-            yield self.df
-
-    return tuple(prod(_aux(*tup) for tup in pairs))
 
 def _choose_IJK(n):
     r"""
@@ -1252,9 +1060,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
             Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
-            sage: phi.dual() * phi == phi.domain().multiplication_by_m_isogeny(11)
+            sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
-            sage: phi * phi.dual() == phi.codomain().multiplication_by_m_isogeny(11)
+            sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
             True
         """
         # FIXME: This code fails if the degree is divisible by the characteristic.
@@ -1363,6 +1171,22 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             True
         """
         return self._pre_iso.scaling_factor() * self._post_iso.scaling_factor()
+
+    def is_separable(self):
+        r"""
+        Determine whether or not this isogeny is separable.
+
+        Since :class:`EllipticCurveHom_velusqrt` only implements
+        separable isogenies, this method always returns ``True``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
+            sage: phi.is_separable()
+            True
+        """
+        return True
 
 
 def _random_example_for_testing():

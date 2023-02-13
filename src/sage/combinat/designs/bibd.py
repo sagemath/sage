@@ -1197,7 +1197,7 @@ def _get_r_s_t_u(v):
     s = r//150
     x = r%150
 
-    if   x == 0:
+    if x == 0:
         t,u = 30*s-5,  25
     elif x == 1:
         t,u = 30*s-5,  26

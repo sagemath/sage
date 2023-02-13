@@ -222,6 +222,7 @@ class RibbonShapedTableaux(SkewTableaux):
             pos += l
         return self.element_class(self, r)
 
+
 class StandardRibbonShapedTableaux(StandardSkewTableaux):
     """
     The set of all standard ribbon shaped tableaux.
@@ -349,6 +350,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         r.reverse()
         return self.element_class(self, r)
 
+
 class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
     """
     Class of standard ribbon shaped tableaux of ribbon shape ``shape``.
@@ -444,10 +446,12 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         for p in descents_composition_list(self.shape):
             yield self.from_permutation(p)
 
+
 class Ribbon_class(RibbonShapedTableau):
     """
     This exists solely for unpickling ``Ribbon_class`` objects.
     """
+
     def __setstate__(self, state):
         r"""
         Unpickle old ``Ribbon_class`` objects.
@@ -461,6 +465,7 @@ class Ribbon_class(RibbonShapedTableau):
         """
         self.__class__ = RibbonShapedTableau
         self.__init__(RibbonShapedTableaux(), state['_list'])
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.ribbon', 'Ribbon_class', Ribbon_class)

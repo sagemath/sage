@@ -110,7 +110,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               x^2 + 2*y^2
         """
         from sage.rings.infinity import infinity
-        if v is infinity  or\
+        if v is infinity or\
           (isinstance(v, (list,tuple)) and len(v) == 1 and v[0] is infinity):
             if self.ambient_space().dimension_relative() > 1:
                 raise ValueError("%s not well defined in dimension > 1"%v)

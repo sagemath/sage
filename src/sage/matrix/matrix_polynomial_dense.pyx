@@ -370,11 +370,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # raise an error if d does not have the right length
         if row_wise and len(d) != m:
-            raise ValueError("length of input degree list should be the " \
-                                      + "row dimension of the input matrix")
+            raise ValueError("length of input degree list should be the "
+                             "row dimension of the input matrix")
         elif (not row_wise) and len(d) != n:
-            raise ValueError("length of input degree list should be the " \
-                                      + "column dimension of the input matrix")
+            raise ValueError("length of input degree list should be the "
+                             "column dimension of the input matrix")
 
         from sage.matrix.constructor import matrix
         return matrix(self.base_ring().base_ring(), m, n,
@@ -464,11 +464,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # raise an error if d does not have the right length
         if row_wise and len(d) != m:
-            raise ValueError("length of input precision list should be the " \
-                                      + "row dimension of the input matrix")
+            raise ValueError("length of input precision list should be the "
+                             "row dimension of the input matrix")
         elif (not row_wise) and len(d) != n:
-            raise ValueError("length of input precision list should be the " \
-                                      + "column dimension of the input matrix")
+            raise ValueError("length of input precision list should be the "
+                             "column dimension of the input matrix")
 
         return matrix(self.base_ring(), m, n, [[self[i,j].truncate(d[i])
             if row_wise else self[i,j].truncate(d[j])
@@ -556,11 +556,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # raise an error if d does not have the right length
         if row_wise and len(d) != m:
-            raise ValueError("length of input shift list should be the " \
-                                      + "row dimension of the input matrix")
+            raise ValueError("length of input shift list should be the "
+                             "row dimension of the input matrix")
         elif (not row_wise) and len(d) != n:
-            raise ValueError("length of input shift list should be the " \
-                                      + "column dimension of the input matrix")
+            raise ValueError("length of input shift list should be the "
+                             "column dimension of the input matrix")
 
         return matrix(self.base_ring(), m, n, [[self[i,j].shift(d[i])
             if row_wise else self[i,j].shift(d[j])
@@ -701,11 +701,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # raise an error if degree does not have the right length
         if row_wise and len(degree) != m:
-            raise ValueError("length of input degree list should be the " \
-                                      + "row dimension of the input matrix")
+            raise ValueError("length of input degree list should be the "
+                             "row dimension of the input matrix")
         elif (not row_wise) and len(degree) != n:
-            raise ValueError("length of input degree list should be the " \
-                                      + "column dimension of the input matrix")
+            raise ValueError("length of input degree list should be the "
+                             "column dimension of the input matrix")
 
         return matrix(self.base_ring(), m, n, [[self[i,j].reverse(degree[i])
             if row_wise else self[i,j].reverse(degree[j])
@@ -788,8 +788,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         try:
             inv_trunc = self.constant_matrix().inverse()
         except ZeroDivisionError:
-            raise ZeroDivisionError("the constant matrix term self(0)" \
-                                                    " must be invertible")
+            raise ZeroDivisionError("the constant matrix term self(0)"
+                                    " must be invertible")
         except ArithmeticError:
             raise ArithmeticError("the input matrix must be square")
 
@@ -2680,8 +2680,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             :meth:`reduce` .
         """
         if self.nrows() != B.nrows():
-            raise ValueError("row dimension of self should be the" \
-                                + " row dimension of the input matrix")
+            raise ValueError("row dimension of self should be the"
+                             " row dimension of the input matrix")
         (Q,R) = self.T.right_quo_rem(B.T)
         return (Q.T,R.T)
 
@@ -2839,8 +2839,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             :meth:`reduce` .
         """
         if self.ncols() != B.ncols():
-            raise ValueError("column dimension of self should be the" \
-                                + " column dimension of the input matrix")
+            raise ValueError("column dimension of self should be the"
+                             " column dimension of the input matrix")
         if B.is_square() and \
            B.is_reduced(row_wise=False,include_zero_vectors=False):
             # case of B column reduced (without zero columns):
@@ -2859,10 +2859,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             (Q,R) = self.reduce(B,shifts=s,return_quotient=True)
             cdeg = R.column_degrees()
             if all([cdeg[i] + s[i] < 0 for i in range(B.ncols())]):
-                return (Q,R)
-            else:
-                raise ValueError("division of these matrices does not admit" \
-                        + " a remainder with the required degree property")
+                return (Q, R)
+            raise ValueError("division of these matrices does not admit a "
+                             "remainder with the required degree property")
 
     def _right_quo_rem_reduced(self, B):
         r"""
@@ -3194,11 +3193,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             :meth:`right_quo_rem` .
         """
         if row_wise and self.ncols() != B.ncols():
-            raise ValueError("column dimension of self should be the" \
-                                + " column dimension of the input matrix")
+            raise ValueError("column dimension of self should be the"
+                             " column dimension of the input matrix")
         if not row_wise and (self.nrows() != B.nrows()):
-            raise ValueError("row dimension of self should be the" \
-                                + " row dimension of the input matrix")
+            raise ValueError("row dimension of self should be the"
+                             " row dimension of the input matrix")
         # note: is_popov calls B._check_shift_dimension(shifts,row_wise)
         # --> no need to check here again
         if B.is_popov(shifts,row_wise,False,False):
@@ -3355,30 +3354,30 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if shifts is None:
             shifts = [0] * m if row_wise else [0] * n
         elif row_wise and len(shifts) != m:
-            raise ValueError('shifts length should be the row dimension of' \
-                                                      + ' the input matrix')
+            raise ValueError('shifts length should be the row dimension of'
+                             ' the input matrix')
         elif (not row_wise) and len(shifts) != n:
-            raise ValueError('shifts length should be the column dimension' \
-                                                   + ' of the input matrix')
+            raise ValueError('shifts length should be the column dimension'
+                             ' of the input matrix')
 
         # set default order / check order dimension
         if not isinstance(order,list):
             order = [order]*n if row_wise else [order]*m
 
         if row_wise and len(order) != n:
-            raise ValueError("order length should be the column dimension" \
-                                                  + " of the input matrix")
+            raise ValueError("order length should be the column dimension"
+                             " of the input matrix")
         elif (not row_wise) and len(order) != m:
-            raise ValueError("order length should be the row dimension of" \
-                                                     + " the input matrix")
+            raise ValueError("order length should be the row dimension of"
+                             " the input matrix")
 
         # raise an error if self does not have the right dimension
         if row_wise and self.ncols() != m:
-            raise ValueError("column dimension should be the row dimension" \
-                                                    + " of the input matrix")
+            raise ValueError("column dimension should be the row dimension"
+                             " of the input matrix")
         elif (not row_wise) and self.nrows() != n:
-            raise ValueError("row dimension should be the column dimension" \
-                                                    + " of the input matrix")
+            raise ValueError("row dimension should be the column dimension"
+                             " of the input matrix")
 
         # check square
         if not self.is_square():
@@ -3599,11 +3598,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 # (since weak Popov, pivot degree is rdeg-shifts entrywise)
                 degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
                 # compute approximant basis with that list as shifts
-                P,rdeg = self.transpose()._approximant_basis_iterative( \
-                                                order, degree_shifts)
+                P, rdeg = self.transpose()._approximant_basis_iterative(
+                    order, degree_shifts)
                 P = P.transpose()
                 # right-multiply by inverse of leading matrix
-                lmat = P.leading_matrix(shifts=degree_shifts,row_wise=False)
+                lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
                 P = P * lmat.inverse()
             else:
                 P = P.transpose()
@@ -3824,19 +3823,19 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if shifts is None:
             shifts = [0] * m if row_wise else [0] * n
         elif row_wise and len(shifts) != m:
-            raise ValueError('shifts length should be the row dimension of' \
-                                                      + ' the input matrix')
+            raise ValueError('shifts length should be the row dimension of'
+                             ' the input matrix')
         elif (not row_wise) and len(shifts) != n:
-            raise ValueError('shifts length should be the column dimension' \
-                                                   + ' of the input matrix')
+            raise ValueError('shifts length should be the column dimension'
+                             ' of the input matrix')
 
         # raise an error if self does not have the right dimension
         if row_wise and self.ncols() != m:
-            raise ValueError("column dimension should be the row dimension" \
-                                                    + " of the input matrix")
+            raise ValueError("column dimension should be the row dimension"
+                             " of the input matrix")
         elif (not row_wise) and self.nrows() != n:
-            raise ValueError("row dimension should be the column dimension" \
-                                                    + " of the input matrix")
+            raise ValueError("row dimension should be the column dimension"
+                             " of the input matrix")
 
         # check full rank and shifts-(ordered weak) Popov form
         if normal_form and (not self.is_popov(shifts, row_wise, False, False)):

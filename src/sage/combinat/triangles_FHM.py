@@ -128,6 +128,7 @@ class Triangle(SageObject):
         ⎛0 2⎞
         ⎝1 4⎠
     """
+
     def __init__(self, poly, variables=None):
         """
         EXAMPLES::

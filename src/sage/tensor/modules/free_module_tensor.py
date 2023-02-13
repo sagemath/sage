@@ -3064,7 +3064,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             for k in range(1,len(pos)):
                 if pos[k] < pos_cov:
                     raise TypeError(
-                        str(pos[0]) + " is a covariant position, while " + \
+                        str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
                         "symmetrization is meaningful only on tensor " +
                         "arguments of the same type")
@@ -3305,7 +3305,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             for k in range(1,len(pos)):
                 if pos[k] < pos_cov:
                     raise TypeError(
-                        str(pos[0]) + " is a covariant position, while " + \
+                        str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
                         "antisymmetrization is meaningful only on tensor " +
                         "arguments of the same type")
