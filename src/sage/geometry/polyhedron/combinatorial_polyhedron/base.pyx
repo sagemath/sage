@@ -1461,18 +1461,15 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef pair_s ridge
 
         if add_equations and names:
-            def get_ridge(size_t i):
-                ridge = self._ridges.get(i)[0]
-                return ((f(ridge.first),) + self.equations(),
-                        (f(ridge.second),) + self.equations())
-
+            return tuple(
+                    ((f(self._ridges.get(i)[0].first),) + self.equations(),
+                     (f(self._ridges.get(i)[0].second),) + self.equations())
+                    for i in range (n_ridges))
         else:
-            def get_ridge(size_t i):
-                ridge = self._ridges.get(i)[0]
-                return (f(ridge.first), f(ridge.second))
-
-        cdef size_t j
-        return tuple(get_ridge(j) for j in range(n_ridges))
+            return tuple(
+                    (f(self._ridges.get(i)[0].first),
+                     f(self._ridges.get(i)[0].second))
+                    for i in range (n_ridges))
 
     @cached_method
     def facet_adjacency_matrix(self, algorithm=None):
@@ -2110,7 +2107,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # For each face in the iterator, check if its a simplex.
         face_iter.structure.lowest_dimension = 2 # every 1-face is a simplex
         d = face_iter.next_dimension()
-        while (d < dim):
+        while d < dim:
             sig_check()
             if face_iter.n_atom_rep() == d + 1:
                 # The current face is a simplex.
@@ -2221,7 +2218,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # For each coface in the iterator, check if its a simplex.
         coface_iter.structure.lowest_dimension = 2 # every coface of dimension 1 is a simplex
         d = coface_iter.next_dimension()
-        while (d < dim):
+        while d < dim:
             sig_check()
             if coface_iter.n_atom_rep() == d + 1:
                 # The current coface is a simplex.
@@ -3721,13 +3718,13 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         dimension_one = 0
         if dim > -1:
-            while (f_vector[dimension_one + 1] == 0):
+            while f_vector[dimension_one + 1] == 0:
                 # Taking care of cases, where there might be no faces
                 # of dimension 0, 1, etc (``n_lines > 0``).
                 dimension_one += 1
             dimension_two = -1
 
-        while (dimension_one < dim + 1):
+        while dimension_one < dim + 1:
             already_seen = sum(f_vector[j] for j in range(dimension_two + 1))
             already_seen_next = already_seen + f_vector[dimension_two + 1]
 

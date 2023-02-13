@@ -41,6 +41,9 @@ cdef class ListOfPairs:
         self.length += 1
 
     cdef inline pair_s* get(self, size_t index) except NULL:
+        """
+        Return a pointer to a pair of the list corresponding to the ``index``.
+        """
         if not (0 <= index < self.length):
             raise IndexError
 
@@ -100,7 +103,7 @@ cdef class ListOfPairs:
         cdef size_t first, second
         (first, second) = value
 
-        if (index == self.length):
+        if index == self.length:
             self.add(first, second)
             return
 
