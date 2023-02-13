@@ -2426,7 +2426,7 @@ def _is_skew_set(G, S):
     return True
 
 
-def is_complementary_difference_set(G, A, B, verbose=False):
+def are_complementary_difference_sets(G, A, B, verbose=False):
     r"""Check if `A, B` are complementary difference sets over the group `G`.
 
     According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
@@ -2448,23 +2448,23 @@ def is_complementary_difference_set(G, A, B, verbose=False):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import is_complementary_difference_set
-        sage: is_complementary_difference_set(Zmod(7), [1, 2, 4], [1, 2, 4])
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 4], [1, 2, 4])
         True
 
     If ``verbose`` is set to True, the function will be verbose::
 
-        sage: is_complementary_difference_set(Zmod(7), [1, 2, 5], [1, 2, 4], verbose=True)
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 5], [1, 2, 4], verbose=True)
         The sets are not supplementary difference sets with lambda = 2
         False
 
     TESTS::
 
-        sage: is_complementary_difference_set(Zmod(16), [1, 2, 4], [1, 2, 4])
+        sage: are_complementary_difference_sets(Zmod(16), [1, 2, 4], [1, 2, 4])
         False
-        sage: is_complementary_difference_set(Zmod(7), [1, 2, 4], [1, 2, 3, 4])
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 4], [1, 2, 3, 4])
         False
-        sage: is_complementary_difference_set(Zmod(19), [1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17])
+        sage: are_complementary_difference_sets(Zmod(19), [1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17])
         True
 
     .. SEEALSO::
@@ -2529,9 +2529,9 @@ def complementary_difference_setI(n, check=True):
 
     TESTS::
 
-        sage: from sage.combinat.designs.difference_family import is_complementary_difference_set
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
         sage: G, [A, B] = complementary_difference_setI(23, check=False)
-        sage: is_complementary_difference_set(G, A, B)
+        sage: are_complementary_difference_sets(G, A, B)
         True
         sage: complementary_difference_setI(17)
         Traceback (most recent call last):
@@ -2551,7 +2551,7 @@ def complementary_difference_setI(n, check=True):
     A = list({x**2 for x in G if x**2 != 0})
     B = A
     if check:
-        assert is_complementary_difference_set(G, A, B)
+        assert are_complementary_difference_sets(G, A, B)
 
     return G, [A, B]
 
