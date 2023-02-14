@@ -1132,9 +1132,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if left != right:
                 raise ValueError("the given parameters does not defines a basic j-invariant")
         num = self._base.one()
-        coeffs = self.coefficients()[1:]
-        gr = coeffs.pop()
-        for g, d in zip(coeffs, parameters[:-1]):
+        gr = self.coefficients()[-1]
+        for g, d in zip(self.coefficients()[1:], parameters[:-1]):
             if g:
                 num *= g**d
         return num/(gr**dr)
@@ -1176,7 +1175,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         equation = [0]
         inequalities = []
         for i in range(1, r):
-
             # create the equation:
             #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             equation.append(q ** i - 1)
@@ -1223,9 +1221,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return False
         if self.rank() == 1:
             return True
-        j_inv_params = self.basic_j_invariants_parameters()
         isom = True
-        for p in j_inv_params:
+        for p in self.basic_j_invariants_parameters():
             if self.basic_j_invariant(p, check=False) != psi.basic_j_invariant(p, check=False):
                 isom = False
                 break
