@@ -393,7 +393,7 @@ class DiGraphGenerators():
         """
         from sage.rings.finite_rings.integer_mod import mod
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.arith.all import is_prime_power
+        from sage.arith.misc import is_prime_power
         if not is_prime_power(q):
             raise ValueError("parameter q must be a prime power")
         if not mod(q, 4) == 3:
