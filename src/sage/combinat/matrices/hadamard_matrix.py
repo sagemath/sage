@@ -3033,6 +3033,10 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = skew_hadamard_matrix_whiteman_construction(n, check=False)
+    elif skew_hadamard_matrix_spence_1975(n, existence=True):
+        if existence:
+            return true()
+        M = skew_hadamard_matrix_spence_1975(n, check=False)
     elif n % 8 == 0:
         if skew_hadamard_matrix(n//2, existence=True) is True:  # (Lemma 14.1.6 in [Ha83]_)
             if existence:
