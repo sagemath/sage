@@ -3823,7 +3823,7 @@ REFERENCES:
 
 .. [KTZ1987] Kierstead, H.A., Trotter, W.T. & Zhou, B. Representing an ordered
              set as the intersection of super greedy linear extensions. Order 4,
-             293-311 (1987). 
+             293-311 (1987).
              :doi:`10.1007/BF00337892`
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
