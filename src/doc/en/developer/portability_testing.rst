@@ -1174,6 +1174,14 @@ application, then in the command palette of VS Code, enter "Remote-Containers:
 Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
+VS Code then prompts you to choose a dev container configuration. 
+For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
+which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
+development version of Sage (``dev`` tag), and a full installation of
+the Sage distribution (``with-targets``). Other dev container configurations
+are described below.
+
 Once VS Code starts configuring the dev container, by clicking on "show log",
 you can see what it does:
 
