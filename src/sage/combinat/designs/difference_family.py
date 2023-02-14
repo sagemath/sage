@@ -2055,7 +2055,9 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     * `n = 97`: [Djo2008a]_
     * `n = 109, 145, 247`: [Djo2008b]_
     * `n = 73`: [Djo2023b]_
-    
+
+    SDS for `n = 81, 169` is built using the function :fun:`skew_supplementary_difference_set_over_polynomial_ring`.
+
     INPUT:
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
@@ -2105,6 +2107,8 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         sage: skew_supplementary_difference_set(7, existence=True)
         False
         sage: skew_supplementary_difference_set(127, existence=True)
+        True
+        sage: skew_supplementary_difference_set(81, existence=True)
         True
 
     .. NOTE::
@@ -2269,13 +2273,22 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         267: [1, 4, 16, 64, 67, 91, 97, 121, 217, 223, 256],
     }
 
+    G, S1, S2, S3, S4 = None, [], [], [], []
+
+    if n in indices:
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
+    elif skew_supplementary_difference_set_over_polynomial_ring(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(n, check=False)
+
     if existence:
-        return n in indices
+        return False
 
-    if n not in indices:
+    if G is None:
         raise ValueError(f'Skew SDS of order {n} not yet implemented.')
-
-    G, [S1, S2, S3, S4] = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
