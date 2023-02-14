@@ -2517,7 +2517,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     TESTS::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import GS_skew_hadamard_smallcases
+        sage: from sage.combinat.matrices.hadamard_matrix import GS_skew_hadamard_smallcases, is_skew_hadamard_matrix
         sage: GS_skew_hadamard_smallcases(36)
         36 x 36 dense matrix over Integer Ring...
         sage: GS_skew_hadamard_smallcases(52)
@@ -2525,6 +2525,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         sage: GS_skew_hadamard_smallcases(92)
         92 x 92 dense matrix over Integer Ring...
         sage: GS_skew_hadamard_smallcases(100)
+        sage: is_skew_hadamard_matrix(GS_skew_hadamard_smallcases(324, check=False))
+        True
+        sage: is_skew_hadamard_matrix(GS_skew_hadamard_smallcases(156, check=False))
+        True
     """
     WGS = williamson_goethals_seidel_skew_hadamard_matrix
 
@@ -2558,12 +2562,19 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     if skew_supplementary_difference_set(n//4, existence=True):
         t = n//4
+
         G, [S1, S2, S3, S4] = skew_supplementary_difference_set(t, check=False)
-        a = [-1 if i in S1 else 1 for i in range(t)]
-        b = [-1 if i in S2 else 1 for i in range(t)]
-        c = [-1 if i in S3 else 1 for i in range(t)]
-        d = [-1 if i in S4 else 1 for i in range(t)]
-        return WGS(a, b, c, d, check=check)
+        Glist = list(G)
+
+        A = matrix([[-1 if y-x in S1 else +1 for y in Glist] for x in Glist])
+        B = matrix([[-1 if y-x in S2 else +1 for y in Glist] for x in Glist])
+        C = matrix([[-1 if y-x in S3 else +1 for y in Glist] for x in Glist])
+        D = matrix([[-1 if y-x in S4 else +1 for y in Glist] for x in Glist])
+
+        H = _construction_goethals_seidel_matrix(A, B, C, D)
+        if check:
+            assert is_skew_hadamard_matrix(H)
+        return H
 
     return None
 
