@@ -58,7 +58,7 @@ from itertools import count, product
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import binomial, GCD as gcd, is_prime, moebius, next_prime, primes
+from sage.arith.misc import binomial, gcd, is_prime, moebius, next_prime, primes
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields

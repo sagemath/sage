@@ -13,7 +13,7 @@ Tornaria methods for computing with quadratic forms
 
 from sage.arith.misc import (CRT_vectors,
                              factor,
-                             GCD as gcd,
+                             gcd,
                              hilbert_symbol,
                              kronecker as kronecker_symbol,
                              prime_to_m_part)

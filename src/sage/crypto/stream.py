@@ -12,7 +12,7 @@ Stream Cryptosystems
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.arith.misc import GCD as gcd, power_mod
+from sage.arith.misc import gcd, power_mod
 from sage.crypto.cryptosystem import SymmetricKeyCryptosystem
 from sage.crypto.stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
 from sage.crypto.util import random_blum_prime
