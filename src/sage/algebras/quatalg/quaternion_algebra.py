@@ -38,7 +38,7 @@ Pickling test::
 from sage.arith.misc import (hilbert_conductor_inverse,
                              hilbert_conductor,
                              factor,
-                             GCD as gcd,
+                             gcd,
                              kronecker as kronecker_symbol,
                              valuation)
 from sage.rings.real_mpfr import RR

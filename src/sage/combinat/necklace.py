@@ -22,7 +22,7 @@ The algorithm used in this file comes from
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import divisors, euler_phi, factorial, GCD as gcd
+from sage.arith.misc import divisors, euler_phi, factorial, gcd
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.composition import Composition
 from sage.combinat.misc import DoublyLinkedList
