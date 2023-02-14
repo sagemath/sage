@@ -1759,7 +1759,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         if base_ring is not None:
             base_ring = base_ring.fraction_field()
-            from sage.rings.rational_field import Q as QQ
+            from sage.rings.rational_field import QQ
             from sage.rings.real_double import RDF
             if base_ring is QQ:
                 solver = "Ppl"

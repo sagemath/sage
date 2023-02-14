@@ -60,8 +60,8 @@ from sage.functions.log import exp
 from sage.functions.other import ceil
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix, identity_matrix

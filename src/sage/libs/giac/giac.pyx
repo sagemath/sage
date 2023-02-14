@@ -154,8 +154,8 @@ from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_init_set
 
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
