@@ -1126,8 +1126,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: the given parameters does not defines a basic j-invariant
         """
+        # TODO: add doctests, fix pep8, define the parameters.
         r = self._gen.degree()
         q = self._Fq.order()
+        if not isinstance(parameters, list):
+            raise TypeError("parameters must be a list")
+        if not len(parameters) == r:
+            raise ValueError(f"the length of the parameters list must be {r}")
         dr = parameters[-1]
         if check:
             right = dr*(q**r - 1)
