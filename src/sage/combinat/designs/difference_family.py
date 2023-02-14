@@ -1945,6 +1945,101 @@ def is_fixed_relative_difference_set(R, q):
     return True
 
 
+def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, check=True):
+    r"""
+    Construct skew supplementary difference sets over a polynomial ring of order `n`.
+
+    The skew supplementary difference sets for `n=81, 169` are taken from [Djo1994a]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the parameter of the supplementary difference sets.
+
+    - ``existence`` -- boolean (dafault False). If true, only check whether the
+      supplementary difference sets can be constructed.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are supplementary
+      difference sets with `S_1` skew before returning them. Setting this parameter to
+      False may speed up the computation considerably.
+
+    OUTPUT:
+
+    If ``existence`` is false, the function returns a Polynomial Ring of order `n`
+    and a list containing 4 sets, or raises an error if data for the given ``n`` is
+    not available.
+    If ``existence`` is true, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_over_polynomial_ring
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)
+
+    If existence is ``True``, the function returns a boolean ::
+
+        sage: skew_supplementary_difference_set_over_polynomial_ring(81, existence=True)
+        True
+        sage: skew_supplementary_difference_set_over_polynomial_ring(17, existence=True)
+        False
+
+    TESTS::
+
+        sage: skew_supplementary_difference_set_over_polynomial_ring(7)
+        Traceback (most recent call last):
+        ...
+        ValueError: Skew SDS of order 7 not yet implemented.
+    """
+    from sage.symbolic.ring import SymbolicRing
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
+
+    data = {
+        81: (3, lambda x: x**4 - x**3 - 1, 16, 5,
+             [1, 2, 4, 6, 8, 10, 12, 14], [1, 2, 3, 4, 10, 11, 13],
+             [4, 5, 6, 8, 12, 13, 14], [2, 4, 5, 6, 7, 11, 12, 13, 15]),
+        169: (13, lambda x: x**2 - 4*x + 6, 24, 7,
+              [0, 2, 5, 7, 9, 10, 12, 15, 16, 18, 21, 22], [0, 1, 2, 7, 8, 9, 13, 14, 18, 20, 23],
+              [1, 4, 6, 7, 9, 14, 16, 17, 20, 21, 23], [3, 5, 6, 9, 10, 12, 13, 14, 15, 17, 20])
+    }
+
+    if existence:
+        return n in data
+
+    if n not in data:
+        raise ValueError(f'Skew SDS of order {n} not yet implemented.')
+
+    mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
+
+    Z3 = Zmod(mod)
+    R = SymbolicRing()
+    x = R.var('x')
+    F = Z3.extension(poly(x))
+
+    H = [F.gen() ** (exp * i) for i in range(order)]
+
+    cosets = []
+    for i in range((n - 1) // (2 * order)):
+        cosets.append([F.gen()**i * el for el in H])
+        cosets.append([-F.gen()**i * el for el in H])
+
+    def generate_set(index_set, cosets):
+        S = []
+        for idx in index_set:
+            S += cosets[idx]
+        return S
+
+    S1 = generate_set(ind1, cosets)
+    S2 = generate_set(ind2, cosets)
+    S3 = generate_set(ind3, cosets)
+    S4 = generate_set(ind4, cosets)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set(F, [S1, S2, S3, S4], lmbda)
+        assert _is_skew_set(F, S1)
+
+    return F, [S1, S2, S3, S4]
+
+
 def skew_supplementary_difference_set(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
