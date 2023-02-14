@@ -2707,6 +2707,101 @@ def complementary_difference_setIII(n, check=True):
     return G, A, B
 
 
+def complementary_difference_sets(n, existence=False, check=True):
+    r"""
+    Compute complementary difference sets over a group of order `n = 2m + 1`.
+
+    According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
+    difference sets over a group `G` of size `n = 2m + 1` if:
+
+    1. they are `2-\{2m+1; m, m; m-1\}` supplementary difference sets
+    2. `A` is skew, i.e. `a \in A` implies `-a \not \in A`
+
+    This method tries to call :func:`complementary_difference_setI`,
+    :func:`complementary_difference_setII` or :func:`complementary_difference_setIII`
+    if the parameter `n` satisfies the requirements of one of these functions.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the group over which the sets are constructed.
+
+    - ``existence`` -- boolean (default False). If true, only check whether the
+      supplementary difference sets can be constructed.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are
+      complementary difference sets before returning them. Setting this to False
+      might speed up the computation for large values of `n`.
+
+    OUTPUT:
+
+    If ``existence`` is false, the function returns group `G` and two complementary
+    difference sets, or raises an error if data for the given `n` is not available.
+    If ``existence`` is true, the function returns a boolean representing whether
+    complementary difference sets can be constructed for the given `n`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_sets
+        sage: complementary_difference_sets(15)
+        (Ring of integers modulo 15, [1, 2, 4, 6, 7, 10, 12], [0, 1, 2, 6, 9, 13, 14])
+
+    If ``existence`` is true, the function returns a boolean::
+
+        sage: complementary_difference_sets(15, existence=True)
+        True
+        sage: complementary_difference_sets(16, existence=True)
+        False
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_sets(29)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_sets(65)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_sets(10)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter n must be odd.
+        sage: complementary_difference_sets(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: Complementary difference sets of order 17 are not implemented yet.
+    """
+    if n % 2 == 0:
+        if existence:
+            return False
+        raise ValueError('The parameter n must be odd.')
+
+    p, t = is_prime_power(n, get_data=True)
+    G, A, B = None, None, None
+
+    if n % 4 == 3 and t > 0:
+        if existence:
+            return True
+        G, A, B = complementary_difference_setI(n, check=False)
+    elif p % 8 == 5 and t > 0:
+        if existence:
+            return True
+        G, A, B = complementary_difference_setII(n, check=False)
+    elif is_prime_power(2*n + 1):
+        if existence:
+            return True
+        G, A, B = complementary_difference_setIII(n, check=False)
+
+    if existence:
+        return False
+
+    if G is None:
+        raise ValueError(f'Complementary difference sets of order {n} are not implemented yet.')
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+    return G, A, B
+
+
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
     Return a (``k``, ``l``)-difference family on an Abelian group of cardinality ``v``.
