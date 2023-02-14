@@ -860,6 +860,27 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return a plot ``self``.
 
+        If English notation is set then the first row of the tableau is on the
+        top:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2],[2,3]])
+            Tableaux.options.convention="english"
+            sphinx_plot(t.plot())
+
+        Whereas if French notation is set, the first row of the tableau is on
+        the bottom:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2],[2,3]])
+            Tableaux.options.convention="french"
+            sphinx_plot(t.plot())
+            Tableaux.options.convention="english"
+
         INPUT:
 
         - ``descents`` -- boolean (default: ``False``); if ``True``,
