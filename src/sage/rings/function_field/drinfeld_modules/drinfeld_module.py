@@ -591,7 +591,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             base_morphism = Hom(function_ring, base_field_noext)(gen[0])
             base_field = base_field_noext.over(base_morphism)
 
-        # This test is also done in the category. We put it here also 
+        # This test is also done in the category. We put it here also
         # to have a friendlier error message
         if not base_field.is_field():
             raise ValueError('generator coefficients must live in a field')
@@ -1110,7 +1110,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: K.<T> = Frac(GF(5)['T'])
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
             sage: c = T^4 + 3*T^2 + T
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
             sage: phi.basic_j_invariant([20, 7, 2])
@@ -1145,7 +1146,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: K.<T> = Frac(GF(5)['T'])
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
             sage: phi.basic_j_invariants_parameters()
             [(1, 5, 1),
@@ -1207,7 +1209,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: K.<T> = Frac(GF(5)['T'])
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
             sage: c = T^4 + 3*T^2 + T
             sage: phi = DrinfeldModule(A, [T, T^3, T^9, T])
             sage: psi = DrinfeldModule(A, [T, c^4*T^3, c^(24)*T^9, c^(124)*T])
