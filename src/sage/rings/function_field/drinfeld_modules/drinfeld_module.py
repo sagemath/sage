@@ -1223,10 +1223,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return False
         if self.rank() == 1:
             return True
-        basic_J_inv = self.basic_j_invariants_parameters()
+        j_inv_params = self.basic_j_invariants_parameters()
         isom = True
-        for J in basic_J_inv:
-            if self.basic_j_invariant(J, check=False) != psi.basic_j_invariant(J, check=False):
+        for p in j_inv_params:
+            if self.basic_j_invariant(p, check=False) != psi.basic_j_invariant(p, check=False):
                 isom = False
                 break
         return isom
