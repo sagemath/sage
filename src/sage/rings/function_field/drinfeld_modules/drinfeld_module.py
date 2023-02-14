@@ -1123,26 +1123,25 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         r = self._gen.degree()
         q = self._Fq.order()
-        parameters = list(parameters)
-        dr = parameters.pop()
+        dr = parameters[-1]
         if check:
             right = dr*(q**r - 1)
             left = 0
-            for k, d in enumerate(parameters):
+            for k, d in enumerate(parameters[:-1]):
                 left += d*(q**(k+1) - 1)
             if left != right:
                 raise ValueError("the given parameters does not defines a basic j-invariant")
         num = self._base.one()
         coeffs = self.coefficients()[1:]
         gr = coeffs.pop()
-        for g, d in zip(coeffs, parameters):
+        for g, d in zip(coeffs, parameters[:-1]):
             if g:
                 num *= g**d
         return num/(gr**dr)
 
     def basic_j_invariants_parameters(self):
         """
-        Return the list of basic j-invariants.
+        Return the list of basic j-invariants parameters.
 
         EXAMPLES::
 
@@ -1150,26 +1149,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
             sage: phi.basic_j_invariants_parameters()
-            [(1, 5, 1),
-             (7, 4, 1),
-             (13, 3, 1),
-             (19, 2, 1),
-             (25, 1, 1),
-             (31, 0, 1),
-             (8, 9, 2),
-             (20, 7, 2),
-             (9, 14, 3),
-             (15, 13, 3),
-             (27, 11, 3),
-             (10, 19, 4),
-             (22, 17, 4),
-             (11, 24, 5),
-             (17, 23, 5),
-             (23, 22, 5),
-             (29, 21, 5),
-             (0, 31, 6),
-             (12, 29, 6),
-             (31, 31, 7)]
+            [[1, 5, 1],
+             [7, 4, 1],
+             [13, 3, 1],
+             [19, 2, 1],
+             [25, 1, 1],
+             [31, 0, 1],
+             [8, 9, 2],
+             [20, 7, 2],
+             [9, 14, 3],
+             [15, 13, 3],
+             [27, 11, 3],
+             [10, 19, 4],
+             [22, 17, 4],
+             [11, 24, 5],
+             [17, 23, 5],
+             [23, 22, 5],
+             [29, 21, 5],
+             [0, 31, 6],
+             [12, 29, 6],
+             [31, 31, 7]]
         """
         # Create the equation and inequalities for the polyhedron:
         r = self._gen.degree()
@@ -1200,7 +1199,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Compute its integral points
         integral_points = polyhedron.integral_points()
 
-        return [p for p in integral_points if gcd(p) == 1]
+        return [list(p) for p in integral_points if gcd(p) == 1]
 
     def is_isomorphic(self, psi):
         r"""
