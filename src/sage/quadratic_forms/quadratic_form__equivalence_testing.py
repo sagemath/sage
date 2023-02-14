@@ -12,10 +12,9 @@ from sage.arith.misc import (hilbert_symbol,
                              legendre_symbol,
                              prime_divisors,
                              valuation)
+from sage.quadratic_forms.quadratic_form import is_QuadraticForm
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-
-from .quadratic_form import is_QuadraticForm
 
 
 ##############################################################################
