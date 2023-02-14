@@ -30,14 +30,14 @@ from sage.arith.misc import GCD as gcd, kronecker as kronecker_symbol
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.prandom import randint
 from sage.quadratic_forms.quadratic_form import QuadraticForm
-from sage.quadratic_forms..ternary import (_basic_lemma,
-                                           _find_a_ternary_qf_by_level_disc,
-                                           _find_all_ternary_qf_by_level_disc,
-                                           _find_p_neighbor_from_vec,
-                                           _find_zeros_mod_p_2,
-                                           _find_zeros_mod_p_odd,
-                                           _reduced_ternary_form_eisenstein_with_matrix,
-                                           _reduced_ternary_form_eisenstein_without_matrix)
+from sage.quadratic_forms.ternary import (_basic_lemma,
+                                          _find_a_ternary_qf_by_level_disc,
+                                          _find_all_ternary_qf_by_level_disc,
+                                          _find_p_neighbor_from_vec,
+                                          _find_zeros_mod_p_2,
+                                          _find_zeros_mod_p_odd,
+                                          _reduced_ternary_form_eisenstein_with_matrix,
+                                          _reduced_ternary_form_eisenstein_without_matrix)
 
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
