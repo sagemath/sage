@@ -108,7 +108,8 @@ from sage.misc.persist import register_unpickle_override
 
 from sage.structure.parent cimport Parent
 
-from sage.arith.all import crt, lcm
+from sage.arith.misc import CRT as crt
+from sage.arith.functions import lcm
 from sage.groups.generic import discrete_log
 
 
@@ -1298,7 +1299,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     vmod.append(w)
                     moduli.append(k)
                 # Now combine in all possible ways using the CRT
-                from sage.arith.all import CRT_basis
+                from sage.arith.misc import CRT_basis
                 basis = CRT_basis(moduli)
                 from sage.misc.mrange import cartesian_product_iterator
                 v = []
@@ -4464,7 +4465,7 @@ cdef class IntegerMod_to_Integer(Map):
             Set of Morphisms from Finite Field of size 2 to Integer Ring in Category of sets
         """
         import sage.categories.homset
-        from sage.categories.all import Sets
+        from sage.categories.sets_cat import Sets
         Morphism.__init__(self, sage.categories.homset.Hom(R, integer_ring.ZZ, Sets()))
 
     cpdef Element _call_(self, x):

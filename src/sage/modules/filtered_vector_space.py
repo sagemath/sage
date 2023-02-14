@@ -99,16 +99,20 @@ Or the algebraic field::
     in Vector space of dimension 3 over Algebraic Field
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from sage.rings.all import QQ, ZZ, RDF, RR, Integer
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
@@ -275,7 +279,7 @@ def construct_from_dim_degree(dim, max_degree, base_ring, check):
     dim = ZZ(dim)
     from sage.matrix.constructor import identity_matrix
     generators = identity_matrix(base_ring, dim).columns()
-    filtration = dict()
+    filtration = {}
     if max_degree is None:
         max_degree = infinity
     filtration[normalize_degree(max_degree)] = range(dim)
@@ -314,7 +318,7 @@ def construct_from_generators(filtration, base_ring, check):
     generators = tuple(sorted(generators))
 
     # normalize filtration data
-    normalized = dict()
+    normalized = {}
     for deg, gens_deg in filtration.items():
         indices = [generators.index(normalize_gen(v)) for v in gens_deg]
         normalized[deg] = tuple(indices)
@@ -373,13 +377,13 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
         v.set_immutable()
 
     # normalize filtration data
-    normalized = dict()
+    normalized = {}
     for deg, gens in filtration.items():
         deg = normalize_degree(deg)
-        gens = [ZZ(i) for i in gens]
-        if any(i < 0 or i >= len(generators) for i in gens):
+        gens = tuple(sorted(ZZ(i) for i in gens))
+        if gens and (gens[0] < 0 or gens[-1] >= len(generators)):
             raise ValueError('generator index out of bounds')
-        normalized[deg] = tuple(sorted(gens))
+        normalized[deg] = gens
     try:
         del normalized[minus_infinity]
     except KeyError:
@@ -387,8 +391,6 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
     filtration = normalized
 
     return FilteredVectorSpace_class(base_ring, dim, generators, filtration, check=check)
-
-
 
 
 class FilteredVectorSpace_class(FreeModule_ambient_field):
@@ -734,7 +736,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             Basis matrix:
             [1 1]
         """
-        return self.get_degree(d).quotient(self.get_degree(d+1))
+        return self.get_degree(d).quotient(self.get_degree(d + 1))
 
     def presentation(self):
         """
@@ -760,7 +762,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             generators.update(V.echelonized_basis())
         generators = tuple(sorted(generators))
 
-        filtration = dict()
+        filtration = {}
         for d, V in filt:
             indices = [ZZ(generators.index(v)) for v in V.echelonized_basis()]
             filtration[d] = tuple(indices)
@@ -769,6 +771,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
     def _repr_field_name(self):
         """
         Return an abbreviated field name as string
+
+        .. NOTE: This should rather be a method of fields and rings.
 
         RAISES:
 
@@ -1001,15 +1005,15 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         self_gens, self_filt = self.presentation()
         other_gens, other_filt = other.presentation()
         generators = \
-            [ list(v) + [base_ring.zero()]*other.dimension() for v in self_gens  ] + \
-            [ [base_ring.zero()]*self.dimension() + list(v)  for v in other_gens ]
+            [list(v) + [base_ring.zero()] * other.dimension() for v in self_gens] + \
+            [[base_ring.zero()] * self.dimension() + list(v) for v in other_gens]
 
         # construct the filtration dictionary
         def join_indices(self_indices, other_indices):
             self_indices = tuple(self_indices)
             other_indices = tuple(i + len(self_gens) for i in other_indices)
             return self_indices + other_indices
-        filtration = dict()
+        filtration = {}
         self_indices = set()
         other_indices = set()
         degrees = list(self_filt) + list(other_filt)
@@ -1071,7 +1075,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         W_coll = VectorCollection(W_generators, base_ring, W.dimension())
         T = TensorOperation([V_coll, W_coll], 'product')
 
-        filtration = dict()
+        filtration = {}
         for V_deg in V.support():
             for W_deg in W.support():
                 deg = V_deg + W_deg
@@ -1112,7 +1116,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         T = TensorOperation([V] * n, operation)
 
         iters = [self.support()] * n
-        filtration = dict()
+        filtration = {}
         from sage.categories.cartesian_product import cartesian_product
         for degrees in cartesian_product(iters):
             deg = sum(degrees)
@@ -1123,7 +1127,6 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
                     filt_deg.add(pow_i)
             filtration[deg] = filt_deg
         return FilteredVectorSpace(T.vectors(), filtration, base_ring=self.base_ring())
-
 
     def exterior_power(self, n):
         """
@@ -1204,7 +1207,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: F.dual().support()
             (-2, 0)
         """
-        filtration = dict()
+        filtration = {}
         prev_deg = minus_infinity
         for deg, V in self._filt[1:]:
             filtration[-prev_deg] = V.complement().echelonized_basis()
@@ -1226,7 +1229,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             (-5, -3)
         """
         generators, filtration = self.presentation()
-        shifted = dict()
+        shifted = {}
         for d, indices in filtration.items():
             shifted[d + deg] = indices
         return FilteredVectorSpace(generators, shifted, base_ring=self.base_ring())
@@ -1269,7 +1272,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         R = self.base_ring()
         if epsilon is None:
             epsilon = R.one()
-        filtration = dict()
+        filtration = {}
         for deg, filt in self._filt[1:]:
             generators = [v + epsilon * random_vector(R, self.rank())
                           for v in filt.echelonized_basis()]
