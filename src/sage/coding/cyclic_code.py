@@ -41,7 +41,7 @@ from .decoder import Decoder
 from copy import copy
 from sage.rings.integer import Integer
 from sage.categories.homset import Hom
-from sage.arith.misc import GCD as gcd
+from sage.arith.misc import gcd
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
