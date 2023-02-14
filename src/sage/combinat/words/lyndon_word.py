@@ -12,7 +12,7 @@ Lyndon words
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import divisors, GCD as gcd, moebius, multinomial
+from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.necklace import _sfc
