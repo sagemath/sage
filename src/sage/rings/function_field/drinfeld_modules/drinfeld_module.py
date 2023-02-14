@@ -1062,15 +1062,24 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
         return isinstance(self, FiniteDrinfeldModule)
 
-    def j_invariant(self):
+    def j_invariant(self, k=1):
         r"""
-        Return the j-invariant of the Drinfeld module if the rank is
-        two; raise a NotImplementedError otherwise.
+        Return the `k`-th `j`-invariant of the Drinfeld
+        `\mathbb{F}_q[T]`-module.
 
-        Assume the rank is two. Write the generator `\phi_T = \omega +
-        g\tau + \Delta\tau^2`. The j-invariant is defined by
-        `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base field
-        of the function ring. In our case, this field is always finite.
+        Recall that the `k`-th `j`-invariant of a Drinfeld module `\phi` of any
+        rank is defined by
+
+        .. MATH::
+
+            j_k(\phi) := g_k(\phi)^{(q^r - 1)/(q^\mathrm{gcd}(k, r) - 1)}}{g_r(\phi)^{(q^k - 1)/(q^{\mathrm{gcd}(k, r)} - 1)}
+
+        where `g_i(\phi)` is the `i`-th coefficient of the generator `\phi_T`.
+
+        INPUT:
+
+        - `k` (default: 1) - an integer greater of equal to one and less than
+          the rank.
 
         OUTPUT: an element in the base codomain
 
@@ -1089,20 +1098,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho = DrinfeldModule(A, [p_root, 0, 1])
             sage: rho.j_invariant()
             0
-
-        The rank must be two::
-
-            sage: sigma = DrinfeldModule(A, [p_root, 1, 0])
-            sage: sigma.j_invariant()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: rank must be 2
         """
-        self._check_rank_two()
-        g = self.coefficient(1)
-        delta = self.coefficient(2)
+        if not isinstance(k, (int, Integer)):
+            raise TypeError(f"k must be an integer")
+        r = self.rank()
+        if k <= 0 or k >= r:
+            raise ValueError(f"k (={k}) must be greater or equal to one and less than the rank (={r})")
         q = self._Fq.order()
-        return (g**(q+1)) / delta
+        gk = self.coefficient(k)
+        gr = self.coefficient(r)
+        return gk**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) / gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1)))
 
     def basic_j_invariant(self, parameters, check=True):
         r"""
