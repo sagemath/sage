@@ -2469,7 +2469,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
 
     .. SEEALSO::
 
-        :func: `is_supplementary_difference_set`
+        :func:`is_supplementary_difference_set`
     """
     n = G.order()
 
@@ -2541,6 +2541,11 @@ def complementary_difference_setI(n, check=True):
         Traceback (most recent call last):
         ...
         ValueError: The parameter 15 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_set`
+        :func:`complementary_difference_sets`
     """
     if not (n % 4 == 3 and is_prime_power(n)):
         raise ValueError(f'The parameter {n} is not valid')
@@ -2610,6 +2615,11 @@ def complementary_difference_setII(n, check=True):
         Traceback (most recent call last):
         ...
         ValueError: The parameter 15 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_set`
+        :func:`complementary_difference_sets`
     """
     p, t = is_prime_power(n, get_data=True)
     if not (p % 8 == 5 and t > 0):
@@ -2685,6 +2695,11 @@ def complementary_difference_setIII(n, check=True):
         Traceback (most recent call last):
         ...
         ValueError: The parameter 17 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_set`
+        :func:`complementary_difference_sets`
     """
     m = (n - 1) // 2
     q = 4*m + 3
@@ -2769,6 +2784,10 @@ def complementary_difference_sets(n, existence=False, check=True):
         Traceback (most recent call last):
         ...
         ValueError: Complementary difference sets of order 17 are not implemented yet.
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_set`
     """
     if n % 2 == 0:
         if existence:
