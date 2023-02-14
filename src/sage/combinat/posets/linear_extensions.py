@@ -253,7 +253,7 @@ class LinearExtensionOfPoset(ClonableArray,
         return True
 
     def is_supergreedy(self):
-        r""""
+        r"""
         Return ``True`` if the linear extension is supergreedy.
         
         A linear extension `[x_1<x_2<...<x_t]` of a finite ordered
