@@ -30,7 +30,7 @@ AUTHORS:
 
 from operator import xor
 
-from sage.arith.misc import gcd, power_mod, XGCD as xgcd
+from sage.arith.misc import gcd, power_mod, xgcd
 from sage.crypto.cryptosystem import PublicKeyCryptosystem
 from sage.crypto.util import is_blum_prime, least_significant_bits, random_blum_prime
 from sage.functions.log import log
