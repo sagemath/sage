@@ -5553,6 +5553,11 @@ REFERENCES:
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
 
+.. [Spe1975] \E. Spence.
+            *Skew-Hadamard Matrices of the Goethals-Seidel Type*,
+            Canadian Journal of Mathematics  27(3) (1975): 555-560.
+            :doi:`10.4153/cjm-1975-066-9`
+
 .. [Spe1977] \E. Spence.
             *Skew-Hadamard matrices of order 2(q + 1)*,
             Discrete Mathematics 18(1) (1977): 79-85.
