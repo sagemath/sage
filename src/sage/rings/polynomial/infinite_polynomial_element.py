@@ -103,14 +103,16 @@ finite polynomial rings are merged with infinite polynomial rings::
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.structure.element import RingElement
+from .commutative_polynomial import CommutativePolynomial
+from .multi_polynomial import MPolynomial
 import copy
 
 
-def InfinitePolynomial(A, p):
+class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClasscallMetaclass):
     """
     Create an element of a Polynomial Ring with a Countably Infinite Number of Variables.
 
@@ -210,38 +212,38 @@ def InfinitePolynomial(A, p):
             if isinstance(A._P, MPolynomialRing_polydict):
                 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                 from sage.misc.sage_eval import sage_eval
-                from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
-                # the base ring may be a function field, therefore
-                # we need GenDictWithBasering
-                return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
-    return InfinitePolynomial_sparse(A, p)
+                p = sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict()))
+                return InfinitePolynomial_dense(A, p)
+            else:
+                # Now there remains to fight the oddities and bugs of libsingular.
+                PP = p.parent()
+                if A._P.has_coerce_map_from(PP):
+                    if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
+                        f = PP.hom(PP.variable_names(), A._P)
+                        try:
+                            return InfinitePolynomial_dense(A, f(p))
+                        except (ValueError, TypeError):
+                            # last desperate attempt: String conversion
+                            from sage.misc.sage_eval import sage_eval
+                            from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+                            # the base ring may be a function field, therefore
+                            # we need GenDictWithBasering
+                            return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+                    return InfinitePolynomial_dense(A, A._P(p))
+                # there is no coercion, so, we set up a name-preserving map.
+                SV = set(repr(x) for x in p.variables())
+                f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
+                try:
+                    return InfinitePolynomial_dense(A, f(p))
+                except (ValueError, TypeError):
+                    # last desperate attempt: String conversion
+                    from sage.misc.sage_eval import sage_eval
+                    from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+                    # the base ring may be a function field, therefore
+                    # we need GenDictWithBasering
+                    return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+        return InfinitePolynomial_sparse(A, p)
 
-
-class InfinitePolynomial_sparse(RingElement):
-    """
-    Element of a sparse Polynomial Ring with a Countably Infinite Number of Variables.
-
-    INPUT:
-
-    - ``A`` -- an Infinite Polynomial Ring in sparse implementation
-    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``.
-
-    Of course, one should not directly invoke this class, but rather
-    construct elements of ``A`` in the usual way.
-
-    EXAMPLES::
-
-        sage: A.<a> = QQ[]
-        sage: B.<b,c> = InfinitePolynomialRing(A,implementation='sparse')
-        sage: p = a*b[100] + 1/2*c[4]
-        sage: p
-        a*b_100 + 1/2*c_4
-        sage: p.parent()
-        Infinite polynomial ring in b, c over Univariate Polynomial Ring in a over Rational Field
-        sage: p.polynomial().parent()
-        Multivariate Polynomial Ring in b_100, b_0, c_4, c_0 over Univariate Polynomial Ring in a over Rational Field
-
-    """
     # Construction and other basic methods
     # We assume that p is good input. Type checking etc. is now done
     # in the _element_constructor_ of the parent.
@@ -260,7 +262,7 @@ class InfinitePolynomial_sparse(RingElement):
         # the wrong ring and we get here without going through
         # _element_constructor_.  See trac 22514 for examples.
         # So a little extra checking is done here.
-        if not is_MPolynomial(p) or p.base_ring() is not A.base_ring():
+        if not isinstance(p, MPolynomial) or p.base_ring() is not A.base_ring():
             # coerce to a convenient multivariate polynomial ring
             p = A._minP(p)
 
@@ -835,7 +837,7 @@ class InfinitePolynomial_sparse(RingElement):
             l = len(self.parent()._names)
             # get the pairs (shift,exponent) of the leading monomial, indexed by the variable names
             Vars = self._p.parent().variable_names()
-            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomial_libsingular
+            from sage.rings.polynomial.multi_polynomial import MPolynomial_libsingular
             if isinstance(self._p, MPolynomial_libsingular):
                 L = [(Vars[i].split('_'), e) for i, e in enumerate(self._p.lm().exponents(as_ETuples=False)[0]) if e]
             elif hasattr(self._p, 'lm'):
@@ -1191,6 +1193,9 @@ class InfinitePolynomial_sparse(RingElement):
                      self.__class__(self.parent(), monomial))
                     for coefficient, monomial in self._p)
 
+    def gcd(self, x):
+        """
+        computes the greatest common divisor
 
         EXAMPLES::
 
@@ -1522,8 +1527,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
     :class:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse`. See
     there for a description of the methods.
     """
-    # Construction and other basic methods
-##    def __init__(self, A, p): # is inherited from the dense implementation
 
     def __call__(self, *args, **kwargs):
         """
