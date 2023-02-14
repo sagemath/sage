@@ -2556,6 +2556,89 @@ def complementary_difference_setI(n, check=True):
     return G, [A, B]
 
 
+def complementary_difference_setII(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n = p^t`, where `p \cong 5 \mod 8`.
+
+    Consider a finite field `G` of order `n` and let `\rho` be the generator of
+    the corresponding multiplicative group. Then, there are two different constructions,
+    depending on whether `t` is even or odd.
+
+    If `t` is even, let `C_0` be the set of non-zero octic residues in `G`, and let
+    `C_i = \rho^i C_0` for `1 \le i \le  7`.
+    Then, `A = C_0 \cup C_1 \cup C_2 \cup C_3` and  `B = C_0 \cup C_1 \cup C_6 \cup C_7`.
+
+    If `t` is odd, let `C_0` be the set of non-zero fourth powers in `G`, and let
+    `C_i = \rho^i C_0` for `1 \le i \le  3`.
+    Then, `A = C_0 \cup C_1` and  `B = C_0 \cup C_3`.
+
+    For more details on this construction, see [Sze1971]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the group `G`.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are
+      complementary difference sets before returning them. Setting this to False
+      might speed up the computation for large values of `n`.
+
+    OUTPUT:
+
+    The function returns the Galois field of order `n` and the two sets, or raises
+    an error if `n` does not satisfy the requirements of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setII
+        sage: complementary_difference_setII(5)
+        (Finite Field of size 5, [1, 2], [1, 3])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_setII(25, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_setII(13, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_setII(49)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 49 is not valid
+        sage: complementary_difference_setII(15)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 15 is not valid
+    """
+    p, t = is_prime_power(n, get_data=True)
+    if not (p % 8 == 5 and t > 0):
+        raise ValueError(f'The parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    G = GF(n, 'a')
+    A, B = None, None
+
+    if t % 2 == 0:
+        rho = G.multiplicative_generator()
+        C0 = list({el**8 for el in G if el != 0})
+        C1, C2, C3, C6, C7 = map(lambda i: [rho**i * el for el in C0], [1, 2, 3, 6, 7])
+        A = C0 + C1 + C2 + C3
+        B = C0 + C1 + C6 + C7
+    else:
+        rho = G.multiplicative_generator()
+        C0 = list({el**4 for el in G if el**4 != 0})
+        C1 = [rho * el for el in C0]
+        C3 = [rho**3 * el for el in C0]
+        A = C0 + C1
+        B = C0 + C3
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+
+    return G, A, B
+
+
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
     Return a (``k``, ``l``)-difference family on an Abelian group of cardinality ``v``.
