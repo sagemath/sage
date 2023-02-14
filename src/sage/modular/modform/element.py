@@ -3395,6 +3395,18 @@ class GradedModularFormElement(ModuleElement):
         """
         return str(self.q_expansion())
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: latex(M.0)
+            1 + 240 q + 2160 q^{2} + 6720 q^{3} + 17520 q^{4} + 30240 q^{5} + O(q^{6})
+        """
+        return self.q_expansion()._latex_()
+
     def __getitem__(self, weight):
         r"""
         Return the homogeneous component of the given graded modular form.
