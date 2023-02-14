@@ -595,4 +595,3 @@ def CactusPresentation(n):
             elt = gens[i] * gens[j] * ~gens[K.index(y)] * ~gens[K.index(x)]
             rls.append(elt)
     return FinitelyPresentedGroup(F, tuple(rls))
-
