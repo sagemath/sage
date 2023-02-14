@@ -67,7 +67,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.element import coerce_binop
 
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 import sage.rings.polynomial.polynomial_ring
 
 from sage.libs.ntl.ZZX cimport *
