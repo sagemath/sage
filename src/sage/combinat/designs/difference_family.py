@@ -2516,21 +2516,21 @@ def complementary_difference_setI(n, check=True):
 
     OUTPUT:
 
-    The function returns a Galois Field of order `n` and a list containing
-    the 2 sets, or raises an error if `n` does not satisfies the requirements
-    of this construction.
+    The function returns the Galois field of order `n` and the two sets, or raises
+    an error if `n` does not satisfy the requirements of this construction.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import complementary_difference_setI
         sage: complementary_difference_setI(19)
         (Finite Field of size 19,
-         [[1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17]])
+         [1, 4, 5, 6, 7, 9, 11, 16, 17],
+         [1, 4, 5, 6, 7, 9, 11, 16, 17])
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, [A, B] = complementary_difference_setI(23, check=False)
+        sage: G, A, B = complementary_difference_setI(23, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
         sage: complementary_difference_setI(17)
@@ -2553,7 +2553,7 @@ def complementary_difference_setI(n, check=True):
     if check:
         assert are_complementary_difference_sets(G, A, B)
 
-    return G, [A, B]
+    return G, A, B
 
 
 def complementary_difference_setII(n, check=True):
