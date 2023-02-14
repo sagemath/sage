@@ -559,7 +559,7 @@ def is_prime(n):
         if not isinstance(R, NumberField_generic):
             import warnings
             s = f'Testing primality in {R}, which is a field, ' \
-                 'hence the result will always be False. '
+                'hence the result will always be False. '
             if R is QQ:
                 s += 'To test whether n is a prime integer, use ' \
                      'is_prime(ZZ(n)) or ZZ(n).is_prime(). '
@@ -567,6 +567,7 @@ def is_prime(n):
             warnings.warn(s)
 
     return ret
+
 
 def is_pseudoprime(n):
     r"""
@@ -2693,7 +2694,7 @@ def radical(n, *args, **kwds):
         sage: radical(0)
         Traceback (most recent call last):
         ...
-        ArithmeticError: Radical of 0 not defined.
+        ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)
         sage: radical(K(2))
         i + 1
