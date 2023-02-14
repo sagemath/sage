@@ -2639,6 +2639,74 @@ def complementary_difference_setII(n, check=True):
     return G, A, B
 
 
+def complementary_difference_setIII(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
+
+    Consider a finite field `G` of order `n` and let `\rho` be a primite element
+    of this group. Now let `Q` be the set of non zero quadratic residues in `G`,
+    and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
+    Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
+    of integers modulo `n`. For more details, see [Sz1969]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the group over which the sets are constructed.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are
+      complementary difference sets before returning them. Setting this to False
+      might speed up the computation for large values of `n`.
+
+    OUTPUT:
+
+    The function returns the Galois field of order `n` and the two sets, or raises
+    an error if `n` does not satisfy the requirements of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setIII
+        sage: complementary_difference_setIII(11)
+        (Ring of integers modulo 11, [1, 2, 5, 7, 8], [0, 1, 3, 8, 10])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_setIII(21, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_setIII(65, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_setIII(10)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 10 is not valid
+        sage: complementary_difference_setIII(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: The parameter 17 is not valid
+    """
+    m = (n - 1) // 2
+    q = 4*m + 3
+    if n % 2 != 1 or not is_prime_power(q):
+        raise ValueError(f'The parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    G = Zmod(n)
+    G2 = GF(q)
+    rho = G2.primitive_element()
+
+    Q = [rho ** (2*b) for b in range(1, n+1)]
+
+    A = [G(a) for a in range(n) if rho**(2*a) - 1 in Q]
+    B = [G(b) for b in range(n) if -rho**(2*b) - 1 not in Q]
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+
+    return G, A, B
+
+
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
     Return a (``k``, ``l``)-difference family on an Abelian group of cardinality ``v``.
