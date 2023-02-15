@@ -792,11 +792,18 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: P.rank()
                 2
 
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3])
                 sage: P = W.coxeter_poset()
                 sage: P
                 Finite meet-semilattice containing 363 elements
                 sage: P.rank()
+                3
+
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")  # optional - gap3
+                sage: P = W.coxeter_poset()                                     # optional - gap3
+                sage: P                                                         # optional - gap3
+                Finite meet-semilattice containing 363 elements
+                sage: P.rank()                                                  # optional - gap3
                 3
             """
             I = self.index_set()
@@ -857,11 +864,18 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: C.homology()
                 {0: 0, 1: Z}
 
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3])
                 sage: C = W.coxeter_complex()
                 sage: C
                 Simplicial complex with 62 vertices and 120 facets
                 sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")  # optional - gap3
+                sage: C = W.coxeter_complex()                                   # optional - gap3
+                sage: C                                                         # optional - gap3
+                Simplicial complex with 62 vertices and 120 facets
+                sage: C.homology()                                              # optional - gap3
                 {0: 0, 1: 0, 2: Z}
             """
             I = self.index_set()

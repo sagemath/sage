@@ -558,7 +558,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W = ReflectionGroup(4)                     # optional - gap3
                 sage: P = W.milnor_fiber_poset()                 # optional - gap3
                 sage: P                                          # optional - gap3
-                Finite meet-semilattice containing 34 elements
+                Finite meet-semilattice containing 41 elements
                 sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
                 24*x^2 + 16*x + 1
 
@@ -566,11 +566,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W.is_well_generated()                      # optional - gap3
                 False
                 sage: P = W.milnor_fiber_poset()                 # optional - gap3
-                sage: P
+                sage: P                                          # optional - gap3
                 Finite poset containing 47 elements
-                sage: sum(x**P.rank(elt) for elt in P)
+                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
                 16*x^3 + 24*x^2 + 6*x + 1
-                sage: P.is_meet_semilattice()
+                sage: P.is_meet_semilattice()                    # optional - gap3
                 False
             """
             I = self.index_set()
