@@ -1822,7 +1822,7 @@ def squarefree_part(x):
         return x.squarefree_part()
     except AttributeError:
         pass
-    from sage.arith.all import factor
+    from sage.arith.misc import factor
     from sage.structure.all import parent
     F = factor(x)
     n = parent(x)(1)
