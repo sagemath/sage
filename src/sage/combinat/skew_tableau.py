@@ -148,11 +148,11 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
@@ -160,6 +160,10 @@ class SkewTableau(ClonableList,
             sage: t == 0
             False
             sage: t == SkewTableaux()([[None,1,2]])
+            True
+            sage: t == [(None,1,2)]
+            True
+            sage: t == [[None,1,2]]
             True
 
             sage: s = SkewTableau([[1,2]])
@@ -171,7 +175,7 @@ class SkewTableau(ClonableList,
         if isinstance(other, (Tableau, SkewTableau)):
             return list(self) == list(other)
         else:
-            return list(self) == other
+            return list(self) == other or list(list(row) for row in self) == other
 
     def __ne__(self, other):
         r"""
@@ -181,22 +185,33 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
-            sage: t = Tableau([[2,3],[1]])
+            sage: t = SkewTableau([[None,1,2]])
             sage: t != []
             True
         """
-        if isinstance(other, (Tableau, SkewTableau)):
-            return list(self) != list(other)
-        else:
-            return list(self) != other
+        return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES:
+
+        Check that :trac:`35137` is fixed::
+
+            sage: t = SkewTableau([[None,1,2]])
+            sage: hash(t) == hash(tuple(t))
+            True
+        """
+        return hash(tuple(self))
 
     def check(self):
         r"""
