@@ -866,7 +866,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         .. PLOT::
             :width: 200 px
 
-            t = Tableau([[1,2],[2,3]])
+            t = Tableau([[1,2,3,4],[2,3],[5]])
             Tableaux.options.convention="english"
             sphinx_plot(t.plot())
 
@@ -876,7 +876,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         .. PLOT::
             :width: 200 px
 
-            t = Tableau([[1,2],[2,3]])
+            t = Tableau([[1,2,3,4],[2,3],[5]])
             Tableaux.options.convention="french"
             sphinx_plot(t.plot())
             Tableaux.options.convention="english"
