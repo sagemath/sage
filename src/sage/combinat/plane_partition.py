@@ -44,8 +44,6 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
-PP = NewType('PP', 'PlanePartition')
-
 
 @richcmp_method
 class PlanePartition(ClonableArray,
@@ -1168,6 +1166,9 @@ class PlanePartition(ClonableArray,
         if not self:
             return (0, 0, 0)
         return (len(self), len(self[0]), self[0][0])
+
+
+PP = NewType('PP', PlanePartition)
 
 
 class PlanePartitions(UniqueRepresentation, Parent):
