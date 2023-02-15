@@ -188,7 +188,7 @@ def discrim(pols):
         -0.500000000000000? + 0.866025403784439?*I,
         -0.522757958574711?,
         0.2613789792873551? - 0.4527216721561923?*I,
-        0.2613789792873551? + 0.4527216721561923?*I]    
+        0.2613789792873551? + 0.4527216721561923?*I]
     """
     flist = tuple(pols)
     x, y = flist[0].parent().gens()
@@ -483,7 +483,7 @@ def fieldI(F0):
         sage: F0.<a> = NumberField(p, embedding = a0)
         sage: F1 = fieldI(F0)
         sage: F0 == F1
-        True        
+        True
     """
     I0 = QQbar.gen()
     if I0 in F0:
@@ -711,7 +711,7 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
-            f0 = F1[y](f.subs({x: X0}))            
+            f0 = F1[y](f.subs({x: X0}))
         y0sf = f0.roots(QQbar, multiplicities = False)
         y0s += list(y0sf)
         while True:
@@ -724,7 +724,7 @@ def braid_in_segment(glist, x0, x1, precision = {}):
     for f in glist:
         for i in intervals[f]:
             aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision[f])
-            strands.append(aux)    
+            strands.append(aux)
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
@@ -741,7 +741,7 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in list} # new
+            precision = {f: precision[f] * 2 for f in glist} # new
             return braid_in_segment(glist, x0, x1, precision = precision) # new
 
         matched = 0
@@ -844,7 +844,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     - ``p`` -- a vertex of ``E``
       
-    - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that 
+    - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
       by a tuple whose first element is the ordering and the second one is the
@@ -1028,9 +1028,9 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
       with an embedding in the complex numbers
       
     - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
-      in order to provide information for `braid_monodromy_arrangement`. 
+      in order to provide information for `braid_monodromy_arrangement`.
           
-    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the 
+    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the
       string assignment is given. t makes only sense if arrangement has
       more than one polynomial
  
@@ -1042,8 +1042,8 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
     
-    If ``arrangement`` contains more than one element, some information to be used by 
-    `braid_monodromy_arrangement` is provided. 
+    If ``arrangement`` contains more than one element, some information to be used by
+    `braid_monodromy_arrangement` is provided.
     
     If ``computebm`` is set to ``False`` only some information to be used by ``strand_components`` is given.
 
@@ -1095,7 +1095,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     p = next(E.vertex_iterator())
     p0 = (p[0], p[1])
     # Construct a dual graph for the compact regions; the dual edges
-    # of this graph have as labels the corresponding edges in G 
+    # of this graph have as labels the corresponding edges in G
     Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
     Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
     DG = Graph(len(Vreg1))
@@ -1158,6 +1158,9 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     if len(arrangement1) == 1:
         return result
     else:
+        p1 = p0[0] + I1 * p0[1]
+        strands = {}
+        roots_base = []
         strands = {}
         roots_base = []
         for i, h in enumerate(arrangement1):
@@ -1370,7 +1373,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
     @parallel
     def relation(x, b):
         return x * b / x
-    
+
     if not puiseux:
         relations = (relation([(x, b) for x in F.gens() for b in bm]))
         R = [r[1] for r in relations]
