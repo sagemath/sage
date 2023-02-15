@@ -267,10 +267,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.j_invariant()  # j-invariant
         1
 
-     A Drinfeld `\mathbb{F}_q[T]`-module can be seen as an Ore
-     polynomial with positive degree and constant coefficient
-     `\gamma(T)`, where `\gamma` is the base morphism. This analogy is
-     the motivation for the following methods::
+    A Drinfeld `\mathbb{F}_q[T]`-module can be seen as an Ore polynomial
+    with positive degree and constant coefficient `\gamma(T)`, where
+    `\gamma` is the base morphism. This analogy is the motivation for
+    the following methods::
 
         sage: phi.coefficients()
         [z, 1, 1]
