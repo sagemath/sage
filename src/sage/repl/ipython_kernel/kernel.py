@@ -96,37 +96,44 @@ class SageKernel(IPythonKernel):
               'url': 'kernelspecs/sagemath/doc/html/en/index.html'},
              ...]
         """
-        from sage.repl.ipython_kernel.install import SageKernelSpec
-        identifier = SageKernelSpec.identifier()
-        kernel_url = lambda x: 'kernelspecs/{0}/{1}'.format(identifier, x)
+        from sage.env import SAGE_DOC_SERVER_URL as url
+
+        if url:
+            def doc_url(path):
+                return '{}/{}'.format(url, path)
+        else:
+            from sage.env import SAGE_DOC_LOCAL_PORT as port
+            def doc_url(path):
+                return 'http://localhost:{}/{}'.format(port, path)
+
         return [
             {
                 'text': 'Sage Documentation',
-                'url': kernel_url('doc/html/en/index.html'),
+                'url': doc_url("html/en/index.html"),
             },
             {
                 'text': 'Tutorial',
-                'url': kernel_url('doc/html/en/tutorial/index.html'),
+                'url': doc_url('html/en/tutorial/index.html'),
             },
             {
                 'text': 'Thematic Tutorials',
-                'url': kernel_url('doc/html/en/thematic_tutorials/index.html'),
+                'url': doc_url('html/en/thematic_tutorials/index.html'),
             },
             {
                 'text': 'FAQs',
-                'url': kernel_url('doc/html/en/faq/index.html'),
+                'url': doc_url('html/en/faq/index.html'),
             },
             {
                 'text': 'PREP Tutorials',
-                'url': kernel_url('doc/html/en/prep/index.html'),
+                'url': doc_url('html/en/prep/index.html'),
             },
             {
                 'text': 'Reference',
-                'url': kernel_url('doc/html/en/reference/index.html'),
+                'url': doc_url('html/en/reference/index.html'),
             },
             {
                 'text': "Developer's Guide",
-                'url': kernel_url('doc/html/en/developer/index.html'),
+                'url': doc_url('html/en/developer/index.html'),
             },
             {
                 'text': "Python",
