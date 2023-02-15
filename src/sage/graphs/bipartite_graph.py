@@ -594,7 +594,7 @@ class BipartiteGraph(Graph):
             use_labels = self._use_labels_for_hash()
             edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
-                from collections import Counter  
+                from collections import Counter
                 edge_items = Counter(edge_items).items()
             return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))
 
