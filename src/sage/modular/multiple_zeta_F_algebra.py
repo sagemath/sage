@@ -716,7 +716,7 @@ class F_algebra(CombinatorialFreeModule):
 
                 sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
                 sage: F = F_algebra(QQ)
-                sage: t = 4*F("35")+F("27")
+                sage: t = 4 * F("35") + F("27")
                 sage: t.without_f2()
                 4*f3f5
             """
@@ -731,10 +731,10 @@ class F_algebra(CombinatorialFreeModule):
 
                 sage: from sage.modular.multiple_zeta_F_algebra import F_algebra
                 sage: F = F_algebra(QQ)
-                sage: t = 4*F("2")+F("3")
+                sage: t = 4 * F("2") + F("3")
                 sage: t.single_valued()
                 2*f3
-                sage: t = 4*F("35")+F("27")
+                sage: t = 4 * F("35") + F("27")
                 sage: t.single_valued()
                 8*f3f5 + 8*f5f3
             """

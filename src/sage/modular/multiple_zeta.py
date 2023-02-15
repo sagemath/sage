@@ -1083,8 +1083,14 @@ class Multizetas(CombinatorialFreeModule):
             return self.parent().iterated(self)
 
         def single_valued(self):
-            """
+            r"""
             Return the single-valued version of ``self``.
+
+            This is the projection map onto the sub-algebra of
+            single-valued motivic multiple zeta values, as defined by
+            F. Brown in [Bro2013]_.
+
+            This morphism of algebras sends in particular `\zeta(2)` to `0`.
 
             EXAMPLES::
 
