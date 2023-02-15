@@ -3670,7 +3670,7 @@ cdef class Matrix(Matrix1):
 
     def _right_kernel_matrix_over_number_field(self):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
@@ -3724,7 +3724,7 @@ cdef class Matrix(Matrix1):
 
     def _right_kernel_matrix_over_field(self, *args, **kwds):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
@@ -3870,7 +3870,7 @@ cdef class Matrix(Matrix1):
 
     def _right_kernel_matrix_over_integer_mod_ring(self):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
