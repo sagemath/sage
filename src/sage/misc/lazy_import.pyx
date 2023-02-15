@@ -1069,7 +1069,6 @@ def lazy_import(module, names, as_=None, *,
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp', deprecation=14275)
         sage: my_Qp(5)
         doctest:...: DeprecationWarning:
-
         Importing my_Qp from here is deprecated; please use "from sage.all import Qp as my_Qp" instead.
         See https://github.com/sagemath/sage/issues/14275 for details.
 
