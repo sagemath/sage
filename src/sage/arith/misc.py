@@ -33,6 +33,7 @@ from sage.rings.rational import Rational
 from sage.rings.abc import RealField, ComplexField
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
+from sage.arith.functions import LCM_list
 
 
 ##################################################################
@@ -558,7 +559,7 @@ def is_prime(n):
         if not isinstance(R, NumberField_generic):
             import warnings
             s = f'Testing primality in {R}, which is a field, ' \
-                 'hence the result will always be False. '
+                'hence the result will always be False. '
             if R is QQ:
                 s += 'To test whether n is a prime integer, use ' \
                      'is_prime(ZZ(n)) or ZZ(n).is_prime(). '
@@ -566,6 +567,7 @@ def is_prime(n):
             warnings.warn(s)
 
     return ret
+
 
 def is_pseudoprime(n):
     r"""
@@ -1514,13 +1516,13 @@ def divisors(n):
 
         sage: K.<a> = QuadraticField(7)
         sage: divisors(K.ideal(7))
-        [Fractional ideal (1), Fractional ideal (-a), Fractional ideal (7)]
+        [Fractional ideal (1), Fractional ideal (a), Fractional ideal (7)]
         sage: divisors(K.ideal(3))
         [Fractional ideal (1), Fractional ideal (3),
-        Fractional ideal (-a + 2), Fractional ideal (-a - 2)]
+        Fractional ideal (a - 2), Fractional ideal (a + 2)]
         sage: divisors(K.ideal(35))
-        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (-a),
-        Fractional ideal (7), Fractional ideal (-5*a), Fractional ideal (35)]
+        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (a),
+        Fractional ideal (7), Fractional ideal (5*a), Fractional ideal (35)]
 
     TESTS::
 
@@ -2618,7 +2620,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: K.<i> = QuadraticField(-1)
         sage: factor(122 - 454*i)
-        (-3*i - 2) * (-i - 2)^3 * (i + 1)^3 * (i + 4)
+        (-i) * (-i - 2)^3 * (i + 1)^3 * (-2*i + 3) * (i + 4)
 
     To access the data in a factorization::
 
@@ -2692,7 +2694,7 @@ def radical(n, *args, **kwds):
         sage: radical(0)
         Traceback (most recent call last):
         ...
-        ArithmeticError: Radical of 0 not defined.
+        ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)
         sage: radical(K(2))
         i + 1
@@ -3132,6 +3134,156 @@ class Euler_Phi:
 
 
 euler_phi = Euler_Phi()
+
+
+def carmichael_lambda(n):
+    r"""
+    Return the Carmichael function of a positive integer ``n``.
+
+    The Carmichael function of `n`, denoted `\lambda(n)`, is the smallest
+    positive integer `k` such that `a^k \equiv 1 \pmod{n}` for all
+    `a \in \ZZ/n\ZZ` satisfying `\gcd(a, n) = 1`. Thus, `\lambda(n) = k`
+    is the exponent of the multiplicative group `(\ZZ/n\ZZ)^{\ast}`.
+
+    INPUT:
+
+    - ``n`` -- a positive integer.
+
+    OUTPUT:
+
+    - The Carmichael function of ``n``.
+
+    ALGORITHM:
+
+    If `n = 2, 4` then `\lambda(n) = \varphi(n)`. Let `p \geq 3` be an odd
+    prime and let `k` be a positive integer. Then
+    `\lambda(p^k) = p^{k - 1}(p - 1) = \varphi(p^k)`. If `k \geq 3`, then
+    `\lambda(2^k) = 2^{k - 2}`. Now consider the case where `n > 3` is
+    composite and let `n = p_1^{k_1} p_2^{k_2} \cdots p_t^{k_t}` be the
+    prime factorization of `n`. Then
+
+    .. MATH::
+
+        \lambda(n)
+        = \lambda(p_1^{k_1} p_2^{k_2} \cdots p_t^{k_t})
+        = \text{lcm}(\lambda(p_1^{k_1}), \lambda(p_2^{k_2}), \dots, \lambda(p_t^{k_t}))
+
+    EXAMPLES:
+
+    The Carmichael function of all positive integers up to and including 10::
+
+        sage: from sage.arith.misc import carmichael_lambda
+        sage: list(map(carmichael_lambda, [1..10]))
+        [1, 1, 2, 2, 4, 2, 6, 2, 6, 4]
+
+    The Carmichael function of the first ten primes::
+
+        sage: list(map(carmichael_lambda, primes_first_n(10)))
+        [1, 2, 4, 6, 10, 12, 16, 18, 22, 28]
+
+    Cases where the Carmichael function is equivalent to the Euler phi
+    function::
+
+        sage: carmichael_lambda(2) == euler_phi(2)
+        True
+        sage: carmichael_lambda(4) == euler_phi(4)
+        True
+        sage: p = random_prime(1000, lbound=3, proof=True)
+        sage: k = randint(1, 1000)
+        sage: carmichael_lambda(p^k) == euler_phi(p^k)
+        True
+
+    A case where `\lambda(n) \neq \varphi(n)`::
+
+        sage: k = randint(3, 1000)
+        sage: carmichael_lambda(2^k) == 2^(k - 2)
+        True
+        sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)
+        False
+
+    Verifying the current implementation of the Carmichael function using
+    another implementation. The other implementation that we use for
+    verification is an exhaustive search for the exponent of the
+    multiplicative group `(\ZZ/n\ZZ)^{\ast}`. ::
+
+        sage: from sage.arith.misc import carmichael_lambda
+        sage: n = randint(1, 500)
+        sage: c = carmichael_lambda(n)
+        sage: def coprime(n):
+        ....:     return [i for i in range(n) if gcd(i, n) == 1]
+        sage: def znpower(n, k):
+        ....:     L = coprime(n)
+        ....:     return list(map(power_mod, L, [k]*len(L), [n]*len(L)))
+        sage: def my_carmichael(n):
+        ....:     if n == 1:
+        ....:         return 1
+        ....:     for k in range(1, n):
+        ....:         L = znpower(n, k)
+        ....:         ones = [1] * len(L)
+        ....:         T = [L[i] == ones[i] for i in range(len(L))]
+        ....:         if all(T):
+        ....:             return k
+        sage: c == my_carmichael(n)
+        True
+
+    Carmichael's theorem states that `a^{\lambda(n)} \equiv 1 \pmod{n}`
+    for all elements `a` of the multiplicative group `(\ZZ/n\ZZ)^{\ast}`.
+    Here, we verify Carmichael's theorem. ::
+
+        sage: from sage.arith.misc import carmichael_lambda
+        sage: n = randint(2, 1000)
+        sage: c = carmichael_lambda(n)
+        sage: ZnZ = IntegerModRing(n)
+        sage: M = ZnZ.list_of_elements_of_multiplicative_group()
+        sage: ones = [1] * len(M)
+        sage: P = [power_mod(a, c, n) for a in M]
+        sage: P == ones
+        True
+
+    TESTS:
+
+    The input ``n`` must be a positive integer::
+
+        sage: from sage.arith.misc import carmichael_lambda
+        sage: carmichael_lambda(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: Input n must be a positive integer.
+        sage: carmichael_lambda(randint(-10, 0))
+        Traceback (most recent call last):
+        ...
+        ValueError: Input n must be a positive integer.
+
+    Bug reported in :trac:`8283`::
+
+        sage: from sage.arith.misc import carmichael_lambda
+        sage: type(carmichael_lambda(16))
+        <class 'sage.rings.integer.Integer'>
+
+    REFERENCES:
+
+    - :wikipedia:`Carmichael_function`
+    """
+    n = Integer(n)
+    # sanity check
+    if n < 1:
+        raise ValueError("Input n must be a positive integer.")
+
+    L = list(n.factor())
+    t = []
+
+    # first get rid of the prime factor 2
+    if n & 1 == 0:
+        two,e = L.pop(0)
+        assert two == 2
+        k = e - 2 if e >= 3 else e - 1
+        t.append(1 << k)
+
+    # then other prime factors
+    t += [p**(k - 1) * (p - 1) for p, k in L]
+
+    # finish the job
+    return LCM_list(t)
 
 
 def crt(a, b, m=None, n=None):

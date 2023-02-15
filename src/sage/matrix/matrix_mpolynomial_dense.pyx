@@ -150,7 +150,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             2
         """
         x = self.fetch('pivots')
-        if not x is None:
+        if x is not None:
             return x
 
         self.echelon_form('frac')
@@ -218,7 +218,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             return
 
         x = self.fetch('in_echelon_form_'+algorithm)
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if algorithm == 'bareiss':
@@ -256,7 +256,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef R = self.base_ring()
 
         x = self.fetch('in_echelon_form_bareiss')
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if isinstance(self.base_ring(), MPolynomialRing_libsingular):
@@ -387,7 +387,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef int c, r, i, j, rc, start_row, nr, nc
 
         x = self.fetch('in_echelon_form_row_reduction')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         nr,nc = self.nrows(),self.ncols()
         F = self.base_ring().base_ring()
@@ -525,7 +526,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         d = self.fetch('det')
 
-        if not d is None:
+        if d is not None:
             return d
 
         if self._nrows == 0:
@@ -537,7 +538,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif self.fetch('charpoly') is not None:
             # if charpoly known, then det is easy.
             D = self.fetch('charpoly')
-            if not D is None:
+            if D is not None:
                 c = D[0]
                 if self._nrows % 2:
                     c = -c

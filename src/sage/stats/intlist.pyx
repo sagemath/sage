@@ -95,7 +95,7 @@ cdef class IntList:
             [1, -2]
         """
         cdef TimeSeries T
-        if isinstance(values, (int,long,Integer)):
+        if isinstance(values, (int, Integer)):
             self._length = values
             values = None
         elif isinstance(values, TimeSeries):

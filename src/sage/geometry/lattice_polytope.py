@@ -103,7 +103,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.combinat.posets.posets import FinitePoset
 from sage.env import POLYTOPE_DATA_DIR
 from sage.geometry.cone import _ambient_space_point, integral_length
@@ -887,7 +887,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         - ``data`` - point or matrix of points (as columns) in the affine
           subspace spanned by this polytope
 
-        OUTPUT: The same point(s) in the coordinates of the ambient space of
+        OUTPUT:
+
+        The same point(s) in the coordinates of the ambient space of
         this polytope.
 
         TESTS::
@@ -1053,7 +1055,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         - ``data`` -- rational point or matrix of points (as columns) in the
           ambient space
 
-        OUTPUT: The same point(s) in the coordinates of the affine subspace
+        OUTPUT:
+
+        The same point(s) in the coordinates of the affine subspace
         space spanned by this polytope.
 
         TESTS::
@@ -3503,8 +3507,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         By default, everything is shown with more or less pretty
         combination of size and color parameters.
 
-        INPUT: Most of the parameters are self-explanatory:
+        INPUT:
 
+        Most of the parameters are self-explanatory:
 
         -  ``show_facets`` - (default:True)
 
@@ -3649,7 +3654,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 pplot += text3d(i+self.nvertices(), bc+index_shift*(p-bc), rgbcolor=pindex_color)
         return pplot
 
-    def polyhedron(self):
+    def polyhedron(self, **kwds):
         r"""
         Return the Polyhedron object determined by this polytope's vertices.
 
@@ -3660,7 +3665,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        return Polyhedron(vertices=[list(v) for v in self._vertices])
+        return Polyhedron(vertices=[list(v) for v in self._vertices], **kwds)
 
     def show3d(self):
         """
@@ -3898,14 +3903,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-
         -  ``keys`` - a string of options passed to poly.x. The
            key "f" is added automatically.
 
         -  ``reduce_dimension`` - (default: False) if ``True`` and this
            polytope is not full-dimensional, poly.x will be called for the
            vertices of this polytope in some basis of the spanned affine space.
-
 
         OUTPUT: the output of poly.x as a string.
 
@@ -5322,7 +5325,6 @@ def _read_poly_x_incidences(data, dim):
 
     INPUT:
 
-
     -  ``data`` - an opened file with incidence
        information. The first line will be skipped, each consecutive line
        contains incidence information for all faces of one dimension, the
@@ -5330,8 +5332,9 @@ def _read_poly_x_incidences(data, dim):
 
     -  ``dim`` - dimension of the polytope.
 
+    OUTPUT:
 
-    OUTPUT: a sequence F, such that F[d][i] is a sequence of vertices
+    a sequence F, such that F[d][i] is a sequence of vertices
     or facets corresponding to the i-th d-dimensional face.
 
     TESTS::
@@ -5549,12 +5552,12 @@ def convex_hull(points):
 
     INPUT:
 
-
     -  ``points`` - a list that can be converted into
        vectors of the same dimension over ZZ.
 
+    OUTPUT:
 
-    OUTPUT: list of vertices of the convex hull of the given points (as
+    list of vertices of the convex hull of the given points (as
     vectors).
 
     EXAMPLES: Let's compute the convex hull of several points on a line
@@ -5628,11 +5631,9 @@ def minkowski_sum(points1, points2):
 
     INPUT:
 
-
     -  ``points1, points2`` - lists of objects that can be
        converted into vectors of the same dimension, treated as vertices
        of two polytopes.
-
 
     OUTPUT: list of vertices of the Minkowski sum, given as vectors.
 
@@ -5659,7 +5660,9 @@ def positive_integer_relations(points):
     - ``points`` - lattice points given as columns of a
       matrix
 
-    OUTPUT: matrix of relations between given points with non-negative
+    OUTPUT:
+
+    matrix of relations between given points with non-negative
     integer coefficients
 
     EXAMPLES: This is a 3-dimensional reflexive polytope::

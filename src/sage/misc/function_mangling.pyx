@@ -116,7 +116,7 @@ cdef class ArgumentFixer:
     """
     def __init__(self, f, classmethod = False):
         try:
-            arg_names, varargs, varkw, defaults = sage_getargspec(f)
+            arg_names, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = sage_getargspec(f)
         except AttributeError:
             # This error occurs if f is defined in a Cython file and the
             # source file has gone.

@@ -235,7 +235,7 @@ class DeltaComplex(GenericCellComplex):
         sage: delta_complexes.RealProjectivePlane()
         Delta complex with 2 vertices and 8 simplices
 
-    Type ``delta_complexes.`` and then hit the TAB key to get the
+    Type ``delta_complexes.`` and then hit the :kbd:`Tab` key to get the
     full list.
     """
     def __init__(self, data=None, check_validity=True):

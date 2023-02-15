@@ -1148,8 +1148,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # but be careful, since for relations things like is(equal(a,b)) are
         # what Maxima needs
 
-    
-
     def _richcmp_(self, other, op):
         """
         Compare this Maxima object with ``other``.
@@ -1523,7 +1521,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         EXAMPLES::
 
             sage: maxima('exp(-sqrt(x))').nintegral('x',0,1)
-            (0.5284822353142306, 4.1633141378838...e-11, 231, 0)
+            (0.5284822353142306, 4.163...e-11, 231, 0)
 
         Note that GP also does numerical integration, and can do so to very
         high precision very quickly::

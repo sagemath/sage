@@ -2,7 +2,7 @@ Quantum Groups
 ==============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/algebras/quantum_groups/ace_quantum_onsager
    sage/algebras/quantum_groups/fock_space

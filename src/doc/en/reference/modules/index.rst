@@ -4,7 +4,7 @@ Modules
 Sage provides modules of various kinds over various base rings.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/tutorial_free_modules
 
@@ -13,7 +13,7 @@ Free modules, submodules, and quotients
 ---------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/module
    sage/modules/free_module
@@ -27,7 +27,7 @@ Modules with basis
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/with_basis/__init__
    sage/modules/with_basis/cell_module
@@ -41,7 +41,7 @@ Finitely generated modules over a PID
 -------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/fg_pid/fgp_module
    sage/modules/fg_pid/fgp_element
@@ -51,7 +51,7 @@ Finitely presented graded modules
 ---------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/fp_graded/free_module
    sage/modules/fp_graded/free_element
@@ -69,7 +69,7 @@ Special modules
 ---------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/free_module_integer
    sage/modules/free_quadratic_module
@@ -82,7 +82,7 @@ Morphisms
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/vector_space_homspace
    sage/modules/vector_space_morphism
@@ -96,7 +96,7 @@ Vectors
 -------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/vector_integer_dense
    sage/modules/vector_mod2_dense
@@ -114,7 +114,7 @@ Misc
 ----
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modules/diamond_cutting
    sage/modules/tensor_operations

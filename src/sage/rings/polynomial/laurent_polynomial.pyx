@@ -294,10 +294,11 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k,f(v)) for (k,v) in self.dict().items()]))
+        return R(dict([(k, f(v)) for (k, v) in self.dict().items()]))
+
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
-    """
+    r"""
     A univariate Laurent polynomial in the form of `t^n \cdot f`
     where `f` is a polynomial in `t`.
 
@@ -1118,12 +1119,27 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             x^3 + 3*x^4 + 3*x^5 + 10*x^6 + 18*x^7 + 9*x^8 + 27*x^9 + 27*x^10 + 27*x^12
             sage: g^4
             x^-40 - 4*x^-29 + 6*x^-18 - 4*x^-7 + x^4
+
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: x^-2
+            x^-2
+            sage: (5*x^2)^-4
+            x^-8
+            sage: (5*x^-4)^-3
+            5*x^12
         """
         cdef LaurentPolynomial_univariate self = _self
         cdef long right = r
         if right != r:
             raise ValueError("exponent must be an integer")
-        return self._parent.element_class(self._parent, self.__u**right, self.__n*right)
+        try:
+            return self._parent.element_class(self._parent, self.__u**right, self.__n*right)
+        except TypeError as err:
+            # we need to handle the special case of negative powers and a unit
+            if not self.__u.is_constant() or not self.__u.leading_coefficient().is_unit():
+                raise
+            c = self._parent._R(self.__u.leading_coefficient() ** right)
+            return self._parent.element_class(self._parent, c, self.__n*right)
 
     cpdef _floordiv_(self, rhs):
         """
@@ -3292,12 +3308,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         to variables supplied in args.
 
         Multiple variables and iteration counts may be supplied; see
-        documentation for the global derivative() function for more
+        documentation for the global :func:`derivative` function for more
         details.
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+            :meth:`_derivative`
 
         EXAMPLES::
 
@@ -3320,7 +3336,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         respect to the given variable.
 
         If var is among the generators of this ring, the derivative
-        is with respect to the generator. Otherwise, _derivative(var) is called
+        is with respect to the generator. Otherwise, ``_derivative(var)`` is called
         recursively for each coefficient of this polynomial.
 
         .. SEEALSO:: :meth:`derivative`
@@ -3747,4 +3763,3 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
-

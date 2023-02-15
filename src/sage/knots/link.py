@@ -1956,13 +1956,14 @@ class Link(SageObject):
             M = max(alex.exponents())
             coeff = alex[M]
             alex -= coeff * binom**M
-            conway += coeff * t_poly**M 
+            conway += coeff * t_poly**M
         return conway
 
     def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ):
         r"""
-        Return the Khovanov polynomial of ``self``. This is the Poincaré
-        polynomial of the Khovanov homology.
+        Return the Khovanov polynomial of ``self``.
+
+        This is the Poincaré polynomial of the Khovanov homology.
 
         INPUT:
 

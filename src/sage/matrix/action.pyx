@@ -580,4 +580,3 @@ cdef class MatrixSchemePointAction(MatrixMulAction):
             (2 : 1)
         """
         return P._matrix_times_point_(mat, self._codomain)
-

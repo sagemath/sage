@@ -47,6 +47,7 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import Zmod
 
+
 def find_generator_polynomial(code, check=True):
     r"""
     Returns a possible generator polynomial for ``code``.
@@ -334,7 +335,7 @@ class CyclicCode(AbstractLinearCode):
             ...
             ValueError: The code is not cyclic.
 
-        If the `primitive_root` does not lie in an extension of `field`,
+        If the ``primitive_root`` does not lie in an extension of ``field``,
         or is not a primitive `n`-th root of unity, then
         an exception is raised::
 
@@ -1321,7 +1322,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         return self._bch_decoder.decoding_radius()
 
 
-####################### registration ###############################
+# ###################### registration ##############################
 
 CyclicCode._registered_encoders["Polynomial"] = CyclicCodePolynomialEncoder
 CyclicCode._registered_encoders["Vector"] = CyclicCodeVectorEncoder

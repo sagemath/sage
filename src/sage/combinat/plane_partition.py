@@ -25,21 +25,22 @@ AUTHORS:
 from __future__ import annotations
 from typing import Iterator
 
-from sage.structure.list_clone import ClonableArray
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
-from sage.rings.integer import Integer
-from sage.misc.misc_c import prod
 from sage.combinat.tableau import Tableau
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.modules.free_module_element import vector
+from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 lazy_import("sage.plot.plot3d.platonic", "cube")
 
 
 class PlanePartition(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                     metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A plane partition.
 
@@ -396,6 +397,70 @@ class PlanePartition(ClonableArray,
         """
         print(self._repr_diagram(show_box))
 
+    def _repr_svg_(self) -> str:
+        """
+        Return the svg picture of a plane partition.
+
+        This can be displayed by Jupyter.
+
+        EXAMPLES::
+
+            sage: PP = PlanePartition([[2, 1, 1], [1, 1]])
+            sage: PP._repr_svg_()
+            '<?xml...</g></svg>'
+        """
+        colors = ["snow", "tomato", "steelblue"]
+
+        resu = '<?xml version=\"1.0\" standalone=\"no\"?>'
+        resu += '<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" '
+        resu += '\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">'
+        resu += '<svg xmlns=\"http://www.w3.org/2000/svg\" '
+        resu += 'xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"300\" viewBox='
+
+        resu1 = '<defs><polygon points=\"0, 0 -0.866, 0.5 0, 1 0.866, 0.5\" '
+        resu1 += f'id=\"cz\" style=\"fill:{colors[0]}\"/>'
+        resu1 += '<polygon points=\"0, 0 0.866, 0.5 0.866, -0.5 0, -1\" '
+        resu1 += f'id=\"cx\" style=\"fill:{colors[1]}\"/>'
+        resu1 += '<polygon points=\"0, 0 0, -1 -0.866, -0.5 -0.866, 0.5\" '
+        resu1 += f'id=\"cy\" style=\"fill:{colors[2]}\"/></defs>'
+        resu1 += '<g style=\"stroke-width:0.01;stroke-linejoin:bevel; '
+        resu1 += 'stroke-linecap:butt; stroke:black; fill:red\">'
+
+        vx = -vector([0.866, -0.5])
+        vy = -vector([-0.866, -0.5])
+        vz = -vector([0, 1])
+        Nx, Ny, Nz = self.parent().box()
+
+        resu += '\"%.3f %.3f %.3f %.3f \">' % (-0.866 * Nx, -Nz,
+                                               0.866 * Nx + 0.866 * Ny,
+                                               Nz + 0.5 * (Nx + Ny))
+        resu += resu1
+
+        mat = self.z_tableau()
+        for i in range(Nx):
+            for j in range(Ny):
+                if mat[i][j]:
+                    v = i * vx + j * vy + mat[i][j] * vz
+                    resu += '<use transform=\"translate(%.3f, %.3f)' % (v[0], v[1])
+                    resu += '\" xlink:href=\"#cz\" />'
+
+        mat = self.y_tableau()
+        for j in range(Nz):
+            for k in range(Nx):
+                if mat[j][k]:
+                    v = j * vz + k * vx + mat[j][k] * vy
+                    resu += '<use transform=\"translate(%.3f, %.3f)' % (v[0], v[1])
+                    resu += '\" xlink:href=\"#cy\" />'
+
+        mat = self.x_tableau()
+        for k in range(Ny):
+            for i in range(Nz):
+                if mat[k][i]:
+                    v = k * vy + i * vz + mat[k][i] * vx
+                    resu += '<use transform=\"translate(%.3f, %.3f)' % (v[0], v[1])
+                    resu += '\" xlink:href=\"#cx\" />'
+        return resu + '</g></svg>'
+
     def _latex_(self, show_box=False,
                 colors=["white", "lightgray", "darkgray"]) -> str:
         r"""
@@ -622,8 +687,8 @@ class PlanePartition(ClonableArray,
             for j in range(c2):
                 T[i][j] = Z[i][j]
         return all(T[r][c] == T[c][r]
-            for r in range(size)
-            for c in range(r, size))
+                   for r in range(size)
+                   for c in range(r, size))
 
     def is_CSPP(self) -> bool:
         r"""

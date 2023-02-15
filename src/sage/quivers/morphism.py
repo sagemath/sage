@@ -562,7 +562,7 @@ class QuiverRepHom(CallMorphism):
         # If all that holds just check the vectors
         return self._vector != other._vector
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether ``self`` is the zero morphism.
 
@@ -585,8 +585,6 @@ class QuiverRepHom(CallMorphism):
             False
         """
         return any(self._vector)
-
-    
 
     def __mul__(self, other):
         """

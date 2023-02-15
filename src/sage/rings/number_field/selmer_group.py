@@ -128,7 +128,7 @@ def _coords_in_C_p(I, C, p):
 
     """
     cyclic_orders = C.gens_orders()
-    non_p_indices = [i           for i,n in enumerate(cyclic_orders) if not p.divides(n)]
+    non_p_indices = [i for i,n in enumerate(cyclic_orders) if not p.divides(n)]
     p_indices     = [(i, n // p) for i,n in enumerate(cyclic_orders) if p.divides(n)]
 
     coords = C(I).exponents()
@@ -283,7 +283,7 @@ def coords_in_U_mod_p(u, U, p):
     """
     coords = U.log(u)
     start = 1 - int(p.divides(U.zeta_order())) # 0 or 1
-    return  [c%p for c in coords[start:]]
+    return [c%p for c in coords[start:]]
 
 def basis_for_p_cokernel(S, C, p):
     r"""
@@ -491,7 +491,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
         sage: [K.ideal(g).factor() for g in gens]
         [(Fractional ideal (2, a + 1)) * (Fractional ideal (3, a + 1)),
-        Fractional ideal (-a),
+        Fractional ideal (a),
         (Fractional ideal (2, a + 1))^2,
         1]
 
@@ -646,7 +646,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
         vals = [a.valuation(P) for P in supp]
         if debug:
             assert all(v % p == 0 for v in vals)
-        one = K(1)    if K == QQ else K.ideal(1)
+        one = K(1) if K == QQ else K.ideal(1)
         aa  = a.abs() if K == QQ else K.ideal(a)
         B = prod((P ** (v // p) for P, v in zip(supp,vals)), one)
         if debug:

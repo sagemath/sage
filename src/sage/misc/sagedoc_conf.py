@@ -146,9 +146,6 @@ class SagemathTransform(Transform):
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
 
-from sage.misc.sageinspect import sage_getargspec
-autodoc_builtin_argspec = sage_getargspec
-
 # This is only used by sage.misc.sphinxify
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)

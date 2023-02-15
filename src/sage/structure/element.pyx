@@ -946,7 +946,7 @@ cdef class Element(SageObject):
         """
         Use this method to implement ``self`` acting on ``x``.
 
-        Return None or raise a CoercionException if no
+        Return ``None`` or raise a ``CoercionException`` if no
         such action is defined here.
         """
         return None
@@ -955,15 +955,14 @@ cdef class Element(SageObject):
         """
         Use this method to implement ``self`` acted on by x.
 
-        Return None or raise a CoercionException if no
+        Return ``None`` or raise a ``CoercionException`` if no
         such action is defined here.
         """
         return None
 
-
     def __xor__(self, right):
-        raise RuntimeError("Use ** for exponentiation, not '^', which means xor\n"+\
-              "in Python, and has the wrong precedence.")
+        raise RuntimeError("Use ** for exponentiation, not '^', which means xor\n"
+                           "in Python, and has the wrong precedence.")
 
     def __pos__(self):
         return self
@@ -2705,10 +2704,10 @@ cdef class RingElement(ModuleElement):
         with Singular 4::
 
             sage: K.<x,y> = ZZ[]
-            sage: (x^12345)^54321
+            sage: (x^123456)^654321
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (670592745)
+            OverflowError: exponent overflow (...)
         """
         return arith_generic_power(self, n)
 

@@ -99,15 +99,15 @@ REFERENCE:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport memcmp, memcpy
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
@@ -134,24 +134,25 @@ cdef int compare_structures_trivial(int *gamma_1, int *gamma_2, void *S1, void *
 def test_get_aut_gp_and_can_lab_trivially(int n=6,
     list partition=[[0,1,2],[3,4],[5]], canonical_label=True, base=False):
     """
-    sage: tttt = sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label.test_get_aut_gp_and_can_lab_trivially
-    sage: tttt()
-    12
-    sage: tttt(canonical_label=False, base=False)
-    12
-    sage: tttt(canonical_label=False, base=True)
-    12
-    sage: tttt(canonical_label=True, base=True)
-    12
-    sage: tttt(n=0, partition=[])
-    1
-    sage: tttt(n=0, partition=[], canonical_label=False, base=False)
-    1
-    sage: tttt(n=0, partition=[], canonical_label=False, base=True)
-    1
-    sage: tttt(n=0, partition=[], canonical_label=True, base=True)
-    1
+    TESTS::
 
+        sage: tttt = sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label.test_get_aut_gp_and_can_lab_trivially
+        sage: tttt()
+        12
+        sage: tttt(canonical_label=False, base=False)
+        12
+        sage: tttt(canonical_label=False, base=True)
+        12
+        sage: tttt(canonical_label=True, base=True)
+        12
+        sage: tttt(n=0, partition=[])
+        1
+        sage: tttt(n=0, partition=[], canonical_label=False, base=False)
+        1
+        sage: tttt(n=0, partition=[], canonical_label=False, base=True)
+        1
+        sage: tttt(n=0, partition=[], canonical_label=True, base=True)
+        1
     """
     cdef aut_gp_and_can_lab *output
     cdef Integer I = Integer(0)
@@ -894,17 +895,3 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         deallocate_agcl_work_space(work_space)
 
     return output
-
-
-
-
-
-
-
-
-
-
-
-
-
-

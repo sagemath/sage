@@ -149,7 +149,7 @@ from .infinity import infinity
 import sage.misc.latex as latex
 from sage.structure.nonexact import Nonexact
 
-from sage.interfaces.magma import MagmaElement
+from sage.interfaces.abc import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.sage_eval import sage_eval
 

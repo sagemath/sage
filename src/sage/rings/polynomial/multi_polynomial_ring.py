@@ -70,8 +70,8 @@ from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_s
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
 
-from sage.interfaces.singular import is_SingularElement
-from sage.interfaces.macaulay2 import is_Macaulay2Element
+import sage.interfaces.abc
+
 from sage.libs.pari.all import pari_gen
 
 from sage.structure.element import Element
@@ -489,7 +489,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             else:
                 raise TypeError("unable to coerce since the denominator is not 1")
 
-        elif is_SingularElement(x) and self._has_singular:
+        elif isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
@@ -507,7 +507,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 raise TypeError("unable to evaluate {!r} in {}".format(x, self))
             return self(x)
 
-        elif is_Macaulay2Element(x):
+        elif isinstance(x, sage.interfaces.abc.Macaulay2Element):
             try:
                 s = x.sage_polystring()
                 if len(s) == 0:
@@ -927,10 +927,7 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         if not self._has_singular:
             # pass through
             MPolynomialRing_base.ideal(self, gens, **kwds)
-        if is_SingularElement(gens):
-            gens = list(gens)
-            do_coerce = True
-        if is_Macaulay2Element(gens):
+        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
             gens = list(gens)
             do_coerce = True
         elif not isinstance(gens, (list, tuple)):

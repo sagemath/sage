@@ -131,8 +131,8 @@ class PuncturedCode(AbstractLinearCode):
         """
         if not isinstance(positions, (Integer, int, set, list)):
             raise TypeError("positions must be either a Sage Integer, a Python int, a set or a list")
-        if isinstance(positions, (list, set)) and not all (isinstance(i, (int, Integer)) for i in positions):
-                raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
+        if isinstance(positions, (list, set)) and not all(isinstance(i, (int, Integer)) for i in positions):
+            raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
         if isinstance(positions, (Integer, int)):
             positions = {positions}
         if isinstance(positions, list):

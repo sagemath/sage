@@ -412,7 +412,7 @@ def is_RingHomomorphism(phi):
     sage.misc.superseded.deprecation(23204, "is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.")
     # We use the category framework to determine whether something is a ring homomorphism.
     from sage.categories.map import Map
-    from sage.categories.all import Rings
+    from sage.categories.rings import Rings
     return isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())
 
 
@@ -2938,6 +2938,48 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         self._power = n
         self._q = self._p ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Update information with the given slots.
+
+        Helper function for copying or pickling.
+
+        EXAMPLES::
+
+            sage: K = Frac(GF(5)['T'])
+            sage: phi = K.frobenius_endomorphism()
+            sage: psi = copy(phi)
+            sage: phi == psi
+            True
+        """
+        self._p = _slots['_domain'].characteristic()
+        self._power = _slots['_power']
+        self._q = self._p ** self._power
+        RingHomomorphism._update_slots(self, _slots)
+
+    cdef dict _extra_slots(self):
+        """
+        Return additional information about this morphism
+        as a dictionary.
+
+        Helper function for copying or pickling.
+
+        EXAMPLES::
+
+            sage: K = Frac(GF(25)['T'])
+            sage: phi = K.frobenius_endomorphism(2)
+            sage: phi
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+
+            sage: psi = loads(dumps(phi)); psi
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+            sage: phi == psi
+            True
+        """
+        slots = RingHomomorphism._extra_slots(self)
+        slots['_power'] = self._power
+        return slots
 
     def _repr_(self):
         """

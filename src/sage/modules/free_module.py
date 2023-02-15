@@ -4075,13 +4075,13 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             try:
                 M = self.change_ring(base_ring)
             except TypeError:
-                raise ValueError("Argument base_ring (= %s) is not compatible "%base_ring + \
-                    "with the base ring (= %s)."%self.base_ring())
+                raise ValueError("Argument base_ring (= %s) is not compatible " % base_ring +
+                    "with the base ring (= %s)." % self.base_ring())
             try:
                 return M.span_of_basis(basis)
             except TypeError:
-                raise ValueError("Argument gens (= %s) is not compatible "%basis + \
-                    "with base_ring (= %s)."%base_ring)
+                raise ValueError("Argument gens (= %s) is not compatible "%basis +
+                    "with base_ring (= %s)." % base_ring)
 
     def submodule_with_basis(self, basis, check=True, already_echelonized=False):
         r"""
@@ -4611,7 +4611,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                 M = self.change_ring(base_ring)
             except TypeError:
                 raise ValueError("Argument base_ring (= %s) is not compatible with the base field (= %s)." % (
-                    base_ring, self.base_field() ))
+                    base_ring, self.base_field()))
             try:
                 return M.span_of_basis(basis)
             except TypeError:
@@ -5653,7 +5653,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         try:
             return self.__basis
-        except  AttributeError:
+        except AttributeError:
             ZERO = self(0)
             one = self.coordinate_ring().one()
             w = []
@@ -5681,7 +5681,9 @@ class FreeModule_ambient(FreeModule_generic):
 
     def change_ring(self, R):
         """
-        Return the ambient free module over R of the same rank as self.
+        Return the ambient free module over ``R`` of the same rank as ``self``.
+
+        This also preserves the sparsity.
 
         EXAMPLES::
 
@@ -5690,20 +5692,27 @@ class FreeModule_ambient(FreeModule_generic):
             sage: A = ZZ^3; A.change_ring(GF(5))
             Vector space of dimension 3 over Finite Field of size 5
 
-        For ambient modules any change of rings is defined.
-
-        ::
+        For ambient modules any change of rings is defined::
 
             sage: A = GF(5)**3; A.change_ring(QQ)
             Vector space of dimension 3 over Rational Field
+
+        TESTS:
+
+        Check for :trac:`29630`::
+
+            sage: V = VectorSpace(QQ, 2, sparse=True)
+            sage: V.change_ring(RR).is_sparse()
+            True
         """
         if self.base_ring() is R:
             return self
         from .free_quadratic_module import is_FreeQuadraticModule
         if is_FreeQuadraticModule(self):
-            return FreeModule(R, self.rank(), inner_product_matrix=self.inner_product_matrix())
-        else:
-            return FreeModule(R, self.rank())
+            return FreeModule(R, self.rank(),
+                              inner_product_matrix=self.inner_product_matrix(),
+                              sparse=self.is_sparse())
+        return FreeModule(R, self.rank(), sparse=self.is_sparse())
 
     def linear_combination_of_basis(self, v):
         """
@@ -6591,7 +6600,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         lx = self.ambient_vector_space()
         rx = other.ambient_vector_space()
         if lx != rx:
-            return lx._echelon_matrix_richcmp( rx, op)
+            return lx._echelon_matrix_richcmp(rx, op)
 
         lx = self.dimension()
         rx = other.dimension()
@@ -6709,7 +6718,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if not B:
             return 1
         d = B[0].denominator()
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         for x in B[1:]:
             d = lcm(d,x.denominator())
         return d

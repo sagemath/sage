@@ -63,6 +63,8 @@ AUTHORS:
   Pfaffian
 
 - Moritz Firsching(2020-10-05): added ``quantum_determinant``
+
+- Dima Pasechnik (2022-11-08): fixed ``echelonize`` for inexact matrices
 """
 
 # ****************************************************************************
@@ -797,7 +799,7 @@ cdef class Matrix(Matrix1):
             sage: RF = RealField(52)
             sage: B = matrix(RF, 2, 2, 1)
             sage: A = matrix(RF, [[0.24, 1, 0], [1, 0, 0]])
-            sage: 0 < (A * A.solve_right(B) - B).norm() < 1e-14
+            sage: 0 <= (A * A.solve_right(B) - B).norm() < 1e-14
             True
 
         Over the inexact ring ``SR``, we can still verify the solution
@@ -1534,19 +1536,15 @@ cdef class Matrix(Matrix1):
         Beware that the ``exact`` algorithm is not numerically stable,
         but the default ``numpy`` algorithm is::
 
-            sage: M = matrix(RR, 3, 3, [1,2,3,1/3,2/3,3/3,1/5,2/5,3/5])
-            sage: M.pseudoinverse()  # tol 1e-15
-            [0.0620518477661335 0.0206839492553778 0.0124103695532267]
-            [ 0.124103695532267 0.0413678985107557 0.0248207391064534]
-            [ 0.186155543298400 0.0620518477661335 0.0372311086596801]
-            sage: M.pseudoinverse(algorithm="numpy")  # tol 1e-15
-            [0.0620518477661335 0.0206839492553778 0.0124103695532267]
-            [ 0.124103695532267 0.0413678985107557 0.0248207391064534]
-            [ 0.186155543298400 0.0620518477661335 0.0372311086596801]
-            sage: M.pseudoinverse(algorithm="exact")
-            [ 0.125000000000000 0.0625000000000000 0.0312500000000000]
-            [ 0.250000000000000  0.125000000000000 0.0625000000000000]
-            [ 0.000000000000000  0.000000000000000 0.0625000000000000]
+            sage: M = matrix.hilbert(12,ring=RR)
+            sage: (~M*M).norm()  # a considerable error
+            1.3...
+            sage: Mx = M.pseudoinverse(algorithm="exact")
+            sage: (Mx*M).norm()  # huge error
+            11.5...
+            sage: Mx = M.pseudoinverse(algorithm="numpy")
+            sage: (Mx*M).norm()  # still OK
+            1.00...
 
         When multiplying the given matrix with the pseudoinverse, the
         result is symmetric for the ``exact`` algorithm or hermitian
@@ -1579,6 +1577,11 @@ cdef class Matrix(Matrix1):
             sage: M.pseudoinverse(algorithm="numpy")  # random
             [-1286742750677287/643371375338643 1000799917193445/1000799917193444]
             [  519646110850445/346430740566963  -300239975158034/600479950316067]
+
+        Although it is not too far off::
+
+            sage: (~M-M.pseudoinverse(algorithm="numpy")).norm() < 1e-14
+            True
 
         TESTS::
 
@@ -2795,7 +2798,7 @@ cdef class Matrix(Matrix1):
             (y + 1) * (y + 2)^2
         """
         f = self.fetch('minpoly')
-        if not f is None:
+        if f is not None:
             return f.change_variable_name(var)
         f = self.charpoly(var=var, **kwds)
         try:
@@ -3415,7 +3418,7 @@ cdef class Matrix(Matrix1):
             TypeError: Hessenbergize only possible for matrices over a field
         """
         X = self.fetch('hessenberg_form')
-        if not X is None:
+        if X is not None:
             return X
         R = self._base_ring
         if R not in _Fields:
@@ -4437,7 +4440,7 @@ cdef class Matrix(Matrix1):
 
         # Determine proof keyword for integer matrices
         proof = kwds.pop('proof', None)
-        if not (proof in [None, True, False]):
+        if proof not in [None, True, False]:
             raise ValueError("'proof' must be one of True, False or None, not %s" % proof)
         if not (proof is None or is_IntegerRing(R)):
             raise ValueError("'proof' flag only valid for matrices over the integers")
@@ -4848,7 +4851,7 @@ cdef class Matrix(Matrix1):
             True
         """
         K = self.fetch('right_kernel')
-        if not K is None:
+        if K is not None:
             verbose("retrieving cached right kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
@@ -5024,7 +5027,7 @@ cdef class Matrix(Matrix1):
             True
         """
         K = self.fetch('left_kernel')
-        if not K is None:
+        if K is not None:
             verbose("retrieving cached left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
@@ -5121,7 +5124,7 @@ cdef class Matrix(Matrix1):
             True
         """
         A = self.restrict(V, check=check)
-        if not poly is None:
+        if poly is not None:
             A = poly(A)
         W = A.kernel()
         if V.is_ambient():
@@ -6263,7 +6266,7 @@ cdef class Matrix(Matrix1):
 
         key = 'eigenspaces_left_' + format + '{0}'.format(var)
         x = self.fetch(key)
-        if not x is None:
+        if x is not None:
             if algebraic_multiplicity:
                 return x
             else:
@@ -6505,7 +6508,7 @@ cdef class Matrix(Matrix1):
 
         key = 'eigenspaces_right_' + format + '{0}'.format(var)
         x = self.fetch(key)
-        if not x is None:
+        if x is not None:
             if algebraic_multiplicity:
                 return x
             else:
@@ -6743,7 +6746,7 @@ cdef class Matrix(Matrix1):
                                           % self.base_ring())
 
         x = self.fetch('eigenvectors_left')
-        if not x is None:
+        if x is not None:
             return x
 
         if not self.base_ring().is_exact():
@@ -7599,8 +7602,18 @@ cdef class Matrix(Matrix1):
             sage: transformation_matrix = m.echelonize(transformation=True)
             sage: m == transformation_matrix * m_original
             True
+
+        TESTS::
+
+        Check that :trac:`34724` is fixed (indirect doctest)::
+
+            sage: a=6.12323399573677e-17
+            sage: m=matrix(RR,[[-a, -1.72508242466029], [ 0.579682446302195, a]])
+            sage: (~m*m).norm()
+            1.0
         """
         self.check_mutability()
+        basring = self.base_ring()
 
         if algorithm == 'default':
             from sage.categories.discrete_valuation import DiscreteValuationFields
@@ -7610,16 +7623,22 @@ cdef class Matrix(Matrix1):
             # In general, we would like to do so in any rank one valuation ring,
             # but this should be done by introducing a category of general valuation rings and fields,
             # which we don't have at the moment
-            elif self.base_ring() in DiscreteValuationFields():
+            elif basring in DiscreteValuationFields():
                 try:
-                    self.base_ring().one().abs()
+                    basring.one().abs()
                     algorithm = 'scaled_partial_pivoting'
                 except (AttributeError, TypeError):
                     algorithm = 'scaled_partial_pivoting_valuation'
-            else:
+            elif basring.is_exact():
                 algorithm = 'classical'
+            else:
+                try:
+                    (basring(0.42)).abs()
+                    algorithm = 'scaled_partial_pivoting'
+                except (AttributeError, ArithmeticError, TypeError):
+                    algorithm = 'classical'
         try:
-            if self.base_ring() in _Fields:
+            if basring in _Fields:
                 if algorithm in ['classical', 'partial_pivoting', 'scaled_partial_pivoting', 'scaled_partial_pivoting_valuation']:
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
@@ -7631,7 +7650,7 @@ cdef class Matrix(Matrix1):
                     kwds['algorithm'] = algorithm
                 return self._echelonize_ring(**kwds)
         except ArithmeticError as msg:
-            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,self.base_ring()))
+            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,basring))
 
     def echelon_form(self, algorithm="default", cutoff=0, **kwds):
         r"""
@@ -7786,7 +7805,7 @@ cdef class Matrix(Matrix1):
             [0.000  1.00  1.00]
         """
         E = self.fetch('echelon_' + algorithm)
-        if not E is None:
+        if E is not None:
             return E
         E = self.__copy__()
         E._echelon_in_place(algorithm)
@@ -8572,7 +8591,7 @@ cdef class Matrix(Matrix1):
         """
         if self._ncols != right._nrows:
             raise ArithmeticError("Number of columns of self must equal number of rows of right.")
-        if not self._base_ring is right.base_ring():
+        if self._base_ring is not right.base_ring():
             raise TypeError("Base rings must be the same.")
 
         if cutoff == 0:
@@ -8676,8 +8695,8 @@ cdef class Matrix(Matrix1):
             nrows = self._nrows - row
         if ncols == -1:
             ncols = self._ncols - col
-        if check and (row < 0 or col < 0 or row + nrows > self._nrows or \
-           col + ncols > self._ncols):
+        if check and (row < 0 or col < 0 or row + nrows > self._nrows or
+                      col + ncols > self._ncols):
             raise IndexError("matrix window index out of range")
         return matrix_window.MatrixWindow(self, row, col, nrows, ncols)
 
@@ -9251,7 +9270,7 @@ cdef class Matrix(Matrix1):
             if density >= 1:
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < self._ncols:
-                        self.set_unsafe(i, j, R._random_nonzero_element(*args,\
+                        self.set_unsafe(i, j, R._random_nonzero_element(*args,
                             **kwds))
             else:
                 num = int(self._nrows * self._ncols * density)
@@ -9624,7 +9643,7 @@ cdef class Matrix(Matrix1):
         """
         key = 'normal'
         n = self.fetch(key)
-        if not n is None:
+        if n is not None:
             return n
         if not self.is_square():
             self.cache(key, False)
@@ -9932,12 +9951,11 @@ cdef class Matrix(Matrix1):
 
         The result is cached.
         """
-
         if self._nrows != self._ncols:
             raise ValueError("must be a square matrix")
 
         X = self.fetch('adjugate')
-        if not X is None:
+        if X is not None:
             return X
 
         X = self._adjugate()
@@ -11243,16 +11261,17 @@ cdef class Matrix(Matrix1):
                 while ranks[i] > ranks[i+1] and ranks[i+1] > n-mult:
                     C = B*C
                     ranks.append(C.rank())
-                    i = i+1
+                    i += 1
                 diagram = [ranks[i]-ranks[i+1] for i in xrange(len(ranks)-1)]
-                blocks.extend([(eval, i) \
-                    for i in Partition(diagram).conjugate()])
+                blocks.extend([(eval, i)
+                               for i in Partition(diagram).conjugate()])
 
         # ``J`` is the matrix in Jordan canonical form.  Note that the blocks
         # are ordered firstly by the eigenvalues, in the same order as obeyed
         # by ``.roots()``, and secondly by size from greatest to smallest.
-        J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse) \
-            for (eval, size) in blocks], subdivide=subdivide)
+        J = block_diagonal_matrix([jordan_block(eval, size, sparse=sparse)
+                                   for (eval, size) in blocks],
+                                  subdivide=subdivide)
 
         if transformation:
             from itertools import groupby
@@ -11268,15 +11287,15 @@ cdef class Matrix(Matrix1):
                 # Let B be the matrix `A - eval Id`.
                 B = A - eval
 
-                block_sizes = [size for e,size in blocks if e == eval]
-                block_size_pairs = [(val,len(list(c))) \
-                    for val,c in groupby(block_sizes)]
+                block_sizes = [size for e, size in blocks if e == eval]
+                block_size_pairs = [(val, len(list(c)))
+                                    for val, c in groupby(block_sizes)]
 
                 # Y is a list of vectors, spanning everything that we have
                 # covered by the Jordan chains we developed so far.
                 Y = []
 
-                for l,count in block_size_pairs:
+                for l, count in block_size_pairs:
 
                     # There are ``count`` Jordan blocks of size ``l``
                     # associated to this eigenvalue.
@@ -12382,7 +12401,7 @@ cdef class Matrix(Matrix1):
 
         iterates, poly, augmented, pivots = self._cyclic_subspace(v)
         k = len(pivots)
-        polynomial = not var is None
+        polynomial = (var is not None)
         if polynomial:
             x = sage.rings.polynomial.polynomial_ring.polygen(R, var)
             poly = sum([poly[i] * x**i for i in range(len(poly))])

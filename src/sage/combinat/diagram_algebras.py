@@ -133,6 +133,7 @@ def brauer_diagrams(k):
         for p in perfect_matchings_iterator(k-1):
             yield [(s[a],s[b]) for a,b in p] + [[k, -k]]
 
+
 def temperley_lieb_diagrams(k):
     r"""
     Return a generator of all Temperley--Lieb diagrams of order ``k``.
@@ -156,6 +157,7 @@ def temperley_lieb_diagrams(k):
         if is_planar(i):
             yield i
 
+
 def planar_diagrams(k):
     r"""
     Return a generator of all planar diagrams of order ``k``.
@@ -166,11 +168,13 @@ def planar_diagrams(k):
     EXAMPLES::
 
         sage: import sage.combinat.diagram_algebras as da
-        sage: all_diagrams = da.partition_diagrams(2)
-        sage: [SetPartition(p) for p in all_diagrams if p not in da.planar_diagrams(2)]
+        sage: all_diagrams = [SetPartition(p) for p in da.partition_diagrams(2)]
+        sage: da2 = [SetPartition(p) for p in da.planar_diagrams(2)]
+        sage: [p for p in all_diagrams if p not in da2]
         [{{-2, 1}, {-1, 2}}]
-        sage: all_diagrams = da.partition_diagrams(5/2)
-        sage: [SetPartition(p) for p in all_diagrams if p not in da.planar_diagrams(5/2)]
+        sage: all_diagrams = [SetPartition(p) for p in da.partition_diagrams(5/2)]
+        sage: da5o2 = [SetPartition(p) for p in da.planar_diagrams(5/2)]
+        sage: [p for p in all_diagrams if p not in da5o2]
         [{{-3, -1, 3}, {-2, 1, 2}},
          {{-3, -2, 1, 3}, {-1, 2}},
          {{-3, -1, 1, 3}, {-2, 2}},
@@ -182,9 +186,75 @@ def planar_diagrams(k):
          {{-3, -1, 3}, {-2, 1}, {2}},
          {{-3, -1, 3}, {-2, 2}, {1}}]
     """
-    for i in partition_diagrams(k):
-        if is_planar(i):
-            yield i
+    if k in ZZ:
+        X = list(range(1,k+1)) + list(range(-k,0))
+        yield from planar_partitions_rec(X)
+    elif k + ZZ(1)/ZZ(2) in ZZ:  # Else k in 1/2 ZZ
+        k = ZZ(k + ZZ(1) / ZZ(2))
+        X = list(range(1,k+1)) + list(range(-k+1,0))
+        for Y in planar_partitions_rec(X):
+            Y = list(Y)
+            for part in Y:
+                if k in part:
+                    part.append(-k)
+                    break
+            yield Y
+    else:
+        raise ValueError("argument %s must be a half-integer" % k)
+
+
+def planar_partitions_rec(X):
+    r"""
+    Iterate over all planar set partitions of ``X`` by using a
+    recursive algorithm.
+
+    ALGORITHM:
+
+    To construct the set partition `\rho = \{\rho_1, \ldots, \rho_k\}` of
+    `[n]`, we remove the part of the set partition containing the last
+    element of ``X``, which, we consider to be `\rho_k = \{i_1, \ldots, i_m\}`
+    without loss of generality. The remaining parts come from the planar set
+    partitions of `\{1, \ldots, i_1-1\}, \{i_1+1, \ldots, i_2-1\}, \ldots,
+    \{i_m+1, \ldots, n\}`.
+
+    EXAMPLES::
+
+        sage: import sage.combinat.diagram_algebras as da
+        sage: list(da.planar_partitions_rec([1,2,3]))
+        [([1, 2], [3]), ([1], [2], [3]), ([2], [1, 3]), ([1], [2, 3]), ([1, 2, 3],)]
+    """
+    if not X:
+        return
+    if len(X) <= 2:
+        # Direct implementation of small cases
+        yield (X,)
+        if len(X) > 1:
+            yield ([X[0]], [X[1]])
+        return
+    from sage.misc.misc import powerset
+    from itertools import product
+    for S in powerset(range(len(X)-1)):
+        if not S:
+            for Y in planar_partitions_rec(X[:-1]):
+                yield Y + ([X[-1]],)
+            continue
+        last = [X[i] for i in S]
+        last.append(X[-1])
+        pt = []
+        if S[0] != 0:
+            pt += [X[:S[0]]]
+        pt = [X[S[i]+1:S[i+1]] for i in range(len(S)-1) if S[i]+1 != S[i+1]]
+        if S[-1] + 1 != len(X) - 1:
+            pt += [X[S[-1]+1:-1]]
+        parts = [planar_partitions_rec(X[S[i]+1:S[i+1]]) for i in range(len(S)-1)
+                 if S[i] + 1 != S[i+1]]
+        if S[0] != 0:
+            parts.append(planar_partitions_rec(X[:S[0]]))
+        if S[-1] + 1 != len(X) - 1:
+            parts.append(planar_partitions_rec(X[S[-1]+1:-1]))
+        for Y in product(*parts):
+            yield sum(Y, ()) + (last,)
+
 
 def ideal_diagrams(k):
     r"""
@@ -207,6 +277,7 @@ def ideal_diagrams(k):
     for i in partition_diagrams(k):
         if propagating_number(i) < k:
             yield i
+
 
 class AbstractPartitionDiagram(AbstractSetPartition):
     r"""
@@ -246,6 +317,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         ...
         ValueError: {{1, 2}, {3, 4}} does not represent two rows of vertices of order 2
     """
+
     def __init__(self, parent, d, check=True):
         r"""
         Initialize ``self``.
@@ -519,6 +591,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent([[-i for i in part] for part in self])
 
+
 class IdealDiagram(AbstractPartitionDiagram):
     r"""
     The element class for a ideal diagram.
@@ -606,20 +679,20 @@ class PlanarDiagram(AbstractPartitionDiagram):
         sage: PlanarDiagrams(2)
         Planar diagrams of order 2
         sage: PlanarDiagrams(2).list()
-        [{{-2, -1, 1, 2}},
-         {{-2, 1, 2}, {-1}},
-         {{-2}, {-1, 1, 2}},
-         {{-2, -1}, {1, 2}},
-         {{-2}, {-1}, {1, 2}},
-         {{-2, -1, 1}, {2}},
+        [{{-2}, {-1}, {1, 2}},
+         {{-2}, {-1}, {1}, {2}},
          {{-2, 1}, {-1}, {2}},
-         {{-2, 2}, {-1, 1}},
-         {{-2, -1, 2}, {1}},
          {{-2, 2}, {-1}, {1}},
+         {{-2, 1, 2}, {-1}},
+         {{-2, 2}, {-1, 1}},
          {{-2}, {-1, 1}, {2}},
          {{-2}, {-1, 2}, {1}},
+         {{-2}, {-1, 1, 2}},
+         {{-2, -1}, {1, 2}},
          {{-2, -1}, {1}, {2}},
-         {{-2}, {-1}, {1}, {2}}]
+         {{-2, -1, 1}, {2}},
+         {{-2, -1, 2}, {1}},
+         {{-2, -1, 1, 2}}]
     """
     @staticmethod
     def __classcall_private__(cls, diag):
@@ -766,6 +839,7 @@ class PartitionDiagram(AbstractPartitionDiagram):
         order = max(v for p in diag for v in p)
         PD = PartitionDiagrams(order)
         return PD(diag)
+
 
 class BrauerDiagram(AbstractPartitionDiagram):
     r"""
@@ -1055,6 +1129,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         D2 = sorted(sorted(abs(y) for y in x) for x in D2)
         return D1 == D2 and pi == list(range(1,len(pi)+1))
 
+
 class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     r"""
     This is an abstract base class for partition diagrams.
@@ -1183,27 +1258,27 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
             [{{-2, -1}, {1, 2}}, {{-2, 2}, {-1, 1}}]
 
             sage: list(da.PlanarDiagrams(3/2))
-            [{{-2, -1, 1, 2}},
-             {{-2, 1, 2}, {-1}},
+            [{{-2, 1, 2}, {-1}},
+             {{-2, 2}, {-1}, {1}},
              {{-2, 2}, {-1, 1}},
              {{-2, -1, 2}, {1}},
-             {{-2, 2}, {-1}, {1}}]
+             {{-2, -1, 1, 2}}]
 
             sage: list(da.PlanarDiagrams(2))
-            [{{-2, -1, 1, 2}},
-             {{-2, 1, 2}, {-1}},
-             {{-2}, {-1, 1, 2}},
-             {{-2, -1}, {1, 2}},
-             {{-2}, {-1}, {1, 2}},
-             {{-2, -1, 1}, {2}},
+            [{{-2}, {-1}, {1, 2}},
+             {{-2}, {-1}, {1}, {2}},
              {{-2, 1}, {-1}, {2}},
-             {{-2, 2}, {-1, 1}},
-             {{-2, -1, 2}, {1}},
              {{-2, 2}, {-1}, {1}},
+             {{-2, 1, 2}, {-1}},
+             {{-2, 2}, {-1, 1}},
              {{-2}, {-1, 1}, {2}},
              {{-2}, {-1, 2}, {1}},
+             {{-2}, {-1, 1, 2}},
+             {{-2, -1}, {1, 2}},
              {{-2, -1}, {1}, {2}},
-             {{-2}, {-1}, {1}, {2}}]
+             {{-2, -1, 1}, {2}},
+             {{-2, -1, 2}, {1}},
+             {{-2, -1, 1, 2}}]
 
             sage: list(da.IdealDiagrams(3/2))
             [{{-2, -1, 1, 2}},
@@ -1278,6 +1353,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
         """
         return self.element_class(self, d)
 
+
 class PartitionDiagrams(AbstractPartitionDiagrams):
     r"""
     This class represents all partition diagrams of integer or integer
@@ -1336,6 +1412,7 @@ class PartitionDiagrams(AbstractPartitionDiagrams):
             877
         """
         return bell_number(ZZ(2 * self.order))
+
 
 class BrauerDiagrams(AbstractPartitionDiagrams):
     r"""
@@ -1555,6 +1632,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
         SP = SP0 + Perm
         return self(SP) # could pass 'SetPartition' ?
 
+
 class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
     r"""
     All Temperley-Lieb diagrams of integer or integer `+1/2` order.
@@ -1639,6 +1717,7 @@ class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
                 return False
         return obj in BrauerDiagrams(self.order) and obj.is_planar()
 
+
 class PlanarDiagrams(AbstractPartitionDiagrams):
     r"""
     All planar diagrams of integer or integer `+1/2` order.
@@ -1654,11 +1733,11 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
         sage: pld = da.PlanarDiagrams(3/2); pld
         Planar diagrams of order 3/2
         sage: pld.list()
-        [{{-2, -1, 1, 2}},
-         {{-2, 1, 2}, {-1}},
+        [{{-2, 1, 2}, {-1}},
+         {{-2, 2}, {-1}, {1}},
          {{-2, 2}, {-1, 1}},
          {{-2, -1, 2}, {1}},
-         {{-2, 2}, {-1}, {1}}]
+         {{-2, -1, 1, 2}}]
 
     TESTS::
 
@@ -1716,6 +1795,7 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
                 return False
         return super().__contains__(obj)
 
+
 class IdealDiagrams(AbstractPartitionDiagrams):
     r"""
     All "ideal" diagrams of integer or integer `+1/2` order.
@@ -1763,6 +1843,7 @@ class IdealDiagrams(AbstractPartitionDiagrams):
                 return False
         return super().__contains__(obj) and obj.propagating_number() < self.order
 
+
 class DiagramAlgebra(CombinatorialFreeModule):
     r"""
     Abstract class for diagram algebras and is not designed to be used
@@ -1790,6 +1871,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
          P{{-2, -1}, {1}, {2}},
          P{{-2}, {-1}, {1}, {2}}]
     """
+
     def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
         r"""
         Initialize ``self``.
@@ -2038,6 +2120,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
         partition algebra elements. Most element methods are
         already implemented elsewhere.
         """
+
         def diagram(self):
             r"""
             Return the underlying diagram of ``self`` if ``self`` is a basis
@@ -2073,6 +2156,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             """
             return self.support()
 
+
 class UnitDiagramMixin():
     """
     Mixin class for diagram algebras that have the unit indexed by
@@ -2095,10 +2179,12 @@ class UnitDiagramMixin():
         """
         return self._base_diagrams(identity_set_partition(self._k))
 
+
 class DiagramBasis(DiagramAlgebra):
     """
     Abstract base class for diagram algebras in the diagram basis.
     """
+
     def product_on_basis(self, d1, d2):
         r"""
         Return the product `D_{d_1} D_{d_2}` by two basis diagrams.
@@ -2118,6 +2204,7 @@ class DiagramBasis(DiagramAlgebra):
             d2 = self._indices(d2)
         (composite_diagram, loops_removed) = d1.compose(d2, check=False)
         return self.term(composite_diagram, self._q**loops_removed)
+
 
 class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     r"""
@@ -3054,6 +3141,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             return P._from_dict({D.dual(): c for D, c in self._monomial_coefficients.items()},
                                 remove_zeros=False)
 
+
 class OrbitBasis(DiagramAlgebra):
     r"""
     The orbit basis of the partition algebra.
@@ -3477,11 +3565,13 @@ class OrbitBasis(DiagramAlgebra):
             return self.parent()._alg(self)
             #return self._alg.coerce_map_from(self)
 
+
 class SubPartitionAlgebra(DiagramBasis):
     """
     A subalgebra of the partition algebra in the diagram basis indexed
     by a subset of the diagrams.
     """
+
     def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
         """
         Initialize ``self`` by adding a coercion to the ambient space.
@@ -3930,6 +4020,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         return TL_diagram_ascii_art(diagram, use_unicode=True)
 
+
 class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     r"""
     A planar algebra.
@@ -3967,20 +4058,20 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         sage: Pl.basis().keys()([[-1, 1], [2, -2]])
         {{-2, 2}, {-1, 1}}
         sage: Pl.basis().list()
-        [Pl{{-2, -1, 1, 2}},
-         Pl{{-2, 1, 2}, {-1}},
-         Pl{{-2}, {-1, 1, 2}},
-         Pl{{-2, -1}, {1, 2}},
-         Pl{{-2}, {-1}, {1, 2}},
-         Pl{{-2, -1, 1}, {2}},
+        [Pl{{-2}, {-1}, {1, 2}},
+         Pl{{-2}, {-1}, {1}, {2}},
          Pl{{-2, 1}, {-1}, {2}},
-         Pl{{-2, 2}, {-1, 1}},
-         Pl{{-2, -1, 2}, {1}},
          Pl{{-2, 2}, {-1}, {1}},
+         Pl{{-2, 1, 2}, {-1}},
+         Pl{{-2, 2}, {-1, 1}},
          Pl{{-2}, {-1, 1}, {2}},
          Pl{{-2}, {-1, 2}, {1}},
+         Pl{{-2}, {-1, 1, 2}},
+         Pl{{-2, -1}, {1, 2}},
          Pl{{-2, -1}, {1}, {2}},
-         Pl{{-2}, {-1}, {1}, {2}}]
+         Pl{{-2, -1, 1}, {2}},
+         Pl{{-2, -1, 2}, {1}},
+         Pl{{-2, -1, 1, 2}}]
         sage: E = Pl([[1,2],[-1,-2]])
         sage: E^2 == x*E
         True
@@ -4128,6 +4219,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
 
         We need to take care of exponents since we are not unital.
         """
+
         def __pow__(self, n):
             """
             Return ``self`` to the `n`-th power.
@@ -4151,6 +4243,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
             if n <= 0:
                 raise ValueError("can only take positive integer powers")
             return generic_power(self, n)
+
 
 def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     r"""
@@ -4348,6 +4441,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     ret.append(ret[0])
     return char_art(ret, baseline=len(ret)//2)
 
+
 def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     r"""
     Return latex code for the diagram ``diagram`` using tikz.
@@ -4444,6 +4538,7 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
 # with partition diagrams, compositions of partition diagrams, and so on.
 # --> CHANGED 'identity' to 'identity_set_partition' for enhanced clarity.
 #########################################################################
+
 
 def is_planar(sp):
     r"""
@@ -4545,6 +4640,7 @@ def to_graph(sp):
             g.add_vertex(part_list[i])
             g.add_edge(part_list[i-1], part_list[i])
     return g
+
 
 def pair_to_graph(sp1, sp2):
     r"""
@@ -4695,6 +4791,7 @@ def to_set_partition(l, k=None):
 
     return sp
 
+
 def to_Brauer_partition(l, k=None):
     r"""
     Same as :func:`to_set_partition` but assumes omitted elements are
@@ -4734,6 +4831,7 @@ def to_Brauer_partition(l, k=None):
             not_paired.remove([-i[0]])
         paired.append([i[0], -i[0]])
     return to_set_partition(paired)
+
 
 def identity_set_partition(k):
     r"""

@@ -502,7 +502,7 @@ cdef class Function(SageObject):
             sage: (out, parent(out))
             (0, Integer Ring)
 
-        Check that `real_part` and `imag_part` still works after :trac:`21216`::
+        Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
 
             sage: import numpy
             sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)

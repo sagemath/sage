@@ -44,6 +44,7 @@ class GenericBacktracker():
     See also :class:`RecursivelyEnumeratedSet_forest` for
     handling simple special cases.
     """
+
     def __init__(self, initial_data, initial_state):
         r"""
         EXAMPLES::
@@ -127,6 +128,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
         sage: TestSuite(PP).run(skip='_test_enumerated_set_contains')
         sage: PP._test_enumerated_set_contains()  # long time
     """
+
     def __init__(self):
         r"""
         TESTS::

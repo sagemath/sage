@@ -86,7 +86,6 @@ from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
-from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.libs.pari.all import pari, pari_gen, PariError
 
 cimport sage.rings.abc
@@ -98,6 +97,8 @@ from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 import sage.rings.abc
+
+import sage.interfaces.abc
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import coerce_binop
@@ -115,8 +116,8 @@ from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
 
-from sage.arith.all import (sort_complex_numbers_for_display,
-        power_mod, lcm, is_prime)
+from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
+from sage.arith.functions import lcm
 
 from . import polynomial_fateman
 
@@ -2749,9 +2750,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     var = ""
                 s += "%s %s" % (x, var)
         s = s.replace(" + -", " - ")
-        s = re.sub(" 1(\.0+)? \|"," ", s)
-        s = re.sub(" -1(\.0+)? \|", " -", s)
-        s = s.replace("|","")
+        s = re.sub(r" 1(\.0+)? \|", " ", s)
+        s = re.sub(r" -1(\.0+)? \|", " -", s)
+        s = s.replace("|", "")
         if s == " ":
             return "0"
         return s[1:].lstrip().rstrip()
@@ -2850,7 +2851,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         raise IndexError("polynomials are immutable")
 
     cpdef _floordiv_(self, right):
-        """
+        r"""
         Quotient of division of self by other. This is denoted //.
 
         If self = quotient \* right + remainder, this function returns
@@ -4959,9 +4960,10 @@ cdef class Polynomial(CommutativeAlgebraElement):
         return ~(q.leading_coefficient())*q  # make monic  (~ is inverse in python)
 
     def is_primitive(self, n=None, n_prime_divs=None):
-        """
-        Return ``True`` if the polynomial is primitive.  The semantics of
-        "primitive" depend on the polynomial coefficients.
+        r"""
+        Return ``True`` if the polynomial is primitive.
+
+        The semantics of "primitive" depend on the polynomial coefficients.
 
         - (field theory) A polynomial of degree `m` over a finite field
           `\GF{q}` is primitive if it is irreducible and its root in
@@ -7215,7 +7217,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             return x - c
         if k > n - k:  # use (n-k)'th symmetric power
             g = self.symmetric_power(n - k, monic=monic)
-            from sage.arith.all import binomial
+            from sage.arith.misc import binomial
             g = ((-x)**binomial(n,k) * g(c/x) / c**binomial(n-1,k)).numerator()
             if monic:
                 g = g.monic()
@@ -11647,7 +11649,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: R.<y> = P[]
             sage: f = y^10 + R.random_element(9)
             sage: g = y^5 + R.random_element(4)
-            sage: q,r = f.quo_rem(g)
+            sage: q, r = f.quo_rem(g)
             sage: f == q*g + r
             True
             sage: g = x*y^5
@@ -11661,6 +11663,17 @@ cdef class Polynomial_generic_dense(Polynomial):
             ...
             ZeroDivisionError: division by zero polynomial
 
+        Polynomials over noncommutative rings are also allowed
+        (after :trac:`34733`)::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = HH[]
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
+
         TESTS:
 
         The following shows that :trac:`16649` is indeed fixed. ::
@@ -11673,7 +11686,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: h.quo_rem(f)
             ((-1/13*x^2 - x)*y^2 + (-x^2 + 3*x - 155/4)*y - x - 1, 0)
             sage: h += (2/3*x^2-3*x+1)*y + 7/17*x+6/5
-            sage: q,r = h.quo_rem(f)
+            sage: q, r = h.quo_rem(f)
             sage: h == q*f + r and r.degree() < f.degree()
             True
 
@@ -11708,7 +11721,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             convert = True
         if convert:
             for k from m-n >= k >= 0:
-                q = inv * x[n+k-1]
+                q = x[n+k-1] * inv
                 try:
                     q = R(q)
                 except TypeError:
@@ -11718,7 +11731,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 quo.append(q)
         else:
             for k from m-n >= k >= 0:
-                q = inv * x[n+k-1]
+                q = x[n+k-1] * inv
                 for j from n+k-2 >= j >= k:
                     x[j] -= q * y[j-k]
                 quo.append(q)

@@ -12,7 +12,7 @@ To get a circulant graph on 10 vertices in which a vertex `i` has `i+2` and
     sage: p = digraphs.Circulant(10,[2,3])
 
 More interestingly, one can get the list of all digraphs that Sage knows how to
-build by typing ``digraphs.`` in Sage and then hitting tab.
+build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
 
 .. csv-table::
     :class: contentstable
@@ -393,7 +393,7 @@ class DiGraphGenerators():
         """
         from sage.rings.finite_rings.integer_mod import mod
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.arith.all import is_prime_power
+        from sage.arith.misc import is_prime_power
         if not is_prime_power(q):
             raise ValueError("parameter q must be a prime power")
         if not mod(q, 4) == 3:

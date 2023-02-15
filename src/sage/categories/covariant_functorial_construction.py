@@ -139,7 +139,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             Category of tensor products of finite dimensional vector spaces with basis over Rational Field
         """
         from sage.structure.parent import Parent
-        assert(all(isinstance(parent, Parent) for parent in parents))
+        assert all(isinstance(parent, Parent) for parent in parents)
         # Should we pass a set of categories to reduce the cache size?
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
@@ -169,7 +169,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: cartesian_product.category_from_categories((Cat1, Cat2))
             Category of Cartesian products of monoids
         """
-        assert(len(categories) > 0)
+        assert len(categories) > 0
         return self.category_from_category(Category.meet(categories))
 
     def category_from_category(self, category):
@@ -205,6 +205,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         Functorial construction application
 
         INPUT:
+
          - ``self``: a covariant functorial construction `F`
          - ``args``: a tuple (or iterable) of parents or elements
 
@@ -216,10 +217,11 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: tensor((E, E, E))
             E # E # E
         """
-        args = tuple(args) # a bit brute force; let's see if this becomes a bottleneck later
-        assert(all( hasattr(arg, self._functor_name) for arg in args))
-        assert(len(args) > 0)
+        args = tuple(args)  # a bit brute force; let's see if this becomes a bottleneck later
+        assert all(hasattr(arg, self._functor_name) for arg in args)
+        assert len(args) > 0
         return getattr(args[0], self._functor_name)(*args[1:], **kwargs)
+
 
 class FunctorialConstructionCategory(Category): # Should this be CategoryWithBase?
     """

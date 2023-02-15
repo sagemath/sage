@@ -1,5 +1,5 @@
 """
-Random Quadratic Forms
+Random quadratic forms
 
 This file contains a set of routines to create a random quadratic form.
 """

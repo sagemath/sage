@@ -20,7 +20,7 @@ are implemented using the PolyBoRi library (cf. :mod:`sage.rings.polynomial.pbor
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/term_order
 

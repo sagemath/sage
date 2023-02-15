@@ -32,7 +32,9 @@ import os
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from sage.arith.all import is_square, is_prime_power, divisors
+from sage.arith.misc import is_square
+from sage.arith.misc import is_prime_power
+from sage.arith.misc import divisors
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.orthogonal_arrays import orthogonal_array
 from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -1213,6 +1215,7 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
         ValueError: I do not know how to build a (784, 0, 14, 38)-SRG from a RSHCD
     """
     from sage.combinat.matrices.hadamard_matrix import regular_symmetric_hadamard_matrix_with_constant_diagonal
+
     def sgn(x):
         return 1 if x >= 0 else -1
     n = v

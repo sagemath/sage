@@ -53,7 +53,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                                       bint certificate,
                                       int a, int b, int c, int n):
     """
-    This method is part of method `is_long_hole_free`.
+    This method is part of method ``is_long_hole_free``.
 
     EXAMPLES::
 
@@ -285,7 +285,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                                           bint certificate,
                                           int a, int b, int c, int n):
     """
-    This method is part of method `is_long_antihole_free`.
+    This method is part of method ``is_long_antihole_free``.
 
     EXAMPLES::
 

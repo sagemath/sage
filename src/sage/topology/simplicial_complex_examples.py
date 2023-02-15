@@ -49,7 +49,7 @@ All of these examples are accessible by typing
 - :func:`ZieglerBall`
 
 You can also get a list by typing ``simplicial_complexes.`` and hitting the
-TAB key.
+:kbd:`Tab` key.
 
 EXAMPLES::
 

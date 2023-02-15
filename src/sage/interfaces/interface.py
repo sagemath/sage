@@ -173,7 +173,9 @@ class Interface(WithEqualityById, ParentWithBase):
     def interact(self):
         r"""
         This allows you to interactively interact with the child
-        interpreter. Press Ctrl-D or type 'quit' or 'exit' to exit and
+        interpreter.
+
+        Press :kbd:`Ctrl` + :kbd:`D` or type 'quit' or 'exit' to exit and
         return to Sage.
 
         .. note::
@@ -709,6 +711,20 @@ class InterfaceFunctionElement(SageObject):
 
 
 def is_InterfaceElement(x):
+    """
+    Return True if ``x`` is of type :class:`InterfaceElement`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.interface import is_InterfaceElement
+        sage: is_InterfaceElement(2)
+        doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
+        See https://trac.sagemath.org/34804 for details.
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead")
+
     return isinstance(x, InterfaceElement)
 
 
@@ -1337,8 +1353,6 @@ class InterfaceElement(Element):
         cmd = '%s %s %s' % (self._name, P._equality_symbol(),
                             P._false_symbol())
         return P.eval(cmd) != P._true_symbol()
-
-    
 
     def __float__(self):
         """
