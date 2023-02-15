@@ -1272,14 +1272,14 @@ class GenericGraph(GenericGraph_pyx):
             if (isinstance(self._backend, StaticSparseBackend) and
                     (data_structure == 'static_sparse' or data_structure is None)):
                 return self
-            
+
         if data_structure is None:
             from sage.graphs.base.dense_graph import DenseGraphBackend
             if isinstance(self._backend, DenseGraphBackend):
                 data_structure = "dense"
             else:
                 data_structure = "sparse"
-        
+
         G = self.__class__(self, name=self.name(), pos=copy(self._pos),
                            weighted=weighted, hash_labels=hash_labels,
                            data_structure=data_structure)
