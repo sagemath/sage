@@ -1,5 +1,6 @@
 <!-- Please provide a concise, informative and self-explanatory title. -->
 <!-- Don't put issue numbers in the title. Put it in the Description below. -->
+<!-- For example, instead of "Fixes #12345", use "Add a new method to multiply two integers" -->
 
 ### :books: Description
 
@@ -21,8 +22,8 @@
 ### :hourglass: Dependencies
 
 <!-- List all open PRs that this PR logically depends on
-Depends on #12345: short description why this is a dependency
-Depends on #34567: ...
+- #12345: short description why this is a dependency
+- #34567: ...
 -->
 
 <!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
