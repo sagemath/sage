@@ -1892,7 +1892,7 @@ def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
 
 def is_fixed_relative_difference_set(R, q):
     r"""Check if the relative difference set `R` is fixed by `q`.
-    
+
     A relative difference set  `R` is fixed by `q` if  `\{qd | d \in R\}= R` (see Section 3 of [Spe1975]_).
 
     INPUT:

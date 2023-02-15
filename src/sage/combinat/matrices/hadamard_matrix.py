@@ -90,6 +90,13 @@ def normalise_hadamard(H, skew=False):
         sage: H = normalise_hadamard(skew_hadamard_matrix(20, skew_normalize=False), skew=True)
         sage: is_hadamard_matrix(H, skew=True, normalized=True)
         True
+
+    If ``skew`` is True but the Hadamard matrix is not skew, the matrix returned
+    will not be normalized::
+
+        sage: H = normalise_hadamard(hadamard_matrix(92), skew=True)
+        sage: is_hadamard_matrix(H, normalized=True)
+        False
     """
 
     if skew:
@@ -2274,7 +2281,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     r"""
     Construct skew Hadamard matrix of order `n` using Spence constrution.
 
-    This function will construct skew Hadamrd matrix of order `n=2(q+1)` where `q` is
+    This function will construct skew Hadamard matrix of order `n=2(q+1)` where `q` is
     a prime power with `q = 5` (mod 8). The construction is taken from [Spe1977]_, and the
     relative difference sets are constructed using :func:`sage.combinat.designs.difference_family.relative_difference_set_from_homomorphism`.
 
@@ -2364,6 +2371,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     Namely, it needs 4 circulant matrices with extra properties, as described in
     :func:`sage.combinat.matrices.hadamard_matrix.williamson_goethals_seidel_skew_hadamard_matrix`
     Matrices are taken from:
+
     * `n=36, 52`: [GS70s]_
     * `n=92`: [Wall71]_
     * `n=188`: [Djo2008a]_
@@ -2607,7 +2615,7 @@ def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
 
     - ``c`` -- (1,-1) list specifying the 1st row of `D`.
 
-    - ``check`` -- boolean: if True (default), check the the matrix is an Hadamard matrix before returning it.
+    - ``check`` -- boolean: if True (default), check that the matrix is a skew Hadamard matrix before returning it.
 
     EXAMPLES::
 
