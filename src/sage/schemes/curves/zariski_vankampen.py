@@ -1161,8 +1161,6 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         p1 = p0[0] + I1 * p0[1]
         strands = {}
         roots_base = []
-        strands = {}
-        roots_base = []
         for i, h in enumerate(arrangement1):
             h0 = h.subs({x: p1})
             h1 = F[y](h0)
