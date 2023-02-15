@@ -31,6 +31,7 @@ from sage.modules.free_module import FreeModule
 from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix
 
+
 class qCommutingPolynomials_generic(CombinatorialFreeModule):
     r"""
     Base class for algebra of `q`-commuting (Laurent, etc.) polynomials.
@@ -81,8 +82,8 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
             B = matrix.zero(ZZ, n)
             for i in range(n):
                 for j in range(i+1, n):
-                    B[i,j] = 1
-                    B[j,i] = -1
+                    B[i, j] = 1
+                    B[j, i] = -1
             B.set_immutable()
         else:
             if not B.is_skew_symmetric():
@@ -170,7 +171,7 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
             sage: R.algebra_generators()
             Finite family {'x': x, 'y': y, 'z': z}
         """
-        d = {v: self.gen(i) for i,v in enumerate(self.variable_names())}
+        d = {v: self.gen(i) for i, v in enumerate(self.variable_names())}
         return Family(self.variable_names(), d.__getitem__, name="generator")
 
     def degree_on_basis(self, m):
@@ -494,7 +495,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
             \mathrm{Frac}(\Bold{Z}[q])[x^{\pm}, y^{\pm}, z^{\pm}]_{q}
         """
         from sage.misc.latex import latex
-        names = ", ".join(r"{}^{{\pm}}".format(v) for v in  self.variable_names())
+        names = ", ".join(r"{}^{{\pm}}".format(v) for v in self.variable_names())
         return "{}[{}]_{{{}}}".format(latex(self.base_ring()), names, self._q)
 
     def _repr_term(self, m):
@@ -663,7 +664,8 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
                 m, c = next(iter(self._monomial_coefficients.items()))
                 ret = -m
                 n = len(m)
-                qpow = sum(exp * sum(B[j, i] * m[j] for j in range(i+1,n)) for i, exp in enumerate(m) if exp)
+                qpow = sum(exp * sum(B[j, i] * m[j] for j in range(i+1, n))
+                           for i, exp in enumerate(m) if exp)
                 ret.set_immutable()
                 return P.term(ret, ~c * q**-qpow)
             return super().__invert__()
