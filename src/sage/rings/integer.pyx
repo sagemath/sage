@@ -2961,7 +2961,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
         - ``limit`` -- (integer, optional keyword argument)
-          Return only prime divisors up to this bound.
+          Return only prime divisors up to this bound, and the factorization
+          is done by checking primes up to ``limit`` using trial division.
 
         Any additional arguments are passed on to the :meth:`factor` method.
 
