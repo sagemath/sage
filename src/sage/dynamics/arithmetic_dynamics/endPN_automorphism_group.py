@@ -23,7 +23,7 @@ from copy import copy, deepcopy
 from itertools import permutations, combinations, product
 
 from sage.arith.functions import lcm
-from sage.arith.misc import CRT, divisors, GCD as gcd, is_square
+from sage.arith.misc import CRT, divisors, gcd, is_square
 from sage.combinat.permutation import Arrangements
 from sage.combinat.subset import Subsets
 from sage.matrix.constructor import matrix

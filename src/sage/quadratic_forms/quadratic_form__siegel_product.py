@@ -16,10 +16,9 @@ from sage.arith.misc import (bernoulli,
                              prime_divisors)
 from sage.misc.functional import sqrt
 from sage.misc.verbose import verbose
+from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-
-from .special_values import QuadraticBernoulliNumber
 
 
 #/*!  \brief Computes the product of all local densities for comparison with independently computed Eisenstein coefficients.

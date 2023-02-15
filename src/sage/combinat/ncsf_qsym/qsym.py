@@ -3688,7 +3688,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             M = self.realization_of().M()
             if l <= n:
                 from sage.misc.cachefunc import cached_function
-                from sage.arith.misc import GCD as gcd
+                from sage.arith.misc import gcd
 
                 @cached_function
                 def monolambda(I):
