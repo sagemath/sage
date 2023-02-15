@@ -1071,7 +1071,7 @@ def lazy_import(module, names, as_=None, *,
         doctest:...: DeprecationWarning:
 
         Importing my_Qp from here is deprecated; please use "from sage.all import Qp as my_Qp" instead.
-        See :trac:`14275` for details.
+        See https://github.com/sagemath/sage/issues/14275 for details.
 
         5-adic Field with capped relative precision 20
 
