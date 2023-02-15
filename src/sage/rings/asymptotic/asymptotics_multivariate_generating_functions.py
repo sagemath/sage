@@ -1345,7 +1345,7 @@ class FractionWithFactoredDenominator(RingElement):
             (1/3, [(x*y - 1, 1), (x^2 + y^2 - 1, 1)])
         """
         from sage.calculus.functions import jacobian
-        from sage.arith.all import xgcd
+        from sage.arith.misc import XGCD as xgcd
         from sage.sets.set import Set
 
         R = self.denominator_ring

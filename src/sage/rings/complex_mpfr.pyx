@@ -3279,7 +3279,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n, **kwds)
 
     # Alias

@@ -4142,7 +4142,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         from sage.rings.fast_arith import prime_range
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.arith.all import factor
+        from sage.arith.misc import factor
         split_primes = []
         for p in prime_range(B):
             Fp = GF(p)
@@ -9358,7 +9358,7 @@ class NumberField_absolute(NumberField_generic):
             r1, r2 = K.signature()
             r = r1 + r2 - 1
 
-            from sage.rings.all import RealField
+            from sage.rings.real_mpfr import RealField
             Reals = RealField(prec)
 
             if x == 0:

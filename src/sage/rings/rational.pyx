@@ -1135,7 +1135,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         seq.append(self)
         nums = [x.numerator() for x in seq]
         denoms = [x.denominator() for x in seq]
-        from sage.arith.all import gcd, lcm
+        from sage.arith.misc import GCD as gcd
+        from sage.arith.functions import lcm
         return gcd(nums) / lcm(denoms)
 
     def valuation(self, p):
@@ -1759,7 +1760,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         if p == 2:
             return ((m % 8) == 1)
 
-        from sage.arith.all import kronecker_symbol
+        from sage.arith.misc import kronecker as kronecker_symbol
         return (kronecker_symbol(m, p) == 1)
 
     def val_unit(self, p):

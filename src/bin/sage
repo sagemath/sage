@@ -479,6 +479,13 @@ usage_advanced() {
         echo "                         Sage documentation for \"string\"."
         echo "  --search_src ...    -- same as --grep"
         echo "  --search_doc ...    -- same as --grepdoc"
+        echo "  --fixdoctests file.py"
+        echo "                      -- Run doctests and replace output of failing doctests"
+        echo "                         with actual output."
+        echo "  --fiximports <files|dir>"
+        echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
+        echo "                         imports when sage.PAC.KAGE is an implicit namespace"
+        echo "                         package"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
@@ -972,6 +979,11 @@ fi
 
 if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
+fi
+
+if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
+    shift
+    exec sage-python -m sage.misc.replace_dot_all "$@"
 fi
 
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then

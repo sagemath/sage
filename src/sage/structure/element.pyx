@@ -2704,10 +2704,10 @@ cdef class RingElement(ModuleElement):
         with Singular 4::
 
             sage: K.<x,y> = ZZ[]
-            sage: (x^12345)^54321
+            sage: (x^123456)^654321
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (670592745)
+            OverflowError: exponent overflow (...)
         """
         return arith_generic_power(self, n)
 

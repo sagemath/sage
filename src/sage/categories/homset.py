@@ -81,6 +81,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.coerce_dict import TripleDict
 _cache = TripleDict(weak_values=True)
 
+
 def Hom(X, Y, category=None, check=True):
     """
     Create the space of homomorphisms from X to Y in the category ``category``.
@@ -1141,7 +1142,7 @@ class Homset(Set_generic):
             sage: H.identity()
             Traceback (most recent call last):
             ...
-            TypeError: Identity map only defined for endomorphisms. Try natural_map() instead.
+            TypeError: identity map only defined for endomorphisms; try natural_map() instead
             sage: H.natural_map()
             Natural morphism:
               From: Integer Ring
@@ -1149,8 +1150,7 @@ class Homset(Set_generic):
         """
         if self.is_endomorphism_set():
             return morphism.IdentityMorphism(self)
-        else:
-            raise TypeError("Identity map only defined for endomorphisms. Try natural_map() instead.")
+        raise TypeError("identity map only defined for endomorphisms; try natural_map() instead")
 
     def one(self):
         """

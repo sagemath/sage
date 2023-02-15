@@ -762,7 +762,7 @@ cdef class FiniteField(Field):
             a + 12
         """
         if self.degree() == 1:
-            from sage.arith.all import primitive_root
+            from sage.arith.misc import primitive_root
             return self(primitive_root(self.order()))
         F, = self.factored_unit_order()
         return self._element_of_factored_order(F)

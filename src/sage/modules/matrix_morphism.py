@@ -1236,7 +1236,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         # testing for the identity matrix will only work for
         #   endomorphisms which have the same basis for domain and codomain
         #   so we test equality on a basis, which is sufficient
-        return all( self(u) == u for u in self.domain().basis() )
+        return all(self(u) == u for u in self.domain().basis())
 
     def is_zero(self):
         r"""
@@ -1369,7 +1369,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.codomain() != other.codomain():
             return False
         # check agreement on any basis of the domain
-        return all( self(u) == other(u) for u in self.domain().basis() )
+        return all(self(u) == other(u) for u in self.domain().basis())
 
     def restrict_domain(self, sub):
         """
