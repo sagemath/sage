@@ -188,7 +188,7 @@ def discrim(pols):
         -0.500000000000000? + 0.866025403784439?*I,
         -0.522757958574711?,
         0.2613789792873551? - 0.4527216721561923?*I,
-        0.2613789792873551? + 0.4527216721561923?*I]    
+        0.2613789792873551? + 0.4527216721561923?*I]
     """
     flist = tuple(pols)
     x, y = flist[0].parent().gens()
@@ -483,7 +483,7 @@ def fieldI(F0):
         sage: F0.<a> = NumberField(p, embedding = a0)
         sage: F1 = fieldI(F0)
         sage: F0 == F1
-        True        
+        True
     """
     I0 = QQbar.gen()
     if I0 in F0:
@@ -493,11 +493,13 @@ def fieldI(F0):
         F1a = F0a.absolute_field('b0')
         b0 = F1a.gen()
         q = b0.minpoly()
-        qroots = q.roots(QQbar, multiplicities = False)
-        for b1 in qroots:
+        qembd = F1a.embeddings(QQbar)
+        for h1 in qembd:
+            b1 = h1(b0)
+            b2 = h1(F1a(F0a.gen(0)))
+            b3 = F0.gen(0)
             F1 = NumberField(q, 'b', embedding = b1)
-            b = F1.gen()
-            if (F0.is_subring(F1)):
+            if b3 in F1 and b2.imag()>0:
                 return F1
 
 
@@ -546,14 +548,11 @@ def roots_interval(pols, x0):
     """
     flist = tuple(pols)
     f = prod(flist)
-    F0 = f.base_ring()
-    F1 = fieldI(F0)
+    F1 = f.base_ring()
     I1 = F1(QQbar.gen())
-    U1 = [_.change_ring(F1) for _ in flist]
-    f1 = f.change_ring(F1)
-    x, y = f1.parent().gens()
-    Ux = [F1[y](_.subs({x: F1(x0)})) for _ in U1]
-    fx = F1[y](f1.subs({x: F1(x0)}))
+    x, y = f.parent().gens()
+    Ux = [F1[y](_.subs({x: F1(x0)})) for _ in flist]
+    fx = F1[y](f.subs({x: F1(x0)}))
     roots = []
     for pol in Ux:
         roots += pol.roots(QQbar, multiplicities=False)
@@ -699,23 +698,20 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         s5*s3^-1
     """
     g = prod(glist)
-    F0 = g.base_ring()
-    F1 = fieldI(F0)
+    F1 = g.base_ring()
     I1 = F1(QQbar.gen())
-    U1 = tuple(_.change_ring(F1) for _ in glist)
-    g1 = g.change_ring(F1)
-    x, y = g1.parent().gens()
+    x, y = g.parent().gens()
     X0 = F1(x0)
     X1 = F1(x1)
     intervals = {}
     if precision == {}: # new
-        precision ={f: 53 for f in U1} # new
+        precision ={f: 53 for f in glist} # new
     y0s = []
-    for f in U1:
+    for f in glist:
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
-            f0 = F1[y](f.subs({x: X0}))            
+            f0 = F1[y](f.subs({x: X0}))
         y0sf = f0.roots(QQbar, multiplicities = False)
         y0s += list(y0sf)
         while True:
@@ -725,16 +721,16 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 break
             precision[f] *= 2
     strands = []
-    for f in U1:
+    for f in glist:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in U1 if p != f], x0, x1, i.center(), precision[f]) 
-            strands.append(aux)    
+            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision[f])
+            strands.append(aux)
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(U1, X0)
-    finalintervals = roots_interval_cached(U1, X1)
+    initialintervals = roots_interval_cached(glist, X0)
+    finalintervals = roots_interval_cached(glist, X1)
     I = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I * cs[0][2]
@@ -745,8 +741,8 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in U1} # new
-            return braid_in_segment(U1, x0, x1, precision = precision) # new
+            precision = {f: precision[f] * 2 for f in glist} # new
+            return braid_in_segment(glist, x0, x1, precision = precision) # new
 
         matched = 0
         for center, interval in finalintervals.items():
@@ -754,8 +750,8 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in U1} # new
-            return braid_in_segment(U1, x0, x1, precision = precision) # new
+            precision = {f: precision[f] * 2 for f in glist} # new
+            return braid_in_segment(glist, x0, x1, precision = precision) # new
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
@@ -848,7 +844,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     - ``p`` -- a vertex of ``E``
       
-    - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that 
+    - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
       by a tuple whose first element is the ordering and the second one is the
@@ -1032,9 +1028,9 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
       with an embedding in the complex numbers
       
     - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
-      in order to provide information for `braid_monodromy_arrangement`. 
+      in order to provide information for `braid_monodromy_arrangement`.
           
-    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the 
+    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the
       string assignment is given. t makes only sense if arrangement has
       more than one polynomial
  
@@ -1046,8 +1042,8 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
     
-    If ``arrangement`` contains more than one element, some information to be used by 
-    `braid_monodromy_arrangement` is provided. 
+    If ``arrangement`` contains more than one element, some information to be used by
+    `braid_monodromy_arrangement` is provided.
     
     If ``computebm`` is set to ``False`` only some information to be used by ``strand_components`` is given.
 
@@ -1072,8 +1068,11 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         arrangement1 = (f, )
     else:
         arrangement1 = arrangement
+    F = fieldI(f.base_ring())
+    I1 = F(QQbar.gen())
+    f = f.change_ring(F)
+    arrangement1 = [_.change_ring(F) for _ in arrangement1]
     x, y = f.parent().gens()
-    F = f.base_ring()
     glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
     g = prod(glist)
     d = g.degree(y)
@@ -1096,7 +1095,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     p = next(E.vertex_iterator())
     p0 = (p[0], p[1])
     # Construct a dual graph for the compact regions; the dual edges
-    # of this graph have as labels the corresponding edges in G 
+    # of this graph have as labels the corresponding edges in G
     Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
     Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
     DG = Graph(len(Vreg1))
@@ -1159,16 +1158,14 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     if len(arrangement1) == 1:
         return result
     else:
-        F1 = fieldI(f.base_ring())
-        I1 = F1(QQbar.gen())
         p1 = p0[0] + I1 * p0[1]
-        U1 = [_.change_ring(F1) for _ in arrangement1]
-        x, y = U1[0].parent().gens()
         strands = {}
         roots_base = []
-        for i, h in enumerate(U1):
+        strands = {}
+        roots_base = []
+        for i, h in enumerate(arrangement1):
             h0 = h.subs({x: p1})
-            h1 = F1[y](h0)
+            h1 = F[y](h0)
             rt = h1.roots(QQbar, multiplicities = False)
             roots_base += [(_,i) for _ in rt]
         if not holdstrand:
@@ -1376,7 +1373,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
     @parallel
     def relation(x, b):
         return x * b / x
-    
+
     if not puiseux:
         relations = (relation([(x, b) for x in F.gens() for b in bm]))
         R = [r[1] for r in relations]
