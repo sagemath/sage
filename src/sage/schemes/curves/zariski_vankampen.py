@@ -474,7 +474,7 @@ def fieldI(F0):
         sage: a0 = p.roots(QQbar, multiplicities = False)[0]
         sage: F0.<a> = NumberField(p, embedding = a0)
         sage: fieldI(F0)
-        Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? - 1.000000000000000?*I
+        Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? + 1.000000000000000?*I
         
         
         sage: from sage.schemes.curves.zariski_vankampen import fieldI
@@ -524,9 +524,11 @@ def roots_interval(pols, x0):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import roots_interval
+        sage: from sage.schemes.curves.zariski_vankampen import roots_interval, fieldI # optional - sirocco
         sage: R.<x, y> = QQ[]
-        sage: flist = (y^3 - x^2, )
+        sage: K = fieldI(QQ)
+        sage: f = y^3 - x^2
+        sage: flist = (f.change_ring(K), )
         sage: ri = roots_interval(flist, 1)
         sage: ri
         {-138907099/160396102*I - 1/2: -1.? - 1.?*I,
@@ -586,9 +588,11 @@ def roots_interval_cached(flist, x0):
 
     TESTS::
 
-        sage: from sage.schemes.curves.zariski_vankampen import roots_interval, roots_interval_cached, roots_interval_cache
-        sage: R.<x,y> = QQ[]
+        sage: from sage.schemes.curves.zariski_vankampen import roots_interval, roots_interval_cached, roots_interval_cache, fieldI # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: K = fieldI(QQ)
         sage: f = y^3 - x^2
+        sage: f = f.change_ring(K)
         sage: ((f, ), 1) in roots_interval_cache
         False
         sage: ri = roots_interval_cached((f, ), 1)
@@ -619,9 +623,11 @@ def populate_roots_interval_cache(inputs):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import populate_roots_interval_cache, roots_interval_cache
+        sage: from sage.schemes.curves.zariski_vankampen import populate_roots_interval_cache, roots_interval_cache, fieldI # optional - sirocco
         sage: R.<x,y> = QQ[]
+        sage: K=fieldI(QQ)
         sage: f = y^5 - x^2
+        sage: f = f.change_ring(K)
         sage: ((f, ), 3) in roots_interval_cache
         False
         sage: populate_roots_interval_cache([((f, ), 3)])
@@ -667,9 +673,11 @@ def braid_in_segment(glist, x0, x1, precision = {}):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment, fieldI # optional - sirocco
         sage: R.<x, y> = QQ[]
+        sage: K = fieldI(QQ)
         sage: f = x^2 + y^3
+        sage: f = f.change_ring(K)
         sage: x0 = 1
         sage: x1 = 1 + I / 2
         sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1) # optional - sirocco
@@ -684,8 +692,10 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         sage: R.<x, y> = Kw[]
         sage: z = -wp - 1
         sage: f = y * (y + z) * x * (x - 1) * (x - y) * (x + z * y - 1) * (x + z * y + wp)
-        sage: from sage.schemes.curves import zariski_vankampen as zvk
+        sage: from sage.schemes.curves import zariski_vankampen as zvk # optional - sirocco
+        sage: Kw1 = zvk.fieldI(Kw)
         sage: g = f.subs({x: x + 2 * y})
+        sage: g = g.change_ring(Kw1)
         sage: p1 = QQbar(sqrt(- 1 / 3))
         sage: p1a = CC(p1)
         sage: p1b=QQ(p1a.real())+I*QQ(p1a.imag())
