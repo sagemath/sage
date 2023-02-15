@@ -2011,6 +2011,11 @@ REFERENCES:
             Lexicographically: an efficient new strategy compared with others, 2020,
             https://hal.archives-ouvertes.fr/hal-02462764v1
 
+.. [DGK2014] \D. Đoković, O. Golubitsky and I.Kotsireas.
+            *Some New Orders of Hadamard and Skew-Hadamard Matrices*,
+            Journal of Combinatorial Designs 22(6) (2014): 270-277.
+            :doi:`10.1002/jcd.21358`
+
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/trifle-spec.pdf
