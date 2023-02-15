@@ -8,7 +8,6 @@ Colored Permutations
 """
 import itertools
 
-from collections.abc import Iterable
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -992,6 +991,18 @@ class SignedPermutation(ColoredPermutation,
             sage: SignedPermutation([2, 1, -3])
             [2, 1, -3]
 
+            sage: SignedPermutation((2,1,-3))
+            [2, 1, -3]
+
+            sage: SignedPermutation(range(1,4))
+            [1, 2, 3]
+
+        TESTS::
+
+            sage: T = SignedPermutation(range(1,4)); type(T)
+            <class 'sage.combinat.colored_permutations.SignedPermutations_with_category.element_class'>
+            sage: SignedPermutation(T)
+            [1, 2, 3]
         """
         return SignedPermutations(len(list(pi)))(pi)
 
