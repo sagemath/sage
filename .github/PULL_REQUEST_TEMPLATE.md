@@ -10,8 +10,7 @@
 
 ### :memo: Checklist
 
-<!-- Put an `x` in all the boxes that apply. It should be `[x]` not `[x ]`.  -->
-<!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+<!-- Put an `x` in all the boxes that apply. It should be `[x]` not `[x ]`. -->
 
 - [ ] The title is concise, informative, and self-explanatory.
 - [ ] The description explains in detail what this PR is about.
@@ -21,6 +20,9 @@
 
 ### :hourglass: Dependencies
 
-<!-- List all open PRs that this PR logically depends on -->
-<!-- Depends on #12345: short description why this is a dependency -->
-<!-- Depends on #34567: ... -->
+<!-- List all open PRs that this PR logically depends on
+Depends on #12345: short description why this is a dependency
+Depends on #34567: ...
+-->
+
+<!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
