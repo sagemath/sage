@@ -2143,7 +2143,9 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     * `n = 213, 631`: [DGK2014]_
     * `n = 331`: [DK2016]_
 
-    SDS for `n = 81, 169` is built using the function :fun:`skew_supplementary_difference_set_over_polynomial_ring`.
+    Additional skew Supplementary difference sets are built using the function
+    :func:`skew_supplementary_difference_set_over_polynomial_ring`, and
+    :func:`skew_supplementary_difference_set_with_paley_todd`.
 
     INPUT:
 
