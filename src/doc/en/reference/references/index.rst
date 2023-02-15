@@ -2103,6 +2103,12 @@ REFERENCES:
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
 
+.. [DK2016] \D. Ðokovic, I. Kotsireas.
+            *A class of cyclic (v; k1, k2, k3; λ) difference families
+            with v = 3 (mod 4) a prime*,
+            Special Matrices 4(1) (2016): 317-325.
+            :doi:`10.1515/spma-2016-0029`
+
 .. [DLHK2007] \J. A. De Loera, D. C. Haws, M. Köppe, Ehrhart
               polynomials of matroid polytopes and
               polymatroids. Discrete & Computational Geometry, Volume

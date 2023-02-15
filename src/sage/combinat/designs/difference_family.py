@@ -2040,6 +2040,91 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
     return F, [S1, S2, S3, S4]
 
 
+def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=True):
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` skew supplementary difference sets where `S_1` is the Paley-Todd difference set.
+
+    The skew SDS returned have the property that `n_1 + n_2 + n_3 + n_4 = n + \lambda`.
+
+    This construction is described in [DK2016]_. The function contains, for each
+    value of `n`, a set `H` containing integers modulo `n`, and four sets `J, K, L`.
+    Then, these are used to construct `(n; k_2, k_3, k_4; \lambda_2)` difference family,
+    with `\lambda_2 = k_2 + k_3 + k_4 + (3n - 1) / 4`. Finally, these sets together
+    with the Paley-Todd difference set form a skew supplementary difference set.
+
+    INPUT:
+
+    - ``n`` -- integer, the parameter of the supplementary difference set.
+
+    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
+      can be constructed.
+
+    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
+      with `S_1` skew before returning them. Setting this parameter to False may speed up the computation considerably.
+
+    OUTPUT:
+
+    If ``existence`` is false, the function returns the group G of integers modulo `n`
+    and a list containing 4 sets, or raises an error if data for the given ``n`` is not available.
+    If ``existence`` is true, the function returns a boolean representing whether skew
+    supplementary difference sets can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_with_paley_todd
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(239)
+
+    If existence is ``True``, the function returns a boolean ::
+
+        sage: skew_supplementary_difference_set_with_paley_todd(239, existence=True)
+        True
+        sage: skew_supplementary_difference_set_with_paley_todd(17, existence=True)
+        False
+
+    TESTS::
+
+        sage: skew_supplementary_difference_set_with_paley_todd(7)
+        Traceback (most recent call last):
+        ...
+        ValueError: Data for skew SDS of order 7 not yet implemented.
+    """
+    H_db = {
+        239: [1, 10, 24, 44, 98, 100, 201],
+    }
+
+    indices = {
+        239: [[1, 3, 5, 6, 15, 17, 19, 28, 34, 38, 39, 57, 58, 63, 85, 95, 107],
+              [1, 3, 4, 5, 15, 16, 17, 18, 19, 21, 23, 29, 35, 45, 58, 63],
+              [0, 1, 4, 6, 7, 8, 13, 16, 18, 34, 35, 45, 47, 58, 63, 95]],
+    }
+
+    if existence:
+        return n in H_db
+
+    if n not in H_db:
+        raise ValueError(f'Data for skew SDS of order {n} not yet implemented.')
+
+    G = Zmod(n)
+    H = {G(el) for el in H_db[n]}
+
+    def generate_subset(indices, H):
+        return list({el * idx for el in H for idx in indices})
+
+    from sage.arith.misc import quadratic_residues
+
+    S1 = [G(el) for el in quadratic_residues(n) if el != 0]
+    S2 = generate_subset(indices[n][0], H)
+    S3 = generate_subset(indices[n][1], H)
+    S4 = generate_subset(indices[n][2], H)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set(G, [S1, S2, S3, S4], lmbda)
+        assert _is_skew_set(G, S1)
+
+    return G, [S1, S2, S3, S4]
+
+
 def skew_supplementary_difference_set(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
@@ -2296,6 +2381,10 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         if existence:
             return True
         G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(n, check=False)
+    elif skew_supplementary_difference_set_with_paley_todd(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(n, check=False)
 
     if existence:
         return False
