@@ -1378,7 +1378,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
     else:
         simplified = False
         relations = (braid2rels([(b.Tietze(), d) for b in bm]))
-        R = [] 
+        R = []
         for r in relations:
             R += r[1]
     if projective:
