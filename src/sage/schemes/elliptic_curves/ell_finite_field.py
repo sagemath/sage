@@ -1556,13 +1556,13 @@ def curves_with_j_0(K):
     For `K=\F_q` where `q\equiv1\mod{6} there are six curves, the sextic twists of `y^2=x^3+1`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
-        sage: curves_with_j_0(GF(7))
+        sage: sorted(curves_with_j_0(GF(7)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 7,
         Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7,
+        Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 7,
         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7]
+        Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
+        Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
         sage: curves_with_j_0(GF(25))
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 5^2,
         Elliptic Curve defined by y^2 = x^3 + z2 over Finite Field in z2 of size 5^2,
@@ -1617,11 +1617,11 @@ def curves_with_j_1728(K):
     For `K=\F_q` where `q\equiv1\mod{4} there are four curves, the quartic twists of `y^2=x^3+x`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_1728
-        sage: curves_with_j_1728(GF(5))
+        sage: sorted(curves_with_j_1728(GF(5)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 5,
         Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 3*x over Finite Field of size 5]
+        Elliptic Curve defined by y^2 = x^3 + 3*x over Finite Field of size 5,
+        Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 5]
         sage: curves_with_j_1728(GF(49))
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 7^2,
         Elliptic Curve defined by y^2 = x^3 + z2*x over Finite Field in z2 of size 7^2,
