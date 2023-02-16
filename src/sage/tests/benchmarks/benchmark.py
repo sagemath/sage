@@ -12,7 +12,7 @@ others.
 
 TESTS::
 
-    sage: import sage.tests.benchmark
+    sage: import sage.tests.benchmarks.benchmark
 """
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
@@ -23,7 +23,7 @@ def avg(X):
 
     EXAMPLES::
 
-        sage: from sage.tests.benchmark import avg
+        sage: from sage.tests.benchmarks.benchmark import avg
         sage: avg([1,2,3])
         2.0
     """
@@ -45,7 +45,7 @@ class Benchmark:
 
     EXAMPLES::
 
-        sage: from sage.tests.benchmark import Benchmark
+        sage: from sage.tests.benchmarks.benchmark import Benchmark
         sage: B = Benchmark()
         sage: def python():
         ....:     t = cputime()
@@ -53,7 +53,7 @@ class Benchmark:
         ....:     return cputime(t)
         sage: B.python = python
         sage: B.run(systems=['python'])
-        sage.tests.benchmark.Benchmark instance
+        sage.tests.benchmarks.benchmark.Benchmark instance
           System      min         avg         max         trials          cpu or wall
         * python ...
 
@@ -77,7 +77,7 @@ class Benchmark:
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolyFactor
+            sage: from sage.tests.benchmarks.benchmark import PolyFactor
             sage: PolyFactor(10, QQ).run()
             Factor a product of 2 polynomials of degree 10 over Rational Field.
               System      min         avg         max         trials          cpu or wall
@@ -133,7 +133,7 @@ class Benchmark:
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Benchmark
+            sage: from sage.tests.benchmarks.benchmark import Benchmark
             sage: B = Benchmark()
             sage: B.repr_str = 'spam'
             sage: B
@@ -142,7 +142,7 @@ class Benchmark:
         try:
             return self.repr_str
         except AttributeError:
-            return 'sage.tests.benchmark.Benchmark instance'
+            return 'sage.tests.benchmarks.benchmark.Benchmark instance'
 
 
 class Divpoly(Benchmark):
@@ -159,7 +159,7 @@ class Divpoly(Benchmark):
             sage: E.division_polynomial(5)
             5*x^12 + 45*x^11 + 422*x^10 + ... - 426371
 
-            sage: from sage.tests.benchmark import Divpoly
+            sage: from sage.tests.benchmarks.benchmark import Divpoly
             sage: B = Divpoly(99)
             sage: B
             99-Division polynomial
@@ -173,7 +173,7 @@ class Divpoly(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Divpoly
+            sage: from sage.tests.benchmarks.benchmark import Divpoly
             sage: B = Divpoly(3)
             sage: isinstance(B.sage(), float)
             True
@@ -191,7 +191,7 @@ class Divpoly(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Divpoly
+            sage: from sage.tests.benchmarks.benchmark import Divpoly
             sage: B = Divpoly(3)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -214,7 +214,7 @@ class PolySquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolySquare
+            sage: from sage.tests.benchmarks.benchmark import PolySquare
             sage: B = PolySquare(3, QQ)
             sage: isinstance(B.sage(), float)
             True
@@ -233,7 +233,7 @@ class PolySquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolySquare
+            sage: from sage.tests.benchmarks.benchmark import PolySquare
             sage: B = PolySquare(3, QQ)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -251,7 +251,7 @@ class PolySquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolySquare
+            sage: from sage.tests.benchmarks.benchmark import PolySquare
             sage: B = PolySquare(3, QQ)
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
@@ -284,7 +284,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.sage()[1], float)
             True
@@ -307,7 +307,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.macaulay2()[1], float) # optional - macaulay2
             True
@@ -325,7 +325,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.maxima()[1], float)
             True
@@ -343,7 +343,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.maple()[1], float)  # optional - maple
             True
@@ -361,7 +361,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
@@ -389,7 +389,7 @@ class MPolynomialPower(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialPower
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialPower
             sage: B = MPolynomialPower()
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -424,7 +424,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.maxima()[1], float)
             True
@@ -444,7 +444,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.maple()[1], float)  # optional - maple
             True
@@ -464,7 +464,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
@@ -493,7 +493,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.sage()[1], float)
             True
@@ -520,7 +520,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.macaulay2()[1], float) # optional - macaulay2
             True
@@ -540,7 +540,7 @@ class MPolynomialMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult
             sage: B = MPolynomialMult()
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -593,7 +593,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.maxima()[1], float)
             True
@@ -619,7 +619,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.macaulay2()[1], float) # optional - macaulay2
             True
@@ -645,7 +645,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
@@ -671,7 +671,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
@@ -697,7 +697,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.sage()[1], float)
             True
@@ -728,7 +728,7 @@ class MPolynomialMult2(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MPolynomialMult2
+            sage: from sage.tests.benchmarks.benchmark import MPolynomialMult2
             sage: B = MPolynomialMult2()
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -769,7 +769,7 @@ class CharPolyTp(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import CharPolyTp
+            sage: from sage.tests.benchmarks.benchmark import CharPolyTp
             sage: B = CharPolyTp()
             sage: isinstance(B.sage(), float)
             True
@@ -786,7 +786,7 @@ class CharPolyTp(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import CharPolyTp
+            sage: from sage.tests.benchmarks.benchmark import CharPolyTp
             sage: B = CharPolyTp()
             sage: isinstance(B.gp(), float)
             True
@@ -803,7 +803,7 @@ class CharPolyTp(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import CharPolyTp
+            sage: from sage.tests.benchmarks.benchmark import CharPolyTp
             sage: B = CharPolyTp()
             sage: isinstance(B.pari(), float)
             True
@@ -820,7 +820,7 @@ class CharPolyTp(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import CharPolyTp
+            sage: from sage.tests.benchmarks.benchmark import CharPolyTp
             sage: B = CharPolyTp()
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -846,7 +846,7 @@ class PolyFactor(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolyFactor
+            sage: from sage.tests.benchmarks.benchmark import PolyFactor
             sage: B = PolyFactor(3, QQ)
             sage: isinstance(B.sage(), float)
             True
@@ -866,7 +866,7 @@ class PolyFactor(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolyFactor
+            sage: from sage.tests.benchmarks.benchmark import PolyFactor
             sage: B = PolyFactor(3, QQ)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -887,7 +887,7 @@ class PolyFactor(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import PolyFactor
+            sage: from sage.tests.benchmarks.benchmark import PolyFactor
             sage: B = PolyFactor(3, QQ)
             sage: isinstance(B.gp(), float)
             True
@@ -916,7 +916,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.sage(), float)
             True
@@ -933,7 +933,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.gp(), float)
             True
@@ -950,7 +950,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.maxima()[1], float)
             True
@@ -967,7 +967,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -984,7 +984,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.python(), float)
             True
@@ -1001,7 +1001,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
@@ -1018,7 +1018,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.gap()[1], float)
             True
@@ -1035,7 +1035,7 @@ class SquareInts(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SquareInts
+            sage: from sage.tests.benchmarks.benchmark import SquareInts
             sage: B = SquareInts()
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
@@ -1059,7 +1059,7 @@ class MatrixSquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixSquare
+            sage: from sage.tests.benchmarks.benchmark import MatrixSquare
             sage: B = MatrixSquare(3, QQ)
             sage: isinstance(B.sage(), float)
             True
@@ -1078,7 +1078,7 @@ class MatrixSquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixSquare
+            sage: from sage.tests.benchmarks.benchmark import MatrixSquare
             sage: B = MatrixSquare(3, QQ)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1097,7 +1097,7 @@ class MatrixSquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixSquare
+            sage: from sage.tests.benchmarks.benchmark import MatrixSquare
             sage: B = MatrixSquare(3, QQ)
             sage: isinstance(B.gp(), float)
             True
@@ -1115,7 +1115,7 @@ class MatrixSquare(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixSquare
+            sage: from sage.tests.benchmarks.benchmark import MatrixSquare
             sage: B = MatrixSquare(3, QQ)
             sage: isinstance(B.gap()[1], float)
             True
@@ -1139,7 +1139,7 @@ class Factorial(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Factorial
+            sage: from sage.tests.benchmarks.benchmark import Factorial
             sage: B = Factorial(10)
             sage: isinstance(B.sage(), float)
             True
@@ -1155,7 +1155,7 @@ class Factorial(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Factorial
+            sage: from sage.tests.benchmarks.benchmark import Factorial
             sage: B = Factorial(10)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1171,7 +1171,7 @@ class Factorial(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Factorial
+            sage: from sage.tests.benchmarks.benchmark import Factorial
             sage: B = Factorial(10)
             sage: isinstance(B.maple()[1], float) # optional - maple
             True
@@ -1188,7 +1188,7 @@ class Factorial(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Factorial
+            sage: from sage.tests.benchmarks.benchmark import Factorial
             sage: B = Factorial(10)
             sage: isinstance(B.gp(), float)
             True
@@ -1209,7 +1209,7 @@ class Fibonacci(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Fibonacci
+            sage: from sage.tests.benchmarks.benchmark import Fibonacci
             sage: B = Fibonacci(10)
             sage: isinstance(B.sage(), float)
             True
@@ -1225,7 +1225,7 @@ class Fibonacci(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Fibonacci
+            sage: from sage.tests.benchmarks.benchmark import Fibonacci
             sage: B = Fibonacci(10)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1241,7 +1241,7 @@ class Fibonacci(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Fibonacci
+            sage: from sage.tests.benchmarks.benchmark import Fibonacci
             sage: B = Fibonacci(10)
             sage: isinstance(B.gap()[1], float)
             True
@@ -1258,7 +1258,7 @@ class Fibonacci(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Fibonacci
+            sage: from sage.tests.benchmarks.benchmark import Fibonacci
             sage: B = Fibonacci(10)
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
@@ -1275,7 +1275,7 @@ class Fibonacci(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import Fibonacci
+            sage: from sage.tests.benchmarks.benchmark import Fibonacci
             sage: B = Fibonacci(10)
             sage: isinstance(B.gp(), float)
             True
@@ -1298,7 +1298,7 @@ class SEA(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SEA
+            sage: from sage.tests.benchmarks.benchmark import SEA
             sage: B = SEA(5)
             sage: isinstance(B.sage()[1], float)
             True
@@ -1319,7 +1319,7 @@ class SEA(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import SEA
+            sage: from sage.tests.benchmarks.benchmark import SEA
             sage: B = SEA(5)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1342,7 +1342,7 @@ class MatrixKernel(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixKernel
+            sage: from sage.tests.benchmarks.benchmark import MatrixKernel
             sage: B = MatrixKernel(3, QQ)
             sage: isinstance(B.sage(), float)
             True
@@ -1361,7 +1361,7 @@ class MatrixKernel(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixKernel
+            sage: from sage.tests.benchmarks.benchmark import MatrixKernel
             sage: B = MatrixKernel(3, QQ)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1380,7 +1380,7 @@ class MatrixKernel(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import MatrixKernel
+            sage: from sage.tests.benchmarks.benchmark import MatrixKernel
             sage: B = MatrixKernel(3, QQ)
             sage: isinstance(B.gp(), float)
             True
@@ -1404,7 +1404,7 @@ class ComplexMultiply(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ComplexMultiply
+            sage: from sage.tests.benchmarks.benchmark import ComplexMultiply
             sage: B = ComplexMultiply(28, 2)
             sage: isinstance(B.sage(), float)
             True
@@ -1422,7 +1422,7 @@ class ComplexMultiply(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ComplexMultiply
+            sage: from sage.tests.benchmarks.benchmark import ComplexMultiply
             sage: B = ComplexMultiply(28, 2)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1446,7 +1446,7 @@ class ComplexMultiply(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ComplexMultiply
+            sage: from sage.tests.benchmarks.benchmark import ComplexMultiply
             sage: B = ComplexMultiply(28, 2)
             sage: isinstance(B.gp(), float)
             True
@@ -1471,7 +1471,7 @@ class ModularSymbols1(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ModularSymbols1
+            sage: from sage.tests.benchmarks.benchmark import ModularSymbols1
             sage: B = ModularSymbols1(11)
             sage: isinstance(B.sage(), float)
             True
@@ -1487,7 +1487,7 @@ class ModularSymbols1(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ModularSymbols1
+            sage: from sage.tests.benchmarks.benchmark import ModularSymbols1
             sage: B = ModularSymbols1(11)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1512,7 +1512,7 @@ class ModularSymbolsDecomp1(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ModularSymbolsDecomp1
+            sage: from sage.tests.benchmarks.benchmark import ModularSymbolsDecomp1
             sage: B = ModularSymbolsDecomp1(11)
             sage: isinstance(B.sage(), float)
             True
@@ -1529,7 +1529,7 @@ class ModularSymbolsDecomp1(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import ModularSymbolsDecomp1
+            sage: from sage.tests.benchmarks.benchmark import ModularSymbolsDecomp1
             sage: B = ModularSymbolsDecomp1(11)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1552,7 +1552,7 @@ class EllipticCurveTraces(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurveTraces
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurveTraces
             sage: B = EllipticCurveTraces(11)
             sage: isinstance(B.sage(), float)
             Traceback (most recent call last):
@@ -1571,7 +1571,7 @@ class EllipticCurveTraces(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurveTraces
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurveTraces
             sage: B = EllipticCurveTraces(11)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1593,7 +1593,7 @@ class EllipticCurvePointMul(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurvePointMul
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurvePointMul
             sage: B = EllipticCurvePointMul(11)
             sage: isinstance(B.sage(), float)
             True
@@ -1611,7 +1611,7 @@ class EllipticCurvePointMul(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurvePointMul
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurvePointMul
             sage: B = EllipticCurvePointMul(11)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1629,7 +1629,7 @@ class EllipticCurvePointMul(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurvePointMul
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurvePointMul
             sage: B = EllipticCurvePointMul(11)
             sage: isinstance(B.gp(), float)
             True
@@ -1647,7 +1647,7 @@ class EllipticCurvePointMul(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurvePointMul
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurvePointMul
             sage: B = EllipticCurvePointMul(11)
             sage: isinstance(B.pari(), float)
             True
@@ -1670,7 +1670,7 @@ class EllipticCurveMW(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurveMW
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurveMW
             sage: B = EllipticCurveMW([1,2,3,4,5])
             sage: isinstance(B.sage()[1], float)
             True
@@ -1687,7 +1687,7 @@ class EllipticCurveMW(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import EllipticCurveMW
+            sage: from sage.tests.benchmarks.benchmark import EllipticCurveMW
             sage: B = EllipticCurveMW([1,2,3,4,5])
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1712,7 +1712,7 @@ class FiniteExtFieldMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldMult
             sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
             sage: isinstance(B.sage(), float)
             True
@@ -1730,7 +1730,7 @@ class FiniteExtFieldMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldMult
             sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
             sage: isinstance(B.pari(), float)
             True
@@ -1748,7 +1748,7 @@ class FiniteExtFieldMult(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldMult
             sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1776,7 +1776,7 @@ class FiniteExtFieldAdd(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldAdd
             sage: B = FiniteExtFieldAdd(GF(9,'x'), 2)
             sage: isinstance(B.sage(), float)
             True
@@ -1794,7 +1794,7 @@ class FiniteExtFieldAdd(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldAdd
             sage: B = FiniteExtFieldAdd(GF(9,'x'), 2)
             sage: isinstance(B.pari(), float)
             True
@@ -1812,7 +1812,7 @@ class FiniteExtFieldAdd(Benchmark):
 
         EXAMPLES::
 
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
+            sage: from sage.tests.benchmarks.benchmark import FiniteExtFieldAdd
             sage: B = FiniteExtFieldAdd(GF(9,'x'), 2)
             sage: isinstance(B.magma(), float) # optional - magma
             True
@@ -1918,7 +1918,7 @@ def mpoly_all(include_maple=False):
 
     EXAMPLES::
 
-        sage: from sage.tests.benchmark import mpoly_all
+        sage: from sage.tests.benchmarks.benchmark import mpoly_all
         sage: mpoly_all() # not tested
         <BLANKLINE>
         ...
