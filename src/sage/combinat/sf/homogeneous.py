@@ -27,10 +27,9 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 ####################################
 from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
+from sage.combinat.sf import multiplicative, classical
 from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
-
-from . import multiplicative, classical
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):

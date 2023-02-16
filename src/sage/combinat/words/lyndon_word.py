@@ -16,12 +16,11 @@ from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.necklace import _sfc
+from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.words import FiniteWords
 from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from .finite_word import FiniteWord_class
-from .words import FiniteWords
 
 
 def LyndonWords(e=None, k=None):
