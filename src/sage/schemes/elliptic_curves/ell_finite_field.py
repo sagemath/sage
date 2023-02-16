@@ -12,7 +12,7 @@ AUTHORS:
 
 - Mariah Lenox (2011-03): Added ``set_order`` method
 
-- Lorenz Panny (2022-11): ``.twists()``
+- Lorenz Panny, John Cremona (2023-02): ``.twists()``
 """
 
 # ****************************************************************************
