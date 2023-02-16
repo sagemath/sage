@@ -166,6 +166,11 @@ from functools import reduce
 
 from sage.arith.misc import binomial, factorial, rising_factorial
 from sage.calculus.functional import derivative
+from sage.functions.error import erf
+from sage.functions.gamma import gamma
+from sage.functions.hyperbolic import cosh, sinh
+from sage.functions.log import exp, log
+from sage.functions.other import sqrt, real_part
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
@@ -178,12 +183,6 @@ from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
-
-from .error import erf
-from .gamma import gamma
-from .hyperbolic import cosh, sinh
-from .log import exp, log
-from .other import sqrt, real_part
 
 
 def rational_param_as_tuple(x):
