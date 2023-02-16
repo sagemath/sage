@@ -1426,7 +1426,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         In characteristic 3, the number of twists is 2 except for
         `j=0=1728`, when there are either 4 or 6 depending on whether the
-        field has odd or even degree over `\FF_3`::
+        field has odd or even degree over `\GF{3}`::
 
             sage: K = GF(3**5)
             sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
@@ -1454,7 +1454,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         In characteristic 2, the number of twists is 2 except for
         `j=0=1728`, when there are either 3 or 7 depending on whether the
-        field has odd or even degree over `\FF_2`::
+        field has odd or even degree over `\GF{2}`::
 
             sage: K = GF(2**7)
             sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
@@ -1553,7 +1553,7 @@ def curves_with_j_0(K):
 
     Examples:
 
-    For `K=\FF_q` where `q\equiv1\mod{6}` there are six curves, the sextic twists of `y^2=x^3+1`::
+    For `K=\GF{q}` where `q\equiv1\mod{6}` there are six curves, the sextic twists of `y^2=x^3+1`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
         sage: sorted(curves_with_j_0(GF(7)), key = lambda E: E.a_invariants())
@@ -1571,7 +1571,7 @@ def curves_with_j_0(K):
         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
         Elliptic Curve defined by y^2 = x^3 + (4*z2+1) over Finite Field in z2 of size 5^2]
 
-    For `K=\FF_q` where `q\equiv5\mod{6}` there are two curves,
+    For `K=\GF{q}` where `q\equiv5\mod{6}` there are two curves,
     quadratic twists of each other by `-3`: `y^2=x^3+1` and
     `y^2=x^3-27`::
 
@@ -1614,7 +1614,7 @@ def curves_with_j_1728(K):
 
     Examples:
 
-    For `K=\FF_q` where `q\equiv1\mod{4} there are four curves, the quartic twists of `y^2=x^3+x`::
+    For `K=\GF{q}` where `q\equiv1\mod{4} there are four curves, the quartic twists of `y^2=x^3+x`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_1728
         sage: sorted(curves_with_j_1728(GF(5)), key = lambda E: E.a_invariants())
@@ -1628,7 +1628,7 @@ def curves_with_j_1728(K):
         Elliptic Curve defined by y^2 = x^3 + (z2+4)*x over Finite Field in z2 of size 7^2,
         Elliptic Curve defined by y^2 = x^3 + (5*z2+4)*x over Finite Field in z2 of size 7^2]
 
-    For `K=\FF_q` where `q\equiv3\mod{4} there are two curves,
+    For `K=\GF{q}` where `q\equiv3\mod{4} there are two curves,
     quadratic twists of each other by `-1`: `y^2=x^3+x` and
     `y^2=x^3-x`::
 
@@ -1664,12 +1664,12 @@ def curves_with_j_0_char2(K):
         .. NOTE::
 
             The number of twists is either 3 or 7 depending on whether
-            the field has odd or even degree over `\FF_2`.  See
+            the field has odd or even degree over `\GF{2}`.  See
             [Connell1999]_, pages 429-431.
 
     Examples:
 
-    In odd degree, there are three isomorphism classes all with representatives defined over `\FF_2`::
+    In odd degree, there are three isomorphism classes all with representatives defined over `\GF{2}`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0_char2
         sage: K = GF(2**7)
@@ -1751,7 +1751,7 @@ def curves_with_j_0_char3(K):
         .. NOTE::
 
             The number of twists is either 4 or 6 depending on whether
-            the field has odd or even degree over `\FF_3`.  See
+            the field has odd or even degree over `\GF{3}`.  See
             [Connell1999]_, pages 429-431.
 
     Examples:
