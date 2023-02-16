@@ -693,9 +693,9 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         sage: z = -wp - 1
         sage: f = y * (y + z) * x * (x - 1) * (x - y) * (x + z * y - 1) * (x + z * y + wp)
         sage: from sage.schemes.curves import zariski_vankampen as zvk # optional - sirocco
-        sage: Kw1 = zvk.fieldI(Kw)
+        sage: Kw1 = zvk.fieldI(Kw) # optional - sirocco
         sage: g = f.subs({x: x + 2 * y})
-        sage: g = g.change_ring(Kw1)
+        sage: g = g.change_ring(Kw1) # optional - sirocco
         sage: p1 = QQbar(sqrt(- 1 / 3))
         sage: p1a = CC(p1)
         sage: p1b=QQ(p1a.real())+I*QQ(p1a.imag())
