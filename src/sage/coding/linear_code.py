@@ -211,6 +211,9 @@ from io import StringIO
 from sage.arith.misc import binomial, GCD
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
+from sage.coding.decoder import Decoder
+from sage.coding.encoder import Encoder
+from sage.coding.linear_code_no_metric import AbstractLinearCodeNoMetric
 from sage.combinat.subset import Subsets
 from sage.cpython.string import bytes_to_str
 from sage.features.gap import GapPackage
@@ -229,10 +232,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-
-from .encoder import Encoder
-from .decoder import Decoder
-from .linear_code_no_metric import AbstractLinearCodeNoMetric
 
 # *****************************************************************************
 # coding theory functions
