@@ -3635,6 +3635,11 @@ REFERENCES:
 .. [KMOY2007] \M. Kashiwara, K. C. Misra, M. Okado, D. Yamada.
               *Perfect crystals for* `U_q(D_4^{(3)})`, J. Algebra. **317** (2007).
 
+.. [Klaise2012] Janis Klaise.
+                *Orders in imaginary quadratic fields of small class number*
+                University of Warwick Undergraduate Masters thesis, unpublished (2012).
+                https://warwick.ac.uk/fac/cross_fac/complexity/people/students/dtc/students2013/klaise/janis_klaise_ug_report.pdf
+
 .. [KMR2012] \A. Kleshchev, A. Mathas, and A. Ram, *Universal Specht
              modules for cyclotomic Hecke algebras*,
              Proc. London Math. Soc. (2012) 105 (6): 1245-1289.
@@ -6084,6 +6089,11 @@ REFERENCES:
 
 .. [Watkins] Mark Watkins, *Hypergeometric motives over Q and their
              L-functions*, http://magma.maths.usyd.edu.au/~watkins/papers/known.pdf
+
+.. [Watkins2004] Mark Watkins.
+                 *Class numbers of imaginary quadratic fields*.
+                 Math. Comp. 73 (2004), 907-938.
+                 https://www.ams.org/journals/mcom/2004-73-246/S0025-5718-03-01517-5/
 
 .. [Wat2003] Joel Watson. *Strategy: an introduction to game
              theory*. WW Norton, 2002.
