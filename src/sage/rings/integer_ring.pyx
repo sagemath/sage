@@ -59,8 +59,7 @@ import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.coerce cimport is_numpy_type
-from sage.structure.element cimport parent
-from sage.structure.element import NumberFieldElement
+from sage.structure.element cimport parent, NumberFieldElement
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool
