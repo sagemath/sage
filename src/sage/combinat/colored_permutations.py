@@ -435,8 +435,8 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         sage: s2*t*s2
         [[0, 1, 0], [1, 2, 3]]
 
-    We can also create a colored permutation by passing
-    either a list of tuples consisting of ``(color, element)``::
+    We can also create a colored permutation by passing either
+    an iterable consisting of tuples consisting of ``(color, element)``::
 
         sage: x = C([(2,1), (3,3), (3,2)]); x
         [[2, 3, 3], [1, 3, 2]]
@@ -445,12 +445,22 @@ class ColoredPermutations(Parent, UniqueRepresentation):
 
         sage: C([[3,3,1], [1,3,2]])
         [[3, 3, 1], [1, 3, 2]]
+        sage: C(([3,3,1], [1,3,2]))
+        [[3, 3, 1], [1, 3, 2]]
 
     There is also the natural lift from permutations::
 
         sage: P = Permutations(3)
         sage: C(P.an_element())
         [[0, 0, 0], [3, 1, 2]]
+
+
+    TESTS::
+
+        sage: T = ColoredPermutations(3,4); type(T[0])
+        <class 'sage.combinat.colored_permutations.ColoredPermutations_with_category.element_class'>
+        sage: C(T[0])
+        [[0, 0, 0], [1, 2, 3]]
 
     REFERENCES:
 
