@@ -180,11 +180,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
+import itertools
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.combinat.combination', 'Combinations')
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -1652,7 +1653,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                     triangulation.update([ frozenset([head]).union(tail) ])
 
             nonminimal = set()
-            for rel in Combinations(triangulation, 2):
+            for rel in itertools.combinations(triangulation, 2):
                 if rel[0].issubset(rel[1]):
                     nonminimal.update([rel[1]])
                 if rel[1].issubset(rel[0]):
