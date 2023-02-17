@@ -18,14 +18,13 @@ from sage.misc.functional import squarefree_part
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
+from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 lazy_import("sage.functions.all", "sgn")
 lazy_import("sage.symbolic.constants", "pi")
-
-from .special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):

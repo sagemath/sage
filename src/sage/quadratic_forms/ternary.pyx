@@ -12,7 +12,7 @@ Helper code for ternary quadratic forms
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.arith.misc import GCD as gcd, inverse_mod, XGCD as xgcd
+from sage.arith.misc import gcd, inverse_mod, xgcd
 from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
 from sage.misc.prandom import randint
 from sage.modules.free_module_element import vector

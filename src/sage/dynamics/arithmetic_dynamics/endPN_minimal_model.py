@@ -36,10 +36,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
-
-lazy_import("sage.symbolic.constants", "e")
-lazy_import("sage.functions.hyperbolic", "cosh")
-
+from sage.symbolic.constants import e
+from sage.arith.misc import gcd
+from copy import copy
 
 def bCheck(c, v, p, b):
     r"""

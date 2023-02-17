@@ -58,12 +58,25 @@ from itertools import count, product
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import binomial, GCD as gcd, is_prime, moebius, next_prime, primes
+from sage.arith.misc import binomial, gcd, is_prime, moebius, next_prime, primes
+from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.function_fields import FunctionFields
 from sage.categories.homset import End
 from sage.categories.number_fields import NumberFields
+from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import (
+    automorphism_group_QQ_CRT,
+    automorphism_group_QQ_fixedpoints,
+    conjugating_set_helper,
+    conjugating_set_initializer,
+    is_conjugate_helper)
+from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_FF
+from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (
+    _fast_possible_periods,
+    _all_periodic_points)
+from sage.functions.other import ceil
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.cachefunc import cached_method
@@ -108,16 +121,6 @@ from sage.structure.element import get_coercion_model
 lazy_import('sage.calculus.functions', 'jacobian')
 lazy_import("sage.functions.other", "ceil")
 lazy_import("sage.symbolic.constants", "e")
-
-from .endPN_automorphism_group import (
-    automorphism_group_QQ_CRT,
-    automorphism_group_QQ_fixedpoints,
-    conjugating_set_helper,
-    conjugating_set_initializer,
-    is_conjugate_helper)
-from .endPN_automorphism_group import automorphism_group_FF
-from .generic_ds import DynamicalSystem
-from .projective_ds_helper import _fast_possible_periods, _all_periodic_points
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,

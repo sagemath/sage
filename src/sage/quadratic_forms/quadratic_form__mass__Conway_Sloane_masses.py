@@ -8,12 +8,11 @@ from sage.arith.misc import (fundamental_discriminant,
                              prime_divisors)
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
+from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 lazy_import("sage.symbolic.constants", "pi")
-
-from .special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 
 
 def parity(self, allow_rescaling_flag=True):

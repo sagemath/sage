@@ -12,15 +12,14 @@ Stream Cryptosystems
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.arith.misc import GCD as gcd, power_mod
+from sage.arith.misc import gcd, power_mod
+from sage.crypto.cryptosystem import SymmetricKeyCryptosystem
+from sage.crypto.stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
+from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 from sage.rings.polynomial.polynomial_element import is_Polynomial
-
-from .cryptosystem import SymmetricKeyCryptosystem
-from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
-from .util import random_blum_prime
 
 
 IntegerModRing = IntegerModFactory("IntegerModRing")

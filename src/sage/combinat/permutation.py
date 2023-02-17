@@ -247,6 +247,15 @@ from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.combinat.backtrack import GenericBacktracker
+from sage.combinat.combinat import CombinatorialElement, catalan_number
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.composition import Composition
+from sage.combinat.permutation_cython import (left_action_product, right_action_product,
+                                              left_action_same_n, right_action_same_n,
+                                              map_to_list, next_perm)
+from sage.combinat.rsk import RSK, RSK_inverse
+from sage.combinat.tools import transitive_ideal
 from sage.graphs.digraph import DiGraph
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -261,16 +270,6 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from .backtrack import GenericBacktracker
-from .combinat import CombinatorialElement, catalan_number
-from .combinatorial_map import combinatorial_map
-from .composition import Composition
-from .permutation_cython import (left_action_product, right_action_product,
-                                 left_action_same_n, right_action_same_n,
-                                 map_to_list, next_perm)
-from .rsk import RSK, RSK_inverse
-from .tools import transitive_ideal
 
 
 class Permutation(CombinatorialElement):

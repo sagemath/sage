@@ -203,7 +203,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.functions import lcm
-from sage.arith.misc import divisors, GCD as gcd
+from sage.arith.misc import divisors, gcd
 from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.groups.group import AbelianGroup as AbelianGroupBase
