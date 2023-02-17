@@ -103,6 +103,7 @@ class SageKernel(IPythonKernel):
                 return '{}/{}'.format(url, path)
         else:
             from sage.env import SAGE_DOC_LOCAL_PORT as port
+
             def doc_url(path):
                 return 'http://localhost:{}/{}'.format(port, path)
 
