@@ -18,8 +18,6 @@ name: CI Linux
 #on: [push, pull_request]
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -164,41 +162,3 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
-
-  local-ubuntu:
-
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        tox_system_factor: [conda-forge-ubuntu]
-        tox_packages_factor: [minimal, standard, environment, environment-optional]
-    env:
-      TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install test prerequisites
-        run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
-      - name: Build and test with tox
-        # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
-        # For doctesting, we use a lower parallelization to avoid timeouts.
-        run: |
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
-      - name: Prepare logs artifact
-        run: |
-          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
-        if: always()
-      - uses: actions/upload-artifact@v3
-        with:
-          path: artifacts
-          name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always()
-      - name: Print out logs for immediate inspection
-        # and markup the output with GitHub Actions logging commands
-        run: |
-          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
-        if: always()

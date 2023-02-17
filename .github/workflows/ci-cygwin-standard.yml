@@ -1,8 +1,6 @@
 name: CI cygwin-standard
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -61,13 +59,11 @@ jobs:
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
   cygwin-stage-ii-e:
-    env:
-      STAGE: ii-e
-      PREVIOUS_STAGES: i-*
-      TARGETS: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs sympow
-      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
-
+    uses: ./.github/workflows/cygwin.yml
+    with:
+      stage: ii-e
+      previous_stages: i-*
+      targets: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs sympow
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
 ############################################## stage-iii ##########################################
