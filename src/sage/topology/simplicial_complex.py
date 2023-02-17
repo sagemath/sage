@@ -173,7 +173,6 @@ from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
 from sage.matrix.constructor import matrix
-from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from functools import total_ordering
 from itertools import combinations, chain
@@ -2217,6 +2216,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 current = self._n_cells_sorted(n-1, subcomplex=subcomplex)
             differentials[n-1] = matrix(base_ring, 0, len(current))
         # finally, return the chain complex
+        from sage.homology.chain_complex import ChainComplex
+
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
