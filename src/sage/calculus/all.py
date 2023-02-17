@@ -1,4 +1,4 @@
-from .__all_sagemath_standard_no_symbolics.py import *
+from .all__sagemath_standard_no_symbolics import *
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
