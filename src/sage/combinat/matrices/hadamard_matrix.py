@@ -937,7 +937,6 @@ def _get_baumert_hall_units(n, existence=False):
     """
     assert n%4 == 0 and n > 0
 
-
     delta_codes_len = n//4
     if not four_symbol_delta_code_smallcases(delta_codes_len, existence=True):
         if existence:
@@ -1036,7 +1035,6 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
     for i in range(len(units)):
         for j in range(i+1, len(units)):
             assert units[i]*units[j].T + units[j]*units[i].T == 0*I(t4)
-
 
     H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
     if check:

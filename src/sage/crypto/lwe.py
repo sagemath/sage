@@ -345,7 +345,6 @@ class LWE(SageObject):
         else:
             return "LWE(%d, %d, %s, %s, %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
 
-
     def __call__(self):
         """
         EXAMPLES::
@@ -580,7 +579,6 @@ class RingLWE(SageObject):
             return "RingLWE(%d, %d, %s, %s, '%s', %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
         else:
             return "RingLWE(%d, %d, %s, %s, %s, %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
-
 
     def __call__(self):
         """

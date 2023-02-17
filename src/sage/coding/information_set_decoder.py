@@ -341,8 +341,6 @@ class InformationSetAlgorithm(SageObject):
         return "\\textnormal{{ISD Algorithm ({}) for }}{} \\textnormal{{decoding {} errors}}".format(self._algorithm_name, self.code()._latex_(), _format_decoding_interval(self.decoding_interval()))
 
 
-
-
 class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
     r"""
     The Lee-Brickell algorithm for information-set decoding.
@@ -623,8 +621,6 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 search_size = p
         self._parameters = { 'search_size': search_size }
         self._time_estimate = estimates[search_size]
-
-
 
 
 class LinearCodeInformationSetDecoder(Decoder):

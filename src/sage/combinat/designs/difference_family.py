@@ -923,7 +923,6 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
         elif existence:
             return True
 
-
     if check and not is_difference_family(K, D, v, k, l):
         raise RuntimeError("radical_difference_family produced a wrong "
                            "difference family with parameters v={}, "
@@ -1807,7 +1806,6 @@ def supplementary_difference_set(q, existence=False, check=True):
     psi1 = ((1 + P.monomial((q-1)//2)) * theta1).mod(P.monomial(q-1) - 1)
     psi2 = (1 + (1 + P.monomial((q-1)//2)) * theta2).mod(P.monomial(q-1) - 1)
 
-
     K1 = list(map(Integer, psi1.exponents()))
     K2 = list(map(Integer, psi2.exponents()))
     K3 = list(map(Integer, psi3.exponents()))
@@ -1991,7 +1989,6 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         True
     """
 
-
     indices = {
         67:  [[0,3,5,6,9,10,13,14,17,18,20],
               [0,2,4,9,11,12,13,16,19,21],
@@ -2060,7 +2057,6 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         for idx in index_set:
             S += cosets[idx]
         return S
-
 
     if existence:
         return n in indices

@@ -2000,7 +2000,6 @@ class IncidenceStructure():
         else:
             return True
 
-
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
