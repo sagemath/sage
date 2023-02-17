@@ -94,14 +94,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
-from sage.misc.misc_c import prod
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
-from sage.combinat.sf.sfa import _variables_recursive, _raise_variables
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
 
 
 class Stream():
@@ -1965,6 +1963,8 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
         """
+        from sage.combinat.sf.sfa import _variables_recursive
+
         if isinstance(f, Stream_exact):
             self._degree_f = f._degree
         else:
@@ -2101,6 +2101,8 @@ class Stream_plethysm(Stream_binary):
         if n < ret_approx_order:
             return ret
 
+        from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
+
         la_exp = la.to_exp()
         wgt = [i for i, m in enumerate(la_exp, 1) if m]
         exp = [m for m in la_exp if m]
@@ -2145,6 +2147,8 @@ class Stream_plethysm(Stream_binary):
             sage: A == B  # long time
             True
         """
+        from sage.combinat.sf.sfa import _raise_variables
+
         while len(self._powers) < m:
             # TODO: possibly we always want a dense cache here?
             self._powers.append(Stream_cauchy_mul(self._powers[-1], self._powers[0], self._is_sparse))
