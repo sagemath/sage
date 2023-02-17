@@ -81,7 +81,7 @@ class Polyhedron:
     pass
 
 
-class HyperbolicSpace:
+cdef class HyperbolicSpace(Parent):
     r"""
     Abstract base class for :class:`~sage.geometry.hyperbolic_space.hyperbolic_model.HyperbolicModel`
 
