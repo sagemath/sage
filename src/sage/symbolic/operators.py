@@ -2,6 +2,8 @@
 
 import operator
 
+from sage.structure.element import Expression
+
 
 def add_vararg(first, *rest):
     r"""

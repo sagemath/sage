@@ -25,6 +25,7 @@ REFERENCES: [BM2012]_, [Mol2015]_
 from copy import copy
 
 from sage.arith.misc import GCD as gcd
+from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import

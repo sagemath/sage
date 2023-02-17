@@ -79,6 +79,7 @@ from sage.interfaces.maxima import Maxima
 from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
+from sage.structure.element import Expression
 
 from .functional import diff
 
