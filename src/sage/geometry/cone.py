@@ -621,10 +621,21 @@ def _ambient_space_point(body, data):
     # If we don't have a lattice element, try successively
     # less-desirable ambient spaces until (as a last resort) we
     # attempt a numerical representation.
-    from sage.rings.qqbar import AA
-    from sage.rings.real_mpfr import RR
+    rings = [QQ]
+    try:
+        from sage.rings.qqbar import AA
+    except ImportError:
+        pass
+    else:
+        rings.append(AA)
+    try:
+        from sage.rings.real_mpfr import RR
+    except ImportError:
+        pass
+    else:
+        rings.append(RR)
 
-    for ring in [QQ, AA, RR]:
+    for ring in rings:
         p = try_base_extend(ring)
         if p is not None:
             return p

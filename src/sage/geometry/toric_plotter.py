@@ -49,7 +49,7 @@ You may change default plotting options as follows::
 from copy import copy
 from math import pi
 
-from sage.functions.all import arccos, arctan2, ceil, floor
+from sage.arith.misc import ceil, floor
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
@@ -1111,6 +1111,8 @@ def sector(ray1, ray2, **extra_options):
         sage: sector((3,2,1), (1,2,3))
         Graphics3d Object
     """
+    from sage.functions.all import arccos, arctan2
+
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)
     r = ray1.norm()
