@@ -103,6 +103,8 @@ include sage/rings/polynomial/multi_polynomial_element.p*
 include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
 
+graft sage/rings/semirings
+
 include sage/sets/
 
 include sage/sets/cartesian_product.py
