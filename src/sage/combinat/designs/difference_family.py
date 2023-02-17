@@ -2792,14 +2792,14 @@ def complementary_difference_setI(n, check=True):
 
 def complementary_difference_setII(n, check=True):
     r"""
-    Construct complementary difference sets in a group of order `n = p^t`, where `p \cong 5 \mod 8`.
+    Construct complementary difference sets in a group of order `n = p^t`, where `p \cong 5 \mod 8` and `t \cong 1, 2, 3 \mod 4`.
 
     Consider a finite field `G` of order `n` and let `\rho` be the generator of
     the corresponding multiplicative group. Then, there are two different constructions,
     depending on whether `t` is even or odd.
 
-    If `t` is even, let `C_0` be the set of non-zero octic residues in `G`, and let
-    `C_i = \rho^i C_0` for `1 \le i \le  7`.
+    If `t \cong 2 \mod 4`, let `C_0` be the set of non-zero octic residues in `G`,
+    and let `C_i = \rho^i C_0` for `1 \le i \le  7`.
     Then, `A = C_0 \cup C_1 \cup C_2 \cup C_3` and  `B = C_0 \cup C_1 \cup C_6 \cup C_7`.
 
     If `t` is odd, let `C_0` be the set of non-zero fourth powers in `G`, and let
@@ -2851,7 +2851,7 @@ def complementary_difference_setII(n, check=True):
         :func:`complementary_difference_sets`
     """
     p, t = is_prime_power(n, get_data=True)
-    if not (p % 8 == 5 and t > 0):
+    if not (p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]):
         raise ValueError(f'The parameter {n} is not valid')
 
     from sage.rings.finite_rings.finite_field_constructor import GF
@@ -3030,7 +3030,7 @@ def complementary_difference_sets(n, existence=False, check=True):
         if existence:
             return True
         G, A, B = complementary_difference_setI(n, check=False)
-    elif p % 8 == 5 and t > 0:
+    elif p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]:
         if existence:
             return True
         G, A, B = complementary_difference_setII(n, check=False)
