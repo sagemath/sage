@@ -1148,10 +1148,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: pyramid = PointConfiguration([[1,0,0],[0,1,1],[0,1,-1],[0,-1,-1],[0,-1,1]])
-            sage: G = pyramid.restricted_automorphism_group()
-            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])
+            sage: G = pyramid.restricted_automorphism_group()                                       # optional - sage.graphs, sage.groups
+            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])                          # optional - sage.graphs, sage.groups
             True
-            sage: DihedralGroup(4).is_isomorphic(G)
+            sage: DihedralGroup(4).is_isomorphic(G)                                                 # optional - sage.graphs, sage.groups
             True
 
         The square with an off-center point in the middle. Note that
@@ -1159,9 +1159,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `D_4` of the convex hull::
 
             sage: square = PointConfiguration([(3/4,3/4),(1,1),(1,-1),(-1,-1),(-1,1)])
-            sage: square.restricted_automorphism_group()
+            sage: square.restricted_automorphism_group()                                            # optional - sage.graphs, sage.groups
             Permutation Group with generators [(3,5)]
-            sage: DihedralGroup(1).is_isomorphic(_)
+            sage: DihedralGroup(1).is_isomorphic(_)                                                 # optional - sage.graphs, sage.groups
             True
         """
         v_list = [ vector(p.projective()) for p in self ]
