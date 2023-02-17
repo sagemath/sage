@@ -2443,7 +2443,7 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
             return False
         raise ValueError('n is not in the form 4*(1+q+q^2)')
 
-    is_valid = (is_prime(1 + q + q**2) and q % 8 in [3, 5, 7]) or is_prime_power(3 + 2*q + 2*q**2)
+    is_valid = (is_prime(m) and m % 8 in [3, 5, 7]) or is_prime_power(3 + 2*q + 2*q**2)
     if existence:
         return is_valid
 
