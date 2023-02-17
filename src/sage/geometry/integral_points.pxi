@@ -19,7 +19,7 @@ import itertools
 from sage.matrix.constructor import matrix, column_matrix, vector, diagonal_matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.arith.misc import GCD as gcd
+from sage.arith.misc import gcd
 from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
