@@ -435,7 +435,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         sage: s2*t*s2
         [[0, 1, 0], [1, 2, 3]]
 
-    We can also create a colored permutation by passing either
+    We can also create a colored permutation by passing
     an iterable consisting of tuples consisting of ``(color, element)``::
 
         sage: x = C([(2,1), (3,3), (3,2)]); x
@@ -455,12 +455,10 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         [[0, 0, 0], [3, 1, 2]]
 
 
-    TESTS::
+    A colored permutation::
 
-        sage: T = ColoredPermutations(3,4); type(T[0])
-        <class 'sage.combinat.colored_permutations.ColoredPermutations_with_category.element_class'>
-        sage: C(T[0])
-        [[0, 0, 0], [1, 2, 3]]
+        sage: C(C.an_element()) == C.an_element()
+        True
 
     REFERENCES:
 
@@ -1006,13 +1004,6 @@ class SignedPermutation(ColoredPermutation,
 
             sage: SignedPermutation(range(1,4))
             [1, 2, 3]
-
-        TESTS::
-
-            sage: T = SignedPermutation(range(1,4)); type(T)
-            <class 'sage.combinat.colored_permutations.SignedPermutations_with_category.element_class'>
-            sage: SignedPermutation(T)
-            [1, 2, 3]
         """
         return SignedPermutations(len(list(pi)))(pi)
 
@@ -1384,6 +1375,9 @@ class SignedPermutations(ColoredPermutations):
             sage: S([]) == list(S)[0]
             True
 
+            sage: T = SignedPermutation(range(1,4))
+            sage: SignedPermutations(3)(T)
+            [1, 2, 3]
         """
         if isinstance(x, self.element_class) and x.parent() is self:
             return self
