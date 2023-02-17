@@ -14,12 +14,10 @@ This module implements general operation tables, which are very matrix-like.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from matplotlib.cm import gist_rainbow, Greys
-from sage.plot.matrix_plot import matrix_plot
-from sage.matrix.constructor import Matrix
-from sage.plot.text import text
 from copy import copy
+
+from sage.structure.sage_object import SageObject
+from sage.matrix.constructor import Matrix
 
 
 class OperationTable(SageObject):
@@ -985,6 +983,9 @@ class OperationTable(SageObject):
             OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)
             sphinx_plot(OTa.color_table(), figsize=(3.0,3.0))
         """
+        from matplotlib.cm import gist_rainbow, Greys
+        from sage.plot.matrix_plot import matrix_plot
+        from sage.plot.text import text
 
         # Base matrix plot object, without text
         plot = matrix_plot(Matrix(self._table), cmap=cmap,
