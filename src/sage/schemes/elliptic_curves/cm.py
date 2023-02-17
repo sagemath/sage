@@ -4,11 +4,13 @@ Complex multiplication for elliptic curves
 This module implements the functions
 
 - ``hilbert_class_polynomial``
+- ``is_HCP``
 - ``cm_j_invariants``
 - ``cm_orders``
 - ``discriminants_with_bounded_class_number``
 - ``cm_j_invariants_and_orders``
 - ``largest_fundamental_disc_with_class_number``
+- ``is_cm_j_invariant``
 
 AUTHORS:
 
@@ -38,9 +40,10 @@ from sage.rings.all import (Integer,
                             QQ,
                             ZZ,
                             IntegerRing,
-                            is_fundamental_discriminant,
-                            PolynomialRing)
+                            GF,
+                            RR)
 
+from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.misc.cachefunc import cached_function
 
 @cached_function
@@ -170,6 +173,156 @@ def hilbert_class_polynomial(D, algorithm=None):
     coeffs = [cof.real().round() for cof in pol.coefficients(sparse=False)]
     return IntegerRing()['x'](coeffs)
 
+
+def is_HCP(f, check_monic_irreducible=True):
+    r"""
+    Return ``True``, `D` if ``f`` is the Hilbert Class Polynomial `H_D`, else ``False``, 0.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in `\ZZ[X]`.
+    - ``check_monic_irreducible`` (boolean, default ``True``) -- if
+      ``True``, check that ``f`` is a monic, irreducible, integer
+      polynomial.
+
+    OUTPUT:
+
+    (integer) -- `D` if ``f`` is the Hilbert Class Polynomial (HCP) `H_D`, esle 0.
+
+    ALGORITHM:
+
+    Cremona and Sutherland: Algorithm 2 of [CreSuth2023]_.
+
+    EXAMPLES::
+
+    Even for large degrees this is fast.  We test the largest
+    discriminant of class number 100, for which the HCP has coefficients
+    with thousands of digits::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: D = -1856563
+        sage: D.class_number()
+        100
+        sage: H = hilbert_class_polynomial(D)
+        sage: H.degree()
+        100
+        sage: max(c for c in H).ndigits()
+        2774
+        sage: is_HCP(H)
+        (True, -1856563)
+
+    Testing polynomials which are not HCPs is faster::
+
+        sage: is_HCP(H+1)
+        (False, 0)
+
+
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: all(is_HCP(hilbert_class_polynomial(D))==(True,D) for D in srange(-4,-100,-1) if D.is_discriminant())
+        True
+        sage: all(is_HCP(hilbert_class_polynomial(D)+1)==(False,0) for D in srange(-4,-100,-1) if D.is_discriminant())
+        True
+
+    """
+    zero = ZZ(0)
+    # optional check that input is monic and irreducible
+    if check_monic_irreducible:
+        try:
+            if not (all(c in ZZ for c in f) and f.is_monic()):
+                return (False, zero)
+            f = f.change_ring(ZZ)
+        except AttributeError:
+            return (False, zero)
+
+    h = f.degree()
+    h2list = [d for d in h.divisors() if (d-h)%2==0 and d.prime_to_m_part(2)==1]
+    pmin = 33 * (h**2 * (RR(h+2).log().log()+2)**2).ceil()
+    # Guarantees 4*p > |D| for fundamental D under GRH
+    p = pmin-1
+    n = 0
+    from sage.arith.all import next_prime
+    while True:
+        p = next_prime(p)
+        n += 1
+        fp = f.change_ring(GF(p))
+        # Compute X^p-X mod fp manually, avoiding quotient ring which is slower
+        r = zpow = z = fp.parent().gen()
+        m = p>>1
+        while m:
+            zpow = (zpow**2) % fp
+            if m & 1:
+                r = (zpow * r) % fp
+            m >>= 1
+        # now r = X^p mod fp
+        d = (r-z).gcd(fp).degree()  # number of roots mod p
+        if d==0:
+            continue
+        if not fp.is_squarefree():
+            continue
+        if d<h and d not in h2list:
+            return (False, zero)
+        jp = fp.any_root(degree=-1, assume_squarefree=True)
+        E = EllipticCurve(j=jp)
+        if E.is_supersingular():
+            continue
+        D = E.endomorphism_discriminant_from_class_number(h)
+        if not D:
+            return (False, zero)
+        return (True, D) if f == hilbert_class_polynomial(D) else (False, zero)
+
+def OrderClassNumber(D0,h0,f):
+    r"""
+    Return the class number h(f**2 * D0), given h(D0)=h0.
+
+    INPUT:
+
+    - ``D0`` (integer) -- a negative fundamental discriminant
+    - ``h0`` (integer) -- the class number of the (maximal) imaginary quadratic order of discriminant ``D0``
+    - ``f`` (integer) -- a positive integer
+
+    OUTPUT:
+
+    (integer) the class number of the imaginary quadratic order of discriminant ``D0*f**2``
+
+    ALGORITHM:
+
+    We use the formula for the class number of the order `\mathcal{O}_{D}` in terms of the class number of the
+     maximal order  `\mathcal{O}_{D_0}`; see [Cox1989]_ Theorem 7.24:
+
+    .. MATH::
+
+    h(D) = \frac{h(D_0)f}{[\mathcal{O}_{D_0}^\times:\mathcal{O}_{D}^\times]}\prod_{p\,|\,f}\left(1-\left(\frac{D_0}{p}\right)\frac{1}{p}\right)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.cm import OrderClassNumber
+        sage: D0 = -4
+        sage: h = D0.class_number()
+        sage: [OrderClassNumber(D0,h,f) for f in srange(1,20)]
+        [1, 1, 2, 2, 2, 4, 4, 4, 6, 4, 6, 8, 6, 8, 8, 8, 8, 12, 10]
+        sage: all([OrderClassNumber(D0,h,f) == (D0*f**2).class_number() for f in srange(1,20)])
+        True
+
+    """
+    if not D0.is_fundamental_discriminant():
+        raise ValueError("{} is not a fundamental discriminant".format(D0))
+    if not D0.is_fundamental_discriminant() or f <= 0:
+        raise ValueError("{} is not a positive integer".format(f))
+    if f == 1:
+        return h0
+    ps = f.prime_divisors()
+    from sage.misc.misc_c import prod
+    from sage.arith.all import kronecker_symbol
+    n = (f // prod(ps)) * prod(p-kronecker_symbol(D0,p) for p in ps)
+    if D0 == -3:
+        #assert h0 == 1 and n%3==0
+        return n//3
+    if D0 == -4:
+        #assert h0 == 1 and n%2==0
+        return n//2
+    return n*h0
 
 @cached_function
 def cm_j_invariants(K, proof=None):
@@ -506,7 +659,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     for D in range(-B, -2):
         D = Integer(D)
-        if is_fundamental_discriminant(D):
+        if D.is_fundamental_discriminant():
             h_D = D.class_number(proof)
             # For each fundamental discriminant D, loop through the f's such
             # that h(D*f^2) could possibly be <= hmax.  As explained to me by Cremona,
@@ -545,14 +698,8 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
                 if D==-4:
                     chmax*=2
             while lb(f)*h_D <= chmax:
-                if f == 1:
-                    h = h_D
-                else:
-                    h = (D*f*f).class_number(proof)
-                # If the class number of this order is within the range, then
-                # use it.  (NOTE: In some cases there is a simple relation between
-                # the class number for D and D*f^2, and this could be used to
-                # optimize this inner loop a little.)
+                h = OrderClassNumber(D,h_D,f)
+                # If the class number of this order is within the range, then use it.
                 if h <= hmax:
                     z = (D, f)
                     if h in T:
@@ -576,13 +723,16 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
 
 @cached_function
-def is_cm_j_invariant(j, method='new'):
-    """
-    Return whether or not this is a CM `j`-invariant.
+def is_cm_j_invariant(j, method='CremonaSutherland'):
+    r"""Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
 
     INPUT:
 
     - ``j`` -- an element of a number field `K`
+
+    - ``method`` (string, default 'CremonaSutherland') -- the method
+      used, either 'CremonaSutherland' (the default, very much faster
+      for all but very small degrees), 'exhaustive' or 'reduction'
 
     OUTPUT:
 
@@ -591,15 +741,24 @@ def is_cm_j_invariant(j, method='new'):
     imaginary quadratic order of discriminant `D=df^2` where `d` is
     the associated fundamental discriminant and `f` the index.
 
-    .. NOTE::
+    ALGORITHM:
 
-        The current implementation makes use of the classification of
-        all orders of class number up to 100, and hence will raise an
-        error if `j` is an algebraic integer of degree greater than
-        this.  It would be possible to implement a more general
-        version, using the fact that `d` must be supported on the
-        primes dividing the discriminant of the minimal polynomial of
-        `j`.
+    The default algorithm used is to test whether the minimal
+    polynomial of ``j`` is a Hilbert CLass Polynomail, using
+    :func:`is_HCP` which implements Algorithm 2 of [CreSuth2023]_ by
+    Cremona and Sutherland.
+
+    Two older methods are available, both of which are much slower
+    except for very small degrees.
+
+    Method 'exhaustive' makes use of the complete and unconditionsl classification of
+    all orders of class number up to 100, and hence will raise an
+    error if `j` is an algebraic integer of degree greater than
+    this.
+
+    Method 'reduction' constructs an elliptic curve over the number
+    field `\QQ(j)` and computes its traces of Frobenius at several
+    primes of degree 1.
 
     EXAMPLES::
 
@@ -616,11 +775,23 @@ def is_cm_j_invariant(j, method='new'):
         sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)
         (True, (-3, 6))
 
+    An example of large degree.  This is only possible using the default algorithm::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
+        sage: D = -1856563
+        sage: H = hilbert_class_polynomial(D)
+        sage: H.degree()
+        100
+        sage: K.<j> = NumberField(H)
+        sage: is_cm_j_invariant(j)
+        (True, (-1856563, 1))
+
     TESTS::
 
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
         sage: all(is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ))
         True
+
     """
     # First we check that j is an algebraic number:
     from sage.rings.all import NumberFieldElement, NumberField
@@ -641,32 +812,48 @@ def is_cm_j_invariant(j, method='new'):
     if j in QQ:
         return False, None
 
-    # Now j has degree at least 2.  If it is not integral so is not CM:
+    # Next we find its minimal polynomial of j:
 
-    if not j.is_integral():
+    if j.parent().absolute_degree()==2:
+        jpol = j.absolute_minpoly() # no algorithm parameter
+    else:
+        jpol = j.absolute_minpoly(algorithm='pari')
+
+    # If it does not have integer coefficients then j is not integral, hence not CM:
+
+    if not all(c in ZZ for c in jpol):
         return False, None
 
-    # Next we find its minimal polynomial and degree h, and if h is
-    # less than the degree of j.parent() we recreate j as an element
-    # of Q(j):
+    # Otherwise test whether it is a Hilbert Class Polynomial
+    # (using the fact that we know that it is monic and irreducible):
 
-    jpol = PolynomialRing(QQ,'x')([-j,1]) if j in QQ else j.absolute_minpoly()
+    if method == 'CremonaSutherland':
+        flag, D = is_HCP(jpol, check_monic_irreducible=False)
+        if flag:
+            D0 = D.squarefree_part()
+            if D0%4 !=1:
+                D0 *= 4
+            f = ZZ(D//D0).isqrt()
+            return (True, (D0,f))
+        else:
+            return (False, None)
+
     h = jpol.degree()
-
-    # This will be used as a fall-back if we cannot determine the
-    # result using local data.  For this to be necessary there would
-    # have to be very few primes of degree 1 and norm under 1000,
-    # since we only need to find one prime of degree 1, good
-    # reduction for which a_P is nonzero.
-    if method=='old':
+    if method in ['exhaustive', 'old']:
         if h>100:
             raise NotImplementedError("CM data only available for class numbers up to 100")
         for d,f in cm_orders(h):
             if jpol == hilbert_class_polynomial(d*f**2):
-                return True, (d,f)
-        return False, None
+                return (True, (d,f))
+        return (False, None)
 
-    # replace j by a clone whose parent is Q(j), if necessary:
+    if method not in ['reduction', 'new']:
+        raise ValueError("Invalid method {} in is_cm_j_invariant".format(method))
+
+    # Now we use the reduction method
+
+    # If the degree h is less than the degree of j.parent() we recreate j as an element
+    # of Q(j, and replace j by a clone whose parent is Q(j), if necessary:
 
     K = j.parent()
     if h < K.absolute_degree():
@@ -676,7 +863,6 @@ def is_cm_j_invariant(j, method='new'):
     # Construct an elliptic curve with j-invariant j, with
     # integral model:
 
-    from sage.schemes.elliptic_curves.all import EllipticCurve
     E = EllipticCurve(j=j).integral_model()
     D = E.discriminant()
     prime_bound = 1000 # test primes of degree 1 up to this norm
@@ -718,12 +904,12 @@ def is_cm_j_invariant(j, method='new'):
             cmd = dP
             cmf = fP
         elif cmd != dP: # inconsistent with previous
-            return False, None
+            return (False, None)
         else:           # consistent d, so update f
             cmf = cmf.gcd(fP)
 
-    if cmd==0: # no conclusion, we found no degree 1 primes, revert to old method
-        return is_cm_j_invariant(j, method='old')
+    if cmd==0: # no conclusion, we found no degree 1 primes, revert to default method
+        return is_cm_j_invariant(j, method='CremonaSutherland')
 
     # it looks like cm by disc cmd * f**2 where f divides cmf
 
@@ -733,11 +919,10 @@ def is_cm_j_invariant(j, method='new'):
 
     # Now we must check if h(cmd*f**2)==h for f|cmf; if so we check
     # whether j is a root of the associated Hilbert class polynomial.
+    h0 = cmd.class_number()
     for f in cmf.divisors(): # only positive divisors
-        d = cmd*f**2
-        if h != d.class_number():
+        if h != OrderClassNumber(cmd,h0,f):
             continue
-        pol = hilbert_class_polynomial(d)
-        if pol(j) == 0:
-            return True, (cmd, f)
-    return False, None
+        if jpol == hilbert_class_polynomial(cmd*f**2):
+            return (True, (cmd, f))
+    return (False, None)

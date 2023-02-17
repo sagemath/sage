@@ -4642,10 +4642,6 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: a.absolute_charpoly(algorithm='pari') == a.absolute_charpoly(algorithm='sage')
             True
         """
-        # this hack is necessary because quadratic fields override
-        # charpoly(), and they don't take the argument 'algorithm'
-        if algorithm is None:
-            return self.charpoly(var)
         return self.charpoly(var, algorithm)
 
     def absolute_minpoly(self, var='x', algorithm=None):
@@ -4673,10 +4669,6 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: b.absolute_minpoly(algorithm='pari') == b.absolute_minpoly(algorithm='sage')
             True
         """
-        # this hack is necessary because quadratic fields override
-        # minpoly(), and they don't take the argument 'algorithm'
-        if algorithm is None:
-            return self.minpoly(var)
         return self.minpoly(var, algorithm)
 
     def charpoly(self, var='x', algorithm=None):

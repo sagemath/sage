@@ -1539,6 +1539,10 @@ REFERENCES:
             and Monographs*. American Mathematical Society,
             Providence, RI, 1999.
 
+.. [Cox1989] David A. Cox.
+         Primes of the form `x^2+ny^2`.
+         Wiley, 1989.
+
 .. [CK2008] Derek G. Corneil and Richard M. Krueger, *A Unified View
             of Graph Searching*, SIAM Jounal on Discrete Mathematics,
             22(4), 1259–-1276, 2008.
@@ -1634,6 +1638,11 @@ REFERENCES:
             https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/orange-spec.pdf
 
 .. [CrNa2020] \J.E. Cremona and F. Najman,  `\QQ`-curves over odd degree number fields, :arxiv:`2004.10054`.
+
+.. [CreSuth2023] \J.E. Cremona and A.V. Sutherland.
+                 *Computing the endomorphism ring of an elliptic curve
+                 over a number field*.
+                 :arxiv:`2301.11169`.
 
 .. [CoCo1] J.H. Conway, H.S.M. Coxeter
     *Triangulated polygons and frieze patterns*,
@@ -5759,6 +5768,12 @@ REFERENCES:
               logarithms in finite abelian p-groups*.
               Mathematics of Computation **80** (2011), pp. 477-500.
               :arxiv:`0809.3413v3`.
+
+.. [RouSuthZur2022] Jeremy Rouse, Andrew V. Sutherland, David Zureick-Brown.
+                    *`\ell`-adic images of Galois for elliptic curves over `\Q`* (and an appendix with John Voight).
+                    Forum of Mathematics, Sigma , Volume 10 , 2022.
+                    :doi: `10.1017/fms.2022.38`.
+                    :arxiv:`2106.11141`.
 
 .. [SV1970] \H. Schneider and M. Vidyasagar. Cross-positive matrices. SIAM
             Journal on Numerical Analysis, 7:508-519, 1970.
