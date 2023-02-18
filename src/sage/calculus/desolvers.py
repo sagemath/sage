@@ -599,9 +599,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     if show_method:
         maxima_method=P("method")
 
-    soln = soln.sage()
     if ics is not None:
-        if not (isinstance(soln, Expression) and soln.is_relational()):
+        if not (isinstance(soln.sage(), Expression) and soln.sage().is_relational()):
             if not show_method:
                 maxima_method=P("method")
             raise NotImplementedError("Unable to use initial condition for this equation (%s)."%(str(maxima_method).strip()))
@@ -649,6 +648,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
             if str(soln).strip() == 'false':
                 raise NotImplementedError("Maxima was unable to solve this BVP. Remove the initial condition to get the general solution.")
 
+    soln = soln.sage()
     if isinstance(soln, Expression) and soln.is_relational() and soln.lhs() == dvar:
         # Remark: Here we do not check that the right hand side does not depend on dvar.
         # This probably will not happen for solutions obtained via ode2, anyway.
