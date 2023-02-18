@@ -49,7 +49,6 @@ Here is a list of all content related to GRS codes:
 # ****************************************************************************
 from copy import copy
 
-from sage.arith.misc import binomial
 from sage.categories.cartesian_product import cartesian_product
 
 from sage.matrix.constructor import matrix
@@ -531,6 +530,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             True
         """
         from sage.symbolic.ring import SR
+        from sage.functions.other import binomial
 
         d = self.minimum_distance()
         n = self.length()
