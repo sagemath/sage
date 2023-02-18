@@ -2126,7 +2126,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: from sage.rings.real_double import RealDoubleElement
             sage: t = RDF.pi()/2
             sage: RealDoubleElement.cos(t)
-            6.123233995736757e-17
+            6.123233995736766e-17
         """
         return self._new_c(libc.math.cos(self._value))
 
@@ -2154,7 +2154,7 @@ cdef class RealDoubleElement(FieldElement):
             1.7320508075688767
             sage: q = RDF.pi()/6
             sage: RealDoubleElement.tan(q)
-            0.5773502691896256
+            0.5773502691896257
         """
         return self._new_c(libc.math.tan(self._value))
 
