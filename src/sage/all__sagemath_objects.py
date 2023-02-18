@@ -7,11 +7,6 @@ import warnings
 
 # TODO: More to be moved from all.py
 
-import os
-import sys
-import operator
-import math
-
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
         sig_on_reset as sig_on_count)
