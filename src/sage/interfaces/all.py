@@ -4,16 +4,18 @@ from .sage0 import sage0, sage0_version, Sage
 from .gap import gap, gap_reset_workspace, Gap
 from .gp import gp, gp_version, Gp
 # import problems
-# from maxima_lib import maxima_lib
-# from .maxima import maxima, Maxima
-from sage.misc.lazy_import import lazy_import
-
-lazy_import('sage.interfaces.maxima', ['maxima', 'Maxima'])
+try:
+    # from maxima_lib import maxima_lib
+    from .maxima import maxima, Maxima
+except ImportError:
+    pass
 
 from .singular import singular, singular_version, Singular
 
 from .magma import magma, Magma
 from .polymake import polymake
+
+from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])
