@@ -2101,6 +2101,20 @@ cdef class RealDoubleElement(FieldElement):
             ...
             ValueError: negative number cannot be raised to a fractional power
         """
+        cdef double v = self._value
+        if v >= 0:
+            if v == 1:
+                return self
+            elif exponent == 0:
+                return self._new_c(1.0)
+            elif v == 0:
+                if exponent < 0:
+                    raise ZeroDivisionError("0.0 cannot be raised to a negative power")
+                return self
+        else:  # v < 0
+            expmod2 = libc.math.fmod(exponent, 2.0)
+            if expmod2 != 0.0 and expmod2 != 1.0:
+                raise ValueError("negative number cannot be raised to a fractional power")
         return self._new_c(self._value ** (<RealDoubleElement>other)._value)
 
     def cos(self):
