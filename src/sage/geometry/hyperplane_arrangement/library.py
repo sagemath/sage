@@ -88,10 +88,10 @@ class HyperplaneArrangementLibrary():
             sage: hyperplane_arrangements.braid(4)                                  # optional - sage.graphs
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
         """
-        from sage.graphs.graph_generators.graphs import CompleteGraph
+        from sage.graphs.graph_generators import graphs
 
         x = polygen(QQ, 'x')
-        A = self.graphical(CompleteGraph(n), K, names=names)
+        A = self.graphical(graphs.CompleteGraph(n), K, names=names)
         charpoly = prod(x - i for i in range(n))
         A.characteristic_polynomial.set_cache(charpoly)
         return A
