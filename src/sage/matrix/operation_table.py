@@ -956,9 +956,9 @@ class OperationTable(SageObject):
 
         - ``element_names`` - (default : ``True``) Whether to display text with element names on the image
 
-        - ``cmap`` - (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
+        - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
 
-        - ``**options`` - passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
+        - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 
         EXAMPLES::
 
@@ -1016,9 +1016,9 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``element_names`` - (default: ``True``) Whether to display text with element names on the image
+        - ``element_names`` -- (default: ``True``) whether to display text with element names on the image
 
-        - ``**options`` - passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
+        - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 
         EXAMPLES::
 
