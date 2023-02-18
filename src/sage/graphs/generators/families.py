@@ -2558,7 +2558,7 @@ def PaleyGraph(q):
     """
     from sage.rings.finite_rings.integer_mod import mod
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     if not is_prime_power(q):
         raise ValueError("parameter q must be a prime power")
     if not mod(q, 4) == 1:
@@ -3933,7 +3933,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     from sage.rings.integer_ring import ZZ
     from sage.matrix.constructor import matrix, block_matrix, \
         ones_matrix, identity_matrix
-    from sage.arith.all import two_squares
+    from sage.arith.misc import two_squares
     p = 4*t + 1
     try:
         x = two_squares(p)
