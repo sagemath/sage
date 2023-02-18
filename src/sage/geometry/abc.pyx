@@ -92,7 +92,7 @@ cdef class HyperbolicSpace(Parent):
 
         sage: import sage.geometry.abc
         sage: H = HyperbolicPlane()                                           # optional - sage.symbolic
-        sage: isinstance(P, sage.geometry.abc.HyperbolicSpace)                # optional - sage.symbolic
+        sage: isinstance(H, sage.geometry.abc.HyperbolicSpace)                # optional - sage.symbolic
         True
 
     By design, there is a unique direct subclass::
