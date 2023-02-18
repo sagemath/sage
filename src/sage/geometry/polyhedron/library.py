@@ -391,38 +391,28 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
 
     One can specify the base ring::
 
-        sage: gale_transform_to_primal(
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)])
+        sage: p = [(1,1), (-1,-1), (1,0), (-1,0), (1,-1), (-2,1)]
+        sage: gtpp = gale_transform_to_primal(p); gtpp
         [(16, -35, 54),
          (24, 10, 31),
          (-15, 50, -60),
          (-25, 0, 0),
          (0, -25, 0),
          (0, 0, -25)]
-        sage: gale_transform_to_primal(
-        ....:     [(1,1),(-1,-1),(1,0),(-1,0),(1,-1),(-2,1)], base_ring=RDF)
-        [(-0.6400000000000001, 1.4, -2.1600000000000006),
-         (-0.9600000000000002, -0.39999999999999997, -1.2400000000000002),
-         (0.6000000000000001, -2.0, 2.4000000000000004),
-         (1.0, 0.0, 0.0),
-         (0.0, 1.0, 0.0),
-         (0.0, 0.0, 1.0)]
+        sage: (matrix(RDF, gtpp)/25 +
+        ....:  matrix(gale_transform_to_primal(p, base_ring=RDF))).norm() < 1e-15
+        True
 
     One can also specify the backend to be used internally::
 
-        sage: gale_transform_to_primal(
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)], backend='field')
+        sage: gale_transform_to_primal(p, backend='field')
         [(48, -71, 88),
          (84, -28, 99),
          (-77, 154, -132),
          (-55, 0, 0),
          (0, -55, 0),
          (0, 0, -55)]
-        sage: gale_transform_to_primal(                          # optional - pynormaliz
-        ....:     [(1,1), (-1,-1), (1,0),
-        ....:      (-1,0), (1,-1), (-2,1)], backend='normaliz')
+        sage: gale_transform_to_primal(p, backend='normaliz') # optional - pynormaliz
         [(16, -35, 54),
          (24, 10, 31),
          (-15, 50, -60),

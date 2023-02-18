@@ -554,16 +554,18 @@ class LatinSquare:
 
     def filled_cells_map(self):
         """
-        Number the filled cells of self with integers from {1, 2, 3, ...}
+        Number the filled cells of self with integers from {1, 2, 3, ...}.
 
         INPUT:
 
-        -  ``self`` - Partial latin square self (empty cells
-           have negative values)
+        - ``self`` -- partial latin square self (empty cells
+          have negative values)
 
-        OUTPUT: A dictionary cells_map where cells_map[(i,j)] = m means
-        that (i,j) is the m-th filled cell in P, while cells_map[m] =
-        (i,j).
+        OUTPUT:
+
+        A dictionary ``cells_map`` where ``cells_map[(i,j)] = m`` means that
+        ``(i,j)`` is the ``m``-th filled cell in ``P``,
+        while ``cells_map[m] = (i,j)``.
 
         EXAMPLES::
 

@@ -1,0 +1,3 @@
+cd src
+export SCIPOPTDIR="$SAGE_LOCAL"
+sdh_pip_install .

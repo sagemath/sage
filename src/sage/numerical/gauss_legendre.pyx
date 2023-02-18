@@ -216,7 +216,7 @@ def nodes(degree, prec):
 def estimate_error(results, prec, epsilon):
     r"""
     Routine to estimate the error in a list of quadrature approximations.
-    
+
     The method used is based on Borwein, Bailey, and Girgensohn. As mentioned in
     mpmath: Although not very conservative, this method seems to be very robust in
     practice.
@@ -226,7 +226,7 @@ def estimate_error(results, prec, epsilon):
     of the maximum norm of the error in the last approximation.
 
     INPUT:
-    
+
      - ``results`` -- list. List of approximations to estimate the error from. Should be at least length 2.
 
      - ``prec`` -- integer. Binary precision at which computations are happening.

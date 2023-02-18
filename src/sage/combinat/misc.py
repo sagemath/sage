@@ -18,6 +18,7 @@ Miscellaneous
 
 from sage.misc.misc_c import prod
 
+
 class DoublyLinkedList():
     """
     A doubly linked list class that provides constant time hiding and
@@ -38,6 +39,7 @@ class DoublyLinkedList():
         sage: dll.unhide(2); dll
         Doubly linked list of [1, 2, 3]: [1, 2, 3]
     """
+
     def __init__(self, l):
         """
         TESTS::
@@ -177,7 +179,6 @@ class DoublyLinkedList():
         return self.prev_value[j]
 
 
-
 def _monomial_exponent_to_lower_factorial(me, x):
     r"""
     Converts a tuple of exponents to the monomial obtained by replacing
@@ -206,6 +207,7 @@ def _monomial_exponent_to_lower_factorial(me, x):
         for j in range(me[i]):
             terms.append( x[i]-j )
     return prod(terms)
+
 
 def umbral_operation(poly):
     r"""
@@ -272,6 +274,7 @@ class IterableFunctionCall:
         bbb
         foo
     """
+
     def __init__(self, f, *args, **kwargs):
         """
         EXAMPLES::
@@ -384,10 +387,10 @@ def check_integer_list_constraints(l, **kwargs):
     filters['max_part'] = lambda x: max(x) <= max_part
     filters['min_length'] = lambda x: len(x) >= min_length
     filters['max_length'] = lambda x: len(x) <= max_length
-    filters['min_slope'] = lambda x: min([x[i+1]-x[i] for i in range(len(x)-1)]+[min_slope+1]) >= min_slope
-    filters['max_slope'] = lambda x: max([x[i+1]-x[i] for i in range(len(x)-1)]+[max_slope-1]) <= max_slope
-    filters['outer'] = lambda x: len(outer) >= len(x) and min([outer[i]-x[i] for i in range(len(x))]) >= 0
-    filters['inner'] = lambda x: len(x) >= len(inner) and max([inner[i]-x[i] for i in range(len(inner))]) <= 0
+    filters['min_slope'] = lambda x: min((x[i + 1] - x[i] for i in range(len(x) - 1)), default=min_slope + 1) >= min_slope
+    filters['max_slope'] = lambda x: max((x[i + 1] - x[i] for i in range(len(x) - 1)), default=max_slope - 1) <= max_slope
+    filters['outer'] = lambda x: len(outer) >= len(x) and min(outer[i] - x[i] for i in range(len(x))) >= 0
+    filters['inner'] = lambda x: len(x) >= len(inner) and max(inner[i] - x[i] for i in range(len(inner))) <= 0
 
     for key in kwargs:
         result = [x for x in result if filters[key](x)]

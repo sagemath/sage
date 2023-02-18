@@ -14,6 +14,7 @@ Poor Man's map
 # ****************************************************************************
 import sage.structure.sage_object
 
+
 class PoorManMap(sage.structure.sage_object.SageObject):
     """
     A class for maps between sets which are not (yet) modeled by parents
@@ -184,6 +185,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         Composition
 
         INPUT:
+
          - ``self`` -- a map `f`
          - ``other`` -- a map `g`
 

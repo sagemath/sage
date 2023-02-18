@@ -262,11 +262,12 @@ def Torus(R=2, r=1, names=None):
     M.induced_metric()
     return M
 
+
 def RealProjectiveSpace(dim=2):
     r"""
     Generate projective space of dimension ``dim`` over the reals.
 
-    This is the topological space of lines through the origin in 
+    This is the topological space of lines through the origin in
     `\RR^{d+1}`. The standard atlas consists of `d+2` charts, which sends
     the set `U_i = \{[x_1, x_2, \ldots, x_{d+1}] : x_i \neq 0 \}` to
     `k^{d}` by dividing by `x_i` and omitting the `i`th coordinate
@@ -364,9 +365,9 @@ def RealProjectiveSpace(dim=2):
     charts = {0: U0.chart(''.join(names[1:]))}
 
     # create the charts
-    for j in range(1, dim+1):
+    for j in range(1, dim + 1):
         U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
-        
+
         # The chart where we assert that x_i == 1
         Cj = U.chart(''.join(names[:j] + names[j+1:]))
         gj = Cj[:]

@@ -58,7 +58,7 @@ class Application(object):
         arb
         autotools
         [...]
-        zn_poly
+        zlib
 
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
@@ -68,7 +68,7 @@ class Application(object):
         boost_cropped
         brial
         [...]
-        zn_poly
+        zlib
         """
         log.debug('Listing packages')
         pc = PackageClass(*package_classes, **filters)

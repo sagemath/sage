@@ -778,4 +778,3 @@ def make_PolynomialRealDense(parent, data):
         3.00000000000000*x^2 + 2.00000000000000*x + 1.00000000000000
     """
     return PolynomialRealDense(parent, data)
-

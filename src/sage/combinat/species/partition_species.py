@@ -106,7 +106,6 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
         return reduce(lambda a,b: a.direct_product(b, maps=False),
                       [SymmetricGroup(block._list) for block in self._list])
 
-
     def change_labels(self, labels):
         """
         Return a relabelled structure.
@@ -285,6 +284,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         if self.is_weighted():
             res *= self._weight
         return res
+
 
 #Backward compatibility
 PartitionSpecies_class = PartitionSpecies

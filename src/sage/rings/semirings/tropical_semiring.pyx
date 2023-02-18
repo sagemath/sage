@@ -189,7 +189,7 @@ cdef class TropicalSemiringElement(Element):
         cdef TropicalSemiringElement self, x
         self = left
         x = right
-        
+
         if self._val is None:
             if x._val is None:
                 return rich_to_bool(op, 0)
@@ -671,4 +671,3 @@ cdef class TropicalToTropical(Map):
             +infinity
         """
         return self.codomain()((<TropicalSemiringElement>x)._val)
-

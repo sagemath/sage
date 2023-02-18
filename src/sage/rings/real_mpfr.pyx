@@ -678,7 +678,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         - Any MPFR real field with precision that is as large as this one
 
-        - int, long, integer, and rational rings.
+        - int, integer, and rational rings.
 
         - the field of algebraic reals
 
@@ -1472,11 +1472,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         elif isinstance(x, Gen) and typ((<Gen>x).g) == t_REAL:
             _gen = x
             self._set_from_GEN_REAL(_gen.g)
-        elif isinstance(x, long):
+        elif isinstance(x, int):
             x = Integer(x)
             mpfr_set_z(self.value, (<Integer>x).value, parent.rnd)
-        elif isinstance(x, int):
-            mpfr_set_si(self.value, x, parent.rnd)
         elif isinstance(x, float):
             mpfr_set_d(self.value, x, parent.rnd)
         elif isinstance(x, complex) and x.imag == 0:
@@ -5678,11 +5676,13 @@ cdef class RealLiteral(RealNumber):
             1.3000000000000000000000000000000000000000000000000000000000
             sage: 1.3 + 1.2
             2.50000000000000
+            sage: RR(1_0000.000000000000000000000000000000000000)
+            10000.0000000000
         """
         RealNumber.__init__(self, parent, x, base)
         if isinstance(x, str):
             self.base = base
-            self.literal = x
+            self.literal = x.replace('_', '')
 
     def __neg__(self):
         """
@@ -6074,7 +6074,7 @@ cdef class int_toRR(Map):
         cdef long x_long
         cdef mpz_t x_mpz
 
-        if not isinstance(x, (int, long)):
+        if not isinstance(x, int):
             x = int(x)
 
         integer_check_long_py(x, &x_long, &err)

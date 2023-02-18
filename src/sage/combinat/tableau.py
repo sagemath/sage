@@ -6098,6 +6098,7 @@ class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets
     """
     All semistandard tableaux.
     """
+
     def __init__(self, max_entry=None):
         r"""
         Initializes the class of all semistandard tableaux.
@@ -6156,6 +6157,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
     """
     Semistandard tableaux of fixed size `n` with no maximum entry.
     """
+
     def __init__(self, n):
         r"""
         Initialize the class of semistandard tableaux of size ``n`` with no
@@ -6256,6 +6258,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
     """
     Semistandard tableaux of fixed shape `p` and no maximum entry.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of semistandard tableaux of shape ``p`` and no
@@ -6343,6 +6346,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
     """
     Semistandard tableaux of fixed size `n`.
     """
+
     def __init__(self, n, max_entry=None):
         r"""
         Initializes the class of semistandard tableaux of size ``n``.
@@ -6546,6 +6550,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
     - ``p`` -- a partition
     - ``max_entry`` -- the max entry; defaults to the size of ``p``
     """
+
     def __init__(self, p, max_entry=None):
         r"""
         Initializes the class of semistandard tableaux of shape ``p``, with a
@@ -6757,6 +6762,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
     r"""
     Semistandard tableaux of fixed shape `p` and weight `\mu`.
     """
+
     def __init__(self, p, mu):
         r"""
         Initializes the class of all semistandard tableaux of shape ``p`` and
@@ -6871,6 +6877,7 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
     r"""
     Semistandard tableaux of fixed size `n` and weight `\mu`.
     """
+
     def __init__(self, n, mu):
         r"""
         Initializes the class of semistandard tableaux of size ``n`` and
@@ -7119,6 +7126,7 @@ class RowStandardTableaux_all(RowStandardTableaux, DisjointUnionEnumeratedSets):
     """
     All row standard tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard tableaux.
@@ -7183,6 +7191,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         sage: RowStandardTableaux(40).cardinality()  # not tested, too long
         2063837185739279909309355007659204891024472174278
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all row standard tableaux of size ``n``.
@@ -7252,6 +7261,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
     """
     Row Standard tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all row standard tableaux of a given shape.
@@ -7519,6 +7529,7 @@ class StandardTableaux_all(StandardTableaux, DisjointUnionEnumeratedSets):
     """
     All standard tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard tableaux.
@@ -7570,6 +7581,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
 
         sage: TestSuite( StandardTableaux(4) ).run()
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all standard tableaux of size ``n``.
@@ -7756,6 +7768,7 @@ class StandardTableaux_shape(StandardTableaux):
     """
     Semistandard tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all semistandard tableaux of a given shape.
@@ -8148,6 +8161,7 @@ class Tableau_class(Tableau):
     """
     This exists solely for unpickling ``Tableau_class`` objects.
     """
+
     def __setstate__(self, state):
         r"""
         Unpickle old ``Tableau_class`` objects.
@@ -8653,6 +8667,7 @@ class IncreasingTableaux_all(IncreasingTableaux, DisjointUnionEnumeratedSets):
         sage: list(T)
         [[]]
     """
+
     def __init__(self, max_entry=None):
         r"""
         Initializes the class of all increasing tableaux.
@@ -8707,6 +8722,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
     """
     Increasing tableaux of fixed size `n` with no maximum entry.
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of increasing tableaux of size ``n`` with no
@@ -8787,6 +8803,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
     """
     Increasing tableaux of fixed shape `p` and no maximum entry.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of increasing tableaux of shape ``p`` and no
@@ -8868,6 +8885,7 @@ class IncreasingTableaux_size(IncreasingTableaux):
     """
     Increasing tableaux of fixed size `n`.
     """
+
     def __init__(self, n, max_entry=None):
         r"""
         Initializes the class of increasing tableaux of size ``n``.
@@ -8987,6 +9005,7 @@ class IncreasingTableaux_shape(IncreasingTableaux):
     - ``p`` -- a partition
     - ``max_entry`` -- the max entry; defaults to the size of ``p``
     """
+
     def __init__(self, p, max_entry=None):
         r"""
         Initializes the class of increasing tableaux of shape ``p``, with a
@@ -9105,6 +9124,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
     r"""
     Increasing tableaux of fixed shape `p` and binary weight `wt`.
     """
+
     def __init__(self, p, wt):
         r"""
         Initializes the class of all increasing tableaux of shape ``p`` and
@@ -9249,6 +9269,7 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
     r"""
     Increasing tableaux of fixed size `n` and weight `wt`.
     """
+
     def __init__(self, n, wt):
         r"""
         Initializes the class of increasing tableaux of size ``n`` and

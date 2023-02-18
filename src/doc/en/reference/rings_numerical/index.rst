@@ -16,7 +16,7 @@ which builds on GMP. In many cases the PARI C-library is used to compute
 special functions when implementations aren't otherwise available.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_mpfr
    sage/rings/complex_mpfr
@@ -32,7 +32,7 @@ Sage implements real and complex interval arithmetic using MPFI
 ComplexBallField).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_mpfi
    sage/rings/real_interval_absolute
@@ -46,7 +46,7 @@ Exact Real Arithmetic
 ---------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_lazy
 

@@ -343,11 +343,11 @@ def function(s, **kwds):
     TESTS:
 
     Make sure that :trac:`15860` is fixed and whitespaces are removed::
-    
+
         sage: function('A, B')
         (A, B)
         sage: B
-        B   
+        B
     """
     G = globals()  # this is the reason the code must be in Cython.
     v = new_function(s, **kwds)

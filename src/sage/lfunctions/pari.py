@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-L-functions from PARI
+`L`-functions from PARI
 
 This is a wrapper around the general PARI L-functions functionality.
 
@@ -328,7 +328,7 @@ def lfun_eta_quotient(scalings, exponents):
         0.0374412812685155
 
         sage: lfun_eta_quotient([6], [4])
-        [[Vecsmall([7]), [Vecsmall([6]), Vecsmall([4])]], 0, [0, 1], 2, 36, 1]
+        [[Vecsmall([7]), [Vecsmall([6]), Vecsmall([4]), 0]], 0, [0, 1], 2, 36, 1]
 
         sage: lfun_eta_quotient([2, 1, 4], [5, -2, -2])
         Traceback (most recent call last):

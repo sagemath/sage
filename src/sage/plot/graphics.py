@@ -2366,7 +2366,7 @@ class Graphics(WithEqualityById, SageObject):
         elif x_locator == []:
             x_locator = NullLocator()
         elif isinstance(x_locator, list):
-            x_locator = FixedLocator(x_locator)
+            x_locator = FixedLocator([float(x) for x in x_locator])
         else:  # x_locator is a number which can be made a float
             from sage.functions.other import ceil, floor
             if floor(xmax / x_locator) - ceil(xmin / x_locator) > 1:
@@ -2387,7 +2387,7 @@ class Graphics(WithEqualityById, SageObject):
         elif y_locator == []:
             y_locator = NullLocator()
         elif isinstance(y_locator, list):
-            y_locator = FixedLocator(y_locator)
+            y_locator = FixedLocator([float(y) for y in y_locator])
         else:  # y_locator is a number which can be made a float
             from sage.functions.other import ceil, floor
             if floor(ymax / y_locator) - ceil(ymin / y_locator) > 1:
@@ -2419,7 +2419,11 @@ class Graphics(WithEqualityById, SageObject):
                     LogFormatterMathtext(base=base[0])(n, pos).replace(
                         "\\mathdefault", ""))
             else:
-                x_formatter = FuncFormatter(lambda n, pos: '$%s$' % latex(n))
+                # circumvent the problem of symbolic tick values (trac #34693)
+                if isinstance(x_locator, FixedLocator):
+                    x_formatter = FixedFormatter(['$%s$' % latex(n) for n in ticks[0]])
+                else:
+                    x_formatter = FuncFormatter(lambda n, pos: '$%s$' % latex(n))
         elif isinstance(x_formatter, (list, tuple)):
             if (not isinstance(ticks[0], (list, tuple)) or
                     len(ticks[0]) != len(x_formatter)):
@@ -2444,7 +2448,11 @@ class Graphics(WithEqualityById, SageObject):
                     LogFormatterMathtext(base=base[1])(n, pos).replace(
                         "\\mathdefault", ""))
             else:
-                y_formatter = FuncFormatter(lambda n, pos: '$%s$' % latex(n))
+                # circumvent the problem of symbolic tick values (trac #34693)
+                if isinstance(y_locator, FixedLocator):
+                    y_formatter = FixedFormatter(['$%s$' % latex(n) for n in ticks[1]])
+                else:
+                    y_formatter = FuncFormatter(lambda n, pos: '$%s$' % latex(n))
         elif isinstance(y_formatter, (list, tuple)):
             if (not isinstance(ticks[1], (list, tuple)) or
                     len(ticks[1]) != len(y_formatter)):

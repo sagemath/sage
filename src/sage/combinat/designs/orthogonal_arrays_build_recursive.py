@@ -162,14 +162,14 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
         matrix[i][B0[i]] = 0
 
     # Last column
-    if   orthogonal_array(k, m+r  ,existence=True):
+    if orthogonal_array(k, m+r  ,existence=True):
         last_group = [x for x in range(s+1) if x != B0[-1]][:s]
     elif orthogonal_array(k,m+r+1,existence=True):
         last_group = [x for x in range(s+1) if x != B0[-1]][:s-1] + [B0[-1]]
     else:
         raise RuntimeError
 
-    for i,x in enumerate(last_group):
+    for i, x in enumerate(last_group):
         matrix[-1][x] = i
 
     OA = OA_relabel(master_design,k+r+1,n, matrix=matrix)
@@ -260,11 +260,11 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     r1 = [None]*q
     r2 = [None]*q
     r3 = [None]*q
-    for i,x in enumerate(group_k_1):
+    for i, x in enumerate(group_k_1):
         r1[x] = i
-    for i,x in enumerate(group_k_2):
+    for i, x in enumerate(group_k_2):
         r2[x] = i
-    for i,x in enumerate(group_k_3):
+    for i, x in enumerate(group_k_3):
         r3[x] = i
 
     OA = OA_relabel(master_design, k+3,q, matrix=[list(range(q))]*k+[r1,r2,r3])
@@ -431,7 +431,8 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
     assert all(sum([xx == 0 for xx in b[1:]]) <= 2 for b in OA)
     return OA
 
-def construction_q_x(k,q,x,check=True,explain_construction=False):
+
+def construction_q_x(k, q, x, check=True, explain_construction=False):
     r"""
     Return an `OA(k,(q-1)*(q-x)+x+2)` using the `q-x` construction.
 
@@ -520,14 +521,14 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
                 "   Malcolm Greig,\n"+
                 "   Designs from projective planes and PBD bases,\n"+
                 "   vol. 7, num. 5, pp. 341--374,\n"+
-                "   Journal of Combinatorial Designs, 1999").format(q,x)
+                "   Journal of Combinatorial Designs, 1999").format(q, x)
 
     n = (q-1)*(q-x)+x+2
 
     # We obtain the qxq matrix from a OA(q,q)-q.OA(1,q). We will need to add
     # blocks corresponding to the rows/columns
     OA = incomplete_orthogonal_array(q,q,(1,)*q)
-    TD = [[i*q+xx for i,xx in enumerate(B)] for B in OA]
+    TD = [[i*q+xx for i, xx in enumerate(B)] for B in OA]
 
     # Add rows, extended with p1 and p2
     p1 = q**2
@@ -563,7 +564,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     for xx in B:
         OA.remove([xx]*k)
 
-    for BB in orthogonal_array(k,x+2):
+    for BB in orthogonal_array(k, x+2):
         OA.append([B[x] for x in BB])
 
     if check:

@@ -1,13 +1,13 @@
 r"""
 Hecke algebra representations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 import functools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -18,6 +18,7 @@ from sage.sets.family import Family
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""
@@ -82,6 +83,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     - [HST2008]_
     """
+
     def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side="right"):
         r"""
         TESTS::
@@ -396,7 +398,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         result.signs = signs
         result.scalar = scalar
         return result
-
 
     def Tw_inverse(self, word):
         r"""
@@ -753,6 +754,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         return CherednikOperatorsEigenvectors(self)
 
 # TODO: this should probably inherit from family!
+
+
 class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
     r"""
     A class for the family of eigenvectors of the `Y` Cherednik
@@ -798,6 +801,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         Add tests for the above assumptions, and also that the
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
+
     def __init__(self, T, T_Y = None, normalized = True):
         r"""
         INPUT:

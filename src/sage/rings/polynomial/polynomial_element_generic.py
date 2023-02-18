@@ -824,6 +824,16 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f.quo_rem(g)
             (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
 
+        Polynomials over noncommutative rings are also allowed::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = PolynomialRing(HH, sparse=True)
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
+
         TESTS::
 
             sage: P.<x> = PolynomialRing(ZZ, sparse=True)

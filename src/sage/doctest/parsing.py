@@ -1022,6 +1022,13 @@ class SageOutputChecker(doctest.OutputChecker):
             got = chained_fixup_warning_regex.sub('', got)
             did_fixup = True
 
+        if "newer macOS version" in got:
+            # :trac:`34741` -- suppress warning arising after
+            # upgrading from macOS 12.X to 13.X.
+            newer_macOS_version_regex = re.compile(r'.*dylib \(.*\) was built for newer macOS version \(.*\) than being linked \(.*\)')
+            got = newer_macOS_version_regex.sub('', got)
+            did_fixup = True
+
         if "insufficient permissions" in got:
             sympow_cache_warning_regex = re.compile(r'\*\*WARNING\*\* /var/cache/sympow/datafiles/le64 yields insufficient permissions')
             got = sympow_cache_warning_regex.sub('', got)

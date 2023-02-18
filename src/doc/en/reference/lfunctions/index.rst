@@ -1,11 +1,11 @@
-L-Functions
-===========
+`L`-Functions
+=============
 
 Sage includes several standard open source packages for computing
-with :math:`L`-functions.
+with `L`-functions.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/lfunctions/lcalc
    sage/lfunctions/sympow
