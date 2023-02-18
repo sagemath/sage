@@ -8573,6 +8573,8 @@ cdef class Polynomial(CommutativePolynomial):
         if isinstance(K, (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
             return self.roots(multiplicities=False)
 
+        from sage.rings.real_mpfr import RR
+
         return self.roots(ring=RR, multiplicities=False)
 
     def complex_roots(self):
@@ -9898,7 +9900,9 @@ cdef class Polynomial(CommutativePolynomial):
         - Didier Deshommes
         - William Stein: fix bugs, add definition, etc.
         """
-        if p <= 0 :
+        from sage.rings.real_mpfr import RR
+
+        if p <= 0:
             raise ValueError("The degree of the norm must be positive")
 
         coeffs = self.coefficients()
