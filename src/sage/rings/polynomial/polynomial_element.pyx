@@ -8465,9 +8465,9 @@ cdef class Polynomial(CommutativePolynomial):
         """
         Return the real roots of this polynomial, without multiplicities.
 
-        Calls self.roots(ring=RR), unless this is a polynomial with
+        Calls ``self.roots(ring=RR)``, unless this is a polynomial with
         floating-point real coefficients, in which case it calls
-        self.roots().
+        ``self.roots()``.
 
         EXAMPLES::
 
@@ -8491,6 +8491,8 @@ cdef class Polynomial(CommutativePolynomial):
         K = self.base_ring()
         if isinstance(K, (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
             return self.roots(multiplicities=False)
+
+        from sage.rings.real_mpfr import RR
 
         return self.roots(ring=RR, multiplicities=False)
 
@@ -9100,7 +9102,7 @@ cdef class Polynomial(CommutativePolynomial):
         Over `\RR[z]`::
 
             sage: z = PowerSeriesRing(RR, 'z').gen()
-            sage: P = PolynomialRing(RR,'x')
+            sage: P = PolynomialRing(RR, 'x')
             sage: x = P.gen()
             sage: p = P(exp(2*z).list())
             sage: m = x^7
@@ -9769,7 +9771,9 @@ cdef class Polynomial(CommutativePolynomial):
         - Didier Deshommes
         - William Stein: fix bugs, add definition, etc.
         """
-        if p <= 0 :
+        from sage.rings.real_mpfr import RR
+
+        if p <= 0:
             raise ValueError("The degree of the norm must be positive")
 
         coeffs = self.coefficients()
