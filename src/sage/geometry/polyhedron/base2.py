@@ -793,8 +793,8 @@ class Polyhedron_base2(Polyhedron_base1):
             z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
             23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +
             101*z^21 + 119*z^22 + 141*z^23 + 164*z^24 + O(z^25)
-            sage: [Partitions(k, length=5).cardinality() for k in range(5,20)] == \             # optional - sage.combinat
-            ....:     c.truncate().coefficients(sparse=False)[5:20]
+            sage: ([Partitions(k, length=5).cardinality() for k in range(5,20)] ==              # optional - sage.combinat
+            ....:     c.truncate().coefficients(sparse=False)[5:20])
             True
 
         .. SEEALSO::

@@ -143,6 +143,7 @@ class sage__libs__pari(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.pari',
                              [PythonModule('sage.libs.pari.convert_sage')])
 
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
@@ -301,6 +302,7 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__pari(),
             sage__plot(),
             sage__rings__number_field(),
             sage__rings__padics(),

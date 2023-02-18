@@ -499,7 +499,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: k = GF(2)                                 # optional - sage.libs.pari
-            sage: ZZ( (k(0),k(1)), 2)
+            sage: ZZ((k(0),k(1)), 2)                        # optional - sage.libs.pari
             2
 
         ::
@@ -3699,11 +3699,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: n = next_prime(10^5) * next_prime(10^40); n.trial_division()      # optional - sage.libs.pari
             100003
-            sage: n.trial_division(bound=10^4)
+            sage: n.trial_division(bound=10^4)                                      # optional - sage.libs.pari
             1000030000000000000000000000000000000012100363
-            sage: (-n).trial_division(bound=10^4)
+            sage: (-n).trial_division(bound=10^4)                                   # optional - sage.libs.pari
             1000030000000000000000000000000000000012100363
-            sage: (-n).trial_division()
+            sage: (-n).trial_division()                                             # optional - sage.libs.pari
             100003
             sage: n = 2 * next_prime(10^40); n.trial_division()                     # optional - sage.libs.pari
             2
