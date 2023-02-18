@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Number Field Elements
+Number field elements (implementation using NTL)
 
 AUTHORS:
 
