@@ -6722,7 +6722,7 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)
             doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             []
 
         Check :trac:`30518`::
@@ -9936,7 +9936,7 @@ cdef class Matrix(Matrix1):
 
             sage: M.adjoint()
             ...: DeprecationWarning: adjoint is deprecated. Please use adjugate instead.
-            See http://trac.sagemath.org/10501 for details.
+            See https://github.com/sagemath/sage/issues/10501 for details.
             [ 41/10  -1/28]
             [-33/13    5/3]
             sage: M.adjoint_classical()
@@ -12747,7 +12747,7 @@ cdef class Matrix(Matrix1):
         if extend:
             # Try to use the algebraic reals but fall back to what is
             # probably QQbar if we find an entry in "L" that won't fit
-            # in AA. This was Trac ticket #18381.
+            # in AA. This was Github issue #18381.
             from sage.rings.qqbar import AA
             try:
                 C = L.change_ring(AA)
@@ -13327,7 +13327,7 @@ cdef class Matrix(Matrix1):
                 max_location = -1
                 if partial:
                     # abs() necessary to convert zero to the
-                    # correct type for comparisons (Trac #12208)
+                    # correct type for comparisons (Issue #12208)
                     max_entry = abs(zero)
                     for i in range(k,m):
                         entry = abs(M.get_unsafe(i,k))

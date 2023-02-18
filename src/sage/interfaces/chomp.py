@@ -38,7 +38,7 @@ def have_chomp(program='homsimpl'):
         sage: from sage.interfaces.chomp import have_chomp
         sage: have_chomp() # random -- depends on whether CHomP is installed
         doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         True
         sage: 'homsimpl' in sage.interfaces.chomp._have_chomp
         True
@@ -141,7 +141,7 @@ class CHomP:
             sage: T = cubical_complexes.Torus()
             sage: CHomP()('homcubes', T) # indirect doctest, optional - CHomP
             doctest:...: DeprecationWarning: the CHomP interface is deprecated
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             {0: 0, 1: Z x Z, 2: Z}
         """
         from sage.misc.temporary_file import tmp_filename
@@ -430,7 +430,7 @@ class CHomP:
             sage: from sage.interfaces.chomp import CHomP
             sage: CHomP().help('homcubes')   # optional - CHomP
             doctest:...: DeprecationWarning: the CHomP interface is deprecated
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             HOMCUBES, ver. ... Copyright (C) ... by Pawel Pilarczyk...
         """
         deprecation(33777, "the CHomP interface is deprecated")
@@ -470,7 +470,7 @@ def homsimpl(complex=None, subcomplex=None, **kwds):
         sage: X = T.disjoint_union(T).disjoint_union(T).disjoint_union(M8).disjoint_union(M4)
         sage: homsimpl(X)[1]  # optional - CHomP
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         Z^6 x C4 x C8
 
     Relative homology::
@@ -539,7 +539,7 @@ def homcubes(complex=None, subcomplex=None, **kwds):
         sage: S = cubical_complexes.Sphere(3)
         sage: homcubes(S)[3]   # optional - CHomP
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         Z
 
     Relative homology::
@@ -592,7 +592,7 @@ def homchain(complex=None, **kwds):
         sage: C = cubical_complexes.Sphere(3).chain_complex()
         sage: homchain(C)[3]   # optional - CHomP
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         Z
 
     Generators: these are given as a list after the homology group.
@@ -679,7 +679,7 @@ def process_generators_cubical(gen_string, dim):
         sage: s = "The 2 generators of H_1 follow:\ngenerator 1:\n-1 * [(0,0,0,0,0)(0,0,0,0,1)]\n1 * [(0,0,0,0,0)(0,0,1,0,0)]"
         sage: process_generators_cubical(s, 1)
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         [[(-1, [0,0] x [0,0] x [0,0] x [0,1]), (1, [0,0] x [0,1] x [0,0] x [0,0])]]
         sage: len(process_generators_cubical(s, 1))  # only one generator
         1
@@ -789,7 +789,7 @@ def process_generators_simplicial(gen_string, dim, complex):
         sage: s = "The 2 generators of H_1 follow:\ngenerator 1:\n-1 * (1,6)\n1 * (1,4)"
         sage: process_generators_simplicial(s, 1, simplicial_complexes.Torus())
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         [[(-1, (1, 6)), (1, (1, 4))]]
     """
     deprecation(33777, "the CHomP interface is deprecated")
@@ -871,7 +871,7 @@ def process_generators_chain(gen_string, dim, base_ring=None):
         sage: s = "[H_0]\na1\n\n[H_1]\na2\na3\n"
         sage: process_generators_chain(s, 1)
         doctest:...: DeprecationWarning: the CHomP interface is deprecated
-        See https://trac.sagemath.org/33777 for details.
+        See https://github.com/sagemath/sage/issues/33777 for details.
         [(0, 1), (0, 0, 1)]
         sage: s = "[H_0]\na1\n\n[H_1]\n5 * a2 - a1\na3\n"
         sage: process_generators_chain(s, 1, base_ring=ZZ)

@@ -428,7 +428,7 @@ cdef class PowerSeries_poly(PowerSeries):
             IndexError: coefficient not known
             sage: f[1:4]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             -17/5*t^3 + O(t^5)
 
             sage: R.<t> = ZZ[[]]

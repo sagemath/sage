@@ -1,6 +1,6 @@
 Change test output for PARI 2.11
 
-See https://trac.sagemath.org/ticket/25567
+See https://github.com/sagemath/sage/issues/25567
 and https://xcas.univ-grenoble-alpes.fr/forum/viewtopic.php?f=4&t=2102
 
 diff -ru a/check/TP11-sol.cas.out1 b/check/TP11-sol.cas.out1
