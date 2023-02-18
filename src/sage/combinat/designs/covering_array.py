@@ -75,14 +75,14 @@ class CoveringArray():
     
     EXAMPLES::
         
-        sage: from sage.combinat.designs.covering_arrays import CoveringArray
-        sage: C = ((1,1,1,0),\
-                   (1,1,0,1),\
-                   (1,0,1,1),\
-                   (0,1,1,1),\
-                   (0,0,0,0))          
+        sage: from sage.combinat.designs.covering_array import CoveringArray
+        sage: C = (('a','a','a','b'),\
+                   ('a','a','b','a'),\
+                   ('a','b','a','a'),\
+                   ('b','a','a','a'),\
+                   ('b','b','b','b'))   
         sage: CoveringArray(C)
-        A 5 by 4 Covering Array with entries from [0, 1]
+        A 5 by 4 Covering Array with entries from ['a', 'b']
         
         sage: C = ((0,0,0,0,0,0,0,0,0,0),\
                   (1,1,1,1,1,1,1,1,1,1),\
@@ -126,14 +126,14 @@ class CoveringArray():
         
     EXAMPLES::
         
-        sage: from sage.combinat.designs.covering_arrays import CoveringArray
-        sage: C = ((1,1,1,0),\
-                   (1,1,0,1),\
-                   (1,0,1,1),\
-                   (0,1,1,1),\
-                   (0,0,0,0))          
+        sage: from sage.combinat.designs.covering_array import CoveringArray
+        sage: C = (('a','a','a','b'),\
+                   ('a','a','b','a'),\
+                   ('a','b','a','a'),\
+                   ('b','a','a','a'),\
+                   ('b','b','b','b'))   
         sage: CoveringArray(C)
-        A 5 by 4 Covering Array with entries from [0, 1]
+        A 5 by 4 Covering Array with entries from ['a', 'b']
         
         sage: C = ((0,0,0,0,0,0,0,0,0,0),\
                   (1,1,1,1,1,1,1,1,1,1),\
@@ -200,7 +200,7 @@ class CoveringArray():
         
         EXAMPLES::
                
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -218,7 +218,7 @@ class CoveringArray():
         
         EXAMPLES::
             
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -236,7 +236,7 @@ class CoveringArray():
     
         EXAMPLES::
                 
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -255,7 +255,7 @@ class CoveringArray():
 
         EXAMPLES::
             
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                     (1,1,0,1),\
                     (1,0,1,1),\
@@ -343,7 +343,7 @@ class CoveringArray():
     
         EXAMPLES::
                 
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -371,7 +371,7 @@ class CoveringArray():
     
         EXAMPLES::
                 
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (1,1,0,1),\
                        (1,0,1,1),\
@@ -391,7 +391,7 @@ class CoveringArray():
         
         EXAMPLES::
                 
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -411,14 +411,14 @@ class CoveringArray():
         
             EXAMPLES::
         
-        sage: from sage.combinat.designs.covering_arrays import CoveringArray
-        sage: C = ((1,1,1,0),\
-                   (1,1,0,1),\
-                   (1,0,1,1),\
-                   (0,1,1,1),\
-                   (0,0,0,0))          
+        sage: from sage.combinat.designs.covering_array import CoveringArray
+        sage: C = (('a','a','a','b'),\
+                   ('a','a','b','a'),\
+                   ('a','b','a','a'),\
+                   ('b','a','a','a'),\
+                   ('b','b','b','b'))   
         sage: CoveringArray(C)
-        A 5 by 4 Covering Array with entries from [0, 1]
+        A 5 by 4 Covering Array with entries from ['a', 'b']
         
         sage: C = ((0,0,0,0,0,0,0,0,0,0),\
                   (1,1,1,1,1,1,1,1,1,1),\
@@ -467,7 +467,7 @@ class CoveringArray():
         
         EXAMPLES::
                 
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
                        (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -494,7 +494,7 @@ class CoveringArray():
         
         EXAMPLES::
     
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),\
                        (0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\
                        (0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\
@@ -515,7 +515,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -559,7 +559,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -603,7 +603,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -632,7 +632,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -661,7 +661,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
@@ -690,7 +690,7 @@ class CoveringArray():
         
         EXAMPLES::
         
-            sage: from sage.combinat.designs.covering_arrays import CoveringArray
+            sage: from sage.combinat.designs.covering_array import CoveringArray
             sage: C1 = ((1,1,1,0),\
                        (0,0,0,0),\
                        (1,0,1,1),\
