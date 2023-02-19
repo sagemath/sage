@@ -2066,6 +2066,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
         """
+        cdef Element sage_res
+
         if len(kwds) > 0:
             f = self.subs(**kwds)
             if len(x) > 0:
@@ -2093,7 +2095,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             # give up, evaluate functional
             sage_res = parent.base_ring().zero()
             for (m,c) in self.dict().iteritems():
-                sage_res += c*mul([ x[i]**m[i] for i in m.nonzero_positions()])
+                sage_res += c * mul([x[i] ** m[i] for i in m.nonzero_positions()])
         else:
             singular_polynomial_call(&res, self._poly, _ring, coerced_x, MPolynomial_libsingular_get_element)
 
@@ -2105,7 +2107,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             else:
                 sage_res = new_MP(parent, res)   # pass on ownership of res to sage_res
 
-        if sage_res.parent() is not res_parent:
+        if sage_res._parent is not res_parent:
             sage_res = res_parent(sage_res)
         return sage_res
 
