@@ -31,6 +31,7 @@ from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_string import _LazyString
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
@@ -1135,17 +1136,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError(f"the length of the parameters list must be {r}")
         dr = parameters[-1]
         if check:
+            # check that the following equation is satisfied:
+            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             right = dr*(q**r - 1)
-            left = 0
-            for k, d in enumerate(parameters[:-1]):
-                left += d*(q**(k+1) - 1)
+            left = sum(d*(q**(k+1) - 1) for k, d in enumerate(parameters[:-1]))
             if left != right:
-                raise ValueError("the given parameters does not defines a basic j-invariant")
-        num = self._base.one()
+                raise ValueError("the given parameters does not defines a basic\
+                                 j-invariant")
         gr = self.coefficients()[-1]
-        for g, d in zip(self.coefficients()[1:], parameters[:-1]):
-            if g:
-                num *= g**d
+        num = prod(g**d for g, d in zip(self.coefficients(sparse=False)[1:],\
+                                        parameters[:-1]))
         return num/(gr**dr)
 
     def basic_j_invariants_parameters(self):
