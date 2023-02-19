@@ -795,7 +795,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: W = CoxeterGroup(['A', 3])
                     sage: len(list(W.elements_below_coxeter_element()))
                     doctest:...: DeprecationWarning: The method elements_below_coxeter_element is deprecated. Please use absolute_order_ideal instead.
-                    See https://trac.sagemath.org/27924 for details.
+                    See https://github.com/sagemath/sage/issues/27924 for details.
                     14
                 """
                 from sage.misc.superseded import deprecation

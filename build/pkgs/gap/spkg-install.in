@@ -53,7 +53,7 @@ sdh_install pkg/GAPDoc-* pkg/primgrp-* pkg/SmallGrp-* pkg/transgrp "$GAP_ROOT"/p
 # typically "expected" to be loaded: These are the default packages that are
 # autoloaded at GAP startup (via the PackagesToLoad UserPreference) with an
 # out-of-the-box GAP installation; see
-# https://trac.sagemath.org/ticket/22626#comment:393 for discussion on this
+# https://github.com/sagemath/sage/issues/22626#comment:393 for discussion on this
 #
 # Also include atlasrep which is a dependency of tomlib
 sdh_install \
@@ -96,7 +96,7 @@ done
 # be going away.  This breaks the build toolchain for some compiled GAP
 # packages.  We need to replace these paths with the final GAP_ROOT path.  The
 # below will work so long as neither of these paths contain '|', and if they do
-# then god help you.  https://trac.sagemath.org/ticket/27218
+# then god help you.  https://github.com/sagemath/sage/issues/27218
 sed -i -e "s|$GAP_BUILD_ROOT|$GAP_ROOT|g" \
     "$SAGE_DESTDIR$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/sysinfo.gap" \
     "$DESTDIR_GAP_ROOT/bin/gap.sh" "$DESTDIR_GAP_ROOT/doc/make_doc" || \
