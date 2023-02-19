@@ -85,6 +85,7 @@ include sage/rings/padics/misc.p*
 
 include sage/rings/polynomial/polynomial_ring.p*
 include sage/rings/polynomial/polynomial_ring_constructor.p*
+include sage/rings/polynomial/polynomial_ring_homomorphism.p*
 include sage/rings/polynomial/polynomial_quotient_ring.p*
 include sage/rings/polynomial/polynomial_singular_interface.p*
 include sage/rings/polynomial/multi_polynomial_ring.p*
