@@ -78,7 +78,7 @@ DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
 # Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
 # of packages if GCC changed.
-# See m4/sage_spkg_collect.m4 and https://trac.sagemath.org/ticket/24703
+# See m4/sage_spkg_collect.m4 and https://github.com/sagemath/sage/issues/24703
 GCC_DEP = @SAGE_GCC_DEP@
 
 # Versions of all the packages, in the format

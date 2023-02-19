@@ -870,7 +870,7 @@ class Maxima(MaximaAbstract, Expect):
                 # process one interrupt (7.5 seconds on an idle system, but up
                 # to a minute on a loaded system) and gets confused by multiple
                 # interrupts.  Instead, send just one interrupt and wait.
-                # See Trac #9361.
+                # See Issue #9361.
                 self._sendstr(chr(3))
                 self._expect_expr(timeout=120)
         except pexpect.EOF:
@@ -1132,7 +1132,7 @@ def is_MaximaElement(x):
         sage: from sage.interfaces.maxima import is_MaximaElement
         sage: is_MaximaElement(1)
         doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: m = maxima(1)
         sage: is_MaximaElement(m)

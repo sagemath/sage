@@ -18,7 +18,7 @@ found, for example, on the :wikipedia:`k-regular_sequence` or in
         doctest:...: FutureWarning: This class/method/function is
         marked as experimental. It, its functionality or its interface
         might change without a formal deprecation.
-        See http://trac.sagemath.org/21202 for details.
+        See https://github.com/sagemath/sage/issues/21202 for details.
 
 
 Examples

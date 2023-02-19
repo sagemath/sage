@@ -385,7 +385,7 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
     # There was here a commented-out check that Q is in local normal form
     # (it often may not be since the reduction procedure
     # often mixes up the order of the valuations...)
-    # This commented-out code was removed in ticket #32960
+    # This commented-out code was removed in issue #32960
 
     # Decide which routine to use to compute the Good-type density
     if p > 2:

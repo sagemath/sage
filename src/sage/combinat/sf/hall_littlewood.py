@@ -924,7 +924,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
             sage: s = Sym.schur(); p = Sym.power()
             sage: HLQp(HLP([2])) # indirect doctest
             -t*HLQp[1, 1] + (t^2+1)*HLQp[2]
-            sage: HLQp(s(HLQ([2]))) # work around bug reported in ticket #12969
+            sage: HLQp(s(HLQ([2]))) # work around bug reported in issue #12969
             (t^2-t)*HLQp[1, 1] + (-t^3+t^2-t+1)*HLQp[2]
             sage: HLQp(s([2]))
             HLQp[2]

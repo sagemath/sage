@@ -1227,7 +1227,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         if not is_ProjectiveSpace(self.codomain()):
             raise NotImplementedError("not implemented for subschemes")
 
-        # Trac #23808: Keep the embedding info associated with the number field K
+        # Issue #23808: Keep the embedding info associated with the number field K
         # used below, instead of in the separate embedding map phi which is
         # forgotten.
         K_pre,P,phi = number_field_elements_from_algebraics(list(self))
