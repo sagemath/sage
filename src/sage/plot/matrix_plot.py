@@ -552,7 +552,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
         sage: matrix_plot(identity_matrix(100), origin='lower')
         doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
-        See https://trac.sagemath.org/27891 for details.
+        See https://github.com/sagemath/sage/issues/27891 for details.
         Graphics object consisting of 1 graphics primitive
     """
     if 'origin' in options:

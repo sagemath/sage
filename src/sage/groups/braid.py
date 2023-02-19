@@ -2360,7 +2360,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         n = len(names)
         # n is the number of generators, not the number of strands
-        # see ticket 14081
+        # see issue 14081
         if n < 1:
             raise ValueError("the number of strands must be at least 2")
         free_group = FreeGroup(names)

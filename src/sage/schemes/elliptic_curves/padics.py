@@ -703,7 +703,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     TESTS:
 
-    Check that ticket :trac:`20798` is solved::
+    Check that issue :trac:`20798` is solved::
 
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)

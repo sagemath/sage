@@ -1,5 +1,5 @@
 Patch from Cygwin to fix segfault when using the JIT compiler; see 
-https://trac.sagemath.org/ticket/23291
+https://github.com/sagemath/sage/issues/23291
 --- a/sljit/sljitConfigInternal.h	2016-04-06 03:05:43.000000000 -0500
 +++ b/sljit/sljitConfigInternal.h	2016-08-11 14:33:58.201820000 -0500
 @@ -564,7 +564,7 @@ SLJIT_API_FUNC_ATTRIBUTE void sljit_free

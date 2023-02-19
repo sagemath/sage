@@ -1,5 +1,5 @@
 # Compile this with -Os because it works around a bug with
-# GCC-4.7.3 + Cython 0.19 on Itanium, see Trac #14452. Moreover, it
+# GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
 # actually results in faster code than -O3.
 #
 # distutils: extra_compile_args = -Os
