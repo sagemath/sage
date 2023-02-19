@@ -404,7 +404,7 @@ def is_RingHomomorphism(phi):
         doctest:warning
         ...
         DeprecationWarning: is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         True
         sage: sage.rings.morphism.is_RingHomomorphism(2/3)
         False
@@ -1654,7 +1654,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
         doctest:warning
         ...
         DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         sage: TestSuite(f).run()
 
     """
@@ -1668,7 +1668,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
             doctest:warning
             ...
             DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-            See http://trac.sagemath.org/23204 for details.
+            See https://github.com/sagemath/sage/issues/23204 for details.
             sage: isinstance(f, RingHomomorphism_coercion)
             True
 

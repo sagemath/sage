@@ -489,7 +489,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             # Because this parent class is a Cython class, the method
             # UnitalAlgebras.ParentMethods.__init_extra__(), which normally
             # registers the coercion map from the base ring, is called only
-            # when inheriting from this class in Python (cf. Trac #26958).
+            # when inheriting from this class in Python (cf. Issue #26958).
             return self._coerce_map_from_base_ring()
         f = self._coerce_map_via([base_ring], other)
         if f is not None:
@@ -4229,7 +4229,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: k.factor()
             ((s^2 + 2/3)) * (x + s*y)^2 * (x + (-s)*y)^5 * (x^2 + s*x*y + (s^2)*y^2)^5
 
-        This shows that ticket :trac:`2780` is fixed, i.e. that the unit
+        This shows that issue :trac:`2780` is fixed, i.e. that the unit
         part of the factorization is set correctly::
 
             sage: x = var('x')
@@ -5762,7 +5762,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             #where the numerator of a polynomial over RationalField
             #is a polynomial over IntegerRing
             #
-            # Trac ticket #11780: Create the polynomial ring over
+            # Github issue #11780: Create the polynomial ring over
             # the integers using the (cached) polynomial ring constructor:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             integer_polynomial_ring = PolynomialRing(ZZ,\

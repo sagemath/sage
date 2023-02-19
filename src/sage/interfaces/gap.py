@@ -1645,7 +1645,7 @@ def is_GapElement(x):
         sage: from sage.interfaces.gap import is_GapElement
         sage: is_GapElement(gap(2))
         doctest:...: DeprecationWarning: the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead
-        See https://trac.sagemath.org/34823 for details.
+        See https://github.com/sagemath/sage/issues/34823 for details.
         True
         sage: is_GapElement(2)
         False

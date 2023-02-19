@@ -720,7 +720,7 @@ class Documenter:
             try:
                 membername, member = obj
                 # ---------------------------------------------------
-                # Trac #17455: Immediately skip lazy imports to avoid
+                # Issue #17455: Immediately skip lazy imports to avoid
                 # deprecation messages.
                 from sage.misc.lazy_import import LazyImport
                 if isinstance(member, LazyImport):
@@ -1319,7 +1319,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
         # does not support bound methods exported at the module level
         if is_function_or_cython_function(member) or inspect.isbuiltin(member):
             return True
-        # Trac #9976: It can be documented if it is a genuine function.
+        # Issue #9976: It can be documented if it is a genuine function.
         # Often, a class instance has the same documentation as its class,
         # and then we typically want to document the class and not the
         # instance.  However, there is an exception: CachedFunction(f) returns
@@ -1339,7 +1339,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
         try:
             self.env.app.emit('autodoc-before-process-signature', self.object, False)
             # ----------------------------------------------------------------
-            # Trac #9976: Support the _sage_argspec_ attribute which makes it
+            # Issue #9976: Support the _sage_argspec_ attribute which makes it
             # possible to get argument specification of decorated callables in
             # documentation correct. See e.g. sage.misc.decorators.sage_wraps
             obj = self.object
@@ -1543,7 +1543,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             if hasattr(self.object, '__name__'):
                 self.doc_as_attr = (self.objpath[-1] != self.object.__name__)
             # -------------------------------------------------------------------
-            # Trac #27692, #7448: The original goal of this was that if some
+            # Issue #27692, #7448: The original goal of this was that if some
             # class is aliased, the alias is generated as a link rather than
             # duplicated. For example in
             #
@@ -2286,7 +2286,7 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
             kwargs.setdefault('unqualified_typehints', True)
 
         # -----------------------------------------------------------------
-        # Trac #9976: Support the _sage_argspec_ attribute which makes it
+        # Issue #9976: Support the _sage_argspec_ attribute which makes it
         # possible to get argument specification of decorated callables in
         # documentation correct.  See e.g. sage.misc.decorators.sage_wraps.
         #
@@ -2337,7 +2337,7 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
         pass
 
     # ------------------------------------------------------------------------
-    # Trac #34730: The format_signature() of the class MethodDocumenter
+    # Issue #34730: The format_signature() of the class MethodDocumenter
     # supports overloaded methods via inspect.signature(), which does not work
     # with Sage yet. Hence the method was removed from here.
     # ------------------------------------------------------------------------
@@ -2666,7 +2666,7 @@ class AttributeDocumenter(GenericAliasMixin, NewTypeMixin, SlotsMixin,  # type: 
         if isinstance(parent, ModuleDocumenter):
             return False
         # ---------------------------------------------------------------------
-        # Trac #34730: Do not pass objects of the class CachedMethodCaller as
+        # Issue #34730: Do not pass objects of the class CachedMethodCaller as
         # attributes.
         #
         #   sage: from sphinx.util import inspect
@@ -2681,7 +2681,7 @@ class AttributeDocumenter(GenericAliasMixin, NewTypeMixin, SlotsMixin,  # type: 
         #
         if inspect.isattributedescriptor(member) and not inspect.isroutine(member):
             return True
-        # Trac #26522: Pass objects of classes that inherit ClasscallMetaclass
+        # Issue #26522: Pass objects of classes that inherit ClasscallMetaclass
         # as attributes rather than method descriptors.
         from sage.misc.classcall_metaclass import ClasscallMetaclass
         if isinstance(type(member), ClasscallMetaclass):
