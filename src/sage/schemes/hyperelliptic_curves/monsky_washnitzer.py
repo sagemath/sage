@@ -502,7 +502,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
                                   "coefficient ring (=%s) of Q" % base_ring)
 
         # CommutativeAlgebra.__init__ tries to establish a coercion
-        # from the base ring, by trac ticket #9138. The corresponding
+        # from the base ring, by github issue #9138. The corresponding
         # hom set is cached.  In order to use self as cache key, its
         # string representation is used. In otder to get the string
         # representation, we need to know the attributes _a and
@@ -2367,7 +2367,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         if R is None:
             R = Q.base_ring()
 
-        # Trac ticket #9138: CommutativeAlgebra.__init__ must not be
+        # Github issue #9138: CommutativeAlgebra.__init__ must not be
         # done so early.  It tries to register a coercion, but that
         # requires the hash being available.  But the hash, in its
         # default implementation, relies on the string representation,
@@ -2410,7 +2410,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Trac ticket #9138: Initialise the commutative algebra here!
+        # Github issue #9138: Initialise the commutative algebra here!
         # Below, we do self(self._poly_ring.gen(0)), which requires
         # the initialisation being finished.
         CommutativeAlgebra.__init__(self, R)

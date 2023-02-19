@@ -1884,7 +1884,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         doctest:warning
         ...
         DeprecationWarning: Reading this pickle may be machine dependent
-        See http://trac.sagemath.org/23411 for details.
+        See https://github.com/sagemath/sage/issues/23411 for details.
         True
 
     Unpickling would even work in the case that the machine creating
