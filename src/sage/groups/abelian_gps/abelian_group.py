@@ -1675,7 +1675,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: F.order()
             +Infinity
 
-        Testing ticket :trac:`18863`::
+        Testing issue :trac:`18863`::
 
             sage: G = AbelianGroup(5,[2])
             sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])
