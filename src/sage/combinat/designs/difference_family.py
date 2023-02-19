@@ -1050,7 +1050,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     # NOTE: below we compute the value of s so that qs = q^s. If the method
     # is_power_of of integers would be able to return the exponent, we could use
     # that... but currently this is not the case
-    # see trac ticket #19792
+    # see github issue #19792
     p1,a1 = qs.is_prime_power(get_data=True)
     p2,a2 = q.is_prime_power(get_data=True)
 

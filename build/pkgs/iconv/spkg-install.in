@@ -1,6 +1,6 @@
 # Only build iconv on Solaris, HP-UX and Cygwin. See
-#     http://trac.sagemath.org/sage_trac/ticket/8567 and
-#     http://trac.sagemath.org/sage_trac/ticket/9603
+#     https://github.com/sagemath/sage/issues/8567 and
+#     https://github.com/sagemath/sage/issues/9603
 # for details.
 
 case "$UNAME" in
@@ -8,8 +8,8 @@ CYGWIN|HP-UX|SunOS)
     echo "iconv will be installed as the operating system is Cygwin, HP-UX or Solaris."
     echo "These systems either lack iconv, or do not have a sufficiently capable"
     echo "version of iconv. See:"
-    echo "    http://trac.sagemath.org/sage_trac/ticket/8567"
-    echo "    http://trac.sagemath.org/sage_trac/ticket/9603"
+    echo "    https://github.com/sagemath/sage/issues/8567"
+    echo "    https://github.com/sagemath/sage/issues/9603"
 
     # Disable NLS on Cygwin to be able to build libiconv without the Cygwin
     # libiconv package.
@@ -29,8 +29,8 @@ CYGWIN|HP-UX|SunOS)
     echo "Solaris, HP-UX and Cygwin, as the system's iconv will be used"
     echo "on other platforms, rather than the one shipped with Sage."
     echo "See:"
-    echo "    http://trac.sagemath.org/sage_trac/ticket/8567"
-    echo "    http://trac.sagemath.org/sage_trac/ticket/9603"
+    echo "    https://github.com/sagemath/sage/issues/8567"
+    echo "    https://github.com/sagemath/sage/issues/9603"
     exit 0
 esac
 
