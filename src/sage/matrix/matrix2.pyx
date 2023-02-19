@@ -5241,8 +5241,8 @@ cdef class Matrix(Matrix1):
 
     def image(self):
         """
-        Return the image of the homomorphism on rows defined by this
-        matrix.
+        Return the image of the homomorphism on rows defined by right
+        multiplication by this matrix: that is, the row-space.
 
         EXAMPLES::
 
@@ -5265,6 +5265,12 @@ cdef class Matrix(Matrix1):
 
             sage: image(B) == B.row_module()
             True
+            sage: image(B) == B.transpose().column_module()
+            True
+
+        .. SEEALSO::
+
+            :meth:`row_module`, :meth:`column_module`
         """
         return self.row_module()
 
