@@ -624,7 +624,7 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
-.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+.. [BDKR2013] \D. Best, D.Ž. Đoković, H. Kharaghani and H. Ramp.
               *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
               Journal of Combinatorial Designs 21(1) (2013): 24-35.
               :doi:`10.1002/jcd.21318`
@@ -2058,7 +2058,7 @@ REFERENCES:
 
 .. [Djo1992c] \D. Đoković.
              *Ten New Orders for Hadamard Matrices of Skew Type*,
-             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
 
 .. [Djo1994] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
