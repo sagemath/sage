@@ -38,11 +38,6 @@ from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_polyhedra import *
 
-# Integers modulo n.
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
-from sage.rings.finite_rings.integer_mod import IntegerMod, Mod, mod
-Integers = IntegerModRing
-
 # Finite fields
 from .finite_rings.all import *
 
@@ -61,9 +56,6 @@ from .padics.padic_printing import _printer_defaults as padic_printing
 
 # valuations
 from .valuation.all import *
-
-# Semirings
-from .semirings.all import *
 
 # Real numbers
 from .real_mpfr import (RealField, RR,
@@ -130,10 +122,6 @@ from .pari_ring import PariRing, Pari
 
 # Big-oh notation
 from .big_oh import O
-
-# Fraction field
-from .fraction_field import FractionField
-Frac = FractionField
 
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences

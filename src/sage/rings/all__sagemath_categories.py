@@ -17,6 +17,11 @@ Rationals = RationalField
 from .integer_ring import IntegerRing, ZZ, crt_basis
 from .integer import Integer
 
+# Integers modulo n.
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
+from sage.rings.finite_rings.integer_mod import IntegerMod, Mod, mod
+Integers = IntegerModRing
+
 # Infinities
 from .infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
 
@@ -26,12 +31,19 @@ from .quotient_ring import QuotientRing
 # Localization
 from .localization import Localization
 
+# Fraction field
+from .fraction_field import FractionField
+Frac = FractionField
+
 # Double precision floating point numbers
 from .real_double import RealDoubleField, RDF, RealDoubleElement
 
 # Ideals
 from .ideal import Ideal
 ideal = Ideal
+
+# Semirings
+from .semirings.all import *
 
 from .finite_rings.all__sagemath_categories import *
 from .number_field.all__sagemath_categories import *
