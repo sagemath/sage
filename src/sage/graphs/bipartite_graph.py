@@ -1287,7 +1287,7 @@ class BipartiteGraph(Graph):
         """
         # This is needed because complement() of generic graph
         # would return a graph of class BipartiteGraph that is
-        # not bipartite. See ticket #12376.
+        # not bipartite. See issue #12376.
         return Graph(self).complement()
 
     def complement_bipartite(self):
@@ -1386,7 +1386,7 @@ class BipartiteGraph(Graph):
 
         TESTS:
 
-        Ticket :trac:`25985` is fixed::
+        Issue :trac:`25985` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
             sage: B.project_left().vertices(sort=True)

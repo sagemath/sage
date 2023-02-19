@@ -51,7 +51,7 @@ cdef class ntl_zz_pContext_class():
         if v > NTL_SP_BOUND:
             raise ValueError("Modulus (=%s) is too big" % v)
         elif v < 2:
-            # Trac 13940: only moduli greater than one are supported.
+            # Issue 13940: only moduli greater than one are supported.
             raise ValueError("Modulus (=%s) is too small" % v)
 
         self.x = zz_pContext_c(v)
