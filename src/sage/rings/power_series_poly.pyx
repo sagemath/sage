@@ -1025,6 +1025,13 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Series must have valuation one for reversion.
+
+            sage: Series = PowerSeriesRing(SR, 'x')
+            sage: ser = Series([0, pi])
+            sage: ser
+            pi*x
+            sage: ser.reverse()
+            1/pi*x + O(x^20)
         """
         if self.valuation() != 1:
             raise ValueError("Series must have valuation one for reversion.")
