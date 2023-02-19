@@ -381,7 +381,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             doctest:warning
             ...
             DeprecationWarning: __getitem__ is changing to match the behavior of number fields. Please use expansion instead.
-            See http://trac.sagemath.org/14825 for details.
+            See https://github.com/sagemath/sage/issues/14825 for details.
             5
             sage: a[1]
             4

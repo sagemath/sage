@@ -278,7 +278,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W.m(1, 1)                                             # optional - coxeter3
             doctest:warning...:
             DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
-            See https://trac.sagemath.org/30237 for details.
+            See https://github.com/sagemath/sage/issues/30237 for details.
             1
         """
         from sage.misc.superseded import deprecation

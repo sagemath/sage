@@ -942,7 +942,7 @@ cdef class BooleanFunction(SageObject):
             doctest:warning
             ...
             DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
-            See https://trac.sagemath.org/28001 for details.
+            See https://github.com/sagemath/sage/issues/28001 for details.
             32
         """
         cdef long a

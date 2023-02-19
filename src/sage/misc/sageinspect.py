@@ -188,7 +188,7 @@ def loadable_module_extension():
         sage: loadable_module_extension() in EXTENSION_SUFFIXES
         doctest:warning...
         DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
-        See https://trac.sagemath.org/33636 for details.
+        See https://github.com/sagemath/sage/issues/33636 for details.
         True
     """
     from sage.misc.superseded import deprecation

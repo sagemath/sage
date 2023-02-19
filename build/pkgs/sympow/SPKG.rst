@@ -43,7 +43,7 @@ Special Update/Build Instructions
    that might show up. I (David Kirkby) would personally not trust this
    code much at all.
 
--  This is a difficult package to maintain. A trac ticket (#9758) has
+-  This is a difficult package to maintain. A github issue (#9758) has
    been
    opened to implement Watkins-Delaunay's algorithm for computing
    modular
@@ -58,7 +58,7 @@ Special Update/Build Instructions
    This has been fixed in the Gentoo Linux distribution. Some
    information
    from Christopher can be seen on
-   http://trac.sagemath.org/sage_trac/ticket/9703
+   https://github.com/sagemath/sage/issues/9703
    This package will generate binary versions of all shipped datafiles,
    so these will work. However, creating totally new datafiles from
    scratch

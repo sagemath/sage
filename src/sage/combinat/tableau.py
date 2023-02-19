@@ -86,34 +86,34 @@ For display options, see :meth:`Tableaux.options`.
 # ****************************************************************************
 from itertools import repeat
 
+import sage.libs.symmetrica.all as symmetrica
+import sage.misc.prandom as random
+
 from sage.arith.misc import binomial, factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
+from sage.combinat import permutation
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
+from sage.combinat.posets.posets import Poset
 from sage.groups.perm_gps.permgroup import PermutationGroup
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc import powerset
+from sage.misc.misc_c import prod
+from sage.misc.persist import register_unpickle_override
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableList
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
-from sage.misc.persist import register_unpickle_override
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.infinity import PlusInfinity
-from sage.rings.integer import Integer
-import sage.libs.symmetrica.all as symmetrica
-import sage.misc.prandom as random
-from sage.misc.misc_c import prod
-from sage.misc.misc import powerset
-
-from . import permutation
-from .combinatorial_map import combinatorial_map
-from .composition import Composition, Compositions
-from .integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
-from .posets.posets import Poset
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 @richcmp_method

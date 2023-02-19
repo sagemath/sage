@@ -11,7 +11,7 @@ TESTS::
 
     sage: R = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: R = ZpLF(2)
     sage: R = QpLC(2)
     sage: R = QpLF(2)

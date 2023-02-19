@@ -247,6 +247,15 @@ from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.combinat.backtrack import GenericBacktracker
+from sage.combinat.combinat import CombinatorialElement, catalan_number
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.composition import Composition
+from sage.combinat.permutation_cython import (left_action_product, right_action_product,
+                                              left_action_same_n, right_action_same_n,
+                                              map_to_list, next_perm)
+from sage.combinat.rsk import RSK, RSK_inverse
+from sage.combinat.tools import transitive_ideal
 from sage.graphs.digraph import DiGraph
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -261,16 +270,6 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from .backtrack import GenericBacktracker
-from .combinat import CombinatorialElement, catalan_number
-from .combinatorial_map import combinatorial_map
-from .composition import Composition
-from .permutation_cython import (left_action_product, right_action_product,
-                                 left_action_same_n, right_action_same_n,
-                                 map_to_list, next_perm)
-from .rsk import RSK, RSK_inverse
-from .tools import transitive_ideal
 
 
 class Permutation(CombinatorialElement):
@@ -7249,7 +7248,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_left_descent(2, mult='r2l')
                 True
@@ -7303,7 +7302,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_right_descent(3, mult='r2l')
                 True
@@ -9064,7 +9063,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
             sage: P = Permutations(3, avoiding=[[2,1,3],[1,2,3]])
             sage: P.a
             doctest:...: DeprecationWarning: The attribute a for the list of patterns to avoid is deprecated, use the method patterns instead.
-            See https://trac.sagemath.org/26810 for details.
+            See https://github.com/sagemath/sage/issues/26810 for details.
             ([2, 1, 3], [1, 2, 3])
         """
         from sage.misc.superseded import deprecation

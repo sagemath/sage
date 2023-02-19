@@ -203,7 +203,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.functions import lcm
-from sage.arith.misc import divisors, GCD as gcd
+from sage.arith.misc import divisors, gcd
 from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.groups.group import AbelianGroup as AbelianGroupBase
@@ -1676,7 +1676,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: F.order()
             +Infinity
 
-        Testing ticket :trac:`18863`::
+        Testing issue :trac:`18863`::
 
             sage: G = AbelianGroup(5,[2])
             sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])

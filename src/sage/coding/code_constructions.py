@@ -40,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import GCD as gcd, quadratic_residues
+from sage.arith.misc import gcd, quadratic_residues
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import random_matrix

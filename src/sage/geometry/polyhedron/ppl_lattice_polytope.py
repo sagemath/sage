@@ -855,8 +855,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: poly = LatticePolytope_PPL((-9,-6,-1,-1),(0,0,0,1),(0,0,1,0),(0,1,0,0),(1,0,0,0))
             sage: fiber = next(poly.fibration_generator(2))
             sage: poly.base_projection_matrix(fiber)
-            [0 0 1 0]
-            [0 0 0 1]
+            [ 0  0 -1  0]
+            [ 0  0  0 -1]
 
         Note that the basis choice in :meth:`base_projection` for the
         quotient is usually different::
@@ -866,7 +866,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: [ proj(p) for p in poly.integral_points() ]
             [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
             sage: [ proj_matrix*p for p in poly.integral_points() ]
-            [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
+            [(1, 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, -1), (-1, 0)]
         """
         return matrix(ZZ, fiber.vertices()).right_kernel_matrix()
 
