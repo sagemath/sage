@@ -910,6 +910,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<v> = E.division_field(7); K
             Finite Field in v of size 433^16
 
+        .. SEEALSO::
+
+            To compute a basis of the `\ell`-torsion once the base field
+            has been extended, you may use
+            :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
+            or
+            :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+
         TESTS:
 
         Some random testing::
