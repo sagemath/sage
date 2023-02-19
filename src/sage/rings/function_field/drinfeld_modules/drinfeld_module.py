@@ -1099,16 +1099,35 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho = DrinfeldModule(A, [p_root, 0, 1])
             sage: rho.j_invariant()
             0
+
+        ::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
+            sage: phi.j_invariant()
+            T^309
+            sage: phi.j_invariant(2)
+            1/T^3
+            sage: phi.j_invariant(3)
+            (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
+            sage: sage: phi.j_invariant([0, 7, 54, 11])
+            (T^54 + 4*T^53 + T^52 + 4*T^51 + T^50 + 2*T^29 + 3*T^28 + 2*T^27 + 3*T^26 + 2*T^25 + T^4 + 4*T^3 + T^2 + 4*T + 1)/T^33
         """
-        if not isinstance(k, (int, Integer)):
-            raise TypeError(f"k must be an integer")
-        r = self.rank()
-        if k <= 0 or k >= r:
-            raise ValueError(f"k (={k}) must be greater or equal to one and less than the rank (={r})")
-        q = self._Fq.order()
-        gk = self.coefficient(k)
-        gr = self.coefficient(r)
-        return gk**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) / gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1)))
+        # TODO: add documentation for this method
+        if isinstance(k, (int, Integer)):
+            r = self.rank()
+            if k <= 0 or k >= r:
+                raise ValueError(f"k (={k}) must be greater or equal to one and less than the rank (={r})")
+            q = self._Fq.order()
+            gk = self.coefficient(k)
+            gr = self.coefficient(r)
+            j_inv = gk**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) / gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1)))
+        elif isinstance(k, list):
+            j_inv = self.basic_j_invariant(k)
+        else:
+            raise TypeError("k must be an integer or a list of integer")
+        return j_inv
 
     def basic_j_invariant(self, parameters, check=True):
         r"""
@@ -1127,7 +1146,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: the given parameters does not defines a basic j-invariant
         """
-        # TODO: add doctests, fix pep8, define the parameters.
+        # TODO: add doctests, fix pep8, define the parameters, implement j_invariantS.
         r = self._gen.degree()
         q = self._Fq.order()
         if not isinstance(parameters, list):
