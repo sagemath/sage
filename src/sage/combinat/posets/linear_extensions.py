@@ -253,7 +253,7 @@ class LinearExtensionOfPoset(ClonableArray,
         return True
 
     def is_supergreedy(self):
-        r""""
+        r"""
         Return ``True`` if the linear extension is supergreedy.
         
         A linear extension `[x_1<x_2<...<x_t]` of a finite ordered
@@ -296,24 +296,20 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         P = self.poset()
         H = P.hasse_diagram()
-
-        def next_elements(H, linext):
-            k = len(linext)
-            S = []
-            while not S:
-                if not k:
-                    S = [x for x in H.sources() if x not in linext]
-                else:
-                    S = [x for x in H.neighbor_out_iterator(linext[k-1]) if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x))]
-                    k -= 1
-            return S
         if not self:
             return True
         if self[0] not in H.sources():
             return False
         for i in range(len(self)-2):
-            X = next_elements(H,self[:i+1])
-            if self[i+1] in X:
+            k = len(self[:i+1])
+            L = []
+            while not L:
+                if not k:
+                    L = [x for x in H.sources() if x not in self[:i+1]]
+                else:
+                    L = [x for x in H.neighbor_out_iterator(self[:i+1][k-1]) if x not in self[:i+1] and all(low in self[:i+1] for low in H.neighbor_in_iterator(x))]
+                    k -= 1
+            if self[i+1] in L:
                 continue
             else:
                 return False
