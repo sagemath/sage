@@ -436,7 +436,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         [[0, 1, 0], [1, 2, 3]]
 
     We can also create a colored permutation by passing
-    either a list of tuples consisting of ``(color, element)``::
+    an iterable consisting of tuples consisting of ``(color, element)``::
 
         sage: x = C([(2,1), (3,3), (3,2)]); x
         [[2, 3, 3], [1, 3, 2]]
@@ -445,12 +445,20 @@ class ColoredPermutations(Parent, UniqueRepresentation):
 
         sage: C([[3,3,1], [1,3,2]])
         [[3, 3, 1], [1, 3, 2]]
+        sage: C(([3,3,1], [1,3,2]))
+        [[3, 3, 1], [1, 3, 2]]
 
     There is also the natural lift from permutations::
 
         sage: P = Permutations(3)
         sage: C(P.an_element())
         [[0, 0, 0], [3, 1, 2]]
+
+
+    A colored permutation::
+
+        sage: C(C.an_element()) == C.an_element()
+        True
 
     REFERENCES:
 
@@ -688,20 +696,22 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             sage: x == C([[2,3,3], [1,3,2]])
             True
         """
-        if isinstance(x, list):
-            if isinstance(x[0], tuple):
-                c = []
-                p = []
-                for k in x:
-                    if len(k) != 2:
-                        raise ValueError("input must be pairs (color, element)")
-                    c.append(self._C(k[0]))
-                    p.append(k[1])
-                return self.element_class(self, c, self._P(p))
+        if isinstance(x, self.element_class) and x.parent() is self:
+            return self
+        x = list(x)
+        if isinstance(x[0], tuple):
+            c = []
+            p = []
+            for k in x:
+                if len(k) != 2:
+                    raise ValueError("input must be pairs (color, element)")
+                c.append(self._C(k[0]))
+                p.append(k[1])
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) != 2:
-                raise ValueError("input must be a pair of a list of colors and a permutation")
-            return self.element_class(self, [self._C(v) for v in x[0]], self._P(x[1]))
+        if len(x) != 2:
+            raise ValueError("input must be a pair of a list of colors and a permutation")
+        return self.element_class(self, [self._C(v) for v in x[0]], self._P(x[1]))
 
     def _coerce_map_from_(self, C):
         """
@@ -989,6 +999,11 @@ class SignedPermutation(ColoredPermutation,
             sage: SignedPermutation([2, 1, -3])
             [2, 1, -3]
 
+            sage: SignedPermutation((2,1,-3))
+            [2, 1, -3]
+
+            sage: SignedPermutation(range(1,4))
+            [1, 2, 3]
         """
         return SignedPermutations(len(list(pi)))(pi)
 
@@ -1360,38 +1375,43 @@ class SignedPermutations(ColoredPermutations):
             sage: S([]) == list(S)[0]
             True
 
+            sage: T = SignedPermutation(range(1,4))
+            sage: SignedPermutations(3)(T)
+            [1, 2, 3]
         """
-        if isinstance(x, list):
-            if x and isinstance(x[0], tuple):
-                c = []
-                p = []
-                for k in x:
-                    if len(k) != 2:
-                        raise ValueError("input must be pairs (sign, element)")
-                    if k[0] != 1 and k[0] != -1:
-                        raise ValueError("the sign must be +1 or -1")
-                    c.append(ZZ(k[0]))
-                    p.append(k[1])
-                return self.element_class(self, c, self._P(p))
+        if isinstance(x, self.element_class) and x.parent() is self:
+            return self
+        x = list(x)
+        if x and isinstance(x[0], tuple):
+            c = []
+            p = []
+            for k in x:
+                if len(k) != 2:
+                    raise ValueError("input must be pairs (sign, element)")
+                if k[0] != 1 and k[0] != -1:
+                    raise ValueError("the sign must be +1 or -1")
+                c.append(ZZ(k[0]))
+                p.append(k[1])
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) == self._n:
-                c = []
-                p = []
-                one = ZZ.one()
-                for v in x:
-                    if v > 0:
-                        c.append(one)
-                        p.append(v)
-                    else:
-                        c.append(-one)
-                        p.append(-v)
-                return self.element_class(self, c, self._P(p))
+        if len(x) == self._n:
+            c = []
+            p = []
+            one = ZZ.one()
+            for v in x:
+                if v > 0:
+                    c.append(one)
+                    p.append(v)
+                else:
+                    c.append(-one)
+                    p.append(-v)
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) != 2:
-                raise ValueError("input must be a pair of a list of signs and a permutation")
-            if any(s != 1 and s != -1 for s in x[0]):
-                raise ValueError("the sign must be +1 or -1")
-            return self.element_class(self, [ZZ(v) for v in x[0]], self._P(x[1]))
+        if len(x) != 2:
+            raise ValueError("input must be a pair of a list of signs and a permutation")
+        if any(s != 1 and s != -1 for s in x[0]):
+            raise ValueError("the sign must be +1 or -1")
+        return self.element_class(self, [ZZ(v) for v in x[0]], self._P(x[1]))
 
     def __iter__(self):
         """

@@ -1126,7 +1126,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             sage: f[1:3]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             x
             sage: f[1:3:2]
             Traceback (most recent call last):
@@ -2475,7 +2475,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 p = self.parent().characteristic()
             except (AttributeError, NotImplementedError):
                 # some quotients do not implement characteristic
-                # see trac ticket 24308
+                # see github issue 24308
                 p = -1
             if 0 < p <= right and (self.base_ring() in sage.categories.integral_domains.IntegralDomains() or p.is_prime()):
                 x = self.parent().gen()
@@ -9666,7 +9666,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 content = self.content_ideal().gen()
                 self_1 = (self//content)
                 return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
-        else:  # The above method is not always correct (see Trac 8736)
+        else:  # The above method is not always correct (see Issue 8736)
             return self.factor().radical_value()
 
     def content_ideal(self):

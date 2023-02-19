@@ -35,7 +35,7 @@
 
 # From various typo tickets
 
-# https://trac.sagemath.org/ticket/30585
+# https://github.com/sagemath/sage/issues/30585
 - name: 'typo "homogenous" detected'
   hint: |
     in mathematics it should be "homogeneous"
