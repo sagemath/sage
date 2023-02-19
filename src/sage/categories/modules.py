@@ -973,6 +973,6 @@ class Modules(Category_module):
                     sage: M.construction()
                     doctest:warning...
                     DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
-                    See https://trac.sagemath.org/34393 for details.
+                    See https://github.com/sagemath/sage/issues/34393 for details.
                     (VectorFunctor, Integer Ring)
                 """

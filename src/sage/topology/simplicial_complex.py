@@ -4473,7 +4473,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
             sage: print(S._chomp_repr_())
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             (2, 3, 5)
             (0, 1, 2)
 

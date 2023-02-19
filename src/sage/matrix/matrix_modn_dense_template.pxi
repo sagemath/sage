@@ -1840,7 +1840,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
         Returns a matrix whose rows form a basis for the right kernel
-        of ``self``, where ``self`` is a matrix over a (small) finite field.
+        of ``self``.
+
+        If the base ring is the ring of integers modulo a composite,
+        the keyword arguments are ignored and the computation is
+        delegated to :meth:`Matrix_dense.right_kernel_matrix`.
 
         INPUT:
 
@@ -1894,7 +1898,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0]
         """
         if self.fetch('in_echelon_form') is None:
-            self = self.echelon_form(algorithm=algorithm)
+            try:
+                self = self.echelon_form(algorithm=algorithm)
+            except NotImplementedError:  # composite modulus
+                return Matrix_dense.right_kernel_matrix(self)
 
         cdef Py_ssize_t r = self.rank()
         cdef Py_ssize_t nrows = self._nrows
