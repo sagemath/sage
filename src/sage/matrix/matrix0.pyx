@@ -6141,7 +6141,7 @@ def set_max_rows(n):
         sage: from sage.matrix.matrix0 import set_max_rows
         sage: set_max_rows(20)
         doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation
@@ -6158,7 +6158,7 @@ def set_max_cols(n):
         sage: from sage.matrix.matrix0 import set_max_cols
         sage: set_max_cols(50)
         doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation

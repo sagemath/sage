@@ -1878,7 +1878,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
             sage: a.g(5) is a.f(5)
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a, 5) is a.f(5)
             True
@@ -2710,7 +2710,7 @@ cdef class CachedMethod():
 
             sage: a.g() is a.f()
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a) is a.f()
             True

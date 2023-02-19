@@ -26,7 +26,7 @@ EXAMPLES::
     (0, 0, 18, 16, 1)
     sage: Gtilde = G_sum.random_deformation()
     sage: V = Gtilde.wedge(2) * K                     # long time
-    sage: V.cohomology(dim=True, weight=(0,0,0,0))    # long time
+    sage: V.cohomology(dim=True, weight=(0,0,0,0))    # long time  # random failure (see #32773)
     (0, 0, 3, 0, 0)
 
 REFERENCES:
@@ -948,7 +948,7 @@ class KlyachkoBundle_class(SageObject):
            sage: V.cohomology(dim=True, weight=(0,))
            (1, 0)
            sage: Vtilde = V.random_deformation()
-           sage: Vtilde.cohomology(dim=True, weight=(0,))
+           sage: Vtilde.cohomology(dim=True, weight=(0,))  # random failure (see #32773)
            (1, 0)
         """
         filt = self._filt.random_deformation(epsilon)
