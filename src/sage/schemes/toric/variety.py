@@ -2437,7 +2437,7 @@ class ToricVariety_field(AmbientSpace):
             sage: sum(dP6.divisor(i) for i in range(3))
             V(x) + V(u) + V(y)
         """
-        # Divisor by a ray index - must be treated here, see Trac #12812.
+        # Divisor by a ray index - must be treated here, see Issue #12812.
         if arg in ZZ:
             arg = [(1, self.gen(arg))]
             check = True # 1 must be coerced into the coefficient ring
@@ -3134,7 +3134,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
             sage: X1 = ToricVariety(fan1);  X2 = ToricVariety(fan2)
             sage: X1 is X2
             False
-            sage: X1.cohomology_ring() is X2.cohomology_ring()   # see http://trac.sagemath.org/sage_trac/ticket/10325
+            sage: X1.cohomology_ring() is X2.cohomology_ring()   # see https://github.com/sagemath/sage/issues/10325
             True
             sage: TDiv = X1.toric_divisor_group()
             sage: X1.toric_divisor_group() is TDiv
@@ -3279,7 +3279,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
     # We definitely should not override __call__, but since our
     # superclass QuotientRing_generic does not adhere to the coercion
     # model we cannot either. See
-    # http://trac.sagemath.org/sage_trac/ticket/9429
+    # https://github.com/sagemath/sage/issues/9429
     def __call__(self, x, coerce=True):
         r"""
         Turn ``x`` into a ``CohomologyClass``.

@@ -53,7 +53,7 @@ cdef class DefaultConvertMap(Map):
             sage: from sage.structure.coerce_maps import DefaultConvertMap
             sage: DefaultConvertMap(ZZ, ZZ)
             doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable
-            See https://trac.sagemath.org/26879 for details.
+            See https://github.com/sagemath/sage/issues/26879 for details.
             Conversion map:
               From: Integer Ring
               To:   Integer Ring

@@ -643,7 +643,7 @@ class GenericGraph(GenericGraph_pyx):
         Equality and hash do not depend on ordering of vertices. In other words,
         `G1 == G2` can be `True` even when
         `G1.vertices(sort=True) == G2.vertices(sort=True)` is
-        `False`. This is parts 1 and 2 of ticket :trac:`17086`. ::
+        `False`. This is parts 1 and 2 of issue :trac:`17086`. ::
 
             sage: import functools
             sage: @functools.total_ordering
@@ -676,7 +676,7 @@ class GenericGraph(GenericGraph_pyx):
             True
 
         Hash of unweighted graphs does not depend on edge labels. That is,
-        part 3 of ticket :trac:`17086` is fixed ::
+        part 3 of issue :trac:`17086` is fixed ::
 
             sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True)
             sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True)
@@ -6356,7 +6356,7 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
-        Ticket :trac:`22003` is fixed:
+        Issue :trac:`22003` is fixed:
 
             sage: Graph(1).num_faces()
             1
@@ -10859,7 +10859,7 @@ class GenericGraph(GenericGraph_pyx):
         TESTS:
 
         When ``vertices2`` is ``None``, then ``vertices2`` is the complement of
-        ``vertices1``. Corrected in ticket :trac:`20479`::
+        ``vertices1``. Corrected in issue :trac:`20479`::
 
             sage: P = graphs.PathGraph(3)
             sage: P.vertex_boundary([0, 1])
@@ -11253,7 +11253,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.vertices()
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See http://trac.sagemath.org/22349 for details.
+            See https://github.com/sagemath/sage/issues/22349 for details.
             [0, 1, 2, 3, 4]
         """
         if sort is None:
@@ -12369,7 +12369,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.edges(sort=None)
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://trac.sagemath.org/27408 for details.
+            See https://github.com/sagemath/sage/issues/27408 for details.
             [(0, 1, None), (0, 2, None), (1, 3, None), (2, 3, None), (2, 4, None), (3, 4, None)]
         """
         if sort is None:
@@ -12582,7 +12582,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: G = Graph({0: [0]}, loops=True)  # ticket 9581
+            sage: G = Graph({0: [0]}, loops=True)  # issue 9581
             sage: G.edges_incident(0)
             [(0, 0, None)]
         """
@@ -15496,7 +15496,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.girth()
             5
 
-        Ticket :trac:`12355`::
+        Issue :trac:`12355`::
 
             sage: H=Graph([(0, 1), (0, 3), (0, 4), (0, 5), (1, 2), (1, 3), (1, 4), (1, 6), (2, 5), (3, 4), (5, 6)])
             sage: H.girth()
