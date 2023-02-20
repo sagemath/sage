@@ -146,7 +146,6 @@ def setup_for_eval_on_grid(funcs,
                 ranges[i] = list(ranges[i])
                 ranges[i][-1], ranges[i][-2] = ranges[i][-2], ranges[i][-1]
                 ranges[i] = tuple(ranges[i])
-                #raise ValueError("xrange not correctly defined: xmin(={}) > xmax(={})".format(ranges[0][-2], ranges[0][-1]))
 
     # pad the variables if we don't have enough
     nargs = len(ranges)
