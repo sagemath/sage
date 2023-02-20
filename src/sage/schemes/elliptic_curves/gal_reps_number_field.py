@@ -545,7 +545,7 @@ class GaloisRepresentation(SageObject):
             sage: G.is_split_normaliser(17)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Only implemented for p<=7
+            NotImplementedError: only implemented for p<=7
         """
         if p == 2:
             return self.is_borel(2)
@@ -563,7 +563,7 @@ class GaloisRepresentation(SageObject):
 
         try:
             if ZZ(p).is_prime():
-                raise NotImplementedError("Only implemented for p<=7")
+                raise NotImplementedError("only implemented for p<=7")
             else:
                 raise NotImplementedError("p = {} should be prime and at most 7".format(p))
         except TypeError:
@@ -631,7 +631,7 @@ class GaloisRepresentation(SageObject):
             sage: G.is_split(7)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Only implemented for p<=5
+            NotImplementedError: only implemented for p<=5
         """
         j = self.E.j_invariant()
         x = polygen(j.parent())
@@ -649,7 +649,7 @@ class GaloisRepresentation(SageObject):
 
         try:
             if ZZ(p).is_prime():
-                raise NotImplementedError("Only implemented for p<=5")
+                raise NotImplementedError("only implemented for p<=5")
             else:
                 raise NotImplementedError("p = {} should be prime and at most 5".format(p))
         except TypeError:
@@ -711,10 +711,10 @@ class GaloisRepresentation(SageObject):
             sage: G.is_nonsplit_normaliser(11)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Only implemented for p<=7
+            NotImplementedError: only implemented for p<=7
         """
         if p == 2:
-            raise ValueError("Normaliser of nonsplit Cartan not defined for p=2")
+            raise ValueError("normaliser of nonsplit Cartan not defined for p=2")
         j = self.E.j_invariant()
         x = polygen(j.parent())
         pol = None
@@ -729,7 +729,7 @@ class GaloisRepresentation(SageObject):
 
         try:
             if ZZ(p).is_prime():
-                raise NotImplementedError("Only implemented for p<=7")
+                raise NotImplementedError("only implemented for p<=7")
             else:
                 raise NotImplementedError("p = {} should be prime, either 3, 5, or 7".format(p))
         except TypeError:
@@ -763,7 +763,7 @@ class GaloisRepresentation(SageObject):
         if p == 2:
             return (j-1728).is_square()
 
-        raise NotImplementedError("Only implemented for p==2")
+        raise NotImplementedError("only implemented for p==2")
 
 def _non_surjective(E, patience=100):
     r"""
@@ -793,10 +793,10 @@ def _non_surjective(E, patience=100):
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._non_surjective(E)
         Traceback (most recent call last):
         ...
-        ValueError: The curve E should not have CM.
+        ValueError: the curve E should not have CM.
     """
     if E.has_cm():
-        raise ValueError("The curve E should not have CM.")
+        raise ValueError("the curve E should not have CM.")
 
     E = _over_numberfield(E)
     K = E.base_field()
@@ -970,10 +970,10 @@ def _exceptionals(E, L, patience=1000):
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._exceptionals(E,[2,3,5])
         Traceback (most recent call last):
         ...
-        ValueError: The curve E should not have CM.
+        ValueError: the curve E should not have CM.
     """
     if E.has_cm():
-        raise ValueError("The curve E should not have CM.")
+        raise ValueError("the curve E should not have CM.")
 
     E = _over_numberfield(E)
     K = E.base_field()
@@ -1326,7 +1326,7 @@ def _semistable_reducible_primes(E, verbose=False):
         if patience == 0:
             # We suspect that E has CM, so we check:
             if E.has_cm():
-                raise ValueError("In _semistable_reducible_primes, the curve E should not have CM.")
+                raise ValueError("in _semistable_reducible_primes, the curve E should not have CM.")
 
         assert div != 0
         # We found our divisibility constraint.
@@ -1376,10 +1376,10 @@ def _possible_normalizers(E, SA):
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._possible_normalizers(E, [])
         Traceback (most recent call last):
         ...
-        ValueError: The curve E should not have CM.
+        ValueError: the curve E should not have CM.
     """
     if E.has_cm():
-        raise ValueError("The curve E should not have CM.")
+        raise ValueError("the curve E should not have CM.")
 
     E = _over_numberfield(E)
     K = E.base_field()

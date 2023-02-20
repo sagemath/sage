@@ -4102,7 +4102,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Note that for over half of all imaginary quadratic fields,
             there exist infinitely many elliptic curves (even up to
             twist) whose mod 3 and mod 5 Galois representations are
-            both reducible (in other words, which posess a rational
+            both reducible (in other words, which possess a rational
             15-isogeny).  Such curves can be proved to be modular, but
             not using the methods implemented here.
 
