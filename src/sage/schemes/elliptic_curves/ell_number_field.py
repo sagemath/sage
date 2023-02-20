@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-r"""Elliptic curves over number fields
+r"""
+Elliptic curves over number fields
 
 An elliptic curve `E` over a number field `K` can be given
 by a Weierstrass equation whose coefficients lie in `K` or by
@@ -4075,8 +4076,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def is_modular(self, verbose=False):
         r"""
-        Returns ``True`` if the base field is totally real and modularity of
-        this curve can be proved, otherwise ``False``.
+        Return ``True`` if the base field is totally real or imaginary
+        quadratic and modularity of this curve can be proved,
+        otherwise ``False``.
 
         INPUT:
 
