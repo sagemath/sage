@@ -53,7 +53,7 @@ from sage.misc.functional import cyclotomic_polynomial
 from sage.arith.all import legendre_symbol, primes
 from sage.sets.set import Set
 from sage.rings.all import Integer, ZZ, QQ, Infinity
-
+from sage.rings.polynomial.polynomial_ring import polygen
 
 class GaloisRepresentation(SageObject):
     r"""
@@ -401,6 +401,369 @@ class GaloisRepresentation(SageObject):
             return [0]
 
         return [l for l in self.isogeny_bound() if self.E.isogenies_prime_degree(l)]
+
+    def is_borel(self, p):
+        r"""
+        Return ``True`` if the projective mod-`p` image is contained in a Borel subgroup.
+
+        INPUT:
+
+        - ``p`` (integer) -- a prime number
+
+        OUTPUT:
+
+        (boolean) ``True or ``False``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('56b1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(2)
+            True
+            sage: E = EllipticCurve('50a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(3)
+            True
+            sage: G.is_borel(5)
+            True
+            sage: E.has_cm()
+            False
+            sage: E = EllipticCurve('405d1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(7)
+            True
+            sage: E = EllipticCurve('121a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(11)
+            True
+            sage: E = EllipticCurve('147c1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(13)
+            True
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('11a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_borel(4)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: p = 4 should be prime
+            sage: G.is_borel(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: p = x should be a prime integer
+        """
+        if p == 2:
+            return not self.E.division_polynomial(2).is_irreducible()
+
+        # for p = 3, 5, 7, 13 we use the fact that X_0(p) has genus 0
+        if p in [3, 5, 7, 13]:
+            from sage.schemes.elliptic_curves.isogeny_small_degree import Fricke_polynomial
+            j = self.E.j_invariant()
+            x = polygen(j.parent())
+            return bool((Fricke_polynomial(p)(x)-j*x).roots()) # True iff list not empty
+
+        try:
+            p = ZZ(p)
+        except TypeError:
+            raise ValueError("p = {} should be a prime integer".format(p))
+        if not p.is_prime():
+            raise NotImplementedError("p = {} should be prime".format(p))
+
+        # the general case requires more work.
+        # First we see if local conditions pass:
+        if p not in Frobenius_filter(self.E, [p]):
+            return False
+
+        # Now there is a p-isogeny modulo many primes of good reduction and we do a final check:
+        return bool(self.E.isogenies_prime_degree(p)) # True iff list not empty
+
+    is_reducible = is_borel
+
+    def is_split_normaliser(self, p):
+        r"""
+        Return ``True`` if the projective mod-`p` image is contained in the normaliser of a split Cartan subgroup.
+
+        INPUT:
+
+        - ``p`` (integer) -- an odd prime number
+
+        OUTPUT:
+
+        (boolean) ``True`` if the projective mod-`p` image is
+        contained in the normaliser of a split Cartan subgroup, else
+        ``False``.
+
+        ALGORITHM:
+
+        This method is currently only implemented for primes `p` for
+        which the modular curve `X_{\text{sp}}^{+}(p)` has genus 0,
+        namely `p=2,3,5,7`.  In these cases we use an explicit formula
+        for the map from the modular curve to the `j`-line, checking
+        that the curve's `j`-invariant is in the image.
+
+        .. NOTE::
+
+            `X_{\text{sp}}^{+}(2)` is the same as `X_0(2)`.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('56b1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(2)
+            True
+            sage: E = EllipticCurve('54a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(3)
+            True
+            sage: E = EllipticCurve('800i1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(5)
+            True
+            sage: E = EllipticCurve('2450d1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(7)
+            True
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('11a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(4)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: p = 4 should be prime and at most 7
+            sage: G.is_split_normaliser(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: p = x should be a prime integer, at most 7
+            sage: G.is_split_normaliser(17)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Only implemented for p<=7
+        """
+        if p == 2:
+            return self.is_borel(2)
+        j = self.E.j_invariant()
+        x = polygen(j.parent())
+        pol = None
+        if p == 3:
+            pol = (x-9)**3 * (x+3)**3 - j * x**3
+        if p == 5:
+            pol = ((x**2-5) * (x**2+5*x+10) * (x+5))**3 - j * (x**2+5*x+5)**5
+        if p == 7:
+            pol = ((x**2-5*x+8) * (x**2-5*x+1) * (x**4-5*x**3+8*x**2-7*x+7) * (x+1))**3*x - j * (x**3-4*x**2+3*x+1)**7
+        if pol:
+            return bool(pol.roots())
+
+        try:
+            if ZZ(p).is_prime():
+                raise NotImplementedError("Only implemented for p<=7")
+            else:
+                raise NotImplementedError("p = {} should be prime and at most 7".format(p))
+        except TypeError:
+            raise ValueError("p = {} should be a prime integer, at most 7".format(p))
+
+
+    def is_split(self, p):
+        r"""
+        Return ``True`` if the projective mod-`p` image is contained in a split Cartan subgroup.
+
+        INPUT:
+
+        - ``p`` (integer) -- a prime number
+
+        OUTPUT:
+
+        (boolean) ``True`` if the projective mod-`p` image is
+        contained in a split Cartan subgroup, else ``False``.
+
+        ALGORITHM:
+
+        This method is currently only implemented for primes `p` for
+        which the modular curve `X_{\text{sp}}(p)$ has genus 0,
+        namely `p=2,3,5`.  In these cases we use an explicit formula
+        for the map from the modular curve to the `j`-line, checking
+        that the curve's `j`-invariant is in the image.
+
+        .. NOTE::
+
+            `X_{\text{sp}}(2)` is the same as `X(2)`.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('56b1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(2)
+            True
+            sage: E = EllipticCurve('54a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(3)
+            True
+            sage: E = EllipticCurve('800i1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(5)
+            True
+            sage: E = EllipticCurve('2450d1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split_normaliser(7)
+            True
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('11a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_split(4)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: p = 4 should be prime and at most 5
+            sage: G.is_split(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: p = x should be a prime integer, at most 5
+            sage: G.is_split(7)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Only implemented for p<=5
+        """
+        j = self.E.j_invariant()
+        x = polygen(j.parent())
+        pol = None
+        if p == 2:
+            pol = (x**2+192)**3 - j * (x-8)**2 * (x+8)**2
+        if p == 3:
+            pol = x**3 * (x+6)**3 * (x**2-6*x+36)**3 - j * (x-3)**3 * (x**2+3*x+9)**3
+        if p == 5:
+            pol1 = x**30 * (x**2-12*x+16)**3 * (x**4-4*x**3+176*x**2+256*x+4096)**3 * (x**4+16*x**3+176*x**2+896*x+7936)**3
+            pol2 = -2**10 * x**30 * (x+4)**5 * (x**4-4*x**3+96*x**2-384*x+2816)**5
+            pol = pol1 - j * pol2
+        if pol:
+            return bool(pol.roots())
+
+        try:
+            if ZZ(p).is_prime():
+                raise NotImplementedError("Only implemented for p<=5")
+            else:
+                raise NotImplementedError("p = {} should be prime and at most 5".format(p))
+        except TypeError:
+            raise ValueError("p = {} should be a prime integer, at most 5".format(p))
+
+    def is_nonsplit_normaliser(self, p):
+        r"""
+        Return ``True`` if the projective mod-`p` image is contained in the normaliser of a nonsplit Cartan subgroup.
+
+        INPUT:
+
+        - ``p`` (integer) -- an odd prime number
+
+        OUTPUT:
+
+        (boolean) ``True`` if the projective mod-`p` image is
+        contained in the normaliser of a nonsplit Cartan subgroup,
+        else ``False``.
+
+        ALGORITHM:
+
+        This method is currently only implemented for primes `p` for
+        which the modular curve `X_{\text{ns}}^{+}(p) has genus 0,
+        namely `p=3,5,7`.  In these cases we use an explicit formula
+        for the map from the modular curve to the `j`-line, checking
+        that the curve's `j`-invariant is in the image.
+
+        `X_{\text{ns}}^{+}(2)` is not defined.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('54a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_nonsplit_normaliser(3)
+            True
+            sage: E = EllipticCurve('675b1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_nonsplit_normaliser(5)
+            True
+            sage: E = EllipticCurve([0, -1, 1, -5373758, -9740388623]) # '15341b1'
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_nonsplit_normaliser(7)
+            True
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.gal_reps_number_field import GaloisRepresentation
+            sage: E = EllipticCurve('11a1')
+            sage: G = GaloisRepresentation(E)
+            sage: G.is_nonsplit_normaliser(4)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: p = 4 should be prime, either 3, 5, or 7
+            sage: G.is_nonsplit_normaliser(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: p = x should be a prime integer, either 3, 5, or 7
+            sage: G.is_nonsplit_normaliser(11)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Only implemented for p<=7
+        """
+        if p == 2:
+            raise ValueError("Normaliser of nonsplit Cartan not defined for p=2")
+        j = self.E.j_invariant()
+        x = polygen(j.parent())
+        pol = None
+        if p == 3:
+            pol = x**3 - j
+        if p == 5:
+            pol = 5**4 * (2*x+1) * (x+1)**3 * (6*x**2+21*x+19)**3 - j * (x**2+x-1)**5
+        if p == 7:
+            pol = ((4*x**2+5*x+2) * (x**2+3*x+4) * (x**2+10*x+4) * (3*x+1))**3 - j * (x**3+x**2-2*x-1)**7
+        if pol:
+            return bool(pol.roots())
+
+        try:
+            if ZZ(p).is_prime():
+                raise NotImplementedError("Only implemented for p<=7")
+            else:
+                raise NotImplementedError("p = {} should be prime, either 3, 5, or 7".format(p))
+        except TypeError:
+            raise ValueError("p = {} should be a prime integer, either 3, 5, or 7".format(p))
+
+    def is_nonsplit(self, p):
+        r"""
+        Return ``True`` if the projective mod-`p` image is contained in a nonsplit Cartan subgroup.
+
+        INPUT:
+
+        - ``p`` (integer) -- a prime number
+
+        OUTPUT:
+
+        (boolean) ``True`` if the projective mod-`p` image is
+        contained in a nonsplit Cartan subgroup, else ``False``.
+
+        ALGORITHM:
+
+        This method is currently only implemented for primes `p` for
+        which the modular curve `X_{\text{ns}}(p) has genus 0 and has
+        a rational point, namely `p=2` only.  (For `p=3,5` the genus
+        is zero but there are no rational points.)  In this cases we
+        use an explicit formula for the map from the modular curve to
+        the `j`-line, checking that the curve's `j`-invariant is in
+        the image.  For `p=2` this is simply that `j-1728` must be a
+        square.
+        """
+        j = self.E.j_invariant()
+        if p == 2:
+            return (j-1728).is_square()
+
+        raise NotImplementedError("Only implemented for p==2")
 
 def _non_surjective(E, patience=100):
     r"""
