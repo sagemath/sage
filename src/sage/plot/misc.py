@@ -96,7 +96,7 @@ def setup_for_eval_on_grid(funcs,
         ValueError: At least one variable range has more than 3 entries: each should either have 2 or 3 entries, with one of the forms (xmin, xmax) or (x, xmin, xmax)
 
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], plot_points=5)
-        (<sage...>, [(1.0, -1.0, 0.5), (-1.0, 1.0, 0.5)])
+        (<sage...>, [(-1.0, 1.0, 0.5), (-1.0, 1.0, 0.5)])
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x,1,-1),(x,-1,1)], plot_points=5)
         Traceback (most recent call last):
         ...
@@ -106,9 +106,9 @@ def setup_for_eval_on_grid(funcs,
         ...
         ValueError: plot start point and end point must be different
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x,1,-1),(y,-1,1)], return_vars=True)
-        (<sage...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [x, y])
+        (<sage...>, [(-1.0, 1.0, 2.0), (-1.0, 1.0, 2.0)], [x, y])
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], return_vars=True)
-        (<sage...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
+        (<sage...>, [(-1.0, 1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
 
     TESTS:
 
@@ -139,12 +139,14 @@ def setup_for_eval_on_grid(funcs,
     else:
         vars, free_vars = unify_arguments(funcs)
 
-    # check for invalid range entered by user
-    if (ranges[0][-2] > ranges[0][-1]):
-        raise ValueError("xrange not correctly defined: xmin(={}) > xmax(={})".format(ranges[0][-2], ranges[0][-1]))
-
-    if (ranges[1][-2] > ranges[1][-1]):
-        raise ValueError("xrange not correctly defined: ymin(={}) > ymax(={})".format(ranges[1][-2], ranges[1][-1]))
+    # check for invalid range entered by user (xmin > xmax or ymin > ymax) and swap the values if True
+    if len(ranges) > 1:
+        for i in range(len(ranges)):
+            if ranges[i][-2] > ranges[i][-1]:
+                ranges[i] = list(ranges[i])
+                ranges[i][-1], ranges[i][-2] = ranges[i][-2], ranges[i][-1]
+                ranges[i] = tuple(ranges[i])
+                #raise ValueError("xrange not correctly defined: xmin(={}) > xmax(={})".format(ranges[0][-2], ranges[0][-1]))
 
     # pad the variables if we don't have enough
     nargs = len(ranges)
