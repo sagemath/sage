@@ -626,8 +626,8 @@ class DocTestController(SageObject):
         try:
             with open(filename) as stats_file:
                 self.baseline_stats.update(json.load(stats_file))
-        except Exception:
-            self.log("Error loading baseline stats from %s"%filename)
+        except Exception as e:
+            self.log("Error loading baseline stats from %s: %s" % (filename, e))
 
     def load_stats(self, filename):
         """
