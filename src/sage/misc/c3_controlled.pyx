@@ -545,9 +545,9 @@ cdef class CmpKeyNamed:
 
     EXAMPLES::
 
-        sage: Algebras(GF(3))._cmp_key == Algebras(GF(5))._cmp_key  # indirect doctest
+        sage: Algebras(GF(3))._cmp_key == Algebras(GF(5))._cmp_key  # indirect doctest          # optional - sage.libs.pari
         True
-        sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
+        sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key                                 # optional - sage.libs.pari
         True
 
     """
@@ -555,9 +555,9 @@ cdef class CmpKeyNamed:
         """
         EXAMPLES::
 
-            sage: Algebras(GF(3))._cmp_key == Algebras(GF(5))._cmp_key  # indirect doctest
+            sage: Algebras(GF(3))._cmp_key == Algebras(GF(5))._cmp_key  # indirect doctest      # optional - sage.libs.pari
             True
-            sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
+            sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key                             # optional - sage.libs.pari
             True
 
         """
@@ -951,6 +951,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     #assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 
+
 class HierarchyElement(object, metaclass=ClasscallMetaclass):
     """
     A class for elements in a hierarchy.
@@ -988,7 +989,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     :class:`HopfAlgebrasWithBasis`::
 
         sage: from sage.misc.c3_controlled import HierarchyElement
-        sage: G = DiGraph({
+        sage: G = DiGraph({                                                             # optional - sage.graphs
         ....:     44 :  [43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         ....:     43 :  [42, 41, 40, 36, 35, 39, 38, 37, 33, 32, 31, 30, 29, 28, 27, 26, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         ....:     42 :  [36, 35, 37, 30, 29, 28, 27, 26, 15, 14, 12, 11, 9, 8, 5, 3, 2, 1, 0],
@@ -1036,12 +1037,12 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         ....:     0 :  [],
         ....:     })
 
-        sage: x = HierarchyElement(44, G)
-        sage: x.mro
+        sage: x = HierarchyElement(44, G)                                               # optional - sage.combinat, sage.graphs
+        sage: x.mro                                                                     # optional - sage.combinat, sage.graphs
         [44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
-        sage: x.cls
+        sage: x.cls                                                                     # optional - sage.combinat, sage.graphs
         <class '44.cls'>
-        sage: x.cls.mro()
+        sage: x.cls.mro()                                                               # optional - sage.combinat, sage.graphs
         [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <... 'object'>]
     """
     @staticmethod
@@ -1050,13 +1051,13 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: x = HierarchyElement(10, P)
-            sage: x
+            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)      # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(10, P)                                           # optional - sage.combinat, sage.graphs
+            sage: x                                                                     # optional - sage.combinat, sage.graphs
             10
-            sage: x.bases
+            sage: x.bases                                                               # optional - sage.combinat, sage.graphs
             [5, 2]
-            sage: x.mro
+            sage: x.mro                                                                 # optional - sage.combinat, sage.graphs
             [10, 5, 2, 1]
         """
         from sage.categories.sets_cat import Sets
@@ -1082,25 +1083,25 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: x = HierarchyElement(10, P)
-            sage: x
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(10, P)                                           # optional - sage.combinat, sage.graphs
+            sage: x                                                                     # optional - sage.combinat, sage.graphs
             10
-            sage: x.value
+            sage: x.value                                                               # optional - sage.combinat, sage.graphs
             10
-            sage: x._bases
+            sage: x._bases                                                              # optional - sage.combinat, sage.graphs
             [5, 2]
-            sage: x._key
+            sage: x._key                                                                # optional - sage.combinat, sage.graphs
             <built-in function identity>
-            sage: x._key(10)
+            sage: x._key(10)                                                            # optional - sage.combinat, sage.graphs
             10
 
         The ``_from_value`` attribute is a function that can be used
         to reconstruct an element of the hierarchy from its value::
 
-            sage: x._from_value
+            sage: x._from_value                                                         # optional - sage.combinat, sage.graphs
             Cached version of <cyfunction HierarchyElement.__classcall__.<locals>.f at ...>
-            sage: x._from_value(x.value) is x
+            sage: x._from_value(x.value) is x                                           # optional - sage.combinat, sage.graphs
             True
         """
         self.value = value
@@ -1115,9 +1116,9 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: x = HierarchyElement(10, P)
-            sage: x
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(10, P)                                           # optional - sage.combinat, sage.graphs
+            sage: x                                                                     # optional - sage.combinat, sage.graphs
             10
         """
         return repr(self.value)
@@ -1134,15 +1135,15 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: x = HierarchyElement(10, P)
-            sage: x.bases
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(10, P)                                           # optional - sage.combinat, sage.graphs
+            sage: x.bases                                                               # optional - sage.combinat, sage.graphs
             [5, 2]
-            sage: type(x.bases[0])
+            sage: type(x.bases[0])                                                      # optional - sage.combinat, sage.graphs
             <class 'sage.misc.c3_controlled.HierarchyElement'>
-            sage: x.mro
+            sage: x.mro                                                                 # optional - sage.combinat, sage.graphs
             [10, 5, 2, 1]
-            sage: x._bases_controlled
+            sage: x._bases_controlled                                                   # optional - sage.combinat, sage.graphs
             [5, 2]
         """
         return self._bases
@@ -1155,18 +1156,18 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_sorted_merge, identity
-            sage: P = Poset({7: [5,6], 5:[1,2], 6: [3,4]}, facade = True)
-            sage: x = HierarchyElement(5, P)
-            sage: x.mro
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(5, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro                                                                 # optional - sage.combinat, sage.graphs
             [5, 2, 1]
-            sage: x = HierarchyElement(6, P)
-            sage: x.mro
+            sage: x = HierarchyElement(6, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro                                                                 # optional - sage.combinat, sage.graphs
             [6, 4, 3]
-            sage: x = HierarchyElement(7, P)
-            sage: x.mro
+            sage: x = HierarchyElement(7, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro                                                                 # optional - sage.combinat, sage.graphs
             [7, 6, 5, 4, 3, 2, 1]
 
-            sage: C3_sorted_merge([[6, 4, 3], [5, 2, 1], [6, 5]], identity)
+            sage: C3_sorted_merge([[6, 4, 3], [5, 2, 1], [6, 5]], identity)             # optional - sage.combinat, sage.graphs
             ([6, 5, 4, 3, 2, 1], [6, 5, 4])
 
         TESTS::
@@ -1191,11 +1192,11 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset({7: [5,6], 5:[1,2], 6: [3,4]}, facade = True)
-            sage: x = HierarchyElement(7, P)
-            sage: x._bases
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(7, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x._bases                                                              # optional - sage.combinat, sage.graphs
             [6, 5]
-            sage: x._bases_controlled
+            sage: x._bases_controlled                                                   # optional - sage.combinat, sage.graphs
             [6, 5, 4]
         """
         self.mro
@@ -1209,17 +1210,17 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_merge
-            sage: P = Poset({7: [5,6], 5:[1,2], 6: [3,4]}, facade=True)
-            sage: x = HierarchyElement(5, P)
-            sage: x.mro_standard
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(5, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_standard                                                        # optional - sage.combinat, sage.graphs
             [5, 2, 1]
-            sage: x = HierarchyElement(6, P)
-            sage: x.mro_standard
+            sage: x = HierarchyElement(6, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_standard                                                        # optional - sage.combinat, sage.graphs
             [6, 4, 3]
-            sage: x = HierarchyElement(7, P)
-            sage: x.mro_standard
+            sage: x = HierarchyElement(7, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_standard                                                        # optional - sage.combinat, sage.graphs
             [7, 6, 4, 3, 5, 2, 1]
-            sage: C3_merge([[6, 4, 3], [5, 2, 1], [6, 5]])
+            sage: C3_merge([[6, 4, 3], [5, 2, 1], [6, 5]])                              # optional - sage.combinat, sage.graphs
             [6, 4, 3, 5, 2, 1]
 
         TESTS::
@@ -1238,19 +1239,19 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_merge
-            sage: P = Poset({7: [5,6], 5:[1,2], 6: [3,4]}, facade=True)
-            sage: x = HierarchyElement(5, P)
-            sage: x.mro_controlled
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(5, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_controlled                                                      # optional - sage.combinat, sage.graphs
             [5, 2, 1]
-            sage: x = HierarchyElement(6, P)
-            sage: x.mro_controlled
+            sage: x = HierarchyElement(6, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_controlled                                                      # optional - sage.combinat, sage.graphs
             [6, 4, 3]
-            sage: x = HierarchyElement(7, P)
-            sage: x.mro_controlled
+            sage: x = HierarchyElement(7, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.mro_controlled                                                      # optional - sage.combinat, sage.graphs
             [7, 6, 5, 4, 3, 2, 1]
-            sage: x._bases
+            sage: x._bases                                                              # optional - sage.combinat, sage.graphs
             [6, 5]
-            sage: x._bases_controlled
+            sage: x._bases_controlled                                                   # optional - sage.combinat, sage.graphs
             [6, 5, 4]
             sage: C3_merge([[6, 4, 3], [5, 2, 1], [6, 5]])
             [6, 4, 3, 5, 2, 1]
@@ -1266,7 +1267,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @cached_method
     def _test_mro(self):
         r"""
-        Runs consistency tests.
+        Run consistency tests.
 
         This checks in particular that the instrumented ``C3`` and
         controlled ``C3`` algorithms give, as desired, the
@@ -1281,9 +1282,9 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset({7: [5,6], 5:[1,2], 6: [3,4]}, facade=True)
-            sage: x = HierarchyElement(7, P)
-            sage: x._test_mro()
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(7, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x._test_mro()                                                         # optional - sage.combinat, sage.graphs
         """
         for b in self._bases:
             b._test_mro()
@@ -1305,17 +1306,17 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: x = HierarchyElement(1, P)
-            sage: x.cls
+            sage: from sage.misc.c3_controlled import HierarchyElement                  # optional - sage.combinat, sage.graphs
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: x = HierarchyElement(1, P)                                            # optional - sage.combinat, sage.graphs
+            sage: x.cls                                                                 # optional - sage.combinat, sage.graphs
             <class '1.cls'>
-            sage: x.cls.mro()
+            sage: x.cls.mro()                                                           # optional - sage.combinat, sage.graphs
             [<class '1.cls'>, <... 'object'>]
-            sage: x = HierarchyElement(30, P)
-            sage: x.cls
+            sage: x = HierarchyElement(30, P)                                           # optional - sage.combinat, sage.graphs
+            sage: x.cls                                                                 # optional - sage.combinat, sage.graphs
             <class '30.cls'>
-            sage: x.cls.mro()
+            sage: x.cls.mro()                                                           # optional - sage.combinat, sage.graphs
             [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <... 'object'>]
         """
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
@@ -1333,12 +1334,12 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: HierarchyElement(1, P).all_bases()
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: HierarchyElement(1, P).all_bases()                                    # optional - sage.combinat, sage.graphs
             {1}
-            sage: HierarchyElement(10, P).all_bases()  # random output
+            sage: HierarchyElement(10, P).all_bases()  # random output                  # optional - sage.combinat, sage.graphs
             {10, 5, 2, 1}
-            sage: sorted([x.value for x in HierarchyElement(10, P).all_bases()])
+            sage: sorted([x.value for x in HierarchyElement(10, P).all_bases()])        # optional - sage.combinat, sage.graphs
             [1, 2, 5, 10]
         """
         return {self} | { x for base in self._bases for x in base.all_bases()  }
@@ -1350,8 +1351,8 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: HierarchyElement(30, P).all_bases_len()
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: HierarchyElement(30, P).all_bases_len()                               # optional - sage.combinat, sage.graphs
             12
         """
         return sum( len(x._bases) for x in self.all_bases())
@@ -1363,8 +1364,8 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x,y: y.divides(x)), facade=True)
-            sage: HierarchyElement(30, P).all_bases_controlled_len()
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # optional - sage.combinat, sage.graphs
+            sage: HierarchyElement(30, P).all_bases_controlled_len()                    # optional - sage.combinat, sage.graphs
             13
         """
         return sum( len(x._bases_controlled) for x in self.all_bases())
