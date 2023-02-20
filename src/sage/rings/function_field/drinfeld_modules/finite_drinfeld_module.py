@@ -77,10 +77,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         sage: frobenius_endomorphism = phi.frobenius_endomorphism()
         sage: frobenius_endomorphism
-        Drinfeld Module morphism:
-          From (gen): 5*t^2 + z6
-          To (gen):   5*t^2 + z6
-          Defn:       t^2
+        Endomorphism of Drinfeld module defined by T |--> 5*t^2 + z6
+          Defn: t^2
 
     Its characteristic polynomial can be computed::
 
@@ -118,7 +116,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         True
     """
 
-    def __init__(self, gen, category, latexname=None):
+    def __init__(self, gen, category):
         """
         Initialize `self`.
 
@@ -136,9 +134,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         - ``name`` (default: `'t'`) -- the name of the Ore polynomial
           ring gen
 
-        - ``latexname`` (default: ``None``) -- the LaTeX name of the Drinfeld
-          module
-
         TESTS::
 
             sage: Fq = GF(25)
@@ -154,7 +149,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         # NOTE: There used to be no __init__ here (which was fine). I
         # added one to ensure that FiniteDrinfeldModule would always
         # have _frobenius_norm and _frobenius_trace attributes.
-        super().__init__(gen, category, latexname)
+        super().__init__(gen, category)
         self._frobenius_norm = None
         self._frobenius_trace = None
 
@@ -174,10 +169,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
-            Drinfeld Module morphism:
-              From (gen): z6*t^2 + 1
-              To (gen):   z6*t^2 + 1
-              Defn:       t^2
+            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
+              Defn: t^2
 
        TESTS::
 

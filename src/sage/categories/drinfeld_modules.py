@@ -18,6 +18,7 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # ******************************************************************************
 
+from sage.categories.objects import Objects
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.homsets import Homsets
 from sage.misc.functional import log
@@ -472,7 +473,7 @@ class DrinfeldModules(Category_over_base_ring):
         INPUT:
 
         - ``gen`` -- the generator of the Drinfeld module, given as an Ore
-        polynomial or a list of coefficients
+          polynomial or a list of coefficients
 
         EXAMPLES::
 
@@ -565,9 +566,9 @@ class DrinfeldModules(Category_over_base_ring):
             sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
             sage: C = phi.category()
             sage: C.super_categories()
-            []
+            [Category of objects]
         """
-        return []
+        return [Objects()]
 
     class ParentMethods:
 

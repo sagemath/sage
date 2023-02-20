@@ -150,7 +150,7 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: latex(action)
-            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} T \mapsto t^{3} + z\text{{ }over{ }base{ }}\Bold{F}_{11^{2}}
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\phi: T \mapsto t^{3} + z
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
                f'{latex(self._base)}\\text{{{{ }}' \
