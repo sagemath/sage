@@ -912,7 +912,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         """
 
-        # this algorithm was written by Francis Clarke see ticket #9407
+        # this algorithm was written by Francis Clarke see issue #9407
 
         from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         from sage.rings.integer_ring import IntegerRing

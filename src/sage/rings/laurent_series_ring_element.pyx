@@ -527,7 +527,7 @@ cdef class LaurentSeries(AlgebraElement):
 
             sage: f[-10:2]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             -5*t^-10 + 1/3 + t + O(t^5)
             sage: f[0:]
             1/3 + t + t^2 - 10/3*t^3 + O(t^5)

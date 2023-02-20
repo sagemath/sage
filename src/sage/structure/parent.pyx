@@ -2650,7 +2650,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     #
                     # TODO: this makes sense in a few cases that we want
                     # to support. But in general this should not be
-                    # allowed. See Trac #15709
+                    # allowed. See Issue #15709
                     S_is_int = True
             if S_is_int:
                 from sage.structure.coerce_actions import IntegerPowAction

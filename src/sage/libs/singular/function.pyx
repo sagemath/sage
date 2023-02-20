@@ -1361,7 +1361,7 @@ EXAMPLES::
 
 The Singular documentation for '%s' is given below.
 """%(self._name,self._name)
-        # Trac ticket #11268: Include the Singular documentation as a block of code
+        # Github issue #11268: Include the Singular documentation as a block of code
         singular_doc = get_docstring(self._name).split('\n')
         if len(singular_doc) > 1:
             return prefix + "\n::\n\n"+'\n'.join(["    "+L for L in singular_doc])

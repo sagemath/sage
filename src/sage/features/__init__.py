@@ -498,7 +498,7 @@ class FileFeature(Feature):
             sage: Executable(name="sh", executable="sh").absolute_path()
             doctest:warning...
             DeprecationWarning: method absolute_path has been replaced by absolute_filename
-            See https://trac.sagemath.org/31292 for details.
+            See https://github.com/sagemath/sage/issues/31292 for details.
             '/...bin/sh'
         """
         try:

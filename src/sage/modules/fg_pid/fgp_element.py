@@ -448,7 +448,7 @@ class FGP_Element(ModuleElement):
         from sage.rings.infinity import infinity
         from sage.rings.finite_rings.integer_mod import Mod
         from sage.rings.integer import Integer
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         n = Integer(1)
         for i, a in enumerate(I):
             if a == 0:
