@@ -4887,7 +4887,7 @@ class FiniteStateMachine(SageObject):
             return (s.from_state, s.to_state)
         # We use an OrderedDict instead of a dict in order to have a
         # defined ordering of the transitions in the output. See
-        # http://trac.sagemath.org/ticket/16580#comment:3 . As the
+        # https://github.com/sagemath/sage/issues/16580#comment:3 . As the
         # transitions have to be sorted anyway, the performance
         # penalty should be bearable; nevertheless, this is only
         # required for doctests.

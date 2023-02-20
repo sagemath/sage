@@ -6,7 +6,7 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
     DeprecationWarning:
     Importing igusa_clebsch_invariants from here is deprecated;
     please use "from sage.schemes.hyperelliptic_curves.invariants import igusa_clebsch_invariants" instead.
-    See https://trac.sagemath.org/28064 for details.
+    See https://github.com/sagemath/sage/issues/28064 for details.
     ...
 
     sage: absolute_igusa_invariants_kohel
@@ -14,7 +14,7 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
     DeprecationWarning:
     Importing absolute_igusa_invariants_kohel from here is deprecated;
     please use "from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_kohel" instead.
-    See https://trac.sagemath.org/28064 for details.
+    See https://github.com/sagemath/sage/issues/28064 for details.
     ...
 
     sage: absolute_igusa_invariants_wamelen
@@ -22,7 +22,7 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
     DeprecationWarning:
     Importing absolute_igusa_invariants_wamelen from here is deprecated;
     please use "from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_wamelen" instead.
-    See https://trac.sagemath.org/28064 for details.
+    See https://github.com/sagemath/sage/issues/28064 for details.
     ...
 
     sage: clebsch_invariants
@@ -30,7 +30,7 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
     DeprecationWarning:
     Importing clebsch_invariants from here is deprecated;
     please use "from sage.schemes.hyperelliptic_curves.invariants import clebsch_invariants" instead.
-    See https://trac.sagemath.org/28064 for details.
+    See https://github.com/sagemath/sage/issues/28064 for details.
     ...
 """
 from sage.misc.lazy_import import lazy_import

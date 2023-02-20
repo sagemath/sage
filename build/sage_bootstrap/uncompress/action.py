@@ -74,8 +74,8 @@ def unpack_archive(archive, dirname=None):
             retry(rename, OSError, tries=len(archive.names))
 
             # Apply typical umask to the top-level directory in case it wasn't
-            # already; see https://trac.sagemath.org/ticket/24567
-            # and later https://trac.sagemath.org/ticket/28596
+            # already; see https://github.com/sagemath/sage/issues/24567
+            # and later https://github.com/sagemath/sage/issues/28596
             os.chmod(dirname, os.stat(dirname).st_mode & ~0o022)
     finally:
         os.chdir(prev_cwd)
