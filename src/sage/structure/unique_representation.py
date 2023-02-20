@@ -21,13 +21,13 @@ Instances of a class have a *cached representation behavior* when several
 instances constructed with the same arguments share the same memory
 representation. For example, calling twice::
 
-    sage: G = SymmetricGroup(6)
-    sage: H = SymmetricGroup(6)
+    sage: G = SymmetricGroup(6)                                                 # optional - sage.groups
+    sage: H = SymmetricGroup(6)                                                 # optional - sage.groups
 
 to create the symmetric group on six elements gives back the same
 object::
 
-    sage: G is H
+    sage: G is H                                                                # optional - sage.groups
     True
 
 This is a standard design pattern. Besides saving memory, it allows for
@@ -1188,15 +1188,15 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     the same memory representation), if and only if they were created using
     equal arguments. For example, calling twice::
 
-        sage: f = SymmetricFunctions(QQ)
-        sage: g = SymmetricFunctions(QQ)
+        sage: f = SymmetricFunctions(QQ)                                        # optional - sage.combinat
+        sage: g = SymmetricFunctions(QQ)                                        # optional - sage.combinat
 
     to create the symmetric function algebra over `\QQ` actually gives back the
     same object::
 
-        sage: f == g
+        sage: f == g                                                            # optional - sage.combinat
         True
-        sage: f is g
+        sage: f is g                                                            # optional - sage.combinat
         True
 
     This is a standard design pattern. It allows for sharing cached data (say
@@ -1211,14 +1211,14 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     derive from it, or make sure some of its super classes does. Also, it
     groups together the class and the factory in a single gadget::
 
-        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)            # optional - sage.combinat
         True
-        sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+        sage: issubclass(SymmetricFunctions, UniqueRepresentation)              # optional - sage.combinat
         True
 
     This nice behaviour is not available when one just uses a factory::
 
-        sage: isinstance(GF(7), GF)
+        sage: isinstance(GF(7), GF)                                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: isinstance() arg 2 must be a type...
