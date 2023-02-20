@@ -243,31 +243,31 @@ cdef class ParentWithGens(ParentWithBase):
             6
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: f = R.hom([5], GF(7))
+            sage: f = R.hom([5], GF(7))                                                 # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
-            sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = R.hom([3], GF(49,'a'))
-            sage: f
+            sage: R.<x> = PolynomialRing(GF(7))                                         # optional - sage.libs.pari
+            sage: f = R.hom([3], GF(49, 'a'))                                           # optional - sage.libs.pari
+            sage: f                                                                     # optional - sage.libs.pari
             Ring morphism:
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x+6)
+            sage: f(x + 6)                                                              # optional - sage.libs.pari
             2
-            sage: f(x^2+1)
+            sage: f(x^2 + 1)                                                            # optional - sage.libs.pari
             3
 
         EXAMPLES: Natural morphism
 
         ::
 
-            sage: f = ZZ.hom(GF(5))
-            sage: f(7)
+            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.libs.pari
+            sage: f(7)                                                                  # optional - sage.libs.pari
             2
-            sage: f
+            sage: f                                                                     # optional - sage.libs.pari
             Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -283,13 +283,13 @@ cdef class ParentWithGens(ParentWithBase):
 
         You can specify a map on the base ring::
 
-            sage: k = GF(2)
-            sage: R.<a> = k[]
-            sage: l.<a> = k.extension(a^3 + a^2 + 1)
-            sage: R.<b> = l[]
-            sage: m.<b> = l.extension(b^2 + b + a)
-            sage: n.<z> = GF(2^6)
-            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+            sage: k = GF(2)                                                             # optional - sage.libs.pari
+            sage: R.<a> = k[]                                                           # optional - sage.libs.pari
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)                                    # optional - sage.libs.pari
+            sage: R.<b> = l[]                                                           # optional - sage.libs.pari
+            sage: m.<b> = l.extension(b^2 + b + a)                                      # optional - sage.libs.pari
+            sage: n.<z> = GF(2^6)                                                       # optional - sage.libs.pari
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))             # optional - sage.libs.pari
             Ring morphism:
               From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
               To:   Finite Field in z of size 2^6
