@@ -2063,7 +2063,7 @@ class TilingSolver(SageObject):
 
         TESTS:
 
-        We check that ticket :trac:`32252` is fixed and that colors of
+        We check that issue :trac:`32252` is fixed and that colors of
         polyominoes are properly recovered::
 
             sage: v = Polyomino([(0, 0), (0, 1)], color="blue")

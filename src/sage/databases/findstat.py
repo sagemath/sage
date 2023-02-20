@@ -4733,7 +4733,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
                 print("    %s: %s" % (id, data["NamePlural"]))
                 print("To use it with this interface, it has to be added to the dictionary")
                 print("    _SupportedFindStatCollections in src/sage/databases/findstat.py")
-                print("of the SageMath distribution.  Please open a ticket on trac!")
+                print("of the SageMath distribution.  Please open an issue on github!")
 #                print("Very likely, the following code would work:")
 #                fields = "SageCodeElementToString,SageCodeElementsOnLevel,SageCodeStringToElement"
 #                url = FINDSTAT_API_COLLECTIONS + id + "?fields=" + fields
