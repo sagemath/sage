@@ -92,10 +92,10 @@ else
             # Don't add debug symbols because configure otherwise
             # fails due to a bus error in Apple's 'ld' when trying
             # to determine if global symbols are prefixed with an
-            # underscore (cf. http://trac.sagemath.org/sage_trac/ticket/5847#comment:35 ff.):
+            # underscore (cf. https://github.com/sagemath/sage/issues/5847#comment:35 ff.):
             echo >&2 "Warning: Disabling debug symbols on MacOS X 10.5" \
                 "PowerPC because of a linker (?) bug."
-            echo >&2 "See http://trac.sagemath.org/sage_trac/ticket/5847#comment:35" \
+            echo >&2 "See https://github.com/sagemath/sage/issues/5847#comment:35" \
                 "ff. for details."
             echo >&2
             CFLAGS="-O3 $ORIGINAL_CFLAGS"

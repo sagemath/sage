@@ -2586,7 +2586,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) + RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2610,7 +2610,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) - RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2634,7 +2634,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) * RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2658,7 +2658,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) / RR(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """

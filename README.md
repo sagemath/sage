@@ -329,7 +329,7 @@ in the Installation Guide.
     manager.
 
     For a large [list of Sage
-    packages](https://trac.sagemath.org/ticket/27330), Sage is able to
+    packages](https://github.com/sagemath/sage/issues/27330), Sage is able to
     detect whether an installed system package is suitable for use with
     Sage; in that case, Sage will not build another copy from source.
 

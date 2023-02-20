@@ -1699,7 +1699,7 @@ class CubicalComplex(GenericCellComplex):
             {[0,0] x [0,1] x [0,1]}
             sage: C._chomp_repr_()
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             '[0,0] x [0,1] x [0,1]\n'
         """
         deprecation(33777, "the CHomP interface is deprecated; hence so is this function")

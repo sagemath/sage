@@ -674,7 +674,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvalues(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute rigorous enclosures of the eigenvalues of this matrix.
@@ -750,7 +750,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             _acb_vec_clear(eigval_approx, n)
         return Sequence(res)
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvectors_right_approx(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute *non-rigorous* approximations of the
@@ -806,7 +806,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             _acb_vec_clear(_eigval, n)
         return [(l, [v], 1) for l, v in zip(eigval, eigvec.columns())]
 
-    @experimental(trac_number=30393)
+    @experimental(issue_number=30393)
     def eigenvectors_right(self, other=None, *, extend=None):
         r"""
         (Experimental.) Compute rigorous enclosures of the eigenvalues and
