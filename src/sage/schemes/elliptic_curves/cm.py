@@ -193,7 +193,7 @@ def is_HCP(f, check_monic_irreducible=True):
 
     Cremona and Sutherland: Algorithm 2 of [CreSuth2023]_.
 
-    EXAMPLES::
+    EXAMPLES:
 
     Even for large degrees this is fast.  We test the largest
     discriminant of class number 100, for which the HCP has coefficients
@@ -293,7 +293,7 @@ def OrderClassNumber(D0,h0,f):
 
     .. MATH::
 
-    h(D) = \frac{h(D_0)f}{[\mathcal{O}_{D_0}^\times:\mathcal{O}_{D}^\times]}\prod_{p\,|\,f}\left(1-\left(\frac{D_0}{p}\right)\frac{1}{p}\right)
+        h(D) = \frac{h(D_0)f}{[\mathcal{O}_{D_0}^\times:\mathcal{O}_{D}^\times]}\prod_{p\,|\,f}\left(1-\left(\frac{D_0}{p}\right)\frac{1}{p}\right)
 
     EXAMPLES::
 

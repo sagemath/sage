@@ -1798,5 +1798,3 @@ def is_j_supersingular(j, proof=True):
     # expensive since it involves counting the number of points on E):
 
     return E.trace_of_frobenius() % p == 0
-
-
