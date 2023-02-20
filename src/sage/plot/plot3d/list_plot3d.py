@@ -244,7 +244,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: P = list_plot3d([(0, 0, 1), (2, 3, 4)], texture='tomato')
         doctest:warning...:
         DeprecationWarning: please use 'color' instead of 'texture'
-        See https://trac.sagemath.org/27084 for details.
+        See https://github.com/sagemath/sage/issues/27084 for details.
     """
     import numpy
     if 'texture' in kwds:
