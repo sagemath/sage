@@ -479,14 +479,15 @@ cpdef bint is_mpmath_type(t):
 
 cdef class CoercionModel:
     """
-    See also sage.categories.pushout
+    See also :mod:`sage.categories.pushout`
 
     EXAMPLES::
 
-        sage: f = ZZ['t','x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f
+        sage: f = ZZ['t', 'x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f     # optional - sage.rings.number_field
         t + x + zeta13
-        sage: f.parent()
-        Multivariate Polynomial Ring in t, x over Cyclotomic Field of order 13 and degree 12
+        sage: f.parent()                                                        # optional - sage.rings.number_field
+        Multivariate Polynomial Ring in t, x
+         over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
         (x*y + 1)/y
         sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0
@@ -549,8 +550,8 @@ cdef class CoercionModel:
 
             sage: from sage.structure.coerce import CoercionModel
             sage: cm = CoercionModel()
-            sage: K = NumberField(x^2-2, 'a')
-            sage: A = cm.get_action(ZZ, K, operator.mul)
+            sage: K = NumberField(x^2 - 2, 'a')                                 # optional - sage.rings.number_field
+            sage: A = cm.get_action(ZZ, K, operator.mul)                        # optional - sage.rings.number_field
             sage: f, g = cm.coercion_maps(QQ, int)
             sage: f, g = cm.coercion_maps(ZZ, int)
         """
@@ -747,7 +748,7 @@ cdef class CoercionModel:
             5/2
             sage: cm.exception_stack()
             []
-            sage: 1/2 + GF(3)(2)
+            sage: 1/2 + GF(3)(2)                                                # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +: 'Rational Field' and 'Finite Field of size 3'
@@ -914,17 +915,17 @@ cdef class CoercionModel:
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
-            sage: GF7 = GF(7)
-            sage: steps, res = cm.analyse(GF7, ZZ)
-            sage: steps
+            sage: GF7 = GF(7)                                                           # optional - sage.libs.pari
+            sage: steps, res = cm.analyse(GF7, ZZ)                                      # optional - sage.libs.pari
+            sage: steps                                                                 # optional - sage.libs.pari
             ['Coercion on right operand via', Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 7, 'Arithmetic performed after coercions.']
-            sage: res
+            sage: res                                                                   # optional - sage.libs.pari
             Finite Field of size 7
-            sage: f = steps[1]; type(f)
+            sage: f = steps[1]; type(f)                                                 # optional - sage.libs.pari
             <class 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
-            sage: f(100)
+            sage: f(100)                                                                # optional - sage.libs.pari
             2
         """
         self._exceptions_cleared = False
@@ -1079,8 +1080,8 @@ cdef class CoercionModel:
             sage: ZZx = ZZ['x']
             sage: cm.division_parent(ZZx)
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: K = GF(41)
-            sage: cm.division_parent(K)
+            sage: K = GF(41)                                                            # optional - sage.libs.pari
+            sage: cm.division_parent(K)                                                 # optional - sage.libs.pari
             Finite Field of size 41
             sage: Zmod100 = Integers(100)
             sage: cm.division_parent(Zmod100)
@@ -1295,7 +1296,7 @@ cdef class CoercionModel:
 
             sage: canonical_coercion(vector([1, 2, 3]), 0)
             ((1, 2, 3), (0, 0, 0))
-            sage: canonical_coercion(GF(5)(0), float(0))
+            sage: canonical_coercion(GF(5)(0), float(0))                        # optional - sage.libs.pari
             (0, 0)
         """
         xp = parent(x)
@@ -1436,8 +1437,8 @@ cdef class CoercionModel:
               From: Rational Field
               To:   Univariate Polynomial Ring in x over Rational Field
 
-            sage: K = GF(7)
-            sage: cm.coercion_maps(QQ, K) is None
+            sage: K = GF(7)                                                     # optional - sage.libs.pari
+            sage: cm.coercion_maps(QQ, K) is None                               # optional - sage.libs.pari
             True
 
         Note that to break symmetry, if there is a coercion map in both
@@ -1473,19 +1474,19 @@ cdef class CoercionModel:
         garbage collection after being involved in binary operations::
 
             sage: import gc
-            sage: T=type(GF(2))
+            sage: T = type(GF(2))                                               # optional - sage.libs.pari
             sage: gc.collect() #random
             852
-            sage: N0=len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: L=[ZZ(1)+GF(p)(1) for p in prime_range(2,50)]
-            sage: N1=len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N1 > N0
+            sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))   # optional - sage.libs.pari
+            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]            # optional - sage.libs.pari
+            sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))   # optional - sage.libs.pari
+            sage: N1 > N0                                                       # optional - sage.libs.pari
             True
-            sage: del L
+            sage: del L                                                         # optional - sage.libs.pari
             sage: gc.collect() #random
             3939
-            sage: N2=len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N2-N0
+            sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))   # optional - sage.libs.pari
+            sage: N2 - N0                                                       # optional - sage.libs.pari
             0
 
         """
@@ -1616,7 +1617,7 @@ cdef class CoercionModel:
 
         If R is S, then two identity morphisms suffice::
 
-            sage: cm.discover_coercion(SR, SR)
+            sage: cm.discover_coercion(SR, SR)                                  # optional - sage.symbolic
             (None, None)
 
         If there is a coercion map either direction, use that::
@@ -1827,13 +1828,14 @@ cdef class CoercionModel:
 
         Check that :trac:`17740` is fixed::
 
-            sage: R = GF(5)['x']
-            sage: cm.discover_action(R, ZZ, operator.truediv)
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            sage: R = GF(5)['x']                                                        # optional - sage.libs.pari
+            sage: cm.discover_action(R, ZZ, operator.truediv)                           # optional - sage.libs.pari
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
-            sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()
+            sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()                      # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Finite Field of size 5
 
         Check that :trac:`18221` is fixed::
@@ -1933,12 +1935,12 @@ cdef class CoercionModel:
 
         If there is no coercion, we only support ``==`` and ``!=``::
 
-            sage: x = QQ.one(); y = GF(2).one()
-            sage: richcmp(x, y, op_EQ)
+            sage: x = QQ.one(); y = GF(2).one()                                 # optional - sage.libs.pari
+            sage: richcmp(x, y, op_EQ)                                          # optional - sage.libs.pari
             False
-            sage: richcmp(x, y, op_NE)
+            sage: richcmp(x, y, op_NE)                                          # optional - sage.libs.pari
             True
-            sage: richcmp(x, y, op_GT)
+            sage: richcmp(x, y, op_GT)                                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >: 'Rational Field' and 'Finite Field of size 2'
