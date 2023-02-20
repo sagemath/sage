@@ -108,7 +108,6 @@ from sage.structure.parent cimport Parent
 
 from sage.arith.misc import CRT as crt
 from sage.arith.functions import lcm
-from sage.groups.generic import discrete_log
 
 
 cdef Integer one_Z = Integer(1)
@@ -781,6 +780,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             if p == 2 and e >= 3:   # (ZZ/2^e)* is not cyclic; must not give unsolvable DLPs to Pari
                 try:
+                    from sage.groups.generic import discrete_log
                     v = discrete_log(a_red, b_red, nb)
                 except ValueError:
                     raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
