@@ -337,7 +337,7 @@ class Set_base():
         if set_self is not self:
             from sage.misc.sage_unittest import TestSuite
             tester.info("\n  Running the test suite of Set(self)")
-            TestSuite(set_self).run(skip="_test_pickling",  # see Trac #32025
+            TestSuite(set_self).run(skip="_test_pickling",  # see Issue #32025
                                     verbose=tester._verbose,
                                     prefix=tester._prefix + "  ")
             tester.info(tester._prefix + " ", newline=False)
