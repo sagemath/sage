@@ -973,7 +973,7 @@ class Components(SageObject):
                     #   self._comp[ind] = self._ring(value, format_type)
                     # is not allowed when ring is an algebra and value some
                     # element of the algebra's base ring, cf. the discussion at
-                    # http://trac.sagemath.org/ticket/16054
+                    # https://github.com/sagemath/sage/issues/16054
 
     def _set_list(self, ind_slice, format_type, values):
         r"""

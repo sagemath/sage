@@ -381,7 +381,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     ##
 
     # if isinstance(name, (int,integer.Integer)) or isinstance(arg2,(int,integer.Integer)):
-    #     deprecation(trac_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Trac ticket #1956.)")
+    #     deprecation(issue_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Github issue #1956.)")
 
     # the following is the original, univariate-only code
 

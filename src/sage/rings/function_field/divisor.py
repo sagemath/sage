@@ -51,7 +51,7 @@ import random
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent

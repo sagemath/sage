@@ -16,7 +16,7 @@ SAGE_SPKG_CONFIGURE([cddlib], [
     AC_CHECK_PROGS(SCDD, [scdd_gmp scdd])
     AS_IF([test x$SCDD = x], [sage_spkg_install_cddlib=yes])
 
-    dnl https://trac.sagemath.org/ticket/30319
+    dnl https://github.com/sagemath/sage/issues/30319
     AS_IF([test -n "$CDDEXEC"], [
         AC_MSG_CHECKING([whether $CDDEXEC --redcheck works correctly for real input])
         cat > conftest.ine <<EOF

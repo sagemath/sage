@@ -654,7 +654,7 @@ class Singular(ExtraTabCompletion, Expect):
         # Simon King:
         # In previous versions, the interface was first synchronised and then
         # unused variables were killed. This created a considerable overhead.
-        # By trac ticket #10296, killing unused variables is now done inside
+        # By github issue #10296, killing unused variables is now done inside
         # singular.set(). Moreover, it is not done by calling a separate _eval_line.
         # In that way, the time spent by waiting for the singular prompt is reduced.
 
@@ -2343,7 +2343,7 @@ def is_SingularElement(x):
         sage: from sage.interfaces.singular import is_SingularElement
         sage: is_SingularElement(singular(2))
         doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         True
         sage: is_SingularElement(2)
         False

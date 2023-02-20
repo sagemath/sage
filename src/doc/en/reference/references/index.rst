@@ -450,6 +450,10 @@ REFERENCES:
 .. [BCDM2019] \T. Beyne, Y. L. Chen, C. Dobraunig, B. Mennink. *Elephant v1* (2019)
               https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/elephant-spec.pdf
 
+.. [BCL2022] Paolo Bellingeri, Hugo Chemin, and Victoria Lebed.
+             *Cactus groups, twin groups, and right-angled Artin groups*.
+             Preprint, :arxiv:`2209.08813` (2022).
+
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
 
@@ -1875,6 +1879,11 @@ REFERENCES:
              *Introduction to Lattices and Order*,
              Cambridge University Press, 1997.
 
+.. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
+             *Fundamental groups of blow-ups*. Selecta Math.,
+             Adv. Math. ***177** no. 1 (2002) pp. 115-179.
+             :arxiv:`math/0203127`.
+
 .. [DB1996] K. Duggal, A. Bejancu,
             *Lightlike Submanifolds of Semi-Riemannian Manifolds and Applications*,
             Mathematics and Its Applications, 1996.
@@ -2173,6 +2182,11 @@ REFERENCES:
 
 .. [Duv1983] J.-P. Duval, Factorizing words over an ordered alphabet,
             J. Algorithms 4 (1983) 363--381.
+
+.. [Duv1988] \A. Duval.
+            *A directed graph version of strongly regular graphs*,
+            Journal of Combinatorial Theory, Series A 47(1) (1988): 71-100.
+            :doi:`10.1016/0097-3165(88)90043-X`
 
 .. [DW1995] Andreas W.M. Dress and Walter Wenzel, *A Simple Proof of
             an Identity Concerning Pfaffians of Skew Symmetric
@@ -3818,6 +3832,10 @@ REFERENCES:
              *Bethe ansatz and inverse scattering transform in a periodic
              box-ball system*, Nuclear Phys. B **747**, no. 3 (2006), 354--397.
 
+.. [KTZ1987] Kierstead, H.A., Trotter, W.T. & Zhou, B. Representing an ordered
+             set as the intersection of super greedy linear extensions. Order 4,
+             293-311 (1987).
+             :doi:`10.1007/BF00337892`
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4485,6 +4503,11 @@ REFERENCES:
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119–131.
+
+.. [Most2019] Jacob Mostovoy.
+              *The pure cactus group is residually nilpotent*.
+              Archiv der Math., **113** (2019). pp. 229-235.
+              :arxiv:`1804.09165`.
 
 .. [MNO1994] Alexander Molev, Maxim Nazarov, and Grigori Olshanski.
              *Yangians and classical Lie algebras*. (1994)
@@ -6115,6 +6138,11 @@ REFERENCES:
              pages 150--168, 1932,
              `available on JSTOR <http://www.jstor.org/stable/2371086>`_
 
+.. [White2015] Noah White.
+               *The monodromy of real Bethe vectors for the Gaudin model*.
+               J. Combin. Algebra, **2** no. 3 (2018). pp. 259-300.
+               :arxiv:`1511.04740`.
+
 .. [Wich1997] Tim Wichmann. Der FGLM Algorithmus - verallgemeinert und implementiert in Singular
               Diploma Thesis (University of Kaiserslautern), 1997.
 
@@ -6228,6 +6256,9 @@ REFERENCES:
 
 .. [Yu2007] \K. Yu, *p-adic logarithmic forms and group varieties. III.*
             Forum Math., 19(2):187–280, 2007.
+
+.. [Yu2022] Runze Yu. *linearity of generalized cactus groups*.
+            Preprint, :arxiv:`2202.00860` (2022).
 
 .. [Yun1976] Yun, David YY. On square-free decomposition
              algorithms. In Proceedings of the third ACM symposium on
