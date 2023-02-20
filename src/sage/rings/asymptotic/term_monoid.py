@@ -181,7 +181,7 @@ Various
         ...
         FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
-        See https://trac.sagemath.org/31922 for details.
+        See https://github.com/sagemath/sage/issues/31922 for details.
 
 
 .. TODO::
@@ -1851,7 +1851,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             ...
             DeprecationWarning: Passing 'coefficient' as a positional argument is deprecated;
             specify it as keyword argument 'coefficient=...'.
-            See https://trac.sagemath.org/32215 for details.
+            See https://github.com/sagemath/sage/issues/32215 for details.
             O(x)
             sage: OT(G.gen(), 4, coefficient=5)
             Traceback (most recent call last):
@@ -4919,7 +4919,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         sage: BT is BTermMonoid(TermMonoid, G, QQ)
         True
     """
-    __init__ = experimental(trac_number=31922)(GenericTermMonoid.__init__)
+    __init__ = experimental(issue_number=31922)(GenericTermMonoid.__init__)
 
     # enable the category framework for elements
     Element = BTerm

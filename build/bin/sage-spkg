@@ -686,7 +686,7 @@ echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_INST_
 if [ -d "$SAGE_DESTDIR" ]; then
     # Some `find` implementations will put superfluous slashes in the
     # output if we give them a directory name with a slash; so make sure
-    # any trailing slash is removed; https://trac.sagemath.org/ticket/26013
+    # any trailing slash is removed; https://github.com/sagemath/sage/issues/26013
     PREFIX="${SAGE_DESTDIR_LOCAL%/}"
 
     rm -f "$PREFIX"/lib/*.la

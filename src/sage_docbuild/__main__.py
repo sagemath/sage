@@ -480,8 +480,8 @@ def main():
     if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty
         # directories due to "git checkout" which never deletes empty
-        # directories it leaves behind. See Trac #20010.
-        # Trac #31948: This is not parallelization-safe; use the option
+        # directories it leaves behind. See Issue #20010.
+        # Issue #31948: This is not parallelization-safe; use the option
         # --no-prune-empty-dirs to turn it off
         for dirpath, dirnames, filenames in os.walk(SAGE_DOC_SRC, topdown=False):
             if not dirnames + filenames:

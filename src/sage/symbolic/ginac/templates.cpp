@@ -5,7 +5,7 @@
  *  boundaries. If libpynac does not contain a template instantiation
  *  but the application using libpynac does, then you will get
  *  mysterious std::bad_cast errors when you pass these instantiations
- *  into pynac. See http://trac.sagemath.org/ticket/14780
+ *  into pynac. See https://github.com/sagemath/sage/issues/14780
  * 
  *  */
 
