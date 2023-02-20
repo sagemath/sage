@@ -1,18 +1,19 @@
 r"""
 Unique factorization domains
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.misc_c import prod
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.gcd_domains import GcdDomains
+
 
 class UniqueFactorizationDomains(Category_singleton):
     """
@@ -242,7 +243,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: Integer(0).radical()
                 Traceback (most recent call last):
                 ...
-                ArithmeticError: Radical of 0 not defined.
+                ArithmeticError: radical of 0 is not defined
 
             The next example shows how to compute the radical of a number,
             assuming no prime > 100000 has exponent > 1 in the factorization::
@@ -259,7 +260,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 10
             """
             if self.is_zero():
-                raise ArithmeticError("Radical of 0 not defined.")
+                raise ArithmeticError("radical of 0 is not defined")
             try:
                 decomp = self.squarefree_decomposition()
             except AttributeError:

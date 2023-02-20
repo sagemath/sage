@@ -1047,7 +1047,7 @@ def is_GpElement(x):
         sage: from sage.interfaces.gp import is_GpElement
         sage: is_GpElement(gp(2))
         doctest:...: DeprecationWarning: the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         True
         sage: is_GpElement(2)
         False

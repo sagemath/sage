@@ -108,7 +108,8 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 
 from sage.modules.free_module_element import vector
-from sage.arith.all import lcm, gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import GCD as gcd
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.algebras.all import FiniteDimensionalAlgebra
@@ -1773,7 +1774,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         finite-dimensional algebra, a construct for which we do
         support primary decomposition.
 
-        See :trac:`attachment/ticket/28094/decomposition.pdf`
+        See :trac:`28094` and https://github.com/sagemath/sage/files/10659303/decomposition.pdf.gz
 
         .. TODO::
 

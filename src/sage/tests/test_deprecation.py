@@ -7,7 +7,7 @@ EXAMPLES::
     sage: sage.tests.test_deprecation.function_old()
     doctest:...: DeprecationWarning: function_old is deprecated. Please
     use sage.tests.test_deprecation.function_new instead.
-    See http://trac.sagemath.org/12345 for details.
+    See https://github.com/sagemath/sage/issues/12345 for details.
 """
 from sage.misc.superseded import deprecated_function_alias
 
@@ -22,7 +22,7 @@ def function_new():
         sage: function_old()
         doctest:...: DeprecationWarning: function_old is deprecated. Please
         use sage.tests.test_deprecation.function_new instead.
-        See http://trac.sagemath.org/12345 for details.
+        See https://github.com/sagemath/sage/issues/12345 for details.
     """
     pass
 

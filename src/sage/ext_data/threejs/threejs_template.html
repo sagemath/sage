@@ -214,7 +214,17 @@ SAGE_SCRIPTS
     camera.up.set( 0, 0, 1 );
     camera.position.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
 
-    var offset = new THREE.Vector3( a[0]*xRange, a[1]*yRange, a[2]*zRange );
+    // camera is positioned so that the line from the camera to the center
+    // of the bounding sphere of the objects makes an angle of 60 degrees with x-axis
+    // and an angle of 30 degrees with z-axis and the field of view of the camera looking
+    // at the center has an angle of 45 degrees.
+    const sin8 = Math.sin(Math.PI / 8);
+    const sin5 = Math.sin(Math.PI / 5);
+    const cos5 = Math.cos(Math.PI / 5);
+    const sin3 = Math.sin(Math.PI / 3);
+    const cos3 = Math.cos(Math.PI / 3);
+    var r = midToCorner / sin8;
+    var offset = new THREE.Vector3( r * sin3 * cos5, r * sin3 * sin5, r * cos3 );
 
     if ( options.viewpoint ) {
 
@@ -569,7 +579,7 @@ SAGE_SCRIPTS
         setTimeout( function() { m.style.display = 'none'; }, 2000 );
 
     }
-                                       
+
 </script>
 
 <div id="menu-container" onclick="toggleMenu()">&#x24d8;

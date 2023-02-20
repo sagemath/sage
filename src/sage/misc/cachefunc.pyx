@@ -69,7 +69,7 @@ approach is still needed for cpdef methods::
     sage: cython_code = ['cpdef test_meth(self,x):',
     ....: '    "some doc for a wrapped cython method"',
     ....: '    return -x',
-    ....: 'from sage.all import cached_method',
+    ....: 'from sage.misc.cachefunc import cached_method',
     ....: 'from sage.structure.parent cimport Parent',
     ....: 'cdef class MyClass(Parent):',
     ....: '    @cached_method',
@@ -107,7 +107,10 @@ By :trac:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
 category (previously, the cache would have been broken)::
 
-    sage: cython_code = ["from sage.all import cached_method, cached_in_parent_method, Category, Objects",
+    sage: cython_code = ["from sage.misc.cachefunc import cached_method", 
+    ....: "from sage.misc.cachefunc import cached_in_parent_method",
+    ....: "from sage.categories.category import Category", 
+    ....: "from sage.categories.objects import Objects",
     ....: "class MyCategory(Category):",
     ....: "    @cached_method",
     ....: "    def super_categories(self):",
@@ -1875,7 +1878,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
             sage: a.g(5) is a.f(5)
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a, 5) is a.f(5)
             True
@@ -2707,7 +2710,7 @@ cdef class CachedMethod():
 
             sage: a.g() is a.f()
             doctest:...: DeprecationWarning: g is deprecated. Please use f instead.
-            See http://trac.sagemath.org/57 for details.
+            See https://github.com/sagemath/sage/issues/57 for details.
             True
             sage: Foo.g(a) is a.f()
             True

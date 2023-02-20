@@ -588,7 +588,7 @@ def strip_string_literals(code, state=None):
 
         sage: s, literals, state = strip_string_literals(r"r'somethin\' funny'"); s
         'r%(L1)s'
-        sage: dep_regex = r'^ *(?:(?:cimport +([\w\. ,]+))|(?:from +(\w+) +cimport)|(?:include *[\'"]([^\'"]+)[\'"])|(?:cdef *extern *from *[\'"]([^\'"]+)[\'"]))' # Ticket 5821
+        sage: dep_regex = r'^ *(?:(?:cimport +([\w\. ,]+))|(?:from +(\w+) +cimport)|(?:include *[\'"]([^\'"]+)[\'"])|(?:cdef *extern *from *[\'"]([^\'"]+)[\'"]))' # Issue 5821
 
     Some extra tests for escaping with odd/even numbers of backslashes::
 
