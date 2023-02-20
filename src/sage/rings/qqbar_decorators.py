@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.number_field
 """
 QQbar decorators
 
