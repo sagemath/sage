@@ -458,7 +458,7 @@ def cm_orders(h, proof=None):
 
     OUTPUT:
 
-    - list of 2-tuples `(D,f)` sorted lexicographically by (|D|,f)
+    - list of 2-tuples `(D,f)` sorted lexicographically by `(|D|, f)`
 
     EXAMPLES::
 
