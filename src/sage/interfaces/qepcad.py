@@ -630,7 +630,7 @@ def _qepcad_atoms(formula):
     .. NOTE::
 
         This function is pis-aller used for doctesting, not a complete
-        parser, which should be written in a further ticket.
+        parser, which should be written in a later PR.
 
     EXAMPLES::
 

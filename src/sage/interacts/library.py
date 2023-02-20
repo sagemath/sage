@@ -115,7 +115,7 @@ def library_interact(
         doctest:warning
         ...
         DeprecationWarning: Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.
-        See https://trac.sagemath.org/33382 for details.
+        See https://github.com/sagemath/sage/issues/33382 for details.
         sage: f()  # an interact appears if using the notebook, else code
         ...Interactive function <function f at ...> with 1 widget
         n: TransformIntSlider(value=5, description='n', max=15, min=-5)
