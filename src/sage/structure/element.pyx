@@ -1683,11 +1683,11 @@ cdef class Element(SageObject):
 
             sage: operator.truediv(2, 3)
             2/3
-            sage: operator.truediv(pi, 3)
+            sage: operator.truediv(pi, 3)                                       # optional - sage.symbolic
             1/3*pi
             sage: x = polygen(QQ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: operator.truediv(2, K.ideal(i+1))
+            sage: K.<i> = NumberField(x^2 + 1)                                  # optional - sage.rings.number_field
+            sage: operator.truediv(2, K.ideal(i+1))                             # optional - sage.rings.number_field
             Fractional ideal (-i + 1)
 
         ::
@@ -2002,15 +2002,15 @@ cdef class Element(SageObject):
 
         ::
 
-            sage: (2/3)^I
+            sage: (2/3)^I                                                       # optional - sage.symbolic
             (2/3)^I
-            sage: (2/3)^sqrt(2)
+            sage: (2/3)^sqrt(2)                                                 # optional - sage.symbolic
             (2/3)^sqrt(2)
-            sage: var('x,y,z,n')
+            sage: var('x,y,z,n')                                                # optional - sage.symbolic
             (x, y, z, n)
-            sage: (2/3)^(x^n + y^n + z^n)
+            sage: (2/3)^(x^n + y^n + z^n)                                       # optional - sage.symbolic
             (2/3)^(x^n + y^n + z^n)
-            sage: (-7/11)^(tan(x)+exp(x))
+            sage: (-7/11)^(tan(x)+exp(x))                                       # optional - sage.symbolic
             (-7/11)^(e^x + tan(x))
             sage: float(1.2)**(1/2)
             1.0954451150103321
@@ -2689,22 +2689,22 @@ cdef class RingElement(ModuleElement):
             True
             sage: p(a,200) * p(a,-64) == p(a,136)
             True
-            sage: p(2, 1/2)
+            sage: p(2, 1/2)                                                     # optional - sage.symbolic
             sqrt(2)
 
         TESTS:
 
         These are not testing this code, but they are probably good to have around::
 
-            sage: 2r**(SR(2)-1-1r)
+            sage: 2r**(SR(2)-1-1r)                                              # optional - sage.symbolic
             1
-            sage: 2r^(1/2)
+            sage: 2r^(1/2)                                                      # optional - sage.symbolic
             sqrt(2)
 
         Exponent overflow should throw an OverflowError (:trac:`2956`)::
 
-            sage: K.<x,y> = AA[]
-            sage: x^(2^64 + 12345)
+            sage: K.<x,y> = AA[]                                                # optional - sage.rings.number_field
+            sage: x^(2^64 + 12345)                                              # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (2147483648)
@@ -2801,8 +2801,8 @@ cdef class RingElement(ModuleElement):
 
         ::
 
-            sage: R.<x> = GF(7)[]
-            sage: divmod(x^2, x-1)
+            sage: R.<x> = GF(7)[]                                               # optional - sage.libs.pari
+            sage: divmod(x^2, x - 1)                                            # optional - sage.libs.pari
             (x + 1, 1)
 
         ::
@@ -2905,17 +2905,17 @@ cdef class RingElement(ModuleElement):
 
         For the Gaussian integers::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: ZI = K.ring_of_integers()
-            sage: ZI(3).is_prime()
+            sage: K.<i> = QuadraticField(-1)                                    # optional - sage.rings.number_field
+            sage: ZI = K.ring_of_integers()                                     # optional - sage.rings.number_field
+            sage: ZI(3).is_prime()                                              # optional - sage.rings.number_field
             True
-            sage: ZI(5).is_prime()
+            sage: ZI(5).is_prime()                                              # optional - sage.rings.number_field
             False
-            sage: ZI(2+i).is_prime()
+            sage: ZI(2+i).is_prime()                                            # optional - sage.rings.number_field
             True
-            sage: ZI(0).is_prime()
+            sage: ZI(0).is_prime()                                              # optional - sage.rings.number_field
             False
-            sage: ZI(1).is_prime()
+            sage: ZI(1).is_prime()                                              # optional - sage.rings.number_field
             False
 
         In fields, an element is never prime::
@@ -2938,13 +2938,13 @@ cdef class RingElement(ModuleElement):
         redefines :meth:`is_prime` to determine primality in the ring
         of integers::
 
-            sage: (1+i).is_prime()
+            sage: (1+i).is_prime()                                              # optional - sage.rings.number_field
             True
-            sage: K(5).is_prime()
+            sage: K(5).is_prime()                                               # optional - sage.rings.number_field
             False
-            sage: K(7).is_prime()
+            sage: K(7).is_prime()                                               # optional - sage.rings.number_field
             True
-            sage: K(7/13).is_prime()
+            sage: K(7/13).is_prime()                                            # optional - sage.rings.number_field
             False
 
         However, for rationals, :meth:`is_prime` *does* follow the
@@ -2988,16 +2988,16 @@ cdef class CommutativeRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: F = GF(25)
-            sage: x = F.gen()
-            sage: z = F.zero()
-            sage: x.inverse_mod(F.ideal(z))
+            sage: F = GF(25)                                                    # optional - sage.libs.pari
+            sage: x = F.gen()                                                   # optional - sage.libs.pari
+            sage: z = F.zero()                                                  # optional - sage.libs.pari
+            sage: x.inverse_mod(F.ideal(z))                                     # optional - sage.libs.pari
             2*z2 + 3
-            sage: x.inverse_mod(F.ideal(1))
+            sage: x.inverse_mod(F.ideal(1))                                     # optional - sage.libs.pari
             1
-            sage: z.inverse_mod(F.ideal(1))
+            sage: z.inverse_mod(F.ideal(1))                                     # optional - sage.libs.pari
             1
-            sage: z.inverse_mod(F.ideal(z))
+            sage: z.inverse_mod(F.ideal(z))                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: an element of a proper ideal does not have an inverse modulo that ideal
@@ -3034,10 +3034,10 @@ cdef class CommutativeRingElement(RingElement):
 
         :trac:`5347` has been fixed::
 
-            sage: K = GF(7)
-            sage: K(3).divides(1)
+            sage: K = GF(7)                                                     # optional - sage.libs.pari
+            sage: K(3).divides(1)                                               # optional - sage.libs.pari
             True
-            sage: K(3).divides(K(1))
+            sage: K(3).divides(K(1))                                            # optional - sage.libs.pari
             True
 
         ::
@@ -4043,14 +4043,14 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         :trac:`30849`::
 
-            sage: 2.gcd(pari(3))
+            sage: 2.gcd(pari(3))                                                # optional - sage.libs.pari
             1
-            sage: type(2.gcd(pari(3)))
+            sage: type(2.gcd(pari(3)))                                          # optional - sage.libs.pari
             <class 'sage.rings.integer.Integer'>
 
-            sage: 2.gcd(pari('1/3'))
+            sage: 2.gcd(pari('1/3'))                                            # optional - sage.libs.pari
             1/3
-            sage: type(2.gcd(pari('1/3')))
+            sage: type(2.gcd(pari('1/3')))                                      # optional - sage.libs.pari
             <class 'sage.rings.rational.Rational'>
 
             sage: import gmpy2
@@ -4061,7 +4061,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
             sage: 2.gcd(gmpy2.mpq(1,3))
             1/3
-            sage: type(2.gcd(pari('1/3')))
+            sage: type(2.gcd(pari('1/3')))                                      # optional - sage.libs.pari
             <class 'sage.rings.rational.Rational'>
         """
         # NOTE: in order to handle nicely pari or gmpy2 integers we do not rely only on coercion
@@ -4082,14 +4082,14 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         :trac:`30849`::
 
-            sage: 2.lcm(pari(3))
+            sage: 2.lcm(pari(3))                                                # optional - sage.libs.pari
             6
-            sage: type(2.lcm(pari(3)))
+            sage: type(2.lcm(pari(3)))                                          # optional - sage.libs.pari
             <class 'sage.rings.integer.Integer'>
 
-            sage: 2.lcm(pari('1/3'))
+            sage: 2.lcm(pari('1/3'))                                            # optional - sage.libs.pari
             2
-            sage: type(2.lcm(pari('1/3')))
+            sage: type(2.lcm(pari('1/3')))                                      # optional - sage.libs.pari
             <class 'sage.rings.rational.Rational'>
 
             sage: import gmpy2
@@ -4199,12 +4199,12 @@ cdef class FieldElement(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: K.<b> = NumberField(x^4 + x^2 + 2/3)
-            sage: c = (1+b) // (1-b); c
+            sage: K.<b> = NumberField(x^4 + x^2 + 2/3)                          # optional - sage.rings.number_field
+            sage: c = (1+b) // (1-b); c                                         # optional - sage.rings.number_field
             3/4*b^3 + 3/4*b^2 + 3/2*b + 1/2
-            sage: (1+b) / (1-b) == c
+            sage: (1+b) / (1-b) == c                                            # optional - sage.rings.number_field
             True
-            sage: c * (1-b)
+            sage: c * (1-b)                                                     # optional - sage.rings.number_field
             b + 1
         """
         return self._div_(right)
@@ -4273,14 +4273,14 @@ cdef class FieldElement(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: K.<rt3> = QQ[sqrt(3)]
-            sage: K(0).divides(rt3)
+            sage: K.<rt3> = QQ[sqrt(3)]                                         # optional - sage.rings.number_field, sage.symbolic
+            sage: K(0).divides(rt3)                                             # optional - sage.rings.number_field, sage.symbolic
             False
-            sage: rt3.divides(K(17))
+            sage: rt3.divides(K(17))                                            # optional - sage.rings.number_field, sage.symbolic
             True
-            sage: K(0).divides(K(0))
+            sage: K(0).divides(K(0))                                            # optional - sage.rings.number_field, sage.symbolic
             True
-            sage: rt3.divides(K(0))
+            sage: rt3.divides(K(0))                                             # optional - sage.rings.number_field, sage.symbolic
             True
         """
         if not (other._parent is self._parent):
@@ -4427,14 +4427,16 @@ def coercion_traceback(dump=True):
         sage: 1 + 1/5
         6/5
         sage: coercion_traceback()  # Should be empty, as all went well.
-        sage: 1/5 + GF(5).gen()
+        sage: 1/5 + GF(5).gen()                                                 # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for +: 'Rational Field' and 'Finite Field of size 5'
-        sage: coercion_traceback()
+        TypeError: unsupported operand parent(s) for +:
+        'Rational Field' and 'Finite Field of size 5'
+        sage: coercion_traceback()                                              # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
-        TypeError: no common canonical parent for objects with parents: 'Rational Field' and 'Finite Field of size 5'
+        TypeError: no common canonical parent for objects with parents:
+        'Rational Field' and 'Finite Field of size 5'
     """
     if dump:
         for traceback in coercion_model.exception_stack():

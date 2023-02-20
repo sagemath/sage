@@ -561,8 +561,8 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
         ::
 
             sage: A = cartesian_product([ZZ, ZZ])
-            sage: B = cartesian_product([GF(3), GF(5)])
-            sage: A((3,5)) == B((0,0))
+            sage: B = cartesian_product([GF(3), GF(5)])                     # optional - sage.libs.pari
+            sage: A((3,5)) == B((0,0))                                      # optional - sage.libs.pari
             True
         """
         if type(self) is type(right):

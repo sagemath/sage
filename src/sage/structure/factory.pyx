@@ -302,7 +302,7 @@ cdef class UniqueFactory(SageObject):
             sage: fake_factory = UniqueFactory('ZZ')
             sage: loads(dumps(fake_factory))
             Integer Ring
-            sage: fake_factory = UniqueFactory('sage.rings.all.QQ')
+            sage: fake_factory = UniqueFactory('sage.rings.rational_field.QQ')
             sage: loads(dumps(fake_factory))
             Rational Field
         """
@@ -313,17 +313,17 @@ cdef class UniqueFactory(SageObject):
         """
         EXAMPLES::
 
-            sage: A = FiniteField(127)
-            sage: A is loads(dumps(A)) # indirect doctest
+            sage: A = FiniteField(127)                                          # optional - sage.libs.pari
+            sage: A is loads(dumps(A)) # indirect doctest                       # optional - sage.libs.pari
             True
-            sage: B = FiniteField(3^3,'b')
-            sage: B is loads(dumps(B))
+            sage: B = FiniteField(3^3,'b')                                      # optional - sage.libs.pari
+            sage: B is loads(dumps(B))                                          # optional - sage.libs.pari
             True
-            sage: C = FiniteField(2^16,'c')
-            sage: C is loads(dumps(C))
+            sage: C = FiniteField(2^16,'c')                                     # optional - sage.libs.pari
+            sage: C is loads(dumps(C))                                          # optional - sage.libs.pari
             True
-            sage: D = FiniteField(3^20,'d')
-            sage: D is loads(dumps(D))
+            sage: D = FiniteField(3^20,'d')                                     # optional - sage.libs.pari
+            sage: D is loads(dumps(D))                                          # optional - sage.libs.pari
             True
 
         TESTS::
