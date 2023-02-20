@@ -393,14 +393,16 @@ cdef class ModuleAction(Action):
             sage: from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
             sage: ZZx = ZZ['x']
             sage: A = LeftModuleAction(ZZ, ZZx); A
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: A._repr_name_()
             'scalar multiplication'
 
-            sage: GF5 = GF(5)
-            sage: GF5t = GF5[['t']]
-            sage: RightModuleAction(GF5, GF5t)
-            Right scalar multiplication by Finite Field of size 5 on Power Series Ring in t over Finite Field of size 5
+            sage: GF5 = GF(5)                                                   # optional - sage.libs.pari
+            sage: GF5t = GF5[['t']]                                             # optional - sage.libs.pari
+            sage: RightModuleAction(GF5, GF5t)                                  # optional - sage.libs.pari
+            Right scalar multiplication by Finite Field of size 5
+             on Power Series Ring in t over Finite Field of size 5
 
         """
         return "scalar multiplication"
@@ -481,18 +483,20 @@ cdef class ModuleAction(Action):
             sage: A(x, 2)
             1/2*x
 
-            sage: GF5x = GF(5)['x']
-            sage: A = ~RightModuleAction(ZZ, GF5x); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            sage: GF5x = GF(5)['x']                                             # optional - sage.libs.pari
+            sage: A = ~RightModuleAction(ZZ, GF5x); A                           # optional - sage.libs.pari
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
-            sage: A(x, 2)
+            sage: A(x, 2)                                                       # optional - sage.libs.pari
             3*x
 
-            sage: GF5xy = GF5x['y']
-            sage: A = ~RightModuleAction(ZZ, GF5xy); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
+            sage: GF5xy = GF5x['y']                                             # optional - sage.libs.pari
+            sage: A = ~RightModuleAction(ZZ, GF5xy); A                          # optional - sage.libs.pari
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -743,13 +747,13 @@ cdef class IntegerMulAction(IntegerAction):
         random errors (see :trac:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: GF101 = GF(101)
-            sage: act = IntegerMulAction(ZZ, GF101)
-            sage: act(3, 9)
+            sage: GF101 = GF(101)                                               # optional - sage.libs.pari
+            sage: act = IntegerMulAction(ZZ, GF101)                             # optional - sage.libs.pari
+            sage: act(3, 9)                                                     # optional - sage.libs.pari
             27
-            sage: act(3^689, 9)
+            sage: act(3^689, 9)                                                 # optional - sage.libs.pari
             42
-            sage: 3^689 * mod(9, 101)
+            sage: 3^689 * mod(9, 101)                                           # optional - sage.libs.pari
             42
 
         TESTS:
@@ -763,14 +767,14 @@ cdef class IntegerMulAction(IntegerAction):
 
         This used to hang before :trac:`17844`::
 
-            sage: E = EllipticCurve(GF(5), [4,0])
-            sage: P = E.random_element()
-            sage: (-2^63)*P
+            sage: E = EllipticCurve(GF(5), [4,0])                               # optional - sage.libs.pari
+            sage: P = E.random_element()                                        # optional - sage.libs.pari
+            sage: (-2^63)*P                                                     # optional - sage.libs.pari
             (0 : 1 : 0)
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.001); 2^(10^7) * P
+            sage: alarm(0.001); 2^(10^7) * P                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -778,8 +782,8 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
-            sage: from cysignals.tests import print_sig_occurred
-            sage: print_sig_occurred()
+            sage: from cysignals.tests import print_sig_occurred                # optional - sage.libs.pari
+            sage: print_sig_occurred()                                          # optional - sage.libs.pari
             No current exception
         """
         cdef int err = 0
@@ -801,8 +805,9 @@ cdef class IntegerMulAction(IntegerAction):
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF5 = GF(5)
-            sage: IntegerMulAction(ZZ, GF5)
-            Left Integer Multiplication by Integer Ring on Finite Field of size 5
+            sage: IntegerMulAction(ZZ, GF5)                                     # optional - sage.libs.pari
+            Left Integer Multiplication by Integer Ring
+            on Finite Field of size 5
         """
         return "Integer Multiplication"
 
@@ -875,13 +880,13 @@ cdef class IntegerPowAction(IntegerAction):
         ``GF(101)``::
 
             sage: from sage.structure.coerce_actions import IntegerPowAction
-            sage: GF101 = GF(101)
-            sage: act = IntegerPowAction(ZZ, GF101)
-            sage: act(3, 100)
+            sage: GF101 = GF(101)                                               # optional - sage.libs.pari
+            sage: act = IntegerPowAction(ZZ, GF101)                             # optional - sage.libs.pari
+            sage: act(3, 100)                                                   # optional - sage.libs.pari
             1
-            sage: act(3, -1)
+            sage: act(3, -1)                                                    # optional - sage.libs.pari
             34
-            sage: act(3, 1000000000000000000000000000000000000000000001)
+            sage: act(3, 1000000000000000000000000000000000000000000001)        # optional - sage.libs.pari
             3
         """
         cdef Element e = <Element>a
