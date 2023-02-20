@@ -1015,6 +1015,67 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
+    def torsion_basis(self, n):
+        r"""
+        Return a basis of the `n`-torsion subgroup of this elliptic curve,
+        assuming it is fully rational.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(62207^2), [1,0])
+            sage: E.abelian_group()
+            Additive abelian group isomorphic to Z/62208 + Z/62208 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 62207^2
+            sage: PA,QA = E.torsion_basis(2^8)
+            sage: PA.weil_pairing(QA, 2^8).multiplicative_order()
+            256
+            sage: PB,QB = E.torsion_basis(3^5)
+            sage: PB.weil_pairing(QB, 3^5).multiplicative_order()
+            243
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [4,4])
+            sage: E.torsion_basis(23)
+            Traceback (most recent call last):
+            ...
+            ValueError: curve does not have full rational 23-torsion
+            sage: F = E.division_field(23); F
+            Finite Field in t of size 101^11
+            sage: EE = E.change_ring(F)
+            sage: P, Q = EE.torsion_basis(23)
+            sage: P  # random
+            (89*z11^10 + 51*z11^9 + 96*z11^8 + 8*z11^7 + 67*z11^6
+             + 31*z11^5 + 55*z11^4 + 59*z11^3 + 28*z11^2 + 8*z11 + 88
+             : 40*z11^10 + 33*z11^9 + 80*z11^8 + 87*z11^7 + 97*z11^6
+             + 69*z11^5 + 56*z11^4 + 17*z11^3 + 26*z11^2 + 69*z11 + 11
+             : 1)
+            sage: Q  # random
+            (25*z11^10 + 61*z11^9 + 49*z11^8 + 17*z11^7 + 80*z11^6
+             + 20*z11^5 + 49*z11^4 + 52*z11^3 + 61*z11^2 + 27*z11 + 61
+             : 60*z11^10 + 91*z11^9 + 89*z11^8 + 7*z11^7 + 63*z11^6
+             + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
+             : 1)
+
+        .. SEEALSO::
+
+            Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
+            to determine a field extension containing the full `\ell`-torsion subgroup.
+
+        ALGORITHM:
+
+        This method currently uses :meth:`abelian_group` and
+        :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+        """
+        # TODO: In many cases this is not the fastest algorithm.
+        # Alternatives include factoring division polynomials and
+        # random sampling (like PARI's ellgroup, but with a milder
+        # termination condition). We should implement these too
+        # and figure out when to use which.
+        T = self.abelian_group().torsion_subgroup(n)
+        if T.invariants() != (n, n):
+            raise ValueError(f'curve does not have full rational {n}-torsion')
+        return tuple(P.element() for P in T.gens())
+
     def is_isogenous(self, other, field=None, proof=True):
         """
         Return whether or not self is isogenous to other.

@@ -4037,7 +4037,7 @@ class LPDictionary(LPAbstractDictionary):
             e = 2 * tuple(N).index(self._entering) + 4
             for i, lin in enumerate(lines):
                 lin = lin[:-2].split("&")
-                # Trac #30809: The MathJaX version of \color takes an argument
+                # Issue #30809: The MathJaX version of \color takes an argument
                 if len(lin) > 1:
                     lin[e] = r"\color{green}{%s}" % (lin[e],)
                     lines[i] = "&".join(lin) + r"\\"
@@ -4630,7 +4630,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                 for j, t in enumerate(terms):
                     if j == m + 2:
                         continue
-                    # Trac #30809: The MathJaX version of \color takes an argument
+                    # Issue #30809: The MathJaX version of \color takes an argument
                     terms[j] = r"\color{red}{" + t + "}"
             lines.append(" & ".join(terms) + r" \\")
         lines.append(r"\end{array}")

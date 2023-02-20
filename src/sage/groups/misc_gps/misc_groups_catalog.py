@@ -25,4 +25,3 @@ from sage.groups.raag import RightAngledArtinGroup as RightAngledArtin
 from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 from sage.groups.cactus_group import CactusGroup as Cactus
 from sage.groups.cactus_group import PureCactusGroup as PureCactus
-

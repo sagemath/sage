@@ -223,4 +223,3 @@ class KernelSubgroup(UniqueRepresentation, Parent):
                 s[1,2]*s[2,3]*s[1,2]*s[1,3]
             """
             return type(self)(self.parent(), ~self.value)
-

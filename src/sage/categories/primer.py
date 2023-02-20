@@ -440,12 +440,12 @@ done by introspection::
 For plain Python methods, one can also just ask in which module they
 are implemented::
 
-    sage: i._pow_.__module__  # not tested (Trac #24275)
+    sage: i._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
     sage: pQ._mul_.__module__
     'sage.rings.polynomial.polynomial_element_generic'
-    sage: pQ._pow_.__module__  # not tested (Trac #24275)
+    sage: pQ._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
 We see that integers and polynomials have each their own

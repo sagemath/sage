@@ -95,8 +95,8 @@ from sage.rings.cc import CC
 # for degrees <= this threshold, pari is used
 # for degrees > this threshold, sage matrices are used
 # the value was decided by running a tuning script on a number of
-# architectures; you can find this script attached to trac
-# ticket 5213
+# architectures; you can find this script attached to github
+# issue 5213
 TUNE_CHARPOLY_NF = 25
 
 def is_NumberFieldElement(x):
@@ -126,7 +126,7 @@ def __create__NumberFieldElement_version0(parent, poly):
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version0(k, z^2 + z + 1)
         doctest:...: DeprecationWarning: __create__NumberFieldElement_version0() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         a^2 + a + 1
     """
     from sage.misc.superseded import deprecation_cython as deprecation
@@ -144,7 +144,7 @@ def __create__NumberFieldElement_version1(parent, cls, poly):
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version1(k, type(a), z^2 + z + 1)
         doctest:...: DeprecationWarning: __create__NumberFieldElement_version1() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         a^2 + a + 1
     """
     from sage.misc.superseded import deprecation_cython as deprecation
