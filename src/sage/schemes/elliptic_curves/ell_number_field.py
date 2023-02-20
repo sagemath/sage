@@ -4074,24 +4074,25 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return [E(pt) for pt in Curve(self).rational_points(**kwds)]
 
     def is_modular(self, verbose=False):
-        r"""Returns `True` if the base field is totally real and modularity of
+        r"""
+        Returns `True` if the base field is totally real and modularity of
         this curve can be proved, otherwise `False`.
 
         INPUT:
 
-        - ``verbose`` (bool, default ``False``) -- if True, outputs a reason for the conclusion.
+        - ``verbose`` (bool, default ``False``) -- if ``True``, outputs a reason for the conclusion.
 
         .. NOTE::
 
-            When `False` is returned, it does not mean that the curve
+            When ``False`` is returned, it does not mean that the curve
             is not modular!  Only that modularity cannot be proved
             with current knowledge and implemented methods.  It is
-            expected that the return value will be `True` for all
+            expected that the return value will be ``True`` for all
             curves defined over totally real fields, and for all
             defined over imaginary quadratic fields over which the
-            modular curve $X_0(15)$ (with label `15a1`) has rank
+            modular curve `X_0(15)` (with label `15a1`) has rank
             zero.  Any curve defined over totally real fields for
-            which the return value is `False` is of interest, as its
+            which the return value is ``False`` is of interest, as its
             mod `p` Galois representations for the primes 3, 5 and 7
             are simultaneously nonmaximal.
 
@@ -4112,7 +4113,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
         real case, and relies on theorems in the following papers:
         [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_.
 
-        EXAMPLES.  Set ``verbose=True`` to see a reason for the conclusion::
+        EXAMPLES:
+
+        Set ``verbose=True`` to see a reason for the conclusion::
 
             sage: E = EllipticCurve('11a1')
             sage: E.is_modular(verbose=True)
@@ -4178,7 +4181,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         """
         def not_from(group, p, j):
-            return len(_modular_polynomial(group, p, j).roots()) == 0
+            return not _modular_polynomial(group, p, j).roots()
 
         K = self.base_field()
         d = K.degree()
@@ -4238,15 +4241,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return False # We've run out of tricks!
 
 def _modular_polynomial(group, p, j):
-    r"""Helper function for the method :meth:`is_modular`.
+    r"""
+    Helper function for the method :meth:`is_modular`.
 
     INPUT:
 
     - ``group`` (string) -- one of 'borel', 'split', 'nonsplit'.
-
     - ``p`` (int) -- a prime number, either 3 or 5 or 7.
-
-    - ``j`` -- an(algebraic number, the `j`-invariant of an elliptic curve.
+    - ``j`` -- an algebraic number; the `j`-invariant of an elliptic curve.
 
     OUTPUT:
 
