@@ -775,6 +775,21 @@ class EllipticCurveHom(Morphism):
             sage: iota(a*P + b*Q) == c*P + d*Q
             True
 
+        We can compute the matrix of a Frobenius endomorphism
+        (:class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`)
+        on a large enough subgroup to verify point-counting results::
+
+            sage: F.<a> = GF((101, 36))
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: EE = E.change_ring(F)
+            sage: P,Q = EE.torsion_basis(37)
+            sage: pi = EE.frobenius_isogeny()
+            sage: M = pi.matrix_on_subgroup((P,Q))
+            sage: M.trace()
+            34
+            sage: E.trace_of_frobenius()
+            -3
+
         .. SEEALSO::
 
             To compute a basis of the `n`-torsion, you may use
