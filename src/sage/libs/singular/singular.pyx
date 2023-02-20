@@ -1725,8 +1725,13 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     - ``_ring`` -- a pointer to some ring.
 
     Whether an overflow occurs or not partially depends
-    on the number of variables in the ring. See trac ticket
-    :trac:`11856`.
+
+    on the number of variables in the ring. See github issue
+    :trac:`11856`. With Singular 4, it is by default optimized
+    for at least 4 variables on 64-bit and 2 variables on 32-bit,
+    which in both cases makes a maximal default exponent of
+    2^16-1.
+
 
     EXAMPLES::
 

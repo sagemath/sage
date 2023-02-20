@@ -31,7 +31,7 @@ SAGE_ROOT_LOGS = logs
 
 # The --stop flag below is just a random flag to induce graceful
 # breakage with non-GNU versions of make.
-# See https://trac.sagemath.org/ticket/24617
+# See https://github.com/sagemath/sage/issues/24617
 
 # Defer unknown targets to build/make/Makefile
 %::
@@ -259,8 +259,8 @@ TEST_FILES = --all
 TEST_FLAGS =
 
 # When the documentation is installed, "optional" also includes all tests marked 'sagemath_doc_html',
-# see https://trac.sagemath.org/ticket/25345, https://trac.sagemath.org/ticket/26110, and
-# https://trac.sagemath.org/ticket/32759
+# see https://github.com/sagemath/sage/issues/25345, https://github.com/sagemath/sage/issues/26110, and
+# https://github.com/sagemath/sage/issues/32759
 TEST_OPTIONAL = sage,optional
 
 # Keep track of the top-level *test* Makefile target for logging.
