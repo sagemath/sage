@@ -46,7 +46,6 @@ abstract base classes.
                                 PrincipalIdealDomainElement
                                     EuclideanDomainElement
                         FieldElement
-                            NumberFieldElement
                         CommutativeAlgebraElement
                         Expression
                     AlgebraElement
@@ -4286,28 +4285,6 @@ cdef class FieldElement(CommutativeRingElement):
         if not (other._parent is self._parent):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
-
-
-cdef class NumberFieldElement(FieldElement):
-    r"""
-    Abstract base class for :class:`~sage.rings.number_field.number_field_element.NumberFieldElement`
-
-    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: k.<a> = NumberField(x^3 + x + 1)
-        sage: isinstance(a, sage.structure.element.NumberFieldElement)
-        True
-
-    By design, there is a unique direct subclass::
-
-        sage: len(sage.structure.element.NumberFieldElement.__subclasses__()) <= 1
-        True
-    """
-
-    pass
 
 
 def is_AlgebraElement(x):

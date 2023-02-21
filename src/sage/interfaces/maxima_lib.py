@@ -1165,7 +1165,7 @@ import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
 
-from sage.structure.element import NumberFieldElement
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 
 car=EclObject("car")
@@ -1525,7 +1525,7 @@ def pyobject_to_max(obj):
     """
     if isinstance(obj,sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(),obj.denom()])
-    elif isinstance(obj, NumberFieldElement):
+    elif isinstance(obj, NumberFieldElement_base):
         from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
         if isinstance(obj, NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1,0,1]:
             re, im = obj.list()

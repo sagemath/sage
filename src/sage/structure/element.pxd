@@ -230,9 +230,6 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 cdef class FieldElement(CommutativeRingElement):
     cpdef _floordiv_(self, other)
 
-cdef class NumberFieldElement(FieldElement):
-    pass
-
 cdef class AlgebraElement(RingElement):
     pass
 

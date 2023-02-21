@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Number Field Elements
+Number field elements (implementation using NTL)
 
 AUTHORS:
 
@@ -111,7 +111,7 @@ def is_NumberFieldElement(x):
         doctest:warning...
         DeprecationWarning: is_NumberFieldElement is deprecated;
         use isinstance(..., sage.structure.element.NumberFieldElement) instead
-        See https://trac.sagemath.org/34931 for details.
+        See https://github.com/sagemath/sage/issues/34931 for details.
         False
         sage: k.<a> = NumberField(x^7 + 17*x + 1)
         sage: is_NumberFieldElement(a+1)

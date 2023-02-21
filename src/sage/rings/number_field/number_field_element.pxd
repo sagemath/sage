@@ -1,9 +1,8 @@
 cimport sage.structure.element
 from sage.libs.gmp.types cimport mpz_t
 from sage.rings.integer cimport Integer
+from sage.rings.number_field.number_field_element_base cimport NumberFieldElement_base
 from sage.rings.polynomial.polynomial_element cimport Polynomial
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement
-from sage.structure.element cimport NumberFieldElement as NumberFieldElement_base
 from sage.structure.parent cimport Parent
 from sage.structure.parent_base cimport ParentWithBase
 from sage.libs.ntl.types cimport ZZ_c, ZZX_c

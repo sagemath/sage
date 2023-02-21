@@ -42,7 +42,7 @@ from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.cachefunc import cached_function
-from sage.structure.element import NumberFieldElement
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 
 
 @cached_function
@@ -626,7 +626,7 @@ def is_cm_j_invariant(j, method='new'):
         True
     """
     # First we check that j is an algebraic number:
-    if not isinstance(j, NumberFieldElement) and j not in QQ:
+    if not isinstance(j, NumberFieldElement_base) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
     # for j in ZZ we have a lookup-table:
