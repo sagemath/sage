@@ -98,6 +98,7 @@ exclude sage/data_structures/stream.*
 graft sage/geometry
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
+exclude sage/geometry/ribbon_graph.p*                    # depends on sage.groups.perm_gps
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
 # simplicial complexes
