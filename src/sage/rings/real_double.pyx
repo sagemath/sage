@@ -85,7 +85,7 @@ def is_RealDoubleField(x):
         doctest:warning...
         DeprecationWarning: is_RealDoubleField is deprecated;
         use isinstance(..., sage.rings.abc.RealDoubleField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: is_RealDoubleField(RealField(53))
         False

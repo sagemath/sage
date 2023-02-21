@@ -8,7 +8,7 @@ sdh_make
 # The JIT feature of pcre is known to be broken on some systems, in
 # particular on Solaris. We run the testsuite of pcre (this takes only
 # a few seconds). It the testsuite fails, we rebuild pcre without JIT
-# support. See https://trac.sagemath.org/ticket/24628
+# support. See https://github.com/sagemath/sage/issues/24628
 if ! $MAKE check; then
     echo >&2 "*** Rebuilding pcre without JIT support ***"
     $MAKE clean

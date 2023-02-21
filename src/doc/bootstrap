@@ -155,8 +155,8 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
             PKG_SCRIPTS=build/pkgs/$PKG_BASE
             # Instead of just copying, we may want to call
             # a version of sage-spkg-info to format extra information.
-            # for sphinx 4.4 we need to replace all direct links by some "extlink" (ticket 33272)
+            # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
 
-            (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) | sed -e "s|https://trac.sagemath.org/ticket/\([0-9]*\)|:trac:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" > "$OUTPUT_DIR"/$PKG_BASE.rst
+            (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) | sed -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" > "$OUTPUT_DIR"/$PKG_BASE.rst
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
 done

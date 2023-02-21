@@ -7453,7 +7453,7 @@ cdef void fast_tp_dealloc(PyObject* o):
 
     # If we are recovering from an interrupt, throw the mpz_t away
     # without recycling or freeing it because it might be in an
-    # inconsistent state (see Trac #24986).
+    # inconsistent state (see Issue #24986).
     if sig_occurred() is NULL:
         if integer_pool_count < integer_pool_size:
             # Here we free any extra memory used by the mpz_t by
