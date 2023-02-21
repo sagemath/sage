@@ -672,7 +672,7 @@ class GaloisRepresentation(SageObject):
         ALGORITHM:
 
         This method is currently only implemented for primes `p` for
-        which the modular curve `X_{\text{ns}}^{+}(p) has genus 0,
+        which the modular curve `X_{\text{ns}}^{+}(p)` has genus 0,
         namely `p=3,5,7`.  In these cases we use an explicit formula
         for the map from the modular curve to the `j`-line, checking
         that the curve's `j`-invariant is in the image.
@@ -751,7 +751,7 @@ class GaloisRepresentation(SageObject):
         ALGORITHM:
 
         This method is currently only implemented for primes `p` for
-        which the modular curve `X_{\text{ns}}(p) has genus 0 and has
+        which the modular curve `X_{\text{ns}}(p)` has genus 0 and has
         a rational point, namely `p=2` only.  (For `p=3,5` the genus
         is zero but there are no rational points.)  In this cases we
         use an explicit formula for the map from the modular curve to
