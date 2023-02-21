@@ -77,6 +77,26 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
     sage: bar == foo
     True
 
+TESTS:
+
+Check our workaround for a race in ecl works, see :trac:`26968`.
+We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
+in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
+
+    sage: import tempfile, subprocess
+    sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
+    sage: _ = subprocess.run(['sage', '-c',  # long time
+    ....: f'''
+    ....: import os
+    ....: os.environ["MAXIMA_USERDIR"] = "{tmpdir.name}"
+    ....: if not os.fork():
+    ....:     import sage.interfaces.maxima_lib
+    ....: else:
+    ....:     import sage.interfaces.maxima_lib
+    ....:     os.wait()
+    ....: '''])
+    sage: tmpdir.cleanup()
+
 """
 
 # ****************************************************************************
