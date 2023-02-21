@@ -120,9 +120,9 @@ New arrangements from old::
     True
     sage: b == hyperplane_arrangements.Catalan(3)                                       # optional - sage.graphs, sage.combinat
     True
-
-    sage: a
+    sage: a                                                                             # optional - sage.graphs, sage.combinat
     Arrangement <t1 - t2 | t0 - t1 | t0 - t2>
+
     sage: a = hyperplane_arrangements.coordinate(4)
     sage: h = a.hyperplanes()[0]
     sage: b = a.restriction(h)
@@ -2640,9 +2640,9 @@ class HyperplaneArrangementElement(Element):
              A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 3 vertices and 1 line,
              A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 3 vertices and 1 line,
              A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 3 vertices and 1 line)
-            sage: A.bounded_regions()[0].is_compact()    # the regions are only *relatively* bounded
+            sage: A.bounded_regions()[0].is_compact()    # the regions are only *relatively* bounded        # optional - sage.combinat
             False
-            sage: A.is_essential()
+            sage: A.is_essential()                                                                          # optional - sage.combinat
             False
         """
         return tuple(self.regions()[i] for i in self._bounded_region_indices())
@@ -3088,13 +3088,13 @@ class HyperplaneArrangementElement(Element):
 
         Check that :trac:`26705` is fixed::
 
-            sage: w = WeylGroup(['A',4]).from_reduced_word([3,4,2,1])
-            sage: I = w.inversion_arrangement()
-            sage: I
+            sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])               # optional - sage.combinat, sage.groups
+            sage: I = w.inversion_arrangement()                                         # optional - sage.combinat, sage.groups
+            sage: I                                                                     # optional - sage.combinat, sage.groups
             Arrangement <a4 | a1 | a1 + a2 | a1 + a2 + a3 + a4>
-            sage: I.minimal_generated_number()
+            sage: I.minimal_generated_number()                                          # optional - sage.combinat, sage.groups
             0
-            sage: I.is_formal()
+            sage: I.is_formal()                                                         # optional - sage.combinat, sage.groups
             True
         """
         V = VectorSpace(self.base_ring(), self.dimension())
@@ -3176,9 +3176,9 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',3], prefix='s')
-            sage: A = W.long_element().inversion_arrangement()
-            sage: for M in A.derivation_module_free_chain(): print("%s\n"%M)
+            sage: W = WeylGroup(['A',3], prefix='s')                                    # optional - sage.combinat, sage.groups
+            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat, sage.groups
+            sage: for M in A.derivation_module_free_chain(): print("%s\n"%M)            # optional - sage.combinat, sage.groups
             [ 1  0  0]
             [ 0  1  0]
             [ 0  0 a3]
@@ -3252,8 +3252,8 @@ class HyperplaneArrangementElement(Element):
         For type `A` arrangements, chordality is equivalent to freeness.
         We verify that in type `A_3`::
 
-            sage: W = WeylGroup(['A',3], prefix='s')
-            sage: for x in W:
+            sage: W = WeylGroup(['A', 3], prefix='s')                                   # optional - sage.combinat, sage.groups
+            sage: for x in W:                                                           # optional - sage.combinat, sage.groups
             ....:    A = x.inversion_arrangement()
             ....:    assert A.matroid().is_chordal() == A.is_free()
 
@@ -3261,8 +3261,8 @@ class HyperplaneArrangementElement(Element):
 
         We check that the algorithms agree::
 
-            sage: W = WeylGroup(['B',3], prefix='s')
-            sage: for x in W:   # long time
+            sage: W = WeylGroup(['B', 3], prefix='s')                                   # optional - sage.combinat, sage.groups
+            sage: for x in W:   # long time                                             # optional - sage.combinat, sage.groups
             ....:    A = x.inversion_arrangement()
             ....:    assert (A.is_free(algorithm="BC")
             ....:            == A.is_free(algorithm="singular"))
@@ -3321,19 +3321,19 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',2], prefix='s')
-            sage: A = W.long_element().inversion_arrangement()
-            sage: A.derivation_module_basis()
+            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat, sage.groups
+            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat, sage.groups
+            sage: A.derivation_module_basis()                                           # optional - sage.combinat, sage.groups
             [(a1, a2), (0, a1*a2 + a2^2)]
 
         TESTS:
 
         We check the algorithms produce a basis with the same exponents::
 
-            sage: W = WeylGroup(['A',2], prefix='s')
-            sage: exponents = lambda B: sorted([max(x.degree() for x in b)
-            ....:                               for b in B])
-            sage: for x in W:  # long time
+            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat, sage.groups
+            sage: def exponents(B):                                                     # optional - sage.combinat, sage.groups
+            ....:     return sorted([max(x.degree() for x in b) for b in B])
+            sage: for x in W:  # long time                                              # optional - sage.combinat, sage.groups
             ....:     A = x.inversion_arrangement()
             ....:     B = A.derivation_module_basis(algorithm="singular")
             ....:     Bp = A.derivation_module_basis(algorithm="BC")
