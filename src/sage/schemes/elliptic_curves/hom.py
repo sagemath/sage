@@ -726,11 +726,8 @@ class EllipticCurveHom(Morphism):
 
     def matrix_on_subgroup(self, domain_gens, codomain_gens=None):
         r"""
-        Return the matrix as which this isogeny acts on the
+        Return the matrix by which this isogeny acts on the
         `n`-torsion subgroup with respect to the given bases.
-
-        (This is useful for tasks such as computing a set of
-        generators for the kernel subgroup.)
 
         INPUT:
 
@@ -775,7 +772,28 @@ class EllipticCurveHom(Morphism):
             sage: iota(a*P + b*Q) == c*P + d*Q
             True
 
-        We can compute the matrix of a Frobenius endomorphism
+        One important application of this is to compute generators of
+        the kernel subgroup of an isogeny, when the `n`-torsion subgroup
+        containing the kernel is accessible::
+
+            sage: K = E(83*i-16, 9*i-147)
+            sage: K.order()
+            7
+            sage: phi = E.isogeny(K)
+            sage: R,S = phi.codomain().gens()
+            sage: mat = phi.matrix_on_subgroup((P,Q), (R,S))
+            sage: mat  # random -- depends on R,S
+            [124 263]
+            [115 141]
+            sage: kermat = mat.left_kernel_matrix(); kermat
+            [300  60]
+            sage: ker = [ZZ(v[0])*P + ZZ(v[1])*Q for v in kermat]
+            sage: {phi(T) for T in ker}
+            {(0 : 1 : 0)}
+            sage: phi == E.isogeny(ker)
+            True
+
+        We can also compute the matrix of a Frobenius endomorphism
         (:class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`)
         on a large enough subgroup to verify point-counting results::
 
@@ -785,6 +803,8 @@ class EllipticCurveHom(Morphism):
             sage: P,Q = EE.torsion_basis(37)
             sage: pi = EE.frobenius_isogeny()
             sage: M = pi.matrix_on_subgroup((P,Q))
+            sage: M.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 37
             sage: M.trace()
             34
             sage: E.trace_of_frobenius()
