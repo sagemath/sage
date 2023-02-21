@@ -705,7 +705,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     - `B` -- integer or None; if None returns all pairs
     - ``proof`` -- this code calls the PARI function :pari:`qfbclassno`, so it
       could give wrong answers when ``proof``==``False`` (though only for
-      discriminants greater than `2\cdot10^{10}).  The default is
+      discriminants greater than `2\cdot10^{10}`).  The default is
       the current value of ``proof.number_field()``.
 
     OUTPUT:
