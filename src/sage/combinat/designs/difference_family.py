@@ -2727,7 +2727,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
     return True
 
 
-def complementary_difference_setI(n, check=True):
+def complementary_difference_setsI(n, check=True):
     r"""
     Construct complementary difference sets in a group of order `n \cong 3 \mod 4`, `n` a prime power.
 
@@ -2750,8 +2750,8 @@ def complementary_difference_setI(n, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import complementary_difference_setI
-        sage: complementary_difference_setI(19)
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsI
+        sage: complementary_difference_setsI(19)
         (Finite Field of size 19,
          [1, 4, 5, 6, 7, 9, 11, 16, 17],
          [1, 4, 5, 6, 7, 9, 11, 16, 17])
@@ -2759,14 +2759,14 @@ def complementary_difference_setI(n, check=True):
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setI(23, check=False)
+        sage: G, A, B = complementary_difference_setsI(23, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
-        sage: complementary_difference_setI(17)
+        sage: complementary_difference_setsI(17)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 17 is not valid
-        sage: complementary_difference_setI(15)
+        sage: complementary_difference_setsI(15)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 15 is not valid
@@ -2790,7 +2790,7 @@ def complementary_difference_setI(n, check=True):
     return G, A, B
 
 
-def complementary_difference_setII(n, check=True):
+def complementary_difference_setsII(n, check=True):
     r"""
     Construct complementary difference sets in a group of order `n = p^t`, where `p \cong 5 \mod 8` and `t \cong 1, 2, 3 \mod 4`.
 
@@ -2823,24 +2823,24 @@ def complementary_difference_setII(n, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import complementary_difference_setII
-        sage: complementary_difference_setII(5)
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsII
+        sage: complementary_difference_setsII(5)
         (Finite Field of size 5, [1, 2], [1, 3])
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setII(25, check=False)
+        sage: G, A, B = complementary_difference_setsII(25, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
-        sage: G, A, B = complementary_difference_setII(13, check=False)
+        sage: G, A, B = complementary_difference_setsII(13, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
-        sage: complementary_difference_setII(49)
+        sage: complementary_difference_setsII(49)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 49 is not valid
-        sage: complementary_difference_setII(15)
+        sage: complementary_difference_setsII(15)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 15 is not valid
@@ -2878,7 +2878,7 @@ def complementary_difference_setII(n, check=True):
     return G, A, B
 
 
-def complementary_difference_setIII(n, check=True):
+def complementary_difference_setsIII(n, check=True):
     r"""
     Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
 
@@ -2903,24 +2903,24 @@ def complementary_difference_setIII(n, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import complementary_difference_setIII
-        sage: complementary_difference_setIII(11)
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsIII
+        sage: complementary_difference_setsIII(11)
         (Ring of integers modulo 11, [1, 2, 5, 7, 8], [0, 1, 3, 8, 10])
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setIII(21, check=False)
+        sage: G, A, B = complementary_difference_setsIII(21, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
-        sage: G, A, B = complementary_difference_setIII(65, check=False)
+        sage: G, A, B = complementary_difference_setsIII(65, check=False)
         sage: are_complementary_difference_sets(G, A, B)
         True
-        sage: complementary_difference_setIII(10)
+        sage: complementary_difference_setsIII(10)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 10 is not valid
-        sage: complementary_difference_setIII(17)
+        sage: complementary_difference_setsIII(17)
         Traceback (most recent call last):
         ...
         ValueError: The parameter 17 is not valid
@@ -2961,8 +2961,8 @@ def complementary_difference_sets(n, existence=False, check=True):
     1. they are `2-\{2m+1; m, m; m-1\}` supplementary difference sets
     2. `A` is skew, i.e. `a \in A` implies `-a \not \in A`
 
-    This method tries to call :func:`complementary_difference_setI`,
-    :func:`complementary_difference_setII` or :func:`complementary_difference_setIII`
+    This method tries to call :func:`complementary_difference_setsI`,
+    :func:`complementary_difference_setsII` or :func:`complementary_difference_setsIII`
     if the parameter `n` satisfies the requirements of one of these functions.
 
     INPUT:
@@ -3029,15 +3029,15 @@ def complementary_difference_sets(n, existence=False, check=True):
     if n % 4 == 3 and t > 0:
         if existence:
             return True
-        G, A, B = complementary_difference_setI(n, check=False)
+        G, A, B = complementary_difference_setsI(n, check=False)
     elif p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]:
         if existence:
             return True
-        G, A, B = complementary_difference_setII(n, check=False)
+        G, A, B = complementary_difference_setsII(n, check=False)
     elif is_prime_power(2*n + 1):
         if existence:
             return True
-        G, A, B = complementary_difference_setIII(n, check=False)
+        G, A, B = complementary_difference_setsIII(n, check=False)
 
     if existence:
         return False
