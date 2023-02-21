@@ -423,7 +423,7 @@ cpdef bint is_Expression(x):
         doctest:warning...
         DeprecationWarning: is_Expression is deprecated;
         use isinstance(..., sage.structure.element.Expression) instead
-        See https://trac.sagemath.org/32638 for details.
+        See https://github.com/sagemath/sage/issues/32638 for details.
         True
         sage: is_Expression(2)
         False
@@ -3644,7 +3644,7 @@ cdef class Expression(Expression_abc):
                     # We don't want to be in the business of trying to
                     # ensure enough precision to solve EVERY problem,
                     # but since there are two real-life examples in
-                    # Trac tickets 31424 and 31665 that are aided by
+                    # Github issues 31424 and 31665 that are aided by
                     # a bump, we reluctantly enter that game.
                     domain = ComplexIntervalField(128)
                 else:
@@ -5050,7 +5050,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that ticket :trac:`7472` is fixed (Taylor polynomial in
+        Check that issue :trac:`7472` is fixed (Taylor polynomial in
         more variables)::
 
             sage: x,y = var('x y'); taylor(x*y^3,(x,1),(y,1),4)
@@ -5873,7 +5873,7 @@ cdef class Expression(Expression_abc):
             # this is needed because sometimes this function get called as
             # expr.substitute(None, **kwds). This is because its signature used
             # to be (in_dict=None, **kwds) instead of (*args, **kwds)
-            # (see ticket #12834)
+            # (see issue #12834)
             args = args[1:]
 
         for a in args:
@@ -6326,7 +6326,7 @@ cdef class Expression(Expression_abc):
             sage: len(a)
             doctest:warning...
             DeprecationWarning: using len on a symbolic expression is deprecated; use method number_of_operands instead
-            See https://trac.sagemath.org/29738 for details.
+            See https://github.com/sagemath/sage/issues/29738 for details.
             0
             sage: len((a^2 + b^2 + (x+y)^2))
             3
@@ -9174,7 +9174,7 @@ cdef class Expression(Expression_abc):
             0.0
             sage: maxima('atan2(0,0.6)')
             0.0
-            sage: SR(0).arctan2(0) # see trac ticket #21614
+            sage: SR(0).arctan2(0) # see github issue #21614
             NaN
             sage: SR(I).arctan2(1)
             arctan2(I, 1)

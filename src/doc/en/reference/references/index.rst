@@ -2183,6 +2183,11 @@ REFERENCES:
 .. [Duv1983] J.-P. Duval, Factorizing words over an ordered alphabet,
             J. Algorithms 4 (1983) 363--381.
 
+.. [Duv1988] \A. Duval.
+            *A directed graph version of strongly regular graphs*,
+            Journal of Combinatorial Theory, Series A 47(1) (1988): 71-100.
+            :doi:`10.1016/0097-3165(88)90043-X`
+
 .. [DW1995] Andreas W.M. Dress and Walter Wenzel, *A Simple Proof of
             an Identity Concerning Pfaffians of Skew Symmetric
             Matrices*, Advances in Mathematics, volume 112, Issue 1,
@@ -3823,8 +3828,9 @@ REFERENCES:
 
 .. [KTZ1987] Kierstead, H.A., Trotter, W.T. & Zhou, B. Representing an ordered
              set as the intersection of super greedy linear extensions. Order 4,
-             293-311 (1987). 
+             293-311 (1987).
              :doi:`10.1007/BF00337892`
+             
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 

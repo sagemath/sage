@@ -1313,7 +1313,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         """
         return all(func.is_trivial_one() for func in self._express.values())
 
-    # TODO: Remove this method as soon as ticket #28629 is solved?
+    # TODO: Remove this method as soon as issue #28629 is solved?
     def is_unit(self):
         r"""
         Return ``True`` iff ``self`` is not trivially zero in at least one of
