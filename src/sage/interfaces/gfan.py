@@ -88,7 +88,7 @@ class Gfan():
             sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases') # optional - gfan
             doctest:...:
             DeprecationWarning: use the option 'input' instead of 'I'
-            See https://trac.sagemath.org/33468 for details.
+            See https://github.com/sagemath/sage/issues/33468 for details.
 
         """
         if format is not None:

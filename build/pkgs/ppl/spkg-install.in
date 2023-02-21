@@ -19,7 +19,7 @@ fi
 
 # Workaround to disable PPL's "watchdog timer", preventing it from clobbering
 # Cysignals' SIGALRM handler on Cygwin; see
-# https://trac.sagemath.org/ticket/21190
+# https://github.com/sagemath/sage/issues/21190
 if [ "$UNAME" = "CYGWIN" ]; then
     sed -i 's/#define HAVE_DECL_SETITIMER 1/#define HAVE_DECL_SETITIMER 0/' config.h
 fi
