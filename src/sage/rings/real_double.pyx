@@ -2172,7 +2172,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: sqrt(x^2+y^2) # overflow
             +infinity
         """
-        return self._new_c(libc.math.hypot(self._value, float(other)))
+        return self._new_c(libc.math.hypot(self._value, RDF.coerce(other)))
 
     def cosh(self):
         """
