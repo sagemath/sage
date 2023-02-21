@@ -800,7 +800,7 @@ def is_PrimeFiniteField(x):
         sage: from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
         sage: is_PrimeFiniteField(QQ)
         doctest:...: DeprecationWarning: the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead
-        See https://trac.sagemath.org/32664 for details.
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_PrimeFiniteField(GF(7))
         True

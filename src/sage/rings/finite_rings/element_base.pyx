@@ -34,7 +34,7 @@ def is_FiniteFieldElement(x):
         sage: from sage.rings.finite_rings.element_base import is_FiniteFieldElement
         sage: is_FiniteFieldElement(1)
         doctest:...: DeprecationWarning: the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead
-        See https://trac.sagemath.org/32664 for details.
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_FiniteFieldElement(IntegerRing())
         False
