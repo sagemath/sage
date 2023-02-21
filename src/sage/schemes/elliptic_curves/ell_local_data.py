@@ -747,7 +747,7 @@ class EllipticCurveLocalData(SageObject):
         # embedding but K has, then there is no coercion
         # from F.p.ring().maximal_order() to K. But it is
         # no problem to do an explicit conversion in that
-        # case (Simon King, trac ticket #8800).
+        # case (Simon King, github issue #8800).
 
         from sage.categories.pushout import pushout, CoercionException
         try:

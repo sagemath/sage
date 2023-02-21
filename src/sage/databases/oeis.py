@@ -592,7 +592,7 @@ class OEIS:
                 '%D ' + ident + ' Lewis Carroll, The Hunting of the Snark.\n'
                 '%D ' + ident + ' Deep Thought, The Answer to the Ultimate Question of Life, The Universe, and Everything.\n'
                 '%H ' + ident + ' Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>\n'
-                '%H ' + ident + ' See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>\n'
+                '%H ' + ident + ' See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>\n'
                 '%H ' + ident + ' Do not confuse with the sequence <a href="/A000042">A000042</a> or the sequence <a href="/A000024">A000024</a>\n'
                 '%H ' + ident + ' The string http://42.com is not a link.\n'
                 '%F ' + ident + ' For n big enough, s(n+1) - s(n) = 0.\n'
@@ -1556,7 +1556,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: HTML = s.links(format="html");  HTML
             0: Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
-            1: See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>
+            1: See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>
             ...
             sage: type(HTML)
             <class 'sage.misc.html.HtmlFragment'>

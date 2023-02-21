@@ -624,7 +624,7 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
-.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+.. [BDKR2013] \D. Best, D.Ž. Đoković, H. Kharaghani and H. Ramp.
               *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
               Journal of Combinatorial Designs 21(1) (2013): 24-35.
               :doi:`10.1002/jcd.21318`
@@ -2058,7 +2058,7 @@ REFERENCES:
 
 .. [Djo1992c] \D. Đoković.
              *Ten New Orders for Hadamard Matrices of Skew Type*,
-             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
 
 .. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
@@ -2222,6 +2222,11 @@ REFERENCES:
 
 .. [Duv1983] J.-P. Duval, Factorizing words over an ordered alphabet,
             J. Algorithms 4 (1983) 363--381.
+
+.. [Duv1988] \A. Duval.
+            *A directed graph version of strongly regular graphs*,
+            Journal of Combinatorial Theory, Series A 47(1) (1988): 71-100.
+            :doi:`10.1016/0097-3165(88)90043-X`
 
 .. [DW1995] Andreas W.M. Dress and Walter Wenzel, *A Simple Proof of
             an Identity Concerning Pfaffians of Skew Symmetric
@@ -3866,6 +3871,10 @@ REFERENCES:
              *Bethe ansatz and inverse scattering transform in a periodic
              box-ball system*, Nuclear Phys. B **747**, no. 3 (2006), 354--397.
 
+.. [KTZ1987] Kierstead, H.A., Trotter, W.T. & Zhou, B. Representing an ordered
+             set as the intersection of super greedy linear extensions. Order 4,
+             293-311 (1987).
+             :doi:`10.1007/BF00337892`
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
