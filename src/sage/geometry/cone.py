@@ -2176,12 +2176,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             3-d cone in 3-d lattice N
             sage: cone.ambient() is cone
             True
-            sage: face = cone.faces(1)[0]
-            sage: face
+            sage: face = cone.faces(1)[0]                                       # optional - sage.graphs
+            sage: face                                                          # optional - sage.graphs
             1-d face of 3-d cone in 3-d lattice N
-            sage: face.ambient()
+            sage: face.ambient()                                                # optional - sage.graphs
             3-d cone in 3-d lattice N
-            sage: face.ambient() is cone
+            sage: face.ambient() is cone                                        # optional - sage.graphs
             True
         """
         return self._ambient
@@ -2913,7 +2913,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         variant of a face lattice, we do not refer to cones as its facets::
 
             sage: fan = Fan([octant])
-            sage: fan.generating_cone(0).facet_of()
+            sage: fan.generating_cone(0).facet_of()                             # optional - sage.graphs
             ()
 
         Subcones of generating cones work as before::
