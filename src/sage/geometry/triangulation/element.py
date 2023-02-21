@@ -931,7 +931,7 @@ class Triangulation(Element):
             sage: p = PointConfiguration([[1,0,0], [0,1,0], [0,0,1], [-1,0,1],
             ....:                         [1,0,-1], [-1,0,0], [0,-1,0], [0,0,-1]])
             sage: t = p.triangulate()
-            sage: t.adjacency_graph()
+            sage: t.adjacency_graph()                                           # optional - sage.graphs
             Graph on 8 vertices
 
         """

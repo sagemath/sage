@@ -474,8 +474,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)
-        sage: len( rectangular_box_points([-100], [100], polytope) )
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)          # optional - sage.symbolic
+        sage: len(rectangular_box_points([-100], [100], polytope))              # optional - sage.symbolic
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -739,7 +739,7 @@ cdef class Inequality_generic:
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2*pi,sqrt(3),7/2], -5.5)
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                  # optional - sage.symbolic
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -761,7 +761,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2*pi,sqrt(3),7/2], -5.5)
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)              # optional - sage.symbolic
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
