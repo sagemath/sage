@@ -136,7 +136,23 @@ ecl_eval("(in-package :maxima)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")
 ecl_eval("(set-locale-subdir)")
-ecl_eval("(set-pathnames)")
+
+try:
+    ecl_eval("(set-pathnames)")
+except RuntimeError:
+    # Recover from :trac:`26968` by creating `*maxima-objdir*` here.
+    # This cannot be done before calling `(set-pathnames)` since
+    # `*maxima-objdir*` is computed there.
+    # We use python `os.makedirs()` which is immune to the race.
+    # Using `(ensure-directories-exist ...)` in lisp would be
+    # subject to the same race condition and since `*maxima-objdir*`
+    # has multiple components this is quite plausible to happen.
+    maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+    import os
+    os.makedirs(maxima_objdir, exist_ok=True)
+    # Call `(set-pathnames)` again to complete its job.
+    ecl_eval("(set-pathnames)")
+
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
