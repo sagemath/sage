@@ -468,8 +468,8 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
-            sage: GF.create_key_and_extra_args(3)
-            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})
+            sage: GF.create_key_and_extra_args(3)                                       # optional - sage.libs.pari
+            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})  # optional - sage.libs.pari
         """
         return self.create_key(*args, **kwds), {}
 
@@ -518,15 +518,15 @@ cdef class UniqueFactory(SageObject):
         The ``GF`` factory used to have a custom :meth:`other_keys`
         method, but this was removed in :trac:`16934`::
 
-            sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
+            sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key                               # optional - sage.libs.pari
             (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
-            sage: K = GF.create_object(0, key); K
+            sage: K = GF.create_object(0, key); K                                                   # optional - sage.libs.pari
             Finite Field in k of size 3^3
-            sage: GF.other_keys(key, K)
+            sage: GF.other_keys(key, K)                                                             # optional - sage.libs.pari
             []
 
-            sage: K = GF(7^40, 'a')
-            sage: loads(dumps(K)) is K
+            sage: K = GF(7^40, 'a')                                                                 # optional - sage.libs.pari
+            sage: loads(dumps(K)) is K                                                              # optional - sage.libs.pari
             True
         """
         return []
