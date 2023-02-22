@@ -452,29 +452,6 @@ cdef class PolyDict:
             return -1
         return max((<ETuple> e).get_exp(i) for e in self.__repn)
 
-    def valuation(PolyDict self, PolyDict x=None):
-        if x is None:
-            _min = []
-            negative = False
-            for v in self.__repn.values():
-                _sum = 0
-                for m in v.nonzero_values(sort=False):
-                    if m < 0:
-                        negative = True
-                        break
-                    _sum += m
-                if negative:
-                    break
-                _min.append(_sum)
-            else:
-                return min(_min)
-            for v in self.__repn.values():
-                _min.append(sum(m for m in v.nonzero_values(sort=False) if m < 0))
-            return min(_min)
-
-        i = gen_index(x)
-        return min((<ETuple> e).get_exp(i) for e in self.__repn)
-
     def total_degree(PolyDict self, tuple w=None):
         r"""
         Return the total degree.
