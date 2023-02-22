@@ -536,7 +536,7 @@ cdef class _LazyString():
 
         TESTS::
 
-            sage: D.update_lazy_string(None, None)
+            sage: D.update_lazy_string(None, None)                                                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Expected tuple, got NoneType

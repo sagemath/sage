@@ -756,9 +756,9 @@ cdef class CoercionModel:
         Now see what the actual problem was::
 
             sage: import traceback
-            sage: cm.exception_stack()
+            sage: cm.exception_stack()                                          # optional - sage.libs.pari
             ['Traceback (most recent call last):...', 'Traceback (most recent call last):...']
-            sage: print(cm.exception_stack()[-1])
+            sage: print(cm.exception_stack()[-1])                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: 'Rational Field' and 'Finite Field of size 3'
@@ -767,7 +767,7 @@ cdef class CoercionModel:
 
         ::
 
-            sage: coercion_traceback()
+            sage: coercion_traceback()                                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: 'Rational Field' and 'Finite Field of size 3'
