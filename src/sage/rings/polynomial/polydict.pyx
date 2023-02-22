@@ -420,7 +420,7 @@ cdef class PolyDict:
             sage: f[(2,1)]
             4
         """
-        if not isinstance(e, ETuple):
+        if type(e) is not ETuple:
             e = ETuple(e)
         return self.__repn[e]
 
