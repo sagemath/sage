@@ -216,7 +216,8 @@ cdef class PolyDict:
             sage: f = PolyDict({(2, 3): 0})
             sage: f
             PolyDict with representation {(2, 3): 0}
-            sage: f.coerce_coefficients(QQ); f
+            sage: f.coerce_coefficients(QQ)
+            sage: f
             PolyDict with representation {(2, 3): 0}
         """
         for k, v in self.__repn.items():
@@ -259,7 +260,7 @@ cdef class PolyDict:
 
     def __len__(self):
         """
-        Return the length.
+        Return the number of terms of this polynomial.
 
         EXAMPLES::
 
@@ -378,12 +379,10 @@ cdef class PolyDict:
         """
         Return a list that defines ``self``.
 
-        It is safe to change this.
-
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
             sage: sorted(f.list())
             [[2, [2, 3]], [3, [1, 2]], [4, [2, 1]]]
         """
@@ -392,8 +391,6 @@ cdef class PolyDict:
     def dict(self):
         """
         Return a copy of the dict that defines ``self``.
-
-        It is safe to change this. For a reference, use dictref.
 
         EXAMPLES::
 
@@ -437,10 +434,10 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f[1,2]
+            sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
+            sage: f[1, 2]
             3
-            sage: f[(2,1)]
+            sage: f[(2, 1)]
             4
         """
         if type(e) is not ETuple:
@@ -463,6 +460,9 @@ cdef class PolyDict:
         return self.__repn.get(e, default)
 
     def __repr__(self):
+        r"""
+        String representation.
+        """
         repn = ' '.join(pformat(self.__repn).splitlines())
         return 'PolyDict with representation %s' % repn
 
@@ -473,7 +473,7 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             sage: f.degree()
             5
             sage: f.degree(PolyDict({(1, 0): 1}))
@@ -1427,6 +1427,8 @@ cdef class ETuple:
 
     def __bool__(self):
         r"""
+        Return whether this polynomial is nonzero.
+
         TESTS::
 
             sage: from sage.rings.polynomial.polydict import ETuple
@@ -1975,16 +1977,16 @@ cdef class ETuple:
             return result
 
         result._data = <int*> sig_malloc(sizeof(int) * (self._nonzero + 1) * 2)
-        while sindex < self._nonzero and self._data[2*sindex] < pos:
-            result._data[2*sindex] = self._data[2*sindex]
-            result._data[2*sindex+1] = self._data[2*sindex+1]
+        while sindex < self._nonzero and self._data[2 * sindex] < pos:
+            result._data[2 * sindex] = self._data[2 * sindex]
+            result._data[2 * sindex + 1] = self._data[2 * sindex + 1]
             sindex += 1
 
-        if sindex < self._nonzero and self._data[2*sindex] == pos:
-            new_value = self._data[2*sindex+1] + other
+        if sindex < self._nonzero and self._data[2 * sindex] == pos:
+            new_value = self._data[2 * sindex + 1] + other
             if new_value:
-                result._data[2*sindex] = pos
-                result._data[2*sindex+1] = new_value
+                result._data[2 * sindex] = pos
+                result._data[2 * sindex + 1] = new_value
                 sindex += 1
                 rindex = sindex
             else:
@@ -1992,8 +1994,8 @@ cdef class ETuple:
                 rindex = sindex
                 sindex += 1
         else:
-            result._data[2*sindex] = pos
-            result._data[2*sindex+1] = other
+            result._data[2 * sindex] = pos
+            result._data[2 * sindex + 1] = other
             result._nonzero += 1
             rindex = sindex + 1
 
@@ -2398,7 +2400,7 @@ cdef class ETuple:
         """
         if not n:
             raise ValueError('n should not be zero')
-        cdef int i
+        cdef size_t i
         for i in range(self._nonzero):
             if self._data[2 * i + 1] % n:
                 return False
@@ -2483,7 +2485,7 @@ cdef class ETuple:
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = self._nonzero
         result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
-        for ind from 0 <= ind < self._nonzero:
+        for ind in range(self._nonzero):
             result._data[2*(result._nonzero-ind-1)] = self._length - self._data[2*ind] - 1
             result._data[2*(result._nonzero-ind-1)+1] = self._data[2*ind+1]
         return result
@@ -2501,7 +2503,7 @@ cdef class ETuple:
             [(0, 1), (2, 2), (4, 3)]
         """
         cdef size_t ind
-        for ind from 0 <= ind < self._nonzero:
+        for ind in range(self._nonzero):
             yield (self._data[2*ind], self._data[2*ind+1])
 
     def combine_to_positives(self, ETuple other):
