@@ -584,9 +584,9 @@ cdef class PolyDict:
         if not self.__repn:
             return True
         it = iter(self.__repn)
-        s = sum(next(it))
+        cdef size_t s = (<ETuple> next(it)).unweighted_degree()
         for elt in it:
-            if sum(elt) != s:
+            if (<ETuple> elt).unweighted_degree() != s:
                 return False
         return True
 
@@ -1690,30 +1690,27 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef size_t unweighted_degree(self):
+    cpdef int unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
-
-        ASSUMPTION:
-
-        All entries are non-negative.
 
         EXAMPLES::
 
              sage: from sage.rings.polynomial.polydict import ETuple
-             sage: e = ETuple([1,1,0,2,0])
-             sage: e.unweighted_degree()
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
              4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
         """
-        cdef size_t degree = 0
+        cdef int degree = 0
         cdef size_t i
-        for i in range(1, 2*self._nonzero, 2):
-            degree += self._data[i]
+        for i in range(self._nonzero):
+            degree += self._data[2 * i + 1]
         return degree
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef size_t weighted_degree(self, tuple w):
+    cpdef int weighted_degree(self, tuple w) except *:
         r"""
         Return the weighted sum of entries.
 
@@ -1721,20 +1718,32 @@ cdef class ETuple:
 
         - ``w`` -- tuple of non-negative integers
 
-        ASSUMPTIONS:
+        EXAMPLES::
 
-        ``w`` has the same length as ``self``, and the entries of ``self``
-        and ``w`` are non-negative.
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: e = ETuple([1, 1, 0, 2, 0])
+             sage: e.weighted_degree((1, 2, 3, 4, 5))
+             11
+             sage: ETuple([-1, 1]).weighted_degree((1, 2))
+             1
+
+             sage: ETuple([1, 0]).weighted_degree((1, 2, 3))
+             Traceback (most recent call last):
+             ...
+             ValueError: w must be of the same length as the ETuple
         """
+        if len(w) != self._length:
+            raise ValueError('w must be of the same length as the ETuple')
+
         cdef size_t i
-        cdef size_t deg = 0
+        cdef int deg = 0
         if len(w) != self._length:
             raise ValueError
-        for i in range(0, 2*self._nonzero, 2):
-            deg += <size_t> self._data[i+1] * <size_t> w[self._data[i]]
+        for i in range(0, 2 * self._nonzero, 2):
+            deg += self._data[i+1] * <int> w[self._data[i]]
         return deg
 
-    cdef size_t unweighted_quotient_degree(self, ETuple other):
+    cpdef int unweighted_quotient_degree(self, ETuple other) except *:
         """
         Degree of ``self`` divided by its gcd with ``other``.
 
@@ -1748,7 +1757,7 @@ cdef class ETuple:
         cdef size_t selfnz = 2 * self._nonzero
         cdef size_t othernz = 2 * other._nonzero
 
-        cdef size_t deg = 0
+        cdef int deg = 0
         while ind1 < selfnz:
             position = self._data[ind1]
             exponent = self._data[ind1+1]
@@ -1770,7 +1779,7 @@ cdef class ETuple:
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef size_t weighted_quotient_degree(self, ETuple other, tuple w):
+    cpdef int weighted_quotient_degree(self, ETuple other, tuple w) except *:
         r"""
         Weighted degree of ``self`` divided by its gcd with ``other``.
 
@@ -1778,12 +1787,10 @@ cdef class ETuple:
 
         - ``other`` -- an :class:`~sage.rings.polynomial.polydict.ETuple`
         - ``w`` -- tuple of non-negative integers.
-
-        ASSUMPTIONS:
-
-        ``w`` and ``other`` have the same length as ``self``, and the
-        entries of ``self``, ``other`` and ``w`` are non-negative.
         """
+        if len(w) != self._length:
+            raise ValueError('w must be of the same length as the ETuple')
+
         cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in double steps.
         cdef size_t ind2 = 0
         cdef size_t exponent

@@ -10,10 +10,11 @@ cdef class ETuple:
     cdef size_t _nonzero
     cdef int *_data
 
-    cpdef size_t unweighted_degree(self)
-    cpdef size_t weighted_degree(self, tuple w)
-    cdef size_t unweighted_quotient_degree(self, ETuple other)
-    cdef size_t weighted_quotient_degree(self, ETuple other, tuple w)
+    cpdef int unweighted_degree(self) except *
+    cpdef int weighted_degree(self, tuple w) except *
+    cpdef int unweighted_quotient_degree(self, ETuple other) except *
+    cpdef int weighted_quotient_degree(self, ETuple other, tuple w) except *
+
     cpdef ETuple eadd(ETuple self, ETuple other)
     cpdef ETuple esub(ETuple self, ETuple other)
     cpdef ETuple emul(ETuple self, int factor)
@@ -34,3 +35,5 @@ cdef class ETuple:
     cpdef ETuple reversed(ETuple self)
     cdef ETuple _new(ETuple self)
     cdef int get_exp(ETuple self, size_t i)
+
+cpdef int gen_index(PolyDict x)
