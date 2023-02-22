@@ -69,8 +69,8 @@ include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.p*
 include sage/rings/finite_rings/integer_mod_ring.p*
 
-include sage/rings/number_field/number_field_base.*
-
+include sage/rings/number_field/number_field_base.p*
+include sage/rings/number_field/number_field_element_base.p*
 include sage/rings/real_double.p*
 
 include sage/rings/fraction_field.p*
