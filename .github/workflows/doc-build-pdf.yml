@@ -33,6 +33,7 @@ jobs:
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
+          TEXMFHOME: /sage/texmf
 
       - name: Copy docs
         run: |
