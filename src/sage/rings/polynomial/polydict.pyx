@@ -81,21 +81,25 @@ cpdef int gen_index(PolyDict x):
         return -1
     return e._data[0]
 
+
 cdef class PolyDict:
     r"""
-    PolyDict is a dictionary all of whose keys are :class:`ETuple` and whose values
-    are coefficients on which arithmetic operations can be performed.
+    Datastructure for multivariate polynomials.
+
+    A PolyDict holds a dictionary all of whose keys are :class:`ETuple` and
+    whose values are coefficients on which it is implicitely assumed that
+    arithmetic operations can be performed.
     """
-    def __init__(PolyDict self, pdict, zero=None, remove_zero=False, force_int_exponents=None, force_etuples=None):
+    def __init__(PolyDict self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None):
         """
         INPUT:
 
         - ``pdict`` -- dict or list, which represents a multi-variable
-          polynomial with the distribute representation (a copy is not made)
+          polynomial with the distribute representation (a copy is made)
 
         - ``zero`` --  deprecated
 
-        - ``remove_zero`` -- whether to check for zero coefficient
+        - ``remove_zero`` -- deprecated
 
         - ``force_int_exponents`` -- deprecated
 
@@ -107,22 +111,29 @@ cdef class PolyDict:
             sage: PolyDict({(2,3):2, (1,2):3, (2,1):4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 2}
 
-            sage: PolyDict({(2,3):0, (1,2):3, (2,1):4}, remove_zero=True)
-            PolyDict with representation {(1, 2): 3, (2, 1): 4}
+            sage: PolyDict({(2,3):0, (1,2):3, (2,1):4})
+            PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 0}
 
-            sage: PolyDict({(0,0):RIF(-1,1)}, remove_zero=True)
+            sage: PolyDict({(0,0):RIF(-1,1)})
             PolyDict with representation {(0, 0): 0.?}
 
         TESTS::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: f = PolyDict({(2, 3):2, (1, 2):3, (2, 1):4})
             sage: len(f)
             3
             sage: f = PolyDict({}, zero=3, force_int_exponents=True, force_etuples=True)
             doctest:warning
             ...
-            DeprecationWarning: the arguments "zero", "forced_int_exponents" and "forced_etuples" of PolyDict constructor are deprecated
+            DeprecationWarning: the arguments "zero", "forced_int_exponents"
+            and "forced_etuples" of PolyDict constructor are deprecated
+            See https://trac.sagemath.org/34000 for details.
+            sage: f = PolyDict({}, remove_zero=False)
+            doctest:warning
+            ...
+            DeprecationWarning: the argument "remove_zero" of PolyDict
+            constructor is deprecated; call the method remove_zeros
             See https://trac.sagemath.org/34000 for details.
         """
         if zero is not None or force_int_exponents is not None or force_etuples is not None:
@@ -131,7 +142,7 @@ cdef class PolyDict:
 
         cdef dict v
 
-        if isinstance(pdict, list):
+        if isinstance(pdict, (tuple, list)):
             v = {}
             for w in pdict:
                 v[ETuple(w[1])] = w[0]
@@ -147,6 +158,9 @@ cdef class PolyDict:
                 v[ETuple(k)] = val
 
         self.__repn = v
+        if remove_zero is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(34000, 'the argument "remove_zero" of PolyDict constructor is deprecated; call the method remove_zeros')
         if remove_zero:
             self.remove_zeros()
 
@@ -157,16 +171,17 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):0}, remove_zero=False)
+            sage: f = PolyDict({(2, 3):0})
             sage: f
             PolyDict with representation {(2, 3): 0}
             sage: f.remove_zeros()
             sage: f
             PolyDict with representation {}
         """
-        for k in list(self.__repn):
-            if not self.__repn[k]:
-                del self.__repn[k]
+        if not all(self.__repn.values()):
+            for k in list(self.__repn):
+                if not self.__repn[k]:
+                    del self.__repn[k]
 
     def coerce_coefficients(self, Parent A):
         r"""
@@ -175,7 +190,7 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):0}, remove_zero=False)
+            sage: f = PolyDict({(2, 3): 0})
             sage: f
             PolyDict with representation {(2, 3): 0}
             sage: f.coerce_coefficients(QQ); f
