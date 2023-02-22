@@ -352,10 +352,10 @@ cdef class CategoryObject(SageObject):
         For orders, we correctly use the ring generator, see
         :trac:`15348`::
 
-            sage: A.<i> = ZZ.extension(x^2 + 1)
-            sage: i
+            sage: A.<i> = ZZ.extension(x^2 + 1)                                 # optional - sage.rings.number_field
+            sage: i                                                             # optional - sage.rings.number_field
             i
-            sage: parent(i)
+            sage: parent(i)                                                     # optional - sage.rings.number_field
             Order in Number Field in i with defining polynomial x^2 + 1
 
         ::
@@ -890,8 +890,8 @@ cdef class CategoryObject(SageObject):
             _test_some_elements
             _test_zero
             _test_zero_divisors
-            sage: F = GF(9,'a')
-            sage: dir(F)
+            sage: F = GF(9,'a')                                                 # optional - sage.libs.pari
+            sage: dir(F)                                                        # optional - sage.libs.pari
             [..., '__class__', ..., '_test_pickling', ..., 'extension', ...]
 
         """
