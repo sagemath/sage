@@ -56,7 +56,7 @@ We verify Lagrange's four squares identity::
 
 import operator
 
-from sage.structure.element import CommutativeRingElement, coerce_binop, get_coercion_model
+from sage.structure.element import CommutativeRingElement, coerce_binop, get_coercion_model, parent
 from sage.misc.misc_c import prod
 import sage.rings.integer
 import sage.rings.integer_ring
@@ -260,6 +260,8 @@ class MPolynomial_element(MPolynomial):
 
     def __neg__(self):
         """
+        Return the negative of ``self``.
+
         EXAMPLES::
 
             sage: R.<x,y> = QQbar[]
@@ -272,6 +274,8 @@ class MPolynomial_element(MPolynomial):
 
     def _add_(self, right):
         """
+        Return the sum of ``self`` and ``right``.
+
         EXAMPLES::
 
             sage: R.<x,y> = QQbar[]
@@ -284,6 +288,8 @@ class MPolynomial_element(MPolynomial):
 
     def _sub_(self, right):
         """
+        Return the difference between ``self`` and ``right``.
+
         EXAMPLES::
 
             sage: R.<x,y> = QQbar[]
@@ -296,6 +302,8 @@ class MPolynomial_element(MPolynomial):
 
     def _mul_(self, right):
         """
+        Return the product between ``self`` and ``right``.
+
         EXAMPLES::
 
             sage: R.<x,y> = QQbar[]
@@ -440,7 +448,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             True
         """
         if not isinstance(x, polydict.PolyDict):
-            x = polydict.PolyDict(x, remove_zero=True)
+            x = polydict.PolyDict(x)
+        x.remove_zeros()
         MPolynomial_element.__init__(self, parent, x)
 
     def _new_constant_poly(self, x, P):
@@ -783,10 +792,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.monomial_coefficient(x)
             -a
         """
-        if not (isinstance(mon, MPolynomial) and mon.parent() is self.parent() and mon.is_monomial()):
-            raise TypeError("mon must be a monomial in the parent of self.")
-        R = self.parent().base_ring()
-        return R(self.element().monomial_coefficient(mon.element().dict()))
+        if parent(mon) is not self.parent():
+            raise TypeError("mon must be a monomial in the parent of self")
+        exp = polydict.monomial_exponent(mon.element())
+        zero = self.parent().base_ring().zero()
+        return self.element().get(exp, zero)
 
     def dict(self):
         """
@@ -1871,7 +1881,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var is not a generator; do term-by-term differentiation recursively
             # var may be, for example, a generator of the base ring
             d = dict([(e, x._derivative(var)) for (e, x) in self.dict().items()])
-            d = polydict.PolyDict(d, remove_zero=True)
+            d = polydict.PolyDict(d)
+            d.remove_zeros()
             return MPolynomial_polydict(P, d)
 
         # differentiate w.r.t. indicated variable
@@ -1965,7 +1976,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var may be, for example, a generator of the base ring
             d = {e: x.integral(var)
                  for e, x in self.dict().items()}
-            d = polydict.PolyDict(d, remove_zero=True)
+            d = polydict.PolyDict(d)
+            d.remove_zeros()
         else:
             # integrate w.r.t. indicated variable
             d = self.element().integral_i(index)
