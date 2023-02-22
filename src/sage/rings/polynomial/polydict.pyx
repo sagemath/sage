@@ -1953,11 +1953,9 @@ cdef class ETuple:
             result._nonzero += 1
             rindex = sindex + 1
 
-        while sindex < self._nonzero:
-            result._data[2*rindex] = self._data[2*sindex]
-            result._data[2*rindex+1] = self._data[2*sindex+1]
-            sindex += 1
-            rindex += 1
+        memcpy(result._data + 2 * rindex,
+               self._data + 2 * sindex,
+               sizeof(int) * 2 * (self._nonzero - sindex))
 
         return result
 
