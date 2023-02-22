@@ -2148,15 +2148,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               To:   Rational Field
 
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
-            sage: P = Sym.macdonald().P()
-            sage: Ht = Sym.macdonald().Ht()
-            sage: Ht._internal_coerce_map_from(P)
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)               # optional - sage.combinat
+            sage: P = Sym.macdonald().P()                                       # optional - sage.combinat
+            sage: Ht = Sym.macdonald().Ht()                                     # optional - sage.combinat
+            sage: Ht._internal_coerce_map_from(P)                               # optional - sage.combinat
             (map internal to coercion system -- copy before use)
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
-            sage: copy(Ht._internal_coerce_map_from(P))
+            sage: copy(Ht._internal_coerce_map_from(P))                         # optional - sage.combinat
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis

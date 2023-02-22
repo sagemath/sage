@@ -804,7 +804,7 @@ cdef class IntegerMulAction(IntegerAction):
         random errors (see :trac:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: GF5 = GF(5)
+            sage: GF5 = GF(5)                                                   # optional - sage.libs.pari
             sage: IntegerMulAction(ZZ, GF5)                                     # optional - sage.libs.pari
             Left Integer Multiplication by Integer Ring
             on Finite Field of size 5
