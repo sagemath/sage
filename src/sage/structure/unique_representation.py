@@ -100,9 +100,9 @@ identity. This is often desired, but can imply subtle problems. For example,
 since ``C(1)`` already is in the cache, and since the unit elements in
 different finite fields are all equal to the integer one, we find::
 
-    sage: GF(5)(1) == 1 == GF(3)(1)
+    sage: GF(5)(1) == 1 == GF(3)(1)                                             # optional - sage.libs.pari
     True
-    sage: C(1) is C(GF(3)(1)) is C(GF(5)(1))
+    sage: C(1) is C(GF(3)(1)) is C(GF(5)(1))                                    # optional - sage.libs.pari
     True
 
 But ``C(2)`` is not in the cache, and the number two is not equal in different
@@ -112,9 +112,9 @@ though it is equal to the number two in the ring of integers (
 when comparing elements of *distinct* algebraic structures!!). Hence, we
 have::
 
-    sage: GF(5)(2) == GF(3)(2)
+    sage: GF(5)(2) == GF(3)(2)                                                  # optional - sage.libs.pari
     False
-    sage: C(GF(3)(2)) is C(GF(5)(2))
+    sage: C(GF(3)(2)) is C(GF(5)(2))                                            # optional - sage.libs.pari
     False
 
 Normalising the arguments

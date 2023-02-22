@@ -103,12 +103,12 @@ class FormalSum(ModuleElement):
             sage: a.reduce()
             sage: a
             4*2/3 - 5*7
-            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)))
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))                # optional - sage.libs.pari
             4*2/3
 
         Notice below that the coefficient 5 doesn't get reduced modulo 5::
 
-            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)), check=False)
+            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)), check=False)     # optional - sage.libs.pari
             4*2/3 - 5*7
 
         Make sure we first reduce before checking coefficient types::
@@ -400,7 +400,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7
+            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7                            # optional - sage.libs.pari
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
 
         The following tests against a bug that was fixed at :trac:`18795`::
