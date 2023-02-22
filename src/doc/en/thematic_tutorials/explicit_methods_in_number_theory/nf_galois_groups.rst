@@ -188,7 +188,7 @@ field).
 ::
 
     sage: w = [-1,-2,..,-200]
-    sage: v = [D for D in w if is_fundamental_discriminant(D)]
+    sage: v = [D for D in w if D.is_fundamental_discriminant()]
     sage: v
     [-3, -4, -7, -8, -11, -15, -19, -20, ..., -195, -199]
 
@@ -222,7 +222,7 @@ class number :math:`1`!
 ::
 
     sage: w = [1..1000]
-    sage: v = [D for D in w if is_fundamental_discriminant(D)]
+    sage: v = [D for D in w if D.is_fundamental_discriminant()]
     sage: len(v)
     302
     sage: len([D for D in v if QuadraticField(D,'a').class_number() == 1])
