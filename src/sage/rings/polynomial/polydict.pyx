@@ -57,7 +57,7 @@ from sage.misc.misc import cputime
 from sage.misc.latex import latex
 
 
-def gen_index(PolyDict x):
+cpdef int gen_index(PolyDict x):
     r"""
     Return the index of the variable represented by ``x`` or ``-1`` if ``x``
     is not a monomial of degree one.
@@ -427,7 +427,9 @@ cdef class PolyDict:
         """
         if x is None:
             return self.total_degree()
-        cdef size_t i = gen_index(x)
+        cdef int i = gen_index(x)
+        if i < 0:
+            raise ValueError('x must be a generator')
         if not self.__repn:
             return -1
         return max((<ETuple> e).get_exp(i) for e in self.__repn)
@@ -1097,7 +1099,7 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.derivative(PolyDict({(1,0): 1}))
+            sage: f.derivative(PolyDict({(1, 0): 1}))
             PolyDict with representation {(0, 2): 3, (1, 1): 8, (1, 3): 4}
             sage: f.derivative(PolyDict({(0,1): 1}))
             PolyDict with representation {(1, 1): 6, (2, 0): 4, (2, 2): 6}
@@ -1106,8 +1108,16 @@ cdef class PolyDict:
             PolyDict with representation {(-2,): -1}
             sage: PolyDict({(-2,): 1}).derivative(PolyDict({(1,): 1}))
             PolyDict with representation {(-3,): -2}
+
+            sage: PolyDict({}).derivative(PolyDict({(1, 1): 1}))
+            Traceback (most recent call last):
+            ...
+            ValueError: x must be a generator
         """
-        return self.derivative_i(gen_index(x))
+        cdef int i = gen_index(x)
+        if i < 0:
+            raise ValueError('x must be a generator')
+        return self.derivative_i(i)
 
     def integral_i(self, size_t i):
         r"""
@@ -1147,8 +1157,15 @@ cdef class PolyDict:
             ArithmeticError: integral of monomial with exponent -1
             sage: PolyDict({(-2,): 1}).integral(PolyDict({(1,): 1}))
             PolyDict with representation {(-1,): -1}
+            sage: PolyDict({}).integral(PolyDict({(1, 1): 1}))
+            Traceback (most recent call last):
+            ...
+            ValueError: x must be a generator
         """
-        return self.integral_i(gen_index(x))
+        cdef int i = gen_index(x)
+        if i < 0:
+            raise ValueError('x must be a generator')
+        return self.integral_i(i)
 
     def lcmt(PolyDict self, greater_etuple):
         """
