@@ -34,6 +34,7 @@ include sage/misc/classcall_metaclass.*
 include sage/misc/inherit_comparison*.*
 include sage/misc/weak_dict.*
 include sage/misc/nested_class*.*
+include sage/misc/test_nested_class*.p*
 include sage/misc/abstract_method.*
 include sage/misc/cachefunc.*
 include sage/misc/decorators.*
