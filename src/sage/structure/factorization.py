@@ -130,21 +130,21 @@ Factorizations can involve fairly abstract mathematical objects::
     <class 'sage.structure.factorization.Factorization'>
 
 
-    sage: K.<a> = NumberField(x^2 + 3); K
+    sage: K.<a> = NumberField(x^2 + 3); K                                       # optional - sage.rings.number_field
     Number Field in a with defining polynomial x^2 + 3
-    sage: f = K.factor(15); f
+    sage: f = K.factor(15); f                                                   # optional - sage.rings.number_field
     (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
-    sage: f.universe()
+    sage: f.universe()                                                          # optional - sage.rings.number_field
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
-    sage: f.unit()
+    sage: f.unit()                                                              # optional - sage.rings.number_field
     Fractional ideal (1)
-    sage: g=K.factor(9); g
+    sage: g = K.factor(9); g                                                    # optional - sage.rings.number_field
     (Fractional ideal (1/2*a + 3/2))^4
-    sage: f.lcm(g)
+    sage: f.lcm(g)                                                              # optional - sage.rings.number_field
     (Fractional ideal (1/2*a + 3/2))^4 * (Fractional ideal (5))
-    sage: f.gcd(g)
+    sage: f.gcd(g)                                                              # optional - sage.rings.number_field
     (Fractional ideal (1/2*a + 3/2))^2
-    sage: f.is_integral()
+    sage: f.is_integral()                                                       # optional - sage.rings.number_field
     True
 
 TESTS::
@@ -577,9 +577,9 @@ class Factorization(SageObject):
             sage: F = factor(2006)
             sage: F.is_commutative()
             True
-            sage: K = QuadraticField(23, 'a')
-            sage: F = K.factor(13)
-            sage: F.is_commutative()
+            sage: K = QuadraticField(23, 'a')                                   # optional - sage.rings.number_field
+            sage: F = K.factor(13)                                              # optional - sage.rings.number_field
+            sage: F.is_commutative()                                            # optional - sage.rings.number_field
             True
             sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: F = Factorization([(z, 2)], 3)
@@ -1099,10 +1099,10 @@ class Factorization(SageObject):
             sage: f^4
             2^8 * 5^8
 
-            sage: K.<a> = NumberField(x^3 - 39*x - 91)
-            sage: F = K.factor(7); F
+            sage: K.<a> = NumberField(x^3 - 39*x - 91)                                                          # optional - sage.rings.number_field
+            sage: F = K.factor(7); F                                                                            # optional - sage.rings.number_field
             (Fractional ideal (7, a)) * (Fractional ideal (7, a + 2)) * (Fractional ideal (7, a - 2))
-            sage: F^9
+            sage: F^9                                                                                           # optional - sage.rings.number_field
             (Fractional ideal (7, a))^9 * (Fractional ideal (7, a + 2))^9 * (Fractional ideal (7, a - 2))^9
 
             sage: R.<x,y> = FreeAlgebra(ZZ, 2)
