@@ -309,10 +309,11 @@ class FormalSums(UniqueRepresentation, Module):
         Abelian Group of all Formal Finite Sums over Integer Ring
         sage: FormalSums(ZZ)
         Abelian Group of all Formal Finite Sums over Integer Ring
-        sage: FormalSums(GF(7))
+        sage: FormalSums(GF(7))                                                         # optional - sage.libs.pari
         Abelian Group of all Formal Finite Sums over Finite Field of size 7
-        sage: FormalSums(ZZ[sqrt(2)])
-        Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
+        sage: FormalSums(ZZ[sqrt(2)])                                                   # optional - sage.symbolic, sage.rings.number_field
+        Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2
+         with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         sage: FormalSums(GF(9,'a'))
         Abelian Group of all Formal Finite Sums over Finite Field in a of size 3^2
 
@@ -338,9 +339,9 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: FormalSums(GF(7))
+            sage: FormalSums(GF(7))                                                     # optional - sage.libs.pari
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
-            sage: FormalSums(GF(7))._repr_()
+            sage: FormalSums(GF(7))._repr_()                                            # optional - sage.libs.pari
             'Abelian Group of all Formal Finite Sums over Finite Field of size 7'
         """
         return "Abelian Group of all Formal Finite Sums over %s"%self.base_ring()
