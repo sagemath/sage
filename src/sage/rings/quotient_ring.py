@@ -490,8 +490,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: F, R = Integers(5).construction()
             sage: F(R)
             Ring of integers modulo 5
-            sage: F, R = GF(5).construction()
-            sage: F(R)
+            sage: F, R = GF(5).construction()                                   # optional - sage.libs.pari
+            sage: F(R)                                                          # optional - sage.libs.pari
             Finite Field of size 5
         """
         from sage.categories.pushout import QuotientFunctor
@@ -679,10 +679,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         Test that there also is a lift for rings that are no
         instances of :class:`~sage.rings.ring.Ring` (see :trac:`11068`)::
 
-            sage: MS = MatrixSpace(GF(5),2,2)
-            sage: I = MS*[MS.0*MS.1,MS.2+MS.3]*MS
-            sage: Q = MS.quo(I)
-            sage: Q.lift()
+            sage: MS = MatrixSpace(GF(5), 2, 2)                                 # optional - sage.libs.pari
+            sage: I = MS * [MS.0*MS.1, MS.2+MS.3] * MS                          # optional - sage.libs.pari
+            sage: Q = MS.quo(I)                                                 # optional - sage.libs.pari
+            sage: Q.lift()                                                      # optional - sage.libs.pari
             Set-theoretic ring morphism:
               From: Quotient of Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 5 by the ideal
             (
@@ -997,7 +997,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             2/3
             sage: S.coerce(a^2 - b)
             -b^2 - b
-            sage: S.coerce(GF(7)(3))
+            sage: S.coerce(GF(7)(3))                                            # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
@@ -1255,9 +1255,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(GF(2))
-            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
-            sage: magma(Q)                    # optional - magma # indirect doctest
+            sage: P.<x,y> = PolynomialRing(GF(2))                               # optional - sage.libs.pari
+            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))                # optional - sage.libs.pari
+            sage: magma(Q)               # optional - magma # indirect doctest  # optional - sage.libs.pari
             Affine Algebra of rank 2 over GF(2)
             Graded Reverse Lexicographical Order
             Variables: x, y
@@ -1349,11 +1349,12 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
                     2   2    2
             (x*y - z , y  - w )
 
-            sage: R.<x,y> = PolynomialRing(GF(101), 2)
-            sage: I = R.ideal([x^2 + x, y^2 + y])
-            sage: Q = R.quotient_ring(I); Q
-            Quotient of Multivariate Polynomial Ring in x, y over Finite Field of size 101 by the ideal (x^2 + x, y^2 + y)
-            sage: Q._macaulay2_init_()                      # optional - macaulay2
+            sage: R.<x,y> = PolynomialRing(GF(101), 2)                              # optional - sage.libs.pari
+            sage: I = R.ideal([x^2 + x, y^2 + y])                                   # optional - sage.libs.pari
+            sage: Q = R.quotient_ring(I); Q                                         # optional - sage.libs.pari
+            Quotient of Multivariate Polynomial Ring in x, y over
+             Finite Field of size 101 by the ideal (x^2 + x, y^2 + y)
+            sage: Q._macaulay2_init_()                      # optional - macaulay2  # optional - sage.libs.pari
                  ZZ
                 ---[x...y]
                 101

@@ -133,25 +133,26 @@ class RingHomset_generic(HomsetWithBase):
 
         You can provide a morphism on the base::
 
-            sage: k = GF(9)
-            sage: z2 = k.gen()
-            sage: cc = k.frobenius_endomorphism()
-            sage: R.<x> = k[]
-            sage: H = Hom(R, R)
-            sage: phi = H([x^2], base_map=cc); phi
-            Ring endomorphism of Univariate Polynomial Ring in x over Finite Field in z2 of size 3^2
+            sage: k = GF(9)                                                     # optional - sage.libs.pari
+            sage: z2 = k.gen()                                                  # optional - sage.libs.pari
+            sage: cc = k.frobenius_endomorphism()                               # optional - sage.libs.pari
+            sage: R.<x> = k[]                                                   # optional - sage.libs.pari
+            sage: H = Hom(R, R)                                                 # optional - sage.libs.pari
+            sage: phi = H([x^2], base_map=cc); phi                              # optional - sage.libs.pari
+            Ring endomorphism of Univariate Polynomial Ring in x
+             over Finite Field in z2 of size 3^2
               Defn: x |--> x^2
                     with map of base ring
-            sage: phi(z2*x) == z2^3 * x^2
+            sage: phi(z2 * x) == z2^3 * x^2                                     # optional - sage.libs.pari
             True
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = GF(7^2)
-            sage: L.<u> = K.extension(x^3 - 3)
-            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
-            sage: phi(u) == u^7
+            sage: K.<a> = GF(7^2)                                               # optional - sage.libs.pari
+            sage: L.<u> = K.extension(x^3 - 3)                                  # optional - sage.libs.pari
+            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())       # optional - sage.libs.pari
+            sage: phi(u) == u^7                                                 # optional - sage.libs.pari
             True
-            sage: phi(a) == a^7
+            sage: phi(a) == a^7                                                 # optional - sage.libs.pari
             True
 
         TESTS::

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Basic arithmetic with C integers
 """

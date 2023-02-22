@@ -31,24 +31,24 @@ EXAMPLES:
 
 Reduction to finite field::
 
-    sage: H = Hom(ZZ, GF(9, 'a'))
-    sage: phi = H([1])
-    sage: phi(5)
+    sage: H = Hom(ZZ, GF(9, 'a'))                                               # optional - sage.libs.pari
+    sage: phi = H([1])                                                          # optional - sage.libs.pari
+    sage: phi(5)                                                                # optional - sage.libs.pari
     2
-    sage: psi = H([4])
-    sage: psi(5)
+    sage: psi = H([4])                                                          # optional - sage.libs.pari
+    sage: psi(5)                                                                # optional - sage.libs.pari
     2
 
 Map from single variable polynomial ring::
 
     sage: R.<x> = ZZ[]
-    sage: phi = R.hom([2], GF(5))
-    sage: phi
+    sage: phi = R.hom([2], GF(5))                                               # optional - sage.libs.pari
+    sage: phi                                                                   # optional - sage.libs.pari
     Ring morphism:
       From: Univariate Polynomial Ring in x over Integer Ring
       To:   Finite Field of size 5
       Defn: x |--> 2
-    sage: phi(x + 12)
+    sage: phi(x + 12)                                                           # optional - sage.libs.pari
     4
 
 Identity map on the real numbers::
@@ -142,28 +142,28 @@ a quotient ring::
 
 Inclusion of ``GF(2)`` into ``GF(4,'a')``::
 
-    sage: k = GF(2)
-    sage: i = k.hom(GF(4, 'a'))
-    sage: i
+    sage: k = GF(2)                                                             # optional - sage.libs.pari
+    sage: i = k.hom(GF(4, 'a'))                                                 # optional - sage.libs.pari
+    sage: i                                                                     # optional - sage.libs.pari
     Ring morphism:
       From: Finite Field of size 2
       To:   Finite Field in a of size 2^2
       Defn: 1 |--> 1
-    sage: i(0)
+    sage: i(0)                                                                  # optional - sage.libs.pari
     0
-    sage: a = i(1); a.parent()
+    sage: a = i(1); a.parent()                                                  # optional - sage.libs.pari
     Finite Field in a of size 2^2
 
 We next compose the inclusion with reduction from the integers to
 ``GF(2)``::
 
-    sage: pi = ZZ.hom(k)
-    sage: pi
+    sage: pi = ZZ.hom(k)                                                        # optional - sage.libs.pari
+    sage: pi                                                                    # optional - sage.libs.pari
     Natural morphism:
       From: Integer Ring
       To:   Finite Field of size 2
-    sage: f = i * pi
-    sage: f
+    sage: f = i * pi                                                            # optional - sage.libs.pari
+    sage: f                                                                     # optional - sage.libs.pari
     Composite map:
       From: Integer Ring
       To:   Finite Field in a of size 2^2
@@ -175,9 +175,9 @@ We next compose the inclusion with reduction from the integers to
               From: Finite Field of size 2
               To:   Finite Field in a of size 2^2
               Defn: 1 |--> 1
-    sage: a = f(5); a
+    sage: a = f(5); a                                                           # optional - sage.libs.pari
     1
-    sage: a.parent()
+    sage: a.parent()                                                            # optional - sage.libs.pari
     Finite Field in a of size 2^2
 
 Inclusion from `\QQ` to the 3-adic field::
@@ -227,19 +227,19 @@ Endomorphism of power series ring::
 
 Frobenius on a power series ring over a finite field::
 
-    sage: R.<t> = PowerSeriesRing(GF(5))
-    sage: f = R.hom([t^5]); f
+    sage: R.<t> = PowerSeriesRing(GF(5))                                        # optional - sage.libs.pari
+    sage: f = R.hom([t^5]); f                                                   # optional - sage.libs.pari
     Ring endomorphism of Power Series Ring in t over Finite Field of size 5
       Defn: t |--> t^5
-    sage: a = 2 + t + 3*t^2 + 4*t^3 + O(t^4)
-    sage: b = 1 + t + 2*t^2 + t^3 + O(t^5)
-    sage: f(a)
+    sage: a = 2 + t + 3*t^2 + 4*t^3 + O(t^4)                                    # optional - sage.libs.pari
+    sage: b = 1 + t + 2*t^2 + t^3 + O(t^5)                                      # optional - sage.libs.pari
+    sage: f(a)                                                                  # optional - sage.libs.pari
     2 + t^5 + 3*t^10 + 4*t^15 + O(t^20)
-    sage: f(b)
+    sage: f(b)                                                                  # optional - sage.libs.pari
     1 + t^5 + 2*t^10 + t^15 + O(t^25)
-    sage: f(a*b)
+    sage: f(a*b)                                                                # optional - sage.libs.pari
     2 + 3*t^5 + 3*t^10 + t^15 + O(t^20)
-    sage: f(a)*f(b)
+    sage: f(a)*f(b)                                                             # optional - sage.libs.pari
     2 + 3*t^5 + 3*t^10 + t^15 + O(t^20)
 
 Homomorphism of Laurent series ring::
@@ -339,37 +339,44 @@ TESTS::
 
 ::
 
-    sage: R.<t> = PowerSeriesRing(GF(5))
-    sage: f = R.hom([t^5])
-    sage: f == loads(dumps(f))
+    sage: R.<t> = PowerSeriesRing(GF(5))                                        # optional - sage.libs.pari
+    sage: f = R.hom([t^5])                                                      # optional - sage.libs.pari
+    sage: f == loads(dumps(f))                                                  # optional - sage.libs.pari
     True
 
 We define the identity map in many possible ways. These should all
 compare equal::
 
-    sage: k = GF(2)
-    sage: R.<x> = k[]
-    sage: F4.<a> = R.quo(x^2+x+1)
-    sage: H = End(F4)
+    sage: k = GF(2)                                                             # optional - sage.libs.pari
+    sage: R.<x> = k[]                                                           # optional - sage.libs.pari
+    sage: F4.<a> = R.quo(x^2+x+1)                                               # optional - sage.libs.pari
+    sage: H = End(F4)                                                           # optional - sage.libs.pari
 
     sage: from sage.rings.morphism import *
-    sage: phi1 = H.identity(); phi1
-    Identity endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
-    sage: phi2 = H([a]); phi2
-    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: phi1 = H.identity(); phi1                                             # optional - sage.libs.pari
+    Identity endomorphism of Univariate Quotient Polynomial Ring in a
+     over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: phi2 = H([a]); phi2                                                   # optional - sage.libs.pari
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a
+     over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: a |--> a
-    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3
-    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3                # optional - sage.libs.pari
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a
+     over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Induced from base ring by
-            Ring endomorphism of Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
+            Ring endomorphism of Univariate Polynomial Ring in x
+             over Finite Field of size 2 (using GF2X)
               Defn: x |--> x
-    sage: phi4 = RingHomomorphism_cover(H); phi4
-    Ring endomorphism of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: phi4 = RingHomomorphism_cover(H); phi4                                # optional - sage.libs.pari
+    Ring endomorphism of Univariate Quotient Polynomial Ring in a
+     over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Natural quotient map
-    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5
-    Frobenius endomorphism x |--> x^(2^2) of Univariate Quotient Polynomial Ring in a over Finite Field of size 2 with modulus x^2 + x + 1
-    sage: maps = [phi1, phi2, phi3, phi4, phi5]
-    sage: for f in maps:
+    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5                          # optional - sage.libs.pari
+    Frobenius endomorphism x |--> x^(2^2) of
+     Univariate Quotient Polynomial Ring in a
+     over Finite Field of size 2 with modulus x^2 + x + 1
+    sage: maps = [phi1, phi2, phi3, phi4, phi5]                                 # optional - sage.libs.pari
+    sage: for f in maps:                                                        # optional - sage.libs.pari
     ....:     for g in maps:
     ....:         if f != g:
     ....:             print("{} != {}".format(f, g))
@@ -473,10 +480,10 @@ cdef class RingMap_lift(RingMap):
     of :class:`sage.rings.ring.Ring`, as in the following
     example::
 
-        sage: MS = MatrixSpace(GF(5),2,2)
-        sage: I = MS*[MS.0*MS.1,MS.2+MS.3]*MS
-        sage: Q = MS.quo(I)
-        sage: Q.0*Q.1   # indirect doctest
+        sage: MS = MatrixSpace(GF(5), 2, 2)                                     # optional - sage.libs.pari
+        sage: I = MS * [MS.0*MS.1, MS.2+MS.3] * MS                              # optional - sage.libs.pari
+        sage: Q = MS.quo(I)                                                     # optional - sage.libs.pari
+        sage: Q.0*Q.1   # indirect doctest                                      # optional - sage.libs.pari
         [0 1]
         [0 0]
     """
@@ -809,18 +816,20 @@ cdef class RingHomomorphism(RingMap):
         We check that composition works when there is a base map::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = GF(7^2)
-            sage: L.<u> = K.extension(x^3 - 3)
-            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
-            sage: phi
-            Ring endomorphism of Univariate Quotient Polynomial Ring in u over Finite Field in a of size 7^2 with modulus u^3 + 4
+            sage: K.<a> = GF(7^2)                                               # optional - sage.libs.pari
+            sage: L.<u> = K.extension(x^3 - 3)                                  # optional - sage.libs.pari
+            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())       # optional - sage.libs.pari
+            sage: phi                                                           # optional - sage.libs.pari
+            Ring endomorphism of Univariate Quotient Polynomial Ring in u
+             over Finite Field in a of size 7^2 with modulus u^3 + 4
               Defn: u |--> 2*u
                     with map of base ring
-            sage: psi = phi^3; psi
-            Ring endomorphism of Univariate Quotient Polynomial Ring in u over Finite Field in a of size 7^2 with modulus u^3 + 4
+            sage: psi = phi^3; psi                                              # optional - sage.libs.pari
+            Ring endomorphism of Univariate Quotient Polynomial Ring in u
+             over Finite Field in a of size 7^2 with modulus u^3 + 4
               Defn: u |--> u
                     with map of base ring
-            sage: psi(a) == phi(phi(phi(a)))
+            sage: psi(a) == phi(phi(phi(a)))                                    # optional - sage.libs.pari
             True
 
         It also works when the image of the base map is not contained within the base ring of the codomain::
@@ -1422,9 +1431,9 @@ cdef class RingHomomorphism(RingMap):
             sage: c = K.hom([1/zeta7])
             sage: (c.inverse() * c).is_identity()
             True
-            sage: F.<t> = GF(7^3)
-            sage: f = F.hom(t^7, F)
-            sage: (f.inverse() * f).is_identity()
+            sage: F.<t> = GF(7^3)                                               # optional - sage.libs.pari
+            sage: f = F.hom(t^7, F)                                             # optional - sage.libs.pari
+            sage: (f.inverse() * f).is_identity()                               # optional - sage.libs.pari
             True
 
         An isomorphism between the algebraic torus and the circle over a number
@@ -1470,18 +1479,18 @@ cdef class RingHomomorphism(RingMap):
 
         Morphisms involving Galois fields::
 
-            sage: A.<t> = GF(7^3)
-            sage: R = A.polynomial_ring().quotient(A.polynomial())
-            sage: g = A.hom(R.gens(), R)
-            sage: (g.inverse() * g).is_identity()
+            sage: A.<t> = GF(7^3)                                               # optional - sage.libs.pari
+            sage: R = A.polynomial_ring().quotient(A.polynomial())              # optional - sage.libs.pari
+            sage: g = A.hom(R.gens(), R)                                        # optional - sage.libs.pari
+            sage: (g.inverse() * g).is_identity()                               # optional - sage.libs.pari
             True
-            sage: B.<T>, f = A.extension(3, map=True)
-            sage: f.inverse()
+            sage: B.<T>, f = A.extension(3, map=True)                           # optional - sage.libs.pari
+            sage: f.inverse()                                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not surjective
-            sage: B.<T>, f = A.extension(1, map=True)
-            sage: f.inverse()
+            sage: B.<T>, f = A.extension(1, map=True)                           # optional - sage.libs.pari
+            sage: f.inverse()                                                   # optional - sage.libs.pari
             Ring morphism:
               From: Finite Field in T of size 7^3
               To:   Finite Field in t of size 7^3
@@ -1526,16 +1535,16 @@ cdef class RingHomomorphism(RingMap):
 
         Check that results are cached::
 
-            sage: R.<x,y> = GF(823)[]
-            sage: f = R.hom([x, y+x^2], R)
-            sage: f.inverse() is f.inverse()
+            sage: R.<x,y> = GF(823)[]                                           # optional - sage.libs.pari
+            sage: f = R.hom([x, y+x^2], R)                                      # optional - sage.libs.pari
+            sage: f.inverse() is f.inverse()                                    # optional - sage.libs.pari
             True
 
         Some subclasses of ring homomorphisms are not supported::
 
             sage: from sage.rings.morphism import FrobeniusEndomorphism_generic
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: FrobeniusEndomorphism_generic(K).inverse()
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: FrobeniusEndomorphism_generic(K).inverse()                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1586,9 +1595,9 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: R.<x,y> = GF(17)[]
-            sage: f = R.hom([3*x, y + x^2 + x^3], R)
-            sage: (f * ~f).is_identity()
+            sage: R.<x,y> = GF(17)[]                                            # optional - sage.libs.pari
+            sage: f = R.hom([3*x, y + x^2 + x^3], R)                            # optional - sage.libs.pari
+            sage: (f * ~f).is_identity()                                        # optional - sage.libs.pari
             True
         """
         return self.inverse()
@@ -1969,24 +1978,24 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         A multivariate quotient over a finite field::
 
-            sage: R.<x,y> = GF(7)[]
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
-            sage: f1 = R.hom([a, b])
-            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
-            sage: f1 == f2
+            sage: R.<x,y> = GF(7)[]                                             # optional - sage.libs.pari
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])              # optional - sage.libs.pari
+            sage: f1 = R.hom([a, b])                                            # optional - sage.libs.pari
+            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])                # optional - sage.libs.pari
+            sage: f1 == f2                                                      # optional - sage.libs.pari
             True
-            sage: f1 == R.hom([b,a])
+            sage: f1 == R.hom([b, a])                                           # optional - sage.libs.pari
             False
-            sage: x^3 + x + y^2
+            sage: x^3 + x + y^2                                                 # optional - sage.libs.pari
             x^3 + y^2 + x
-            sage: f1(x^3 + x + y^2)
+            sage: f1(x^3 + x + y^2)                                             # optional - sage.libs.pari
             a - b
-            sage: f2(x^3 + x + y^2)
+            sage: f2(x^3 + x + y^2)                                             # optional - sage.libs.pari
             a - b
 
         TESTS::
 
-            sage: loads(dumps(f2)) == f2
+            sage: loads(dumps(f2)) == f2                                        # optional - sage.libs.pari
             True
 
         This was fixed in :trac:`24277`::
@@ -2281,20 +2290,20 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         A matrix ring over a multivariate quotient over a finite field::
 
-            sage: R.<x,y> = GF(7)[]
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
-            sage: f1 = R.hom([a, b])
-            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
-            sage: MR = MatrixSpace(R,2)
-            sage: MQ = MatrixSpace(Q,2)
-            sage: f1M = MR.hom(f1,MQ)
-            sage: f2M = MR.hom(f2,MQ)
-            sage: f1M == f2M
+            sage: R.<x,y> = GF(7)[]                                             # optional - sage.libs.pari
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])              # optional - sage.libs.pari
+            sage: f1 = R.hom([a, b])                                            # optional - sage.libs.pari
+            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])                # optional - sage.libs.pari
+            sage: MR = MatrixSpace(R, 2)                                        # optional - sage.libs.pari
+            sage: MQ = MatrixSpace(Q, 2)                                        # optional - sage.libs.pari
+            sage: f1M = MR.hom(f1, MQ)                                          # optional - sage.libs.pari
+            sage: f2M = MR.hom(f2, MQ)                                          # optional - sage.libs.pari
+            sage: f1M == f2M                                                    # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: f1M == loads(dumps(f1M))
+            sage: f1M == loads(dumps(f1M))                                      # optional - sage.libs.pari
             True
         """
         if not isinstance(other, RingHomomorphism_from_base):
@@ -2830,14 +2839,14 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
-            sage: phi = S.hom([b, c, a])
-            sage: psi = S.hom([c, b, a])
-            sage: f = S.hom([b, c, a + a^3 + b^3 + c^3])
-            sage: phi == psi
+            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)                       # optional - sage.libs.pari
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                          # optional - sage.libs.pari
+            sage: phi = S.hom([b, c, a])                                        # optional - sage.libs.pari
+            sage: psi = S.hom([c, b, a])                                        # optional - sage.libs.pari
+            sage: f = S.hom([b, c, a + a^3 + b^3 + c^3])                        # optional - sage.libs.pari
+            sage: phi == psi                                                    # optional - sage.libs.pari
             False
-            sage: phi == f
+            sage: phi == f                                                      # optional - sage.libs.pari
             True
         """
         if not isinstance(other, RingHomomorphism_from_quotient):
@@ -2854,14 +2863,14 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
-            sage: phi = S.hom([b, c, a])
-            sage: type(phi)
+            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)                       # optional - sage.libs.pari
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                          # optional - sage.libs.pari
+            sage: phi = S.hom([b, c, a])                                        # optional - sage.libs.pari
+            sage: type(phi)                                                     # optional - sage.libs.pari
             <class 'sage.rings.morphism.RingHomomorphism_from_quotient'>
-            sage: hash(phi) == hash(phi)
+            sage: hash(phi) == hash(phi)                                        # optional - sage.libs.pari
             True
-            sage: {phi: 1}[phi]
+            sage: {phi: 1}[phi]                                                 # optional - sage.libs.pari
             1
         """
         return hash(self.phi)
@@ -2916,11 +2925,13 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         TESTS::
 
             sage: from sage.rings.morphism import FrobeniusEndomorphism_generic
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: FrobeniusEndomorphism_generic(K)
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5
-            sage: FrobeniusEndomorphism_generic(K, 2)
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u over Finite Field of size 5
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: FrobeniusEndomorphism_generic(K)                              # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5
+            sage: FrobeniusEndomorphism_generic(K, 2)                           # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+             over Finite Field of size 5
         """
         from .ring import CommutativeRing
         from sage.categories.homset import Hom
@@ -2947,10 +2958,10 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K = Frac(GF(5)['T'])
-            sage: phi = K.frobenius_endomorphism()
-            sage: psi = copy(phi)
-            sage: phi == psi
+            sage: K = Frac(GF(5)['T'])                                          # optional - sage.libs.pari
+            sage: phi = K.frobenius_endomorphism()                              # optional - sage.libs.pari
+            sage: psi = copy(phi)                                               # optional - sage.libs.pari
+            sage: phi == psi                                                    # optional - sage.libs.pari
             True
         """
         self._p = _slots['_domain'].characteristic()
@@ -2967,14 +2978,16 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K = Frac(GF(25)['T'])
-            sage: phi = K.frobenius_endomorphism(2)
-            sage: phi
-            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+            sage: K = Frac(GF(25)['T'])                                         # optional - sage.libs.pari
+            sage: phi = K.frobenius_endomorphism(2)                             # optional - sage.libs.pari
+            sage: phi                                                           # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of
+             Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
 
-            sage: psi = loads(dumps(phi)); psi
-            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-            sage: phi == psi
+            sage: psi = loads(dumps(phi)); psi                                  # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of
+             Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+            sage: phi == psi                                                    # optional - sage.libs.pari
             True
         """
         slots = RingHomomorphism._extra_slots(self)
@@ -2987,12 +3000,14 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(); Frob
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism(); Frob                       # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5
 
-            sage: Frob._repr_()
-            'Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5'
+            sage: Frob._repr_()                                                 # optional - sage.libs.pari
+            'Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5'
         """
         if self._power == 0:
             s = "Identity endomorphism"
@@ -3009,11 +3024,11 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism()
-            sage: Frob._repr_short()
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism()                             # optional - sage.libs.pari
+            sage: Frob._repr_short()                                            # optional - sage.libs.pari
             'Frob'
-            sage: (Frob^2)._repr_short()
+            sage: (Frob^2)._repr_short()                                        # optional - sage.libs.pari
             'Frob^2'
         """
         if self._power == 0:
@@ -3030,9 +3045,9 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(2)
-            sage: Frob._latex_()
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism(2)                            # optional - sage.libs.pari
+            sage: Frob._latex_()                                                # optional - sage.libs.pari
             '\\verb"Frob"^{2}'
         """
         if self._power == 0:
@@ -3047,11 +3062,11 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         TESTS::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism()
-            sage: Frob(u)
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism()                             # optional - sage.libs.pari
+            sage: Frob(u)                                                       # optional - sage.libs.pari
             u^5
-            sage: (Frob^2)(1+u)
+            sage: (Frob^2)(1+u)                                                 # optional - sage.libs.pari
             1 + u^25
         """
         return x ** self._q
@@ -3064,11 +3079,11 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism()
-            sage: Frob.power()
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism()                             # optional - sage.libs.pari
+            sage: Frob.power()                                                  # optional - sage.libs.pari
             1
-            sage: (Frob^9).power()
+            sage: (Frob^9).power()                                              # optional - sage.libs.pari
             9
         """
         return self._power
@@ -3079,11 +3094,13 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(); Frob
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5
-            sage: Frob^2
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u over Finite Field of size 5
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: Frob = K.frobenius_endomorphism(); Frob                       # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5
+            sage: Frob^2                                                        # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+             over Finite Field of size 5
         """
         return self.__class__(self.domain(), self.power()*n)
 
@@ -3093,13 +3110,16 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: f = K.frobenius_endomorphism(); f
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5
-            sage: g = K.frobenius_endomorphism(2); g
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u over Finite Field of size 5
-            sage: f * g
-            Frobenius endomorphism x |--> x^(5^3) of Power Series Ring in u over Finite Field of size 5
+            sage: K.<u> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: f = K.frobenius_endomorphism(); f                             # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5
+            sage: g = K.frobenius_endomorphism(2); g                            # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+             over Finite Field of size 5
+            sage: f * g                                                         # optional - sage.libs.pari
+            Frobenius endomorphism x |--> x^(5^3) of Power Series Ring in u
+             over Finite Field of size 5
         """
         if isinstance(right, FrobeniusEndomorphism_generic):
             return self.__class__(self.domain(), self._power + right.power())

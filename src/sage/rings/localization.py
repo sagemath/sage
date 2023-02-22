@@ -251,12 +251,13 @@ class LocalizationElement(IntegralDomainElement):
     EXAMPLES::
 
         sage: from sage.rings.localization import LocalizationElement
-        sage: P.<x,y,z> = GF(5)[]
-        sage: L = P.localization((x, y*z-x))
-        sage: LocalizationElement(L, 4/(y*z-x)**2)
+        sage: P.<x,y,z> = GF(5)[]                                               # optional - sage.libs.pari
+        sage: L = P.localization((x, y*z-x))                                    # optional - sage.libs.pari
+        sage: LocalizationElement(L, 4/(y*z-x)**2)                              # optional - sage.libs.pari
         (-1)/(y^2*z^2 - 2*x*y*z + x^2)
-        sage: _.parent()
-        Multivariate Polynomial Ring in x, y, z over Finite Field of size 5 localized at (x, y*z - x)
+        sage: _.parent()                                                        # optional - sage.libs.pari
+        Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
+         localized at (x, y*z - x)
     """
 
     def __init__(self, parent, x):
@@ -481,11 +482,11 @@ class LocalizationElement(IntegralDomainElement):
         """
         EXAMPLES::
 
-           sage: P.<x,y,z> = GF(7)[]
-           sage: L = Localization(P, (x, y, z))
-           sage: L(1/x) < L(3/(x*y*z)**3)
+           sage: P.<x,y,z> = GF(7)[]                                            # optional - sage.libs.pari
+           sage: L = Localization(P, (x, y, z))                                 # optional - sage.libs.pari
+           sage: L(1/x) < L(3/(x*y*z)**3)                                       # optional - sage.libs.pari
            False
-           sage: ~L(y*z/x) == L(x/(y*z))
+           sage: ~L(y*z/x) == L(x/(y*z))                                        # optional - sage.libs.pari
            True
         """
         sval = self._value
@@ -701,9 +702,10 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: R.<a> = GF(3)[]
-            sage: Localization(R, a**2-1)
-            Univariate Polynomial Ring in a over Finite Field of size 3 localized at (a + 1, a + 2)
+            sage: R.<a> = GF(3)[]                                               # optional - sage.libs.pari
+            sage: Localization(R, a**2-1)                                       # optional - sage.libs.pari
+            Univariate Polynomial Ring in a over Finite Field of size 3
+             localized at (a + 1, a + 2)
         """
         return "%s localized at %s" % (self.base(), self._extra_units)
 
@@ -950,11 +952,12 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: R.<a> = GF(5)[]
-            sage: L = Localization(R, (a**2-3, a))
-            sage: L.fraction_field()
-            Fraction Field of Univariate Polynomial Ring in a over Finite Field of size 5
-            sage: L.is_subring(_)
+            sage: R.<a> = GF(5)[]                                               # optional - sage.libs.pari
+            sage: L = Localization(R, (a**2-3, a))                              # optional - sage.libs.pari
+            sage: L.fraction_field()                                            # optional - sage.libs.pari
+            Fraction Field of Univariate Polynomial Ring in a
+             over Finite Field of size 5
+            sage: L.is_subring(_)                                               # optional - sage.libs.pari
             True
         """
         return self._fraction_field
@@ -965,9 +968,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: R.<a> = GF(5)[]
-            sage: L = R.localization((a**2-3, a))
-            sage: L.characteristic()
+            sage: R.<a> = GF(5)[]                                               # optional - sage.libs.pari
+            sage: L = R.localization((a**2-3, a))                               # optional - sage.libs.pari
+            sage: L.characteristic()                                            # optional - sage.libs.pari
             5
         """
         return self.base_ring().characteristic()

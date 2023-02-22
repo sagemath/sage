@@ -1226,7 +1226,7 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: InfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: InfinityRing.has_coerce_map_from(AA)
+            sage: InfinityRing.has_coerce_map_from(AA)                          # optional - sage.rings.number_field
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
@@ -1237,7 +1237,7 @@ class InfinityRing_class(Singleton, Ring):
         infinity ring::
 
             sage: cm = get_coercion_model()
-            sage: cm.explain(AA(3), oo, operator.lt)
+            sage: cm.explain(AA(3), oo, operator.lt)                            # optional - sage.rings.number_field
             Coercion on left operand via
                 Coercion map:
                   From: Algebraic Real Field
@@ -1278,7 +1278,7 @@ class InfinityRing_class(Singleton, Ring):
         r"""
         EXAMPLES::
 
-            sage: QQbar(-2*i)*infinity
+            sage: QQbar(-2*i)*infinity                                          # optional - sage.rings.number_field
             (-I)*Infinity
         """
         from sage.symbolic.ring import SR
