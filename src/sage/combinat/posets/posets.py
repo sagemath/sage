@@ -7614,9 +7614,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         if not self.has_bottom():
             raise ValueError("the poset has not a bottom element")
         n = rk(hasse.maximal_elements()[0])
-        x0 = hasse.minimal_elements()[0]
         q = polygen(ZZ, 'q')
-        return sum(hasse.moebius_function(x0, x) * q**(n - rk(x)) for x in hasse)
+        return sum(hasse.bottom_moebius_function(x) * q**(n - rk(x)) for x in hasse)
 
     def chain_polynomial(self):
         """
