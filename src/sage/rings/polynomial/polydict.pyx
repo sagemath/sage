@@ -1186,7 +1186,7 @@ cdef class PolyDict:
             sage: loads(dumps(f)) == f
             True
         """
-        return make_PolyDict, (self.__repn,)
+        return PolyDict, (self.__repn,)
 
     def min_exp(self):
         """
@@ -1690,15 +1690,12 @@ cdef class ETuple:
 
             sage: from sage.rings.polynomial.polydict import ETuple
             sage: e = ETuple([1,1,0])
-            sage: bool(e == loads(dumps(e)))
+            sage: e == loads(dumps(e))
             True
         """
         cdef size_t ind
-        # this is not particularly fast, but I doubt many people care
-        # if you do, feel free to tweak!
-        d = {self._data[2*ind]: self._data[2*ind+1]
-             for ind from 0 <= ind < self._nonzero}
-        return make_ETuple, (d, int(self._length))
+        d = {self._data[2 * ind]: self._data[2 * ind + 1] for ind in range(self._nonzero)}
+        return ETuple, (d, int(self._length))
 
     # additional methods
 
@@ -2484,8 +2481,14 @@ cdef class ETuple:
 
 
 def make_PolyDict(data):
-    return PolyDict(data, remove_zero=False)
+    r"""
+    Ensure support for pickled data from older sage versions.
+    """
+    return PolyDict(data)
 
 
 def make_ETuple(data, length):
+    r"""
+    Ensure support for pickled data from older sage versions.
+    """
     return ETuple(data, length)
