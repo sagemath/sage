@@ -1020,8 +1020,10 @@ class HasseDiagram(DiGraph):
             # since zero is the minimal element, we can ignore the case that zero > j,
             # and move on to computing the interval, which is exactly the order ideal.
             else:
-                ci = self.order_ideal([j])
-                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci[:-1])
+                # do the depth_first_search over order_ideal, because we don't care
+                # about sorting the elements of the order
+                ci = self.depth_first_search([j], neighbors=self.neighbors_in)
+                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci if k != j)
         return self._moebius_function_values[(zero, j)]
 
     def moebius_function_matrix(self, algorithm='cython'):
