@@ -90,7 +90,7 @@ cdef class PolyDict:
     whose values are coefficients on which it is implicitely assumed that
     arithmetic operations can be performed.
     """
-    def __init__(PolyDict self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None):
+    def __init__(self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None):
         """
         INPUT:
 
@@ -274,7 +274,7 @@ cdef class PolyDict:
 
         raise TypeError('unsupported comparison between PolyDict')
 
-    def rich_compare(PolyDict self, PolyDict other, int op, sortkey=None):
+    def rich_compare(self, PolyDict other, int op, sortkey=None):
         """
         Compare two `PolyDict`s using a specified term ordering ``sortkey``.
 
@@ -424,11 +424,11 @@ cdef class PolyDict:
             e = ETuple(e)
         return self.__repn[e]
 
-    def __repr__(PolyDict self):
+    def __repr__(self):
         repn = ' '.join(pformat(self.__repn).splitlines())
         return 'PolyDict with representation %s' % repn
 
-    def degree(PolyDict self, PolyDict x=None):
+    def degree(self, PolyDict x=None):
         r"""
         Return the total degree or the maximum degree in the variable ``x``.
 
@@ -452,7 +452,7 @@ cdef class PolyDict:
             return -1
         return max((<ETuple> e).get_exp(i) for e in self.__repn)
 
-    def total_degree(PolyDict self, tuple w=None):
+    def total_degree(self, tuple w=None):
         r"""
         Return the total degree.
 
@@ -478,7 +478,7 @@ cdef class PolyDict:
         else:
             return max((<ETuple> e).weighted_degree(w) for e in self.__repn)
 
-    def monomial_coefficient(PolyDict self, mon):
+    def monomial_coefficient(self, mon):
         """
         Return the coefficient of the monomial ``mon``.
 
@@ -498,7 +498,7 @@ cdef class PolyDict:
             return 0
         return self.__repn[K]
 
-    def polynomial_coefficient(PolyDict self, degrees):
+    def polynomial_coefficient(self, degrees):
         """
         Return a polydict that defines the coefficient in the current
         polynomial viewed as a tower of polynomial extensions.
@@ -538,7 +538,7 @@ cdef class PolyDict:
                 ans[ETuple(t)] = self.__repn[S]
         return self._new(ans)
 
-    def coefficient(PolyDict self, mon):
+    def coefficient(self, mon):
         """
         Return a polydict that defines a polynomial in 1 less number
         of variables that gives the coefficient of mon in this
@@ -564,7 +564,7 @@ cdef class PolyDict:
                 ans[ETuple(t)] = self.__repn[S]
         return self._new(ans)
 
-    def is_homogeneous(PolyDict self):
+    def is_homogeneous(self):
         r"""
         Return whether this polynomial is homogeneous.
 
@@ -610,7 +610,7 @@ cdef class PolyDict:
             return False
         return not any(e for e in self.__repn)
 
-    def homogenize(PolyDict self, size_t var):
+    def homogenize(self, size_t var):
         r"""
         Return the homogeneization of ``self`` by increasing the degree of the
         variable ``var``.
@@ -642,7 +642,7 @@ cdef class PolyDict:
                 H[f] = val
         return self._new(H)
 
-    def latex(PolyDict self, vars, atomic_exponents=True,
+    def latex(self, vars, atomic_exponents=True,
               atomic_coefficients=True, sortkey=None):
         r"""
         Return a nice polynomial latex representation of this PolyDict, where
@@ -736,7 +736,7 @@ cdef class PolyDict:
             return "0"
         return poly
 
-    def poly_repr(PolyDict self, vars, atomic_exponents=True,
+    def poly_repr(self, vars, atomic_exponents=True,
                   atomic_coefficients=True, sortkey=None):
         """
         Return a nice polynomial string representation of this PolyDict, where
@@ -944,7 +944,7 @@ cdef class PolyDict:
                         PyDict_SetItem(newpoly, e, <object>cc+c)
         return self._new(newpoly)
 
-    def scalar_rmult(PolyDict self, s):
+    def scalar_rmult(self, s):
         """
         Right Scalar Multiplication
 
@@ -966,7 +966,7 @@ cdef class PolyDict:
             v[e] = c * s
         return self._new(v)
 
-    def scalar_lmult(PolyDict self, s):
+    def scalar_lmult(self, s):
         """
         Left Scalar Multiplication
 
@@ -1162,7 +1162,7 @@ cdef class PolyDict:
             raise ValueError('x must be a generator')
         return self.integral_i(i)
 
-    def lcmt(PolyDict self, greater_etuple):
+    def lcmt(self, greater_etuple):
         """
         Provides functionality of lc, lm, and lt by calling the tuple
         compare function on the provided term order T.
@@ -1176,7 +1176,7 @@ cdef class PolyDict:
         except KeyError:
             raise ArithmeticError("%s not supported", greater_etuple)
 
-    def __reduce__(PolyDict self):
+    def __reduce__(self):
         """
 
         EXAMPLES::
@@ -1302,7 +1302,7 @@ cdef class ETuple:
     question (although, there is no question that this is much faster
     than the prior use of python dicts).
     """
-    cdef ETuple _new(ETuple self):
+    cdef ETuple _new(self):
         """
         Quickly creates a new initialized ETuple with the
         same length as self.
@@ -1312,7 +1312,7 @@ cdef class ETuple:
         x._length = self._length
         return x
 
-    def __init__(ETuple self, data=None, length=None):
+    def __init__(self, data=None, length=None):
         """
         - ``ETuple()`` -> an empty ETuple
         - ``ETuple(sequence)`` -> ETuple initialized from sequence's items
@@ -1374,7 +1374,7 @@ cdef class ETuple:
         else:
             raise TypeError("Error in ETuple(%s, %s, %s)" % (self, data, length))
 
-    def __cinit__(ETuple self):
+    def __cinit__(self):
         self._data = <int*>0
 
     def __dealloc__(self):
@@ -1449,7 +1449,7 @@ cdef class ETuple:
                 result._data[2*(f*self._nonzero+index)+1] = self._data[2*index+1]
         return result
 
-    def __getitem__(ETuple self, i):
+    def __getitem__(self, i):
         """
         EXAMPLES::
 
@@ -1493,7 +1493,7 @@ cdef class ETuple:
                     return 0
             return 0
 
-    cdef int get_exp(ETuple self, size_t i):
+    cdef int get_exp(self, size_t i):
         """
         Return the exponent for the ``i``-th variable.
         """
@@ -1506,7 +1506,7 @@ cdef class ETuple:
                 return 0
         return 0
 
-    def __hash__(ETuple self):
+    def __hash__(self):
         """
         x.__hash__() <==> hash(x)
         """
@@ -1518,7 +1518,7 @@ cdef class ETuple:
         result = (1000003 * result) ^ self._length
         return result
 
-    def __len__(ETuple self):
+    def __len__(self):
         """
         x.__len__() <==> len(x)
 
@@ -1531,7 +1531,7 @@ cdef class ETuple:
         """
         return self._length
 
-    def __contains__(ETuple self, elem):
+    def __contains__(self, elem):
         """
         x.__contains__(n) <==> n in x
 
@@ -1632,7 +1632,7 @@ cdef class ETuple:
         if op == Py_GE:  # >=
             return tuple(self) >= tuple(other)
 
-    def __iter__(ETuple self):
+    def __iter__(self):
         """
         x.__iter__() <==> iter(x)
 
@@ -1661,10 +1661,10 @@ cdef class ETuple:
             else:
                 yield 0
 
-    def __str__(ETuple self):
+    def __str__(self):
         return repr(self)
 
-    def __repr__(ETuple self):
+    def __repr__(self):
         r"""
         TESTS::
 
@@ -1684,7 +1684,7 @@ cdef class ETuple:
         else:
             return '(' + ', '.join(map(str, self)) + ')'
 
-    def __reduce__(ETuple self):
+    def __reduce__(self):
         """
         EXAMPLES::
 
@@ -1828,7 +1828,7 @@ cdef class ETuple:
             ind1 += 2
         return deg
 
-    cpdef ETuple eadd(ETuple self, ETuple other):
+    cpdef ETuple eadd(self, ETuple other):
         """
         Vector addition of ``self`` with ``other``.
 
@@ -1877,7 +1877,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple eadd_p(ETuple self, int other, size_t pos):
+    cpdef ETuple eadd_p(self, int other, size_t pos):
         """
         Add ``other`` to ``self`` at position ``pos``.
 
@@ -1959,7 +1959,7 @@ cdef class ETuple:
 
         return result
 
-    cpdef ETuple eadd_scaled(ETuple self, ETuple other, int scalar):
+    cpdef ETuple eadd_scaled(self, ETuple other, int scalar):
         """
         Vector addition of ``self`` with ``scalar * other``.
 
@@ -1998,7 +1998,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple esub(ETuple self, ETuple other):
+    cpdef ETuple esub(self, ETuple other):
         """
         Vector subtraction of ``self`` with ``other``.
 
@@ -2036,7 +2036,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emul(ETuple self, int factor):
+    cpdef ETuple emul(self, int factor):
         """
         Scalar Vector multiplication of ``self``.
 
@@ -2060,7 +2060,7 @@ cdef class ETuple:
                 result._data[2*ind+1] = self._data[2*ind+1]*factor
         return result
 
-    cpdef ETuple emax(ETuple self, ETuple other):
+    cpdef ETuple emax(self, ETuple other):
         """
         Vector of maximum of components of ``self`` and ``other``.
 
@@ -2107,7 +2107,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emin(ETuple self, ETuple other):
+    cpdef ETuple emin(self, ETuple other):
         """
         Vector of minimum of components of ``self`` and ``other``.
 
@@ -2148,7 +2148,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef int dotprod(ETuple self, ETuple other):
+    cpdef int dotprod(self, ETuple other):
         """
         Return the dot product of this tuple by ``other``.
 
@@ -2178,7 +2178,7 @@ cdef class ETuple:
             result += exp1 * exp2
         return result
 
-    cpdef ETuple escalar_div(ETuple self, int n):
+    cpdef ETuple escalar_div(self, int n):
         r"""
         Divide each exponent by ``n``.
 
@@ -2321,7 +2321,7 @@ cdef class ETuple:
                 return False
         return True
 
-    cpdef bint is_constant(ETuple self):
+    cpdef bint is_constant(self):
         """
         Return if all exponents are zero in the tuple.
 
@@ -2337,7 +2337,7 @@ cdef class ETuple:
         """
         return self._nonzero == 0
 
-    cpdef bint is_multiple_of(ETuple self, int n):
+    cpdef bint is_multiple_of(self, int n):
         r"""
         Test whether each entry is a multiple of ``n``.
 
@@ -2360,7 +2360,7 @@ cdef class ETuple:
                 return False
         return True
 
-    cpdef list nonzero_positions(ETuple self, bint sort=False):
+    cpdef list nonzero_positions(self, bint sort=False):
         """
         Return the positions of non-zero exponents in the tuple.
 
@@ -2379,7 +2379,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2*ind] for ind from 0 <= ind < self._nonzero]
 
-    cpdef common_nonzero_positions(ETuple self, ETuple other, bint sort=False):
+    cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
         Returns an optionally sorted list of non zero positions either
         in self or other, i.e. the only positions that need to be
@@ -2402,7 +2402,7 @@ cdef class ETuple:
         else:
             return res
 
-    cpdef list nonzero_values(ETuple self, bint sort=True):
+    cpdef list nonzero_values(self, bint sort=True):
         """
         Return the non-zero values of the tuple.
 
@@ -2424,7 +2424,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2*ind+1] for ind from 0 <= ind < self._nonzero]
 
-    cpdef ETuple reversed(ETuple self):
+    cpdef ETuple reversed(self):
         """
         Return the reversed ETuple of ``self``.
 
@@ -2444,7 +2444,7 @@ cdef class ETuple:
             result._data[2*(result._nonzero-ind-1)+1] = self._data[2*ind+1]
         return result
 
-    def sparse_iter(ETuple self):
+    def sparse_iter(self):
         """
         Iterator over the elements of ``self`` where the elements are returned
         as ``(i, e)`` where ``i`` is the position of ``e`` in the tuple.
@@ -2460,7 +2460,7 @@ cdef class ETuple:
         for ind from 0 <= ind < self._nonzero:
             yield (self._data[2*ind], self._data[2*ind+1])
 
-    def combine_to_positives(ETuple self, ETuple other):
+    def combine_to_positives(self, ETuple other):
         """
         Given a pair of ETuples (self, other), returns a triple of
         ETuples (a, b, c) so that self = a + b, other = a + c and b and c
