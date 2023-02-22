@@ -467,7 +467,7 @@ cdef class UniqueFactory(SageObject):
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
             sage: GF.create_key_and_extra_args(3)                                       # optional - sage.libs.pari
-            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})  # optional - sage.libs.pari
+            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})
         """
         return self.create_key(*args, **kwds), {}
 
