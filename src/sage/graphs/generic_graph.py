@@ -4115,12 +4115,18 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph({0:[], 1:[], 2:[], 3:[]}); g.is_eulerian()
             True
-        """
 
+        Issue :trac:`35168` is fixed::
+
+            sage: Graph([[0, 42, 'John'], [(42, 0)]]).is_eulerian()
+            False
+            sage: Graph([[0, 42, 'John'], [(42, 'John')]]).is_eulerian()
+            False
+        """
         # unconnected graph can still be Eulerian if all components
         # up to one doesn't contain any edge
         nontrivial_components = 0
-        for cc in self.connected_components():
+        for cc in self.connected_components(sort=False):
             if len(cc) > 1:
                 nontrivial_components += 1
             if nontrivial_components > 1:
