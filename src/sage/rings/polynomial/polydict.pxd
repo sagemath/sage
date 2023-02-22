@@ -37,3 +37,4 @@ cdef class ETuple:
     cdef int get_exp(self, size_t i)
 
 cpdef int gen_index(PolyDict x)
+cpdef ETuple monomial_exponent(PolyDict p)

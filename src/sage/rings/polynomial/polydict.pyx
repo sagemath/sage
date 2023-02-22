@@ -82,6 +82,29 @@ cpdef int gen_index(PolyDict x):
     return e._data[0]
 
 
+cpdef ETuple monomial_exponent(PolyDict p):
+    r"""
+    Return the unique exponent of ``p`` if it is a monomial or raise a ``ValueError``.
+
+    EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict, monomial_exponent
+            sage: monomial_exponent(PolyDict({(2, 3): 1}))
+            (2, 3)
+            sage: monomial_exponent(PolyDict({(2, 3): 3}))
+            Traceback (most recent call last):
+            ...
+            ValueError: not a monomial
+            sage: monomial_exponent(PolyDict({(1, 0): 1, (0, 1): 1}))
+            Traceback (most recent call last):
+            :::
+            ValueError: not a monomial
+    """
+    if len(p.__repn) != 1 or not next(iter(p.__repn.values())).is_one():
+        raise ValueError('not a monomial')
+    return next(iter(p.__repn))
+
+
 cdef class PolyDict:
     r"""
     Datastructure for multivariate polynomials.
@@ -424,6 +447,21 @@ cdef class PolyDict:
             e = ETuple(e)
         return self.__repn[e]
 
+    def get(self, ETuple e, default=None):
+        r"""
+        Return the coefficient of the ETuple ``e`` if present and ``default`` otherwise.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict, ETuple
+            sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
+            sage: f.get(ETuple([1,2]))
+            3
+            sage: f.get(ETuple([1,1]), 'hello')
+            'hello'
+        """
+        return self.__repn.get(e, default)
+
     def __repr__(self):
         repn = ' '.join(pformat(self.__repn).splitlines())
         return 'PolyDict with representation %s' % repn
@@ -491,8 +529,14 @@ cdef class PolyDict:
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.monomial_coefficient(PolyDict({(2,1):1}).dict())
+            doctest:warning
+            ...
+            DeprecationWarning: PolyDict.monomial_coefficient is deprecated; use PolyDict.get instead
+            See https://trac.sagemath.org/34000 for details.
             4
         """
+        from sage.misc.superseded import deprecation
+        deprecation(34000, 'PolyDict.monomial_coefficient is deprecated; use PolyDict.get instead')
         K, = mon.keys()
         if K not in self.__repn:
             return 0
