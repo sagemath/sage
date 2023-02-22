@@ -187,7 +187,7 @@ def is_HCP(f, check_monic_irreducible=True):
 
     OUTPUT:
 
-    (integer) -- `D` if ``f`` is the Hilbert Class Polynomial (HCP) `H_D`, esle 0.
+    (integer) -- `D` if ``f`` is the Hilbert Class Polynomial (HCP) `H_D`, else 0.
 
     ALGORITHM:
 
