@@ -265,22 +265,18 @@ cdef class PolyDict:
             sage: p1 < p2
             Traceback (most recent call last):
             ...
-            TypeError: '<' not supported between instances of
-            'sage.rings.polynomial.polydict.PolyDict' and
-            'sage.rings.polynomial.polydict.PolyDict'
+            TypeError: unsupported comparison between PolyDict
         """
-        try:
-            return left.rich_compare(right, op)
-        except TypeError:
-            return NotImplemented
+        if op == Py_EQ:
+            return left.__repn == right.__repn
+        elif op == Py_NE:
+            return left.__repn != right.__repn
+
+        raise TypeError('unsupported comparison between PolyDict')
 
     def rich_compare(PolyDict self, PolyDict other, int op, sortkey=None):
         """
-        Compare two `PolyDict`s.  If a ``sortkey`` argument is given it should
-        be a sort key used to specify a term order.
-
-        If not sort key is provided than only comparison by equality (``==`` or
-        ``!=``) is supported.
+        Compare two `PolyDict`s using a specified term ordering ``sortkey``.
 
         EXAMPLES::
 
@@ -288,18 +284,13 @@ cdef class PolyDict:
             sage: from sage.structure.richcmp import op_EQ, op_NE, op_LT
             sage: p1 = PolyDict({(0,): 1})
             sage: p2 = PolyDict({(0,): 2})
-            sage: p1.rich_compare(PolyDict({(0,): 1}), op_EQ)
-            True
-            sage: p1.rich_compare(p2, op_EQ)
-            False
-            sage: p1.rich_compare(p2, op_NE)
-            True
-            sage: p1.rich_compare(p2, op_LT)
-            Traceback (most recent call last):
-            ...
-            TypeError: ordering of PolyDicts requires a sortkey
-
             sage: O = TermOrder()
+            sage: p1.rich_compare(PolyDict({(0,): 1}), op_EQ, O.sortkey)
+            True
+            sage: p1.rich_compare(p2, op_EQ, O.sortkey)
+            False
+            sage: p1.rich_compare(p2, op_NE, O.sortkey)
+            True
             sage: p1.rich_compare(p2, op_LT, O.sortkey)
             True
 
@@ -307,27 +298,44 @@ cdef class PolyDict:
             sage: p4 = PolyDict({(3, 2, 4): 1, (3, 2, 3): 2})
             sage: p3.rich_compare(p4, op_LT, O.sortkey)
             False
+
+        TESTS::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: from sage.structure.richcmp import op_EQ, op_NE, op_LT
+            sage: p = PolyDict({})
+            sage: ans = p.rich_compare(p, op_EQ)
+            doctest:warning
+            ...
+            DeprecationWarning: the argument "sortkey" will become mandatory in future sage versions
+            See https://trac.sagemath.org/34000 for details.
+            sage: ans
+            True
         """
+        if sortkey is None:
+            from sage.misc.superseded import deprecation
+            deprecation(34000, 'the argument "sortkey" will become mandatory in future sage versions')
+
         if op == Py_EQ:
             return self.__repn == other.__repn
         elif op == Py_NE:
             return self.__repn != other.__repn
-        elif sortkey is None:
+
+        if sortkey is None:
             raise TypeError("ordering of PolyDicts requires a sortkey")
 
         # start with biggest
-        left = iter(sorted(self.__repn, key=sortkey, reverse=True))
-        right = iter(sorted(other.__repn, key=sortkey, reverse=True))
+        cdef list left = sorted(self.__repn, key=sortkey, reverse=True)
+        cdef list right = sorted(other.__repn, key=sortkey, reverse=True)
 
-        for m in left:
-            try:
-                n = next(right)
-            except StopIteration:
-                return rich_to_bool(op, 1)  # left has terms, right does not
-
-            # first compare the leading monomials
+        cdef size_t i
+        for i in range(min(len(left), len(right))):
+            m = left[i]
+            n = right[i]
             keym = sortkey(m)
             keyn = sortkey(n)
+
+            # first compare the leading monomials
             if keym > keyn:
                 return rich_to_bool(op, 1)
             elif keym < keyn:
@@ -341,12 +349,7 @@ cdef class PolyDict:
             elif coefm < coefn:
                 return rich_to_bool(op, -1)
 
-        # try next pair
-        try:
-            n = next(right)
-            return rich_to_bool(op, -1)  # right has terms, left does not
-        except StopIteration:
-            return rich_to_bool(op, 0)  # both have no terms
+        return rich_to_bool(op, (len(left) > len(right)) - (len(left) < len(right)))
 
     def list(self):
         """
