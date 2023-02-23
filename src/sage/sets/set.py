@@ -101,14 +101,16 @@ def Set(X=None, category=None):
     EXAMPLES::
 
         sage: X = Set(GF(9, 'a'))                                               # optional - sage.libs.pari
-        sage: X
+        sage: X                                                                 # optional - sage.libs.pari
         {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2}
-        sage: type(X)
+        sage: type(X)                                                           # optional - sage.libs.pari
         <class 'sage.sets.set.Set_object_enumerated_with_category'>
-        sage: Y = X.union(Set(QQ))
-        sage: Y
-        Set-theoretic union of {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2} and Set of elements of Rational Field
-        sage: type(Y)
+        sage: Y = X.union(Set(QQ))                                              # optional - sage.libs.pari
+        sage: Y                                                                 # optional - sage.libs.pari
+        Set-theoretic union of
+         {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2} and
+         Set of elements of Rational Field
+        sage: type(Y)                                                           # optional - sage.libs.pari
         <class 'sage.sets.set.Set_object_union_with_category'>
 
     Usually sets can be used as dictionary keys.
