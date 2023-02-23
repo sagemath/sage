@@ -69,6 +69,7 @@ include sage/sets/finite_enumerated_set.py
 include sage/sets/disjoint_union_enumerated_sets.py
 include sage/sets/set_from_iterator.py
 include sage/sets/non_negative_integers.p*
+include sage/sets/finite_set_map*.p*
 include sage/misc/lazy_list.p*
 include sage/misc/mrange.p*
 include sage/misc/callable_dict.p*

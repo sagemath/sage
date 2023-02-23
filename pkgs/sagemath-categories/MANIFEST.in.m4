@@ -107,14 +107,11 @@ include sage/rings/polynomial/term_order.p*
 
 graft sage/rings/semirings
 
-include sage/sets/
-
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py
 include sage/sets/disjoint_union_enumerated_sets.py
 include sage/sets/family.py
 include sage/sets/finite_enumerated_set.py
-include sage/sets/finite_set_map*.p*
 include sage/sets/image_set.py
 include sage/sets/integer_range.py
 include sage/sets/non_negative_integers.py
