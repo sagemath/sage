@@ -6,7 +6,7 @@ if [ "$UNAME" = "CYGWIN" ]; then
     # Compiling with vpx support creates a broken library in some cases
     # because the vpx package itself is broken on some older Cygwin versions;
     # we don't need this feature so safer to just disable
-    # https://trac.sagemath.org/ticket/27970
+    # https://github.com/sagemath/sage/issues/27970
     LIBGD_CONFIGURE="--without-vpx $LIBGD_CONFIGURE"
 fi
 if [ -n "$SAGE_FREETYPE_PREFIX" ]; then

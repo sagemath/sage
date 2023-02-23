@@ -30,7 +30,7 @@ SAGE_ORIG_PATH=${NEW_PATH%%':'}
 # Also, Trac #20023 removed the vendored argparse library from sage_bootstrap,
 # so we test that python is new enough (>= 2.7) to run it.
 #
-# See https://trac.sagemath.org/ticket/29090
+# See https://github.com/sagemath/sage/issues/29090
 
 # Trac #29890: Our first choice is "python", not "python3". This is to avoid
 # a defect of sage_bootstrap on macOS regarding SSL URLs.

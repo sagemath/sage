@@ -88,7 +88,7 @@ class JoinFeature(Feature):
             sage: Latte().is_functional()  # optional - latte_int
             doctest:warning...
             DeprecationWarning: method JoinFeature.is_functional; use is_present instead
-            See https://trac.sagemath.org/33114 for details.
+            See https://github.com/sagemath/sage/issues/33114 for details.
             FeatureTestResult('latte_int', True)
         """
         try:

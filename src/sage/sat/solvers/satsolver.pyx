@@ -97,7 +97,7 @@ cdef class SatSolver:
         http://www.satcompetition.org/2009/format-benchmarks2009.html, and
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
-        The differences were summarized in the discussion on the ticket
+        The differences were summarized in the discussion on the issue
         :trac:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
