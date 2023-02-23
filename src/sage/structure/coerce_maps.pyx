@@ -46,7 +46,7 @@ cdef class DefaultConvertMap(Map):
 
         Test that :trac:`23211` is resolved::
 
-            sage: f._is_coercion
+            sage: f._is_coercion                                                # optional - sage.libs.pari
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
@@ -87,7 +87,7 @@ cdef class DefaultConvertMap(Map):
         EXAMPLES::
 
             sage: f = GF(11).convert_map_from(GF(7))                            # optional - sage.libs.pari
-            sage: f._repr_type()
+            sage: f._repr_type()                                                # optional - sage.libs.pari
             'Conversion'
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
