@@ -71,7 +71,7 @@ def has_finite_length(obj):
         True
         sage: has_finite_length(iter(range(10)))
         False
-        sage: has_finite_length(GF(17^127))
+        sage: has_finite_length(GF(17^127))                                     # optional - sage.libs.pari
         True
         sage: has_finite_length(ZZ)
         False
@@ -100,7 +100,7 @@ def Set(X=None, category=None):
 
     EXAMPLES::
 
-        sage: X = Set(GF(9,'a'))
+        sage: X = Set(GF(9, 'a'))                                               # optional - sage.libs.pari
         sage: X
         {0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2}
         sage: type(X)
@@ -218,18 +218,24 @@ class Set_base():
         EXAMPLES::
 
             sage: Set(QQ).union(Set(ZZ))
-            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
+            Set-theoretic union of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
             sage: Set(QQ) + Set(ZZ)
-            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
-            sage: X = Set(QQ).union(Set(GF(3))); X
-            Set-theoretic union of Set of elements of Rational Field and {0, 1, 2}
-            sage: 2/3 in X
+            Set-theoretic union of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
+            sage: X = Set(QQ).union(Set(GF(3))); X                              # optional - sage.libs.pari
+            Set-theoretic union of
+             Set of elements of Rational Field and
+             {0, 1, 2}
+            sage: 2/3 in X                                                      # optional - sage.libs.pari
             True
-            sage: GF(3)(2) in X
+            sage: GF(3)(2) in X                                                 # optional - sage.libs.pari
             True
-            sage: GF(5)(2) in X
+            sage: GF(5)(2) in X                                                 # optional - sage.libs.pari
             False
-            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)                      # optional - sage.libs.pari
             [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -253,12 +259,10 @@ class Set_base():
             sage: 2/1 in X
             True
 
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c')))
-            sage: X
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c'))); X           # optional - sage.libs.pari
             {}
 
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b')))
-            sage: X
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b'))); X           # optional - sage.libs.pari
             {}
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -282,12 +286,10 @@ class Set_base():
             sage: 4/1 in X
             True
 
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c')))
-            sage: X
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c'))); X             # optional - sage.libs.pari
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
 
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b')))
-            sage: X
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b'))); X             # optional - sage.libs.pari
             {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -411,11 +413,11 @@ class Set_add_sub_operators:
              Set-theoretic union of
               Set of elements of Real Field with 53 bits of precision and
               Set of elements of Vector space of dimension 5 over Rational Field
-            sage: Set(GF(3)) + Set(GF(2))
+            sage: Set(GF(3)) + Set(GF(2))                                               # optional - sage.libs.pari
             {0, 1, 2, 0, 1}
-            sage: Set(GF(2)) + Set(GF(4,'a'))
+            sage: Set(GF(2)) + Set(GF(4,'a'))                                           # optional - sage.libs.pari
             {0, 1, a, a + 1}
-            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)
+            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)                      # optional - sage.libs.pari
             [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
         """
         return self.union(X)
@@ -441,14 +443,14 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     EXAMPLES::
 
-        sage: K = GF(19)
-        sage: Set(K)
+        sage: K = GF(19)                                                                # optional - sage.libs.pari
+        sage: Set(K)                                                                    # optional - sage.libs.pari
         {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
-        sage: S = Set(K)
+        sage: S = Set(K)                                                                # optional - sage.libs.pari
 
-        sage: latex(S)
+        sage: latex(S)                                                                  # optional - sage.libs.pari
         \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
-        sage: TestSuite(S).run()
+        sage: TestSuite(S).run()                                                        # optional - sage.libs.pari
 
         sage: latex(Set(ZZ))
         \Bold{Z}
@@ -606,7 +608,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: X = Set(ZZ)
             sage: 5 in X
             True
-            sage: GF(7)(3) in X
+            sage: GF(7)(3) in X                                                 # optional - sage.libs.pari
             True
             sage: 2/1 in X
             True
@@ -618,16 +620,16 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         Finite fields better illustrate the difference between
         ``__contains__`` for objects and their underlying sets::
 
-            sage: X = Set(GF(7))
-            sage: X
+            sage: X = Set(GF(7))                                                # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, 2, 3, 4, 5, 6}
-            sage: 5/3 in X
+            sage: 5/3 in X                                                      # optional - sage.libs.pari
             False
-            sage: 5/3 in GF(7)
+            sage: 5/3 in GF(7)                                                  # optional - sage.libs.pari
             False
-            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)
+            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)                 # optional - sage.libs.pari
             [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
-            sage: Set(GF(7)).intersection(Set(GF(5)))
+            sage: Set(GF(7)).intersection(Set(GF(5)))                           # optional - sage.libs.pari
             {}
         """
         return x in self.__object
@@ -671,9 +673,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             +Infinity
             sage: Primes().cardinality()
             +Infinity
-            sage: Set(GF(5)).cardinality()
+            sage: Set(GF(5)).cardinality()                                      # optional - sage.libs.pari
             5
-            sage: Set(GF(5^2,'a')).cardinality()
+            sage: Set(GF(5^2,'a')).cardinality()                                # optional - sage.libs.pari
             25
         """
         if self in Sets().Infinite():
@@ -739,7 +741,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
             sage: Set(QQ).is_finite()
             False
-            sage: Set(GF(250037)).is_finite()
+            sage: Set(GF(250037)).is_finite()                                   # optional - sage.libs.pari
             True
             sage: Set(Integers(2^1000000)).is_finite()
             True
@@ -853,13 +855,13 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(19)); S
+            sage: S = Set(GF(19)); S                                                    # optional - sage.libs.pari
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
-            sage: S.category()
+            sage: S.category()                                                          # optional - sage.libs.pari
             Category of finite enumerated sets
-            sage: print(latex(S))
+            sage: print(latex(S))                                                       # optional - sage.libs.pari
             \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run()                                                    # optional - sage.libs.pari
         """
         Set_object.__init__(self, X, category=FiniteEnumeratedSets().or_subcategory(category))
 
@@ -884,7 +886,7 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: Set(GF(19)).is_finite()
+            sage: Set(GF(19)).is_finite()                                       # optional - sage.libs.pari
             True
         """
         return True
@@ -916,15 +918,15 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(19))
-            sage: I = iter(S)
-            sage: next(I)
+            sage: S = Set(GF(19))                                               # optional - sage.libs.pari
+            sage: I = iter(S)                                                   # optional - sage.libs.pari
+            sage: next(I)                                                       # optional - sage.libs.pari
             0
-            sage: next(I)
+            sage: next(I)                                                       # optional - sage.libs.pari
             1
-            sage: next(I)
+            sage: next(I)                                                       # optional - sage.libs.pari
             2
-            sage: next(I)
+            sage: next(I)                                                       # optional - sage.libs.pari
             3
         """
         return iter(self.set())
@@ -935,8 +937,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(2))
-            sage: latex(S)
+            sage: S = Set(GF(2))                                                # optional - sage.libs.pari
+            sage: latex(S)                                                      # optional - sage.libs.pari
             \left\{0, 1\right\}
         """
         return '\\left\\{' + ', '.join(latex(x) for x in self.set()) + '\\right\\}'
@@ -947,8 +949,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(2))
-            sage: S
+            sage: S = Set(GF(2))                                                # optional - sage.libs.pari
+            sage: S                                                             # optional - sage.libs.pari
             {0, 1}
 
         TESTS::
@@ -967,12 +969,12 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: X
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: X.list()
+            sage: X.list()                                                      # optional - sage.libs.pari
             [0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
-            sage: type(X.list())
+            sage: type(X.list())                                                # optional - sage.libs.pari
             <... 'list'>
 
         .. TODO::
@@ -995,14 +997,14 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: X
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: X.set()
+            sage: X.set()                                                       # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: type(X.set())
+            sage: type(X.set())                                                 # optional - sage.libs.pari
             <... 'set'>
-            sage: type(X)
+            sage: type(X)                                                       # optional - sage.libs.pari
             <class 'sage.sets.set.Set_object_enumerated_with_category'>
         """
         return set(self.object())
@@ -1014,22 +1016,22 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: X
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: s = X.set(); s
+            sage: s = X.set(); s                                                # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: hash(s)
+            sage: hash(s)                                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'set'
-            sage: s = X.frozenset(); s
+            sage: s = X.frozenset(); s                                          # optional - sage.libs.pari
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
 
-            sage: hash(s) != hash(tuple(X.set()))
+            sage: hash(s) != hash(tuple(X.set()))                               # optional - sage.libs.pari
             True
 
-            sage: type(s)
+            sage: type(s)                                                       # optional - sage.libs.pari
             <... 'frozenset'>
         """
         return frozenset(self.object())
@@ -1040,8 +1042,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: s = Set(GF(8,'c'))
-            sage: hash(s) == hash(s)
+            sage: s = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: hash(s) == hash(s)                                            # optional - sage.libs.pari
             True
         """
         return hash(self.frozenset())
@@ -1052,10 +1054,10 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: X == Set(GF(8,'c'))
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: X == Set(GF(8,'c'))                                           # optional - sage.libs.pari
             True
-            sage: X == Set(GF(4,'a'))
+            sage: X == Set(GF(4,'a'))                                           # optional - sage.libs.pari
             False
             sage: Set(QQ) == Set(ZZ)
             False
@@ -1132,13 +1134,13 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: Y = Set([GF(8,'c').0, 1, 2, 3])
-            sage: X
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: Y = Set([GF(8,'c').0, 1, 2, 3])                               # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: sorted(Y)
+            sage: sorted(Y)                                                     # optional - sage.libs.pari
             [1, 2, 3, c]
-            sage: sorted(X.union(Y), key=str)
+            sage: sorted(X.union(Y), key=str)                                   # optional - sage.libs.pari
             [0, 1, 2, 3, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1151,9 +1153,9 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: X = Set(GF(8,'c'))
-            sage: Y = Set([GF(8,'c').0, 1, 2, 3])
-            sage: X.intersection(Y)
+            sage: X = Set(GF(8,'c'))                                            # optional - sage.libs.pari
+            sage: Y = Set([GF(8,'c').0, 1, 2, 3])                               # optional - sage.libs.pari
+            sage: X.intersection(Y)                                             # optional - sage.libs.pari
             {1, c}
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1309,7 +1311,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: Set(ZZ).union(Set(GF(5)))
+            sage: Set(ZZ).union(Set(GF(5)))                                     # optional - sage.libs.pari
             Set-theoretic union of Set of elements of Integer Ring and {0, 1, 2, 3, 4}
         """
         return "Set-theoretic {} of {} and {}".format(self._op, self._X, self._Y)
@@ -1320,7 +1322,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: latex(Set(ZZ).union(Set(GF(5))))
+            sage: latex(Set(ZZ).union(Set(GF(5))))                              # optional - sage.libs.pari
             \Bold{Z} \cup \left\{0, 1, 2, 3, 4\right\}
         """
         return latex(self._X) + self._latex_op + latex(self._Y)
@@ -1334,9 +1336,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         The hash values of equal sets are in general not equal since it is not
         decidable whether two sets are equal::
 
-            sage: X = Set(GF(13)).intersection(Set(ZZ))
-            sage: Y = Set(ZZ).intersection(Set(GF(13)))
-            sage: hash(X) == hash(Y)
+            sage: X = Set(GF(13)).intersection(Set(ZZ))                         # optional - sage.libs.pari
+            sage: Y = Set(ZZ).intersection(Set(GF(13)))                         # optional - sage.libs.pari
+            sage: hash(X) == hash(Y)                                            # optional - sage.libs.pari
             False
 
         TESTS:
@@ -1442,7 +1444,7 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]
+            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]                     # optional - sage.libs.pari
             [0, 1, 2, 0, 1]
         """
         for x in self._X:
@@ -1456,14 +1458,14 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: X = Set(GF(3)).union(Set(GF(2)))
-            sage: GF(5)(1) in X
+            sage: X = Set(GF(3)).union(Set(GF(2)))                              # optional - sage.libs.pari
+            sage: GF(5)(1) in X                                                 # optional - sage.libs.pari
             False
-            sage: GF(3)(2) in X
+            sage: GF(3)(2) in X                                                 # optional - sage.libs.pari
             True
-            sage: GF(2)(0) in X
+            sage: GF(2)(0) in X                                                 # optional - sage.libs.pari
             True
-            sage: GF(5)(0) in X
+            sage: GF(5)(0) in X                                                 # optional - sage.libs.pari
             False
         """
         return x in self._X or x in self._Y
@@ -1474,14 +1476,14 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: X = Set(GF(3)).union(Set(GF(2)))
-            sage: X
+            sage: X = Set(GF(3)).union(Set(GF(2)))                              # optional - sage.libs.pari
+            sage: X                                                             # optional - sage.libs.pari
             {0, 1, 2, 0, 1}
-            sage: X.cardinality()
+            sage: X.cardinality()                                               # optional - sage.libs.pari
             5
 
-            sage: X = Set(GF(3)).union(Set(ZZ))
-            sage: X.cardinality()
+            sage: X = Set(GF(3)).union(Set(ZZ))                                 # optional - sage.libs.pari
+            sage: X.cardinality()                                               # optional - sage.libs.pari
             +Infinity
         """
         return self._X.cardinality() + self._Y.cardinality()
