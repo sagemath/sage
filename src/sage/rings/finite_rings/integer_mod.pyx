@@ -930,8 +930,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: k = GF(691)                                                   # optional - sage.libs.pari
-            sage: a = k(389)
-            sage: a.norm()
+            sage: a = k(389)                                                    # optional - sage.libs.pari
+            sage: a.norm()                                                      # optional - sage.libs.pari
             389
 
         AUTHORS:
