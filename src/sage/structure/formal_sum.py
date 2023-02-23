@@ -406,7 +406,7 @@ class FormalSums(UniqueRepresentation, Module):
 
         The following tests against a bug that was fixed at :trac:`18795`::
 
-            sage: isinstance(F7, F7.category().parent_class)
+            sage: isinstance(F7, F7.category().parent_class)                            # optional - sage.libs.pari
             True
         """
         if self.base_ring().has_coerce_map_from(R):
