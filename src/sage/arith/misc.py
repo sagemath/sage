@@ -1692,8 +1692,8 @@ class Sigma:
         EXAMPLES::
 
             sage: from sage.arith.misc import Sigma
-            sage: p = Sigma().plot()
-            sage: p.ymax()
+            sage: p = Sigma().plot()                                            # optional - sage.plot
+            sage: p.ymax()                                                      # optional - sage.plot
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
@@ -1974,8 +1974,8 @@ def xgcd(a, b):
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
 
-        sage: K.<g> = NumberField(x^2-3)
-        sage: g.xgcd(g+2)
+        sage: K.<g> = NumberField(x^2 - 3)                                      # optional - sage.rings.number_field
+        sage: g.xgcd(g + 2)                                                     # optional - sage.rings.number_field
         (1, 1/3*g, 0)
 
         sage: R.<a,b> = K[]
@@ -2013,10 +2013,10 @@ def xgcd(a, b):
 
     We check that :trac:`3330` has been fixed::
 
-        sage: R.<a,b> = NumberField(x^2-3,'g').extension(x^2-7,'h')[]
-        sage: h = R.base_ring().gen()
-        sage: S.<y> = R.fraction_field()[]
-        sage: xgcd(y^2, a*h*y+b)
+        sage: R.<a,b> = NumberField(x^2 - 3, 'g').extension(x^2 - 7, 'h')[]     # optional - sage.rings.number_field
+        sage: h = R.base_ring().gen()                                           # optional - sage.rings.number_field
+        sage: S.<y> = R.fraction_field()[]                                      # optional - sage.rings.number_field
+        sage: xgcd(y^2, a*h*y + b)                                              # optional - sage.rings.number_field
         (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
     """
     try:
@@ -3122,8 +3122,8 @@ class Euler_Phi:
         EXAMPLES::
 
             sage: from sage.arith.misc import Euler_Phi
-            sage: p = Euler_Phi().plot()
-            sage: p.ymax()
+            sage: p = Euler_Phi().plot()                                        # optional - sage.plot
+            sage: p.ymax()                                                      # optional - sage.plot
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
@@ -4476,8 +4476,8 @@ class Moebius:
 
     ::
 
-        sage: x = GF(7)['x'].0
-        sage: moebius(x+2)
+        sage: x = GF(7)['x'].0                                                  # optional - sage.libs.pari
+        sage: moebius(x + 2)                                                    # optional - sage.libs.pari
         -1
 
     Tests with numpy and gmpy2 numbers::
@@ -4552,8 +4552,8 @@ class Moebius:
         EXAMPLES::
 
             sage: from sage.arith.misc import Moebius
-            sage: p = Moebius().plot()
-            sage: p.ymax()
+            sage: p = Moebius().plot()                                          # optional - sage.plot
+            sage: p.ymax()                                                      # optional - sage.plot
             1.0
         """
         values = self.range(xmin, xmax + 1)
@@ -6188,45 +6188,45 @@ def gauss_sum(char_value, finite_field):
     EXAMPLES::
 
         sage: from sage.arith.misc import gauss_sum
-        sage: F = GF(5); q = 5
-        sage: zq = UniversalCyclotomicField().zeta(q-1)
-        sage: L = [gauss_sum(zq**i,F) for i in range(5)]; L
+        sage: F = GF(5); q = 5                                                  # optional - sage.libs.pari
+        sage: zq = UniversalCyclotomicField().zeta(q-1)                         # optional - sage.libs.pari
+        sage: L = [gauss_sum(zq**i, F) for i in range(5)]; L                    # optional - sage.libs.pari
         [-1,
          E(20)^4 + E(20)^13 - E(20)^16 - E(20)^17,
          E(5) - E(5)^2 - E(5)^3 + E(5)^4,
          E(20)^4 - E(20)^13 - E(20)^16 + E(20)^17,
          -1]
-        sage: [g*g.conjugate() for g in L]
+        sage: [g*g.conjugate() for g in L]                                      # optional - sage.libs.pari
         [1, 5, 5, 5, 1]
 
-        sage: F = GF(11**2); q = 11**2
-        sage: zq = UniversalCyclotomicField().zeta(q-1)
-        sage: g = gauss_sum(zq**4,F)
-        sage: g*g.conjugate()
+        sage: F = GF(11**2); q = 11**2                                          # optional - sage.libs.pari
+        sage: zq = UniversalCyclotomicField().zeta(q - 1)                       # optional - sage.libs.pari
+        sage: g = gauss_sum(zq**4, F)                                           # optional - sage.libs.pari
+        sage: g*g.conjugate()                                                   # optional - sage.libs.pari
         121
 
     TESTS::
 
-        sage: F = GF(11); q = 11
-        sage: zq = UniversalCyclotomicField().zeta(q-1)
-        sage: gauss_sum(zq**2,F).n(60)
+        sage: F = GF(11); q = 11                                                # optional - sage.libs.pari, sage.rings.number_field
+        sage: zq = UniversalCyclotomicField().zeta(q - 1)                       # optional - sage.libs.pari, sage.rings.number_field
+        sage: gauss_sum(zq**2, F).n(60)                                         # optional - sage.libs.pari, sage.rings.number_field
         2.6361055643248352 + 2.0126965627574471*I
 
-        sage: zq = QQbar.zeta(q-1)
-        sage: gauss_sum(zq**2,F)
+        sage: zq = QQbar.zeta(q - 1)                                            # optional - sage.libs.pari, sage.rings.number_field
+        sage: gauss_sum(zq**2, F)                                               # optional - sage.libs.pari, sage.rings.number_field
         2.636105564324836? + 2.012696562757447?*I
 
-        sage: zq = ComplexField(60).zeta(q-1)
-        sage: gauss_sum(zq**2,F)
+        sage: zq = ComplexField(60).zeta(q - 1)                                 # optional - sage.libs.pari, sage.rings.number_field
+        sage: gauss_sum(zq**2, F)                                               # optional - sage.libs.pari, sage.rings.number_field
         2.6361055643248352 + 2.0126965627574471*I
 
-        sage: F = GF(7); q = 7
-        sage: zq = QQbar.zeta(q-1)
-        sage: D = DirichletGroup(7, QQbar)
-        sage: all(D[i].gauss_sum()==gauss_sum(zq**i,F) for i in range(6))
+        sage: F = GF(7); q = 7                                                  # optional - sage.libs.pari, sage.rings.number_field
+        sage: zq = QQbar.zeta(q - 1)                                            # optional - sage.libs.pari, sage.rings.number_field
+        sage: D = DirichletGroup(7, QQbar)                                      # optional - sage.libs.pari, sage.rings.number_field
+        sage: all(D[i].gauss_sum() == gauss_sum(zq**i, F) for i in range(6))    # optional - sage.libs.pari, sage.rings.number_field
         True
 
-        sage: gauss_sum(1,QQ)
+        sage: gauss_sum(1, QQ)
         Traceback (most recent call last):
         ...
         ValueError: second input must be a finite field
