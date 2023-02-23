@@ -387,7 +387,7 @@ sage class. In this case the class is specified using the arguments to
 
 Here is an example to test the pickling of a :class:`GlobalOptions` instance::
 
-    sage: TestSuite(Partitions.options).run()
+    sage: TestSuite(Partitions.options).run()                                   # optional - sage.combinat
 
 TESTS:
 
@@ -740,7 +740,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: str(Tableaux.options.convention)
+            sage: str(Tableaux.options.convention)                              # optional - sage.combinat
             'English'
         """
         return str(self._options[self._name])
