@@ -110,14 +110,19 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
     ::
 
-        sage: A.<y> = PolynomialRing(GF(2)); A
+        sage: A.<y> = PolynomialRing(GF(2)); A                                                              # optional - sage.libs.pari
         Univariate Polynomial Ring in y over Finite Field of size 2 (using GF2X)
-        sage: B = A.quotient(y^2 + y + 1, 'y2'); B
+        sage: B = A.quotient(y^2 + y + 1, 'y2'); B                                                          # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in y2 over Finite Field of size 2 with modulus y^2 + y + 1
-        sage: C = PolynomialRing(B, 'x'); x=C.gen(); C
-        Univariate Polynomial Ring in x over Univariate Quotient Polynomial Ring in y2 over Finite Field of size 2 with modulus y^2 + y + 1
-        sage: R = C.quotient(x^3 - 5); R
-        Univariate Quotient Polynomial Ring in xbar over Univariate Quotient Polynomial Ring in y2 over Finite Field of size 2 with modulus y^2 + y + 1 with modulus x^3 + 1
+        sage: C = PolynomialRing(B, 'x'); x = C.gen(); C                                                    # optional - sage.libs.pari
+        Univariate Polynomial Ring in x
+         over Univariate Quotient Polynomial Ring in y2
+          over Finite Field of size 2 with modulus y^2 + y + 1
+        sage: R = C.quotient(x^3 - 5); R                                                                    # optional - sage.libs.pari
+        Univariate Quotient Polynomial Ring in xbar
+         over Univariate Quotient Polynomial Ring in y2
+          over Finite Field of size 2 with modulus y^2 + y + 1
+          with modulus x^3 + 1
 
     Next we create a number field, but viewed as a quotient of a
     polynomial ring over `\QQ`::
@@ -391,11 +396,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Check that :trac:`26161` has been resolved::
 
-            sage: R.<x> = GF(2)[]
-            sage: S = R.quo(x)
-            sage: S in FiniteFields()
+            sage: R.<x> = GF(2)[]                                                                           # optional - sage.libs.pari
+            sage: S = R.quo(x)                                                                              # optional - sage.libs.pari
+            sage: S in FiniteFields()                                                                       # optional - sage.libs.pari
             True
-            sage: type(S).mro()
+            sage: type(S).mro()                                                                             # optional - sage.libs.pari
             [<class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category'>,
             ...
              <class 'sage.categories.finite_fields.FiniteFields.parent_class'>,
@@ -549,16 +554,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: P5.<x> = GF(5)[]
-            sage: Q = P5.quo([(x^2+1)^2])
+            sage: P5.<x> = GF(5)[]                                              # optional - sage.libs.pari
+            sage: Q = P5.quo([(x^2+1)^2])                                       # optional - sage.libs.pari
             sage: P.<x> = ZZ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
             sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])
-            sage: Q.has_coerce_map_from(Q1)  #indirect doctest
+            sage: Q.has_coerce_map_from(Q1)  #indirect doctest                  # optional - sage.libs.pari
             True
-            sage: Q1.has_coerce_map_from(Q)
+            sage: Q1.has_coerce_map_from(Q)                                     # optional - sage.libs.pari
             False
-            sage: Q1.has_coerce_map_from(Q2)
+            sage: Q1.has_coerce_map_from(Q2)                                    # optional - sage.libs.pari
             False
 
         The following tests against a bug fixed in :trac:`8992`::
@@ -588,15 +593,15 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)
-            sage: R.<x> = K[]
-            sage: S.<a> = R.quotient(x^2 - i)
-            sage: Q8.<z> = CyclotomicField(8)
-            sage: S._is_valid_homomorphism_(Q8, [z]) # no coercion from K to Q8
+            sage: K.<i> = NumberField(t^2 + 1)                                  # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                   # optional - sage.rings.number_field
+            sage: S.<a> = R.quotient(x^2 - i)                                   # optional - sage.rings.number_field
+            sage: Q8.<z> = CyclotomicField(8)                                   # optional - sage.rings.number_field
+            sage: S._is_valid_homomorphism_(Q8, [z]) # no coercion from K to Q8 # optional - sage.rings.number_field
             False
-            sage: S._is_valid_homomorphism_(Q8, [z], K.hom([z^2]))
+            sage: S._is_valid_homomorphism_(Q8, [z], K.hom([z^2]))              # optional - sage.rings.number_field
             True
-            sage: S._is_valid_homomorphism_(Q8, [1/z], K.hom([z^-2]))
+            sage: S._is_valid_homomorphism_(Q8, [1/z], K.hom([z^-2]))           # optional - sage.rings.number_field
             True
         """
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
@@ -767,15 +772,15 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: P.<t>=ZZ[]
-            sage: Q = P.quo(5+t^2)
+            sage: P.<t> = ZZ[]
+            sage: Q = P.quo(5 + t^2)
             sage: F, R = Q.construction()
             sage: F(R) == Q
             True
-            sage: P.<t> = GF(3)[]
-            sage: Q = P.quo([2+t^2])
-            sage: F, R = Q.construction()
-            sage: F(R) == Q
+            sage: P.<t> = GF(3)[]                                               # optional - sage.libs.pari
+            sage: Q = P.quo([2 + t^2])                                          # optional - sage.libs.pari
+            sage: F, R = Q.construction()                                       # optional - sage.libs.pari
+            sage: F(R) == Q                                                     # optional - sage.libs.pari
             True
 
         AUTHOR:
@@ -841,12 +846,12 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: R.<x> = GF(9,'a')[]
-            sage: R.quo(2*x^3+x+1).cardinality()
+            sage: R.<x> = GF(9, 'a')[]                                          # optional - sage.libs.pari
+            sage: R.quo(2*x^3 + x + 1).cardinality()                            # optional - sage.libs.pari
             729
-            sage: GF(9,'a').extension(2*x^3+x+1).cardinality()
+            sage: GF(9, 'a').extension(2*x^3 + x + 1).cardinality()             # optional - sage.libs.pari
             729
-            sage: R.quo(2).cardinality()
+            sage: R.quo(2).cardinality()                                        # optional - sage.libs.pari
             1
 
         TESTS::
@@ -885,16 +890,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: R.<x> = GF(9,'a')[]
-            sage: R.quo(2*x^3+x+1).is_finite()
+            sage: R.<x> = GF(9, 'a')[]                                          # optional - sage.libs.pari
+            sage: R.quo(2*x^3 + x + 1).is_finite()                              # optional - sage.libs.pari
             True
-            sage: R.quo(2).is_finite()
+            sage: R.quo(2).is_finite()                                          # optional - sage.libs.pari
             True
 
         ::
 
             sage: P.<v> = GF(2)[]
-            sage: P.quotient(v^2-v).is_finite()
+            sage: P.quotient(v^2 - v).is_finite()                               # optional - sage.libs.pari
             True
         """
         f = self.modulus()
@@ -910,9 +915,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         r"""
         EXAMPLES::
 
-            sage: R.<x> = GF(3)[]
-            sage: Q = R.quo(x^3 - x^2 - x - 1)
-            sage: list(Q)
+            sage: R.<x> = GF(3)[]                                               # optional - sage.libs.pari
+            sage: Q = R.quo(x^3 - x^2 - x - 1)                                  # optional - sage.libs.pari
+            sage: list(Q)                                                       # optional - sage.libs.pari
             [0,
              1,
              2,
@@ -923,7 +928,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              ...
              2*xbar^2 + 2*xbar + 1,
              2*xbar^2 + 2*xbar + 2]
-            sage: len(_) == Q.cardinality() == 27
+            sage: len(_) == Q.cardinality() == 27                               # optional - sage.libs.pari
             True
         """
         if not self.is_finite():
@@ -947,9 +952,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S.<a> = R.quo(z - 19)
             sage: S.characteristic()
             0
-            sage: R.<x> = PolynomialRing(GF(9,'a'))
-            sage: S = R.quotient(x^3 + 1)
-            sage: S.characteristic()
+            sage: R.<x> = PolynomialRing(GF(9, 'a'))                            # optional - sage.libs.pari
+            sage: S = R.quotient(x^3 + 1)                                       # optional - sage.libs.pari
+            sage: S.characteristic()                                            # optional - sage.libs.pari
             3
         """
         return self.base_ring().characteristic()
@@ -961,9 +966,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(GF(3))
-            sage: S = R.quotient(x^2005 + 1)
-            sage: S.degree()
+            sage: R.<x> = PolynomialRing(GF(3))                                 # optional - sage.libs.pari
+            sage: S = R.quotient(x^2005 + 1)                                    # optional - sage.libs.pari
+            sage: S.degree()                                                    # optional - sage.libs.pari
             2005
         """
         return self.modulus().degree()
@@ -1168,9 +1173,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(GF(3))
-            sage: S = R.quotient(x^2 - 2)
-            sage: S.modulus()
+            sage: R.<x> = PolynomialRing(GF(3))                                 # optional - sage.libs.pari
+            sage: S = R.quotient(x^2 - 2)                                       # optional - sage.libs.pari
+            sage: S.modulus()                                                   # optional - sage.libs.pari
             x^2 + 1
         """
         return self.__polynomial
@@ -1201,11 +1206,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<alpha> = R.quotient(x^29 - 17*x - 1)
-            sage: K = S.number_field()
-            sage: K
+            sage: K = S.number_field()                                          # optional - sage.rings.number_field
+            sage: K                                                             # optional - sage.rings.number_field
             Number Field in alpha with defining polynomial x^29 - 17*x - 1
-            sage: alpha = K.gen()
-            sage: alpha^29
+            sage: alpha = K.gen()                                               # optional - sage.rings.number_field
+            sage: alpha^29                                                      # optional - sage.rings.number_field
             17*alpha + 1
         """
         if self.characteristic() != 0:
@@ -1246,10 +1251,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: F1.<a> = GF(2^7)
-            sage: P1.<x> = F1[]
-            sage: F2 = F1.extension(x^2+x+1, 'u')
-            sage: F2.random_element().parent() is F2
+            sage: F1.<a> = GF(2^7)                                              # optional - sage.libs.pari
+            sage: P1.<x> = F1[]                                                 # optional - sage.libs.pari
+            sage: F2 = F1.extension(x^2 + x + 1, 'u')                           # optional - sage.libs.pari
+            sage: F2.random_element().parent() is F2                            # optional - sage.libs.pari
             True
         """
         return self(self.polynomial_ring().random_element( \
@@ -1829,13 +1834,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: k.<a> = GF(4)
-            sage: R.<b> = k[]
-            sage: l.<b> = k.extension(b^2 + b + a)
-            sage: K.<x> = FunctionField(l)
-            sage: R.<t> = K[]
-            sage: F = t*x
-            sage: F.factor(proof=False)
+            sage: k.<a> = GF(4)                                                 # optional - sage.libs.pari
+            sage: R.<b> = k[]                                                   # optional - sage.libs.pari
+            sage: l.<b> = k.extension(b^2 + b + a)                              # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(l)                                      # optional - sage.libs.pari
+            sage: R.<t> = K[]                                                   # optional - sage.libs.pari
+            sage: F = t * x                                                     # optional - sage.libs.pari
+            sage: F.factor(proof=False)                                         # optional - sage.libs.pari
             (x) * t
 
         """
@@ -1856,17 +1861,17 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: K = GF(2)
-            sage: R.<x> = K[]
-            sage: L.<x> = K.extension(x^2 + x + 1)
-            sage: R.<y> = L[]
-            sage: M.<y> = L.extension(y^2 + y + x)
-            sage: R.<T> = M[]
-            sage: R(y).factor() # indirect doctest
+            sage: K = GF(2)                                                     # optional - sage.libs.pari
+            sage: R.<x> = K[]                                                   # optional - sage.libs.pari
+            sage: L.<x> = K.extension(x^2 + x + 1)                              # optional - sage.libs.pari
+            sage: R.<y> = L[]                                                   # optional - sage.libs.pari
+            sage: M.<y> = L.extension(y^2 + y + x)                              # optional - sage.libs.pari
+            sage: R.<T> = M[]                                                   # optional - sage.libs.pari
+            sage: R(y).factor() # indirect doctest                              # optional - sage.libs.pari
             y
-            sage: (T^2 + T + x).factor() # indirect doctest
+            sage: (T^2 + T + x).factor() # indirect doctest                     # optional - sage.libs.pari
             (T + y) * (T + y + 1)
-            sage: (y*T^2 + y*T + y*x).factor() # indirect doctest
+            sage: (y*T^2 + y*T + y*x).factor() # indirect doctest               # optional - sage.libs.pari
             (y) * (T + y) * (T + y + 1)
 
         """
@@ -1907,17 +1912,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(4)
-            sage: R.<b> = K[]
-            sage: L.<b> = K.extension(b^2+b+a); L
-            Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^2 with modulus b^2 + b + a
-            sage: from_M, to_M, M = L._isomorphic_ring(); M
+            sage: K.<a> = GF(4)                                                 # optional - sage.libs.pari
+            sage: R.<b> = K[]                                                   # optional - sage.libs.pari
+            sage: L.<b> = K.extension(b^2 + b + a); L                           # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in b
+             over Finite Field in a of size 2^2 with modulus b^2 + b + a
+            sage: from_M, to_M, M = L._isomorphic_ring(); M                     # optional - sage.libs.pari
             Finite Field in z4 of size 2^4
 
-            sage: R.<c> = L[]
-            sage: M.<c> = L.extension(c^2+b*c+b); M
-            Univariate Quotient Polynomial Ring in c over Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^2 with modulus b^2 + b + a with modulus c^2 + b*c + b
-            sage: from_N, to_N, N = M._isomorphic_ring(); N
+            sage: R.<c> = L[]                                                   # optional - sage.libs.pari
+            sage: M.<c> = L.extension(c^2 + b*c + b); M                         # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in c
+             over Univariate Quotient Polynomial Ring in b
+              over Finite Field in a of size 2^2 with modulus b^2 + b + a
+              with modulus c^2 + b*c + b
+            sage: from_N, to_N, N = M._isomorphic_ring(); N                     # optional - sage.libs.pari
             Finite Field in z8 of size 2^8
 
             sage: R.<x> = QQ[]
@@ -1930,9 +1939,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Verify that this works for trivial extensions::
 
-            sage: K.<a> = GF(4)
-            sage: R.<b> = K[]
-            sage: from_L, to_L, L = R.quo(b)._isomorphic_ring(); L
+            sage: K.<a> = GF(4)                                                 # optional - sage.libs.pari
+            sage: R.<b> = K[]                                                   # optional - sage.libs.pari
+            sage: from_L, to_L, L = R.quo(b)._isomorphic_ring(); L              # optional - sage.libs.pari
             Finite Field in a of size 2^2
 
         """
@@ -2049,13 +2058,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: K.<a> = GF(4)
-            sage: R.<b> = K[]
-            sage: L.<b> = K.extension(b^2+b+a)
-            sage: L._test_isomorphic_ring()
-            sage: R.<c> = L[]
-            sage: M.<c> = L.extension(c^2+b*c+b)
-            sage: M._test_isomorphic_ring()
+            sage: K.<a> = GF(4)                                                 # optional - sage.libs.pari
+            sage: R.<b> = K[]                                                   # optional - sage.libs.pari
+            sage: L.<b> = K.extension(b^2 + b + a)                              # optional - sage.libs.pari
+            sage: L._test_isomorphic_ring()                                     # optional - sage.libs.pari
+            sage: R.<c> = L[]                                                   # optional - sage.libs.pari
+            sage: M.<c> = L.extension(c^2 + b*c + b)                            # optional - sage.libs.pari
+            sage: M._test_isomorphic_ring()                                     # optional - sage.libs.pari
 
         """
         tester = self._tester(**options)
@@ -2264,9 +2273,9 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
 
         Note that the parent ring must be an integral domain::
 
-            sage: R.<x> = GF(25,'f25')['x']
-            sage: S.<a> = R.quo(x^3 - 2)
-            sage: F, g, h = S.field_extension('b')
+            sage: R.<x> = GF(25, 'f25')['x']                                    # optional - sage.libs.pari
+            sage: S.<a> = R.quo(x^3 - 2)                                        # optional - sage.libs.pari
+            sage: F, g, h = S.field_extension('b')                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             AttributeError: 'PolynomialQuotientRing_generic_with_category' object has no attribute 'field_extension'
@@ -2274,21 +2283,21 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
         Over a finite field, the corresponding field extension is not a
         number field::
 
-            sage: R.<x> = GF(25, 'a')['x']
-            sage: S.<a> = R.quo(x^3 + 2*x + 1)
-            sage: F, g, h = S.field_extension('b')
-            sage: h(F.0^2 + 3)
+            sage: R.<x> = GF(25, 'a')['x']                                      # optional - sage.libs.pari
+            sage: S.<a> = R.quo(x^3 + 2*x + 1)                                  # optional - sage.libs.pari
+            sage: F, g, h = S.field_extension('b')                              # optional - sage.libs.pari
+            sage: h(F.0^2 + 3)                                                  # optional - sage.libs.pari
             a^2 + 3
-            sage: g(x^2 + 2)
+            sage: g(x^2 + 2)                                                    # optional - sage.libs.pari
             b^2 + 2
 
         We do an example involving a relative number field::
 
             sage: R.<x> = QQ['x']
-            sage: K.<a> = NumberField(x^3 - 2)
-            sage: S.<X> = K['X']
-            sage: Q.<b> = S.quo(X^3 + 2*X + 1)
-            sage: Q.field_extension('b')
+            sage: K.<a> = NumberField(x^3 - 2)                                  # optional - sage.rings.number_field
+            sage: S.<X> = K['X']                                                # optional - sage.rings.number_field
+            sage: Q.<b> = S.quo(X^3 + 2*X + 1)                                  # optional - sage.rings.number_field
+            sage: Q.field_extension('b')                                        # optional - sage.rings.number_field
             (Number Field in b with defining polynomial X^3 + 2*X + 1 over its base field, ...
               Defn: b |--> b, Relative number field morphism:
               From: Number Field in b with defining polynomial X^3 + 2*X + 1 over its base field
@@ -2301,19 +2310,19 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
         ::
 
             sage: R.<x> = QQ['x']
-            sage: K.<a> = NumberField(x^3 - 2)
-            sage: S.<X> = K['X']
-            sage: f = (X+a)^3 + 2*(X+a) + 1
-            sage: f
+            sage: K.<a> = NumberField(x^3 - 2)                                  # optional - sage.rings.number_field
+            sage: S.<X> = K['X']                                                # optional - sage.rings.number_field
+            sage: f = (X+a)^3 + 2*(X+a) + 1                                     # optional - sage.rings.number_field
+            sage: f                                                             # optional - sage.rings.number_field
             X^3 + 3*a*X^2 + (3*a^2 + 2)*X + 2*a + 3
-            sage: Q.<z> = S.quo(f)
-            sage: F.<w>, g, h = Q.field_extension()
-            sage: c = g(z)
-            sage: f(c)
+            sage: Q.<z> = S.quo(f)                                              # optional - sage.rings.number_field
+            sage: F.<w>, g, h = Q.field_extension()                             # optional - sage.rings.number_field
+            sage: c = g(z)                                                      # optional - sage.rings.number_field
+            sage: f(c)                                                          # optional - sage.rings.number_field
             0
-            sage: h(g(z))
+            sage: h(g(z))                                                       # optional - sage.rings.number_field
             z
-            sage: g(h(w))
+            sage: g(h(w))                                                       # optional - sage.rings.number_field
             w
 
         AUTHORS:

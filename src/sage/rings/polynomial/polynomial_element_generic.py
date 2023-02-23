@@ -188,13 +188,13 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<w> = PolynomialRing(GF(9,'a'), sparse=True)
-            sage: f = w^1997 - w^10000
-            sage: f.valuation()
+            sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)               # optional - sage.libs.pari
+            sage: f = w^1997 - w^10000                                          # optional - sage.libs.pari
+            sage: f.valuation()                                                 # optional - sage.libs.pari
             1997
-            sage: R(19).valuation()
+            sage: R(19).valuation()                                             # optional - sage.libs.pari
             0
-            sage: R(0).valuation()
+            sage: R(0).valuation()                                              # optional - sage.libs.pari
             +Infinity
         """
         if not self.__coeffs:
@@ -1066,11 +1066,11 @@ class Polynomial_generic_field(Polynomial_singular_repr,
         EXAMPLES::
 
             sage: R.<y> = PolynomialRing(QQ)
-            sage: K.<t> = NumberField(y^2 - 2)
-            sage: P.<x> = PolynomialRing(K)
-            sage: x.quo_rem(K(1))
+            sage: K.<t> = NumberField(y^2 - 2)                                  # optional - sage.rings.number_field
+            sage: P.<x> = PolynomialRing(K)                                     # optional - sage.rings.number_field
+            sage: x.quo_rem(K(1))                                               # optional - sage.rings.number_field
             (x, 0)
-            sage: x.xgcd(K(1))
+            sage: x.xgcd(K(1))                                                  # optional - sage.rings.number_field
             (1, 0, 1)
         """
         P = self.parent()
@@ -1186,10 +1186,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         Check that :trac:`22936` is fixed::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))
-            sage: R.<y> = S[]
-            sage: p = x^2+y+x*y^2
-            sage: p.newton_polygon()
+            sage: S.<x> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: R.<y> = S[]                                                   # optional - sage.libs.pari
+            sage: p = x^2 + y + x*y^2                                           # optional - sage.libs.pari
+            sage: p.newton_polygon()                                            # optional - sage.libs.pari
             Finite Newton polygon with 3 vertices: (0, 2), (1, 0), (2, 1)
 
         AUTHOR:
@@ -1289,10 +1289,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))
-            sage: R.<y> = S[]
-            sage: p = x^2+y+x*y^2
-            sage: p._factor_of_degree(1)
+            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.libs.pari
+            sage: R.<y> = S[]                                                           # optional - sage.libs.pari
+            sage: p = x^2 + y + x*y^2                                                   # optional - sage.libs.pari
+            sage: p._factor_of_degree(1)                                                # optional - sage.libs.pari
             (1 + O(x^20))*y + x^2 + x^5 + 2*x^8 + 4*x^14 + 2*x^17 + 2*x^20 + O(x^22)
 
         AUTHOR:
@@ -1424,11 +1424,13 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))
-            sage: R.<y> = S[]
-            sage: p = x^2+y+x*y^2
-            sage: p.slope_factorization()
-            (x) * ((x + O(x^22))*y + 1 + 4*x^3 + 4*x^6 + 3*x^9 + x^15 + 3*x^18 + O(x^21)) * ((x^-1 + O(x^20))*y + x + x^4 + 2*x^7 + 4*x^13 + 2*x^16 + 2*x^19 + O(x^22))
+            sage: S.<x> = PowerSeriesRing(GF(5))                                # optional - sage.libs.pari
+            sage: R.<y> = S[]                                                   # optional - sage.libs.pari
+            sage: p = x^2 + y + x*y^2                                           # optional - sage.libs.pari
+            sage: p.slope_factorization()                                       # optional - sage.libs.pari
+            (x)
+            * ((x + O(x^22))*y + 1 + 4*x^3 + 4*x^6 + 3*x^9 + x^15 + 3*x^18 + O(x^21))
+            * ((x^-1 + O(x^20))*y + x + x^4 + 2*x^7 + 4*x^13 + 2*x^16 + 2*x^19 + O(x^22))
 
         AUTHOR:
 
