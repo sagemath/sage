@@ -139,7 +139,7 @@ def setup_for_eval_on_grid(funcs,
     else:
         vars, free_vars = unify_arguments(funcs)
 
-    # check for invalid range entered by user (xmin > xmax or ymin > ymax) and swap the values if True
+    # check for invalid range (xmin > xmax or ymin > ymax) and swap 
     if len(ranges) > 1:
         for i in range(len(ranges)):
             if ranges[i][-2] > ranges[i][-1]:
