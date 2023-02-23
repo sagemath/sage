@@ -256,7 +256,7 @@ class LinearExtensionOfPoset(ClonableArray,
         r"""
         Return ``True`` if the linear extension is supergreedy.
         
-        A linear extension `[x_1<x_2<...<x_t]` of a finite ordered
+        A linear extension `[x_1,x_2,...,x_t]` of a finite ordered
         set `P=(P, <)` is *super greedy* if it can be obtained using
         the following procedure: Choose `x_1` to be a minimal
         element of `P`; suppose `x_1,...,x_i` have been chosen;
@@ -296,18 +296,23 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         P = self.poset()
         H = P.hasse_diagram()
+        sources = H.sources()
+        linext=[]
         if not self:
             return True
-        if self[0] not in H.sources():
+        if self[0] not in sources:
             return False
         for i in range(len(self)-2):
-            k = len(self[:i+1])
+            linext.append(self[i])
+            k = len(linext)
             L = []
             while not L:
                 if not k:
-                    L = [x for x in H.sources() if x not in self[:i+1]]
+                    L = [x for x in sources if x not in linext]
                 else:
-                    L = [x for x in H.neighbor_out_iterator(self[:i+1][k-1]) if x not in self[:i+1] and all(low in self[:i+1] for low in H.neighbor_in_iterator(x))]
+                    for x in H.neighbor_out_iterator(linext[k-1]):
+                        if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x)):
+                            L.append(x)
                     k -= 1
             if self[i+1] in L:
                 continue
