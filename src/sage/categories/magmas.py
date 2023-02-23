@@ -785,7 +785,7 @@ class Magmas(Category_singleton):
             # This should instead register the multiplication to the coercion model
             # But this is not yet implemented in the coercion model
             #
-            # Trac ticket #11900: The following used to test whether
+            # Github issue #11900: The following used to test whether
             # self.product != self.product_from_element_class_mul. But
             # that is, of course, a bug. Namely otherwise, if the parent
             # has an optimized `product` then its elements will *always* use
