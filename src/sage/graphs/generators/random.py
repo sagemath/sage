@@ -1443,8 +1443,8 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
     ::
 
         sage: G = graphs.RandomTreePowerlaw(15, 2)
-        sage: if G:
-        ....:     G.show()  # random output, long time
+        sage: if G:                                   # random output, long time
+        ....:     G.show()
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1483,8 +1483,8 @@ def RandomRegular(d, n, seed=None):
     ::
 
         sage: G = graphs.RandomRegular(3, 20)
-        sage: if G:
-        ....:     G.show()  # random output, long time
+        sage: if G:                           # random output, long time
+        ....:     G.show()
 
     REFERENCES:
 

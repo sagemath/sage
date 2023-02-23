@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Common graphs
 
@@ -1752,10 +1751,10 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4,13):                        # optional plantri
-            ....:     cmd = '-qm2c2 {}'.format(i)              # optional plantri
-            ....:     L =  len(list(graphs.plantri_gen(cmd)))  # optional plantri
-            ....:     print("{:2d}   {:3d}".format(i, L))      # optional plantri
+            sage: for i in range(4, 13):                        # optional plantri
+            ....:     cmd = '-qm2c2 {}'.format(i)
+            ....:     L = len(list(graphs.plantri_gen(cmd)))
+            ....:     print("{:2d}   {:3d}".format(i, L))
              4     1
              5     1
              6     2

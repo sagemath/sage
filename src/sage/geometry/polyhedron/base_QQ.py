@@ -1030,7 +1030,8 @@ class Polyhedron_QQ(Polyhedron_base):
         G = `\Zmod{2}` act on P as follows::
 
             sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1],   # optional - pynormaliz
-            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                      # optional - pynormaliz
+            ....:                          [0,-1,-1],[1,1,1],[-1,-1,-1]],
+            ....:                backend='normaliz')
             sage: K = P.restricted_automorphism_group(output = 'permutation')            # optional - pynormaliz
             sage: G = K.subgroup(gens = [K([(0,2),(1,3),(4,6),(5,7)])])                  # optional - pynormaliz
             sage: conj_reps = G.conjugacy_classes_representatives()                      # optional - pynormaliz
@@ -1165,7 +1166,8 @@ class Polyhedron_QQ(Polyhedron_base):
         If the `H^*`-series is not polynomial, then it is not effective::
 
             sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1], # optional - pynormaliz
-            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                    # optional - pynormaliz
+            ....:                          [0,-1,-1],[1,1,1],[-1,-1,-1]],
+            ....:                backend='normaliz')
             sage: G = P.restricted_automorphism_group(output = 'permutation')          # optional - pynormaliz
             sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])                # optional - pynormaliz
             sage: Hstar = P.Hstar_function(H); Hstar                                   # optional - pynormaliz
