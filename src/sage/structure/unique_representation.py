@@ -424,10 +424,10 @@ Class inheritance
 Using :class:`CachedRepresentation` has the advantage that one has a class and
 creates cached instances of this class by the usual Python syntax::
 
-    sage: G = SymmetricGroup(6)
-    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)
+    sage: G = SymmetricGroup(6)                                                                     # optional - sage.groups
+    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)     # optional - sage.groups
     True
-    sage: isinstance(G, SymmetricGroup)
+    sage: isinstance(G, SymmetricGroup)                                                             # optional - sage.groups
     True
 
 In contrast, a factory is just a callable object that returns something that
@@ -436,14 +436,14 @@ instances of quite different classes::
 
     sage: isinstance(GF, sage.structure.factory.UniqueFactory)
     True
-    sage: K5 = GF(5)
-    sage: type(K5)
+    sage: K5 = GF(5)                                                                                # optional - sage.libs.pari
+    sage: type(K5)                                                                                  # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.finite_field_prime_modn.FiniteField_prime_modn_with_category'>
-    sage: K25 = GF(25, 'x')
-    sage: type(K25)
+    sage: K25 = GF(25, 'x')                                                                         # optional - sage.libs.pari
+    sage: type(K25)                                                                                 # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
-    sage: Kp = GF(next_prime_power(1000000)^2, 'x')
-    sage: type(Kp)
+    sage: Kp = GF(next_prime_power(1000000)^2, 'x')                                                 # optional - sage.libs.pari
+    sage: type(Kp)                                                                                  # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
 
 This can be confusing to the user. Namely, the user might determine the class
