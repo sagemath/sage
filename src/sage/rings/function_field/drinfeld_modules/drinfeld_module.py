@@ -1111,7 +1111,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             1/T^3
             sage: phi.j_invariant(3)
             (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
-            sage: sage: phi.j_invariant([0, 7, 54, 11])
+            sage: phi.j_invariant([0, 7, 54, 11])
             (T^54 + 4*T^53 + T^52 + 4*T^51 + T^50 + 2*T^29 + 3*T^28 + 2*T^27 + 3*T^26 + 2*T^25 + T^4 + 4*T^3 + T^2 + 4*T + 1)/T^33
         """
         # TODO: add documentation for this method
@@ -1126,7 +1126,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         elif isinstance(k, list):
             j_inv = self.basic_j_invariant(k)
         else:
-            raise TypeError("k must be an integer or a list of integer")
+            raise TypeError("k must be an integer or a list of integers")
         return j_inv
 
     def basic_j_invariant(self, parameters, check=True):
