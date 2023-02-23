@@ -126,7 +126,8 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
     vectors = [vector((ff(*point), gg(*point), hh(*point))) for point in points]
 
     try:
-        cm = matplotlib.colormaps.get_cmap(color)
+        import matplotlib
+        cm = matplotlib.colormaps.get_cmap(colors)
     except (TypeError, ValueError):
         cm = None
     if cm is None:
