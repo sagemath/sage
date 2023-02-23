@@ -717,7 +717,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             sage: F == G  # True now
             True
             sage: H = M.mixed_form([f, 0, 0])
-            sage: F != H  # this is fixed by ticket #30108
+            sage: F != H  # this is fixed by issue #30108
             True
             sage: F.parent().zero() == 0
             True

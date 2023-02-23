@@ -36,7 +36,7 @@ from sage.libs.gap.element import GapElement as LibGapElement
 #
 # This module needs to be rewritten to implement the ring of class
 # functions in the usual parent/element pattern. But
-# http://trac.sagemath.org/14014 is already too long...
+# https://github.com/sagemath/sage/issues/14014 is already too long...
 
 
 def ClassFunction(group, values):

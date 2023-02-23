@@ -1196,7 +1196,7 @@ class TikzPicture(Standalone):
                            usetikzlibrary=['shapes'])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_graph(cls, graph, merge_multiedges=True,
             merge_label_function=tuple, **kwds):
         r"""
@@ -1243,7 +1243,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_graph(g) # optional sage.graphs dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
             sage: _ = tikz.pdf()      # not tested
 
         Using ``prog``::
@@ -1342,7 +1342,7 @@ class TikzPicture(Standalone):
         return TikzPicture(tikz, standalone_config=["border=4mm"])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_graph_with_pos(cls, graph, scale=1, merge_multiedges=True,
             merge_label_function=tuple):
         r"""
@@ -1372,7 +1372,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_graph_with_pos(g)       # optional sage.graphs
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 
@@ -1468,7 +1468,7 @@ class TikzPicture(Standalone):
         return TikzPicture(tikz, standalone_config=["border=4mm"])
 
     @classmethod
-    @experimental(trac_number=20343)
+    @experimental(issue_number=20343)
     def from_poset(cls, poset, **kwds):
         r"""
         Convert a poset to a tikzpicture using graphviz and dot2tex.
@@ -1500,7 +1500,7 @@ class TikzPicture(Standalone):
             sage: tikz = TikzPicture.from_poset(P) # optional sage.combinat dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20343 for details.
+            See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 
