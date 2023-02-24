@@ -3175,7 +3175,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         10: (9,8)
         11: (2,1), (4,6), (5,2), (5,4), (6,3)
         13: (2,1), (3,1), (3,2), (4,1), (4,3), (5,5), (6,5)
-        15: (3,1), (4,6), (5,6), (7,3)
+        15: (3,1), (4,6), (5,6), (7,3), (7,6)
         16: (3,2), (5,4), (6,2)
         17: (2,1), (4,3), (5,5), (8,7)
         19: (2,1), (3,1), (3,2), (4,2), (6,5), (9,4), (9,8)
@@ -3253,6 +3253,11 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: for p in [3,5,7,9,11]:
         ....:     v = p*(p+2); k = (v-1)/2;  lmbda = (k-1)/2
         ....:     G,D = designs.difference_family(v,k,lmbda)
+
+    Check Complementary difference sets::
+
+        sage: for v in [15, 33, 35, 39, 51]:
+        ....:     G, D = designs.difference_family(v, (v-1)//2, (v-1)//2-1)
 
     Check the database::
 
@@ -3507,6 +3512,15 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
             if p > q:
                 p,q = q,p
             G,D = twin_prime_powers_difference_set(p,check=False)
+
+    elif (v-1)//2 == k and (v-1)//2-1 == l and complementary_difference_sets(v, existence=True):
+        if existence:
+            return True
+        elif explain_construction:
+            return "Complementary difference sets"
+        else:
+            G, A, B = complementary_difference_sets(v)
+            D = [A, B]
 
     else:
         if existence:
