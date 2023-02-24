@@ -1799,6 +1799,11 @@ REFERENCES:
             *Tracking p-adic precision*,
             LMS J. Comput. Math. **17** (2014), 274-294.
 
+.. [Connell1999] Ian Connell.
+                 *Elliptic Curve Handbook*.
+                 Online lecture notes, available at
+                 https://git.hackade.org/ben/tinycrypt/raw/branch/master/docs/Elliptic%20Curve%20Handbook.pdf
+
 .. [CS1986] \J. Conway and N. Sloane. *Lexicographic codes:
             error-correcting codes from game theory*, IEEE
             Trans. Infor. Theory **32** (1986) 337-348.

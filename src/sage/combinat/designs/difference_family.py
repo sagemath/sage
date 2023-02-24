@@ -1930,6 +1930,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_. The set `S_1 \subset G` is
+
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G \setminus \{0\}`.
 
     The data is taken from:

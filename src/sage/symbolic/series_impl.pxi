@@ -246,10 +246,10 @@ cdef class SymbolicSeries(Expression):
         else:
             from sage.rings.integer_ring import ZZ
             if any(not c[1] in ZZ for c in l):
-                raise ValueError("Cannot return dense coefficient list with noninteger exponents.")
+                raise ValueError("cannot return dense coefficient list with noninteger exponents")
             val = l[0][1]
             if val < 0:
-                raise ValueError("Cannot return dense coefficient list with negative valuation.")
+                raise ValueError("cannot return dense coefficient list with negative valuation")
             deg = l[-1][1]
             ret = [ZZ(0)] * int(deg+1)
             for c in l:

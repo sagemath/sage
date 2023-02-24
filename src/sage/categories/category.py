@@ -153,7 +153,7 @@ class Category(UniqueRepresentation, SageObject):
 
     This is achieved as follows::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: class EuclideanDomains(Category):
         ....:     # operations on the category itself
         ....:     def super_categories(self):
@@ -201,7 +201,7 @@ class Category(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: from sage.misc.lazy_attribute import lazy_attribute
         sage: class As (Category):
         ....:     def super_categories(self):
