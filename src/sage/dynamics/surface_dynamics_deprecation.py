@@ -25,7 +25,7 @@ def surface_dynamics_deprecation(name):
         computation that are currently available in Sage. See more
         information at
             http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/
-        See http://trac.sagemath.org/20695 for details.
+        See https://github.com/sagemath/sage/issues/20695 for details.
     """
     from sage.misc.superseded import deprecation
     deprecation(20695, deprecation_msg.format(name))

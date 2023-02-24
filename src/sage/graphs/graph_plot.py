@@ -692,13 +692,13 @@ class GraphPlot(SageObject):
             ....:         m = sum(vector((vx[v], vy[v])) for v in (v0, v1))/2
             ....:         assert (vector((x, y)) - m).norm() < tol
 
-        Ticket :trac:`24051` is fixed::
+        Issue :trac:`24051` is fixed::
 
             sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
             sage: G.plot(edge_colors={"red": [(1, 0)]})
             Graphics object consisting of 5 graphics primitives
 
-        Ticket :trac:`31542` is fixed::
+        Issue :trac:`31542` is fixed::
 
             sage: s = 'ABCCCCDABCDABCDA'
             sage: g = DiGraph({}, loops=True, multiedges=True)

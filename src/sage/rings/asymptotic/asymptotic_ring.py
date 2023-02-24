@@ -2870,7 +2870,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             ...
             FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
-            See https://trac.sagemath.org/31922 for details.
+            See https://github.com/sagemath/sage/issues/31922 for details.
             sage: basy.compare_with_values('n', lambda k: 1/(3+3/k), [2^k for k in srange(8)])
             [(1, 0.500...), (2, 0.666...), (4, 0.800...), (8, 0.888...),
             (16, 0.941...), (32, 0.969...), (64, 0.984...), (128, 0.992...)]
@@ -4158,9 +4158,9 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
 
         elif is_PowerSeriesRing(P):
             raise NotImplementedError(
-                'Cannot convert %s from the %s to an asymptotic expansion '
+                'cannot convert %s from the %s to an asymptotic expansion '
                 'in %s, since growths at other points than +oo are not yet '
-                'supported.' % (data, P, self))
+                'supported' % (data, P, self))
             # Delete lines above as soon as we can deal with growths
             # other than the that at going to +oo.
             from sage.rings.infinity import PlusInfinity

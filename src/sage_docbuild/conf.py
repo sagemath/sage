@@ -71,7 +71,7 @@ jupyter_sphinx_thebelab_config = {
 plot_html_show_source_link = False
 plot_pre_code = r"""
 # Set locale to prevent having commas in decimal numbers
-# in tachyon input (see https://trac.sagemath.org/ticket/28971)
+# in tachyon input (see https://github.com/sagemath/sage/issues/28971)
 import locale
 locale.setlocale(locale.LC_NUMERIC, 'C')
 def sphinx_plot(graphics, **kwds):
@@ -711,7 +711,7 @@ def call_intersphinx(app, env, node, contnode):
     if res:
         # Replace absolute links to $SAGE_DOC by relative links: this
         # allows to copy the whole documentation tree somewhere else
-        # without breaking links, see Trac #20118.
+        # without breaking links, see Issue #20118.
         if res['refuri'].startswith(SAGE_DOC):
             here = os.path.dirname(os.path.join(builder.outdir,
                                                 node['refdoc']))

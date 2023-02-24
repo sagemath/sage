@@ -891,10 +891,10 @@ http://fricas.sourceforge.net.
         """
         EXAMPLES::
 
-            sage: fricas.__reduce__()                                           # optional - fricas
+            sage: FriCAS().__reduce__()
             (<function reduce_load_fricas at 0x...>, ())
-            sage: f, args = _                                                   # optional - fricas
-            sage: f(*args)                                                      # optional - fricas
+            sage: f, args = _
+            sage: f(*args)
             FriCAS
         """
         return reduce_load_fricas, tuple([])
@@ -2112,7 +2112,7 @@ def is_FriCASElement(x):
         sage: from sage.interfaces.fricas import is_FriCASElement
         sage: is_FriCASElement(2)
         doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_FriCASElement(fricas(2))                                       # optional - fricas
         True
@@ -2132,8 +2132,8 @@ def reduce_load_fricas():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import reduce_load_fricas             # optional - fricas
-        sage: reduce_load_fricas()                                              # optional - fricas
+        sage: from sage.interfaces.fricas import reduce_load_fricas
+        sage: reduce_load_fricas()
         FriCAS
     """
     return fricas

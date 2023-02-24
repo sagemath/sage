@@ -31,7 +31,7 @@
 # absolute path (a relative path remains relative), nor does it treat
 # "." or ".." specially.
 #
-# AUTHOR: Jeroen Demeyer (2011-08-23): Trac tickets #5852 and #11704
+# AUTHOR: Jeroen Demeyer (2011-08-23): Github issues #5852 and #11704
 #
 resolvelinks() {
     # $in is what still needs to be converted (normally has no starting slash)
@@ -278,7 +278,7 @@ if [ "$UNAME" = "Darwin" ]; then
     export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
     # Work around problems on recent OS X crashing with an error message
     # "... may have been in progress in another thread when fork() was called"
-    # when objective-C functions are called after fork(). See Trac #25921.
+    # when objective-C functions are called after fork(). See Issue #25921.
     # Most likely, these errors are false positives, so we disable them:
     export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 fi
@@ -355,12 +355,12 @@ if [ "$PYTHON_EGG_CACHE" = "" ]; then
 fi
 
 # Set PYTHONUSERBASE to avoid picking up non-Sage versions of
-# Matplotlib, numpy, etc. See http://trac.sagemath.org/ticket/19612.
+# Matplotlib, numpy, etc. See https://github.com/sagemath/sage/issues/19612.
 #
 # For more history (it used to be PYTHONNOUSERSITE=yes which killed
 # the ability to do "sage -pip install PACKAGE --user"), see
-# http://trac.sagemath.org/ticket/14243 and
-# http://trac.sagemath.org/ticket/18955.
+# https://github.com/sagemath/sage/issues/14243 and
+# https://github.com/sagemath/sage/issues/18955.
 
 if [ "$PYTHONUSERBASE" = "" ]; then
     PYTHONUSERBASE="$DOT_SAGE/local"
@@ -449,7 +449,7 @@ if [ -n "$SAGE_LOCAL" ]; then
     PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
 fi
 
-# Allow SAGE_BROWSER to override BROWSER (Trac #22449)
+# Allow SAGE_BROWSER to override BROWSER (Issue #22449)
 if [ -n "$SAGE_BROWSER" ]; then
     export BROWSER="$SAGE_BROWSER"
 fi
@@ -558,7 +558,7 @@ case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in
         # sage-num-threads.py would just recompute them
         ;;
     *)
-        # See Trac Ticket #12016
+        # See Issue Ticket #12016
         # First, figure out the right values for SAGE_NUM_THREADS (default
         # number of threads) and SAGE_NUM_THREADS_PARALLEL (default number of
         # threads when parallel execution is asked explicitly).
@@ -615,7 +615,7 @@ fi
 
 if [ -n "$SAGE_LOCAL" ]; then
     # If we move the Sage tree then ncurses cannot find terminfo, hence, we
-    # tell it where to find it. See Trac Ticket #15091
+    # tell it where to find it. See Issue Ticket #15091
     export TERMINFO="$SAGE_LOCAL/share/terminfo"
 
     # If nodejs is installed, activate the nodeenv containing it.

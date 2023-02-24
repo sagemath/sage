@@ -156,7 +156,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check that ticket :trac:`8601` is fixed::
+        Check that issue :trac:`8601` is fixed::
 
             sage: VS = VectorSpace(GF(2), 3)
             sage: VS((-1,-2,-3))
