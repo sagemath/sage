@@ -25,6 +25,7 @@ from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.integer_ring import ZZ
 
 class QuasiModularFormsElement(ModuleElement):
     r"""
@@ -463,7 +464,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).weights_list()
             [2, 5, 7]
         """
-        return sorted(list(self.to_polynomial().homogeneous_components()))
+        return sorted(self.homogeneous_components().keys())
 
     def is_homogeneous(self):
         r"""
@@ -474,28 +475,32 @@ class QuasiModularFormsElement(ModuleElement):
         EXAMPLES::
 
             sage: QM = QuasiModularForms(1)
-            sage: (QM.0).is_homogeneous()
+            sage: E2, E4, E6 = QM.gens()
+            sage: (E2).is_homogeneous()
             True
-            sage: (QM.0 + QM.1).is_homogeneous()
+            sage: (E2 + E4).is_homogeneous()
             False
-            sage: (QM.0 * QM.1 + QM.2).is_homogeneous()
+            sage: (E2 * E4 + E6).is_homogeneous()
             True
             sage: QM(1).is_homogeneous()
             True
-            sage: (1 + QM.0).is_homogeneous()
+            sage: (1 + E2).is_homogeneous()
             False
-            sage: QM = QuasiModularForms(Gamma0(4))
-            sage: (QM.0).is_homogeneous()
+            sage: F = E6^3 + E4^4*E2 + (E4^2*E6)*E2^2 + (E4^3 + E6^2)*E2^3
+            sage: F.is_homogeneous()
             True
-            sage: (QM.0 + QM.1).is_homogeneous()
-            True
-            sage: (QM.0 + QM.1 + QM.2).is_homogeneous()
-            True
-            sage: (QM.0 + QM.1^3).is_homogeneous()
-            False
-
         """
-        return len(self.weights_list()) == 1
+        k = None
+        for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
+            if c:
+                if not c.is_homogeneous():
+                    return False
+                if k is None:
+                    k = c.weight() + 2*i
+                    continue
+                if c.weight() + 2*i != k:
+                    return False
+        return True
 
     def weight(self):
         r"""
@@ -518,9 +523,11 @@ class QuasiModularFormsElement(ModuleElement):
             ValueError: the given graded quasiform is not an homogeneous element
         """
         if self.is_homogeneous():
-            return self.to_polynomial().degree()
+            return (self._polynomial.leading_coefficient().weight()
+                    + 2*self._polynomial.degree())
         else:
-            raise ValueError("the given graded quasiform is not an homogeneous element")
+            raise ValueError("the given graded quasiform is not an homogeneous \
+                             element")
 
     def homogeneous_components(self):
         r"""
@@ -538,17 +545,34 @@ class QuasiModularFormsElement(ModuleElement):
              6: 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)}
             sage: (1 + QM.0).homogeneous_components()
             {0: 1, 2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)}
-            sage: QM = QuasiModularForms(Gamma0(5))
-            sage: F = QM.0 + QM.1 * QM.0 + QM.3^2*QM.0
+            sage: QM5 = QuasiModularForms(Gamma1(3))
+            sage: F = QM.1 + QM.1*QM.2 + QM.1*QM.0 + (QM.1 + QM.2^2)*QM.0^3
             sage: F.homogeneous_components()
-            {2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
-             4: 1 - 18*q - 198*q^2 - 936*q^3 - 2574*q^4 - 5610*q^5 + O(q^6),
-             10: q^2 - 24*q^3 - 52*q^4 - 520*q^5 + O(q^6)}
+            {4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+             6: 1 + 216*q - 3672*q^2 - 62496*q^3 - 322488*q^4 - 1121904*q^5 + O(q^6),
+             10: 2 - 96*q - 149040*q^2 - 4986240*q^3 - 67535952*q^4 - 538187328*q^5 + O(q^6),
+             18: 1 - 1080*q + 294840*q^2 - 902880*q^3 - 452402280*q^4 + 105456816*q^5 + O(q^6)}
+            sage: F = QM.zero()
+            sage: F.homogeneous_components()
+            {0: 0}
+            sage: F = QM(42/13)
+            sage: F.homogeneous_components()
+            {0: 42/13}
         """
         QM = self.parent()
-        poly_self = self.to_polynomial()
-        pol_hom_comp = poly_self.homogeneous_components()
-        return {k: QM.from_polynomial(pol) for k, pol in pol_hom_comp.items()}
+        if self.is_zero():
+            return {ZZ(0): self}
+        components = {}
+        E2 = self.parent().weight_2_eisenstein_series()
+        for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
+            if c:
+                forms = c._forms_dictionary
+                for k in forms.keys():
+                    try:
+                        components[ZZ(k + 2*i)] += QM(forms[k]*(E2**i))
+                    except KeyError:
+                        components[ZZ(k + 2*i)] = QM(forms[k]*(E2**i))
+        return components
 
     def serre_derivative(self):
         r"""
