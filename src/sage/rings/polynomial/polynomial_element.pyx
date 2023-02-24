@@ -11422,30 +11422,30 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = QQbar[]
-            sage: f = (1+2*x)^3 + 3*x; f
+            sage: R.<x> = QQbar[]                                               # optional - sage.rings.number_field
+            sage: f = (1+2*x)^3 + 3*x; f                                        # optional - sage.rings.number_field
             8*x^3 + 12*x^2 + 9*x + 1
-            sage: g = f // (1+2*x); g
+            sage: g = f // (1+2*x); g                                           # optional - sage.rings.number_field
             4*x^2 + 4*x + 5/2
-            sage: f - g * (1+2*x)
+            sage: f - g * (1+2*x)                                               # optional - sage.rings.number_field
             -3/2
-            sage: f.quo_rem(1+2*x)
+            sage: f.quo_rem(1+2*x)                                              # optional - sage.rings.number_field
             (4*x^2 + 4*x + 5/2, -3/2)
 
         TESTS:
 
         Check that :trac:`13048` and :trac:`2034` are fixed::
 
-            sage: R.<x> = QQbar[]
-            sage: x // x
+            sage: R.<x> = QQbar[]                                               # optional - sage.rings.number_field
+            sage: x // x                                                        # optional - sage.rings.number_field
             1
-            sage: x // 1
+            sage: x // 1                                                        # optional - sage.rings.number_field
             x
-            sage: x // int(1)
+            sage: x // int(1)                                                   # optional - sage.rings.number_field
             x
-            sage: x //= int(1); x
+            sage: x //= int(1); x                                               # optional - sage.rings.number_field
             x
-            sage: int(1) // x  # check that this doesn't segfault
+            sage: int(1) // x  # check that this doesn't segfault               # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             AttributeError: type object 'int' has no attribute 'base_ring'
@@ -11560,10 +11560,10 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = GF(17)[]
-            sage: f = (1+2*x)^3 + 3*x; f
+            sage: R.<x> = GF(17)[]                                              # optional - sage.libs.pari
+            sage: f = (1+2*x)^3 + 3*x; f                                        # optional - sage.libs.pari
             8*x^3 + 12*x^2 + 9*x + 1
-            sage: f.list()
+            sage: f.list()                                                      # optional - sage.libs.pari
             [1, 9, 12, 8]
         """
         if copy:
@@ -12059,20 +12059,20 @@ cdef class ConstantPolynomialSection(Map):
 
     EXAMPLES::
 
-        sage: P0.<y_1> = GF(3)[]
-        sage: P1.<y_2,y_1,y_0> = GF(3)[]
-        sage: P0(-y_1)    # indirect doctest
+        sage: P0.<y_1> = GF(3)[]                                                        # optional - sage.libs.pari
+        sage: P1.<y_2,y_1,y_0> = GF(3)[]                                                # optional - sage.libs.pari
+        sage: P0(-y_1)    # indirect doctest                                            # optional - sage.libs.pari
         2*y_1
 
-        sage: phi = GF(3).convert_map_from(P0); phi
+        sage: phi = GF(3).convert_map_from(P0); phi                                     # optional - sage.libs.pari
         Generic map:
           From: Univariate Polynomial Ring in y_1 over Finite Field of size 3
           To:   Finite Field of size 3
-        sage: type(phi)
+        sage: type(phi)                                                                 # optional - sage.libs.pari
         <class 'sage.rings.polynomial.polynomial_element.ConstantPolynomialSection'>
-        sage: phi(P0.one())
+        sage: phi(P0.one())                                                             # optional - sage.libs.pari
         1
-        sage: phi(y_1)
+        sage: phi(y_1)                                                                  # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: not a constant polynomial
