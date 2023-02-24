@@ -60,7 +60,7 @@ def install_ellcurves():
     ellcurves_root = os.path.join(SAGE_SHARE, 'ellcurves')
 
     # Remove previous installs (possibly with bad permissions, see
-    # https://trac.sagemath.org/ticket/21641)
+    # https://github.com/sagemath/sage/issues/21641)
     import shutil
     try:
         shutil.rmtree(ellcurves_root)

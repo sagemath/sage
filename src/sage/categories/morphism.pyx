@@ -393,7 +393,7 @@ cdef class Morphism(Map):
             # multiplying it with the gens of the scalar ring.
             #
             # It is known that this way of comparing morphisms may give
-            # a mathematically wrong answer. See Trac #28617 and #31783.
+            # a mathematically wrong answer. See Issue #28617 and #31783.
             if e is not None and isinstance(e, ModuleElement):
                 B = (<ModuleElement>e)._parent._base
                 gens = [e * B.coerce(x) for x in gens]
