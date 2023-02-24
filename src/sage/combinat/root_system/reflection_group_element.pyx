@@ -197,9 +197,9 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((3,1,2))            # optional - gap3
-            sage: data = {w: [w.to_matrix(), w.to_matrix(on_space="dual")] for w in W}
-            sage: for w in W.iteration_tracking_words():
+            sage: W = ReflectionGroup((3,1,2))                                          # optional - gap3
+            sage: data = {w: [w.to_matrix(), w.to_matrix(on_space="dual")] for w in W}  # optional - gap3
+            sage: for w in W.iteration_tracking_words():                                # optional - gap3
             ....:     w.reduced_word()
             ....:     mats = [w.to_matrix(), w.to_matrix(on_space="dual")]
             ....:     mats
