@@ -201,8 +201,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: for w in W.iteration_tracking_words():  # optional - gap3
             ....:     w.reduced_word()                    # optional - gap3
             ....:     mats = [w.to_matrix(), w.to_matrix(on_space="dual")]  # optional - gap3
-            ....:     mats                                # optional - gap3
-            ....:     assert data[w] == mats              # optional - gap3
+            ....:     mats
+            ....:     assert data[w] == mats
             []
             [
             [1 0]  [1 0]
