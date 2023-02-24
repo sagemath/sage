@@ -75,15 +75,15 @@ Some challenges
 
   Similar objects should behave similarly::
 
-      sage: Permutations(5).cardinality()
+      sage: Permutations(5).cardinality()                                       # optional - sage.combinat
       120
 
-      sage: GL(2,2).cardinality()
+      sage: GL(2,2).cardinality()                                               # optional - sage.groups
       6
 
       sage: A = random_matrix(ZZ,6,3,x=7)
-      sage: L = LatticePolytope(A.rows())
-      sage: L.npoints()                # oops!   # random
+      sage: L = LatticePolytope(A.rows())                                       # optional - sage.geometry.polyhedron
+      sage: L.npoints()                # oops!   # random                       # optional - sage.geometry.polyhedron
       37
 
 - How to ensure robustness?

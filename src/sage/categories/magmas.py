@@ -377,11 +377,11 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()              # optional - sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()              # optional - sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()              # optional - sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):
@@ -531,8 +531,8 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroup(2)
-                    sage: S.is_empty()
+                    sage: S = SymmetricGroup(2)                                 # optional - sage.groups
+                    sage: S.is_empty()                                          # optional - sage.groups
                     False
 
                     sage: M = Monoids().example()
@@ -711,11 +711,11 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
-                        sage: PvW0 in Magmas().Unital().Realizations()
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat, sage.groups
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat, sage.groups
+                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat, sage.groups
                         True
-                        sage: PvW0.one()
+                        sage: PvW0.one()                                                                                # optional - sage.combinat, sage.groups
                         1
                     """
                     return self(self.realization_of().a_realization().one())
@@ -1069,12 +1069,12 @@ class Magmas(Category_singleton):
                     sage: x * x
                     (1/4, 1, 1)
 
-                    sage: A = SymmetricGroupAlgebra(QQ, 3)
-                    sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])
-                    sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])
-                    sage: cartesian_product([A,A]).product(x,y)
+                    sage: A = SymmetricGroupAlgebra(QQ, 3)                      # optional - sage.groups
+                    sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])       # optional - sage.groups
+                    sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])       # optional - sage.groups
+                    sage: cartesian_product([A,A]).product(x,y)                 # optional - sage.groups
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
-                    sage: x*y
+                    sage: x*y                                                   # optional - sage.groups
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
                 prods = ((a * b) for a, b in zip(left.cartesian_factors(),
@@ -1123,9 +1123,9 @@ class Magmas(Category_singleton):
 
                 Here is a more elaborate example involving a sub algebra::
 
-                    sage: Z = SymmetricGroup(5).algebra(QQ).center()
-                    sage: B = Z.basis()
-                    sage: B[3] * B[2]
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()            # optional - sage.groups
+                    sage: B = Z.basis()                                         # optional - sage.groups
+                    sage: B[3] * B[2]                                           # optional - sage.groups
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert x in self

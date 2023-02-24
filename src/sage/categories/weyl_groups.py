@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups, sage.combinat
 r"""
 Weyl Groups
 """
