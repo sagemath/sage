@@ -33,10 +33,15 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import TYPE_CHECKING
+
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 
+if TYPE_CHECKING:
+    from sage.manifolds.point import ManifoldPoint
+    from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
 
 class DiffMap(ContinuousMap):
     r"""
@@ -515,7 +520,7 @@ class DiffMap(ContinuousMap):
                                           # class
         self._diff.clear()
 
-    def differential(self, point):
+    def differential(self, point: ManifoldPoint) -> FiniteRankFreeModuleMorphism:
         r"""
         Return the differential of ``self`` at a given point.
 

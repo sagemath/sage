@@ -29,8 +29,12 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from typing import Optional
+
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.comp import Components
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+
 
 class FiniteRankFreeModuleElement(AlternatingContrTensor):
     r"""
@@ -185,7 +189,13 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         a∧b = -2 e_0∧e_1 - 6 e_0∧e_2 + 7 e_1∧e_2
 
     """
-    def __init__(self, fmodule, name=None, latex_name=None):
+
+    def __init__(
+        self,
+        fmodule: FiniteRankFreeModule,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
+    ):
         r"""
         TESTS::
 
