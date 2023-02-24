@@ -77,7 +77,7 @@ for the comparison::
 
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
@@ -86,12 +86,17 @@ for the comparison::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
+from typing import TYPE_CHECKING
 
-from sage.structure.element import Element
 from sage.misc.decorators import options
-from sage.symbolic.expression import Expression
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression
+
+if TYPE_CHECKING:
+    from sage.manifolds.chart import Chart
+
 
 class ManifoldPoint(Element):
     r"""
@@ -187,8 +192,9 @@ class ManifoldPoint(Element):
         Element.__init__(self, parent)
         parent._has_defined_points = True
         self._manifold = parent.manifold()  # a useful shortcut
-        self._coordinates = {} # dictionary of the point coordinates in various
-                               # charts, with the charts as keys
+        # dictionary of the point coordinates in various
+        # charts, with the charts as keys
+        self._coordinates: dict[Chart, Expression] = {}
         if coords is not None:
             if len(coords) != parent.manifold().dimension():
                 raise ValueError("the number of coordinates must be equal " +

@@ -37,16 +37,37 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Iterable, Optional, TypedDict, Union, overload
+
+from typing_extensions import Unpack
+
+from sage.ext.fast_callable import fast_callable
+from sage.manifolds.calculus_method import CalculusMethod, CalculusMethodName
+from sage.manifolds.chart_func import ChartFunctionRing
+from sage.misc.decorators import options
+from sage.misc.latex import latex
+from sage.rings.infinity import Infinity
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.ring import SR
-from sage.rings.infinity import Infinity
-from sage.misc.latex import latex
-from sage.misc.decorators import options
-from sage.manifolds.chart_func import ChartFunctionRing
-from sage.manifolds.calculus_method import CalculusMethod
 from sage.symbolic.expression import Expression
-from sage.ext.fast_callable import fast_callable
+from sage.symbolic.ring import SR
+
+if TYPE_CHECKING:
+    from sage.geometry.convex_set import ConvexSet_base
+    from sage.manifolds.manifold import TopologicalManifold
+    from sage.manifolds.point import ManifoldPoint
+    from sage.sets.condition_set import ConditionSet
+
+
+CoordinateRestrictions = Union[Iterable[Expression], Expression]
+
+CoordinateOptions = TypedDict("CoordinateOptions", {"periods": tuple[Expression, ...]})
+
+ValidateCoordinateOptions = TypedDict(
+    "ValidateCoordinateOptions", {"parameters": dict[Expression, Expression]}
+)
 
 
 class Chart(UniqueRepresentation, SageObject):
@@ -289,9 +310,15 @@ class Chart(UniqueRepresentation, SageObject):
     """
 
     @staticmethod
-    def __classcall__(cls, domain, coordinates='',
-                      calc_method=None, names=None,
-                      coord_restrictions=None, **coordinate_options):
+    def __classcall__(
+        cls: Chart,
+        domain: TopologicalManifold,
+        coordinates: str = "",
+        calc_method: Optional[CalculusMethodName] = None,
+        names: Optional[tuple[str, ...]] = None,
+        coord_restrictions: Optional[CoordinateRestrictions] = None,
+        **coordinate_options: Unpack[CoordinateOptions],
+    ) -> Chart:
         r"""
         Normalize init args and implement unique representation behavior.
 
@@ -328,8 +355,14 @@ class Chart(UniqueRepresentation, SageObject):
             domain._charts_by_coord[coord_string] = self
             return self
 
-    def __init__(self, domain, coordinates, calc_method=None, periods=None,
-                 coord_restrictions=None):
+    def __init__(
+        self,
+        domain: TopologicalManifold,
+        coordinates: tuple[Expression],
+        calc_method: Optional[CalculusMethodName] = None,
+        periods: Optional[Iterable[Expression]] = None,
+        coord_restrictions: Optional[CoordinateRestrictions] = None,
+    ):
         r"""
         Construct a chart.
 
@@ -402,10 +435,9 @@ class Chart(UniqueRepresentation, SageObject):
         # Initialization of the set of charts which the current chart is a
         # restriction of:
         self._supercharts = set([self])
-        #
-        self._dom_restrict = {}  # dict. of the restrictions of self to
-                                 # subsets of self._domain, with the
-                                 # subsets as keys
+        # dict. of the restrictions of self to subsets of self._domain, with the
+        # subsets as keys
+        self._dom_restrict: dict[TopologicalManifold, CoordinateRestrictions] = {}
         # The null and one functions of the coordinates:
         # Expression in self of the zero and one scalar fields of open sets
         # containing the domain of self:
@@ -414,13 +446,15 @@ class Chart(UniqueRepresentation, SageObject):
             dom._one_scalar_field._express[self] = self.function_ring().one()
 
     @classmethod
-    def _parse_coordinates(cls, domain, coordinates):
+    def _parse_coordinates(
+        cls, domain: TopologicalManifold, coordinates: Union[str, Iterable[str]]
+    ) -> tuple[tuple[Expression, ...], CoordinateOptions]:
         r"""
         Initialization of the coordinates as symbolic variables.
 
         INPUT:
 
-        - ``coord_list`` -- list (or space-separated concatenation) of
+        - ``coordinates`` -- list (or space-separated concatenation) of
           coordinate fields.  Each field is a string of at most 3 items,
           separated by ":". These items are: the coordinate symbol, the
           (optional) indicator of the periodic character of the
@@ -473,7 +507,9 @@ class Chart(UniqueRepresentation, SageObject):
         return tuple(xx_list), dict(periods=tuple(period_list))
 
     @staticmethod
-    def _normalize_coord_restrictions(coordinates, coord_restrictions):
+    def _normalize_coord_restrictions(
+        coordinates: Iterable[Expression], coord_restrictions: Optional[CoordinateRestrictions]
+    ) -> Iterable[Expression]:
         r"""
         Rewrite ``coord_restrictions`` as a ``frozenset``, representing a logical "and", of other clauses.
 
@@ -493,7 +529,10 @@ class Chart(UniqueRepresentation, SageObject):
             frozenset({(x != 0, y != 0), x > y, z^2 < x})
 
         """
-        def normalize(r):
+
+        def normalize(
+            r: Union[Expression, Iterable[Expression]]
+        ) -> Union[Expression, Iterable[Expression]]:
             if isinstance(r, tuple):  # or
                 return tuple(normalize(x) for x in r)
             elif isinstance(r, (list, set, frozenset)):  # and
@@ -515,7 +554,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         return normalize(coord_restrictions)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -529,7 +568,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return 'Chart ({}, {})'.format(self.domain()._name, self._xx)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of the object.
 
@@ -553,7 +592,7 @@ class Chart(UniqueRepresentation, SageObject):
         description += latex(self._xx[n-1]).strip() + r')\right)'
         return description
 
-    def _first_ngens(self, n):
+    def _first_ngens(self, n: int):
         r"""
         Return the list of coordinates.
 
@@ -565,7 +604,15 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self[:]
 
-    def __getitem__(self, i):
+    @overload
+    def __getitem__(self, i: int) -> Expression:
+        ...
+
+    @overload
+    def __getitem__(self, i: slice) -> tuple[Expression, ...]:
+        ...
+
+    def __getitem__(self, i: Union[int, slice]) -> Union[Expression, tuple[Expression, ...]]:
         r"""
         Access to the coordinates.
 
@@ -618,7 +665,7 @@ class Chart(UniqueRepresentation, SageObject):
             return self._xx[start:stop:i.step]
         return self._xx[i-self._sindex]
 
-    def __call__(self, point):
+    def __call__(self, point: ManifoldPoint) -> tuple[Expression, ...]:
         r"""
         Return the coordinates of a given point.
 
@@ -643,7 +690,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return point.coord(self)
 
-    def domain(self):
+    def domain(self) -> TopologicalManifold:
         r"""
         Return the open subset on which the chart is defined.
 
@@ -661,7 +708,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self._domain
 
-    def manifold(self):
+    def manifold(self) -> TopologicalManifold:
         r"""
         Return the manifold on which the chart is defined.
 
@@ -678,7 +725,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self._manifold
 
-    def periods(self):
+    def periods(self) -> tuple[Optional[Expression], ...]:
         r"""
         Return the coordinate periods.
 
@@ -723,7 +770,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self._periods
 
-    def add_restrictions(self, restrictions):
+    def add_restrictions(self, restrictions: CoordinateRestrictions):
         r"""
         Add some restrictions on the coordinates.
 
@@ -769,7 +816,9 @@ class Chart(UniqueRepresentation, SageObject):
         deprecation(32102, "Chart.add_restrictions is deprecated; provide the restrictions at the time of creating the chart")
         self._restrictions.extend(self._normalize_coord_restrictions(self._xx, restrictions))
 
-    def restrict(self, subset, restrictions=None):
+    def restrict(
+        self, subset: TopologicalManifold, restrictions: Optional[CoordinateRestrictions] = None
+    ) -> Chart:
         r"""
         Return the restriction of ``self`` to some open subset of its domain.
 
@@ -845,7 +894,9 @@ class Chart(UniqueRepresentation, SageObject):
             self._dom_restrict[subset] = res
         return self._dom_restrict[subset]
 
-    def valid_coordinates(self, *coordinates, **kwds):
+    def valid_coordinates(
+        self, *coordinates: Expression, **kwds: Unpack[ValidateCoordinateOptions]
+    ) -> bool:
         r"""
         Check whether a tuple of coordinates can be the coordinates of a
         point in the chart domain.
@@ -904,7 +955,11 @@ class Chart(UniqueRepresentation, SageObject):
             return self._check_restrictions(self._restrictions, substitutions)
         return True
 
-    def _check_restrictions(self, restrict, substitutions):
+    def _check_restrictions(
+        self,
+        restrict: Union[tuple[Expression, ...], list[Expression], Expression],
+        substitutions: dict[Expression, Expression],
+    ):
         r"""
         Recursive helper function to check the validity of coordinates
         given some restrictions
@@ -973,7 +1028,7 @@ class Chart(UniqueRepresentation, SageObject):
         else:
             return ambient
 
-    def _restrict_set(self, universe, coord_restrictions):
+    def _restrict_set(self, universe, coord_restrictions: CoordinateRestrictions) -> ConditionSet:
         """
         Return a set corresponding to coordinate restrictions.
 
@@ -1013,8 +1068,14 @@ class Chart(UniqueRepresentation, SageObject):
         from sage.sets.condition_set import ConditionSet
         return ConditionSet(universe, coord_restrictions, vars=self._xx)
 
-    def transition_map(self, other, transformations, intersection_name=None,
-                       restrictions1=None, restrictions2=None):
+    def transition_map(
+        self,
+        other: Chart,
+        transformations: Union[Expression, tuple[Expression, ...]],
+        intersection_name: Optional[str] = None,
+        restrictions1: Optional[CoordinateRestrictions] = None,
+        restrictions2: Optional[CoordinateRestrictions] = None,
+    ):
         r"""
         Construct the transition map between the current chart,
         `(U, \varphi)` say, and another one, `(V, \psi)` say.
@@ -1136,7 +1197,12 @@ class Chart(UniqueRepresentation, SageObject):
                 transformations = [transformations]
         return CoordChange(chart1, chart2, *transformations)
 
-    def preimage(self, codomain_subset, name=None, latex_name=None):
+    def preimage(
+        self,
+        codomain_subset: ConvexSet_base,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
+    ):
         """
         Return the preimage (pullback) of ``codomain_subset`` under ``self``.
 
@@ -1255,8 +1321,13 @@ class Chart(UniqueRepresentation, SageObject):
 
         return ChartFunctionRing(self)
 
-    def function(self, expression, calc_method=None, expansion_symbol=None,
-                 order=None):
+    def function(
+        self,
+        expression: Expression,
+        calc_method: Optional[CalculusMethodName] = None,
+        expansion_symbol: Optional[Expression] = None,
+        order: Optional[int] = None,
+    ):
         r"""
         Define a coordinate function to the base field.
 
@@ -1516,7 +1587,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self._calc_method
 
-    def multifunction(self, *expressions):
+    def multifunction(self, *expressions: Expression):
         r"""
         Define a coordinate function to some Cartesian power of the base field.
 
@@ -1575,6 +1646,11 @@ class Chart(UniqueRepresentation, SageObject):
 
 
 # *****************************************************************************
+
+RealCoordinateOptions = TypedDict(
+    "RealCoordinateOptions", {"periods": tuple[Expression, ...], "bounds": tuple[Expression, ...]}
+)
+
 
 class RealChart(Chart):
     r"""
@@ -1856,8 +1932,16 @@ class RealChart(Chart):
     :meth:`plot`.
 
     """
-    def __init__(self, domain, coordinates, calc_method=None, bounds=None,
-                 periods=None, coord_restrictions=None):
+
+    def __init__(
+        self,
+        domain: TopologicalManifold,
+        coordinates: tuple[Expression, ...],
+        calc_method: Optional[CalculusMethodName] = None,
+        bounds: Optional[Iterable[Expression]] = None,
+        periods: Optional[Iterable[Expression]] = None,
+        coord_restrictions: Optional[CoordinateRestrictions] = None,
+    ):
         r"""
         Construct a chart on a real topological manifold.
 
@@ -1882,7 +1966,9 @@ class RealChart(Chart):
         self._fast_valid_coordinates = None
 
     @classmethod
-    def _parse_coordinates(cls, domain, coordinates):
+    def _parse_coordinates(
+        cls, domain: TopologicalManifold, coordinates: Union[str, Iterable[str]]
+    ) -> tuple[tuple[Expression, ...], RealCoordinateOptions]:
         r"""
         Initialization of the coordinates as symbolic variables.
 
@@ -1991,7 +2077,7 @@ class RealChart(Chart):
         return tuple(xx_list), dict(bounds=tuple(bounds_list),
                                     periods=tuple(period_list))
 
-    def coord_bounds(self, i=None):
+    def coord_bounds(self, i: Optional[int] = None):
         r"""
         Return the lower and upper bounds of the range of a coordinate.
 
@@ -2097,7 +2183,7 @@ class RealChart(Chart):
         else:
             return ambient
 
-    def coord_range(self, xx=None):
+    def coord_range(self, xx: Optional[Expression] = None):
         r"""
         Display the range of a coordinate (or all coordinates), as an
         interval.
@@ -2185,7 +2271,7 @@ class RealChart(Chart):
                                                         resu_latex)
         return FormattedExpansion(resu_txt, resu_latex)
 
-    def add_restrictions(self, restrictions):
+    def add_restrictions(self, restrictions: CoordinateRestrictions):
         r"""
         Add some restrictions on the coordinates.
 
@@ -2317,8 +2403,9 @@ class RealChart(Chart):
         self._restrictions = new_restrictions
         self._fast_valid_coordinates = None
 
-
-    def restrict(self, subset, restrictions=None):
+    def restrict(
+        self, subset: TopologicalManifold, restrictions: Optional[CoordinateRestrictions] = None
+    ):
         r"""
         Return the restriction of the chart to some open subset of its domain.
 
@@ -2423,7 +2510,7 @@ class RealChart(Chart):
             self._dom_restrict[subset] = res
         return self._dom_restrict[subset]
 
-    def valid_coordinates(self, *coordinates, **kwds):
+    def valid_coordinates(self, *coordinates: Expression, **kwds):
         r"""
         Check whether a tuple of coordinates can be the coordinates of a
         point in the chart domain.
@@ -3343,7 +3430,8 @@ class CoordChange(SageObject):
         v = x - y
 
     """
-    def __init__(self, chart1, chart2, *transformations):
+
+    def __init__(self, chart1: Chart, chart2: Chart, *transformations: tuple[Expression, ...]):
         r"""
         Construct a transition map.
 
@@ -3378,7 +3466,7 @@ class CoordChange(SageObject):
             for sdom in domain.open_supersets():
                 sdom._coord_changes[(chart1, chart2)] = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the transition map.
 
@@ -3399,7 +3487,7 @@ class CoordChange(SageObject):
         return "Change of coordinates from {} to {}".format(self._chart1,
                                                             self._chart2)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of the transition map.
 
@@ -3417,7 +3505,7 @@ class CoordChange(SageObject):
         """
         return latex(self._chart1) + r' \rightarrow ' + latex(self._chart2)
 
-    def __eq__(self, other):
+    def __eq__(self, other: CoordChange) -> bool:
         r"""
         Equality operator.
 
@@ -3449,7 +3537,7 @@ class CoordChange(SageObject):
                 and (self._chart2 == other._chart2)
                 and (self._transf == other._transf))
 
-    def __ne__(self, other):
+    def __ne__(self, other: CoordChange) -> bool:
         r"""
         Non-equality operator.
 
@@ -3466,7 +3554,7 @@ class CoordChange(SageObject):
         """
         return not (self == other)
 
-    def __call__(self, *coords):
+    def __call__(self, *coords: tuple[Expression]) -> tuple[Expression]:
         r"""
         Compute the new coordinates from old ones.
 
@@ -3490,7 +3578,7 @@ class CoordChange(SageObject):
         """
         return self._transf(*coords)
 
-    def inverse(self):
+    def inverse(self) -> CoordChange:
         r"""
         Return the inverse coordinate transformation.
 
@@ -3621,7 +3709,7 @@ class CoordChange(SageObject):
         SR.cleanup_var(xp2)
         return self._inverse
 
-    def set_inverse(self, *transformations, **kwds):
+    def set_inverse(self, *transformations: tuple[Expression, ...], **kwds):
         r"""
         Sets the inverse of the coordinate transformation.
 
@@ -3768,7 +3856,7 @@ class CoordChange(SageObject):
                 for li in infos:
                     print(li)
 
-    def __mul__(self, other):
+    def __mul__(self, other: CoordChange) -> CoordChange:
         r"""
         Composition with another change of coordinates.
 
@@ -3806,7 +3894,9 @@ class CoordChange(SageObject):
         transf = self._transf(*(other._transf.expr()))
         return type(self)(other._chart1, self._chart2, *transf)
 
-    def restrict(self, dom1, dom2=None):
+    def restrict(
+        self, dom1: TopologicalManifold, dom2: Optional[TopologicalManifold] = None
+    ) -> CoordChange:
         r"""
         Restriction to subsets.
 
@@ -3849,7 +3939,7 @@ class CoordChange(SageObject):
         return type(self)(self._chart1.restrict(dom1),
                           self._chart2.restrict(dom2), *(self._transf.expr()))
 
-    def display(self):
+    def display(self) -> str:
         r"""
         Display of the coordinate transformation.
 

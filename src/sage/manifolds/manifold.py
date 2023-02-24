@@ -348,7 +348,7 @@ from sage.rings.real_mpfr import RR
 from sage.structure.global_options import GlobalOptions
 
 if TYPE_CHECKING:
-    from sage.manifolds.chart import Chart
+    from sage.manifolds.chart import Chart, CoordChange
     from sage.manifolds.continuous_map import ContinuousMap
     from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
@@ -587,20 +587,24 @@ class TopologicalManifold(ManifoldSubset):
         if not isinstance(start_index, (int, Integer)):
             raise TypeError("the starting index must be an integer")
         self._sindex = start_index
-        #
-        self._atlas = []  # list of charts defined on subsets of self
-        self._top_charts = []  # list of charts defined on subsets of self
-                        # that are not subcharts of charts on larger subsets
-        self._def_chart = None  # default chart
-        self._orientation = [] # set no orientation a priori
-        self._charts_by_coord = {} # dictionary of charts whose domain is self
-                                   # (key: string formed by the coordinate
-                                   #  symbols separated by a white space)
-        self._coord_changes = {} # dictionary of transition maps (key: pair of
-                                 # of charts)
+        # list of charts defined on subsets of self
+        self._atlas: list[Chart] = []
+        # list of charts defined on subsets of self
+        # that are not subcharts of charts on larger subsets
+        self._top_charts: list[Chart] = []
+        # default chart
+        self._def_chart: Optional[Chart] = None
+        # set no orientation a priori
+        self._orientation = []
+        # dictionary of charts whose domain is self
+        # (key: string formed by the coordinate
+        #  symbols separated by a white space)
+        self._charts_by_coord: dict[str, Chart] = {}
+        # dictionary of transition maps (key: pair of of charts)
+        self._coord_changes: dict[tuple[Chart, Chart], CoordChange] = {}
         # List of charts that individually cover self, i.e. whose
         # domains are self (if non-empty, self is a coordinate domain):
-        self._covering_charts = []
+        self._covering_charts: list[Chart] = []
         # Algebra of scalar fields defined on self:
         self._scalar_field_algebra = self._structure.scalar_field_algebra(self)
         # The zero scalar field:

@@ -20,18 +20,25 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.structure.sage_object import SageObject
-from sage.symbolic.ring import SR
-from sage.manifolds.utilities import (simplify_chain_real,
-                                      simplify_chain_generic,
-                                      simplify_chain_real_sympy,
-                                      simplify_chain_generic_sympy,)
-from sage.misc.latex import latex
+from typing import TYPE_CHECKING, Callable, Literal, Optional, Union
+
 import sympy
 
+from sage.manifolds.utilities import (
+    simplify_chain_generic,
+    simplify_chain_generic_sympy,
+    simplify_chain_real,
+    simplify_chain_real_sympy,
+)
+from sage.misc.latex import latex
+from sage.structure.sage_object import SageObject
+from sage.symbolic.ring import SR
+
+if TYPE_CHECKING:
+    from sage.symbolic.expression import Expression
 
 # Conversion functions
-def _SR_to_Sympy(expression):
+def _SR_to_Sympy(expression: Expression) -> Expression:
     r"""
     Convert an expression from ``SR`` to ``sympy``.
 
@@ -70,7 +77,7 @@ def _SR_to_Sympy(expression):
     return SR(expression)._sympy_()
 
 
-def _Sympy_to_SR(expression):
+def _Sympy_to_SR(expression: Expression) -> Expression:
     r"""
     Convert an expression from ``sympy`` to ``SR``.
 
@@ -111,6 +118,9 @@ def _Sympy_to_SR(expression):
         if type(a) is type(expression):
             raise TypeError
         return a
+
+
+CalculusMethodName = Literal["SR", "sympy"]
 
 
 class CalculusMethod(SageObject):
@@ -173,11 +183,16 @@ class CalculusMethod(SageObject):
     introducing a new simplification algorithm.
 
     """
-    _default = 'SR'  # default calculus method
-    _methods = ('SR', 'sympy')  # implemented methods
-    _tranf = {'SR':  _Sympy_to_SR, 'sympy': _SR_to_Sympy}  # translators
+    # default calculus method
+    _default: CalculusMethodName = "SR"
+    # implemented methods
+    _methods: tuple[CalculusMethodName, ...] = ("SR", "sympy")
+    # translators
+    _tranf = {"SR": _Sympy_to_SR, "sympy": _SR_to_Sympy}
+    _simplify_dict: dict[CalculusMethodName, Callable[[Expression], Expression]]
+    _current: CalculusMethodName
 
-    def __init__(self, current=None, base_field_type='real'):
+    def __init__(self, current: Optional[CalculusMethodName] = None, base_field_type: str = "real"):
         r"""
         Initializes ``self``.
 
@@ -204,7 +219,9 @@ class CalculusMethod(SageObject):
         self._simplify_dict_default = self._simplify_dict.copy()
         self._latex_dict = {'sympy': sympy.latex, 'SR': latex}
 
-    def simplify(self, expression, method=None):
+    def simplify(
+        self, expression: Expression, method: Optional[CalculusMethodName] = None
+    ) -> Expression:
         r"""
         Apply the simplifying function associated with a given calculus method
         to a symbolic expression.
@@ -275,7 +292,9 @@ class CalculusMethod(SageObject):
             method = self._current
         return self._simplify_dict[method](expression)
 
-    def is_trivial_zero(self, expression, method=None):
+    def is_trivial_zero(
+        self, expression: Expression, method: Optional[CalculusMethodName] = None
+    ) -> bool:
         r"""
         Check if an expression is trivially equal to zero without any
         simplification.
@@ -320,7 +339,7 @@ class CalculusMethod(SageObject):
                 return True
             return False
 
-    def set(self, method):
+    def set(self, method: CalculusMethodName):
         r"""
         Set the currently active calculus method.
 
@@ -350,7 +369,7 @@ class CalculusMethod(SageObject):
                                       "implemented")
         self._current = method
 
-    def current(self):
+    def current(self) -> CalculusMethodName:
         r"""
         Return the active calculus method as a string.
 
@@ -377,7 +396,11 @@ class CalculusMethod(SageObject):
         """
         return self._current
 
-    def set_simplify_function(self, simplifying_func, method=None):
+    def set_simplify_function(
+        self,
+        simplifying_func: Union[Callable[[Expression], Expression], Literal["default"]],
+        method: Optional[CalculusMethodName] = None,
+    ):
         r"""
         Set the simplifying function associated to a given calculus method.
 
@@ -447,7 +470,9 @@ class CalculusMethod(SageObject):
         else:
             self._simplify_dict[method] = simplifying_func
 
-    def simplify_function(self, method=None):
+    def simplify_function(
+        self, method: Optional[CalculusMethodName] = None
+    ) -> Callable[[Expression], Expression]:
         r"""
         Return the simplifying function associated to a given calculus method.
 
@@ -547,7 +572,7 @@ class CalculusMethod(SageObject):
         """
         self._current = self._default
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 

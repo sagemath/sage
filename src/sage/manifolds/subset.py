@@ -68,15 +68,21 @@ Families of subsets after the above operations::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import annotations
-from typing import Optional
-from collections import defaultdict
+
 import itertools
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.superseded import deprecation
+from collections import defaultdict
+from typing import TYPE_CHECKING, Optional
+
 from sage.categories.sets_cat import Sets
 from sage.manifolds.family import ManifoldObjectFiniteFamily, ManifoldSubsetFiniteFamily
 from sage.manifolds.point import ManifoldPoint
+from sage.misc.superseded import deprecation
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from sage.manifolds.manifold import TopologicalManifold
+
 
 class ManifoldSubset(UniqueRepresentation, Parent):
     r"""
@@ -153,7 +159,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     _name: str
 
-    def __init__(self, manifold, name: str, latex_name=None, category=None):
+    def __init__(self, manifold: TopologicalManifold, name: str, latex_name=None, category=None):
         r"""
         Construct a manifold subset.
 
@@ -1320,7 +1326,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     #### End of accessors
 
-    def is_subset(self, other):
+    def is_subset(self, other: TopologicalManifold):
         r"""
         Return ``True`` if and only if ``self`` is included in ``other``.
 
