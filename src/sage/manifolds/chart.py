@@ -39,7 +39,7 @@ REFERENCES:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Optional, TypedDict, Union, overload
+from typing import TYPE_CHECKING, Iterable, Optional, Type, TypedDict, Union, overload
 
 from typing_extensions import Unpack
 
@@ -311,7 +311,7 @@ class Chart(UniqueRepresentation, SageObject):
 
     @staticmethod
     def __classcall__(
-        cls: Chart,
+        cls: Type[Chart],
         domain: TopologicalManifold,
         coordinates: str = "",
         calc_method: Optional[CalculusMethodName] = None,
@@ -358,9 +358,9 @@ class Chart(UniqueRepresentation, SageObject):
     def __init__(
         self,
         domain: TopologicalManifold,
-        coordinates: tuple[Expression],
+        coordinates: tuple[Expression, ...],
         calc_method: Optional[CalculusMethodName] = None,
-        periods: Optional[Iterable[Expression]] = None,
+        periods: Optional[tuple[Optional[Expression], ...]] = None,
         coord_restrictions: Optional[CoordinateRestrictions] = None,
     ):
         r"""
@@ -725,7 +725,7 @@ class Chart(UniqueRepresentation, SageObject):
         """
         return self._manifold
 
-    def periods(self) -> tuple[Optional[Expression], ...]:
+    def periods(self) -> Optional[tuple[Optional[Expression], ...]]:
         r"""
         Return the coordinate periods.
 
@@ -3554,7 +3554,7 @@ class CoordChange(SageObject):
         """
         return not (self == other)
 
-    def __call__(self, *coords: tuple[Expression]) -> tuple[Expression]:
+    def __call__(self, *coords: tuple[Expression, ...]) -> tuple[Expression, ...]:
         r"""
         Compute the new coordinates from old ones.
 
