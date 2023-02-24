@@ -116,7 +116,7 @@ cdef class Functor(SageObject):
         Functor from Category of rings to Category of fields
         sage: F(ZZ)
         Rational Field
-        sage: F(GF(2))
+        sage: F(GF(2))                                                          # optional - sage.libs.pari
         Finite Field of size 2
 
     Functors are not only about the objects of a category, but also about
@@ -171,7 +171,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))
+            sage: F(GF(2))                                                      # optional - sage.libs.pari
             Finite Field of size 2
 
         """
@@ -247,14 +247,15 @@ cdef class Functor(SageObject):
         TESTS::
 
             sage: from sage.categories.functor import Functor
-            sage: F = Functor(Rings(),Fields())
-            sage: k.<a> = GF(25)
-            sage: f = k.hom([-a-4])
-            sage: R.<t> = k[]
-            sage: fR = R.hom(f,R)
-            sage: fF = F(fR)         # indirect doctest
-            sage: fF
-            Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Finite Field in a of size 5^2
+            sage: F = Functor(Rings(), Fields())
+            sage: k.<a> = GF(25)                                                # optional - sage.libs.pari
+            sage: f = k.hom([-a-4])                                             # optional - sage.libs.pari
+            sage: R.<t> = k[]                                                   # optional - sage.libs.pari
+            sage: fR = R.hom(f,R)                                               # optional - sage.libs.pari
+            sage: fF = F(fR)         # indirect doctest                         # optional - sage.libs.pari
+            sage: fF                                                            # optional - sage.libs.pari
+            Ring endomorphism of Fraction Field of
+             Univariate Polynomial Ring in t over Finite Field in a of size 5^2
               Defn: Induced from base ring by
                     Ring endomorphism of Univariate Polynomial Ring in t over Finite Field in a of size 5^2
                       Defn: Induced from base ring by
@@ -335,13 +336,13 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))
+            sage: F(GF(2))                                                      # optional - sage.libs.pari
             Finite Field of size 2
 
         Two subclasses::
 
-            sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
-            sage: F1(GF(5)) #indirect doctest
+            sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
+            sage: F1(GF(5))  # indirect doctest                                 # optional - sage.libs.pari
             Finite Field of size 5
             sage: F1(ZZ)
             Traceback (most recent call last):
@@ -457,10 +458,12 @@ class ForgetfulFunctor_generic(Functor):
 
     EXAMPLES::
 
-        sage: F = ForgetfulFunctor(FiniteFields(),Fields()) #indirect doctest
+        sage: F = ForgetfulFunctor(FiniteFields(), Fields()) #indirect doctest
         sage: F
-        The forgetful functor from Category of finite enumerated fields to Category of fields
-        sage: F(GF(3))
+        The forgetful functor
+         from Category of finite enumerated fields
+         to Category of fields
+        sage: F(GF(3))                                                          # optional - sage.libs.pari
         Finite Field of size 3
 
     """

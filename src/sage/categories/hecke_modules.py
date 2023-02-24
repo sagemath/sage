@@ -46,7 +46,7 @@ class HeckeModules(Category_module):
 
         sage: HeckeModules(IntegerRing())
         Category of Hecke modules over Integer Ring
-        sage: HeckeModules(FiniteField(5))
+        sage: HeckeModules(FiniteField(5))                                      # optional - sage.libs.pari
         Category of Hecke modules over Finite Field of size 5
 
     The base ring doesn't have to be a principal ideal domain::
@@ -64,7 +64,7 @@ class HeckeModules(Category_module):
 
             sage: TestSuite(HeckeModules(ZZ)).run()
 
-            sage: HeckeModules(Partitions(3)).run()
+            sage: HeckeModules(Partitions(3)).run()                             # optional - sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 3) must be a commutative ring

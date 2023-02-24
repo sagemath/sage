@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.groups
 r"""
 Group algebras and beyond: the Algebra functorial construction
 
