@@ -461,6 +461,8 @@ def complex_to_rgb(z_values, contoured=False, tiled=False,
             rgb[i, j, 2] = b
 
     sig_off()
+    nan_indices = np.isnan(rgb).any(-1)     # Mask for undefined points
+    rgb[nan_indices] = 1                    # Make nan_indices white
     return rgb
 
 

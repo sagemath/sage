@@ -37,7 +37,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.set_factories import (
     SetFactory, ParentWithSetFactory, TopMostParentPolicy)
-from sage.sets.all import DisjointUnionEnumeratedSets
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import LazyFamily
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
