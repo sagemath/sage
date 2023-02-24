@@ -157,7 +157,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         ....:     _ = f.write(code)
         sage: load(t)
         sage: hello
-        <fortran object>
+        <fortran ...>
     """
     import sage.repl.load
     if len(filename) != 1:
