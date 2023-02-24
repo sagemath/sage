@@ -7051,7 +7051,7 @@ class Graph(GenericGraph):
             ...
             ValueError: the algorithm must be "Cliquer", "MILP" or "mcqd"
 
-        Ticket :trac:`24287` is fixed::
+        Issue :trac:`24287` is fixed::
 
             sage: G = Graph([(0,1)]*5 + [(1,2)]*2, multiedges=True)
             sage: G.vertex_cover(reduction_rules=True, algorithm='MILP')
@@ -7059,7 +7059,7 @@ class Graph(GenericGraph):
             sage: G.vertex_cover(reduction_rules=False)
             [1]
 
-        Ticket :trac:`25988` is fixed::
+        Issue :trac:`25988` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
             sage: B.vertex_cover(algorithm='Cliquer', reduction_rules=True)

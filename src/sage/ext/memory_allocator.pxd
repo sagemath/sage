@@ -65,7 +65,7 @@ cdef class MemoryAllocator:
             ....:     assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
             doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
+            See https://github.com/sagemath/sage/issues/31591 for details.
         """
         cdef size_t extra = alignment - 1
         return align(self.malloc(size + extra), alignment)
@@ -96,7 +96,7 @@ cdef class MemoryAllocator:
             ....: ''')
             sage: foo()
             doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
+            See https://github.com/sagemath/sage/issues/31591 for details.
         """
         # Find extra such that (nmemb + extra) * size >= nmemb * size + alignment - 1
         # ⇔ extra * size >= alignment - 1

@@ -11,7 +11,7 @@ from sage.structure.element cimport Element
 # Cython-0.17.2 disallows inline cpdef in non-final classes
 # This restriction will be lifted at one point, then we can set
 # some of the methods to be inline again, that is,
-# revert the patch form http://trac.sagemath.org/13740
+# revert the patch form https://github.com/sagemath/sage/issues/13740
 
 cdef class ClonableElement(Element):
     cdef bint _is_immutable

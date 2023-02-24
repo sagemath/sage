@@ -1210,7 +1210,7 @@ cdef class MPolynomial(CommutativeRingElement):
             Rational Field
 
         """
-        from sage.arith.all import gcd
+        from sage.arith.misc import GCD as gcd
         return gcd(self.coefficients())
 
     def content_ideal(self):

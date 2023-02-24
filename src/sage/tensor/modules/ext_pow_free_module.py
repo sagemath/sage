@@ -266,7 +266,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             sage: A.construction() is None
             True
         """
-        # No construction until https://trac.sagemath.org/ticket/30242
+        # No construction until https://github.com/sagemath/sage/issues/30242
         # makes this a quotient of TensorFreeModule
         return None
 
@@ -650,7 +650,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             sage: A.construction() is None
             True
         """
-        # No construction until https://trac.sagemath.org/ticket/30242
+        # No construction until https://github.com/sagemath/sage/issues/30242
         # makes this a quotient of TensorFreeModule
         return None
 

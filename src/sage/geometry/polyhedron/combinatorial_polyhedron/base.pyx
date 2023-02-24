@@ -1450,7 +1450,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: r = C.ridges(add_equations=True)
             sage: r1 = C.ridges(add_equalities=True)
             doctest:...: DeprecationWarning: the keyword ``add_equalities`` is deprecated; use ``add_equations``
-            See https://trac.sagemath.org/31834 for details.
+            See https://github.com/sagemath/sage/issues/31834 for details.
             sage: r == r1
             True
         """
@@ -2762,7 +2762,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
             sage: it = C.face_generator(1, False)
             doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
-            See https://trac.sagemath.org/33646 for details.
+            See https://github.com/sagemath/sage/issues/33646 for details.
             sage: it = C.face_generator(1, dual=True)
 
         .. SEEALSO::
