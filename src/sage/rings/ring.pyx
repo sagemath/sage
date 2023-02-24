@@ -871,8 +871,7 @@ cdef class Ring(ParentWithGens):
 
         Make sure :trac:`10481` is fixed::
 
-            sage: var('x')
-            x
+            sage: x = polygen(ZZ, 'x')
             sage: R.<a> = ZZ['x'].quo(x^2)
             sage: R.fraction_field()
             Traceback (most recent call last):
@@ -952,11 +951,11 @@ cdef class Ring(ParentWithGens):
             -1
             sage: QQ.zeta(1)
             1
-            sage: CyclotomicField(6).zeta(6)
+            sage: CyclotomicField(6).zeta(6)                                    # optional - sage.rings.number_field
             zeta6
-            sage: CyclotomicField(3).zeta(3)
+            sage: CyclotomicField(3).zeta(3)                                    # optional - sage.rings.number_field
             zeta3
-            sage: CyclotomicField(3).zeta(3).multiplicative_order()
+            sage: CyclotomicField(3).zeta(3).multiplicative_order()             # optional - sage.rings.number_field
             3
             sage: a = GF(7).zeta(); a
             3
@@ -1021,7 +1020,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: CyclotomicField(19).zeta_order()
+            sage: CyclotomicField(19).zeta_order()                              # optional - sage.rings.number_field
             38
             sage: GF(19).zeta_order()
             18
@@ -1312,16 +1311,18 @@ cdef class CommutativeRing(Ring):
         All orders in number fields have Krull dimension 1, including
         non-maximal orders::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: R = K.maximal_order(); R
-            Gaussian Integers in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.krull_dimension()
+            sage: K.<i> = QuadraticField(-1)                                    # optional - sage.rings.number_field
+            sage: R = K.maximal_order(); R                                      # optional - sage.rings.number_field
+            Gaussian Integers in Number Field in i
+             with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.krull_dimension()                                           # optional - sage.rings.number_field
             1
-            sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.is_maximal()
+            sage: R = K.order(2*i); R                                           # optional - sage.rings.number_field
+            Order in Number Field in i
+             with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.is_maximal()                                                # optional - sage.rings.number_field
             False
-            sage: R.krull_dimension()
+            sage: R.krull_dimension()                                           # optional - sage.rings.number_field
             1
         """
         raise NotImplementedError
