@@ -4089,7 +4089,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             When ``False`` is returned, it does not mean that the
             curve is not modular!  Only that modularity cannot be
             proved with current knowledge and implemented methods.  It
-            is expected that the return value will be ``True`` for all
+            is expected that the return value will be ``True`` for most
             curves defined over totally real fields, and for all
             defined over imaginary quadratic fields over which the
             modular curve `X_0(15)` (which is the elliptic curve with
@@ -4114,11 +4114,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         This is based on code provided by S. Siksek for the totally
         real case, and relies on theorems in the following papers:
-        [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_.  It
-        relies on checking that the images of the mod-`p` Galois
+        [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_,
+        [DNS2020]_, [Box2022]_.
+
+        It relies on checking that the images of the mod-`p` Galois
         representation attached to the elliptic curve for `p=3,5,7`
-        are not simultaneously small expcept for the cases (base field
-        `\QQ` or real quadratic) where theoretical results show this to
+        are not simultaneously small, except for the cases (base field
+        `\QQ`, real quadratic, totally real cubic, or totally real quartic
+        not containing `\sqrt{5}`) where theoretical results show this to
         be impossible.
 
         EXAMPLES:
@@ -4144,11 +4147,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Unable to determine modularity except over totally real and imaginary quadratic fields
             False
 
-        Some examples from the LMFDB.  Over a totally real cubic field::
+        Some examples from the LMFDB.  Over a totally real quintic field::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(R([-3, -7, -1, 1]))
-            sage: E = EllipticCurve([K([-4,-1,1]),K([-4,-2,1]),K([-4,-1,1]),K([-2807,-660,446]),K([5874,1376,-933])])
+            sage: K.<a> = NumberField(R([1, 3, -1, -5, 0, 1]))
+            sage: E = EllipticCurve([K([3,0,-5,0,1]),K([-3,-7,9,2,-2]),K([1,0,0,0,0]),K([-22,-79,-92,14,21]),K([12,-87,-324,7,74])])
             sage: E.is_modular(verbose=True)
             Modular since the mod 3 Galois image is neither reducible nor split
             True
@@ -4186,7 +4189,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.is_modular(verbose=True)
             Unable to determine modularity except over totally real and imaginary quadratic fields
             False
-
         """
         K = self.base_field()
         d = K.degree()
@@ -4198,17 +4200,24 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         TR =  K.is_totally_real()
 
-        if TR and d == 2: # base field real quadratic
+        if TR and d <= 3: # base field real quadratic or totally real cubic
             if verbose:
-                print("All elliptic curves over real quadratic fields are modular")
+                if d==2:
+                    print("All elliptic curves over real quadratic fields are modular")
+                else:
+                    print("All elliptic curves over totaly real cubic fields are modular")
             return True
+
+        if TR and d==4 and not K(5).is_square():
+            if verbose:
+                print("All elliptic curves over totally real quartic fields not containing sqrt(5) are modular")
 
         if d > 2 and not TR:
             if verbose:
                 print("Unable to determine modularity except over totally real and imaginary quadratic fields")
             return False # meaning 'unknown'
 
-        # from here either K is totally real (TR is True) or imagainary quadratic
+        # from here either K is totally real of degree at least 4 (TR is True) or imaginary quadratic
 
         if self.has_cm():
             if verbose:

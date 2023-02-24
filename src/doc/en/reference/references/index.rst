@@ -736,6 +736,10 @@ REFERENCES:
             Cambridge Univ Press, 2001.
             :doi:`10.1017/S0963548301004813`.
 
+.. [Box2022] Josha Box.
+             Elliptic curves over totally real quartic fields not containing `\sqrt{5}` are modular.
+             Trans. Amer. Math. Soc. 375 (2022), 3129-3172.
+
 .. [BF2005] \R.L. Burden and J.D. Faires. *Numerical Analysis*.
             8th edition, Thomson Brooks/Cole, 2005.
 
@@ -1978,6 +1982,10 @@ REFERENCES:
                     Charles Colbourn, Jeffrey Dinitz
                     Chapman & Hall/CRC
                     2012
+
+.. [DNS2020] Maarten Derickx, Filip Najman, Samir Siksek
+              *Elliptic curves over totally real cubic fields are modular.*
+              Algebra and Number Theory. (2020) 14 no.7, pp. 1791--1800.
 
 .. [DerZak1980] Nachum Dershowitz and Schmuel Zaks,
                 *Enumerations of ordered trees*,
