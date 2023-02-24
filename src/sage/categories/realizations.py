@@ -161,8 +161,8 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")
-            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                                   # optional - sage.combinat
+            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()                           # optional - sage.combinat
             'multiplicative bases on primitive elements'
         """
         import re
@@ -179,10 +179,10 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")
-            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                                   # optional - sage.combinat
+            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C                                # optional - sage.combinat
             Category of multiplicative bases on primitive elements of Sym
-            sage: C._repr_object_names()
+            sage: C._repr_object_names()                                                            # optional - sage.combinat
             'multiplicative bases on primitive elements of Sym'
         """
         return "{} of {}".format(self._get_name(), self.base())

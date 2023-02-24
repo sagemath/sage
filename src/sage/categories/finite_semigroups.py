@@ -86,8 +86,9 @@ class FiniteSemigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
-                sage: sorted(map(sorted, S.j_classes()))
-                [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'], ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
+                sage: sorted(map(sorted, S.j_classes()))                                # optional - sage.graphs
+                [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
+                 ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
             return self.cayley_graph(side="twosided", simple=True).strongly_connected_components()
 
@@ -103,8 +104,9 @@ class FiniteSemigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
-                sage: sorted(map(sorted, S.j_classes_of_idempotents()))
-                [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'], ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
+                sage: sorted(map(sorted, S.j_classes_of_idempotents()))                 # optional - sage.graphs
+                [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
+                 ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
             return [l for l in ([x for x in cl if attrcall('is_idempotent')(x)] for cl in self.j_classes()) if len(l) > 0]
 
@@ -120,7 +122,7 @@ class FiniteSemigroups(CategoryWithAxiom):
             The chosen elements depend on the order of each `J`-class,
             and that order is random when using Python 3. ::
 
-                sage: sorted(S.j_transversal_of_idempotents()) # random
+                sage: sorted(S.j_transversal_of_idempotents()) # random                 # optional - sage.graphs
                 ['a', 'ab', 'abc', 'ac', 'b', 'c', 'cb']
             """
             def first_idempotent(l):

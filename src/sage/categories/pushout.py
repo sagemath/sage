@@ -107,12 +107,14 @@ class ConstructionFunctor(Functor):
         sage: P.<x,y> = ZZ[]
         sage: F = P.construction()[0]; F
         MPoly[x,y]
-        sage: A.<a,b> = GF(5)[]
-        sage: f = A.hom([a+b,a-b],A)
-        sage: F(A)
-        Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Finite Field of size 5
-        sage: F(f)
-        Ring endomorphism of Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+        sage: A.<a,b> = GF(5)[]                                                         # optional - sage.libs.pari
+        sage: f = A.hom([a+b, a-b], A)                                                  # optional - sage.libs.pari
+        sage: F(A)                                                                      # optional - sage.libs.pari
+        Multivariate Polynomial Ring in x, y
+         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+        sage: F(f)                                                                      # optional - sage.libs.pari
+        Ring endomorphism of Multivariate Polynomial Ring in x, y
+         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
           Defn: Induced from base ring by
                 Ring endomorphism of Multivariate Polynomial Ring in a, b over Finite Field of size 5
                   Defn: a |--> a + b
@@ -430,22 +432,26 @@ class CompositeConstructionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: from sage.categories.pushout import CompositeConstructionFunctor
-        sage: F = CompositeConstructionFunctor(QQ.construction()[0],ZZ['x'].construction()[0],QQ.construction()[0],ZZ['y'].construction()[0])
+        sage: F = CompositeConstructionFunctor(QQ.construction()[0], ZZ['x'].construction()[0],
+        ....:                                  QQ.construction()[0], ZZ['y'].construction()[0])
         sage: F
         Poly[y](FractionField(Poly[x](FractionField(...))))
         sage: F == loads(dumps(F))
         True
         sage: F == CompositeConstructionFunctor(*F.all)
         True
-        sage: F(GF(2)['t'])
-        Univariate Polynomial Ring in y over Fraction Field of Univariate Polynomial Ring in x over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+        sage: F(GF(2)['t'])                                                                         # optional - sage.libs.pari
+        Univariate Polynomial Ring in y over Fraction Field of Univariate Polynomial Ring in x
+         over Fraction Field of Univariate Polynomial Ring in t
+          over Finite Field of size 2 (using GF2X)
     """
     def __init__(self, *args):
         """
         TESTS::
 
             sage: from sage.categories.pushout import CompositeConstructionFunctor
-            sage: F = CompositeConstructionFunctor(QQ.construction()[0],ZZ['x'].construction()[0],QQ.construction()[0],ZZ['y'].construction()[0])
+            sage: F = CompositeConstructionFunctor(QQ.construction()[0], ZZ['x'].construction()[0],
+            ....:                                  QQ.construction()[0], ZZ['y'].construction()[0])
             sage: F
             Poly[y](FractionField(Poly[x](FractionField(...))))
             sage: F == CompositeConstructionFunctor(*F.all)
@@ -801,32 +807,32 @@ class PolynomialFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: P = ZZ['t'].construction()[0]
-        sage: P(GF(3))
+        sage: P(GF(3))                                                          # optional - sage.libs.pari
         Univariate Polynomial Ring in t over Finite Field of size 3
-        sage: P == loads(dumps(P))
+        sage: P == loads(dumps(P))                                              # optional - sage.libs.pari
         True
-        sage: R.<x,y> = GF(5)[]
-        sage: f = R.hom([x+2*y,3*x-y],R)
-        sage: P(f)((x+y)*P(R).0)
+        sage: R.<x,y> = GF(5)[]                                                 # optional - sage.libs.pari
+        sage: f = R.hom([x + 2*y, 3*x - y], R)                                  # optional - sage.libs.pari
+        sage: P(f)((x+y) * P(R).0)                                              # optional - sage.libs.pari
         (-x + y)*t
 
     By :trac:`9944`, the construction functor distinguishes sparse and
     dense polynomial rings. Before, the following example failed::
 
-        sage: R.<x> = PolynomialRing(GF(5), sparse=True)
-        sage: F,B = R.construction()
-        sage: F(B) is R
+        sage: R.<x> = PolynomialRing(GF(5), sparse=True)                        # optional - sage.libs.pari
+        sage: F, B = R.construction()                                           # optional - sage.libs.pari
+        sage: F(B) is R                                                         # optional - sage.libs.pari
         True
         sage: S.<x> = PolynomialRing(ZZ)
-        sage: R.has_coerce_map_from(S)
+        sage: R.has_coerce_map_from(S)                                          # optional - sage.libs.pari
         False
-        sage: S.has_coerce_map_from(R)
+        sage: S.has_coerce_map_from(R)                                          # optional - sage.libs.pari
         False
-        sage: S.0 + R.0
+        sage: S.0 + R.0                                                         # optional - sage.libs.pari
         2*x
-        sage: (S.0 + R.0).parent()
+        sage: (S.0 + R.0).parent()                                              # optional - sage.libs.pari
         Univariate Polynomial Ring in x over Finite Field of size 5
-        sage: (S.0 + R.0).parent().is_sparse()
+        sage: (S.0 + R.0).parent().is_sparse()                                  # optional - sage.libs.pari
         False
 
     """
@@ -838,7 +844,7 @@ class PolynomialFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import PolynomialFunctor
             sage: P = PolynomialFunctor('x')
-            sage: P(GF(3))
+            sage: P(GF(3))                                                      # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Finite Field of size 3
 
         There is an optional parameter ``multi_variate``, but
@@ -865,7 +871,7 @@ class PolynomialFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P = ZZ['x'].construction()[0]
-            sage: P(GF(3))      # indirect doctest
+            sage: P(GF(3))      # indirect doctest                              # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Finite Field of size 3
 
         """
@@ -882,7 +888,7 @@ class PolynomialFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P = ZZ['x'].construction()[0]
-            sage: P(ZZ.hom(GF(3)))  # indirect doctest
+            sage: P(ZZ.hom(GF(3)))  # indirect doctest                          # optional - sage.libs.pari
             Ring morphism:
               From: Univariate Polynomial Ring in x over Integer Ring
               To:   Univariate Polynomial Ring in x over Finite Field of size 3
@@ -992,17 +998,19 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         sage: P.<x,y> = ZZ[]
         sage: F = P.construction()[0]; F
         MPoly[x,y]
-        sage: A.<a,b> = GF(5)[]
-        sage: F(A)
-        Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Finite Field of size 5
-        sage: f = A.hom([a+b,a-b],A)
-        sage: F(f)
-        Ring endomorphism of Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+        sage: A.<a,b> = GF(5)[]                                                 # optional - sage.libs.pari
+        sage: F(A)                                                              # optional - sage.libs.pari
+        Multivariate Polynomial Ring in x, y
+         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+        sage: f = A.hom([a+b, a-b], A)                                          # optional - sage.libs.pari
+        sage: F(f)                                                              # optional - sage.libs.pari
+        Ring endomorphism of Multivariate Polynomial Ring in x, y
+         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
           Defn: Induced from base ring by
                 Ring endomorphism of Multivariate Polynomial Ring in a, b over Finite Field of size 5
                   Defn: a |--> a + b
                         b |--> a - b
-        sage: F(f)(F(A)(x)*a)
+        sage: F(f)(F(A)(x)*a)                                                   # optional - sage.libs.pari
         (a + b)*x
 
     """
@@ -1155,8 +1163,8 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             ...
             TypeError: unsupported operand parent(s) for +: 'Multivariate Polynomial Ring in x, y, z over Integer Ring' and 'Multivariate Polynomial Ring in y, s over Rational Field'
             sage: R = PolynomialRing(ZZ, 'x', 500)
-            sage: S = PolynomialRing(GF(5), 'x', 200)
-            sage: R.gen(0) + S.gen(0)
+            sage: S = PolynomialRing(GF(5), 'x', 200)                           # optional - sage.libs.pari
+            sage: R.gen(0) + S.gen(0)                                           # optional - sage.libs.pari
             2*x0
         """
         if len(self.vars) <= 1:
@@ -2228,17 +2236,17 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         TESTS::
 
-            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]
+            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]      # optional - sage.libs.pari
             sage: F2 = (ZZ^3).span([(1,2,3),(4,5,6)]).construction()[0]
             sage: F3 = (QQ^3).span([(1,2,3),(4,5,6)]).construction()[0]
             sage: F4 = (ZZ^3).span([(1,0,-1),(0,1,2)]).construction()[0]
-            sage: F1 == loads(dumps(F1))
+            sage: F1 == loads(dumps(F1))                                        # optional - sage.libs.pari
             True
 
         The ``span`` method automatically transforms the given basis into
         echelon form. The bases look like that::
 
-            sage: F1.basis
+            sage: F1.basis                                                      # optional - sage.libs.pari
             [
             (1, 0, 4),
             (0, 1, 2)
@@ -2263,18 +2271,18 @@ class SubspaceFunctor(ConstructionFunctor):
         The basis of ``F2`` is modulo 5 different from the other bases.
         So, we have::
 
-            sage: F1 != F2 != F3
+            sage: F1 != F2 != F3                                                # optional - sage.libs.pari
             True
 
         The bases of ``F1``, ``F3`` and ``F4`` are the same modulo 5; however,
         there is no coercion from ``QQ^3`` to ``GF(5)^3``. Therefore, we have::
 
-            sage: F1 == F3
+            sage: F1 == F3                                                      # optional - sage.libs.pari
             False
 
         But there are coercions from ``ZZ^3`` to ``QQ^3`` and ``GF(5)^3``, thus::
 
-            sage: F1 == F4 == F3
+            sage: F1 == F4 == F3                                                # optional - sage.libs.pari
             True
 
         """
@@ -2314,17 +2322,18 @@ class SubspaceFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: M = GF(5)^3
-            sage: S1 = M.submodule([(1,2,3),(4,5,6)])
-            sage: S2 = M.submodule([(2,2,3)])
-            sage: F1 = S1.construction()[0]
-            sage: F2 = S2.construction()[0]
-            sage: F1.merge(F2)
+            sage: M = GF(5)^3                                                   # optional - sage.libs.pari
+            sage: S1 = M.submodule([(1,2,3),(4,5,6)])                           # optional - sage.libs.pari
+            sage: S2 = M.submodule([(2,2,3)])                                   # optional - sage.libs.pari
+            sage: F1 = S1.construction()[0]                                     # optional - sage.libs.pari
+            sage: F2 = S2.construction()[0]                                     # optional - sage.libs.pari
+            sage: F1.merge(F2)                                                  # optional - sage.libs.pari
             SubspaceFunctor
-            sage: F1.merge(F2)(GF(5)^3) == S1+S2
+            sage: F1.merge(F2)(GF(5)^3) == S1 + S2                              # optional - sage.libs.pari
             True
-            sage: F1.merge(F2)(GF(5)['t']^3)
-            Free module of degree 3 and rank 3 over Univariate Polynomial Ring in t over Finite Field of size 5
+            sage: F1.merge(F2)(GF(5)['t']^3)                                    # optional - sage.libs.pari
+            Free module of degree 3 and rank 3
+             over Univariate Polynomial Ring in t over Finite Field of size 5
             User basis matrix:
             [1 0 0]
             [0 1 0]
@@ -2338,7 +2347,8 @@ class SubspaceFunctor(ConstructionFunctor):
             sage: v = S1([0,3,6]) + S2([2,0,1/(2*t)]); v   # indirect doctest
             (2, 3, (-12*t - 1)/(-2*t))
             sage: v.parent()
-            Vector space of degree 3 and dimension 3 over Fraction Field of Univariate Polynomial Ring in t over Integer Ring
+            Vector space of degree 3 and dimension 3
+             over Fraction Field of Univariate Polynomial Ring in t over Integer Ring
             User basis matrix:
             [1 0 0]
             [0 1 0]
@@ -2383,7 +2393,7 @@ class FractionField(ConstructionFunctor):
         Category of integral domains
         sage: F.codomain()
         Category of fields
-        sage: F(GF(5)) is GF(5)
+        sage: F(GF(5)) is GF(5)                                                 # optional - sage.libs.pari
         True
         sage: F(ZZ['t'])
         Fraction Field of Univariate Polynomial Ring in t over Integer Ring
@@ -2423,8 +2433,9 @@ class FractionField(ConstructionFunctor):
         TESTS::
 
             sage: F = QQ.construction()[0]
-            sage: F(GF(5)['t'])      # indirect doctest
-            Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
+            sage: F(GF(5)['t'])      # indirect doctest                         # optional - sage.libs.pari
+            Fraction Field of Univariate Polynomial Ring in t
+             over Finite Field of size 5
         """
         return R.fraction_field()
 
@@ -2455,7 +2466,7 @@ class CompletionFunctor(ConstructionFunctor):
         sage: Px
         Power Series Ring in x over Integer Ring
         sage: F3 = Px.construction()[0]
-        sage: F3(GF(3)['x'])
+        sage: F3(GF(3)['x'])                                                    # optional - sage.libs.pari
         Power Series Ring in x over Finite Field of size 3
 
     TESTS::
