@@ -1010,13 +1010,13 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: f = R.hom([x, QQbar(i) * x + y^2], R)
-            sage: I = R.ideal(y^3)
-            sage: J = f._inverse_image_ideal(I); J
+            sage: R.<x,y> = QQbar[]                                             # optional - sage.rings.number_field
+            sage: f = R.hom([x, QQbar(i) * x + y^2], R)                         # optional - sage.rings.number_field
+            sage: I = R.ideal(y^3)                                              # optional - sage.rings.number_field
+            sage: J = f._inverse_image_ideal(I); J                              # optional - sage.rings.number_field
             Ideal (x^2 + 2*I*x*y - y^2)
             of Multivariate Polynomial Ring in x, y over Algebraic Field
-            sage: f(J) <= I
+            sage: f(J) <= I                                                     # optional - sage.rings.number_field
             True
 
         TESTS:
@@ -1878,19 +1878,20 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: cc = K.hom([-i])
-            sage: S.<y> = K[]
-            sage: phi = S.hom([y^2], base_map=cc)
-            sage: phi
-            Ring endomorphism of Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
+            sage: K.<i> = NumberField(x^2 + 1)                                  # optional - sage.rings.number_field
+            sage: cc = K.hom([-i])                                              # optional - sage.rings.number_field
+            sage: S.<y> = K[]                                                   # optional - sage.rings.number_field
+            sage: phi = S.hom([y^2], base_map=cc)                               # optional - sage.rings.number_field
+            sage: phi                                                           # optional - sage.rings.number_field
+            Ring endomorphism of Univariate Polynomial Ring in y
+             over Number Field in i with defining polynomial x^2 + 1
               Defn: y |--> y^2
                     with map of base ring
-            sage: phi(y)
+            sage: phi(y)                                                        # optional - sage.rings.number_field
             y^2
-            sage: phi(i*y)
+            sage: phi(i*y)                                                      # optional - sage.rings.number_field
             -i*y^2
-            sage: phi.base_map()
+            sage: phi.base_map()                                                # optional - sage.rings.number_field
             Composite map:
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
@@ -2413,6 +2414,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: f = A.coerce_map_from(ZZ)
             sage: g = f.extend_to_fraction_field()   # indirect doctest

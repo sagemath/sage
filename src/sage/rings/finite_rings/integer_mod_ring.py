@@ -16,16 +16,16 @@ the other direction.
 ::
 
     sage: r = Integers(7)
-    sage: s = GF(7)
-    sage: r.has_coerce_map_from(s)
+    sage: s = GF(7)                                                             # optional - sage.libs.pari
+    sage: r.has_coerce_map_from(s)                                              # optional - sage.libs.pari
     False
-    sage: s.has_coerce_map_from(r)
+    sage: s.has_coerce_map_from(r)                                              # optional - sage.libs.pari
     True
-    sage: s(1) + r(1)
+    sage: s(1) + r(1)                                                           # optional - sage.libs.pari
     2
-    sage: parent(s(1) + r(1))
+    sage: parent(s(1) + r(1))                                                   # optional - sage.libs.pari
     Finite Field of size 7
-    sage: parent(r(1) + s(1))
+    sage: parent(r(1) + s(1))                                                   # optional - sage.libs.pari
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -263,9 +263,9 @@ def is_IntegerModRing(x):
         Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
         See https://github.com/sagemath/sage/issues/32606 for details.
         True
-        sage: is_IntegerModRing(GF(13))
+        sage: is_IntegerModRing(GF(13))                                         # optional - sage.libs.pari
         True
-        sage: is_IntegerModRing(GF(4, 'a'))
+        sage: is_IntegerModRing(GF(4, 'a'))                                     # optional - sage.libs.pari
         False
         sage: is_IntegerModRing(10)
         False
@@ -1136,7 +1136,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
-            sage: Zmod(87)._pari_order()
+            sage: Zmod(87)._pari_order()                                        # optional - sage.libs.pari
             87
         """
         try:
@@ -1149,14 +1149,14 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         TESTS::
 
-            sage: K2 = GF(2)
-            sage: K3 = GF(3)
-            sage: K8 = GF(8,'a')
-            sage: K8(5) # indirect doctest
+            sage: K2 = GF(2)                                                    # optional - sage.libs.pari
+            sage: K3 = GF(3)                                                    # optional - sage.libs.pari
+            sage: K8 = GF(8, 'a')                                               # optional - sage.libs.pari
+            sage: K8(5) # indirect doctest                                      # optional - sage.libs.pari
             1
-            sage: K8('a+1')
+            sage: K8('a+1')                                                     # optional - sage.libs.pari
             a + 1
-            sage: K8(K2(1))
+            sage: K8(K2(1))                                                     # optional - sage.libs.pari
             1
 
         The following test refers to :trac:`6468`::
@@ -1168,7 +1168,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             ....:         raise PariError
             sage: P = foo_parent()
             sage: F = foo(P)
-            sage: GF(2)(F)
+            sage: GF(2)(F)                                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: error coercing to finite field
@@ -1322,10 +1322,12 @@ In the latter case, please inform the developers.""".format(self.order()))
             Ring of integers modulo 12
             sage: Z13 = IntegerModRing(13); Z13
             Ring of integers modulo 13
-            sage: F = GF(11); F
+            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13
+            (True, False, False)
+            sage: F = GF(11); F                                                 # optional - sage.libs.pari
             Finite Field of size 11
-            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13, Z11 == F
-            (True, False, False, False)
+            sage: Z11 == F                                                      # optional - sage.libs.pari
+            False
 
         In :trac:`15229`, the following was implemented::
 
@@ -1333,7 +1335,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R2 = IntegerModRing(5, is_field=True)
             sage: R1 is R2    # used to return False
             True
-            sage: R2 == GF(5)
+            sage: R2 == GF(5)                                                   # optional - sage.libs.pari
             False
 
         """
@@ -1367,12 +1369,12 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = IntegerModRing(18)
-            sage: R.unit_gens()
+            sage: R.unit_gens()                                                 # optional - sage.groups
             (11,)
             sage: R = IntegerModRing(17)
-            sage: R.unit_gens()
+            sage: R.unit_gens()                                                 # optional - sage.groups
             (3,)
-            sage: IntegerModRing(next_prime(10^30)).unit_gens()
+            sage: IntegerModRing(next_prime(10^30)).unit_gens()                 # optional - sage.groups
             (5,)
 
         The choice of generators is affected by the optional keyword
@@ -1380,18 +1382,18 @@ In the latter case, please inform the developers.""".format(self.order()))
         See :meth:`unit_group` for details. ::
 
             sage: A = Zmod(55)
-            sage: A.unit_gens(algorithm='sage')
+            sage: A.unit_gens(algorithm='sage')                                 # optional - sage.groups
             (12, 46)
-            sage: A.unit_gens(algorithm='pari')
+            sage: A.unit_gens(algorithm='pari')                                 # optional - sage.groups, sage.libs.pari
             (2, 21)
 
         TESTS::
 
-            sage: IntegerModRing(2).unit_gens()
+            sage: IntegerModRing(2).unit_gens()                                 # optional - sage.groups
             ()
-            sage: IntegerModRing(4).unit_gens()
+            sage: IntegerModRing(4).unit_gens()                                 # optional - sage.groups
             (3,)
-            sage: IntegerModRing(8).unit_gens()
+            sage: IntegerModRing(8).unit_gens()                                 # optional - sage.groups
             (7, 5)
 
         """
@@ -1402,10 +1404,10 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = IntegerModRing(17)
-            sage: R.unit_group_exponent()
+            sage: R.unit_group_exponent()                                       # optional - sage.groups
             16
             sage: R = IntegerModRing(18)
-            sage: R.unit_group_exponent()
+            sage: R.unit_group_exponent()                                       # optional - sage.groups
             6
         """
         return self.unit_group().exponent()
@@ -1417,7 +1419,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = Integers(500)
-            sage: R.unit_group_order()
+            sage: R.unit_group_order()                                          # optional - sage.groups
             200
         """
         return self.unit_group().order()
@@ -1456,69 +1458,71 @@ In the latter case, please inform the developers.""".format(self.order()))
         cyclic factors are computed, but in a different order::
 
             sage: A = Zmod(15)
-            sage: G = A.unit_group(); G
+            sage: G = A.unit_group(); G                                         # optional - sage.groups
             Multiplicative Abelian group isomorphic to C2 x C4
-            sage: G.gens_values()
+            sage: G.gens_values()                                               # optional - sage.groups
             (11, 7)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
             (7, 11)
 
         Here are two examples where the cyclic factors are isomorphic,
         but are ordered differently and have different generators::
 
             sage: A = Zmod(40)
-            sage: G = A.unit_group(); G
+            sage: G = A.unit_group(); G                                         # optional - sage.groups
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
-            sage: G.gens_values()
+            sage: G.gens_values()                                               # optional - sage.groups
             (31, 21, 17)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
             (17, 31, 21)
 
             sage: A = Zmod(192)
-            sage: G = A.unit_group(); G
+            sage: G = A.unit_group(); G                                         # optional - sage.groups
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
-            sage: G.gens_values()
+            sage: G.gens_values()                                               # optional - sage.groups
             (127, 133, 65)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
             Multiplicative Abelian group isomorphic to C16 x C2 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
             (133, 127, 65)
 
         In the following examples, the cyclic factors are not even
         isomorphic::
 
             sage: A = Zmod(319)
-            sage: A.unit_group()
+            sage: A.unit_group()                                                # optional - sage.groups
             Multiplicative Abelian group isomorphic to C10 x C28
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
             Multiplicative Abelian group isomorphic to C140 x C2
 
             sage: A = Zmod(30.factorial())
-            sage: A.unit_group()
-            Multiplicative Abelian group isomorphic to C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
-            sage: A.unit_group(algorithm='pari')
-            Multiplicative Abelian group isomorphic to C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
+            sage: A.unit_group()                                                # optional - sage.groups
+            Multiplicative Abelian group isomorphic to
+             C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            Multiplicative Abelian group isomorphic to
+             C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
 
         TESTS:
 
         We test the cases where the unit group is trivial::
 
             sage: A = Zmod(1)
-            sage: A.unit_group()
+            sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
             Trivial Abelian group
             sage: A = Zmod(2)
-            sage: A.unit_group()
+            sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
             Trivial Abelian group
 
-            sage: Zmod(3).unit_group(algorithm='bogus')
+            sage: Zmod(3).unit_group(algorithm='bogus')                         # optional - sage.groups
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'bogus' for computing the unit group
