@@ -1423,7 +1423,7 @@ class GraphLatex(SageObject):
         options.update(self._options)
 
         # NOTE: the edge_labels option for graphviz_string is opposite
-        # see https://trac.sagemath.org/ticket/25120
+        # see https://github.com/sagemath/sage/issues/25120
         if 'edge_colors' in options:
             edge_colors = options['edge_colors']
             new_edge_colors = {}

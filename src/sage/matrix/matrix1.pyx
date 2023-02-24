@@ -892,7 +892,7 @@ cdef class Matrix(Matrix0):
             doctest:warning
             ...
             DeprecationWarning: the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead
-            See https://trac.sagemath.org/32984 for details.
+            See https://github.com/sagemath/sage/issues/32984 for details.
             Vector space of dimension 3 over Ring of integers modulo 5
         """
         from sage.misc.superseded import deprecation
@@ -949,7 +949,7 @@ cdef class Matrix(Matrix0):
             doctest:warning
             ...
             DeprecationWarning: the method _column_ambient_module is deprecated use column_ambient_module (without underscore) instead
-            See https://trac.sagemath.org/32984 for details.
+            See https://github.com/sagemath/sage/issues/32984 for details.
             Vector space of dimension 2 over Ring of integers modulo 5
         """
         from sage.misc.superseded import deprecation
