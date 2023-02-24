@@ -702,7 +702,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             return self._element_constructor_polyhedron(polyhedron, mutable=mutable, **kwds)
         if nargs == 1 and args[0] == 0:
             return self.zero()
-        raise ValueError('Cannot convert to polyhedron object.')
+        raise ValueError('cannot convert to polyhedron object')
 
     def _element_constructor_polyhedron(self, polyhedron, **kwds):
         """

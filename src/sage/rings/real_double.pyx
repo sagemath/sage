@@ -947,7 +947,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: ZZ(RDF(-2345.67))
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert non-integral float to integer
+            TypeError: cannot convert non-integral float to integer
         """
         return Integer(self._value)
 

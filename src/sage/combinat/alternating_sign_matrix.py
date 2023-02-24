@@ -1197,7 +1197,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         if isinstance(asm, AlternatingSignMatrix):
             if asm.parent() is self:
                 return asm
-            raise ValueError("Cannot convert between alternating sign matrices of different sizes")
+            raise ValueError("cannot convert between alternating sign matrices of different sizes")
         try:
             m = self._matrix_space(asm)
         except (TypeError, ValueError):
