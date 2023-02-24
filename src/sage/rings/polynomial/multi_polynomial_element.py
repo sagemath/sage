@@ -34,7 +34,7 @@ We verify Lagrange's four squares identity::
     sage: R.<a0,a1,a2,a3,b0,b1,b2,b3> = QQbar[]                                         # optional - sage.rings.number_field
     sage: ((a0^2 + a1^2 + a2^2 + a3^2) * (b0^2 + b1^2 + b2^2 + b3^2) ==                 # optional - sage.rings.number_field
     ....:  (a0*b0 - a1*b1 - a2*b2 - a3*b3)^2 + (a0*b1 + a1*b0 + a2*b3 - a3*b2)^2
-    ....:  + (a0*b2 - a1*b3 + a2*b0 + a3*b1)^2 + (a0*b3 + a1*b2 - a2*b1 + a3*b0)^2
+    ....:  + (a0*b2 - a1*b3 + a2*b0 + a3*b1)^2 + (a0*b3 + a1*b2 - a2*b1 + a3*b0)^2)
     True
 """
 #*****************************************************************************
