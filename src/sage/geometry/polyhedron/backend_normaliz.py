@@ -31,7 +31,7 @@ AUTHORS:
 
 from sage.structure.element import Element
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod2
+from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 import sage.features.normaliz
 lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
