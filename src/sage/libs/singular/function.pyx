@@ -1304,7 +1304,7 @@ cdef class SingularFunction(SageObject):
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
                 ring = dummy_ring
         if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
-            raise TypeError("Cannot call Singular function '%s' with ring parameter of type '%s'"%(self._name,type(ring)))
+            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
     def _instancedoc_(self):
@@ -1361,7 +1361,7 @@ EXAMPLES::
 
 The Singular documentation for '%s' is given below.
 """%(self._name,self._name)
-        # Trac ticket #11268: Include the Singular documentation as a block of code
+        # Github issue #11268: Include the Singular documentation as a block of code
         singular_doc = get_docstring(self._name).split('\n')
         if len(singular_doc) > 1:
             return prefix + "\n::\n\n"+'\n'.join(["    "+L for L in singular_doc])

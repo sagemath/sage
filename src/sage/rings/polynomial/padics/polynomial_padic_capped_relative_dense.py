@@ -378,7 +378,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a[1:3]
             doctest:warning...:
             DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             0*t^2 + (13^2 + O(13^4))*t
             sage: a[1:3:2]
             Traceback (most recent call last):

@@ -522,7 +522,7 @@ class DynamicInheritComparisonClasscallMetaclass(DynamicMetaclass, InheritCompar
     pass
 
 
-# This registers the appropriate reduction methods (see Trac #5985)
+# This registers the appropriate reduction methods (see Issue #5985)
 for M in [DynamicMetaclass,
           DynamicClasscallMetaclass,
           DynamicInheritComparisonMetaclass,

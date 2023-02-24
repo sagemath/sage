@@ -3551,7 +3551,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
             sage: L()
             Empty hyperplane arrangement of dimension 2
-            sage: L(0)        # zero is equivalent to no argument, Trac #8648
+            sage: L(0)        # zero is equivalent to no argument, Issue #8648
             Empty hyperplane arrangement of dimension 2
             sage: L(0*x)      # degenerate hyperplane is NOT allowed
             Traceback (most recent call last):
