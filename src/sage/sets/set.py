@@ -329,7 +329,7 @@ class Set_base():
 
         Instances of other subclasses of :class:`Set_base` run this method::
 
-            sage: Polyhedron()._test_as_set_object(verbose=True)
+            sage: Polyhedron()._test_as_set_object(verbose=True)                # optional - sage.geometry.polyhedron
             Running the test suite of Set(self)
             running ._test_an_element() . . . pass
             ...
@@ -715,7 +715,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(SymmetricGroup(2).list()).is_empty()
+            sage: Set(SymmetricGroup(2).list()).is_empty()                      # optional - sage.groups
             False
             sage: Set(ZZ).is_empty()
             False
@@ -728,7 +728,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(DihedralGroup(4).list()).is_empty()
+            sage: Set(DihedralGroup(4).list()).is_empty()                       # optional - sage.groups
             False
             sage: Set(QQ).is_empty()
             False
@@ -800,10 +800,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1,2,3])
-            sage: X.subsets_lattice()
+            sage: X.subsets_lattice()                                           # optional - sage.combinat
             Finite lattice containing 8 elements
             sage: Y = Set()
-            sage: Y.subsets_lattice()
+            sage: Y.subsets_lattice()                                           # optional - sage.combinat
             Finite lattice containing 1 elements
 
         """
@@ -1095,7 +1095,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])
+            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])                # optional - sage.combinat
             8
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1123,7 +1123,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])
+            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])              # optional - sage.combinat
             4
         """
         if not isinstance(other, Set_object_enumerated):
