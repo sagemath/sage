@@ -1140,7 +1140,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             :doc:`subring`
         """
         if self is not SR:
-            raise NotImplementedError('Cannot create subring of %s.' % (self,))
+            raise NotImplementedError('cannot create subring of %s' % (self,))
         from .subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
