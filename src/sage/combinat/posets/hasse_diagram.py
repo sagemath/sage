@@ -1023,7 +1023,8 @@ class HasseDiagram(DiGraph):
                 # do the depth_first_search over order_ideal, because we don't care
                 # about sorting the elements of the order ideal.
                 ci = self._backend.depth_first_search(j, reverse=True)
-                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci if k != j)
+                next(ci)  # throw out the first element, which is j
+                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci)
         return self._moebius_function_values[(zero, j)]
 
     def moebius_function_matrix(self, algorithm='cython'):
