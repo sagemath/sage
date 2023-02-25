@@ -86,7 +86,7 @@ class DiscreteValuationRings(Category_singleton):
             even if the input matrix is exact::
 
                 sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])     # optional - sage.libs.pari
-                sage: M
+                sage: M                                                                 # optional - sage.libs.pari
                 [    1     t   t^2]
                 [1 + t   t^2   t^3]
                 [  t^2   t^3   t^4]

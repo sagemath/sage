@@ -261,7 +261,7 @@ cdef class Functor(SageObject):
                       Defn: Induced from base ring by
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
-            sage: fF((a^2+a)*t^2/(a*t - a^2))
+            sage: fF((a^2+a)*t^2/(a*t - a^2))                                   # optional - sage.libs.pari
             ((4*a + 2)*t^2)/(t + a + 4)
 
         """
