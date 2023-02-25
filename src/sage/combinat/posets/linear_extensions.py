@@ -255,7 +255,7 @@ class LinearExtensionOfPoset(ClonableArray,
     def is_supergreedy(self):
         r"""
         Return ``True`` if the linear extension is supergreedy.
-        
+
         A linear extension `[x_1,x_2,...,x_t]` of a finite ordered
         set `P=(P, <)` is *super greedy* if it can be obtained using
         the following procedure: Choose `x_1` to be a minimal
@@ -271,7 +271,7 @@ class LinearExtensionOfPoset(ClonableArray,
         For more details see [KTZ1987]_.
 
         EXAMPLES::
-        
+
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
             sage: P = Poset((X,Y), cover_relations = True, facade=False)
@@ -297,29 +297,25 @@ class LinearExtensionOfPoset(ClonableArray,
         P = self.poset()
         H = P.hasse_diagram()
         sources = H.sources()
-        linext=[]
+        linext = []
         if not self:
             return True
         if self[0] not in sources:
             return False
         for i in range(len(self)-2):
             linext.append(self[i])
-            k = len(linext)
-            L = []
-            while not L:
-                if not k:
-                    L = [x for x in sources if x not in linext]
-                else:
-                    for x in H.neighbor_out_iterator(linext[k-1]):
-                        if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x)):
-                            L.append(x)
-                    k -= 1
-            if self[i+1] in L:
-                continue
+            for y in reversed(linext):
+                L = [x for x in H.neighbor_out_iterator(y)
+                     if x not in linext
+                     and all(low in linext for low in H.neighbor_in_iterator(x))]
+                if L:
+                    break
             else:
+                L = (x for x in sources if x not in linext)
+            if self[i+1] not in L:
                 return False
         return True
-    
+
     def tau(self, i):
         r"""
         Return the operator `\tau_i` on linear extensions ``self`` of a poset.
