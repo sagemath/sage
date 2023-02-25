@@ -83,48 +83,48 @@ dnl Packages with important upper version bounds
 
 scripts =
     # The sage script
-    bin/sage
+    # bin/sage                          -- installed by sagemath-environment
     # Other scripts that should be in the path also for OS packaging of sage:
-    bin/sage-eval
+    # bin/sage-eval                     -- installed by sagemath-repl
     # Included because it is useful for doctesting/coverage testing user scripts too:
-    bin/sage-runtests
-    bin/sage-fixdoctests
-    bin/sage-coverage
+    # bin/sage-runtests                 -- installed by sagemath-repl
+    # bin/sage-fixdoctests              -- installed by sagemath-repl
+    # bin/sage-coverage                 -- installed by sagemath-repl
     # The following is deprecated but might still be used in user package install scripts
     bin/sage-cython
     # Helper scripts invoked by sage script
     # (they would actually belong to something like libexec)
-    bin/sage-cachegrind
-    bin/sage-callgrind
-    bin/sage-massif
-    bin/sage-omega
-    bin/sage-valgrind
-    bin/sage-venv-config
-    bin/sage-version.sh
-    bin/sage-cleaner
+    # bin/sage-cachegrind               -- installed by sagemath-repl
+    # bin/sage-callgrind                -- installed by sagemath-repl
+    # bin/sage-massif                   -- installed by sagemath-repl
+    # bin/sage-omega                    -- installed by sagemath-repl
+    # bin/sage-valgrind                 -- installed by sagemath-repl
+    # bin/sage-venv-config              -- installed by sagemath-environment
+    # bin/sage-version.sh               -- installed by sagemath-environment
+    # bin/sage-cleaner                  -- installed by sagemath-repl
     # Only makes sense in sage-the-distribution. TODO: Move to another installation script.
     bin/sage-list-packages
     # Uncategorized scripts in alphabetical order
     bin/math-readline
-    bin/sage-env
+    # bin/sage-env                      -- installed by sagemath-environment
     # sage-env-config -- installed by sage_conf
     # sage-env-config.in -- not to be installed
     bin/sage-grep
     bin/sage-grepdoc
-    bin/sage-inline-fortran
-    bin/sage-ipynb2rst
-    bin/sage-ipython
-    bin/sage-notebook
-    bin/sage-num-threads.py
-    bin/sage-preparse
-    bin/sage-python
+    # bin/sage-inline-fortran           -- installed by sagemath-repl
+    # bin/sage-ipynb2rst                -- installed by sagemath-repl
+    # bin/sage-ipython                  -- installed by sagemath-repl
+    # bin/sage-notebook                 -- installed by sagemath-repl
+    # bin/sage-num-threads.py           -- installed by sagemath-environment
+    # bin/sage-preparse                 -- installed by sagemath-repl
+    # bin/sage-python                   -- installed by sagemath-environment
     bin/sage-rebase.bat
     bin/sage-rebase.sh
     bin/sage-rebaseall.bat
     bin/sage-rebaseall.sh
-    bin/sage-run
-    bin/sage-run-cython
-    bin/sage-startuptime.py
+    # bin/sage-run                      -- installed by sagemath-repl
+    # bin/sage-run-cython               -- installed by sagemath-repl
+    # bin/sage-startuptime.py           -- installed by sagemath-repl
     bin/sage-update-version
 
 [options.package_data]
