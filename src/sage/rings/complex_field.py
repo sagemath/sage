@@ -7,7 +7,7 @@ TESTS::
     doctest:warning
     ...
     DeprecationWarning: the complex_field module is deprecated, please use sage.rings.complex_mpfr
-    See http://trac.sagemath.org/24483 for details.
+    See https://github.com/sagemath/sage/issues/24483 for details.
     sage: ComplexField()
     Complex Field with 53 bits of precision
 """

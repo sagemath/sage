@@ -6,7 +6,8 @@ TESTS:
 
 Check that this can be used outside of Sage (see :trac:`25549`)::
 
-    sage: cython('''  # optional - sage.misc.cython
+    sage: cython(                                               # optional - sage.misc.cython
+    ....: '''
     ....: from sage.cpython.string cimport char_to_str
     ....: print(char_to_str("hello world!"))
     ....: ''')

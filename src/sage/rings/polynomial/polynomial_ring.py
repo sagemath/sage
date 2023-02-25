@@ -787,7 +787,7 @@ class PolynomialRing_general(ring.Algebra):
                 # Ideally, we should avoid cyclic coercions (a coercion
                 # from A to B and also from B to A), but this is
                 # currently hard to do:
-                # see https://trac.sagemath.org/ticket/24319
+                # see https://github.com/sagemath/sage/issues/24319
                 if not self_sparse and P_sparse:
                     # Always allow coercion sparse -> dense
                     pass
@@ -797,7 +797,7 @@ class PolynomialRing_general(ring.Algebra):
                     if self.element_class is not Polynomial_integer_dense_flint:
                         return None
                 # Other rings: always allow coercion
-                # To be fixed in Trac #24319
+                # To be fixed in Issue #24319
             f = base_ring.coerce_map_from(P.base_ring())
             if f is None:
                 return None
@@ -1978,7 +1978,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         implementation = None
         # NOTE: This is obviously not a complete solution. The parents
         # don't keep track in a clean way what the implementation is.
-        # Trac #31852 is the task of finding a general solution for
+        # Issue #31852 is the task of finding a general solution for
         # construction functors of parents with multiple
         # implementations, such as MatrixSpace, Polyhedron, and
         # PolynomialRing.
