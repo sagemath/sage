@@ -44,37 +44,6 @@ include sage/geometry/triangulation/triangulations.cc
 include sage/geometry/triangulation/data.cc
 include sage/geometry/triangulation/functions.cc
 
-# Exclude what is already shipped in sagemath-objects, sagemath-categories, sagemath-environment, sagemath-repl
-global-exclude all__*.py
-prune sage/misc
-include sage/misc/all.py
-include sage/misc/allocator.pxd
-include sage/misc/allocator.pyx
-include sage/misc/binary_tree.pxd
-include sage/misc/binary_tree.pyx
-include sage/misc/search.pxd
-include sage/misc/search.pyx
-# Exclude what is shipped in sagemath-objects
-prune sage/cpython
-prune sage/structure
-prune sage/libs/gmp
-# Exclude what is shipped in sagemath-categories
-prune sage/categories
-exclude sage/rings/ideal.*
-exclude sage/rings/ring.*
-prune sage/typeset
-# Exclude what is shipped in sagemath-environment
-exclude sage/env.py
-exclude sage/version.py
-prune sage/features
-# Exclude what is shipped in sagemath-repl
-prune sage/doctest
-prune sage/repl
-exclude sage/misc/banner.py
-exclude sage/misc/sagedoc.py
-exclude sage/misc/sage_input.py
-exclude sage/misc/sage_eval.py
-
 global-exclude __pycache__
 global-exclude *.py[co]
 global-exclude *.bak
