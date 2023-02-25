@@ -16,24 +16,24 @@ Next we make a univariate polynomial ring over
 
 ::
 
-    sage: S1.<y> = S[]
+    sage: S1.<y> = S[]                                                          # optional - sage.libs.pari
 
 And, we quotient out that by `y^2 + a`.
 
 ::
 
-    sage: T.<z> = S1.quotient(y^2+a)
+    sage: T.<z> = S1.quotient(y^2 + a)                                          # optional - sage.libs.pari
 
 In the quotient `z^2` is `-a`.
 
 ::
 
-    sage: z^2
+    sage: z^2                                                                   # optional - sage.libs.pari
     -a
 
 And since `a^3 = -3x + 1`, we have::
 
-    sage: z^6
+    sage: z^6                                                                   # optional - sage.libs.pari
     3*a - 1
 
 ::
