@@ -151,13 +151,13 @@ cdef class PolyDict:
             ...
             DeprecationWarning: the arguments "zero", "forced_int_exponents"
             and "forced_etuples" of PolyDict constructor are deprecated
-            See https://trac.sagemath.org/34000 for details.
+            See https://github.com/sagemath/sage/issues/34000 for details.
             sage: f = PolyDict({}, remove_zero=False)
             doctest:warning
             ...
             DeprecationWarning: the argument "remove_zero" of PolyDict
             constructor is deprecated; call the method remove_zeros
-            See https://trac.sagemath.org/34000 for details.
+            See https://github.com/sagemath/sage/issues/34000 for details.
         """
         if zero is not None or force_int_exponents is not None or force_etuples is not None:
             from sage.misc.superseded import deprecation
@@ -332,7 +332,7 @@ cdef class PolyDict:
             doctest:warning
             ...
             DeprecationWarning: the argument "sortkey" will become mandatory in future sage versions
-            See https://trac.sagemath.org/34000 for details.
+            See https://github.com/sagemath/sage/issues/34000 for details.
             sage: ans
             True
         """
@@ -532,7 +532,7 @@ cdef class PolyDict:
             doctest:warning
             ...
             DeprecationWarning: PolyDict.monomial_coefficient is deprecated; use PolyDict.get instead
-            See https://trac.sagemath.org/34000 for details.
+            See https://github.com/sagemath/sage/issues/34000 for details.
             4
         """
         from sage.misc.superseded import deprecation
