@@ -1167,7 +1167,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                                         parameters[:-1]))
         return num/(gr**dr)
 
-    def basic_j_invariants_parameters(self):
+    def basic_j_invariants_parameters(self, param=None):
         """
         Return the list of basic j-invariants parameters.
 
@@ -1198,27 +1198,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              [12, 29, 6],
              [31, 31, 7]]
         """
-        # Create the equation and inequalities for the polyhedron:
         r = self._gen.degree()
+        if param is None:
+            param = [idx for idx, c in enumerate(
+                self.coefficients(sparse=False)[1:-1], start=1) if c]
+        elif isinstance(param, list):  # check if param is valid
+            if not all(isinstance(k, (int, Integer)) for k in param):
+                raise TypeError("the elements of the list param must be integers")
+            if max(param) >= r or min(param) <= 0:
+                raise ValueError(f"the maximum or the minimum of the list" \
+                    "param must be > 0 and < {r} respectively")
+            if not all(param[i] < param[i+1] for i in range(len(param) - 1)):
+                raise ValueError(f"the elements of param should be distinct" \
+                    "and sorted")
+        elif param == "all":
+            param = list(range(1, r))
+        else:
+            raise TypeError("input param is invalid")
+        # Create the equation and inequalities for the polyhedron:
         q = self._Fq.order()
         equation = [0]
         inequalities = []
-        for i in range(1, r):
+        for idx, i in enumerate(param):
             # create the equation:
             #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
-            equation.append(q ** i - 1)
+            equation.append(q**i - 1)
 
             # create inequalities of the form 0 <= delta_i
-            lower_bounds = [0] * (r + 1)
-            lower_bounds[i] = 1
+            lower_bounds = [0]*(len(param) + 2)
+            lower_bounds[idx + 1] = 1
 
             # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
-            upper_bounds = [Integer((q ** r - 1)/(q ** (gcd(i, r)) - 1))] + [0] * r
-            upper_bounds[i] = -1
+            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(param) + 1)
+            upper_bounds[idx + 1] = -1
 
             inequalities.extend((lower_bounds, upper_bounds))
 
-        equation.append(1 - q ** r)
+        equation.append(1 - q**r)
 
         # Create the polyhedron defined by the equation and the inequalities.
         polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
@@ -1226,7 +1242,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Compute its integral points
         integral_points = polyhedron.integral_points()
 
-        return [list(p) for p in integral_points if gcd(p) == 1]
+        param.append(r)
+        points = [list(p) for p in integral_points if gcd(p) == 1]
+        return [param, points]
 
     def is_isomorphic(self, psi):
         r"""
