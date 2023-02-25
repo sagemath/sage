@@ -24,6 +24,7 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
