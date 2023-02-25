@@ -25,11 +25,14 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from typing import TYPE_CHECKING
+
 from sage.manifolds.differentiable.tangent_vector import TangentVector
-from sage.manifolds.point import ManifoldPoint
 from sage.symbolic.ring import SR
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 
+if TYPE_CHECKING:
+    from sage.manifolds.point import ManifoldPoint
 
 class TangentSpace(FiniteRankFreeModule):
     r"""

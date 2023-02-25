@@ -29,11 +29,16 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.comp import Components
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+    from sage.tensor.modules.free_module_basis import FreeModuleBasis
 
 
 class FiniteRankFreeModuleElement(AlternatingContrTensor):
@@ -219,7 +224,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         AlternatingContrTensor.__init__(self, fmodule, 1, name=name,
                                         latex_name=latex_name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -237,7 +242,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         description += "of the {}".format(self._fmodule)
         return description
 
-    def _new_comp(self, basis):
+    def _new_comp(self, basis: FreeModuleBasis) -> Components:
         r"""
         Create some (uninitialized) components of ``self`` in a given basis.
 
