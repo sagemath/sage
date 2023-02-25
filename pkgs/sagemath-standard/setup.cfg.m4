@@ -135,11 +135,11 @@ sage.libs.gap =
 sage.interfaces =
     sage-maxima.lisp
 
-sage.doctest =
-    tests/*
+# sage.doctest =                        -- installed by sagemath-repl
+#     tests/*
 
-sage.repl.rich_output =
-    example*
+# sage.repl.rich_output =               -- installed by sagemath-repl
+#     example*
 
 sage =
     ext_data/*
