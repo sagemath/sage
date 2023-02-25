@@ -1021,8 +1021,8 @@ class HasseDiagram(DiGraph):
             # and move on to computing the interval, which is exactly the order ideal.
             else:
                 # do the depth_first_search over order_ideal, because we don't care
-                # about sorting the elements of the order ideal
-                ci = self.depth_first_search([j], neighbors=self.neighbors_in)
+                # about sorting the elements of the order ideal.
+                ci = self._backend.depth_first_search(j, reverse=True)
                 self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci if k != j)
         return self._moebius_function_values[(zero, j)]
 
