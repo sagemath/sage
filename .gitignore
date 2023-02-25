@@ -176,6 +176,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-objects/setup.cfg
 /pkgs/sagemath-categories/setup.cfg
 /pkgs/sagemath-environment/setup.cfg
+/pkgs/sagemath-standard/setup.cfg
 /pkgs/sagemath-repl/setup.cfg
 /pkgs/sagemath-objects/pyproject.toml
 /pkgs/sagemath-categories/pyproject.toml
