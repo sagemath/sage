@@ -859,7 +859,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
         sage: R = ZpLC(next_prime(10^60)) # indirect doctest
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/23505 for details.
+        See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicRingLattice_with_category'>
 
@@ -988,7 +988,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
         sage: R = QpLC(next_prime(10^60)) # indirect doctest
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/23505 for details.
+        See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicFieldLattice_with_category'>
 
