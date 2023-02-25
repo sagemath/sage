@@ -1111,7 +1111,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             1/T^3
             sage: phi.j_invariant(3)
             (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
-            sage: phi.j_invariant([0, 7, 54, 11])
+            sage: phi.j_invariant([[1, 2, 3, 4], [0, 7, 54, 11]])
             (T^54 + 4*T^53 + T^52 + 4*T^51 + T^50 + 2*T^29 + 3*T^28 + 2*T^27 + 3*T^26 + 2*T^25 + T^4 + 4*T^3 + T^2 + 4*T + 1)/T^33
         """
         # TODO: add documentation for this method
@@ -1139,32 +1139,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: c = T^4 + 3*T^2 + T
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
-            sage: phi.basic_j_invariant([20, 7, 2])
+            sage: phi.basic_j_invariant([[1, 2, 3], [20, 7, 2]])
             (T^7 + 2*T^6 + T^5 + T^2 + 2*T + 1)/(T^4 + 2*T^2 + 1)
-            sage: phi.basic_j_invariant([1, 1, 1])
+            sage: phi.basic_j_invariant([[1, 2, 3], [1, 1, 1]])
             Traceback (most recent call last):
             ...
             ValueError: the given parameters does not defines a basic j-invariant
         """
         # TODO: add doctests, fix pep8, define the parameters, implement j_invariantS.
+        # TODO: delete this method?
         r = self._gen.degree()
         q = self._Fq.order()
         if not isinstance(parameters, list):
             raise TypeError("parameters must be a list")
-        if not len(parameters) == r:
-            raise ValueError(f"the length of the parameters list must be {r}")
-        dr = parameters[-1]
+        dr = parameters[1][-1]
         if check:
             # check that the following equation is satisfied:
             # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             right = dr*(q**r - 1)
-            left = sum(d*(q**(k+1) - 1) for k, d in enumerate(parameters[:-1]))
+            left = sum(parameters[1][i]*(q**(parameters[0][i]) - 1) for i in range(len(parameters[0]) - 1))
             if left != right:
                 raise ValueError("the given parameters does not defines a basic\
                                  j-invariant")
         gr = self.coefficients()[-1]
-        num = prod(g**d for g, d in zip(self.coefficients(sparse=False)[1:],\
-                                        parameters[:-1]))
+        num = prod(self._gen[k]**d for k, d in zip(parameters[0][:-1], parameters[1][:-1]))
         return num/(gr**dr)
 
     def basic_j_invariants_parameters(self, param=None):
