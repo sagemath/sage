@@ -1000,11 +1000,11 @@ class HasseDiagram(DiGraph):
             sage: hasse.bottom_moebius_function(1)
             Traceback (most recent call last):
             ...
-            ValueError: the poset has not a bottom element
+            ValueError: the poset does not have a bottom element
         """
         zero = self.bottom()
         if zero is None:
-            raise ValueError("the poset has not a bottom element")
+            raise ValueError("the poset does not have a bottom element")
         # if the value has already been computed, either by self.moebius_function
         # or by self.bottom_moebius_function, then just use the cached value.
         try:
@@ -1021,7 +1021,7 @@ class HasseDiagram(DiGraph):
             # and move on to computing the interval, which is exactly the order ideal.
             else:
                 # do the depth_first_search over order_ideal, because we don't care
-                # about sorting the elements of the order
+                # about sorting the elements of the order ideal
                 ci = self.depth_first_search([j], neighbors=self.neighbors_in)
                 self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci if k != j)
         return self._moebius_function_values[(zero, j)]

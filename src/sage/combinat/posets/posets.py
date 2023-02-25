@@ -7612,7 +7612,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         if not self.is_graded():
             raise ValueError("the poset is not graded")
         if not self.has_bottom():
-            raise ValueError("the poset has not a bottom element")
+            raise ValueError("the poset does not have a bottom element")
         n = rk(hasse.maximal_elements()[0])
         q = polygen(ZZ, 'q')
         return sum(hasse.bottom_moebius_function(x) * q**(n - rk(x)) for x in hasse)
