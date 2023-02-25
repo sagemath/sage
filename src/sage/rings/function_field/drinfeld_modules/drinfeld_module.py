@@ -1177,26 +1177,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
             sage: phi.basic_j_invariants_parameters()
-            [[1, 5, 1],
-             [7, 4, 1],
-             [13, 3, 1],
-             [19, 2, 1],
-             [25, 1, 1],
-             [31, 0, 1],
-             [8, 9, 2],
-             [20, 7, 2],
-             [9, 14, 3],
-             [15, 13, 3],
-             [27, 11, 3],
-             [10, 19, 4],
-             [22, 17, 4],
-             [11, 24, 5],
-             [17, 23, 5],
-             [23, 22, 5],
-             [29, 21, 5],
-             [0, 31, 6],
-             [12, 29, 6],
-             [31, 31, 7]]
+            [[[1, 2, 3], [1, 5, 1]],
+             [[1, 2, 3], [7, 4, 1]],
+             [[1, 2, 3], [13, 3, 1]],
+             [[1, 2, 3], [19, 2, 1]],
+             [[1, 2, 3], [25, 1, 1]],
+             [[1, 2, 3], [31, 0, 1]],
+             [[1, 2, 3], [8, 9, 2]],
+             [[1, 2, 3], [20, 7, 2]],
+             [[1, 2, 3], [9, 14, 3]],
+             [[1, 2, 3], [15, 13, 3]],
+             [[1, 2, 3], [27, 11, 3]],
+             [[1, 2, 3], [10, 19, 4]],
+             [[1, 2, 3], [22, 17, 4]],
+             [[1, 2, 3], [11, 24, 5]],
+             [[1, 2, 3], [17, 23, 5]],
+             [[1, 2, 3], [23, 22, 5]],
+             [[1, 2, 3], [29, 21, 5]],
+             [[1, 2, 3], [0, 31, 6]],
+             [[1, 2, 3], [12, 29, 6]],
+             [[1, 2, 3], [31, 31, 7]]]
+            sage: phi.basic_j_invariants_parameters([1])
+            [[[1, 3], [31, 1]]]
+            sage: phi.basic_j_invariants_parameters([2])
+            [[[2, 3], [31, 6]]]
         """
         r = self._gen.degree()
         if param is None:
@@ -1243,8 +1247,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         integral_points = polyhedron.integral_points()
 
         param.append(r)
-        points = [list(p) for p in integral_points if gcd(p) == 1]
-        return [param, points]
+        return [[param, list(p)] for p in integral_points if gcd(p) == 1]
 
     def is_isomorphic(self, psi):
         r"""
