@@ -119,7 +119,7 @@ class ConstructionFunctor(Functor):
                 Ring endomorphism of Multivariate Polynomial Ring in a, b over Finite Field of size 5
                   Defn: a |--> a + b
                         b |--> a - b
-        sage: F(f)(F(A)(x)*a)
+        sage: F(f)(F(A)(x)*a)                                                           # optional - sage.libs.pari
         (a + b)*x
 
     """

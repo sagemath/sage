@@ -818,10 +818,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: T.<t> = PolynomialRing(S)
-            sage: W = T.quotient(t^99 + 99)
-            sage: W.base_ring()
-            Univariate Quotient Polynomial Ring in beta over Integer Ring with modulus z^3 + z^2 + z + 1
+            sage: T.<t> = PolynomialRing(S)                                     # optional - sage.libs.pari
+            sage: W = T.quotient(t^99 + 99)                                     # optional - sage.libs.pari
+            sage: W.base_ring()                                                 # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in beta
+             over Integer Ring with modulus z^3 + z^2 + z + 1
         """
         return self.__ring.base_ring()
 
