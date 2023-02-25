@@ -275,10 +275,6 @@ cdef class PolyDict:
         """
         Implement the ``__richcmp__`` protocol for `PolyDict`s.
 
-        Uses `PolyDict.rich_compare` without a key  (so only ``==`` and ``!=``
-        are supported on Python 3; on Python 2 this will fall back on Python 2
-        default comparison behavior).
-
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
