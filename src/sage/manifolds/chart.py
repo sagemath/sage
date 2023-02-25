@@ -39,7 +39,17 @@ REFERENCES:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Optional, Type, TypedDict, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    Optional,
+    Tuple,
+    Type,
+    TypedDict,
+    Union,
+    overload,
+)
 
 from typing_extensions import Unpack
 
@@ -63,10 +73,10 @@ if TYPE_CHECKING:
 
 CoordinateRestrictions = Union[Iterable[Expression], Expression]
 
-CoordinateOptions = TypedDict("CoordinateOptions", {"periods": tuple[Expression, ...]})
+CoordinateOptions = TypedDict("CoordinateOptions", {"periods": Tuple[Expression, ...]})
 
 ValidateCoordinateOptions = TypedDict(
-    "ValidateCoordinateOptions", {"parameters": dict[Expression, Expression]}
+    "ValidateCoordinateOptions", {"parameters": Dict[Expression, Expression]}
 )
 
 
@@ -817,7 +827,9 @@ class Chart(UniqueRepresentation, SageObject):
         self._restrictions.extend(self._normalize_coord_restrictions(self._xx, restrictions))
 
     def restrict(
-        self, subset: TopologicalManifold, restrictions: Optional[CoordinateRestrictions] = None
+        self,
+        subset: TopologicalManifold,
+        restrictions: Optional[CoordinateRestrictions] = None,
     ) -> Chart:
         r"""
         Return the restriction of ``self`` to some open subset of its domain.
@@ -1028,7 +1040,9 @@ class Chart(UniqueRepresentation, SageObject):
         else:
             return ambient
 
-    def _restrict_set(self, universe, coord_restrictions: CoordinateRestrictions) -> ConditionSet:
+    def _restrict_set(
+        self, universe, coord_restrictions: CoordinateRestrictions
+    ) -> ConditionSet:
         """
         Return a set corresponding to coordinate restrictions.
 
@@ -1648,7 +1662,8 @@ class Chart(UniqueRepresentation, SageObject):
 # *****************************************************************************
 
 RealCoordinateOptions = TypedDict(
-    "RealCoordinateOptions", {"periods": tuple[Expression, ...], "bounds": tuple[Expression, ...]}
+    "RealCoordinateOptions",
+    {"periods": Tuple[Expression, ...], "bounds": Tuple[Expression, ...]},
 )
 
 
@@ -2166,9 +2181,9 @@ class RealChart(Chart):
             sage: c_spher1.codomain()
             The Cartesian product of ((0, +oo), (0, pi), [0, 2*pi))
         """
-        from sage.sets.real_set import RealSet
-        from sage.modules.free_module import VectorSpace
         from sage.categories.cartesian_product import cartesian_product
+        from sage.modules.free_module import VectorSpace
+        from sage.sets.real_set import RealSet
         intervals = tuple(RealSet.interval(xmin, xmax,
                                            lower_closed=(min_included == 'periodic' or min_included),
                                            upper_closed=(max_included != 'periodic' and max_included))
@@ -2676,7 +2691,7 @@ class RealChart(Chart):
             return self._fast_valid_coordinates(*coordinates)
 
         # case fast callable has to be computed
-        from operator import lt, gt
+        from operator import gt, lt
 
         if not isinstance(self._restrictions, (list, set, frozenset)):
             if isinstance(self._restrictions, tuple):
@@ -3120,11 +3135,11 @@ class RealChart(Chart):
             sage: X.plot.reset()
 
         """
+        from sage.manifolds.continuous_map import ContinuousMap
+        from sage.manifolds.utilities import set_axes_labels
         from sage.misc.functional import numerical_approx
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
-        from sage.manifolds.continuous_map import ContinuousMap
-        from sage.manifolds.utilities import set_axes_labels
 
         # Extract the kwds options
         max_range = kwds['max_range']

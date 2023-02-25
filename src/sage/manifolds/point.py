@@ -87,6 +87,8 @@ for the comparison::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sage.misc.decorators import options
@@ -945,11 +947,11 @@ class ManifoldPoint(Element):
             sphinx_plot(g+gX)
 
         """
-        from sage.plot.point import point2d
-        from sage.plot.text import text
+        from sage.manifolds.chart import Chart
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes2 import point3d, text3d
-        from sage.manifolds.chart import Chart
+        from sage.plot.point import point2d
+        from sage.plot.text import text
         if self._manifold.base_field_type() != 'real':
             raise NotImplementedError('plot of points on manifolds over fields different'
                                       ' from the real field is not implemented')
