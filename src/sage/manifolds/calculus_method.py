@@ -20,6 +20,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Callable, Literal, Optional, Union
 
 import sympy
