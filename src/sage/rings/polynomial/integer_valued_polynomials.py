@@ -79,20 +79,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         """
         return self.S()
 
-    def indices(self):
-        r"""
-        Return the objects that index the basis elements of this algebra.
-
-        This is the set `\NN` of nonnegative integers.
-
-        EXAMPLES::
-
-            sage: A = IntegerValuedPolynomialRing(QQ)
-            sage: A.indices()
-            Non negative integers
-        """
-        return NonNegativeIntegers()
-
     def _repr_(self) -> str:
         r"""
         Return the string representation.
@@ -255,16 +241,16 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         Integer-valued polynomial rings are commutative and associative
         algebras, with a basis indexed by non-negative integers.
 
-        The basis used here is given by `B[i] = \binom{i+n}{i}` for `i \in \NN`.
+        The basis used here is given by `S[i] = \binom{i+n}{i}` for `i \in \NN`.
 
-        Assuming `n_1 \leq n_2`, the product of two monomials `B[n_1] \cdot B[n_2]`
+        Assuming `n_1 \leq n_2`, the product of two monomials `S[n_1] \cdot S[n_2]`
         is given by the sum
 
         .. MATH::
 
-            \sum_{k=0}^{n_1} (-1)^k \binom{n_1}{k}\binom{n_1+n_2-k}{n_1} B[n_1 + n_2 - k].
+            \sum_{k=0}^{n_1} (-1)^k \binom{n_1}{k}\binom{n_1+n_2-k}{n_1} S[n_1 + n_2 - k].
 
-        There is a conversion formula between the two bases
+        There is a conversion formula between the two bases::
 
         .. MATH::
 
@@ -340,7 +326,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: TestSuite(F).run()
             """
             CombinatorialFreeModule.__init__(self, A.base_ring(),
-                                             A.indices(),
+                                             NonNegativeIntegers(),
                                              category=A.Bases(),
                                              prefix="S",
                                              latex_prefix=r"\mathbb{S}")
@@ -707,8 +693,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 return QQ.sum(c / QQ(i) for i, c in self if i)
 
-            special_value = derivative_at_minus_one
-
             def polynomial(self):
                 """
                 Convert to a standard polynomial in `x`.
@@ -793,7 +777,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         The basis used here is given by `B[i] = \binom{n}{i}` for `i \in \NN`.
 
-        There is a conversion formula between the two bases
+        There is a conversion formula between the two bases::
 
         .. MATH::
 
@@ -885,7 +869,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 in the binomial basis
                 sage: TestSuite(F).run()
             """
-            CombinatorialFreeModule.__init__(self, A.base_ring(), A.indices(),
+            CombinatorialFreeModule.__init__(self, A.base_ring(),
+                                             NonNegativeIntegers(),
                                              latex_prefix="",
                                              category=A.Bases())
 
