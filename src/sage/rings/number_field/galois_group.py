@@ -48,7 +48,7 @@ class GaloisGroup_v1(SageObject):
         sage: K = QQ[2^(1/3)]
         sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
         ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-        See https://trac.sagemath.org/28782 for details.
+        See https://github.com/sagemath/sage/issues/28782 for details.
         Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
         sage: G.order()
         6
@@ -68,7 +68,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField([x^2 + 1, x^2 + 2],'a')
             sage: GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group PARI group [4, 1, 2, "E(4) = 2[x]2"] of degree 4 of the Number Field in a0 with defining polynomial x^2 + 1 over its base field
         """
         deprecation(28782, "GaloisGroup_v1 is deprecated; please use GaloisGroup_v2")
@@ -90,7 +90,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^3 + 2, 'alpha')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H == G
@@ -118,7 +118,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^3 + 2, 'alpha')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: L = QQ[sqrt(2)]
             sage: H = GaloisGroup_v1(L.absolute_polynomial().galois_group(pari_group=True), L)
             sage: H != G
@@ -140,7 +140,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^4 + 2*x + 2, 'a')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.__repr__()
             'Galois group PARI group [24, -1, 5, "S4"] of degree 4 of the Number Field in a with defining polynomial x^4 + 2*x + 2'
         """
@@ -157,7 +157,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^3 + 2*x + 2, 'theta')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K)
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: H = G.group(); H
             PARI group [6, -1, 2, "S3"] of degree 3
             sage: P = H.permutation_group(); P
@@ -177,7 +177,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^5 + 2, 'theta_1')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group PARI group [20, -1, 3, "F(5) = 5:4"] of degree 5 of the Number Field in theta_1 with defining polynomial x^5 + 2
             sage: G.order()
             20
@@ -194,7 +194,7 @@ class GaloisGroup_v1(SageObject):
             sage: K = NumberField(x^6 + 2, 't')
             sage: G = GaloisGroup_v1(K.absolute_polynomial().galois_group(pari_group=True), K); G
             ...DeprecationWarning: GaloisGroup_v1 is deprecated; please use GaloisGroup_v2
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group PARI group [12, -1, 3, "D(6) = S(3)[x]2"] of degree 6 of the Number Field in t with defining polynomial x^6 + 2
             sage: G.number_field()
             Number Field in t with defining polynomial x^6 + 2
@@ -323,10 +323,10 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group(type="pari")
             ...DeprecationWarning: the different Galois types have been merged into one class
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.group()
             ...DeprecationWarning: the group method is deprecated; you can use _pol_galgp if you really need it
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             PARI group [6, -1, 2, "S3"] of degree 3
         """
         deprecation(28782, "the group method is deprecated; you can use _pol_galgp if you really need it")
@@ -477,7 +477,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: L.<b> = NumberField(x^2 - x + 17*a)
             sage: G = L.galois_group()
             ...DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: M, emb = G._gcdata
             sage: emb.domain() is L
             True

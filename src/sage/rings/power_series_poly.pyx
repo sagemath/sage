@@ -428,7 +428,7 @@ cdef class PowerSeries_poly(PowerSeries):
             IndexError: coefficient not known
             sage: f[1:4]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             -17/5*t^3 + O(t^5)
 
             sage: R.<t> = ZZ[[]]
@@ -1025,6 +1025,13 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Series must have valuation one for reversion.
+
+            sage: Series = PowerSeriesRing(SR, 'x')
+            sage: ser = Series([0, pi])
+            sage: ser
+            pi*x
+            sage: ser.reverse()
+            1/pi*x + O(x^20)
         """
         if self.valuation() != 1:
             raise ValueError("Series must have valuation one for reversion.")

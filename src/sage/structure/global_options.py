@@ -663,7 +663,7 @@ class Option():
 
             sage: config.size(value=None)
             doctest:...: DeprecationWarning: keyword argument "value" should be replaced by positional argument
-            See https://trac.sagemath.org/30763 for details.
+            See https://github.com/sagemath/sage/issues/30763 for details.
             sage: config.size() is None
             True
             sage: config.size(1, 2)

@@ -1050,7 +1050,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     # NOTE: below we compute the value of s so that qs = q^s. If the method
     # is_power_of of integers would be able to return the exponent, we could use
     # that... but currently this is not the case
-    # see trac ticket #19792
+    # see github issue #19792
     p1,a1 = qs.is_prime_power(get_data=True)
     p2,a2 = q.is_prime_power(get_data=True)
 
@@ -1294,24 +1294,24 @@ def _is_periodic_sequence(seq, period):
         first = seq[:per]
         periodic = True
         for j in range(1, len(seq)//per):
-            if seq[j*per:(j+1)*per] != first:
+            if seq[j*per : (j+1)*per] != first:
                 periodic = False
                 break
         if periodic:
             return False
-    if seq[:period] != seq[period:2*period]:
+    if seq[:period] != seq[period : 2*period]:
         return False
     return True
 
 def _create_m_sequence(q, n, check=True):
-    r"""Create an m-sequence over GF(q) with period `q^n-1`.
+    r"""Create an m-sequence over GF(q) with period `q^n - 1`.
 
     Given a prime power `q`, the m-sequence is created as described by [Zie1959]_
     from a primitive function over the finite field `GF(q)`.
 
-    Given a primitive function `f=c_0+c_1x+...+c_nx^n` over `K=GF(q)` of degree `n`,
-    the recurrence is given by: `a_i = -c_0^{-1}(c_1a_{i-1}+...+c_na{i-n})`.
-    The first `n` elements will be `0,0,...,0,1` and these will give a maximal length recurrence sequence
+    Given a primitive function `f=c_0+c_1x+...+c_nx^n` over `K = GF(q)` of degree `n`,
+    the recurrence is given by: `a_i = -c_0^{-1}(c_1a_{i-1} + ... + c_na{i-n})`.
+    The first `n` elements will be `0, 0, ..., 0, 1` and these will give a maximal length recurrence sequence
     as shown in [Mit2008]_.
 
     INPUT:
@@ -1320,7 +1320,7 @@ def _create_m_sequence(q, n, check=True):
 
     - ``n`` -- a nonnegative number.
 
-    - ``check`` -- boolean (dafault True): if true, check that the result is a seqauence with correct period.
+    - ``check`` -- boolean (default True): if true, check that the result is a seqauence with correct period.
       Setting it to false may speed up considerably the computation.
 
     EXAMPLES::
@@ -1354,13 +1354,13 @@ def _create_m_sequence(q, n, check=True):
 
     period = q**n - 1
     seq_len = period*2 if check else period
-    seq = [1]+[0]*(n-1)
+    seq = [1] + [0]*(n-1)
 
     while len(seq) < seq_len:
         nxt = 0
         for i, coeff in zip(exps[1:], coeffs[1:]):
-            nxt += coeff*seq[-i]
-        seq.append(-coeffs[0].inverse()*nxt)
+            nxt += coeff * seq[-i]
+        seq.append(-coeffs[0].inverse() * nxt)
 
     if check:
         assert _is_periodic_sequence(seq, period)
@@ -1444,14 +1444,14 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
         raise ValueError('N must be at least 2')
 
     m_seq = _create_m_sequence(q, N, check=False)
-    period = q**N-1
+    period = q**N - 1
     G = AdditiveAbelianGroup([period])
 
     set1 = [i for i in G if m_seq[i[0]] == 1]
 
     if check:
         H = _get_submodule_of_order(G, q-1)
-        assert is_relative_difference_set(set1, G, H, (period//(q-1), q-1, q**(N-1), q**(N-2)))
+        assert is_relative_difference_set(set1, G, H, (period // (q-1), q - 1, q**(N-1), q**(N-2)))
     return set1
 
 def relative_difference_set_from_homomorphism(q, N, d, check=True):
@@ -1506,7 +1506,7 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True):
     if (q-1)%d != 0:
         raise ValueError('q-1 must be a multiple of d')
 
-    G = AdditiveAbelianGroup([q**N-1])
+    G = AdditiveAbelianGroup([q**N - 1])
     K = _get_submodule_of_order(G, d)
     assert K is not None, 'Could not find kernel'
 
@@ -1517,11 +1517,11 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True):
     second_diff_set = [theta(x) for x in diff_set]
 
     if check:
-        H = _get_submodule_of_order(G2, (q-1)//d)
-        assert is_relative_difference_set(second_diff_set, G2, H, ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
+        H = _get_submodule_of_order(G2, (q-1) // d)
+        assert is_relative_difference_set(second_diff_set, G2, H, ((q**N-1) // (q-1), (q-1) // d, q**(N-1), q**(N-2) * d))
     return second_diff_set
 
-def is_relative_difference_set(R, G, H, params, verbose =False):
+def is_relative_difference_set(R, G, H, params, verbose=False):
     r"""Check if `R` is a difference set of `G` relative to `H`, with the given parameters.
 
     This function checks that `G`, `H` and `R` have the orders specified in the parameters, and
@@ -1546,9 +1546,9 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
 
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order, relative_difference_set_from_m_sequence, is_relative_difference_set
         sage: q, N = 5, 2
-        sage: G = AdditiveAbelianGroup([q^N-1])
-        sage: H = _get_submodule_of_order(G, q-1)
-        sage: params = ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2))
+        sage: G = AdditiveAbelianGroup([q^N - 1])
+        sage: H = _get_submodule_of_order(G, q - 1)
+        sage: params = ((q^N-1) // (q-1), q - 1, q^(N-1), q^(N-2))
         sage: R = relative_difference_set_from_m_sequence(q, N)
         sage: is_relative_difference_set(R, G, H, params)
         True
@@ -1561,7 +1561,7 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
         False
     """
     m, n, k, d = params
-    if G.order() != m*n:
+    if G.order() != m * n:
         if verbose:
             print('Incorrect order of G:', G.order())
         return False
@@ -1579,7 +1579,7 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
     for el1 in R:
         for el2 in R:
             if el1 != el2:
-                idx = el1-el2
+                idx = el1 - el2
                 if idx not in diff_set:
                     diff_set[idx] = 0
                 diff_set[idx] += 1
@@ -1602,11 +1602,11 @@ def is_relative_difference_set(R, G, H, params, verbose =False):
     return True
 
 def is_supplementary_difference_set(Ks, v, lmbda):
-    r"""Check that the sets in ``Ks`` are `n-\{v; k_1,...,k_n; \lambda \}` supplementary difference sets.
-
+    r"""Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary difference sets.
+    
     From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of an additive abelian group `G` of order `v`
-    such that `|S_i|= k_i`. If, for each `g\in G`, `g \neq 0`, the total number of solutions of `a_i-a'_i = g`, with
-    `a_i,a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1,...,k_n;\lambda\}` supplementary difference sets.
+    such that `|S_i| = k_i`. If, for each `g \in G`, `g \neq 0`, the total number of solutions of `a_i - a'_i = g`, with
+    `a_i, a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1, ..., k_n; \lambda\}` supplementary difference sets.
 
     INPUT:
 
@@ -1638,8 +1638,7 @@ def is_supplementary_difference_set(Ks, v, lmbda):
     for K in Ks:
         for el1 in K:
             for el2 in K:
-                diff = G[el1]-G[el2]
-
+                diff = G[el1] - G[el2]
                 if diff not in differences_counter:
                     differences_counter[diff] = 0
                 differences_counter[diff] += 1
@@ -1722,13 +1721,12 @@ def supplementary_difference_set(q, existence=False, check=True):
     .. SEEALSO::
 
         :func:`is_supplementary_difference_set`
-
     """
     s = 0
     m = -1
 
     while q > 2**(s+1) and (q-1) % 2**(s+1) == 0:
-        prime_pow = (q-1)//2**(s+1)-1
+        prime_pow = (q-1)//2**(s+1) - 1
         if is_prime_power(prime_pow) and prime_pow % 2 == 1:
             m = (q - (2**(s+1) + 1)) // 2**(s+1) + 1
             break
@@ -1742,7 +1740,7 @@ def supplementary_difference_set(q, existence=False, check=True):
     if m == -1:
         raise ValueError('There is no s for which m-1 is an odd prime power')
 
-    set1 = relative_difference_set_from_homomorphism(m-1, 2, (m-2)//2, check=False)
+    set1 = relative_difference_set_from_homomorphism(m - 1, 2, (m-2) // 2, check=False)
 
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     P = PolynomialRing(ZZ, 'x')
@@ -1753,15 +1751,15 @@ def supplementary_difference_set(q, existence=False, check=True):
         hall += P.monomial(d[0])
 
     T_2m = 0
-    for i in range(2*m):
+    for i in range(2 * m):
         T_2m += P.monomial(i)
 
-    modulo = P.monomial(2*m)-1
+    modulo = P.monomial(2*m) - 1
 
     diff = T_2m - (1+P.monomial(m))*hall
     diff = diff.mod(modulo)
     exp1, exp2 = diff.exponents()
-    a = (exp1+exp2-m)//2
+    a = (exp1+exp2-m) // 2
 
     alfa3 = (P.monomial(a) + hall).mod(modulo)
     alfa4 = (P.monomial(a+m) + hall).mod(modulo)
@@ -1769,22 +1767,22 @@ def supplementary_difference_set(q, existence=False, check=True):
     psi3 = alfa3
     psi4 = alfa4
     for i in range(s):
-        psi3 = (alfa3(P.monomial(2))+P.monomial(1)*alfa4(P.monomial(2))).mod(P.monomial(4*m)-1)
+        psi3 = (alfa3(P.monomial(2)) + P.monomial(1)*alfa4(P.monomial(2))).mod(P.monomial(4*m)-1)
         psi4 = (alfa3(P.monomial(2)) + P.monomial(1)*(T_2m(P.monomial(2)) - alfa4(P.monomial(2)))).mod(P.monomial(4*m)-1)
 
     # Construction of psi1, psi2
     set2 = relative_difference_set_from_m_sequence(q, 2, check=False)
-    s3 = _get_fixed_relative_difference_set(set2)
+    s3 = get_fixed_relative_difference_set(set2)
 
     phi_exps = []
     for i in range(len(s3)):
         for j in range(i+1, len(s3)):
-            diff = (s3[i]-s3[j])
-            if diff%(q-1) == 0 and diff%(q**2-1) != 0:
+            diff = s3[i] - s3[j]
+            if diff % (q-1) == 0 and diff % (q**2-1) != 0:
                 phi_exps.append(s3[i])
 
-    exps1 = [(x+1)//2 for x in phi_exps if x%2 == 1]
-    exps2 = [x//2 for x in phi_exps if x%2 == 0]
+    exps1 = [(x+1)//2 for x in phi_exps if x % 2 == 1]
+    exps2 = [x//2 for x in phi_exps if x % 2 == 0]
 
     theta1 = 0
     for exp in exps1:
@@ -1794,12 +1792,12 @@ def supplementary_difference_set(q, existence=False, check=True):
     theta2 = 0
     for exp in exps2:
         theta2 += P.monomial(exp)
-    theta2 = theta2.mod(P.monomial(q-1)-1)
+    theta2 = theta2.mod(P.monomial(q-1) - 1)
 
     phi1 = 0
     phi2 = 0
     for exp in phi_exps:
-        if exp%2 == 0:
+        if exp % 2 == 0:
             phi2 += P.monomial(exp)
         else:
             phi1 += P.monomial(exp)
@@ -1817,8 +1815,8 @@ def supplementary_difference_set(q, existence=False, check=True):
 
     return K1, K2, K3, K4
 
-def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
-    r"""Contruct an equivalent relative difference set fixed by the size of the set.
+def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
+    r"""Construct an equivalent relative difference set fixed by the size of the set.
 
     Given a relative difference set `R(q+1, q-1, q, 1)`, it is possible to find a translation
     of this set fixed by `q` (see Section 3 of [Spe1975]_). We say that a set is fixed by `t` if
@@ -1842,30 +1840,30 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, _get_fixed_relative_difference_set
+        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(5, 2)
-        sage: _get_fixed_relative_difference_set(s1) #random
+        sage: get_fixed_relative_difference_set(s1) #random
         [2, 10, 19, 23, 0]
 
     If ``as_elements`` is true, the reuslt will contain elements of the group::
 
-        sage: _get_fixed_relative_difference_set(s1, as_elements=True) #random
+        sage: get_fixed_relative_difference_set(s1, as_elements=True) #random
         [(2), (10), (19), (23), (0)]
 
     TESTS::
 
-        sage: from sage.combinat.designs.difference_family import _is_fixed_relative_difference_set
+        sage: from sage.combinat.designs.difference_family import is_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(5, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: _is_fixed_relative_difference_set(s2, len(s2))
+        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
+        sage: is_fixed_relative_difference_set(s2, len(s2))
         True
         sage: s1 = relative_difference_set_from_m_sequence(9, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: _is_fixed_relative_difference_set(s2, len(s2))
+        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
+        sage: is_fixed_relative_difference_set(s2, len(s2))
         True
         sage: type(s2[0])
         <class 'sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup_fixed_gens_with_category.element_class'>
-        sage: s2 = _get_fixed_relative_difference_set(s1)
+        sage: s2 = get_fixed_relative_difference_set(s1)
         sage: type(s2[0])
         <class 'sage.rings.integer.Integer'>
     """
@@ -1875,14 +1873,14 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
     s2 = None
     for el in G:
         fixed_set = [el+x for x in rel_diff_set]
-        if _is_fixed_relative_difference_set(fixed_set, q):
+        if is_fixed_relative_difference_set(fixed_set, q):
             s2 = fixed_set
             break
     assert s2 is not None, 'Cannot find fixed translation of the set'
 
     s3 = None
     for i in range(G.order()):
-        temp = [((q+1)*i+x[0])%G.order() for x in s2]
+        temp = [((q+1)*i+x[0]) % G.order() for x in s2]
         if 0 in temp:
             s3 = temp
             break
@@ -1892,10 +1890,10 @@ def _get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
         return [G[x] for x in s3]
     return s3
 
-def _is_fixed_relative_difference_set(R, q):
+def is_fixed_relative_difference_set(R, q):
     r"""Check if the relative difference set `R` is fixed by `q`.
 
-    A relative difference set  `R` is fixed by `q` if  `\{qd | d\in R\}= R` (see Section 3 of [Spe1975]_).
+    A relative difference set  `R` is fixed by `q` if  `\{qd | d \in R\}= R` (see Section 3 of [Spe1975]_).
 
     INPUT:
 
@@ -1905,40 +1903,45 @@ def _is_fixed_relative_difference_set(R, q):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, _get_fixed_relative_difference_set, _is_fixed_relative_difference_set
+        sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set, is_fixed_relative_difference_set
         sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: _is_fixed_relative_difference_set(s2, len(s2))
+        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
+        sage: is_fixed_relative_difference_set(s2, len(s2))
         True
         sage: G = AdditiveAbelianGroup([15])
         sage: s3 = [G[1], G[2], G[3], G[4]]
-        sage: _is_fixed_relative_difference_set(s3, len(s3))
+        sage: is_fixed_relative_difference_set(s3, len(s3))
         False
 
     If the relative difference set does not contain elements of the group, the method returns false::
 
         sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = _get_fixed_relative_difference_set(s1, as_elements=False)
-        sage: _is_fixed_relative_difference_set(s2, len(s2))
+        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=False)
+        sage: is_fixed_relative_difference_set(s2, len(s2))
         False
-
-
     """
     for el in R:
-        if q*el not in R:
+        if q * el not in R:
             return False
     return True
 
 
 def skew_supplementary_difference_set(n, existence=False, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1+n_2+n_3+n_4= n+\lambda`.
+    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994]_. The set `S_1 \subset G` is
-    always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus\{0\}`.
+    always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G \setminus \{0\}`.
 
-    The data for `n = 103, 151` is taken from [Djo1994]_ and the data for `n = 67, 113, 127, 157, 163, 181, 241`
-    is taken from [Djo1992]_.
-
+    The data is taken from:
+    
+    * `n = 103, 151`: [Djo1994]_
+    * `n = 67, 113, 127, 157, 163, 181, 241`: [Djo1992a]_
+    * `n = 37, 43`: [Djo1992b]_
+    * `n = 39, 49, 65, 93, 121, 129, 133, 217, 219, 267`: [Djo1992c]_
+    * `n = 97`: [Djo2008a]_
+    * `n = 109, 145, 247`: [Djo2008b]_
+    * `n = 73`: [Djo2023b]_
+    
     INPUT:
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
@@ -1989,78 +1992,177 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         False
         sage: skew_supplementary_difference_set(127, existence=True)
         True
+
+    .. NOTE::
+
+        The data for `n=247` in [Djo2008b]_ contains a typo: the set `\alpha_2` should contain `223` instead of `233`.
+        This can be verified by checking the resulting sets, which are given explicitly in the paper.
     """
 
-
+    # If -1 is present in an index set, it means that {0} should be added to that set
     indices = {
-        67:  [[0,3,5,6,9,10,13,14,17,18,20],
-              [0,2,4,9,11,12,13,16,19,21],
-              [1,3,6,10,11,13,14,16,20,21],
-              [2,4,6,8,9,11,14,17,19]],
-        103: [[1,3,4,6,8,11,12,14,17,18,20,22,25,27,28,30,32],
-              [2,9,10,12,13,14,15,16,20,21,22,23,24,26,28,29,30],
-              [0,1,2,3,4,11,12,13,16,17,19,20,21,24,25,26,28,30,31],
-              [0,1,2,3,4,5,6,13,15,18,19,20,23,24,25,26,27,28,29,31]],
-        113: [[0,3,4,6,8,10,13,14],
-              [1,3,8,9,10,11,12,13],
-              [0,2,3,5,6,7,12],
-              [1,2,3,5,8,9,15]],
-        127: [[0,3,5,7,8,10,12,14,16],
-              [0,1,3,6,7,9,10,12,14,15],
-              [0,1,3,4,5,7,8,9,15,16],
-              [1,4,5,6,9,10,13,14,15,16]],
-        151: [[0,3,5,6,8,11,13,14,16,19,21,23,25,27,28],
-              [2,3,6,13,16,17,20,23,25,26,27,28,29],
-              [0,1,2,3,4,6,7,8,9,10,11,12,23,24,27,28],
-              [1,4,5,10,11,12,13,14,16,18,19,22,25,26,27,28]],
-        157:[[0,2,5,7,8,11],
-             [0,4,5,6,9,11],
-             [6,7,8,9,10,11],
-             [0,5,6,7,8,10,11]],
-        163: [[0,2,5,6,9,10,13,14,17],
-              [0,1,7,10,12,15,16,17],
-              [0,1,3,5,8,13,15,16,17],
-              [3,6,7,8,11,12,13,14,16,17]],
-        181: [[0,3,5,6,8,10,13,15,16,19],
-              [4,5,7,8,11,14,15,16,18,19],
-              [0,4,10,11,13,15,16,18,19],
-              [2,4,5,7,11,13,15,17,19]],
-        241: [[0,2,4,6,8,11,12,14],
-              [1,3,4,6,7,13,14,15],
-              [6,8,9,10,12,13,14,15],
-              [3,4,5,9,10,13,14]],
+        37: [[0, 3, 5, 7, 9, 10], [0, 5, 6, 7, 8],
+             [1, 2, 6, 7, 9], [2, 6, 8, 9, 10]],
+        39: [[1, 3, 5, 6, 8, 10, 12], [0, 1, 5, 8, 12, 13],
+             [1, 3, 4, 7, 9, 12, 13], [0, 1, 2, 3, 7, 8]],
+        43: [[1, 2, 4], [1, 2, 4], [0, 2, 3], [3, 4, -1]],
+        49: [[1, 2, 5, 7, 8, 10, 13, 14], [4, 5, 6, 7, 10, 11],
+             [0, 1, 2, 4, 6, 7, 12, 14], [1, 2, 3, 5, 6, 10, 12, 13, 14]],
+        65: [[1, 3, 5, 6, 8, 10, 13, 14, 17, 18, 20, 22],
+             [0, 3, 7, 10, 16, 17, 18, 20, 21],
+             [2, 4, 6, 8, 9, 10, 14, 15, 16, 17, 18, 20],
+             [5, 7, 8, 9, 11, 12, 13, 14, 16, 18, 19, 20, 21]],
+        67:  [[0, 3, 5, 6, 9, 10, 13, 14, 17, 18, 20],
+              [0, 2, 4, 9, 11, 12, 13, 16, 19, 21],
+              [1, 3, 6, 10, 11, 13, 14, 16, 20, 21],
+              [2, 4, 6, 8, 9, 11, 14, 17, 19]],
+        73: [[4, 6, 8, 14], [8, 10, 12, 14], [4, 6, 10, 12], [-1, 0, 2, 10]],
+        93: [[0, 3, 4, 6, 9, 10, 12, 14, 17, 18],
+             [2, 3, 4, 5, 9, 13, 15, 18, 19],
+             [1, 2, 3, 4, 5, 6, 7, 8, 16],
+             [1, 4, 6, 11, 12, 13, 15, 16, 17, 18]],
+        97: [[1, 2, 4, 6, 9, 11, 13, 14, 17, 18, 21, 23, 25, 27, 29, 30],
+             [1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 23, 27, 29],
+             [0, 1, 2, 5, 6, 12, 13, 15, 16, 20, 24, 25, 26, 29, 30, 31],
+             [0, 2, 3, 4, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 23, 28, 29]],
+        103: [[1, 3, 4, 6, 8, 11, 12, 14, 17, 18, 20, 22, 25, 27, 28, 30, 32],
+              [2, 9, 10, 12, 13, 14, 15, 16, 20, 21, 22, 23, 24, 26, 28, 29, 30],
+              [0, 1, 2, 3, 4, 11, 12, 13, 16, 17, 19, 20, 21, 24, 25, 26, 28, 30, 31],
+              [0, 1, 2, 3, 4, 5, 6, 13, 15, 18, 19, 20, 23, 24, 25, 26, 27, 28, 29, 31]],
+        109: [[0, 2, 5, 7, 8, 10, 12, 15, 16, 19, 20, 23, 24, 26, 29, 30, 33, 34],
+              [4, 5, 6, 7, 11, 15, 18, 19, 20, 22, 25, 30, 32, 33, 35],
+              [0, 1, 5, 6, 9, 10, 11, 14, 17, 20, 24, 26, 27, 28, 29, 31, 32],
+              [0, 3, 4, 6, 7, 9, 10, 12, 13, 22, 24, 25, 26, 27, 28, 29, 31, 33, 35]],
+        113: [[0, 3, 4, 6, 8, 10, 13, 14],
+              [1, 3, 8, 9, 10, 11, 12, 13],
+              [0, 2, 3, 5, 6, 7, 12],
+              [1, 2, 3, 5, 8, 9, 15]],
+        121: [[0, 2, 4, 7, 8, 11, 13, 14, 16, 19, 20, 22],
+              [0, 1, 4, 5, 8, 9, 10, 15, 17, 20, 23],
+              [1, 2, 3, 7, 9, 16, 18, 19, 20, 21, 22, 23],
+              [0, 2, 9, 10, 11, 12, 13, 14, 15, 17, 18, 21, 22, 23]],
+        127: [[0, 3, 5, 7, 8, 10, 12, 14, 16],
+              [0, 1, 3, 6, 7, 9, 10, 12, 14, 15],
+              [0, 1, 3, 4, 5, 7, 8, 9, 15, 16],
+              [1, 4, 5, 6, 9, 10, 13, 14, 15, 16]],
+        129: [[1, 2, 4, 7, 9, 11, 12, 14,16,18],
+              [0, 1, 2, 3, 9, 11, 14, 15, 19],
+              [0, 1, 3, 6, 8, 10, 12, 16, 18, 19],
+              [0, 3, 7, 8, 9, 10, 12, 14, 15, 17]],
+        133: [[1, 2, 5, 6, 9, 11, 12, 14], [1, 4, 7, 9, 10, 12, 13, 15],
+              [0, 5, 6, 8, 11, 12, 13, 15], [0, 1, 2, 5, 7, 8, 9, 13, 14, 15]],
+        145: [[1, 2, 4, 7, 9, 10, 13, 14, 16, 19, 20, 22], [0, 2, 4, 7, 10, 11, 14, 18, 19, 20, 21, 22],
+              [1, 3, 6, 9, 12, 13, 14, 17, 19, 20, 21, 22, 23], [2, 3, 5, 6, 7, 9, 12, 13, 15, 16, 19, 20, 21, 22, 23]],
+        151: [[0, 3, 5, 6, 8, 11, 13, 14, 16, 19, 21, 23, 25, 27, 28],
+              [2, 3, 6, 13, 16, 17, 20, 23, 25, 26, 27, 28, 29],
+              [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 23, 24, 27, 28],
+              [1, 4, 5, 10, 11, 12, 13, 14, 16, 18, 19, 22, 25, 26, 27, 28]],
+        157: [[0, 2, 5, 7, 8, 11],
+              [0, 4, 5, 6, 9, 11],
+              [6, 7, 8, 9, 10, 11],
+              [0, 5, 6, 7, 8, 10, 11]],
+        163: [[0, 2, 5, 6, 9, 10, 13, 14, 17],
+              [0, 1, 7, 10, 12, 15, 16, 17],
+              [0, 1, 3, 5, 8, 13, 15, 16, 17],
+              [3, 6, 7, 8, 11, 12, 13, 14, 16, 17]],
+        181: [[0, 3, 5, 6, 8, 10, 13, 15, 16, 19],
+              [4, 5, 7, 8, 11, 14, 15, 16, 18, 19],
+              [0, 4, 10, 11, 13, 15, 16, 18, 19],
+              [2, 4, 5, 7, 11, 13, 15, 17, 19]],
+        217: [[0, 3, 5, 7, 8, 11, 12, 14], [1, 3, 4, 7, 9, 11, 12, 15],
+              [3, 4, 5, 6, 7, 9, 10, 14, 15], [1, 3, 4, 5, 7, 8, 11, 13, 14]],
+        219: [[1, 3, 5, 6, 8, 11, 12, 15, 17, 18, 21, 22, 24],
+              [2, 6, 8, 10, 11, 12, 13, 16, 19, 22, 23, 24],
+              [0, 1, 5, 6, 10, 11, 13, 14, 17, 20, 21, 24, 25],
+              [0, 2, 3, 4, 5, 6, 7, 11, 12, 13, 16, 20, 23]],
+        241: [[0, 2, 4, 6, 8, 11, 12, 14],
+              [1, 3, 4, 6, 7, 13, 14, 15],
+              [6, 8, 9, 10, 12, 13, 14, 15],
+              [3, 4, 5, 9, 10, 13, 14]],
+        247: [[0, 2, 4, 7, 8, 10, 12, 15, 16, 18, 20, 23, 25, 27, 29],
+              [0, 2, 7, 9, 11, 12, 14, 15, 16, 18, 20, 22, 26],
+              [2, 3, 4, 12, 13, 14, 15, 16, 18, 20, 23, 24, 26, 27, 29],
+              [0, 3, 4, 6, 10, 11, 12, 14, 18, 19, 20, 22, 25, 29]],
+        267: [[0, 3, 4, 7, 8, 11, 13, 15, 16, 19, 21, 22, 25],
+              [0, 1, 4, 5, 6, 8, 14, 15, 18, 21, 23],
+              [0, 2, 4, 5, 7, 9, 10, 11, 14, 15, 16, 17, 25],
+              [0, 1, 3, 4, 6, 14, 15, 16, 17, 18, 20, 22, 23, 25]],
     }
 
+    # If the element is a list, that is the coset.
     cosets_gens = {
-        67: [1,2,3,4,5,6,8,10,12,15,17],
+        37: [1, 2, 3, 5, 6, 9],
+        39: [1, 2, 3, 4, 6, 8, [13]],
+        43: [1, 3, 7],
+        49: [1, 2, 3, 4, 6, 7, 9, 12],
+        65: [1, 2, 3, 5, 6, 7, 9, 10, 11, [13], 22, [26]],
+        67: [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 17],
+        73: [1, 3, 5, 9, 11, 13, 17, 25],
+        93: [1, 2, 3, 5, 7, 9, 10, 14, 15, [31]],
+        97: [1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15, 18, 20, 23, 26],
         103: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 15, 17, 19, 21, 23, 30],
+        109: [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 15, 16, 18, 20, 23, 25, 30],
         113: [1, 2, 3, 5, 6, 9, 10, 13],
+        121: [1, 2, 4, 5, 7, 8, 10, 11, 16, 17, 19, 20],
         127: [1, 3, 5, 7, 9, 11, 13, 19, 21],
-        151: [1, 2, 3 ,4, 5, 6, 9, 10, 11, 12, 15, 22, 27, 29, 30],
+        129: [1, 3, 5, 7, 9, 11, 13, 19, 21, [43]],
+        133: [1, 2, 3, 6, 7, 9, 18, [19, 38, 76]],
+        145: [1, [2, 17, 32, 72, 77, 127, 137], [3, 43, 48, 98, 108, 118, 133], [6, 51, 71, 86, 91, 96, 121],
+              [7, 52, 82, 107, 112, 117, 132], [11, 21, 31, 46, 61, 101, 106], [14, 19, 69, 79, 89, 104, 119],
+              [22, 42, 57, 62, 67, 92, 122], [5, 35, 80, 100, 115, 120, 125], [10, 15, 55, 70, 85, 95, 105],
+              [29], [58]],
+        151: [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 22, 27, 29, 30],
         157: [1, 2, 3, 5, 9, 15],
         163: [1, 2, 3, 5, 6, 9, 10, 15, 18],
         181: [1, 2, 3, 4, 6, 7, 8, 12, 13, 24],
+        217: [1, 2, 4, 5, 7, 10, 19, [31, 62, 124]],
+        219: [1, 2, 3, 5, 7, 9, 11, 15, 19, 22, 23, 33, [73]],
         241: [1, 2, 4, 5, 7, 13, 19, 35],
+        247: [1, [2, 18, 31, 32, 41, 110, 122, 162, 223], [3, 27, 48, 165, 170, 183, 185, 211, 243],
+              [5, 28, 45, 58, 80, 158, 187, 201, 226], [6, 54, 83, 93, 96, 119, 123, 175, 239], [7, 20, 63, 73, 112, 138, 163, 180, 232],
+              [10, 56, 69, 90, 116, 127, 155, 160, 205], [11, 47, 99, 102, 111, 115, 150, 176, 177], [13, 52, 65, 78, 91, 117, 143, 208, 221],
+              [14, 29, 40, 79, 113, 126, 146, 217, 224], [17, 25, 43, 49, 140, 142, 153, 194, 225], [19, 57, 171],
+              [33, 34, 37, 50, 59, 86, 98, 141, 203], [35, 66, 68, 74, 100, 118, 159, 172, 196], [38, 95, 114]],
+        267: [1, 2, 3, 5, 7, 9, 10, 13, 14, 15, 19, 39, [89]],
     }
 
     H_db = {
+        37: [1, 10, -11],
+        39: [1, 16, 22],
+        43: [1, 4, 11, 16, 21, -2, -8],
+        49: [1, 18, 30],
+        65: [1, 16, 61],
         67: [1, 29, 37],
+        73: [1, 2, 4, 8, 16, 32, 64, 55, 37],
+        93: [1, 4, 16, 64, 70],
+        97: [1, 35, 61],
         103: [1, 46, 56],
-        113: [1,16,28,30,49,106,109],
-        127: [1,2,4,8,16,32,64],
-        151: [1, 8,19,59, 64],
-        157: [1,14,16,39,46,67,75,93,99,101,108,130,153],
-        163: [1,38,40,53,58,85,104,133,140],
-        181: [1,39,43,48,62,65,73,80,132],
-        241: [1,15,24,54,87,91,94,98,100,119,160,183,205,225,231],
+        109: [1, 45, 63],
+        113: [1, 16, 28, 30, 49, 106, 109],
+        121: [1, 3, 9, 27, 81],
+        127: [1, 2, 4, 8, 16, 32, 64],
+        129: [1, 4, 16, 64, 97, 121, 127],
+        133: [1, 4, 16, 25, 64, 93, 100, 106, 123],
+        145: [1, 16, 36, 81, 111, 136, 141],
+        151: [1, 8, 19, 59, 64],
+        157: [1, 14, 16, 39, 46, 67, 75, 93, 99, 101, 108, 130, 153],
+        163: [1, 38, 40, 53, 58, 85, 104, 133, 140],
+        181: [1, 39, 43, 48, 62, 65, 73, 80, 132],
+        217: [1, 8, 9, 25, 51, 64, 72, 78, 81, 142, 190, 191, 193, 200, 214],
+        219: [1, 4, 16, 37, 55, 64, 148, 154, 178],
+        241: [1, 15, 24, 54, 87, 91, 94, 98, 100, 119, 160, 183, 205, 225, 231],
+        247: [1, 9, 16, 55, 61, 81, 139, 144, 235],
+        267: [1, 4, 16, 64, 67, 91, 97, 121, 217, 223, 256],
     }
 
     def generate_set(index_set, cosets):
         S = []
         for idx in index_set:
-            S += cosets[idx]
+            if idx == -1:
+                S.append(Z(0))
+            else:
+                S += cosets[idx]
         return S
-
 
     if existence:
         return n in indices
@@ -2073,11 +2175,11 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
 
     cosets = []
     for el in cosets_gens[n]:
-        even_coset = []
-        odd_coset = []
-        for x in H:
-            even_coset.append(x*el)
-            odd_coset.append(-x*el)
+        if isinstance(el, list):
+            even_coset = [Z(x) for x in el]
+        else:
+            even_coset = [x*el for x in H]
+        odd_coset = [-x for x in even_coset]
         cosets.append(even_coset)
         cosets.append(odd_coset)
 
@@ -2087,7 +2189,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     S4 = generate_set(indices[n][3], cosets)
 
     if check:
-        lmbda = len(S1)+len(S2)+len(S3)+len(S4) - n
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
         assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
         assert _is_skew_set(S1, n)
 

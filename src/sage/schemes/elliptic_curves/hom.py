@@ -202,7 +202,7 @@ class EllipticCurveHom(Morphism):
         if op == op_NE:
             return not self._richcmp_(other, op_EQ)
 
-        # We first compare domain, codomain, and degree; cf. Trac #11327
+        # We first compare domain, codomain, and degree; cf. Issue #11327
 
         lx, rx = self.domain(), other.domain()
         if lx != rx:
@@ -226,7 +226,7 @@ class EllipticCurveHom(Morphism):
         if ret is not NotImplemented:
             return ret
 
-        # If not, fall back to comparing rational maps; cf. Trac #11327
+        # If not, fall back to comparing rational maps; cf. Issue #11327
 
         return richcmp(self.rational_maps(), other.rational_maps(), op)
 

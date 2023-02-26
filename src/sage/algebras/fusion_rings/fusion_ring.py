@@ -1349,7 +1349,7 @@ class FusionRing(WeylCharacterRing):
             set_start_method('fork')
         except RuntimeError:
             pass
-        # Turn off multiprocessing when field is QQbar due to pickling issues introduced by PARI upgrade in trac ticket #30537
+        # Turn off multiprocessing when field is QQbar due to pickling issues introduced by PARI upgrade in github issue #30537
         pool = Pool() if use_mp and self.fvars_field() != QQbar else None
 
         # Set up computational basis and compute generators one at a time
