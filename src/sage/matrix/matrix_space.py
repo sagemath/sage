@@ -250,11 +250,15 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         pass
 
             if isinstance(R, sage.rings.abc.IntegerModRing):
-                from . import matrix_modn_dense_double, matrix_modn_dense_float
-                if R.order() < matrix_modn_dense_float.MAX_MODULUS:
-                    return matrix_modn_dense_float.Matrix_modn_dense_float
-                if R.order() < matrix_modn_dense_double.MAX_MODULUS:
-                    return matrix_modn_dense_double.Matrix_modn_dense_double
+                try:
+                    from . import matrix_modn_dense_double, matrix_modn_dense_float
+                except ImportError:
+                    pass
+                else:
+                    if R.order() < matrix_modn_dense_float.MAX_MODULUS:
+                        return matrix_modn_dense_float.Matrix_modn_dense_float
+                    if R.order() < matrix_modn_dense_double.MAX_MODULUS:
+                        return matrix_modn_dense_double.Matrix_modn_dense_double
 
             if isinstance(R, sage.rings.abc.NumberField_cyclotomic):
                 from . import matrix_cyclo_dense
