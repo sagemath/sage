@@ -294,16 +294,13 @@ class LinearExtensionOfPoset(ClonableArray,
             sage: T.linear_extensions()[0].is_supergreedy()
             True
         """
-        P = self.poset()
-        H = P.hasse_diagram()
-        sources = H.sources()
+        H = self.poset().hasse_diagram()
+        L = sources = H.sources()
         linext = []
-        if not self:
-            return True
-        if self[0] not in sources:
-            return False
-        for i in range(len(self)-2):
-            linext.append(self[i])
+        for e in self:
+            if e not in L:
+                return False
+            linext.append(e)
             for y in reversed(linext):
                 L = [x for x in H.neighbor_out_iterator(y)
                      if x not in linext
@@ -311,9 +308,7 @@ class LinearExtensionOfPoset(ClonableArray,
                 if L:
                     break
             else:
-                L = (x for x in sources if x not in linext)
-            if self[i+1] not in L:
-                return False
+                L = sources = [x for x in sources if x not in linext]
         return True
 
     def tau(self, i):
