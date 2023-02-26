@@ -523,7 +523,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 [   1    0]
                 [E(4)    1]
             """
-            from sage.matrix.all import Matrix
+            from sage.matrix.constructor import Matrix
             return Matrix(list(self.independent_roots())).inverse()
 
     class ElementMethods:
@@ -1187,7 +1187,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                         sage: W.rational_catalan_number(3, polynomial=True)
                         q^6 + q^4 + q^3 + q^2 + 1
                     """
-                    from sage.arith.all import gcd
+                    from sage.arith.misc import GCD as gcd
                     from sage.combinat.q_analogues import q_int
 
                     h = self.coxeter_number()

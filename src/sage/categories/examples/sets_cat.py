@@ -13,7 +13,7 @@ from sage.structure.element import Element
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer, IntegerWrapper
 from sage.rings.integer_ring import IntegerRing
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 

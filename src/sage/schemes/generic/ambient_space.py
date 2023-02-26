@@ -379,7 +379,7 @@ class AmbientSpace(Scheme):
         base = self.base_scheme()
         if base.is_noetherian():
             return self.dimension_relative() + base.dimension()
-        raise NotImplementedError("Cannot compute the dimension of this scheme.")
+        raise NotImplementedError("cannot compute the dimension of this scheme")
 
     dimension = dimension_absolute
 

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.misc.cython
 r"""
 Fast conversion of Python objects to C long
 """
@@ -113,7 +114,7 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     We create a pure Python wrapper of this function::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython('''
         ....: from sage.arith.long cimport *
         ....: from sage.rings.integer cimport smallInteger
         ....: def check_long(x):
@@ -246,7 +247,7 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
 
     We create a pure Python wrapper of this function::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython('''
         ....: from sage.arith.long cimport *
         ....: def check_long_py(x):
         ....:     cdef long value
@@ -270,6 +271,17 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
         ....:     assert check_long_py(int(v)) == v
+        sage: check_long_py(int(2^60))
+        1152921504606846976                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^61))
+        2305843009213693952                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^62))
+        4611686018427387904                 # 64-bit
+        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^63))
+        'Overflow (...)'
         sage: check_long_py(int(2^100))
         'Overflow (...)'
         sage: check_long_py(int(long_max() + 1))
@@ -309,7 +321,12 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
 
     cdef long lead
     cdef long lead_2_overflow = (<long>1) << (BITS_IN_LONG - PyLong_SHIFT)
-    cdef long lead_3_overflow = (<long>1) << (BITS_IN_LONG - 2 * PyLong_SHIFT)
+    cdef long lead_3_overflow
+    if BITS_IN_LONG < 2 * PyLong_SHIFT:
+        # in this case 3 digit is always overflow
+        lead_3_overflow = 0
+    else:
+        lead_3_overflow = (<long>1) << (BITS_IN_LONG - 2 * PyLong_SHIFT)
     if size == 0:
         value[0] = 0
         err[0] = 0
@@ -371,7 +388,7 @@ cdef inline bint is_small_python_int(obj):
 
     EXAMPLES::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython('''
         ....: from sage.arith.long cimport is_small_python_int
         ....: def is_small_wrapper(x):
         ....:     return is_small_python_int(x)
