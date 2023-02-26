@@ -1927,7 +1927,7 @@ cdef class Matrix(Matrix1):
 
         This test addresses an issue raised at :trac:`20512`::
 
-            sage: A.minors(0)[0].parent() == P
+            sage: A.minors(0)[0].parent() == P                                  # optional - sage.libs.pari
             True
         """
         from sage.combinat.combination import Combinations
@@ -2816,7 +2816,7 @@ cdef class Matrix(Matrix1):
         The default variable name is `x`, but you can specify
         another name::
 
-            sage: factor(A.minpoly('y'))
+            sage: factor(A.minpoly('y'))                                                # optional - sage.libs.pari
             (y + 1) * (y + 2)^2
         """
         f = self.fetch('minpoly')
@@ -4745,9 +4745,9 @@ cdef class Matrix(Matrix1):
         If the optional meataxe package is installed, we again have to make sure
         to work with a copy of B that has the same type as ``P.basis_matrix()``::
 
-            sage: B.parent()(B.list())*P.basis_matrix().transpose() == zero_matrix(F, 3, 2)         # optional - sage.libs.pari
+            sage: B.parent()(B.list()) * P.basis_matrix().transpose() == zero_matrix(F, 3, 2)       # optional - sage.libs.pari
             True
-            sage: K == P
+            sage: K == P                                                                            # optional - sage.libs.pari
             True
 
         Over number fields, PARI is used by default, but general-purpose code
@@ -13871,7 +13871,7 @@ cdef class Matrix(Matrix1):
             True
             sage: L, d = A.indefinite_factorization()                                               # optional - sage.libs.pari
             sage: D = diagonal_matrix(d)                                                            # optional - sage.libs.pari
-            sage: L
+            sage: L                                                                                 # optional - sage.libs.pari
             [              1               0               0               0]
             [4*a^2 + 4*a + 3               1               0               0]
             [              3   4*a^2 + a + 2               1               0]
@@ -15152,7 +15152,7 @@ cdef class Matrix(Matrix1):
         numbers or finite fields which are not a quadratic extension::
 
             sage: N = matrix(GF(5), 2, [0,1,2,3])                               # optional - sage.libs.pari
-            sage: N.conjugate_transpose()
+            sage: N.conjugate_transpose()                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.rings.finite_rings.integer_mod.IntegerMod_int' object has no attribute 'conjugate'

@@ -897,7 +897,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: rings.append(SR)                                              # optional - sage.symbolic
             sage: rings.extend([GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a')])      # optional - sage.libs.pari
             sage: x = polygen(QQ)
-            sage: rings.extend([NumberField(x^3+2, 'a'), CyclotomicField(4)]    # optional - sage.rings.number_field
+            sage: rings.extend([NumberField(x^3+2, 'a'), CyclotomicField(4)])   # optional - sage.rings.number_field
             sage: for R in rings:
             ....:     A = MatrixSpace(R, 60, 30, sparse=False)(0)
             ....:     B = A.augment(A)
