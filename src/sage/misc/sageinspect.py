@@ -1203,17 +1203,21 @@ def _sage_getargspec_cython(source):
 
         sage: def dummy_python(self, *args, x=1): pass
         sage: sgc("def dummy_python(self, *args, x=1): pass")
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: cython("def dummy_cython(self, *args, x=1): pass")
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: cython("def dummy_cython(self, *args, x=1): pass")                        # optional - sage.misc.cython
         sage: sgc("def dummy_cython(self, *args, x=1): pass")
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In some examples above, a syntax error was raised when a type
     definition contains a pointer. An exception is made for ``char*``,
     since C strings are acceptable input in public Cython functions::
 
         sage: sgc('def f(char *x = "a string", z = {(1,2,3): True}): pass')
-        FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=('a string', {(1, 2, 3): True}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['x', 'z'], varargs=None, varkw=None,
+                    defaults=('a string', {(1, 2, 3): True}),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
 
     AUTHORS:
@@ -1523,17 +1527,21 @@ def sage_getargspec(obj):
 
         sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)
-        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
         sage: sage_getargspec(BooleanMonomialMonoid.gen)
-        FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
         sage: sage_getargspec(I.groebner_basis)
         FullArgSpec(args=['self', 'algorithm', 'deg_bound', 'mult_bound', 'prot'],
-        varargs='args', varkw='kwds', defaults=('', None, None, False), kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: cython("cpdef int foo(x,y) except -1: return 1")
-        sage: sage_getargspec(foo)
-        FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+                    varargs='args', varkw='kwds', defaults=('', None, None, False),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: cython("cpdef int foo(x,y) except -1: return 1")                          # optional - sage.misc.cython
+        sage: sage_getargspec(foo)                                                      # optional - sage.misc.cython
+        FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     If a ``functools.partial`` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
@@ -1543,7 +1551,8 @@ def sage_getargspec(obj):
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
         sage: sage_getargspec(f1)
-        FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     TESTS:
 
@@ -1564,34 +1573,38 @@ def sage_getargspec(obj):
         ....: '    def _sage_src_(self):',
         ....: '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
         ....: '    def __call__(self, m,n): return "something"']
-        sage: cython('\n'.join(cython_code))
-        sage: O = MyClass()
-        sage: print(sage.misc.sageinspect.sage_getsource(O))
+        sage: cython('\n'.join(cython_code))                                            # optional - sage.misc.cython
+        sage: O = MyClass()                                                             # optional - sage.misc.cython
+        sage: print(sage.misc.sageinspect.sage_getsource(O))                            # optional - sage.misc.cython
         def foo(x, a=')"', b={(2+1):'bar', not 1:3, 3<<4:5}): return
-        sage: spec = sage.misc.sageinspect.sage_getargspec(O)
-        sage: spec.args, spec.varargs, spec.varkw
+        sage: spec = sage.misc.sageinspect.sage_getargspec(O)                           # optional - sage.misc.cython
+        sage: spec.args, spec.varargs, spec.varkw                                       # optional - sage.misc.cython
         (['x', 'a', 'b'], None, None)
-        sage: spec.defaults[0]
+        sage: spec.defaults[0]                                                          # optional - sage.misc.cython
         ')"'
-        sage: sorted(spec.defaults[1].items(), key=lambda x: str(x))
+        sage: sorted(spec.defaults[1].items(), key=lambda x: str(x))                    # optional - sage.misc.cython
         [(3, 'bar'), (48, 5), (False, 3)]
-        sage: sage.misc.sageinspect.sage_getargspec(O.__call__)
-        FullArgSpec(args=['self', 'm', 'n'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage.misc.sageinspect.sage_getargspec(O.__call__)                         # optional - sage.misc.cython
+        FullArgSpec(args=['self', 'm', 'n'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     ::
 
-        sage: cython('def foo(x, a=\'\\\')"\', b={not (2+1==3):\'bar\'}): return')
-        sage: print(sage.misc.sageinspect.sage_getsource(foo))
+        sage: cython('def foo(x, a=\'\\\')"\', b={not (2+1==3):\'bar\'}): return')      # optional - sage.misc.cython
+        sage: print(sage.misc.sageinspect.sage_getsource(foo))                          # optional - sage.misc.cython
         def foo(x, a='\')"', b={not (2+1==3):'bar'}): return
         <BLANKLINE>
-        sage: sage.misc.sageinspect.sage_getargspec(foo)
-        FullArgSpec(args=['x', 'a', 'b'], varargs=None, varkw=None, defaults=('\')"', {False: 'bar'}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage.misc.sageinspect.sage_getargspec(foo)                                # optional - sage.misc.cython
+        FullArgSpec(args=['x', 'a', 'b'], varargs=None, varkw=None,
+                    defaults=('\')"', {False: 'bar'}),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following produced a syntax error before the patch at :trac:`11913`,
     see also :trac:`26906`::
 
-        sage: sage.misc.sageinspect.sage_getargspec(r.lm)                         # optional - rpy2
-        FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage.misc.sageinspect.sage_getargspec(r.lm)                               # optional - rpy2
+        FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following was fixed in :trac:`16309`::
 
