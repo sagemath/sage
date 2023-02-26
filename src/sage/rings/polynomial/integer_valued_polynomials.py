@@ -48,11 +48,11 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         sage: IntegerValuedPolynomialRing(24)
         Traceback (most recent call last):
         ...
-        TypeError: argument R must be a ring
+        TypeError: argument R must be a commutative ring
     """
     def __init__(self, R):
-        if R not in Rings():
-            raise TypeError("argument R must be a ring")
+        if R not in Rings().Commutative():
+            raise TypeError("argument R must be a commutative ring")
         self._base = R
         cat = Algebras(R).Commutative().WithBasis()
         Parent.__init__(self, base=R, category=cat.WithRealizations())
@@ -121,11 +121,12 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 [Category of realizations of Integer-Valued Polynomial Ring
                  over Rational Field,
                  Join of Category of algebras with basis over Rational Field and
+                 Category of filtered algebras over Rational Field and
                  Category of commutative algebras over Rational Field and
                  Category of realizations of unital magmas]
             """
             A = self.base()
-            category = Algebras(A.base_ring()).Commutative()
+            category = Algebras(A.base_ring()).Commutative().Filtered()
             return [A.Realizations(),
                     category.Realizations().WithBasis()]
 
@@ -160,6 +161,18 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     S[0]
                 """
                 return self.basis().keys()(0)
+
+            def degree_on_basis(self, m):
+                r"""
+                Return the degree of the basis element indexed by ``m``.
+
+                EXAMPLES::
+
+                    sage: A = IntegerValuedPolynomialRing(QQ).S()
+                    sage: A.degree_on_basis(4)  # indirect doctest
+                    4
+                """
+                return ZZ(m)
 
             def gen(self):
                 r"""
@@ -262,10 +275,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         - :wikipedia:`Integer-valued polynomial`
 
-        INPUT:
-
-        - ``A`` -- a parent with realization
-
         EXAMPLES::
 
             sage: F = IntegerValuedPolynomialRing(QQ).S(); F
@@ -323,10 +332,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             r"""
             Initialize ``self``.
 
-            INPUT:
-
-            - ``A`` -- a parent with realization
-
             EXAMPLES::
 
                 sage: F = IntegerValuedPolynomialRing(QQ).S(); F
@@ -350,7 +355,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             return "shifted"
 
-        # with @cached_method ?
         def product_on_basis(self, n1, n2):
             r"""
             Return the product of basis elements ``n1`` and ``n2``.
@@ -407,7 +411,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `p` -- a polynomial in one variable
+            - ``p`` -- a polynomial in one variable
 
             EXAMPLES::
 
@@ -454,12 +458,12 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: A.from_h_vector(ex.h_vector())
                 S[2] + S[4]
             """
-            B = self.basis()
             d = len(h) - 1
             m = matrix(QQ, d + 1, d + 1,
                        lambda j, i: (-1)**(d - j) * binomial(d - i, d - j))
             v = vector(QQ, [h[i] for i in range(d + 1)])
-            return self.sum(Integer(c) * B[i] for i, c in enumerate(m * v))
+            return self._from_dict({i: Integer(c)
+                                    for i, c in enumerate(m * v)})
 
         def _element_constructor_(self, x):
             r"""
@@ -654,8 +658,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     return self
 
                 A = self.parent()
-                resu = A.sum(c * A.monomial(j) for i, c in self
-                             for j in range(i + 1))
+                B = A.basis()
+                resu = A.linear_combination((B[j], c) for i, c in self
+                                            for j in range(i + 1))
                 if k == 1:
                     return resu
                 return resu.variable_shift(k - 1)
@@ -682,8 +687,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     return self
 
                 A = self.parent()
-                resu = (A.sum(c * A.monomial(i) for i, c in self) -
-                        A.sum(c * A.monomial(i - 1) for i, c in self if i))
+                resu = self - A._from_dict({i - 1: c for i, c in self if i})
                 if k == 1:
                     return resu
                 return resu.variable_unshift(k - 1)
@@ -715,9 +719,15 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: B = F.gen()
                     sage: (B+1).polynomial()
                     x + 2
+
+                TESTS::
+
+                    sage: F.zero().polynomial().parent()
+                    Univariate Polynomial Ring in x over Rational Field
                 """
                 x = polygen(QQ, 'x')
-                return sum(c * binomial(x + i, i) for i, c in self)
+                R = x.parent()
+                return R.sum(c * binomial(x + i, i) for i, c in self)
 
             def h_vector(self):
                 """
@@ -889,7 +899,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             return "binomial"
 
-        # with @cached_method ?
         def product_on_basis(self, n1, n2):
             r"""
             Return the product of basis elements ``n1`` and ``n2``.
@@ -1118,8 +1127,14 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: B = F.gen()
                     sage: (B+1).polynomial()
                     x + 1
+
+                TESTS::
+
+                    sage: F.zero().polynomial().parent()
+                    Univariate Polynomial Ring in x over Rational Field
                 """
                 x = polygen(QQ, 'x')
-                return sum(c * binomial(x, i) for i, c in self)
+                R = x.parent()
+                return R.sum(c * binomial(x, i) for i, c in self)
 
     B = Binomial
