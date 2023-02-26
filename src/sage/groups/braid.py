@@ -1634,7 +1634,15 @@ class Braid(FiniteTypeArtinGroupElement):
         if not l:
             return None
         else:
-            return self.parent()._element_from_libbraiding(l)
+            B = self.parent()
+            n = B.strands()
+            b0 = B._element_from_libbraiding(l)
+            L = b0.left_normal_form()
+            D1 = prod(L[1: ])
+            k = 2 * L[0].exponent_sum()/ n / (n - 1)
+            k = k % 2
+            D0 = B.delta()**k
+            return D0 * D1
 
     def is_conjugated(self, other):
         """
