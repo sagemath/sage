@@ -841,8 +841,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
                 raise TypeError("cannot coerce monomial %s to %s" % (other, self))
 
         elif isinstance(other, BooleanPolynomial) and \
-            ((<BooleanPolynomialRing>(<BooleanPolynomial>other)\
-            ._parent)._pbring.nVariables() <= self._pbring.nVariables()):
+            ((<BooleanPolynomialRing>(<BooleanPolynomial>other)._parent)._pbring.nVariables() <= self._pbring.nVariables()):
             # try PolyBoRi's built-in coercions
             if self._pbring.hash() == \
                     (<BooleanPolynomialRing>(<BooleanPolynomial>other)._parent)._pbring.hash():
@@ -2080,7 +2079,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
             ValueError: cannot convert monomial t*x*y to MonomialMonoid of Boolean PolynomialRing in x, y, z: name t not defined
         """
         if isinstance(other, BooleanMonomial) and \
-            ((<BooleanMonomial>other)._parent.ngens() <= \
+            ((<BooleanMonomial>other)._parent.ngens() <=
             (<BooleanPolynomialRing>self._ring)._pbring.nVariables()):
             try:
                 var_mapping = get_var_mapping(self, other.parent())
@@ -2182,7 +2181,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
                     return new_BM_from_PBMonom(self,
                             (<BooleanPolynomialRing>self._ring),
                             (<BooleanPolynomial>other)._pbpoly.lead())
-                elif ((<BooleanPolynomial>other)._pbpoly.nUsedVariables() <= \
+                elif ((<BooleanPolynomial>other)._pbpoly.nUsedVariables() <=
                     (<BooleanPolynomialRing>self._ring)._pbring.nVariables()):
                         try:
                             var_mapping = get_var_mapping(self, other)

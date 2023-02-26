@@ -1579,8 +1579,8 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=[ReductionMap(K, self, None, None, None, None)]) # could be special-cased a bit more.
         else:
             PBinv = PB**(-1)
-            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], \
-                                                 convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
+            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)],
+                                           convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
 
     def _element_constructor_(self, x):
         """
