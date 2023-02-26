@@ -473,6 +473,13 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
         sphinx_plot(arrow((0,0,1), (1,1,1)))
 
+    TESTS:
+
+    Check that :trac:`35031` is fixed::
+
+        sage: arrow((0,0), (0,0), linestyle='dashed')
+        Graphics object consisting of 1 graphics primitive
+
     """
     try:
         return arrow2d(tailpoint, headpoint, **kwds)
