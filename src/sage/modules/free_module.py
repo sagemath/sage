@@ -6005,7 +6005,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
         TESTS::
 
             sage: A = FreeModule(PolynomialRing(GF(5),'x'), 3)                  # optional - sage.libs.pari
-            sage: TestSuite(A).run()
+            sage: TestSuite(A).run()                                            # optional - sage.libs.pari
         """
         FreeModule_ambient.__init__(self, base_ring, rank, sparse, coordinate_ring, category=category)
 
