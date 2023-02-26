@@ -2788,9 +2788,9 @@ cdef class Matrix(Matrix1):
         EXAMPLES::
 
             sage: a = matrix(QQ, 4, 4, range(16))
-            sage: a.minimal_polynomial('z')
+            sage: a.minimal_polynomial('z')                                             # optional - sage.libs.pari
             z^3 - 30*z^2 - 80*z
-            sage: a.minpoly()
+            sage: a.minpoly()                                                           # optional - sage.libs.pari
             x^3 - 30*x^2 - 80*x
         """
         return self.minpoly(var, **kwds)
