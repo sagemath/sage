@@ -207,7 +207,7 @@ def unrank(L, i):
 
     Enumerated sets::
 
-        sage: unrank(GF(7), 2)
+        sage: unrank(GF(7), 2)                                                  # optional - sage.libs.pari
         2
         sage: unrank(IntegerModRing(29), 10)
         10
