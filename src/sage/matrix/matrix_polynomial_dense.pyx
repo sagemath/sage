@@ -2526,8 +2526,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: Fq.<a> = GF(2^3)                                              # optional - sage.libs.pari
             sage: pR.<x> = Fq[]                                                 # optional - sage.libs.pari
-            sage: A = matrix(pR, [[x^2+a,  x^4+a],
-            ....:                 [  x^3,  a*x^4]])                             # optional - sage.libs.pari
+            sage: A = matrix(pR, [[x^2+a,  x^4+a],                              # optional - sage.libs.pari
+            ....:                 [  x^3,  a*x^4]])
             sage: W, U = A.reduced_form(transformation=True)                    # optional - sage.libs.pari
             sage: W, U                                                          # optional - sage.libs.pari
             (
@@ -2645,8 +2645,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:            [[      3*x^3 + 3*x,         2*x^3 + 4],
             ....:             [  3*x^3 + 6*x + 5, 6*x^3 + 5*x^2 + 1],
             ....:             [  2*x^3 + 2*x + 6,   3*x^2 + 2*x + 2]])
-            sage: B = Matrix(pR, 3, 3,
-            ....:            [[              3,       x + 3,               6],  # optional - sage.libs.pari
+            sage: B = Matrix(pR, 3, 3,                                          # optional - sage.libs.pari
+            ....:            [[              3,       x + 3,               6],
             ....:             [3*x^3 + 3*x + 1, 4*x^2 + 3*x,   6*x^3 + x + 4],
             ....:             [  4*x^2 + x + 4, 3*x^2 + 4*x, 3*x^2 + 3*x + 2]])
             sage: Q, R = A.left_quo_rem(B); Q, R                                # optional - sage.libs.pari

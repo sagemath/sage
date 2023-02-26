@@ -877,9 +877,13 @@ def random_vector(ring, degree=None, *args, **kwds):
         sage: w1 = vector(ZZ.random_element(distribution="1/n") for _ in range(20))
         sage: w2 = vector(ZZ.random_element(x=-1000, y=1000) for _ in range(15))
         sage: w3 = vector(QQ.random_element() for _ in range(10))
+        sage: [v1, v2, v3] == [w1, w2, w3]
+        True
         sage: w4 = vector(FiniteField(17).random_element() for _ in range(10))  # optional - sage.libs.pari
+        sage: v4 == w4                                                          # optional - sage.libs.pari
+        True
         sage: w5 = vector(RR.random_element() for _ in range(10))
-        sage: [v1, v2, v3, v4, v5] == [w1, w2, w3, w4, w5]
+        sage: v5 == w5
         True
 
     Inputs get checked before constructing the vector. ::
@@ -2842,7 +2846,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: v.pairwise_product(w).parent()
+            sage: v.pairwise_product(w).parent()                                # optional - sage.libs.pari
             Vector space of dimension 3 over Finite Field of size 3
 
         TESTS::

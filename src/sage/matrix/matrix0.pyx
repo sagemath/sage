@@ -916,8 +916,8 @@ cdef class Matrix(sage.structure.element.Matrix):
              over Finite Field of size 2 (using Matrix_generic_dense)
             sage: type(m[:2,:2])                                                # optional - sage.libs.pari
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-            sage: parent(m[:2,:2])
-            Full MatrixSpace of 2 by 2 dense matrices                           # optional - sage.libs.pari
+            sage: parent(m[:2,:2])                                              # optional - sage.libs.pari
+            Full MatrixSpace of 2 by 2 dense matrices
              over Finite Field of size 2 (using Matrix_generic_dense)
         """
         cdef list row_list
