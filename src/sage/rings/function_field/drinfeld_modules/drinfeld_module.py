@@ -1264,11 +1264,28 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi0 = DrinfeldModule(A, [T, 1, 1, 1])
             sage: phi.is_isomorphic(phi0)
             False
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [T, 1, 0, 1, 0, 0, 0, T^2, 1, 1])
+            sage: phi.is_isomorphic(phi)
+            True
+            sage: psi = DrinfeldModule(A, [T, 1, 0, 1, 0, T, 0, T^2, 1, 1])
+            sage: phi.is_isomorphic(psi)
+            False
         """
-        if self.rank() != psi.rank():
-            return False
-        if self.rank() == 1:
+        # trivial checks:
+        if self._gen == psi._gen:
             return True
+        if self._gen.degree() != psi._gen.degree():
+            return False
+        if self._gen.degree() == 1:
+            return True
+        # check if self and psi are patterned alike:
+        if not all(bool(g_self) == bool(g_psi) for g_self, g_psi in\
+            zip(self._gen.coefficients(sparse=False), psi._gen.coefficients(sparse=False))):
+            return False
+        # check that all the nonzero basic j-invariants agree
         isom = True
         for p in self.basic_j_invariants_parameters():
             if self.basic_j_invariant(p, check=False) != psi.basic_j_invariant(p, check=False):
