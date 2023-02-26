@@ -3382,3 +3382,81 @@ def amicable_hadamard_matrices_wallis(n, check=True):
     if check:
         assert are_amicable_hadamard_matrices(M, N)
     return M, N
+
+
+def amicable_hadamard_matrices(n, existence=False, check=True):
+    r"""Construct amicable Hadamard matrices of order `n` using the available methods.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the amicable Hadamard matrices.
+
+    - ``existence`` -- boolean (default False). If true, only check whether
+      amicable Hadamard matrices of order `n` can be constructed.
+
+    - ``check`` -- boolean, if true (default), check that the matrices are amicable
+      Hadamard matrices before returning them.
+
+    OUTPUT:
+
+    If ``existence`` is true, the function returns a boolean representing whether
+    amicable Hadamard matrices of order `n` can be constructed.
+    If ``existence`` is false, returns two amicable Hadamard matrices, or raises
+    an error if the matrices cannot be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import amicable_hadamard_matrices
+        sage: amicable_hadamard_matrices(2)
+        (
+        [ 1  1]  [ 1  1]
+        [-1  1], [ 1 -1]
+        )
+
+    If ``existence`` is true, the function returns a boolean::
+
+        sage: amicable_hadamard_matrices(16, existence=True)
+        False
+
+    TESTS::
+
+        sage: M, N = amicable_hadamard_matrices(20)
+        sage: amicable_hadamard_matrices(18)
+        Traceback (most recent call last):
+        ...
+        ValueError: Hadamard matrices of order 18 do not exist
+        sage: amicable_hadamard_matrices(16)
+        Traceback (most recent call last):
+        ...
+        ValueError: Construction for amicable Hadamard matrices of order 16 not yet implemented.
+    """
+    if not ((n % 4 == 0 and n > 2) or n in [1, 2]):
+        if existence:
+            return False
+        raise ValueError(f"Hadamard matrices of order {n} do not exist")
+
+    M, N = None, None
+    if n == 1:
+        if existence:
+            return True
+        M = matrix([1])
+        N = matrix([1])
+    elif n == 2:
+        if existence:
+            return True
+        M = matrix([[1, 1], [-1, 1]])
+        N = matrix([[1, 1], [1, -1]])
+    elif is_prime_power(n-1):
+        if existence:
+            return True
+        M, N = amicable_hadamard_matrices_wallis(n, check=False)
+
+    if existence:
+        return False
+
+    if M is None:
+        raise ValueError(f'Construction for amicable Hadamard matrices of order {n} not yet implemented.')
+
+    if check:
+        assert are_amicable_hadamard_matrices(M, N)
+    return M, N
