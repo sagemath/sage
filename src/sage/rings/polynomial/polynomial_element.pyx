@@ -9900,38 +9900,38 @@ cdef class Polynomial(CommutativeAlgebraElement):
         Quick tests::
 
             sage: P.<x> = ZZ['x']
-            sage: (x - 1).is_cyclotomic()
+            sage: (x - 1).is_cyclotomic()                                                           # optional - sage.libs.pari
             True
-            sage: (x + 1).is_cyclotomic()
+            sage: (x + 1).is_cyclotomic()                                                           # optional - sage.libs.pari
             True
-            sage: (x^2 - 1).is_cyclotomic()
+            sage: (x^2 - 1).is_cyclotomic()                                                         # optional - sage.libs.pari
             False
-            sage: (x^2 + x + 1).is_cyclotomic(certificate=True)
+            sage: (x^2 + x + 1).is_cyclotomic(certificate=True)                                     # optional - sage.libs.pari
             3
-            sage: (x^2 + 2*x + 1).is_cyclotomic(certificate=True)
+            sage: (x^2 + 2*x + 1).is_cyclotomic(certificate=True)                                   # optional - sage.libs.pari
             0
 
         Test first 100 cyclotomic polynomials::
 
-            sage: all(cyclotomic_polynomial(i).is_cyclotomic() for i in range(1,101))
+            sage: all(cyclotomic_polynomial(i).is_cyclotomic() for i in range(1, 101))              # optional - sage.libs.pari
             True
 
         Some more tests::
 
-            sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")
+            sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")        # optional - sage.libs.pari
             False
             sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")
             False
 
-            sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")
+            sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")        # optional - sage.libs.pari
             True
             sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")
             True
 
             sage: y = polygen(QQ)
-            sage: (y/2 - 1/2).is_cyclotomic()
+            sage: (y/2 - 1/2).is_cyclotomic()                                                       # optional - sage.libs.pari
             False
-            sage: (2*(y/2 - 1/2)).is_cyclotomic()
+            sage: (2*(y/2 - 1/2)).is_cyclotomic()                                                   # optional - sage.libs.pari
             True
 
         Invalid arguments::
@@ -9943,8 +9943,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         Test using other rings::
 
-            sage: z = polygen(GF(5))
-            sage: (z - 1).is_cyclotomic()
+            sage: z = polygen(GF(5))                                                                # optional - sage.libs.pari
+            sage: (z - 1).is_cyclotomic()                                                           # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented in non-zero characteristic
@@ -9952,28 +9952,28 @@ cdef class Polynomial(CommutativeAlgebraElement):
         TESTS::
 
             sage: R = ZZ['x']
-            sage: for _ in range(20):
+            sage: for _ in range(20):                                                               # optional - sage.libs.pari
             ....:     p = R.random_element(degree=randint(10,20))
             ....:     ans_pari = p.is_cyclotomic(algorithm="pari")
             ....:     ans_sage = p.is_cyclotomic(algorithm="sage")
             ....:     assert ans_pari == ans_sage, "problem with p={}".format(p)
-            sage: for d in range(2,20):
+            sage: for d in range(2, 20):                                                            # optional - sage.libs.pari
             ....:     p = cyclotomic_polynomial(d)
             ....:     assert p.is_cyclotomic(algorithm="pari"), "pari problem with p={}".format(p)
             ....:     assert p.is_cyclotomic(algorithm="sage"), "sage problem with p={}".format(p)
 
         Test the output type when ``certificate=True``::
 
-            sage: type((x^2 - 2).is_cyclotomic(certificate=True))
+            sage: type((x^2 - 2).is_cyclotomic(certificate=True))                                   # optional - sage.libs.pari
             <class 'sage.rings.integer.Integer'>
-            sage: type((x -1).is_cyclotomic(certificate=True))
+            sage: type((x - 1).is_cyclotomic(certificate=True))                                     # optional - sage.libs.pari
             <class 'sage.rings.integer.Integer'>
 
         Check that the arguments are forwarded when the input is not a
         polynomial with coefficients in `\ZZ`::
 
             sage: x = polygen(QQ)
-            sage: (x-1).is_cyclotomic(certificate=True)
+            sage: (x - 1).is_cyclotomic(certificate=True)                                           # optional - sage.libs.pari
             1
         """
         S = self.base_ring()
@@ -10050,20 +10050,20 @@ cdef class Polynomial(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^5 - 1).is_cyclotomic_product()
+            sage: (x^5 - 1).is_cyclotomic_product()                                                 # optional - sage.libs.pari
             True
-            sage: (x^5 + x^4 - x^2 + 1).is_cyclotomic_product()
+            sage: (x^5 + x^4 - x^2 + 1).is_cyclotomic_product()                                     # optional - sage.libs.pari
             False
 
-            sage: p = prod(cyclotomic_polynomial(i) for i in [2,5,7,12])
-            sage: p.is_cyclotomic_product()
+            sage: p = prod(cyclotomic_polynomial(i) for i in [2, 5, 7, 12])                         # optional - sage.libs.pari
+            sage: p.is_cyclotomic_product()                                                         # optional - sage.libs.pari
             True
 
-            sage: (x^5 - 1/3).is_cyclotomic_product()
+            sage: (x^5 - 1/3).is_cyclotomic_product()                                               # optional - sage.libs.pari
             False
 
             sage: x = polygen(Zmod(5))
-            sage: (x-1).is_cyclotomic_product()
+            sage: (x - 1).is_cyclotomic_product()                                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented in non-zero characteristic
@@ -10276,9 +10276,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         In positive characteristic, the degree can drop in this case::
 
-            sage: R.<x> = GF(2)[]
-            sage: f = x + 1
-            sage: f.homogenize(x)
+            sage: R.<x> = GF(2)[]                                               # optional - sage.libs.pari
+            sage: f = x + 1                                                     # optional - sage.libs.pari
+            sage: f.homogenize(x)                                               # optional - sage.libs.pari
             0
 
         For compatibility with the multivariate case, the parameter ``var`` can
@@ -10355,43 +10355,43 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: a.nth_root(2)
             1/56*x^3 + 103/336*x^2 + 365/252*x + 25/12
 
-            sage: K.<sqrt2> = QuadraticField(2)
-            sage: R.<x> = K[]
-            sage: a = (x + sqrt2)^3 * ((1+sqrt2)*x - 1/sqrt2)^6
-            sage: b = a.nth_root(3); b
+            sage: K.<sqrt2> = QuadraticField(2)                                 # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                   # optional - sage.rings.number_field
+            sage: a = (x + sqrt2)^3 * ((1+sqrt2)*x - 1/sqrt2)^6                 # optional - sage.rings.number_field
+            sage: b = a.nth_root(3); b                                          # optional - sage.rings.number_field
             (2*sqrt2 + 3)*x^3 + (2*sqrt2 + 2)*x^2 + (-2*sqrt2 - 3/2)*x + 1/2*sqrt2
-            sage: b^3 == a
+            sage: b^3 == a                                                      # optional - sage.rings.number_field
             True
 
-            sage: R.<x> = QQbar[]
-            sage: p = x**3 + QQbar(2).sqrt() * x - QQbar(3).sqrt()
-            sage: r = (p**5).nth_root(5)
-            sage: r * p[0] == p * r[0]
+            sage: R.<x> = QQbar[]                                               # optional - sage.rings.number_field
+            sage: p = x**3 + QQbar(2).sqrt() * x - QQbar(3).sqrt()              # optional - sage.rings.number_field
+            sage: r = (p**5).nth_root(5)                                        # optional - sage.rings.number_field
+            sage: r * p[0] == p * r[0]                                          # optional - sage.rings.number_field
             True
-            sage: p = (x+1)^20 + x^20
-            sage: p.nth_root(20)
+            sage: p = (x+1)^20 + x^20                                           # optional - sage.rings.number_field
+            sage: p.nth_root(20)                                                # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: not a 20th power
 
-            sage: z = GF(4).gen()
-            sage: R.<x> = GF(4)[]
-            sage: p = z*x**4 + 2*x - 1
-            sage: r = (p**15).nth_root(15)
-            sage: r * p[0] == p * r[0]
+            sage: z = GF(4).gen()                                               # optional - sage.libs.pari
+            sage: R.<x> = GF(4)[]                                               # optional - sage.libs.pari
+            sage: p = z*x**4 + 2*x - 1                                          # optional - sage.libs.pari
+            sage: r = (p**15).nth_root(15)                                      # optional - sage.libs.pari
+            sage: r * p[0] == p * r[0]                                          # optional - sage.libs.pari
             True
-            sage: ((x+1)**2).nth_root(2)
+            sage: ((x+1)**2).nth_root(2)                                        # optional - sage.libs.pari
             x + 1
-            sage: ((x+1)**4).nth_root(4)
+            sage: ((x+1)**4).nth_root(4)                                        # optional - sage.libs.pari
             x + 1
-            sage: ((x+1)**12).nth_root(12)
+            sage: ((x+1)**12).nth_root(12)                                      # optional - sage.libs.pari
             x + 1
-            sage: (x^4 + x^3 + 1).nth_root(2)
+            sage: (x^4 + x^3 + 1).nth_root(2)                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: not a 2nd power
-            sage: p = (x+1)^17 + x^17
-            sage: r = p.nth_root(17)
+            sage: p = (x+1)^17 + x^17                                           # optional - sage.libs.pari
+            sage: r = p.nth_root(17)                                            # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: not a 17th power
@@ -10451,7 +10451,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         Some random tests::
 
-            sage: for R in [QQ['x'], GF(4)['x']]:
+            sage: for R in [QQ['x'], GF(4)['x']]:                               # optional - sage.libs.pari
             ....:     for _ in range(30):
             ....:         p = R.random_element(degree=randint(10,20))
             ....:         n = ZZ.random_element(2,20)
@@ -10560,12 +10560,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         Finite characteristic::
 
-            sage: R.<x> = GF(2)[]
-            sage: (1 + x)._nth_root_series(3, 10)
+            sage: R.<x> = GF(2)[]                                               # optional - sage.libs.pari
+            sage: (1 + x)._nth_root_series(3, 10)                               # optional - sage.libs.pari
             x^9 + x^8 + x^3 + x^2 + x + 1
-            sage: (1 + x^2)._nth_root_series(2, 10)
+            sage: (1 + x^2)._nth_root_series(2, 10)                             # optional - sage.libs.pari
             x + 1
-            sage: (1 + x)._nth_root_series(2, 10)
+            sage: (1 + x)._nth_root_series(2, 10)                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: not a 2nd power
@@ -10681,18 +10681,18 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: R.<x> = PolynomialRing(ZZ, implementation="NTL")
             sage: (2*x + 1).divides(4*x**2 + 1)
             False
-            sage: K.<z> = GF(4)
-            sage: R.<x> = K[]
-            sage: S.<y> = R[]
-            sage: p = ((3*z + 2)*x + 2*z - 1) * y + 2*x + z
-            sage: q = y^2 + z*y*x + 2*y + z
-            sage: p.divides(q), p.divides(p*q)
+            sage: K.<z> = GF(4)                                                 # optional - sage.libs.pari
+            sage: R.<x> = K[]                                                   # optional - sage.libs.pari
+            sage: S.<y> = R[]                                                   # optional - sage.libs.pari
+            sage: p = ((3*z + 2)*x + 2*z - 1) * y + 2*x + z                     # optional - sage.libs.pari
+            sage: q = y^2 + z*y*x + 2*y + z                                     # optional - sage.libs.pari
+            sage: p.divides(q), p.divides(p*q)                                  # optional - sage.libs.pari
             (False, True)
-            sage: R.<x,y> = GF(2)[]
-            sage: S.<z> = R[]
-            sage: p = (x+y+1) * z + x*y
-            sage: q = (y^2-x^2) * z^2 + z + x-y
-            sage: p.divides(q), p.divides(p*q)
+            sage: R.<x,y> = GF(2)[]                                             # optional - sage.libs.pari
+            sage: S.<z> = R[]                                                   # optional - sage.libs.pari
+            sage: p = (x+y+1) * z + x*y                                         # optional - sage.libs.pari
+            sage: q = (y^2-x^2) * z^2 + z + x-y                                 # optional - sage.libs.pari
+            sage: p.divides(q), p.divides(p*q)                                  # optional - sage.libs.pari
             (False, True)
         """
         if not self.base_ring().is_integral_domain():
@@ -11839,7 +11839,7 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
 
         sage: from sage.rings.polynomial.polynomial_element import generic_power_trunc
 
-        sage: for S in [ZZ, GF(3)]:  # known bug  # not tested (see :trac:`32075`)
+        sage: for S in [ZZ, GF(3)]:  # known bug  # not tested (see :trac:`32075`)                  # optional - sage.libs.pari
         ....:     R = PolynomialRing(S, 'x')
         ....:     for _ in range(100):
         ....:         p = R.random_element()
