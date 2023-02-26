@@ -67,12 +67,13 @@ class HopfAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                sage: [a,b] = A.algebra_generators()
-                sage: a, a.antipode()
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # optional - sage.groups
+                An example of Hopf algebra with basis: the group algebra of the
+                 Dihedral group of order 6 as a permutation group over Rational Field
+                sage: [a,b] = A.algebra_generators()                                    # optional - sage.groups
+                sage: a, a.antipode()                                                   # optional - sage.groups
                 (B[(1,2,3)], B[(1,3,2)])
-                sage: b, b.antipode()
+                sage: b, b.antipode()                                                   # optional - sage.groups
                 (B[(1,3)], B[(1,3)])
 
             TESTS::
@@ -204,11 +205,11 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: N = NonCommutativeSymmetricFunctions(QQ)
-                    sage: R = N.ribbon()
-                    sage: R.antipode_by_coercion.__module__
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)              # optional - sage.combinat
+                    sage: R = N.ribbon()                                        # optional - sage.combinat
+                    sage: R.antipode_by_coercion.__module__                     # optional - sage.combinat
                     'sage.categories.hopf_algebras'
-                    sage: R.antipode_by_coercion(R[1,3,1])
+                    sage: R.antipode_by_coercion(R[1,3,1])                      # optional - sage.combinat
                     -R[2, 1, 2]
                 """
                 R = self.realization_of().a_realization()

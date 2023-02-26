@@ -105,10 +105,10 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
         sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75       # optional - sage.combinat
         True
-        sage: from sage.graphs.generic_graph import GenericGraph
-        sage: A = gen_rest_table_index(Graph).count('\n')
-        sage: B = gen_rest_table_index(GenericGraph).count('\n')
-        sage: A < B
+        sage: from sage.graphs.generic_graph import GenericGraph                        # optional - sage.graphs
+        sage: A = gen_rest_table_index(Graph).count('\n')                               # optional - sage.graphs
+        sage: B = gen_rest_table_index(GenericGraph).count('\n')                        # optional - sage.graphs
+        sage: A < B                                                                     # optional - sage.graphs
         True
 
     When ``only_local_functions`` is ``False``, we do not include

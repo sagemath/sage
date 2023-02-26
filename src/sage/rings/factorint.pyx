@@ -129,24 +129,24 @@ cpdef factor_aurifeuillian(n, check=True):
     EXAMPLES::
 
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
-        sage: fa(2^6+1)
+        sage: fa(2^6+1)                                                         # optional - sage.libs.pari
         [5, 13]
-        sage: fa(2^58+1)
+        sage: fa(2^58+1)                                                        # optional - sage.libs.pari
         [536838145, 536903681]
-        sage: fa(3^3+1)
+        sage: fa(3^3+1)                                                         # optional - sage.libs.pari
         [4, 1, 7]
-        sage: fa(5^5-1)
+        sage: fa(5^5-1)                                                         # optional - sage.libs.pari
         [4, 11, 71]
-        sage: prod(_) == 5^5-1
+        sage: prod(_) == 5^5-1                                                  # optional - sage.libs.pari
         True
-        sage: fa(2^4+1)
+        sage: fa(2^4+1)                                                         # optional - sage.libs.pari
         [17]
-        sage: fa((6^2*3)^3+1)
+        sage: fa((6^2*3)^3+1)                                                   # optional - sage.libs.pari
         [109, 91, 127]
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:
+        sage: for n in [2,3,5,6,30,31,33]:                                      # optional - sage.libs.pari
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s
@@ -317,16 +317,16 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
 
     EXAMPLES::
 
-        sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest
+        sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest          # optional - sage.libs.pari
         -1 * 83 * 131 * 294971519 * 1472414939
 
     Check that PARI's debug level is properly reset (:trac:`18792`)::
 
-        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
+        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         AlarmInterrupt
-        sage: pari.get_debug_level()
+        sage: pari.get_debug_level()                                            # optional - sage.libs.pari
         0
     """
     from sage.libs.pari.all import pari
