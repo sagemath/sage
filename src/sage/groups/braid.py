@@ -1617,7 +1617,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         - ``other`` -- the other braid to look for conjugating braid
         
-        - ``short'' -- a boolean variable (default ``False``) to get a 
+        - ``short'' -- a boolean variable (default ``False``) to get a
           shorter conugating braid
 
         EXAMPLES::
@@ -1687,7 +1687,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         - ``other`` -- the other braid to look for conjugating braid
         
-        - ``short'' -- a boolean variable (default ``False``) to get a 
+        - ``short'' -- a boolean variable (default ``False``) to get a
           shorter conugating braid
 
         EXAMPLES::
@@ -1711,10 +1711,10 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: print (d2.permutation())
             [1, 2, 3, 4]
             sage: d2 * c / d2 == a
-            True            
+            True
             sage: print (d2)
             (s0*s1*s2^2*s1*s0)^4
-        """        
+        """
         p1 = self.permutation()
         p2 = other.permutation()
         if p1 != p2:
