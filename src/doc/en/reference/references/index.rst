@@ -5416,6 +5416,10 @@ REFERENCES:
              *Wide-open encryption design offers flexible implementations*; in
              Cryptologia, (1985), pp. 75-91.
 
+.. [Seb1978] \J. Seberry.
+            *On Skew Hadamard Matrices*,
+            Ars Combinatoria 6 (1978): 255-276.
+
 .. [Seb2017] \J. Seberry,
              *Orthogonal designs: Hadamard matrices, quadratic forms and algebras*.
              Springer 2017. :doi:`10.1007/978-3-319-59032-5`

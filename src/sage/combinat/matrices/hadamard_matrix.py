@@ -2579,6 +2579,106 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     return None
 
 
+def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
+    r"""Construct skew Hadamard matrices of order `mn(n - 1)` if suitable orthogonal designs exist.
+
+    In [Seb1978]_ is proved that if amicable Hadamard matrices of order `n` and an orthogonal
+    design of type `(1, m, mn - m - 1)` in order `mn` exist, then a skew Hadamard matrix
+    of order `mn(n - 1)` can be constructed. The paper uses amicable orthogonal designs
+    instead of amicable Hadamard matrices, but the two are equivalent (see [Seb2017]_).
+
+    Amicable Hadamard matrices are constructed using :func:`amicable_hadamard_matrices`,
+    and the orthogonal designs are constructed using the Goethals-Seidel array,
+    with data taken from [Seb2017]_.
+
+    INPUT:
+
+    - ``n`` -- A positive integer, the order of the matrix to be constructed.
+
+    - ``existence`` -- boolean (default False). If True, only return whether the
+      skew Hadamard matrix can be constructed.
+
+    - ``check`` -- boolean: if True (default), check that the result is a skew
+      Hadamard matrix before returning it.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It
+    raises an error if a construction for order `n` is not yet implemented, or if
+    `n` does not satisfy the constraint.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_from_orthogonal_design
+        sage: skew_hadamard_matrix_from_orthogonal_design(756)
+        756 x 756 dense matrix over Integer Ring...
+
+    If ``existence`` is True, the function returns a boolean::
+
+        sage: skew_hadamard_matrix_from_orthogonal_design(200, existence=True)
+        False
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_skew_hadamard_matrix
+        sage: is_skew_hadamard_matrix(skew_hadamard_matrix_from_orthogonal_design(756, check=False))
+        True
+        sage: skew_hadamard_matrix_from_orthogonal_design(31)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a multiple of 4
+        sage: skew_hadamard_matrix_from_orthogonal_design(16)
+        Traceback (most recent call last):
+        ...
+        ValueError: Orthogonal designs for matrix of order 16 not yet implemented.
+    """
+    # We use value i to represent entries where variable x_i should be, and -i for -x_i
+    orthogonal_designs = {
+        (1, 1, 26): [[1, 3, 3, -3, 3, -3, -3],  [2, 3, 3, -3, 3, -3, -3],
+                     [3, 3, 3, -3, 3, 3, 3], [3, 3, -3, -3, -3, 3, -3]]
+    }
+
+    if n % 4 != 0:
+        raise ValueError('n must be a multiple of 4')
+
+    m1, m2 = None, None
+    for d in divisors(n)[1:-1]:
+        if (n//d) % (d-1) != 0:
+            continue
+        d1 = n // (d*(d - 1))
+        if (1, d1, d1*d - d1 - 1) in orthogonal_designs and amicable_hadamard_matrices(d, existence=True):
+            m1 = d1
+            m2 = d
+
+    if m2 is None or m1 is None:
+        if existence:
+            return False
+        raise ValueError(f'Orthogonal designs for matrix of order {n} not yet implemented.')
+
+    if existence:
+        return True
+
+    M, N = amicable_hadamard_matrices(m2, check=False)
+    M = normalise_hadamard(M, skew=True)
+    N = normalise_hadamard(N)
+
+    P = M[1:, 1:] - I(m2 - 1)
+    D = N[1:, 1:]
+
+    A1, A2, A3, A4 = map(matrix.circulant, orthogonal_designs[(1, m1, m1*m2 - m1 - 1)])
+    OD = _construction_goethals_seidel_matrix(A1, A2, A3, A4)
+
+    blocks = {1: P, -1: -P, 2: J(m2 - 1), -2: -J(m2 - 1), 3: D, -3: -D}
+    H = block_matrix([[blocks[el] for el in row] for row in OD]) + I(n)
+
+    if check:
+        assert is_skew_hadamard_matrix(H)
+
+    return H
+
+
 def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
     r"""
     Construct a skew Hadamard matrix of order `n=2(q+1)` where `q=p^t` is a prime power with `p \cong 5 \mod 8` and `t \cong 2 \mod 4`.
@@ -2991,6 +3091,10 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = skew_hadamard_matrix_spence_1975(n, check=False)
+    elif skew_hadamard_matrix_from_orthogonal_design(n, existence=True):
+        if existence:
+            return true()
+        M = skew_hadamard_matrix_from_orthogonal_design(n, check=False)
     elif n % 8 == 0:
         if skew_hadamard_matrix(n//2, existence=True) is True:  # (Lemma 14.1.6 in [Ha83]_)
             if existence:
