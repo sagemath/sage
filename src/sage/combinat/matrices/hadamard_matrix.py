@@ -3292,3 +3292,93 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
         return False
 
     return True
+
+
+def amicable_hadamard_matrices_wallis(n, check=True):
+    r"""Construct amicable Hadamard matrices of order `n = q + 1` where `q` is a prime power.
+
+    If `q` is a prime power `\equiv 3 \mod 4`, then amicable Hadamard matrices
+    of order `q+1` can be constructed as described in [Wal1970b]_.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrices to be constructed.
+
+    - ``check`` -- boolean, if true (default) check that the resulting matrices
+      are amicable Hadamard before returing them.
+
+    OUTPUT:
+
+    The function returns two amicable Hadamard matrices, or raises an error if such
+    matrices cannot be created using this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import amicable_hadamard_matrices_wallis
+        sage: M, N = amicable_hadamard_matrices_wallis(28)
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import are_amicable_hadamard_matrices
+        sage: M, N = amicable_hadamard_matrices_wallis(20, check=False)
+        sage: are_amicable_hadamard_matrices(M, N)
+        True
+        sage: amicable_hadamard_matrices_wallis(18)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a positive multiple of 4
+        sage: amicable_hadamard_matrices_wallis(16)
+        Traceback (most recent call last):
+        ...
+        ValueError: q = n-1 must be a prime power
+    """
+    if n % 4 != 0 or n < 0:
+        raise ValueError('n must be a positive multiple of 4')
+
+    q = n - 1
+    if not is_prime_power(q):
+        raise ValueError('q = n-1 must be a prime power')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    G = GF(q)
+
+    ls1, ls2 = [], []
+    elements_added = set()
+    for el in G:
+        if el == 0 or el in elements_added:
+            continue
+        elements_added.add(el)
+        ls1.append(el)
+        elements_added.add(-el)
+        ls2 = [-el] + ls2
+    Glist = [0] + ls1 + ls2
+
+    squares = []
+    for el in Glist:
+        squares.append(el*el)
+
+    def chi(el):
+        if el == 0:
+            return 0
+        if el in squares:
+            return 1
+        return -1
+
+    S = matrix([[chi(Glist[i] - Glist[j]) for j in range(q)] for i in range(q)])
+    R = matrix([[1 if (i, j) == (0, 0) else 1 if j == q-i else 0 for j in range(q)] for i in range(q)])
+
+    P = S + I(q)
+    D = R + R*S
+
+    e = matrix([1 for _ in range(q)])
+    one = matrix([1])
+
+    M = block_matrix([[ one, e],
+                      [-e.T, P]])
+    N = block_matrix([[-one, -e],
+                      [-e.T,  D]])
+
+    if check:
+        assert are_amicable_hadamard_matrices(M, N)
+    return M, N

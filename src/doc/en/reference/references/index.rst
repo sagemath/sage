@@ -6143,6 +6143,11 @@ REFERENCES:
 .. [Wal1970] David W. Walkup, "The lower bound conjecture for 3- and
              4-manifolds", Acta Math. 125 (1970), 75-107.
 
+.. [Wal1970b] \J. Wallis.
+            *(v, k, λ) Configurations and Hadamard matrices*,
+            Journal of the Australian Mathematical Society 11(3) (1970): 297-309.
+            :doi:`10.1017/S1446788700006674`
+
 .. [Wal2001] Timothy Walsh, *Gray codes for involutions*, J. Combin.
              Math. Combin. Comput. **36** (2001), 95-118.
              http://www.info2.uqam.ca/~walsh_t/papers/Involutions%20paper.pdf
