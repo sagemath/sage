@@ -391,9 +391,9 @@ cdef class Matrix(Matrix1):
         The vector of constants needs to be compatible with
         the base ring of the coefficient matrix::
 
-            sage: F.<a> = FiniteField(27)
-            sage: b = vector(F, [a,a,a,a,a])
-            sage: A.solve_left(b)
+            sage: F.<a> = FiniteField(27)                   # optional - sage.libs.pari
+            sage: b = vector(F, [a,a,a,a,a])                # optional - sage.libs.pari
+            sage: A.solve_left(b)                           # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: ...
@@ -777,9 +777,9 @@ cdef class Matrix(Matrix1):
         The vector of constants needs to be compatible with
         the base ring of the coefficient matrix.  ::
 
-            sage: F.<a> = FiniteField(27)
-            sage: b = vector(F, [a,a,a,a,a])
-            sage: A.solve_right(b)
+            sage: F.<a> = FiniteField(27)                                       # optional - sage.libs.pari
+            sage: b = vector(F, [a,a,a,a,a])                                    # optional - sage.libs.pari
+            sage: A.solve_right(b)                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: ...
@@ -1131,14 +1131,15 @@ cdef class Matrix(Matrix1):
 
         ::
 
-            sage: G = matrix(GF(3),2,[0,1,2,2])
-            sage: H = matrix(ZZ,2,[1,2,3,4])
-            sage: J = G.elementwise_product(H)
-            sage: J
+            sage: G = matrix(GF(3), 2, [0, 1, 2, 2])                            # optional - sage.libs.pari
+            sage: H = matrix(ZZ, 2, [1, 2, 3, 4])
+            sage: J = G.elementwise_product(H)                                  # optional - sage.libs.pari
+            sage: J                                                             # optional - sage.libs.pari
             [0 2]
             [0 2]
-            sage: J.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 3
+            sage: J.parent()                                                    # optional - sage.libs.pari
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Finite Field of size 3
 
         Non-commutative rings behave as expected.  These are the usual quaternions. ::
 
@@ -1179,11 +1180,13 @@ cdef class Matrix(Matrix1):
         multiplication makes sense.  This will raise an error. ::
 
             sage: A = matrix(QQ, 3, 2, range(6))
-            sage: B = matrix(GF(3), 3, [2]*6)
-            sage: A.elementwise_product(B)
+            sage: B = matrix(GF(3), 3, [2]*6)                                   # optional - sage.libs.pari
+            sage: A.elementwise_product(B)                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            TypeError: no common canonical parent for objects with parents: 'Full MatrixSpace of 3 by 2 dense matrices over Rational Field' and 'Full MatrixSpace of 3 by 2 dense matrices over Finite Field of size 3'
+            TypeError: no common canonical parent for objects with parents:
+             'Full MatrixSpace of 3 by 2 dense matrices over Rational Field' and
+             'Full MatrixSpace of 3 by 2 dense matrices over Finite Field of size 3'
 
         We illustrate various combinations of sparse and dense matrices.
         The usual coercion rules apply::
@@ -1758,20 +1761,20 @@ cdef class Matrix(Matrix1):
         An example with an exotic matrix (for which only Butera-Pernici and
         Ryser algorithms are available)::
 
-            sage: R.<x,y> = PolynomialRing(GF(5))
-            sage: A = matrix(R,[[1,x,y],[x*y,x**2+y,0]])
-            sage: A.rook_vector(algorithm="ButeraPernici")
+            sage: R.<x,y> = PolynomialRing(GF(5))                               # optional - sage.libs.pari
+            sage: A = matrix(R, [[1, x, y], [x*y, x**2+y, 0]])                  # optional - sage.libs.pari
+            sage: A.rook_vector(algorithm="ButeraPernici")                      # optional - sage.libs.pari
             [1, x^2 + x*y + x + 2*y + 1, 2*x^2*y + x*y^2 + x^2 + y^2 + y]
-            sage: A.rook_vector(algorithm="Ryser")
+            sage: A.rook_vector(algorithm="Ryser")                              # optional - sage.libs.pari
             [1, x^2 + x*y + x + 2*y + 1, 2*x^2*y + x*y^2 + x^2 + y^2 + y]
-            sage: A.rook_vector(algorithm="Godsil")
+            sage: A.rook_vector(algorithm="Godsil")                             # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: coefficients must be zero or one, but we have 'x' in position (0,1).
-            sage: B = A.transpose()
-            sage: B.rook_vector(algorithm="ButeraPernici")
+            sage: B = A.transpose()                                             # optional - sage.libs.pari
+            sage: B.rook_vector(algorithm="ButeraPernici")                      # optional - sage.libs.pari
             [1, x^2 + x*y + x + 2*y + 1, 2*x^2*y + x*y^2 + x^2 + y^2 + y]
-            sage: B.rook_vector(algorithm="Ryser")
+            sage: B.rook_vector(algorithm="Ryser")                              # optional - sage.libs.pari
             [1, x^2 + x*y + x + 2*y + 1, 2*x^2*y + x*y^2 + x^2 + y^2 + y]
 
         TESTS::
@@ -1914,11 +1917,13 @@ cdef class Matrix(Matrix1):
 
         ::
 
-            sage: k = GF(37)
-            sage: P.<x0,x1,x2> = PolynomialRing(k)
-            sage: A = Matrix(P,2,3,[x0*x1, x0, x1, x2, x2 + 16, x2 + 5*x1 ])
-            sage: A.minors(2)
-            [x0*x1*x2 + 16*x0*x1 - x0*x2, 5*x0*x1^2 + x0*x1*x2 - x1*x2, 5*x0*x1 + x0*x2 - x1*x2 - 16*x1]
+            sage: k = GF(37)                                                    # optional - sage.libs.pari
+            sage: P.<x0,x1,x2> = PolynomialRing(k)                              # optional - sage.libs.pari
+            sage: A = Matrix(P, 2, 3, [x0*x1, x0, x1, x2, x2 + 16, x2 + 5*x1])  # optional - sage.libs.pari
+            sage: A.minors(2)                                                   # optional - sage.libs.pari
+            [x0*x1*x2 + 16*x0*x1 - x0*x2,
+             5*x0*x1^2 + x0*x1*x2 - x1*x2,
+             5*x0*x1 + x0*x2 - x1*x2 - 16*x1]
 
         This test addresses an issue raised at :trac:`20512`::
 
@@ -2021,8 +2026,8 @@ cdef class Matrix(Matrix1):
         We verify that :trac:`5569` is resolved (otherwise the following
         would hang for hours)::
 
-            sage: d = random_matrix(GF(next_prime(10^20)),50).det()
-            sage: d = random_matrix(Integers(10^50),50).det()
+            sage: d = random_matrix(GF(next_prime(10^20)), 50).det()            # optional - sage.libs.pari
+            sage: d = random_matrix(Integers(10^50), 50).det()                  # optional - sage.libs.pari
 
         We verify that :trac:`7704` is resolved::
 
@@ -2033,15 +2038,20 @@ cdef class Matrix(Matrix1):
 
         We verify that :trac:`10063` is resolved::
 
-            sage: A = GF(2)['x,y,z']
-            sage: A.inject_variables()
+            sage: A = GF(2)['x,y,z']                                            # optional - sage.libs.pari
+            sage: A.inject_variables()                                          # optional - sage.libs.pari
             Defining x, y, z
-            sage: R = A.quotient(x^2 + 1).quotient(y^2 + 1).quotient(z^2 + 1)
-            sage: R.inject_variables()
+            sage: R = A.quotient(x^2 + 1).quotient(y^2 + 1).quotient(z^2 + 1)   # optional - sage.libs.pari
+            sage: R.inject_variables()                                          # optional - sage.libs.pari
             Defining xbarbarbar, ybarbarbar, zbarbarbar
-            sage: M = matrix([[1,1,1,1],[xbarbarbar,ybarbarbar,1,1],[0,1,zbarbarbar,1],[xbarbarbar,zbarbarbar,1,1]])
-            sage: M.determinant()
-            xbarbarbar*ybarbarbar*zbarbarbar + xbarbarbar*ybarbarbar + xbarbarbar*zbarbarbar + ybarbarbar*zbarbarbar + xbarbarbar + ybarbarbar + zbarbarbar + 1
+            sage: M = matrix([[1, 1, 1, 1],                                     # optional - sage.libs.pari
+            ....:             [xbarbarbar, ybarbarbar, 1, 1],
+            ....:             [0, 1, zbarbarbar, 1],
+            ....:             [xbarbarbar, zbarbarbar, 1, 1]])
+            sage: M.determinant()                                               # optional - sage.libs.pari
+            xbarbarbar*ybarbarbar*zbarbarbar + xbarbarbar*ybarbarbar
+            + xbarbarbar*zbarbarbar + ybarbarbar*zbarbarbar + xbarbarbar
+            + ybarbarbar + zbarbarbar + 1
 
         Check that the determinant is computed from a cached charpoly
         properly::
@@ -2222,17 +2232,17 @@ cdef class Matrix(Matrix1):
             sage: A.quantum_determinant(q^-2)
             7*q^-6 + q^-4 + q^-2 + 5
 
-            sage: S.<x,y> = PolynomialRing(GF(7))
-            sage: R.<q> = LaurentPolynomialRing(S)
-            sage: MS = MatrixSpace(S, 3, sparse=True)
-            sage: A = MS([[x, y, 3], [4, 2+y, x^2], [0, 1-x, x+y]])
-            sage: A.det()
+            sage: S.<x,y> = PolynomialRing(GF(7))                                                   # optional - sage.libs.pari
+            sage: R.<q> = LaurentPolynomialRing(S)                                                  # optional - sage.libs.pari
+            sage: MS = MatrixSpace(S, 3, sparse=True)                                               # optional - sage.libs.pari
+            sage: A = MS([[x, y, 3], [4, 2+y, x^2], [0, 1-x, x+y]])                                 # optional - sage.libs.pari
+            sage: A.det()                                                                           # optional - sage.libs.pari
             x^4 - x^3 + x^2*y + x*y^2 + 2*x^2 - 2*x*y + 3*y^2 + 2*x - 2
-            sage: A.quantum_determinant()
+            sage: A.quantum_determinant()                                                           # optional - sage.libs.pari
             (2*x - 2)*q^2 + (x^4 - x^3 + 3*x*y + 3*y^2)*q + x^2*y + x*y^2 + 2*x^2 + 2*x*y
-            sage: A.quantum_determinant(int(2))
+            sage: A.quantum_determinant(int(2))                                                     # optional - sage.libs.pari
             2*x^4 - 2*x^3 + x^2*y + x*y^2 + 2*x^2 + x*y - y^2 + x - 1
-            sage: A.quantum_determinant(q*x + q^-1*y)
+            sage: A.quantum_determinant(q*x + q^-1*y)                                               # optional - sage.libs.pari
             (2*x*y^2 - 2*y^2)*q^-2 + (x^4*y - x^3*y + 3*x*y^2 + 3*y^3)*q^-1
              + (-2*x^2*y + x*y^2 + 2*x^2 - 2*x*y)
              + (x^5 - x^4 + 3*x^2*y + 3*x*y^2)*q + (2*x^3 - 2*x^2)*q^2
@@ -2400,13 +2410,13 @@ cdef class Matrix(Matrix1):
         In order to use the Bär-Faddeev-LeVerrier algorithm, the base ring
         must have characteristic zero::
 
-            sage: A = matrix(GF(5), [(0, 3, 4, 1, 3, 4),
+            sage: A = matrix(GF(5), [(0, 3, 4, 1, 3, 4),                        # optional - sage.libs.pari
             ....:                    (2, 0, 2, 0, 1, 0),
             ....:                    (1, 3, 0, 4, 1, 0),
             ....:                    (4, 0, 1, 0, 2, 0),
             ....:                    (2, 4, 4, 3, 0, 0),
             ....:                    (1, 0, 0, 0, 0, 0)])
-            sage: A.pfaffian(algorithm='bfl')
+            sage: A.pfaffian(algorithm='bfl')                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Bär-Faddeev-LeVerrier algorithm not applicable,
@@ -2414,7 +2424,7 @@ cdef class Matrix(Matrix1):
 
         In that case, the definition by perfect matchings is used instead::
 
-            sage: A.pfaffian()
+            sage: A.pfaffian()                                                  # optional - sage.libs.pari
             2
 
         """
@@ -2602,13 +2612,14 @@ cdef class Matrix(Matrix1):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 3, 3, range(9))
-            sage: phi = ZZ.hom(GF(5))
-            sage: m.apply_morphism(phi)
+            sage: phi = ZZ.hom(GF(5))                                           # optional - sage.libs.pari
+            sage: m.apply_morphism(phi)                                         # optional - sage.libs.pari
             [0 1 2]
             [3 4 0]
             [1 2 3]
-            sage: parent(m.apply_morphism(phi))
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 5
+            sage: parent(m.apply_morphism(phi))                                 # optional - sage.libs.pari
+            Full MatrixSpace of 3 by 3 dense matrices
+             over Finite Field of size 5
 
         We apply a morphism to a matrix over a polynomial ring::
 
@@ -2650,27 +2661,29 @@ cdef class Matrix(Matrix1):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 3, 3, range(9))
-            sage: k.<a> = GF(9)
-            sage: f = lambda x: k(x)
-            sage: n = m.apply_map(f); n
+            sage: k.<a> = GF(9)                                                 # optional - sage.libs.pari
+            sage: f = lambda x: k(x)                                            # optional - sage.libs.pari
+            sage: n = m.apply_map(f); n                                         # optional - sage.libs.pari
             [0 1 2]
             [0 1 2]
             [0 1 2]
-            sage: n.parent()
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field in a of size 3^2
+            sage: n.parent()                                                    # optional - sage.libs.pari
+            Full MatrixSpace of 3 by 3 dense matrices
+             over Finite Field in a of size 3^2
 
         In this example, we explicitly specify the codomain.
 
         ::
 
-            sage: s = GF(3)
-            sage: f = lambda x: s(x)
-            sage: n = m.apply_map(f, k); n
+            sage: s = GF(3)                                                     # optional - sage.libs.pari
+            sage: f = lambda x: s(x)                                            # optional - sage.libs.pari
+            sage: n = m.apply_map(f, k); n                                      # optional - sage.libs.pari
             [0 1 2]
             [0 1 2]
             [0 1 2]
-            sage: n.parent()
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field in a of size 3^2
+            sage: n.parent()                                                    # optional - sage.libs.pari
+            Full MatrixSpace of 3 by 3 dense matrices
+             over Finite Field in a of size 3^2
 
         If self is subdivided, the result will be as well::
 
@@ -2792,12 +2805,12 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: A = matrix(GF(9,'c'), 4, [1, 1, 0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
-            sage: factor(A.minpoly())
+            sage: A = matrix(GF(9, 'c'), 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])       # optional - sage.libs.pari
+            sage: factor(A.minpoly())                                                   # optional - sage.libs.pari
             (x + 1) * (x + 2)^2
-            sage: A.minpoly()(A) == 0
+            sage: A.minpoly()(A) == 0                                                   # optional - sage.libs.pari
             True
-            sage: factor(A.charpoly())
+            sage: factor(A.charpoly())                                                  # optional - sage.libs.pari
             (x + 1)^2 * (x + 2)^2
 
         The default variable name is `x`, but you can specify
@@ -3274,14 +3287,14 @@ cdef class Matrix(Matrix1):
 
         Here's an example involving a cyclotomic field::
 
-            sage: K.<z> = CyclotomicField(3)
-            sage: M = MatrixSpace(K,3,sparse=True)
-            sage: A = M([(1+z)/3,(2+z)/3,z/3,1,1+z,-2,1,5,-1+z])
-            sage: print(A)
+            sage: K.<z> = CyclotomicField(3)                                    # optional - sage.rings.number_field
+            sage: M = MatrixSpace(K, 3, sparse=True)                            # optional - sage.rings.number_field
+            sage: A = M([(1+z)/3, (2+z)/3, z/3, 1, 1+z, -2, 1, 5, -1+z])        # optional - sage.rings.number_field
+            sage: print(A)                                                      # optional - sage.rings.number_field
             [1/3*z + 1/3 1/3*z + 2/3       1/3*z]
             [          1       z + 1          -2]
             [          1           5       z - 1]
-            sage: print(A.denominator())
+            sage: print(A.denominator())                                        # optional - sage.rings.number_field
             3
         """
         if self.nrows() == 0 or self.ncols() == 0:
@@ -3557,7 +3570,7 @@ cdef class Matrix(Matrix1):
             Z^3 - 12*Z^2 - 18*Z
             sage: matrix(ZZ,3,3,range(9))._charpoly_hessenberg('Z')
             Z^3 - 12*Z^2 - 18*Z
-            sage: matrix(GF(7),3,3,range(9))._charpoly_hessenberg('Z')
+            sage: matrix(GF(7), 3, 3,range(9))._charpoly_hessenberg('Z')          # optional - sage.libs.pari
             Z^3 + 2*Z^2 + 3*Z
             sage: matrix(QQ['x'],3,3,range(9))._charpoly_hessenberg('Z')
             Z^3 - 12*Z^2 - 18*Z
@@ -3684,7 +3697,7 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        Returns a pair.  First item is the string 'pivot-pari-numberfield'
+        Returns a pair.  First item is the string ``'pivot-pari-numberfield'``
         that identifies the nature of the basis vectors.
 
         Second item is a matrix whose rows are a basis for the right kernel,
@@ -3692,32 +3705,34 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-7)
-            sage: a = Q.gen(0)
-            sage: A = matrix(Q, [[  2, 5-a, 15-a],
+            sage: Q = QuadraticField(-7)                                        # optional - sage.rings.number_field
+            sage: a = Q.gen(0)                                                  # optional - sage.rings.number_field
+            sage: A = matrix(Q, [[  2, 5-a, 15-a],                              # optional - sage.rings.number_field
             ....:                [2+a,   a, -7 + 5*a]])
-            sage: result = A._right_kernel_matrix_over_number_field()
-            sage: result[0]
+            sage: result = A._right_kernel_matrix_over_number_field()           # optional - sage.rings.number_field, sage.libs.pari
+            sage: result[0]                                                     # optional - sage.rings.number_field, sage.libs.pari
             'pivot-pari-numberfield'
-            sage: P = result[1]; P
+            sage: P = result[1]; P                                              # optional - sage.rings.number_field, sage.libs.pari
             [-a -3  1]
-            sage: A*P.transpose() == zero_matrix(Q, 2, 1)
+            sage: A*P.transpose() == zero_matrix(Q, 2, 1)                       # optional - sage.rings.number_field, sage.libs.pari
             True
 
         TESTS:
 
         We test some trivial cases. ::
 
-            sage: Q = QuadraticField(-7)
-            sage: A = matrix(Q, 0, 2)
-            sage: A._right_kernel_matrix_over_number_field()[1]
+            sage: Q = QuadraticField(-7)                                        # optional - sage.rings.number_field
+            sage: A = matrix(Q, 0, 2)                                           # optional - sage.rings.number_field
+            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field, sage.libs.pari
             [1 0]
             [0 1]
-            sage: A = matrix(Q, 2, 0)
-            sage: A._right_kernel_matrix_over_number_field()[1].parent()
-            Full MatrixSpace of 0 by 0 dense matrices over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
-            sage: A = zero_matrix(Q, 4, 3)
-            sage: A._right_kernel_matrix_over_number_field()[1]
+            sage: A = matrix(Q, 2, 0)                                           # optional - sage.rings.number_field, sage.libs.pari
+            sage: A._right_kernel_matrix_over_number_field()[1].parent()        # optional - sage.rings.number_field, sage.libs.pari
+            Full MatrixSpace of 0 by 0 dense matrices
+             over Number Field in a with defining polynomial x^2 + 7
+              with a = 2.645751311064591?*I
+            sage: A = zero_matrix(Q, 4, 3)                                      # optional - sage.rings.number_field, sage.libs.pari
+            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field, sage.libs.pari
             [1 0 0]
             [0 1 0]
             [0 0 1]
@@ -3746,34 +3761,35 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: C = CyclotomicField(14)
-            sage: a = C.gen(0)
-            sage: A = matrix(C, 3, 4, [[  1,    a,    1+a,  a^3+a^5],
+            sage: C = CyclotomicField(14)                                       # optional - sage.rings.number_field
+            sage: a = C.gen(0)                                                  # optional - sage.rings.number_field
+            sage: A = matrix(C, 3, 4, [[  1,    a,    1+a,  a^3+a^5],           # optional - sage.rings.number_field
             ....:                      [  a,  a^4,  a+a^4,  a^4+a^8],
             ....:                      [a^2, a^6, a^2+a^6, a^5+a^10]])
-            sage: result = A._right_kernel_matrix_over_field()
-            sage: result[0]
+            sage: result = A._right_kernel_matrix_over_field()                  # optional - sage.rings.number_field
+            sage: result[0]                                                     # optional - sage.rings.number_field
             'pivot-generic'
-            sage: P = result[1]; P
+            sage: P = result[1]; P                                              # optional - sage.rings.number_field
             [       -1        -1         1         0]
             [-zeta14^3 -zeta14^4         0         1]
-            sage: A*P.transpose() == zero_matrix(C, 3, 2)
+            sage: A*P.transpose() == zero_matrix(C, 3, 2)                       # optional - sage.rings.number_field
             True
 
         TESTS:
 
         We test some trivial cases. ::
 
-            sage: C = CyclotomicField(14)
-            sage: A = matrix(C, 0, 2)
-            sage: A._right_kernel_matrix_over_field()[1]
+            sage: C = CyclotomicField(14)                                       # optional - sage.rings.number_field
+            sage: A = matrix(C, 0, 2)                                           # optional - sage.rings.number_field
+            sage: A._right_kernel_matrix_over_field()[1]                        # optional - sage.rings.number_field
             [1 0]
             [0 1]
-            sage: A = matrix(C, 2, 0)
-            sage: A._right_kernel_matrix_over_field()[1].parent()
-            Full MatrixSpace of 0 by 0 dense matrices over Cyclotomic Field of order 14 and degree 6
-            sage: A = zero_matrix(C, 4, 3)
-            sage: A._right_kernel_matrix_over_field()[1]
+            sage: A = matrix(C, 2, 0)                                           # optional - sage.rings.number_field
+            sage: A._right_kernel_matrix_over_field()[1].parent()               # optional - sage.rings.number_field
+            Full MatrixSpace of 0 by 0 dense matrices
+             over Cyclotomic Field of order 14 and degree 6
+            sage: A = zero_matrix(C, 4, 3)                                      # optional - sage.rings.number_field
+            sage: A._right_kernel_matrix_over_field()[1]                        # optional - sage.rings.number_field
             [1 0 0]
             [0 1 0]
             [0 0 1]
@@ -4053,47 +4069,47 @@ cdef class Matrix(Matrix1):
         basis, so the `basis` keywords 'computed' and 'pivot' will return
         the same results. ::
 
-            sage: Q = QuadraticField(-7)
-            sage: a = Q.gen(0)
-            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],
+            sage: Q = QuadraticField(-7)                                                # optional - sage.rings.number_field
+            sage: a = Q.gen(0)                                                          # optional - sage.rings.number_field
+            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],                                # optional - sage.rings.number_field
             ....:                [2+a, a, -7 + 5*a, -3+3*a]])
-            sage: C = A.right_kernel_matrix(algorithm='default', basis='computed'); C
+            sage: C = A.right_kernel_matrix(algorithm='default', basis='computed'); C   # optional - sage.rings.number_field
             [    -a     -3      1      0]
             [    -2 -a - 1      0      1]
-            sage: A*C.transpose() == zero_matrix(Q, 2, 2)
+            sage: A*C.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field
             True
-            sage: P = A.right_kernel_matrix(algorithm='pari', basis='pivot'); P
+            sage: P = A.right_kernel_matrix(algorithm='pari', basis='pivot'); P         # optional - sage.rings.number_field, sage.libs.pari
             [    -a     -3      1      0]
             [    -2 -a - 1      0      1]
-            sage: A*P.transpose() == zero_matrix(Q, 2, 2)
+            sage: A*P.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field, sage.libs.pari
             True
-            sage: E = A.right_kernel_matrix(algorithm='default', basis='echelon'); E
+            sage: E = A.right_kernel_matrix(algorithm='default', basis='echelon'); E    # optional - sage.rings.number_field
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
-            sage: A*E.transpose() == zero_matrix(Q, 2, 2)
+            sage: A*E.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field
             True
 
         We can bypass using PARI for number fields and use Sage's general
         code for matrices over any field.  The basis vectors as computed
         are in pivot format. ::
 
-            sage: Q = QuadraticField(-7)
-            sage: a = Q.gen(0)
-            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],[2+a, a, -7 + 5*a, -3+3*a]])
-            sage: G = A.right_kernel_matrix(algorithm='generic', basis='computed'); G
+            sage: Q = QuadraticField(-7)                                                # optional - sage.rings.number_field
+            sage: a = Q.gen(0)                                                          # optional - sage.rings.number_field
+            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],[2+a, a, -7 + 5*a, -3+3*a]])    # optional - sage.rings.number_field
+            sage: G = A.right_kernel_matrix(algorithm='generic', basis='computed'); G   # optional - sage.rings.number_field
             [    -a     -3      1      0]
             [    -2 -a - 1      0      1]
-            sage: A*G.transpose() == zero_matrix(Q, 2, 2)
+            sage: A*G.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field
             True
 
         We check that number fields are handled by the right routine as part of
         typical right kernel computation. ::
 
-            sage: Q = QuadraticField(-7)
-            sage: a = Q.gen(0)
-            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],[2+a, a, -7 + 5*a, -3+3*a]])
+            sage: Q = QuadraticField(-7)                                                # optional - sage.rings.number_field
+            sage: a = Q.gen(0)                                                          # optional - sage.rings.number_field
+            sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a],[2+a, a, -7 + 5*a, -3+3*a]])    # optional - sage.rings.number_field
             sage: set_verbose(1)
-            sage: A.right_kernel(algorithm='default')
+            sage: A.right_kernel(algorithm='default')                                   # optional - sage.rings.number_field
             verbose ...
             verbose 1 (<module>) computing right kernel matrix over a number field for 2x4 matrix
             verbose 1 (<module>) done computing right kernel matrix over a number field for 2x4 matrix
@@ -4111,15 +4127,15 @@ cdef class Matrix(Matrix1):
         :meth:`~sage.matrix.matrix_mod2_dense.Matrix_mod2_dense._right_kernel_matrix`
         method. There are no options for the algorithm used.  ::
 
-            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],
+            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],                                 # optional - sage.libs.pari
             ....:                   [1, 0, 0, 0, 1, 1,],
             ....:                   [1, 0, 0, 0, 1, 1]])
-            sage: E = A.right_kernel_matrix(algorithm='default', format='echelon'); E
+            sage: E = A.right_kernel_matrix(algorithm='default', format='echelon'); E   # optional - sage.libs.pari
             [1 0 0 0 0 1]
             [0 1 1 0 0 0]
             [0 0 0 1 0 0]
             [0 0 0 0 1 1]
-            sage: A*E.transpose() == zero_matrix(GF(2), 3, 4)
+            sage: A*E.transpose() == zero_matrix(GF(2), 3, 4)                           # optional - sage.libs.pari
             True
 
         Since GF(2) is a field we can route this computation to the generic
@@ -4127,24 +4143,24 @@ cdef class Matrix(Matrix1):
         keywords, 'pluq', 'default' and unspecified, all have the
         same effect as there is no optional behavior. ::
 
-            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],
+            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],                                 # optional - sage.libs.pari
             ....:                   [1, 0, 0, 0, 1, 1,],
             ....:                   [1, 0, 0, 0, 1, 1]])
-            sage: P = A.right_kernel_matrix(algorithm='generic', basis='pivot'); P
+            sage: P = A.right_kernel_matrix(algorithm='generic', basis='pivot'); P      # optional - sage.libs.pari
             [0 1 1 0 0 0]
             [0 0 0 1 0 0]
             [1 0 0 0 1 0]
             [1 0 0 0 0 1]
-            sage: A*P.transpose() == zero_matrix(GF(2), 3, 4)
+            sage: A*P.transpose() == zero_matrix(GF(2), 3, 4)                           # optional - sage.libs.pari
             True
-            sage: DP = A.right_kernel_matrix(algorithm='default', basis='pivot'); DP
+            sage: DP = A.right_kernel_matrix(algorithm='default', basis='pivot'); DP    # optional - sage.libs.pari
             [0 1 1 0 0 0]
             [0 0 0 1 0 0]
             [1 0 0 0 1 0]
             [1 0 0 0 0 1]
-            sage: A*DP.transpose() == zero_matrix(GF(2), 3, 4)
+            sage: A*DP.transpose() == zero_matrix(GF(2), 3, 4)                          # optional - sage.libs.pari
             True
-            sage: A.right_kernel_matrix(algorithm='pluq', basis='echelon')
+            sage: A.right_kernel_matrix(algorithm='pluq', basis='echelon')              # optional - sage.libs.pari
             [1 0 0 0 0 1]
             [0 1 1 0 0 0]
             [0 0 0 1 0 0]
@@ -4152,11 +4168,11 @@ cdef class Matrix(Matrix1):
 
         We test that the mod 2 code is called for matrices over GF(2). ::
 
-            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],
+            sage: A = matrix(GF(2),[[0, 1, 1, 0, 0, 0],                                 # optional - sage.libs.pari
             ....:                   [1, 0, 0, 0, 1, 1,],
             ....:                   [1, 0, 0, 0, 1, 1]])
             sage: set_verbose(1)
-            sage: A.right_kernel(algorithm='default')
+            sage: A.right_kernel(algorithm='default')                                   # optional - sage.libs.pari
             verbose ...
             verbose 1 (<module>) computing right kernel matrix over integers mod 2 for 3x6 matrix
             verbose 1 (<module>) done computing right kernel matrix over integers mod 2 for 3x6 matrix
@@ -4175,19 +4191,19 @@ cdef class Matrix(Matrix1):
         will compute a set of basis vectors in the pivot format.
         These could be returned as a basis in echelon form.  ::
 
-            sage: F.<a> = FiniteField(5^2)
-            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],
+            sage: F.<a> = FiniteField(5^2)                                              # optional - sage.libs.pari
+            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],                   # optional - sage.libs.pari
             ....:                      [  a, a^4,   a+a^4,  a^4+a^8],
             ....:                      [a^2, a^6, a^2+a^6, a^5+a^10]])
-            sage: P = A.right_kernel_matrix(algorithm='default', basis='pivot'); P
+            sage: P = A.right_kernel_matrix(algorithm='default', basis='pivot'); P      # optional - sage.libs.pari
             [      4       4       1       0]
             [  a + 2 3*a + 3       0       1]
-            sage: A*P.transpose() == zero_matrix(F, 3, 2)
+            sage: A*P.transpose() == zero_matrix(F, 3, 2)                               # optional - sage.libs.pari
             True
-            sage: E = A.right_kernel_matrix(algorithm='default', basis='echelon'); E
+            sage: E = A.right_kernel_matrix(algorithm='default', basis='echelon'); E    # optional - sage.libs.pari
             [      1       0 3*a + 4 2*a + 2]
             [      0       1     2*a 3*a + 3]
-            sage: A*E.transpose() == zero_matrix(F, 3, 2)
+            sage: A*E.transpose() == zero_matrix(F, 3, 2)                               # optional - sage.libs.pari
             True
 
         This general code can be requested for matrices over any field
@@ -4214,12 +4230,12 @@ cdef class Matrix(Matrix1):
         We test that the generic code is called for matrices over fields,
         lacking any more specific routine. ::
 
-            sage: F.<a> = FiniteField(5^2)
-            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],
+            sage: F.<a> = FiniteField(5^2)                                              # optional - sage.libs.pari
+            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],                   # optional - sage.libs.pari
             ....:                      [  a, a^4,   a+a^4,  a^4+a^8],
             ....:                      [a^2, a^6, a^2+a^6, a^5+a^10]])
             sage: set_verbose(1)
-            sage: A.right_kernel(algorithm='default')
+            sage: A.right_kernel(algorithm='default')                                   # optional - sage.libs.pari
             verbose ...
             verbose 1 (<module>) computing right kernel matrix over an arbitrary field for 3x4 matrix
             ...
@@ -4383,8 +4399,8 @@ cdef class Matrix(Matrix1):
             sage: A.right_kernel_matrix()
             [1 0]
             [0 1]
-            sage: A = matrix(FiniteField(7), 2, 0)
-            sage: A.right_kernel_matrix().parent()
+            sage: A = matrix(FiniteField(7), 2, 0)                                      # optional - sage.libs.pari
+            sage: A.right_kernel_matrix().parent()                                      # optional - sage.libs.pari
             Full MatrixSpace of 0 by 0 dense matrices over Finite Field of size 7
 
         TESTS:
@@ -4406,7 +4422,7 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix kernel algorithm 'junk' not recognized
-            sage: matrix(GF(2), 2, 2).right_kernel_matrix(algorithm='padic')
+            sage: matrix(GF(2), 2, 2).right_kernel_matrix(algorithm='padic')            # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: 'padic' matrix kernel algorithm only available over the rationals and the integers, not over Finite Field of size 2
@@ -4698,16 +4714,17 @@ cdef class Matrix(Matrix1):
         Over an arbitrary field, with two basis formats.  Same vector space,
         different bases.  ::
 
-            sage: F.<a> = FiniteField(5^2)
-            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],
+            sage: F.<a> = FiniteField(5^2)                                                          # optional - sage.libs.pari
+            sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],                               # optional - sage.libs.pari
             ....:                      [  a, a^4,   a+a^4,  a^4+a^8],
             ....:                      [a^2, a^6, a^2+a^6, a^5+a^10]])
-            sage: K = A.right_kernel(); K
-            Vector space of degree 4 and dimension 2 over Finite Field in a of size 5^2
+            sage: K = A.right_kernel(); K                                                           # optional - sage.libs.pari
+            Vector space of degree 4 and dimension 2
+             over Finite Field in a of size 5^2
             Basis matrix:
             [      1       0 3*a + 4 2*a + 2]
             [      0       1     2*a 3*a + 3]
-            sage: A*K.basis_matrix().transpose() == zero_matrix(F, 3, 2)
+            sage: A*K.basis_matrix().transpose() == zero_matrix(F, 3, 2)                            # optional - sage.libs.pari
             True
 
         In the following test, we have to force usage of
@@ -4717,9 +4734,10 @@ cdef class Matrix(Matrix1):
         installed. ::
 
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-            sage: B = Matrix_generic_dense(A.parent(), A.list(), False, False)
-            sage: P = B.right_kernel(basis = 'pivot'); P
-            Vector space of degree 4 and dimension 2 over Finite Field in a of size 5^2
+            sage: B = Matrix_generic_dense(A.parent(), A.list(), False, False)                      # optional - sage.libs.pari
+            sage: P = B.right_kernel(basis='pivot'); P                                              # optional - sage.libs.pari
+            Vector space of degree 4 and dimension 2
+             over Finite Field in a of size 5^2
             User basis matrix:
             [      4       4       1       0]
             [  a + 2 3*a + 3       0       1]
@@ -4727,7 +4745,7 @@ cdef class Matrix(Matrix1):
         If the optional meataxe package is installed, we again have to make sure
         to work with a copy of B that has the same type as ``P.basis_matrix()``::
 
-            sage: B.parent()(B.list())*P.basis_matrix().transpose() == zero_matrix(F, 3, 2)
+            sage: B.parent()(B.list())*P.basis_matrix().transpose() == zero_matrix(F, 3, 2)         # optional - sage.libs.pari
             True
             sage: K == P
             True
@@ -4735,20 +4753,22 @@ cdef class Matrix(Matrix1):
         Over number fields, PARI is used by default, but general-purpose code
         can be requested.  Same vector space, same bases, different code.::
 
-            sage: Q = QuadraticField(-7)
-            sage: a = Q.gen(0)
-            sage: A = matrix(Q, [[  2, 5-a,     15-a, 16+4*a],
+            sage: Q = QuadraticField(-7)                                                            # optional - sage.rings.number_field
+            sage: a = Q.gen(0)                                                                      # optional - sage.rings.number_field
+            sage: A = matrix(Q, [[  2, 5-a,     15-a, 16+4*a],                                      # optional - sage.rings.number_field
             ....:                [2+a,   a, -7 + 5*a, -3+3*a]])
-            sage: K = A.right_kernel(algorithm='default'); K
-            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+            sage: K = A.right_kernel(algorithm='default'); K                                        # optional - sage.rings.number_field
+            Vector space of degree 4 and dimension 2
+             over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             Basis matrix:
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
-            sage: A*K.basis_matrix().transpose() == zero_matrix(Q, 2, 2)
+            sage: A*K.basis_matrix().transpose() == zero_matrix(Q, 2, 2)                            # optional - sage.rings.number_field
             True
-            sage: B = copy(A)
-            sage: G = A.right_kernel(algorithm='generic'); G
-            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+            sage: B = copy(A)                                                                       # optional - sage.rings.number_field
+            sage: G = A.right_kernel(algorithm='generic'); G                                        # optional - sage.rings.number_field
+            Vector space of degree 4 and dimension 2
+             over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             Basis matrix:
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
@@ -5018,11 +5038,11 @@ cdef class Matrix(Matrix1):
 
         Over a finite field, with a basis matrix in "pivot" format. ::
 
-            sage: A = matrix(FiniteField(7), [[5, 0, 5, 2, 4],
+            sage: A = matrix(FiniteField(7), [[5, 0, 5, 2, 4],                          # optional - sage.libs.pari
             ....:                             [1, 3, 2, 3, 6],
             ....:                             [1, 1, 6, 5, 3],
             ....:                             [2, 5, 6, 0, 0]])
-            sage: A.kernel(basis='pivot')
+            sage: A.kernel(basis='pivot')                                               # optional - sage.libs.pari
             Vector space of degree 4 and dimension 2 over Finite Field of size 7
             User basis matrix:
             [5 2 1 0]
@@ -6019,8 +6039,8 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(QQ, 2, range(4))
             sage: A._eigenspace_format(None) == 'all'
             True
-            sage: B = matrix(GF(13), 2, range(4))
-            sage: B._eigenspace_format(None)
+            sage: B = matrix(GF(13), 2, range(4))                               # optional - sage.libs.pari
+            sage: B._eigenspace_format(None)                                    # optional - sage.libs.pari
             'all'
 
         Subrings are promoted to fraction fields and then checked for the
@@ -6216,26 +6236,25 @@ cdef class Matrix(Matrix1):
 
         Next we compute the left eigenspaces over the finite field of order 11. ::
 
-            sage: A = ModularSymbols(43, base_ring=GF(11), sign=1).T(2).matrix(); A
+            sage: A = ModularSymbols(43, base_ring=GF(11), sign=1).T(2).matrix(); A                 # optional - sage.libs.pari
             [ 3  0  9  0]
             [ 0  9  0 10]
             [ 0  0 10  1]
             [ 0  0  1  1]
-            sage: A.base_ring()
+            sage: A.base_ring()                                                                     # optional - sage.libs.pari
             Finite Field of size 11
-            sage: A.charpoly()
+            sage: A.charpoly()                                                                      # optional - sage.libs.pari
             x^4 + 10*x^3 + 3*x^2 + 2*x + 1
-            sage: A.eigenspaces_left(format='galois', var = 'beta')
+            sage: A.eigenspaces_left(format='galois', var='beta')                                   # optional - sage.libs.pari
             [
-            (9, Vector space of degree 4 and dimension 1 over Finite Field of size 11
-            User basis matrix:
-            [0 1 5 6]),
-            (3, Vector space of degree 4 and dimension 1 over Finite Field of size 11
-            User basis matrix:
-            [1 0 1 6]),
-            (beta2, Vector space of degree 4 and dimension 1 over Univariate Quotient Polynomial Ring in beta2 over Finite Field of size 11 with modulus x^2 + 9
-            User basis matrix:
-            [        0         0         1 beta2 + 1])
+             (9, Vector space of degree 4 and dimension 1 over Finite Field of size 11
+                 User basis matrix: [0 1 5 6]),
+             (3, Vector space of degree 4 and dimension 1 over Finite Field of size 11
+                 User basis matrix: [1 0 1 6]),
+             (beta2, Vector space of degree 4 and dimension 1
+                      over Univariate Quotient Polynomial Ring in beta2
+                       over Finite Field of size 11 with modulus x^2 + 9
+                     User basis matrix: [        0         0         1 beta2 + 1])
             ]
 
         This method is only applicable to exact matrices.
@@ -6277,15 +6296,15 @@ cdef class Matrix(Matrix1):
         possible, will raise an error.  Using the ``'galois'``
         format option is more likely to be successful.  ::
 
-            sage: F.<b> = FiniteField(11^2)
-            sage: A = matrix(F, [[b + 1, b + 1], [10*b + 4, 5*b + 4]])
-            sage: A.eigenspaces_left(format='all')
+            sage: F.<b> = FiniteField(11^2)                                             # optional - sage.libs.pari
+            sage: A = matrix(F, [[b + 1, b + 1], [10*b + 4, 5*b + 4]])                  # optional - sage.libs.pari
+            sage: A.eigenspaces_left(format='all')                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: unable to construct eigenspaces for eigenvalues outside the base field,
             try the keyword option: format='galois'
 
-            sage: A.eigenspaces_left(format='galois')
+            sage: A.eigenspaces_left(format='galois')                                   # optional - sage.libs.pari
             [
             (a0, Vector space of degree 2 and dimension 1 over Univariate Quotient Polynomial Ring in a0 over Finite Field in b of size 11^2 with modulus x^2 + (5*b + 6)*x + 8*b + 10
             User basis matrix:
@@ -6591,11 +6610,11 @@ cdef class Matrix(Matrix1):
 
     right_eigenspaces = eigenspaces_right
 
-    def eigenvalues(self,extend=True):
+    def eigenvalues(self, extend=True):
         r"""
         Return a sequence of the eigenvalues of a matrix, with
-        multiplicity. If the eigenvalues are roots of polynomials in QQ,
-        then QQbar elements are returned that represent each separate
+        multiplicity. If the eigenvalues are roots of polynomials in ``QQ``,
+        then ``QQbar`` elements are returned that represent each separate
         root.
 
         If the option extend is set to False, only eigenvalues in the base
@@ -6608,33 +6627,40 @@ cdef class Matrix(Matrix1):
             [ 4  5  6  7]
             [ 8  9 10 11]
             [12 13 14 15]
-            sage: sorted(a.eigenvalues(), reverse=True)
+            sage: sorted(a.eigenvalues(), reverse=True)                         # optional - sage.rings.number_field
             [32.46424919657298?, 0, 0, -2.464249196572981?]
 
         ::
 
-            sage: a=matrix([(1, 9, -1, -1), (-2, 0, -10, 2), (-1, 0, 15, -2), (0, 1, 0, -1)])
-            sage: a.eigenvalues()
-            [-0.9386318578049146?, 15.50655435353258?, 0.2160387521361705? - 4.713151979747493?*I, 0.2160387521361705? + 4.713151979747493?*I]
+            sage: a = matrix([(1, 9, -1, -1),
+            ....:             (-2, 0, -10, 2),
+            ....:             (-1, 0, 15, -2),
+            ....:             (0, 1, 0, -1)])
+            sage: a.eigenvalues()                                               # optional - sage.rings.number_field
+            [-0.9386318578049146?,
+             15.50655435353258?,
+             0.2160387521361705? - 4.713151979747493?*I,
+             0.2160387521361705? + 4.713151979747493?*I]
 
-        A symmetric matrix a+a.transpose() should have real eigenvalues
+        A symmetric matrix ``a + a.transpose()`` should have real eigenvalues
 
         ::
 
-            sage: b=a+a.transpose()
-            sage: ev = b.eigenvalues(); ev
-            [-8.35066086057957?, -1.107247901349379?, 5.718651326708515?, 33.73925743522043?]
+            sage: b = a + a.transpose()
+            sage: ev = b.eigenvalues(); ev                                      # optional - sage.rings.number_field
+            [-8.35066086057957?, -1.107247901349379?,
+             5.718651326708515?, 33.73925743522043?]
 
-        The eigenvalues are elements of QQbar, so they really represent
+        The eigenvalues are elements of ``QQbar``, so they really represent
         exact roots of polynomials, not just approximations.
 
         ::
 
-            sage: e = ev[0]; e
+            sage: e = ev[0]; e                                                  # optional - sage.rings.number_field
             -8.35066086057957?
-            sage: p = e.minpoly(); p
+            sage: p = e.minpoly(); p                                            # optional - sage.rings.number_field
             x^4 - 30*x^3 - 171*x^2 + 1460*x + 1784
-            sage: p(e) == 0
+            sage: p(e) == 0                                                     # optional - sage.rings.number_field
             True
 
         To perform computations on the eigenvalue as an element of a number
@@ -6642,38 +6668,39 @@ cdef class Matrix(Matrix1):
 
         ::
 
-            sage: e.as_number_field_element()
-            (Number Field in a with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264,
+            sage: e.as_number_field_element()                                   # optional - sage.rings.number_field
+            (Number Field in a
+             with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264,
             a + 7,
             Ring morphism:
               From: Number Field in a with defining polynomial y^4 - 2*y^3 - 507*y^2 - 3972*y - 4264
               To:   Algebraic Real Field
               Defn: a |--> -15.35066086057957?)
 
-        Notice the effect of the extend option.
+        Notice the effect of the ``extend`` option.
 
         ::
 
-            sage: M=matrix(QQ,[[0,-1,0],[1,0,0],[0,0,2]])
-            sage: M.eigenvalues()
+            sage: M = matrix(QQ, [[0,-1,0], [1,0,0], [0,0,2]])
+            sage: M.eigenvalues()                                               # optional - sage.rings.number_field
             [2, -1*I, 1*I]
             sage: M.eigenvalues(extend=False)
             [2]
 
         The method also works for matrices over finite fields::
 
-            sage: M = matrix(GF(3), [[0,1,1],[1,2,0],[2,0,1]])
-            sage: ev = sorted(M.eigenvalues()); ev
+            sage: M = matrix(GF(3), [[0,1,1], [1,2,0], [2,0,1]])                # optional - sage.libs.pari
+            sage: ev = sorted(M.eigenvalues()); ev                              # optional - sage.libs.pari
             [2*z3, 2*z3 + 1, 2*z3 + 2]
 
-        Similarly as in the case of QQbar, the eigenvalues belong to some
+        Similarly as in the case of ``QQbar``, the eigenvalues belong to some
         algebraic closure but they can be converted to elements of a finite
         field::
 
-            sage: e = ev[0]
-            sage: e.parent()
+            sage: e = ev[0]                                                     # optional - sage.libs.pari
+            sage: e.parent()                                                    # optional - sage.libs.pari
             Algebraic closure of Finite Field of size 3
-            sage: e.as_finite_field_element()
+            sage: e.as_finite_field_element()                                   # optional - sage.libs.pari
             (Finite Field in z3 of size 3^3, 2*z3, Ring morphism:
               From: Finite Field in z3 of size 3^3
               To:   Algebraic closure of Finite Field of size 3
@@ -6794,9 +6821,9 @@ cdef class Matrix(Matrix1):
 
         Check :trac:`30518`::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: m = matrix(K, 4, [2,4*i,-i,0, -4*i,2,-1,0, 2*i,-2,0,0, 4*i+4, 4*i-4,1-i,-2])
-            sage: assert all(m*v == e*v for e, vs, _ in m.eigenvectors_right() for v in vs)
+            sage: K.<i> = QuadraticField(-1)                                                        # optional - sage.rings.number_field
+            sage: m = matrix(K, 4, [2,4*i,-i,0, -4*i,2,-1,0, 2*i,-2,0,0, 4*i+4, 4*i-4,1-i,-2])      # optional - sage.rings.number_field
+            sage: assert all(m*v == e*v for e, vs, _ in m.eigenvectors_right() for v in vs)         # optional - sage.rings.number_field
         """
         if other is not None:
             if isinstance(other, bool):
@@ -7772,13 +7799,13 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: MS = MatrixSpace(GF(19),2,3)
-            sage: C = MS.matrix([1,2,3,4,5,6])
-            sage: C.rank()
+            sage: MS = MatrixSpace(GF(19), 2, 3)                                # optional - sage.libs.pari
+            sage: C = MS.matrix([1,2,3,4,5,6])                                  # optional - sage.libs.pari
+            sage: C.rank()                                                      # optional - sage.libs.pari
             2
-            sage: C.nullity()
+            sage: C.nullity()                                                   # optional - sage.libs.pari
             0
-            sage: C.echelon_form()
+            sage: C.echelon_form()                                              # optional - sage.libs.pari
             [ 1  0 18]
             [ 0  1  2]
 
@@ -7786,7 +7813,7 @@ cdef class Matrix(Matrix1):
         the transformation matrix, so the ``transformation`` option is
         ignored::
 
-            sage: C.echelon_form(transformation=True)
+            sage: C.echelon_form(transformation=True)                           # optional - sage.libs.pari
             [ 1  0 18]
             [ 0  1  2]
 
@@ -8212,20 +8239,20 @@ cdef class Matrix(Matrix1):
         Subdivided, or not, the result is immutable, so make a
         copy if you want to make changes.  ::
 
-            sage: A = matrix(FiniteField(7), [[2,0,3], [5,5,3], [5,6,5]])
-            sage: E = A.extended_echelon_form()
-            sage: E.is_mutable()
+            sage: A = matrix(FiniteField(7), [[2,0,3], [5,5,3], [5,6,5]])                           # optional - sage.libs.pari
+            sage: E = A.extended_echelon_form()                                                     # optional - sage.libs.pari
+            sage: E.is_mutable()                                                                    # optional - sage.libs.pari
             False
-            sage: F = A.extended_echelon_form(subdivide=True)
-            sage: F
+            sage: F = A.extended_echelon_form(subdivide=True)                                       # optional - sage.libs.pari
+            sage: F                                                                                 # optional - sage.libs.pari
             [1 0 0|0 4 6]
             [0 1 0|4 2 2]
             [0 0 1|5 2 3]
             [-----+-----]
-            sage: F.is_mutable()
+            sage: F.is_mutable()                                                                    # optional - sage.libs.pari
             False
-            sage: G = copy(F)
-            sage: G.subdivide([],[]); G
+            sage: G = copy(F)                                                                       # optional - sage.libs.pari
+            sage: G.subdivide([], []); G                                                            # optional - sage.libs.pari
             [1 0 0 0 4 6]
             [0 1 0 4 2 2]
             [0 0 1 5 2 3]
@@ -9203,15 +9230,17 @@ cdef class Matrix(Matrix1):
         Different base rings are handled sensibly.  ::
 
             sage: A = matrix(ZZ, 2, 3, range(6))
-            sage: B = matrix(FiniteField(23), 3, 4, range(12))
-            sage: C = matrix(FiniteField(29), 4, 5, range(20))
-            sage: D = A.tensor_product(B)
-            sage: D.parent()
+            sage: B = matrix(FiniteField(23), 3, 4, range(12))                          # optional - sage.libs.pari
+            sage: C = matrix(FiniteField(29), 4, 5, range(20))                          # optional - sage.libs.pari
+            sage: D = A.tensor_product(B)                                               # optional - sage.libs.pari
+            sage: D.parent()                                                            # optional - sage.libs.pari
             Full MatrixSpace of 6 by 12 dense matrices over Finite Field of size 23
-            sage: E = C.tensor_product(B)
+            sage: E = C.tensor_product(B)                                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Finite Field of size 29' and 'Full MatrixSpace of 3 by 4 dense matrices over Finite Field of size 23'
+            TypeError: unsupported operand parent(s) for *:
+             'Finite Field of size 29' and
+             'Full MatrixSpace of 3 by 4 dense matrices over Finite Field of size 23'
 
         The input is checked to be sure it is a matrix.  ::
 
@@ -9238,9 +9267,9 @@ cdef class Matrix(Matrix1):
             sage: m2.tensor_product(m3).dimensions()
             (0, 6)
 
-            sage: m1 = MatrixSpace(GF(5), 3, 2).an_element()
-            sage: m2 = MatrixSpace(GF(5), 0, 4).an_element()
-            sage: m1.tensor_product(m2).parent()
+            sage: m1 = MatrixSpace(GF(5), 3, 2).an_element()                            # optional - sage.libs.pari
+            sage: m2 = MatrixSpace(GF(5), 0, 4).an_element()                            # optional - sage.libs.pari
+            sage: m1.tensor_product(m2).parent()                                        # optional - sage.libs.pari
             Full MatrixSpace of 0 by 8 dense matrices over Finite Field of size 5
         """
         if not isinstance(A, Matrix):
@@ -9523,26 +9552,26 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: A = matrix(QQbar, [[(1/sqrt(5))*(1+i), (1/sqrt(55))*(3+2*I), (1/sqrt(22))*(2+2*I)],
+            sage: A = matrix(QQbar, [[(1/sqrt(5))*(1+i), (1/sqrt(55))*(3+2*I), (1/sqrt(22))*(2+2*I)],       # optional - sage.symbolic, sage.rings.number_field
             ....:                    [(1/sqrt(5))*(1-i), (1/sqrt(55))*(2+2*I),  (1/sqrt(22))*(-3+I)],
             ....:                    [    (1/sqrt(5))*I, (1/sqrt(55))*(3-5*I),    (1/sqrt(22))*(-2)]])
-            sage: A.is_unitary()
+            sage: A.is_unitary()                                                                            # optional - sage.symbolic, sage.rings.number_field
             True
 
         A permutation matrix is always orthogonal. ::
 
-            sage: sigma = Permutation([1,3,4,5,2])
-            sage: P = sigma.to_matrix(); P
+            sage: sigma = Permutation([1,3,4,5,2])                                                          # optional - sage.combinat
+            sage: P = sigma.to_matrix(); P                                                                  # optional - sage.combinat
             [1 0 0 0 0]
             [0 0 0 0 1]
             [0 1 0 0 0]
             [0 0 1 0 0]
             [0 0 0 1 0]
-            sage: P.is_unitary()
+            sage: P.is_unitary()                                                                            # optional - sage.combinat
             True
-            sage: P.change_ring(GF(3)).is_unitary()
+            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat, sage.libs.pari
             True
-            sage: P.change_ring(GF(3)).is_unitary()
+            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat, sage.libs.pari
             True
 
         A square matrix far from unitary. ::
@@ -9553,7 +9582,7 @@ cdef class Matrix(Matrix1):
 
         Rectangular matrices are never unitary.  ::
 
-            sage: A = matrix(QQbar, 3, 4)
+            sage: A = matrix(QQbar, 3, 4)                                                                   # optional - sage.rings.number_field
             sage: A.is_unitary()
             False
         """
@@ -9677,30 +9706,30 @@ cdef class Matrix(Matrix1):
         Sage has several fields besides the entire complex numbers
         where conjugation is non-trivial. ::
 
-            sage: F.<b> = QuadraticField(-7)
-            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
+            sage: F.<b> = QuadraticField(-7)                                    # optional - sage.rings.number_field
+            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],                  # optional - sage.rings.number_field
             ....:                [-2*b - 3, -3*b + 2,   -2*b],
             ....:                [   b + 1,        0,     -2]])
-            sage: C = C*C.conjugate_transpose()
-            sage: C.is_normal()
+            sage: C = C*C.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: C.is_normal()                                                 # optional - sage.rings.number_field
             True
 
         A matrix that is nearly normal, but for a non-real
         diagonal entry. ::
 
-            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],
+            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],                     # optional - sage.rings.number_field
             ....:                    [  2+I,   3+I, 2-6*I],
             ....:                    [1-4*I, 2+6*I,     5]])
-            sage: A.is_normal()
+            sage: A.is_normal()                                                 # optional - sage.rings.number_field
             False
-            sage: A[1,1] = 132
-            sage: A.is_normal()
+            sage: A[1,1] = 132                                                  # optional - sage.rings.number_field
+            sage: A.is_normal()                                                 # optional - sage.rings.number_field
             True
 
         Rectangular matrices are never normal.  ::
 
-            sage: A = matrix(QQbar, 3, 4)
-            sage: A.is_normal()
+            sage: A = matrix(QQbar, 3, 4)                                       # optional - sage.rings.number_field
+            sage: A.is_normal()                                                 # optional - sage.rings.number_field
             False
 
         A square, empty matrix is trivially normal.  ::
@@ -9832,7 +9861,7 @@ cdef class Matrix(Matrix1):
 
         Test :trac:`17341`::
 
-            sage: random_matrix(GF(2), 8, 586, sparse=True).visualize_structure()
+            sage: random_matrix(GF(2), 8, 586, sparse=True).visualize_structure()       # optional - sage.libs.pari
             512x6px 24-bit RGB image
         """
         cdef Py_ssize_t x, y, _x, _y, v, bi, bisq
@@ -9884,8 +9913,8 @@ cdef class Matrix(Matrix1):
 
         ::
 
-            sage: A = random_matrix(GF(127),200,200,density=0.3)
-            sage: A.density() <= 0.3
+            sage: A = random_matrix(GF(127), 200, 200, density=0.3)             # optional - sage.libs.pari
+            sage: A.density() <= 0.3                                            # optional - sage.libs.pari
             True
 
         ::
@@ -9956,9 +9985,9 @@ cdef class Matrix(Matrix1):
 
         Test :trac:`27473`::
 
-            sage: F.<t> = LaurentSeriesRing(GF(2))
-            sage: M = Matrix([[t,1],[0,t]])
-            sage: ~M
+            sage: F.<t> = LaurentSeriesRing(GF(2))                              # optional - sage.libs.pari
+            sage: M = Matrix([[t,1], [0,t]])                                    # optional - sage.libs.pari
+            sage: ~M                                                            # optional - sage.libs.pari
             [t^-1 t^-2]
             [   0 t^-1]
 
@@ -10484,32 +10513,32 @@ cdef class Matrix(Matrix1):
         so we need to check with the conjugate-transpose.  This
         example verifies that the bug on :trac:`10791` is fixed.  ::
 
-            sage: F.<a> = QuadraticField(-5)
-            sage: A = matrix(F, [[    1,   a - 3,   a - 2, a + 1],
+            sage: F.<a> = QuadraticField(-5)                                                            # optional - sage.rings.number_field
+            sage: A = matrix(F, [[    1,   a - 3,   a - 2, a + 1],                                      # optional - sage.rings.number_field
             ....:                [    a, 2*a + 1, 3*a + 1,     1],
             ....:                [a + 1,   a - 6, 2*a - 5,     1],
             ....:                [  2*a,       a,     3*a,    -3],
             ....:                [    1,   a - 1,       a, a - 1]])
-            sage: A.rank()
+            sage: A.rank()                                                                              # optional - sage.rings.number_field
             3
-            sage: Q, R = A._gram_schmidt_noscale()
-            sage: Q
+            sage: Q, R = A._gram_schmidt_noscale()                                                      # optional - sage.rings.number_field
+            sage: Q                                                                                     # optional - sage.rings.number_field
             [                      1         25/33*a - 38/11   641/1163*a + 453/1163]
             [                      a         17/11*a + 73/33  322/1163*a + 1566/1163]
             [                  a + 1        10/33*a - 173/33 -784/1163*a + 1614/1163]
             [                    2*a          1/11*a + 80/33  196/1163*a - 1234/1163]
             [                      1         25/33*a - 16/11  855/1163*a - 1717/1163]
-            sage: R
+            sage: R                                                                                     # optional - sage.rings.number_field
             [                    1         8/33*a + 5/11        8/33*a + 16/11         2/11*a + 1/33]
             [                    0                     1                     1 -107/1163*a - 78/1163]
             [                    0                     0                     0                     1]
-            sage: Q*R == A
+            sage: Q*R == A                                                                              # optional - sage.rings.number_field
             True
-            sage: Q.transpose().conjugate()*Q
+            sage: Q.transpose().conjugate()*Q                                                           # optional - sage.rings.number_field
             [        33          0          0]
             [         0    2326/33          0]
             [         0          0 16532/1163]
-            sage: Q.column_space() == A.column_space()
+            sage: Q.column_space() == A.column_space()                                                  # optional - sage.rings.number_field
             True
 
         Some trivial cases.  ::
@@ -10994,7 +11023,7 @@ cdef class Matrix(Matrix1):
         in the smallest ring containing the matrix entries (:trac:`14508`)::
 
             sage: c = matrix([[0,1,0],[0,0,1],[1,0,0]])
-            sage: c.jordan_form(CyclotomicField(3))
+            sage: c.jordan_form(CyclotomicField(3))                             # optional - sage.rings.number_field
             [         1|         0|         0]
             [----------+----------+----------]
             [         0|     zeta3|         0]
@@ -11062,9 +11091,11 @@ cdef class Matrix(Matrix1):
 
         We verify that the bug from :trac:`6942` is fixed::
 
-            sage: M = Matrix(GF(2),[[1,0,1,0,0,0,1],[1,0,0,1,1,1,0],[1,1,0,1,1,1,1],[1,1,1,0,1,1,1],[1,1,1,0,0,1,0],[1,1,1,0,1,0,0],[1,1,1,1,1,1,0]])
-            sage: J, T = M.jordan_form(transformation=True)
-            sage: J
+            sage: M = Matrix(GF(2),[[1,0,1,0,0,0,1], [1,0,0,1,1,1,0], [1,1,0,1,1,1,1],  # optional - sage.libs.pari
+            ....:                   [1,1,1,0,1,1,1], [1,1,1,0,0,1,0], [1,1,1,0,1,0,0],
+            ....:                   [1,1,1,1,1,1,0]])
+            sage: J, T = M.jordan_form(transformation=True)                             # optional - sage.libs.pari
+            sage: J                                                                     # optional - sage.libs.pari
             [1 1|0 0|0 0|0]
             [0 1|0 0|0 0|0]
             [---+---+---+-]
@@ -11075,11 +11106,11 @@ cdef class Matrix(Matrix1):
             [0 0|0 0|0 1|0]
             [---+---+---+-]
             [0 0|0 0|0 0|1]
-            sage: M * T == T * J
+            sage: M * T == T * J                                                        # optional - sage.libs.pari
             True
-            sage: T.rank()
+            sage: T.rank()                                                              # optional - sage.libs.pari
             7
-            sage: M.rank()
+            sage: M.rank()                                                              # optional - sage.libs.pari
             7
 
         We verify that the bug from :trac:`6932` is fixed::
@@ -11609,7 +11640,7 @@ cdef class Matrix(Matrix1):
             ....:                 [2, -1,  1,  0, -2],
             ....:                 [0, -1, -1, -5, -8]])
 
-            sage: [e in QQ for e in A.eigenvalues()]
+            sage: [e in QQ for e in A.eigenvalues()]                                    # optional - sage.rings.number_field
             [False, False, False, False, False]
             sage: A.is_diagonalizable()
             False
@@ -11618,37 +11649,37 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: not diagonalizable over Rational Field
 
-            sage: [e in QQbar for e in A.eigenvalues()]
+            sage: [e in QQbar for e in A.eigenvalues()]                                 # optional - sage.rings.number_field
             [True, True, True, True, True]
-            sage: A.is_diagonalizable(base_field=QQbar)
+            sage: A.is_diagonalizable(base_field=QQbar)                                 # optional - sage.rings.number_field
             True
 
         Other exact fields may be employed, though it will not always
         be possible to extend their base fields to contain all
         the eigenvalues. ::
 
-            sage: F.<b> = FiniteField(5^2)
-            sage: A = matrix(F, [[      4, 3*b + 2, 3*b + 1, 3*b + 4],
+            sage: F.<b> = FiniteField(5^2)                                              # optional - sage.libs.pari
+            sage: A = matrix(F, [[      4, 3*b + 2, 3*b + 1, 3*b + 4],                  # optional - sage.libs.pari
             ....:                [2*b + 1,     4*b,       0,       2],
             ....:                [    4*b,   b + 2, 2*b + 3,       3],
             ....:                [    2*b,     3*b, 4*b + 4, 3*b + 3]])
-            sage: A.is_diagonalizable()
+            sage: A.is_diagonalizable()                                                 # optional - sage.libs.pari
             False
-            sage: A.jordan_form()
+            sage: A.jordan_form()                                                       # optional - sage.libs.pari
             [      4       1|      0       0]
             [      0       4|      0       0]
             [---------------+---------------]
             [      0       0|2*b + 1       1]
             [      0       0|      0 2*b + 1]
 
-            sage: F.<c> = QuadraticField(-7)
-            sage: A = matrix(F, [[   c + 3,   2*c - 2,   -2*c + 2,     c - 1],
+            sage: F.<c> = QuadraticField(-7)                                            # optional - sage.rings.number_field
+            sage: A = matrix(F, [[   c + 3,   2*c - 2,   -2*c + 2,     c - 1],          # optional - sage.rings.number_field
             ....:                [2*c + 10, 13*c + 15, -13*c - 17, 11*c + 31],
             ....:                [2*c + 10, 14*c + 10, -14*c - 12, 12*c + 30],
             ....:                [       0,   2*c - 2,   -2*c + 2,   2*c + 2]])
-            sage: A.is_diagonalizable()
+            sage: A.is_diagonalizable()                                                 # optional - sage.rings.number_field
             True
-            sage: A.diagonalization()
+            sage: A.diagonalization()                                                   # optional - sage.rings.number_field
             (
             [    4     0     0     0]  [   1    0    1    0]
             [    0    -2     0     0]  [   4    1    0    1]
@@ -11826,23 +11857,23 @@ cdef class Matrix(Matrix1):
 
         Other exact fields are supported.  ::
 
-            sage: F.<a> = FiniteField(7^2)
-            sage: A = matrix(F,[[2*a + 5, 6*a + 6,   a + 3],
+            sage: F.<a> = FiniteField(7^2)                                      # optional - sage.libs.pari
+            sage: A = matrix(F,[[2*a + 5, 6*a + 6,   a + 3],                    # optional - sage.libs.pari
             ....:               [  a + 3, 2*a + 2, 4*a + 2],
             ....:               [2*a + 6, 5*a + 5,     3*a]])
-            sage: B = matrix(F,[[5*a + 5, 6*a + 4,   a + 1],
+            sage: B = matrix(F,[[5*a + 5, 6*a + 4,   a + 1],                    # optional - sage.libs.pari
             ....:               [  a + 5, 4*a + 3, 3*a + 3],
             ....:               [3*a + 5,   a + 4, 5*a + 6]])
-            sage: A.is_similar(B)
+            sage: A.is_similar(B)                                               # optional - sage.libs.pari
             True
-            sage: B.is_similar(A)
+            sage: B.is_similar(A)                                               # optional - sage.libs.pari
             True
-            sage: _, T = A.is_similar(B, transformation=True)
-            sage: T
+            sage: _, T = A.is_similar(B, transformation=True)                   # optional - sage.libs.pari
+            sage: T                                                             # optional - sage.libs.pari
             [      1       0       0]
             [6*a + 1 4*a + 3 4*a + 2]
             [6*a + 3 3*a + 5 3*a + 6]
-            sage: A == T.inverse()*B*T
+            sage: A == T.inverse()*B*T                                          # optional - sage.libs.pari
             True
 
         Two matrices with different sets of eigenvalues, so they
@@ -11901,19 +11932,19 @@ cdef class Matrix(Matrix1):
         design, but we are not able to resurrect a similarity
         transformation.  ::
 
-            sage: F.<a> = FiniteField(7^2)
-            sage: C = matrix(F,[[  a + 2, 5*a + 4],
-            ....:               [6*a + 6, 6*a + 4]])
-            sage: S = matrix(F, [[0, 1],
+            sage: F.<a> = FiniteField(7^2)                                      # optional - sage.libs.pari
+            sage: C = matrix(F, [[  a + 2, 5*a + 4],                            # optional - sage.libs.pari
+            ....:                [6*a + 6, 6*a + 4]])
+            sage: S = matrix(F, [[0, 1],                                        # optional - sage.libs.pari
             ....:                [1, 0]])
-            sage: D = S.inverse()*C*S
-            sage: C.is_similar(D)
+            sage: D = S.inverse()*C*S                                           # optional - sage.libs.pari
+            sage: C.is_similar(D)                                               # optional - sage.libs.pari
             True
-            sage: C.is_similar(D, transformation=True)
+            sage: C.is_similar(D, transformation=True)                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             RuntimeError: unable to compute transformation for similar matrices
-            sage: C.jordan_form()
+            sage: C.jordan_form()                                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             RuntimeError: Some eigenvalue does not exist in
@@ -11923,9 +11954,9 @@ cdef class Matrix(Matrix1):
         algebraic closure of this field to find the change-of-basis
         matrix::
 
-            sage: cox = posets.TamariLattice(3).coxeter_transformation()
-            sage: M = cox.change_ring(GF(3))
-            sage: M.is_similar(M**3, True)  # long time
+            sage: cox = posets.TamariLattice(3).coxeter_transformation()        # optional - sage.graphs, sage.combinat, sage.libs.pari
+            sage: M = cox.change_ring(GF(3))                                    # optional - sage.graphs, sage.combinat, sage.libs.pari
+            sage: M.is_similar(M**3, True)  # long time                         # optional - sage.graphs, sage.combinat, sage.libs.pari
             (
                   [1 0 0 0 0]
                   [0 1 1 0 2]
@@ -11958,9 +11989,9 @@ cdef class Matrix(Matrix1):
         If the fraction fields of the entries are unequal and do not
         coerce in a common field, it is an error.  ::
 
-            sage: A = matrix(GF(3), 2, 2, range(4))
-            sage: B = matrix(GF(2), 2, 2, range(4))
-            sage: A.is_similar(B, transformation=True)
+            sage: A = matrix(GF(3), 2, 2, range(4))                             # optional - sage.libs.pari
+            sage: B = matrix(GF(2), 2, 2, range(4))                             # optional - sage.libs.pari
+            sage: A.is_similar(B, transformation=True)                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
@@ -11974,8 +12005,8 @@ cdef class Matrix(Matrix1):
         of ``QQ`` in ``QQbar``).  ::
 
             sage: A = matrix(ZZ, 2, 2, range(4))
-            sage: B = matrix(QQbar, 2, 2, range(4))
-            sage: A.is_similar(B)
+            sage: B = matrix(QQbar, 2, 2, range(4))                             # optional - sage.rings.number_field
+            sage: A.is_similar(B)                                               # optional - sage.rings.number_field
             True
 
         TESTS:
@@ -12395,7 +12426,7 @@ cdef class Matrix(Matrix1):
             ...
             TypeError: polynomial generator must be over the same ring as the matrix entries
 
-            sage: A.cyclic_subspace(v, basis='garbage')
+            sage: A.cyclic_subspace(v, basis='garbage')                                             # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: basis format must be 'echelon' or 'iterates', not garbage
@@ -12424,10 +12455,10 @@ cdef class Matrix(Matrix1):
             ...
             TypeError: matrix entries must be from an exact field, not Ring of integers modulo 6
 
-            sage: F.<a> = GF(2^4)
-            sage: G = matrix(QQ, 4, range(16))
-            sage: w = vector(F, 4, [1, a, a^2, a^3])
-            sage: G.cyclic_subspace(w)
+            sage: F.<a> = GF(2^4)                                                                   # optional - sage.libs.pari
+            sage: G = matrix(QQ, 4, range(16))                                                      # optional - sage.libs.pari
+            sage: w = vector(F, 4, [1, a, a^2, a^3])                                                # optional - sage.libs.pari
+            sage: G.cyclic_subspace(w)                                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: unable to make vector entries compatible with matrix entries
@@ -12586,40 +12617,40 @@ cdef class Matrix(Matrix1):
         field of complex numbers with rational real and imaginary parts,
         allow for this computation::
 
-            sage: C.<I> = QuadraticField(-1)
-            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],
+            sage: C.<I> = QuadraticField(-1)                                                        # optional - sage.rings.number_field
+            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],                     # optional - sage.rings.number_field
             ....:                [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
             ....:                [-24*I + 25, 69*I + 89,        976, 24*I + 6],
             ....:                [     -21*I, -7*I + 15,  -24*I + 6,       28]])
-            sage: A.is_hermitian()
+            sage: A.is_hermitian()                                                                  # optional - sage.rings.number_field
             True
-            sage: L = A.cholesky()
+            sage: L = A.cholesky()                                                                  # optional - sage.rings.number_field
             sage: L
             [                4.79...?                         0                       0        0]
             [   0.62...? - 3.54...?*I                  5.00...?                       0        0]
             [   5.21...? - 5.00...?*I   13.58...? + 10.72...?*I               24.98...?        0]
             [             -4.37...?*I   -0.10...? -  0.85...?*I  -0.21...? + 0.37...?*I 2.81...?]
-            sage: L.parent()
+            sage: L.parent()                                                                        # optional - sage.rings.number_field
             Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
-            sage: (L*L.conjugate_transpose() - A.change_ring(QQbar)).norm() < 10^-10
+            sage: (L*L.conjugate_transpose() - A.change_ring(QQbar)).norm() < 10^-10                # optional - sage.rings.number_field
             True
 
         The field of algebraic numbers is an ideal setting for this
         computation::
 
-            sage: A = matrix(QQbar, [[        2,   4 + 2*I,   6 - 4*I],
+            sage: A = matrix(QQbar, [[        2,   4 + 2*I,   6 - 4*I],                             # optional - sage.rings.number_field
             ....:                    [ -2*I + 4,        11, 10 - 12*I],
             ....:                    [  4*I + 6, 10 + 12*I,        37]])
-            sage: A.is_hermitian()
+            sage: A.is_hermitian()                                                                  # optional - sage.rings.number_field
             True
-            sage: L = A.cholesky()
-            sage: L
+            sage: L = A.cholesky()                                                                  # optional - sage.rings.number_field
+            sage: L                                                                                 # optional - sage.rings.number_field
             [                       1.414213562373095?          0                    0]
             [2.828427124746190? - 1.414213562373095?*I          1                    0]
             [4.242640687119285? + 2.828427124746190?*I   -2*I + 2   1.732050807568878?]
-            sage: L.parent()
+            sage: L.parent()                                                                        # optional - sage.rings.number_field
             Full MatrixSpace of 3 by 3 dense matrices over Algebraic Field
-            sage: L*L.conjugate_transpose() == A
+            sage: L*L.conjugate_transpose() == A                                                    # optional - sage.rings.number_field
             True
 
         Results are cached, hence immutable.  Use the ``copy`` function
@@ -12675,22 +12706,22 @@ cdef class Matrix(Matrix1):
 
         The matrix may not be Hermitian::
 
-            sage: F.<a> = FiniteField(5^4)
-            sage: A = matrix(F, [[2+a^3, 3], [3, 3]])
-            sage: A.cholesky()
+            sage: F.<a> = FiniteField(5^4)                                      # optional - sage.libs.pari
+            sage: A = matrix(F, [[2+a^3, 3], [3, 3]])                           # optional - sage.libs.pari
+            sage: A.cholesky()                                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: matrix is not Hermitian
 
         The matrix may not be positive-definite::
 
-            sage: C.<I> = QuadraticField(-1)
-            sage: B = matrix(C, [[      2, 4 - 2*I, 2 + 2*I],
+            sage: C.<I> = QuadraticField(-1)                                    # optional - sage.rings.number_field
+            sage: B = matrix(C, [[      2, 4 - 2*I, 2 + 2*I],                   # optional - sage.rings.number_field
             ....:                [4 + 2*I,       8,    10*I],
             ....:                [2 - 2*I,   -10*I,      -3]])
-            sage: B.is_positive_definite()
+            sage: B.is_positive_definite()                                      # optional - sage.rings.number_field
             False
-            sage: B.cholesky()
+            sage: B.cholesky()                                                  # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: matrix is not positive definite
@@ -13225,30 +13256,30 @@ cdef class Matrix(Matrix1):
             sage: B == P*L*U
             True
 
-            sage: F.<a> = FiniteField(5^2)
-            sage: C = matrix(F, [[a + 3, 4*a + 4, 2, 4*a + 2],
+            sage: F.<a> = FiniteField(5^2)                                              # optional - sage.libs.pari
+            sage: C = matrix(F, [[a + 3, 4*a + 4, 2, 4*a + 2],                          # optional - sage.libs.pari
             ....:                [3, 2*a + 4, 2*a + 4, 2*a + 1],
             ....:                [3*a + 1, a + 3, 2*a + 4, 4*a + 3],
             ....:                [a, 3, 3*a + 1, a]])
-            sage: P, L, U = C.LU(pivot='nonzero')
-            sage: P
+            sage: P, L, U = C.LU(pivot='nonzero')                                       # optional - sage.libs.pari
+            sage: P                                                                     # optional - sage.libs.pari
             [1 0 0 0]
             [0 1 0 0]
             [0 0 1 0]
             [0 0 0 1]
-            sage: L
+            sage: L                                                                     # optional - sage.libs.pari
             [      1       0       0       0]
             [3*a + 3       1       0       0]
             [    2*a 4*a + 2       1       0]
             [2*a + 3       2 2*a + 4       1]
-            sage: U
+            sage: U                                                                     # optional - sage.libs.pari
             [  a + 3 4*a + 4       2 4*a + 2]
             [      0   a + 1   a + 3 2*a + 4]
             [      0       0       1 4*a + 2]
             [      0       0       0       0]
-            sage: L.base_ring()
+            sage: L.base_ring()                                                         # optional - sage.libs.pari
             Finite Field in a of size 5^2
-            sage: C == P*L*U
+            sage: C == P*L*U                                                            # optional - sage.libs.pari
             True
 
         With no pivoting strategy given (i.e. ``pivot=None``)
@@ -13325,18 +13356,18 @@ cdef class Matrix(Matrix1):
         absolute value must be handled carefully.  This tests that
         situation in the case of cyclotomic fields.  ::
 
-            sage: C = SymmetricGroup(5).character_table()
-            sage: C.base_ring()
+            sage: C = SymmetricGroup(5).character_table()                       # optional - sage.groups, sage.rings.number_field
+            sage: C.base_ring()                                                 # optional - sage.groups, sage.rings.number_field
             Cyclotomic Field of order 1 and degree 1
-            sage: P, L, U = C.LU(pivot='partial')
-            sage: C == P*L*U
+            sage: P, L, U = C.LU(pivot='partial')                               # optional - sage.groups, sage.rings.number_field
+            sage: C == P*L*U                                                    # optional - sage.groups, sage.rings.number_field
             True
 
         Check that :trac:`32736` is solved::
 
-            sage: M = Matrix(FiniteField(11), [[2,3],[4,5]])
-            sage: P, L, U = M.LU()
-            sage: P.base_ring()
+            sage: M = Matrix(FiniteField(11), [[2,3],[4,5]])                    # optional - sage.libs.pari
+            sage: P, L, U = M.LU()                                              # optional - sage.libs.pari
+            sage: P.base_ring()                                                 # optional - sage.libs.pari
             Finite Field of size 11
         """
         if pivot not in [None, 'partial', 'nonzero']:
@@ -13788,23 +13819,23 @@ cdef class Matrix(Matrix1):
         with rational real and imaginary parts.  As theory
         predicts, the diagonal entries will be real numbers.  ::
 
-            sage: C.<I> = QuadraticField(-1)
-            sage: B = matrix(C, [[      2, 4 - 2*I, 2 + 2*I],
+            sage: C.<I> = QuadraticField(-1)                                    # optional - sage.rings.number_field
+            sage: B = matrix(C, [[      2, 4 - 2*I, 2 + 2*I],                   # optional - sage.rings.number_field
             ....:                [4 + 2*I,       8,    10*I],
             ....:                [2 - 2*I,   -10*I,      -3]])
-            sage: B.is_hermitian()
+            sage: B.is_hermitian()                                              # optional - sage.rings.number_field
             True
-            sage: L, d = B.indefinite_factorization(algorithm='hermitian')
-            sage: D = diagonal_matrix(d)
-            sage: L
+            sage: L, d = B.indefinite_factorization(algorithm='hermitian')      # optional - sage.rings.number_field
+            sage: D = diagonal_matrix(d)                                        # optional - sage.rings.number_field
+            sage: L                                                             # optional - sage.rings.number_field
             [      1       0       0]
             [  I + 2       1       0]
             [ -I + 1 2*I + 1       1]
-            sage: D
+            sage: D                                                             # optional - sage.rings.number_field
             [ 2  0  0]
             [ 0 -2  0]
             [ 0  0  3]
-            sage: B == L*D*L.conjugate_transpose()
+            sage: B == L*D*L.conjugate_transpose()                              # optional - sage.rings.number_field
             True
 
         If a leading principal submatrix has zero determinant, this
@@ -13830,27 +13861,27 @@ cdef class Matrix(Matrix1):
         may be factored.  This provides a reasonable alternative
         to the Cholesky decomposition.  ::
 
-            sage: F.<a> = FiniteField(5^3)
-            sage: A = matrix(F,
+            sage: F.<a> = FiniteField(5^3)                                                          # optional - sage.libs.pari
+            sage: A = matrix(F,                                                                     # optional - sage.libs.pari
             ....:     [[      a^2 + 2*a, 4*a^2 + 3*a + 4,       3*a^2 + a, 2*a^2 + 2*a + 1],
             ....:      [4*a^2 + 3*a + 4,       4*a^2 + 2,             3*a, 2*a^2 + 4*a + 2],
             ....:      [      3*a^2 + a,             3*a,       3*a^2 + 2, 3*a^2 + 2*a + 3],
             ....:      [2*a^2 + 2*a + 1, 2*a^2 + 4*a + 2, 3*a^2 + 2*a + 3, 3*a^2 + 2*a + 4]])
-            sage: A.is_symmetric()
+            sage: A.is_symmetric()                                                                  # optional - sage.libs.pari
             True
-            sage: L, d = A.indefinite_factorization()
-            sage: D = diagonal_matrix(d)
+            sage: L, d = A.indefinite_factorization()                                               # optional - sage.libs.pari
+            sage: D = diagonal_matrix(d)                                                            # optional - sage.libs.pari
             sage: L
             [              1               0               0               0]
             [4*a^2 + 4*a + 3               1               0               0]
             [              3   4*a^2 + a + 2               1               0]
             [      4*a^2 + 4 2*a^2 + 3*a + 3 2*a^2 + 3*a + 1               1]
-            sage: D
+            sage: D                                                                                 # optional - sage.libs.pari
             [      a^2 + 2*a               0               0               0]
             [              0 2*a^2 + 2*a + 4               0               0]
             [              0               0 3*a^2 + 4*a + 3               0]
             [              0               0               0       a^2 + 3*a]
-            sage: A == L*D*L.transpose()
+            sage: A == L*D*L.transpose()                                                            # optional - sage.libs.pari
             True
 
         This works correctly for the 0x0 matrix::
@@ -14350,11 +14381,11 @@ cdef class Matrix(Matrix1):
         An indefinite Hermitian matrix that happens to have a
         classical factorization::
 
-            sage: F.<I> = QuadraticField(-1)
-            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],
+            sage: F.<I> = QuadraticField(-1)                                    # optional - sage.rings.number_field
+            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],                   # optional - sage.rings.number_field
             ....:                [4 + 2*I,       8,    10*I],
             ....:                [2 - 2*I,   -10*I,      -3]])
-            sage: A.block_ldlt(classical=True)[1:]
+            sage: A.block_ldlt(classical=True)[1:]                              # optional - sage.rings.number_field
             (
                                        [ 2| 0| 0]
                                        [--+--+--]
@@ -14386,11 +14417,11 @@ cdef class Matrix(Matrix1):
         correctly::
 
             sage: n = ZZ.random_element(6)
-            sage: F = QuadraticField(-1, 'I')
-            sage: A = matrix.random(F, n)
-            sage: A = A + A.conjugate_transpose()
-            sage: P,L,D = A.block_ldlt()
-            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()
+            sage: F = QuadraticField(-1, 'I')                                   # optional - sage.rings.number_field
+            sage: A = matrix.random(F, n)                                       # optional - sage.rings.number_field
+            sage: A = A + A.conjugate_transpose()                               # optional - sage.rings.number_field
+            sage: P,L,D = A.block_ldlt()                                        # optional - sage.rings.number_field
+            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()    # optional - sage.rings.number_field
             True
 
         Ensure that a "random" complex positive-semidefinite matrix is
@@ -14398,13 +14429,13 @@ cdef class Matrix(Matrix1):
         is in fact diagonal::
 
             sage: n = ZZ.random_element(6)
-            sage: F = QuadraticField(-1, 'I')
-            sage: A = matrix.random(F, n)
-            sage: A = A*A.conjugate_transpose()
-            sage: P,L,D = A.block_ldlt()
-            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()
+            sage: F = QuadraticField(-1, 'I')                                   # optional - sage.rings.number_field
+            sage: A = matrix.random(F, n)                                       # optional - sage.rings.number_field
+            sage: A = A*A.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: P,L,D = A.block_ldlt()                                        # optional - sage.rings.number_field
+            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()    # optional - sage.rings.number_field
             True
-            sage: diagonal_matrix(D.diagonal()) == D
+            sage: diagonal_matrix(D.diagonal()) == D                            # optional - sage.rings.number_field
             True
 
         The factorization should be a no-op on diagonal matrices::
@@ -14607,9 +14638,10 @@ cdef class Matrix(Matrix1):
         a Hermitian matrix (for a non-Hermitian matrix, both "obviously"
         return ``False``)::
 
-            sage: F = QuadraticField(-1, 'I')
+            sage: rings = [ZZ, QQ, RDF, CDF]
+            sage: rings.append(QuadraticField(-1, 'I'))                         # optional - sage.rings.number_field
             sage: from sage.misc.prandom import choice
-            sage: ring = choice([ZZ, QQ, F, RDF, CDF])
+            sage: ring = choice(rings)
             sage: A = matrix.random(ring, 10); A = A + A.conjugate_transpose()
             sage: def is_positive_semidefinite_naive(A):
             ....:     if A.nrows() == 0:
@@ -14625,9 +14657,9 @@ cdef class Matrix(Matrix1):
         either real numbers, complex numbers, or symbolics; otherwise
         we risk returning nonsensical results::
 
-            sage: F = FiniteField(5^2)
-            sage: A = matrix.identity(F, 1)
-            sage: A.is_positive_semidefinite()
+            sage: F = FiniteField(5^2)                                          # optional - sage.libs.pari
+            sage: A = matrix.identity(F, 1)                                     # optional - sage.libs.pari
+            sage: A.is_positive_semidefinite()                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: Could not see Finite Field in z2 of size 5^2
@@ -14777,17 +14809,17 @@ cdef class Matrix(Matrix1):
         numbers, complex numbers, or symbolic ring, then this routine
         will fail since comparison to zero is meaningless::
 
-            sage: F.<a> = FiniteField(5^3)
-            sage: a.conjugate()
+            sage: F.<a> = FiniteField(5^3)                                                          # optional - sage.libs.pari
+            sage: a.conjugate()                                                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: cardinality of the field must be a square number
-            sage: A = matrix(F,
+            sage: A = matrix(F,                                                                     # optional - sage.libs.pari
             ....:     [[      a^2 + 2*a, 4*a^2 + 3*a + 4,       3*a^2 + a, 2*a^2 + 2*a + 1],
             ....:      [4*a^2 + 3*a + 4,       4*a^2 + 2,             3*a, 2*a^2 + 4*a + 2],
             ....:      [      3*a^2 + a,             3*a,       3*a^2 + 2, 3*a^2 + 2*a + 3],
             ....:      [2*a^2 + 2*a + 1, 2*a^2 + 4*a + 2, 3*a^2 + 2*a + 3, 3*a^2 + 2*a + 4]])
-            sage: A.is_positive_definite()
+            sage: A.is_positive_definite()                                                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: Could not see Finite Field in a of size 5^3 as a subring
@@ -15095,31 +15127,31 @@ cdef class Matrix(Matrix1):
         (Matrices over quadratic number fields are another
         class of examples.) ::
 
-            sage: C = CyclotomicField(5)
-            sage: a = C.gen(); a
+            sage: C = CyclotomicField(5)                                        # optional - sage.rings.number_field
+            sage: a = C.gen(); a                                                # optional - sage.rings.number_field
             zeta5
-            sage: CC(a)
+            sage: CC(a)                                                         # optional - sage.rings.number_field
             0.309016994374947 + 0.951056516295154*I
-            sage: M = matrix(C, 1, 2, [a^2, a+a^3])
-            sage: M.conjugate_transpose()
+            sage: M = matrix(C, 1, 2, [a^2, a+a^3])                             # optional - sage.rings.number_field
+            sage: M.conjugate_transpose()                                       # optional - sage.rings.number_field
             [             zeta5^3]
             [-zeta5^3 - zeta5 - 1]
 
         Furthermore, this method can be applied to matrices over
         quadratic extensions of finite fields::
 
-            sage: F.<a> = GF(9,'a')
-            sage: N = matrix(F, 2, [0,a,-a,1]); N
+            sage: F.<a> = GF(9,'a')                                             # optional - sage.libs.pari
+            sage: N = matrix(F, 2, [0,a,-a,1]); N                               # optional - sage.libs.pari
             [  0   a]
             [2*a   1]
-            sage: N.conjugate_transpose()
+            sage: N.conjugate_transpose()                                       # optional - sage.libs.pari
             [      0   a + 2]
             [2*a + 1       1]
 
         Conjugation does not make sense over rings not containing complex
         numbers or finite fields which are not a quadratic extension::
 
-            sage: N = matrix(GF(5), 2, [0,1,2,3])
+            sage: N = matrix(GF(5), 2, [0,1,2,3])                               # optional - sage.libs.pari
             sage: N.conjugate_transpose()
             Traceback (most recent call last):
             ...
@@ -15138,8 +15170,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a matrix whose entries are coercible into
-           CDF
+        -  ``self`` - a matrix whose entries are coercible into ``CDF``
 
         -  ``p`` - one of the following options:
 
@@ -15345,7 +15376,7 @@ cdef class Matrix(Matrix1):
             sage: A.plot()
             Graphics object consisting of 1 graphics primitive
 
-        Here we make a random matrix over RR and use cmap='hsv' to color
+        Here we make a random matrix over ``RR`` and use ``cmap='hsv'`` to color
         the matrix elements different RGB colors (see documentation for
         ``matrix_plot`` for more information on cmaps)::
 
@@ -15355,8 +15386,8 @@ cdef class Matrix(Matrix1):
 
         Another random plot, but over GF(389)::
 
-            sage: A = random_matrix(GF(389), 10)
-            sage: A.plot(cmap='Oranges')
+            sage: A = random_matrix(GF(389), 10)                                # optional - sage.libs.pari
+            sage: A.plot(cmap='Oranges')                                        # optional - sage.libs.pari
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.matrix_plot import matrix_plot
@@ -15580,12 +15611,13 @@ cdef class Matrix(Matrix1):
 
         An example over a field::
 
-            sage: m = matrix( GF(17), 3, 3, [11,5,1,3,6,8,1,16,0]); d,u,v = m.smith_form()
-            sage: d
+            sage: m = matrix(GF(17), 3, 3, [11,5,1,3,6,8,1,16,0])               # optional - sage.libs.pari
+            sage: d,u,v = m.smith_form()                                        # optional - sage.libs.pari
+            sage: d                                                             # optional - sage.libs.pari
             [1 0 0]
             [0 1 0]
             [0 0 0]
-            sage: u*m*v == d
+            sage: u*m*v == d                                                    # optional - sage.libs.pari
             True
 
         When the base ring has a ``ring_of_integers`` method and supports denominators,
@@ -15857,31 +15889,31 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: M = FunctionField(GF(7),'x').maximal_order()
-            sage: K.<x> = FunctionField(GF(7)); M = K.maximal_order()
-            sage: A = matrix(M, 2, 3, [x, 1, 2*x, x, 1+x, 2])
-            sage: A.hermite_form()
+            sage: M = FunctionField(GF(7), 'x').maximal_order()                                     # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(GF(7)); M = K.maximal_order()                               # optional - sage.libs.pari
+            sage: A = matrix(M, 2, 3, [x, 1, 2*x, x, 1+x, 2])                                       # optional - sage.libs.pari
+            sage: A.hermite_form()                                                                  # optional - sage.libs.pari
             [      x       1     2*x]
             [      0       x 5*x + 2]
-            sage: A.hermite_form(transformation=True)
+            sage: A.hermite_form(transformation=True)                                               # optional - sage.libs.pari
             (
             [      x       1     2*x]  [1 0]
             [      0       x 5*x + 2], [6 1]
             )
-            sage: A = matrix(M, 2, 3, [x, 1, 2*x, 2*x, 2, 4*x])
-            sage: A.hermite_form(transformation=True, include_zero_rows=False)
+            sage: A = matrix(M, 2, 3, [x, 1, 2*x, 2*x, 2, 4*x])                                     # optional - sage.libs.pari
+            sage: A.hermite_form(transformation=True, include_zero_rows=False)                      # optional - sage.libs.pari
             ([  x   1 2*x], [1 0])
-            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=True); H, U
+            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=True); H, U          # optional - sage.libs.pari
             (
             [  x   1 2*x]  [1 0]
             [  0   0   0], [5 1]
             )
-            sage: U*A == H
+            sage: U*A == H                                                                          # optional - sage.libs.pari
             True
-            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=False)
-            sage: U*A
+            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=False)               # optional - sage.libs.pari
+            sage: U*A                                                                               # optional - sage.libs.pari
             [  x   1 2*x]
-            sage: U*A == H
+            sage: U*A == H                                                                          # optional - sage.libs.pari
             True
         """
         left, H, pivots = self._echelon_form_PID()
@@ -15955,11 +15987,11 @@ cdef class Matrix(Matrix1):
 
         We verify that :trac:`9053` is resolved::
 
-            sage: R.<x> = GF(7)[]
-            sage: A = R^3
-            sage: L = A.span([x*A.0 + (x^3 + 1)*A.1, x*A.2])
-            sage: M = A.span([x*L.0])
-            sage: M.0 in L
+            sage: R.<x> = GF(7)[]                                                   # optional - sage.libs.pari
+            sage: A = R^3                                                           # optional - sage.libs.pari
+            sage: L = A.span([x*A.0 + (x^3 + 1)*A.1, x*A.2])                        # optional - sage.libs.pari
+            sage: M = A.span([x*L.0])                                               # optional - sage.libs.pari
+            sage: M.0 in L                                                          # optional - sage.libs.pari
             True
 
         """
@@ -16450,31 +16482,31 @@ cdef class Matrix(Matrix1):
         while the eigenvalues may lie outside the field, this does not impede
         the computation of the form.  ::
 
-            sage: F.<a> = GF(5^4)
-            sage: A = matrix(F, [[     a,      0,  0, a + 3],
+            sage: F.<a> = GF(5^4)                                                                           # optional - sage.libs.pari
+            sage: A = matrix(F, [[     a,      0,  0, a + 3],                                               # optional - sage.libs.pari
             ....:                [     0,a^2 + 1,  0,     0],
             ....:                [     0,      0,a^3,     0],
             ....:                [a^2 +4 ,     0,   0,a + 2]])
-            sage: A.zigzag_form()
+            sage: A.zigzag_form()                                                                           # optional - sage.libs.pari
             [                    0 a^3 + 2*a^2 + 2*a + 2|                    0|                    0]
             [                    1               2*a + 2|                    0|                    0]
             [-------------------------------------------+---------------------+---------------------]
             [                    0                     0|                  a^3|                    0]
             [-------------------------------------------+---------------------+---------------------]
             [                    0                     0|                    0|              a^2 + 1]
-            sage: A.eigenvalues()
+            sage: A.eigenvalues()                                                                           # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
 
         Subdivisions are optional.  ::
 
-            sage: F.<a> = GF(5^4)
-            sage: A = matrix(F, [[     a,      0,  0, a + 3],
+            sage: F.<a> = GF(5^4)                                                                           # optional - sage.libs.pari
+            sage: A = matrix(F, [[     a,      0,  0, a + 3],                                               # optional - sage.libs.pari
             ....:                [     0,a^2 + 1,  0,     0],
             ....:                [     0,      0,a^3,     0],
             ....:                [a^2 +4 ,     0,   0,a + 2]])
-            sage: A.zigzag_form(subdivide=False)
+            sage: A.zigzag_form(subdivide=False)                                                            # optional - sage.libs.pari
             [                    0 a^3 + 2*a^2 + 2*a + 2                     0                     0]
             [                    1               2*a + 2                     0                     0]
             [                    0                     0                   a^3                     0]
@@ -16785,8 +16817,8 @@ cdef class Matrix(Matrix1):
         Rational form may be computed over any field.  The matrix below is
         an example where the eigenvalues lie outside the field.  ::
 
-            sage: F.<a> = FiniteField(7^2)
-            sage: A = matrix(F,
+            sage: F.<a> = FiniteField(7^2)                                                                                  # optional - sage.libs.pari
+            sage: A = matrix(F,                                                                                             # optional - sage.libs.pari
             ....: [[5*a + 3, 4*a + 1, 6*a + 2, 2*a + 5,       6, 4*a + 5, 4*a + 5,       5,   a + 6,      5,  4*a + 4],
             ....:  [6*a + 3, 2*a + 4,       0,       6, 5*a + 5,     2*a, 5*a + 1,       1, 5*a + 2,     4*a, 5*a + 6],
             ....:  [3*a + 1, 6*a + 6,   a + 6,       2,       0, 3*a + 6, 5*a + 4, 5*a + 6, 5*a + 2,       3, 4*a + 2],
@@ -16798,7 +16830,7 @@ cdef class Matrix(Matrix1):
             ....:  [3*a + 5, 6*a + 2,     4*a,   a + 5,       0,     5*a, 6*a + 5, 2*a + 1, 3*a + 1, 3*a + 5, 4*a + 2],
             ....:  [3*a + 2,   a + 3, 3*a + 6,       a, 3*a + 5, 5*a + 1, 3*a + 2,   a + 3,   a + 2, 6*a + 1, 3*a + 3],
             ....:  [6*a + 6, 5*a + 1,     4*a,       2, 5*a + 5, 3*a + 5, 3*a + 1,     2*a,     2*a, 2*a + 4, 4*a + 2]])
-            sage: A.rational_form()
+            sage: A.rational_form()                                                                                         # optional - sage.libs.pari
             [  a + 2|      0       0       0|      0       0       0       0       0       0       0]
             [-------+-----------------------+-------------------------------------------------------]
             [      0|      0       0   a + 6|      0       0       0       0       0       0       0]
@@ -16812,18 +16844,18 @@ cdef class Matrix(Matrix1):
             [      0|      0       0       0|      0       0       0       1       0       0   a + 6]
             [      0|      0       0       0|      0       0       0       0       1       0 2*a + 1]
             [      0|      0       0       0|      0       0       0       0       0       1 2*a + 1]
-            sage: invariants = A.rational_form(format='invariants')
-            sage: invariants
+            sage: invariants = A.rational_form(format='invariants')                                                         # optional - sage.libs.pari
+            sage: invariants                                                                                                # optional - sage.libs.pari
             [[6*a + 5, 1], [6*a + 1, a + 3, a + 3, 1], [5*a, a + 4, a + 6, 6*a + 5, 6*a + 1, 5*a + 6, 5*a + 6, 1]]
-            sage: R.<x> = F[]
-            sage: polys = [R(p) for p in invariants]
-            sage: [p.factor() for p in polys]
+            sage: R.<x> = F[]                                                                                               # optional - sage.libs.pari
+            sage: polys = [R(p) for p in invariants]                                                                        # optional - sage.libs.pari
+            sage: [p.factor() for p in polys]                                                                               # optional - sage.libs.pari
             [x + 6*a + 5, (x + 6*a + 5) * (x^2 + (2*a + 5)*x + 5*a), (x + 6*a + 5) * (x^2 + (2*a + 5)*x + 5*a)^3]
-            sage: polys[-1] == A.minimal_polynomial()
+            sage: polys[-1] == A.minimal_polynomial()                                                                       # optional - sage.libs.pari
             True
-            sage: prod(polys) == A.characteristic_polynomial()
+            sage: prod(polys) == A.characteristic_polynomial()                                                              # optional - sage.libs.pari
             True
-            sage: A.eigenvalues()
+            sage: A.eigenvalues()                                                                                           # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
@@ -17732,10 +17764,10 @@ def _smith_diag(d, transformation=True):
         )
         sage: D == U*A*V
         True
-        sage: m = matrix(GF(7),2, [3,0,0,6]); d,u,v = _smith_diag(m); d
+        sage: m = matrix(GF(7), 2, [3,0,0,6]); d,u,v = _smith_diag(m); d        # optional - sage.libs.pari
         [1 0]
         [0 1]
-        sage: u*m*v == d
+        sage: u*m*v == d                                                        # optional - sage.libs.pari
         True
     """
 
