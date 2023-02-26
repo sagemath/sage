@@ -75,6 +75,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.categories.groups import Groups
 from sage.groups.free_group import FreeGroup, is_FreeGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.combinat.permutation import Permutations
@@ -1608,13 +1609,16 @@ class Braid(FiniteTypeArtinGroupElement):
         b = leastcommonmultiple(self, other)
         return B._element_from_libbraiding(b)
 
-    def conjugating_braid(self, other):
+    def conjugating_braid(self, other, short = False):
         r"""
         Return a conjugating braid, if it exists.
 
         INPUT:
 
         - ``other`` -- the other braid to look for conjugating braid
+        
+        - ``short'' -- a boolean variable (default ``False``) to get a 
+          shorter conugating braid
 
         EXAMPLES::
 
@@ -1622,7 +1626,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a = B([2, 2, -1, -1])
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
-            sage: d1 = a.conjugating_braid(c)
+            sage: d1 = a.conjugating_braid(c, short = True)
             sage: print (len(d1.Tietze()))
             7
             sage: d1 * c / d1 == a
@@ -1643,6 +1647,8 @@ class Braid(FiniteTypeArtinGroupElement):
             B = self.parent()
             n = B.strands()
             b0 = B._element_from_libbraiding(l)
+            if not short:
+                return b0
             L = b0.left_normal_form()
             D1 = prod(L[1: ])
             k = 2 * L[0].exponent_sum() / n / (n - 1)
@@ -1672,6 +1678,71 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         l = conjugatingbraid(self, other)
         return bool(l)
+    
+    def pure_conjugating_braid(self, other, short = False):
+        r"""
+        Return a pure conjugating braid, if it exists.
+
+        INPUT:
+
+        - ``other`` -- the other braid to look for conjugating braid
+        
+        - ``short'' -- a boolean variable (default ``False``) to get a 
+          shorter conugating braid
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: a = B([1, 2, 3])
+            sage: b = B([3, 2,])
+            sage: c = b ^ 12 * a / b ^ 12
+            sage: d1 = a.conjugating_braid(c, short = True)
+            sage: print (len(d1.Tietze()))
+            30
+            sage: print (d1.permutation())
+            [3, 4, 1, 2]
+            sage: d1 * c / d1 == a
+            True
+            sage: d1 * a / d1 == c
+            False
+            sage: d2 = a.pure_conjugating_braid(c, short = True)
+            sage: print (len(d2.Tietze()))
+            24
+            sage: print (d2.permutation())
+            [1, 2, 3, 4]
+            sage: d2 * c / d2 == a
+            True            
+            sage: print (d2)
+            (s0*s1*s2^2*s1*s0)^4
+        """        
+        p1 = self.permutation()
+        p2 = other.permutation()
+        if p1 != p2:
+            return None
+        l = conjugatingbraid(self, other)
+        if not l:
+            return None
+        else:
+            B = self.parent()
+            n = B.strands()
+            G = SymmetricGroup(n)
+            b0 = self.conjugating_braid(other)
+            p3 = G(b0.permutation().inverse())
+            if p3.order() > 1:
+                LB = self.centralizer()
+                LP = [G(_.permutation()) for _ in LB]
+                P = p3.word_problem(LP, display = False, as_list = True)
+                b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
+                b0 = b1 * b0
+            if not short:
+                return b0
+            L = b0.left_normal_form()
+            D1 = prod(L[1: ])
+            k = 2 * L[0].exponent_sum() / n / (n - 1)
+            k = int(k % 2)
+            D0 = B.delta()
+            D0a = D0 ** k
+            return D0a * D1
 
     def ultra_summit_set(self):
         """
