@@ -729,26 +729,30 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f = -5/t^(10) + 1/3 + t + t^2 - 10/3*t^3; f
             -5*t^-10 + 1/3 + t + t^2 - 10/3*t^3
 
-        Slicing is deprecated::
+        Slicing can be used to truncate Laurent polynomials::
 
-            sage: f[-10:2]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            -5*t^-10 + 1/3 + t
-            sage: f[0:]
-            1/3 + t + t^2 - 10/3*t^3
             sage: f[:3]
             -5*t^-10 + 1/3 + t + t^2
+
+        Any other kind of slicing is an error, see :trac:`18940`::
+
+            sage: f[-10:2]
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[-14:5:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
         """
         cdef LaurentPolynomial_univariate ret
         if isinstance(i, slice):
-            start = i.start - self.__n if i.start is not None else 0
-            stop = i.stop - self.__n if i.stop is not None else self.__u.degree() + 1
-            f = self.__u[start:stop:i.step]  # deprecation(18940)
+            start, stop, step = i.start, i.stop, i.step
+            if start is not None or step is not None:
+                self.__u[start:stop:step]  # error out, see issue #18940
+            stop = stop - self.__n if stop is not None else self.__u.degree() + 1
+            f = self.__u[:stop]
             ret = <LaurentPolynomial_univariate> self._new_c()
             ret.__u = f
             ret.__n = self.__n
