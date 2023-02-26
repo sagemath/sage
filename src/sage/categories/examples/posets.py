@@ -10,7 +10,7 @@ Examples of posets
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import Posets
+from sage.categories.posets import Posets
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.set import Set, Set_object_enumerated
 from sage.sets.positive_integers import PositiveIntegers

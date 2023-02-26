@@ -352,7 +352,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
             break
         elif paritype == t_PADIC:
             if x._valp() < 0:
-                raise TypeError("Cannot convert p-adic with negative valuation to an integer")
+                raise TypeError("cannot convert p-adic with negative valuation to an integer")
             # Lifting a PADIC yields an integer
             x = x.lift()
             break
