@@ -3229,3 +3229,66 @@ def rshcd_from_prime_power_and_conference_matrix(n):
             [ e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II),         H34],
             [-e_t_f.T, (e.T).tensor_product(W+II), H34.T,      -A_t_W+JJ.tensor_product(II)]])
         return H
+
+
+def are_amicable_hadamard_matrices(M, N, verbose=False):
+    r"""Chek if `M` and `N` are amicable Hadamard matrices.
+
+    Two matrices `M` and `N` of order `n` are called amicable if they
+    satisfy the following conditions (see [Seb2017]_):
+
+    * `M` is a skew Hadamard matrix
+    * `N` is a symmetric Hadamard matrix
+    * `MN^T = NM^T`
+
+    INPUT:
+
+    - ``M`` -- a sqaure matrix.
+
+    - ``N`` -- a square matrix.
+
+    - ``verbose`` (boolean) -- Default False. Whether to be verbose when the
+        matrices are not amicable Hadamard matrices.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import are_amicable_hadamard_matrices
+        sage: M = matrix([[1, 1], [-1, 1]])
+        sage: N = matrix([[1, 1], [1, -1]])
+        sage: are_amicable_hadamard_matrices(M, N)
+        True
+
+    If ``verbose`` is true, the function will be verbose when returning False:
+
+        sage: N = matrix([[1, 1], [1, 1]])
+        sage: are_amicable_hadamard_matrices(M, N, verbose=True)
+        The second matrix is not Hadamard
+        False
+
+    TESTS::
+
+        sage: N = matrix.hadamard(12)
+        sage: are_amicable_hadamard_matrices(M, N)
+        False
+    """
+    if not is_skew_hadamard_matrix(M):
+        if verbose:
+            print('The first matrix is not skew Hadamard')
+        return False
+
+    if not is_hadamard_matrix(N):
+        if verbose:
+            print('The second matrix is not Hadamard')
+        return False
+
+    if not N.is_symmetric():
+        if verbose:
+            print('The second matrix is not symmetric')
+        return False
+
+    if len(M[0]) != len(N[0]):
+        if verbose:
+            print('M*N.transpose() is not equal to N*M.transpose()')
+        return False
+
+    return True
