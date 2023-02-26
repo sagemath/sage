@@ -256,13 +256,13 @@ class LinearExtensionOfPoset(ClonableArray,
         r"""
         Return ``True`` if the linear extension is supergreedy.
 
-        A linear extension of a Poset `P` with elements `\{_1,x_2,...,x_t\}`
+        A linear extension of a poset `P` with elements `\{x_1,x_2,...,x_t\}`
         is *super greedy*, if it can be obtained using the following
-        algorithm: Choose `x_1` to be a minimal element of `P`;
+        algorithm: choose `x_1` to be a minimal element of `P`;
         suppose `X = \{x_1,...,x_i\}` have been chosen; let `M` be
-        the set of minimal elements of `P/X`. If there is an element
+        the set of minimal elements of `P\setminus X`. If there is an element
         of `M` which covers an element `x_j` in `X`, then let `x_{i+1}`
-        be one of these such that `j` is maximal; otherwise, choose `x_{i+1}
+        be one of these such that `j` is maximal; otherwise, choose `x_{i+1}`
         to be any element of `M`.
 
         Informally, a linear extension is supergreedy if it "always
