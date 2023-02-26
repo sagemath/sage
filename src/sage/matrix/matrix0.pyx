@@ -907,16 +907,18 @@ cdef class Matrix(sage.structure.element.Matrix):
         Check that submatrices with a specified implementation have the
         same implementation::
 
-            sage: M = MatrixSpace(GF(2), 3, 3, implementation='generic')
-            sage: m = M(range(9))
-            sage: type(m)
+            sage: M = MatrixSpace(GF(2), 3, 3, implementation='generic')        # optional - sage.libs.pari
+            sage: m = M(range(9))                                               # optional - sage.libs.pari
+            sage: type(m)                                                       # optional - sage.libs.pari
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-            sage: parent(m)
-            Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
-            sage: type(m[:2,:2])
+            sage: parent(m)                                                     # optional - sage.libs.pari
+            Full MatrixSpace of 3 by 3 dense matrices
+             over Finite Field of size 2 (using Matrix_generic_dense)
+            sage: type(m[:2,:2])                                                # optional - sage.libs.pari
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: parent(m[:2,:2])
-            Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
+            Full MatrixSpace of 2 by 2 dense matrices                           # optional - sage.libs.pari
+             over Finite Field of size 2 (using Matrix_generic_dense)
         """
         cdef list row_list
         cdef list col_list
@@ -1637,12 +1639,13 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A = Matrix(QQ, 2, 2, [1/2, 1/3, 1/3, 1/4])
             sage: A.parent()
              Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: A.change_ring(GF(25,'a'))
+            sage: A.change_ring(GF(25,'a'))                                     # optional - sage.libs.pari
             [3 2]
             [2 4]
-            sage: A.change_ring(GF(25,'a')).parent()
-             Full MatrixSpace of 2 by 2 dense matrices over Finite Field in a of size 5^2
-            sage: A.change_ring(ZZ)
+            sage: A.change_ring(GF(25,'a')).parent()                            # optional - sage.libs.pari
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Finite Field in a of size 5^2
+            sage: A.change_ring(ZZ)                                             # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: matrix has denominators so can...t change to ZZ
@@ -1653,7 +1656,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [1/2 1/3]
             [-------]
             [1/3 1/4]
-            sage: A.change_ring(GF(25,'a'))
+            sage: A.change_ring(GF(25,'a'))                                     # optional - sage.libs.pari
             [3 2]
             [---]
             [2 4]
@@ -3987,44 +3990,44 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],
+            sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],                # optional - sage.rings.number_field
             ....:                    [-3 - I,     -4*I,     -2],
             ....:                    [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A._is_hermitian(skew=False, tolerance=0)
+            sage: A._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             False
-            sage: B = A*A.conjugate_transpose()
-            sage: B._is_hermitian(skew=False, tolerance=0)
+            sage: B = A*A.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: B._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             True
 
         Sage has several fields besides the entire complex numbers
         where conjugation is non-trivial::
 
-            sage: F.<b> = QuadraticField(-7)
-            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
+            sage: F.<b> = QuadraticField(-7)                                    # optional - sage.rings.number_field
+            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],                  # optional - sage.rings.number_field
             ....:                [-2*b - 3, -3*b + 2,   -2*b],
             ....:                [   b + 1,        0,     -2]])
-            sage: C._is_hermitian(skew=False, tolerance=0)
+            sage: C._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             False
-            sage: C = C*C.conjugate_transpose()
-            sage: C._is_hermitian(skew=False, tolerance=0)
+            sage: C = C*C.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: C._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             True
 
         A matrix that is nearly Hermitian, but for a non-real
         diagonal entry::
 
-            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],
+            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],                     # optional - sage.rings.number_field
             ....:                    [  2+I,   3+I, 2-6*I],
             ....:                    [1-4*I, 2+6*I,     5]])
-            sage: A._is_hermitian(skew=False, tolerance=0)
+            sage: A._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             False
-            sage: A[1,1] = 132
-            sage: A._is_hermitian(skew=False, tolerance=0)
+            sage: A[1, 1] = 132                                                 # optional - sage.rings.number_field
+            sage: A._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             True
 
         Rectangular matrices are never Hermitian::
 
-            sage: A = matrix(QQbar, 3, 4)
-            sage: A._is_hermitian(skew=False, tolerance=0)
+            sage: A = matrix(QQbar, 3, 4)                                       # optional - sage.rings.number_field
+            sage: A._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             False
 
         A square, empty matrix is trivially Hermitian::
@@ -4034,10 +4037,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             True
 
         A matrix that is skew-Hermitian::
-            sage: A = matrix(QQbar, [[-I, 2+I], [-2+I, 0]])
-            sage: A._is_hermitian(skew=False, tolerance=0)
+
+            sage: A = matrix(QQbar, [[-I, 2+I], [-2+I, 0]])                     # optional - sage.rings.number_field
+            sage: A._is_hermitian(skew=False, tolerance=0)                      # optional - sage.rings.number_field
             False
-            sage: A._is_hermitian(skew=True, tolerance=0)
+            sage: A._is_hermitian(skew=True, tolerance=0)                       # optional - sage.rings.number_field
             True
         """
         key = ("_is_hermitian", skew, tolerance)
@@ -4129,43 +4133,43 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],
+            sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],                # optional - sage.rings.number_field
             ....:                    [-3 - I,     -4*I,     -2],
             ....:                    [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A.is_hermitian()
+            sage: A.is_hermitian()                                              # optional - sage.rings.number_field
             False
-            sage: B = A*A.conjugate_transpose()
-            sage: B.is_hermitian()
+            sage: B = A*A.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: B.is_hermitian()                                              # optional - sage.rings.number_field
             True
 
         Sage has several fields besides the entire complex numbers
         where conjugation is non-trivial. ::
 
-            sage: F.<b> = QuadraticField(-7)
-            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
+            sage: F.<b> = QuadraticField(-7)                                    # optional - sage.rings.number_field
+            sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],                  # optional - sage.rings.number_field
             ....:                [-2*b - 3, -3*b + 2,   -2*b],
             ....:                [   b + 1,        0,     -2]])
-            sage: C.is_hermitian()
+            sage: C.is_hermitian()                                              # optional - sage.rings.number_field
             False
-            sage: C = C*C.conjugate_transpose()
-            sage: C.is_hermitian()
+            sage: C = C*C.conjugate_transpose()                                 # optional - sage.rings.number_field
+            sage: C.is_hermitian()                                              # optional - sage.rings.number_field
             True
 
         A matrix that is nearly Hermitian, but for a non-real
         diagonal entry. ::
 
-            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],
+            sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],                     # optional - sage.rings.number_field
             ....:                    [  2+I,   3+I, 2-6*I],
             ....:                    [1-4*I, 2+6*I,     5]])
-            sage: A.is_hermitian()
+            sage: A.is_hermitian()                                              # optional - sage.rings.number_field
             False
-            sage: A[1,1] = 132
-            sage: A.is_hermitian()
+            sage: A[1, 1] = 132                                                 # optional - sage.rings.number_field
+            sage: A.is_hermitian()                                              # optional - sage.rings.number_field
             True
 
         Rectangular matrices are never Hermitian.  ::
 
-            sage: A = matrix(QQbar, 3, 4)
+            sage: A = matrix(QQbar, 3, 4)                                       # optional - sage.rings.number_field
             sage: A.is_hermitian()
             False
 
@@ -4204,27 +4208,27 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: A = matrix(QQbar, [[0, -1],
+            sage: A = matrix(QQbar, [[0, -1],                                   # optional - sage.rings.number_field
             ....:                    [1,  0]])
-            sage: A.is_skew_hermitian()
+            sage: A.is_skew_hermitian()                                         # optional - sage.rings.number_field
             True
 
         A matrix that is nearly skew-Hermitian, but for a non-real
         diagonal entry. ::
 
-            sage: A = matrix(QQbar, [[  -I, -1, 1-I],
+            sage: A = matrix(QQbar, [[  -I, -1, 1-I],                           # optional - sage.rings.number_field
             ....:                    [   1,  1,  -1],
             ....:                    [-1-I,  1,  -I]])
-            sage: A.is_skew_hermitian()
+            sage: A.is_skew_hermitian()                                         # optional - sage.rings.number_field
             False
-            sage: A[1,1] = -I
-            sage: A.is_skew_hermitian()
+            sage: A[1, 1] = -I                                                  # optional - sage.rings.number_field
+            sage: A.is_skew_hermitian()                                         # optional - sage.rings.number_field
             True
 
         Rectangular matrices are never skew-Hermitian. ::
 
-            sage: A = matrix(QQbar, 3, 4)
-            sage: A.is_skew_hermitian()
+            sage: A = matrix(QQbar, 3, 4)                                       # optional - sage.rings.number_field
+            sage: A.is_skew_hermitian()                                         # optional - sage.rings.number_field
             False
 
         A square, empty matrix is trivially Hermitian. ::
@@ -4627,8 +4631,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(GF(7),5,range(25))
-            sage: m.rank()
+            sage: m = matrix(GF(7), 5, range(25))                               # optional - sage.libs.pari
+            sage: m.rank()                                                      # optional - sage.libs.pari
             2
 
         Rank is not implemented over the integers modulo a composite yet.::
@@ -4644,10 +4648,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         We should be able to compute the rank of a matrix whose
         entries are polynomials over a finite field (:trac:`5014`)::
 
-            sage: P.<x> = PolynomialRing(GF(17))
-            sage: m = matrix(P, [ [ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],
-            ....:                 [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16] ])
-            sage: m.rank()
+            sage: P.<x> = PolynomialRing(GF(17))                                # optional - sage.libs.pari
+            sage: m = matrix(P, [[ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],        # optional - sage.libs.pari
+            ....:                [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16]])
+            sage: m.rank()                                                      # optional - sage.libs.pari
             2
         """
         x = self.fetch('rank')
@@ -4879,21 +4883,21 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Over finite fields::
 
-            sage: A = matrix(GF(59),3,[10,56,39,53,56,33,58,24,55])
-            sage: A.multiplicative_order()
+            sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])           # optional - sage.libs.pari
+            sage: A.multiplicative_order()                                      # optional - sage.libs.pari
             580
-            sage: (A^580).is_one()
+            sage: (A^580).is_one()                                              # optional - sage.libs.pari
             True
 
-            sage: B = matrix(GF(10007^3,'b'),0)
-            sage: B.multiplicative_order()
+            sage: B = matrix(GF(10007^3, 'b'), 0)                               # optional - sage.libs.pari
+            sage: B.multiplicative_order()                                      # optional - sage.libs.pari
             1
 
-            sage: M = MatrixSpace(GF(11^2,'e'),5)
-            sage: E = M.random_element()
-            sage: while E.det() == 0:
+            sage: M = MatrixSpace(GF(11^2, 'e'), 5)                             # optional - sage.libs.pari
+            sage: E = M.random_element()                                        # optional - sage.libs.pari
+            sage: while E.det() == 0:                                           # optional - sage.libs.pari
             ....:     E = M.random_element()
-            sage: (E^E.multiplicative_order()).is_one()
+            sage: (E^E.multiplicative_order()).is_one()                         # optional - sage.libs.pari
             True
 
         Over `\ZZ`::
@@ -4934,8 +4938,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS::
 
-            sage: C = matrix(GF(2^10,'c'),2,3,[1]*6)
-            sage: C.multiplicative_order()
+            sage: C = matrix(GF(2^10, 'c'), 2, 3, [1]*6)                        # optional - sage.libs.pari
+            sage: C.multiplicative_order()                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: self must be invertible ...
@@ -5387,43 +5391,45 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLE of matrix times matrix over different base rings::
 
-            sage: a = matrix(ZZ,2,2,range(4))
-            sage: b = matrix(GF(7),2,2,range(4))
-            sage: c = matrix(QQ,2,2,range(4))
-            sage: d = a*b; d
+            sage: a = matrix(ZZ, 2, 2, range(4))
+            sage: b = matrix(GF(7), 2, 2, range(4))                                     # optional - sage.libs.pari
+            sage: c = matrix(QQ, 2, 2, range(4))
+            sage: d = a * b; d                                                          # optional - sage.libs.pari
             [2 3]
             [6 4]
-            sage: parent(d)
+            sage: parent(d)                                                             # optional - sage.libs.pari
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
-            sage: parent(b*a)
+            sage: parent(b * a)                                                         # optional - sage.libs.pari
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
-            sage: d = a*c; d
+            sage: d = a * c; d
             [ 2  3]
             [ 6 11]
             sage: parent(d)
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: d = b+c
+            sage: d = b + c                                                             # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7' and 'Full MatrixSpace of 2 by 2 dense matrices over Rational Field'
-            sage: d = b+c.change_ring(GF(7)); d
+            TypeError: unsupported operand parent(s) for +:
+             'Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Rational Field'
+            sage: d = b + c.change_ring(GF(7)); d                                       # optional - sage.libs.pari
             [0 2]
             [4 6]
 
         EXAMPLE of matrix times matrix where one matrix is sparse and the
         other is dense (in such mixed cases, the result is always dense)::
 
-            sage: a = matrix(ZZ,2,2,range(4),sparse=True)
-            sage: b = matrix(GF(7),2,2,range(4),sparse=False)
-            sage: c = a*b; c
+            sage: a = matrix(ZZ, 2, 2, range(4), sparse=True)
+            sage: b = matrix(GF(7), 2, 2, range(4), sparse=False)                       # optional - sage.libs.pari
+            sage: c = a * b; c                                                          # optional - sage.libs.pari
             [2 3]
             [6 4]
-            sage: parent(c)
+            sage: parent(c)                                                             # optional - sage.libs.pari
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
-            sage: c = b*a; c
+            sage: c = b * a; c                                                          # optional - sage.libs.pari
             [2 3]
             [6 4]
-            sage: parent(c)
+            sage: parent(c)                                                             # optional - sage.libs.pari
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
 
         EXAMPLE of matrix multiplication over a noncommutative base ring::

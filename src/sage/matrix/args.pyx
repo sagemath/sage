@@ -757,10 +757,10 @@ cdef class MatrixArgs:
 
         ::
 
-            sage: ma = MatrixArgs(GF(2), 2, 3, L)
-            sage: ma.dict(convert=False)
+            sage: ma = MatrixArgs(GF(2), 2, 3, L)                               # optional - sage.libs.pari
+            sage: ma.dict(convert=False)                                        # optional - sage.libs.pari
             {(0, 1): 1, (0, 2): 2, (1, 0): 3, (1, 1): 4, (1, 2): 5}
-            sage: ma.dict()
+            sage: ma.dict()                                                     # optional - sage.libs.pari
             {(0, 1): 1, (1, 0): 1, (1, 2): 1}
         """
         self.finalize()
@@ -1196,21 +1196,21 @@ cdef class MatrixArgs:
 
         Check that :trac:`26655` is fixed::
 
-            sage: F.<a> = GF(9)
-            sage: M = MatrixSpace(F, 2, 2)
-            sage: A = M([[1, a], [0, 1]])
-            sage: M(pari(A))
+            sage: F.<a> = GF(9)                                                 # optional - sage.libs.pari
+            sage: M = MatrixSpace(F, 2, 2)                                      # optional - sage.libs.pari
+            sage: A = M([[1, a], [0, 1]])                                       # optional - sage.libs.pari
+            sage: M(pari(A))                                                    # optional - sage.libs.pari
             [1 a]
             [0 1]
 
         Constructing a matrix from a PARI ``t_VEC`` or ``t_COL`` with
         ``t_VEC`` or ``t_COL`` elements is currently not supported::
 
-            sage: M(pari([1, a, 0, 1]))
+            sage: M(pari([1, a, 0, 1]))                                         # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
-            sage: M(pari([[1, a], [0, 1]]))
+            sage: M(pari([[1, a], [0, 1]]))                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
@@ -1322,12 +1322,12 @@ cpdef MatrixArgs MatrixArgs_init(space, entries):
     EXAMPLES::
 
         sage: from sage.matrix.args import MatrixArgs_init
-        sage: S = MatrixSpace(GF(2), 2, 4)
-        sage: ma = MatrixArgs_init(S, {(1,3):7})
-        sage: M = ma.matrix(); M
+        sage: S = MatrixSpace(GF(2), 2, 4)                                      # optional - sage.libs.pari
+        sage: ma = MatrixArgs_init(S, {(1, 3): 7})                              # optional - sage.libs.pari
+        sage: M = ma.matrix(); M                                                # optional - sage.libs.pari
         [0 0 0 0]
         [0 0 0 1]
-        sage: parent(M) is S
+        sage: parent(M) is S                                                    # optional - sage.libs.pari
         True
     """
     cdef MatrixArgs ret

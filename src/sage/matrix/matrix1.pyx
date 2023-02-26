@@ -5,8 +5,8 @@ For design documentation see :mod:`sage.matrix.docs`.
 
 TESTS::
 
-    sage: A = Matrix(GF(5),3,3,srange(9))
-    sage: TestSuite(A).run()
+    sage: A = Matrix(GF(5), 3, 3, srange(9))                                    # optional - sage.libs.pari
+    sage: TestSuite(A).run()                                                    # optional - sage.libs.pari
 """
 
 #*****************************************************************************
@@ -110,13 +110,13 @@ cdef class Matrix(Matrix0):
         Particularly difficult is the case of matrices over cyclotomic
         fields and general number fields. See :trac:`5618` and :trac:`8909`::
 
-            sage: K.<zeta> = CyclotomicField(8)
-            sage: A = MatrixSpace(K,2,2)([0,1+zeta,2*zeta,3])
-            sage: g = gap(A); g
+            sage: K.<zeta> = CyclotomicField(8)                                 # optional - sage.rings.number_field
+            sage: A = MatrixSpace(K, 2, 2)([0, 1+zeta, 2*zeta, 3])              # optional - sage.rings.number_field
+            sage: g = gap(A); g                                                 # optional - sage.rings.number_field
             [ [ 0, 1+E(8) ], [ 2*E(8), 3 ] ]
-            sage: matrix(K, g) == A
+            sage: matrix(K, g) == A                                             # optional - sage.rings.number_field
             True
-            sage: g.IsMatrix()
+            sage: g.IsMatrix()                                                  # optional - sage.rings.number_field
             true
 
             sage: x = polygen(ZZ, 'x')
@@ -124,7 +124,7 @@ cdef class Matrix(Matrix0):
             sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])                        # optional - sage.rings.number_field
             sage: g = gap(A); g                                                         # optional - sage.rings.number_field
             [ [ !0, tau+1 ], [ 2*tau, !3 ] ]
-            sage: matrix(L, g) == A
+            sage: matrix(L, g) == A                                             # optional - sage.rings.number_field
             True
         """
         cdef Py_ssize_t i, j
@@ -153,9 +153,9 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: libgap(identity_matrix(ZZ,2))
+            sage: libgap(identity_matrix(ZZ, 2))
             [ [ 1, 0 ], [ 0, 1 ] ]
-            sage: libgap(matrix(GF(3),2,2,[4,5,6,7]))
+            sage: libgap(matrix(GF(3), 2, 2, [4,5,6,7]))                        # optional - sage.libs.pari
             [ [ Z(3)^0, Z(3) ], [ 0*Z(3), Z(3)^0 ] ]
         """
         from sage.libs.gap.libgap import libgap
@@ -336,9 +336,9 @@ cdef class Matrix(Matrix0):
         We coerce a matrix over a cyclotomic field, where the generator
         must be named during the coercion. ::
 
-            sage: K = CyclotomicField(9) ; z = K.0
-            sage: M = matrix(K,3,3,[0,1,3,z,z**4,z-1,z**17,1,0])
-            sage: M
+            sage: K = CyclotomicField(9); z = K.0                               # optional - sage.rings.number_field
+            sage: M = matrix(K, 3, 3, [0,1,3,z,z**4,z-1,z**17,1,0])             # optional - sage.rings.number_field
+            sage: M                                                             # optional - sage.rings.number_field
             [                 0                  1                  3]
             [             zeta9            zeta9^4          zeta9 - 1]
             [-zeta9^5 - zeta9^2                  1                  0]
@@ -405,12 +405,12 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: M = matrix(ZZ,2,range(4))
-            sage: polymake(M)                   # optional - jupymake
+            sage: polymake(M)                           # optional - jupymake
             0 1
             2 3
-            sage: K.<sqrt5> = QuadraticField(5)
-            sage: M = matrix(K, [[1, 2], [sqrt5, 3]])
-            sage: polymake(M)                   # optional - jupymake
+            sage: K.<sqrt5> = QuadraticField(5)                                 # optional - sage.rings.number_field
+            sage: M = matrix(K, [[1, 2], [sqrt5, 3]])                           # optional - sage.rings.number_field
+            sage: polymake(M)                           # optional - jupymake   # optional - sage.rings.number_field
             1 2
             0+1r5 3
         """
@@ -626,9 +626,9 @@ cdef class Matrix(Matrix0):
             sage: sage_input(matrix(QQ, 3, 3, [5..13])/7, verify=True)
             # Verified
             matrix(QQ, [[5/7, 6/7, 1], [8/7, 9/7, 10/7], [11/7, 12/7, 13/7]])
-            sage: M = MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002)
-            sage: input = sage_input(M, verify=True)
-            sage: sage_eval(input) == M
+            sage: M = MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002)         # optional - sage.libs.pari
+            sage: input = sage_input(M, verify=True)                                                # optional - sage.libs.pari
+            sage: sage_eval(input) == M                                                             # optional - sage.libs.pari
             True
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: matrix(RDF, [[3, 1], [4, 1]])._sage_input_(SageInputBuilder(), False)
@@ -2450,7 +2450,7 @@ cdef class Matrix(Matrix0):
 
         Specify a different base ring for the output::
 
-            sage: M.zero_pattern_matrix(GF(2)).base_ring()
+            sage: M.zero_pattern_matrix(GF(2)).base_ring()                      # optional - sage.libs.pari
             Finite Field of size 2
 
         Examples for different base rings for ``self``::
@@ -2466,36 +2466,36 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: W.<a> = CyclotomicField(100)
-            sage: M = Matrix(2, 3, [a, a/2, 0, a^2, a^100-1, a^2 - a]); M
+            sage: W.<a> = CyclotomicField(100)                                  # optional - sage.rings.number_field
+            sage: M = Matrix(2, 3, [a, a/2, 0, a^2, a^100-1, a^2 - a]); M       # optional - sage.rings.number_field
             [      a   1/2*a       0]
             [    a^2       0 a^2 - a]
-            sage: M.zero_pattern_matrix()
+            sage: M.zero_pattern_matrix()                                       # optional - sage.rings.number_field
             [0 0 1]
             [0 1 0]
 
         ::
 
-            sage: K.<a> = GF(2^4)
-            sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,
+            sage: K.<a> = GF(2^4)                                               # optional - sage.libs.pari
+            sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,           # optional - sage.libs.pari
             ....:      a + 1, a^2, a^3 + a + 1, a^3 + a, a^3 + a]
-            sage: M = Matrix(K, 3, 4, l); M
+            sage: M = Matrix(K, 3, 4, l); M                                     # optional - sage.libs.pari
             [    a^2 + 1     a^3 + 1           0           0]
             [          a a^3 + a + 1       a + 1       a + 1]
             [        a^2 a^3 + a + 1     a^3 + a     a^3 + a]
-            sage: M.zero_pattern_matrix()
+            sage: M.zero_pattern_matrix()                                       # optional - sage.libs.pari
             [0 0 1 1]
             [0 0 0 0]
             [0 0 0 0]
 
         ::
 
-            sage: K.<a> = GF(25)
-            sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])
-            sage: M
+            sage: K.<a> = GF(25)                                                # optional - sage.libs.pari
+            sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])                     # optional - sage.libs.pari
+            sage: M                                                             # optional - sage.libs.pari
             [    0     2     3]
             [    0     a a + 3]
-            sage: M.zero_pattern_matrix()
+            sage: M.zero_pattern_matrix()                                       # optional - sage.libs.pari
             [1 0 0]
             [1 0 0]
 
@@ -2582,7 +2582,7 @@ cdef class Matrix(Matrix0):
         dict items are ETuples (see :trac:`17658`)::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: matrix(GF(5^2,"z"),{ETuple((1, 1)): 2}).dense_matrix()
+            sage: matrix(GF(5^2, "z"), {ETuple((1, 1)): 2}).dense_matrix()      # optional - sage.libs.pari
             [0 0]
             [0 2]
         """

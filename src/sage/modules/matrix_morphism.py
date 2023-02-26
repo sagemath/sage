@@ -523,7 +523,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Composite maps can be formed with matrix morphisms::
 
-            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)                                         # optional - sage.rings.number_field
             sage: V, VtoK, KtoV = K.vector_space()                                      # optional - sage.rings.number_field
             sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f                             # optional - sage.rings.number_field
@@ -539,9 +538,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     [ 1  1]
                     Domain: Vector space of dimension 2 over Rational Field
                     Codomain: Vector space of dimension 2 over Rational Field
-            sage: f(a)
+            sage: f(a)                                                                  # optional - sage.rings.number_field
             (1, 1)
-            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV
+            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV                      # optional - sage.rings.number_field
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 23
               To:   Vector space of dimension 2 over Rational Field
@@ -976,22 +975,22 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  2]
-            sage: hom(GF(7)^3, GF(7)^2, zero_matrix(GF(7), 3, 2)).image()
+            sage: hom(GF(7)^3, GF(7)^2, zero_matrix(GF(7), 3, 2)).image()               # optional - sage.libs.pari
             Vector space of degree 2 and dimension 0 over Finite Field of size 7
             Basis matrix:
             []
-            sage: m = matrix(3, [1, 0, 0, 1, 0, 0, 0, 0, 1]); m
+            sage: m = matrix(3, [1, 0, 0, 1, 0, 0, 0, 0, 1]); m                         # optional - sage.libs.pari
             [1 0 0]
             [1 0 0]
             [0 0 1]
-            sage: f1 = V.hom(m)
-            sage: f2 = V.hom(m, side="right")
-            sage: f1.image()
+            sage: f1 = V.hom(m)                                                         # optional - sage.libs.pari
+            sage: f2 = V.hom(m, side="right")                                           # optional - sage.libs.pari
+            sage: f1.image()                                                            # optional - sage.libs.pari
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [1 0 0]
             [0 0 1]
-            sage: f2.image()
+            sage: f2.image()                                                            # optional - sage.libs.pari
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [1 1 0]
