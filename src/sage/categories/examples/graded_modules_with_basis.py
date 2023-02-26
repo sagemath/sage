@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat
 r"""
 Examples of graded modules with basis
 """
