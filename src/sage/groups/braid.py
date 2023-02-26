@@ -1620,15 +1620,21 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(3)
             sage: a = B([2, 2, -1, -1])
-            sage: b = B([2, 1, 2, 1])
+            sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
-            sage: d = a.conjugating_braid(c)
-            sage: d * c / d == a
+            sage: d1 = a.conjugating_braid(c)
+            sage: print (len(d1.Tietze()))
+            7
+            sage: d1 * c / d1 == a
             True
-            sage: d
-            s1*s0
-            sage: d * a / d == c
+            sage: d1
+            s1^2*s0^2*s1^2*s0
+            sage: d1 * a / d1 == c
             False
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)
+            sage: d2 = B._element_from_libbraiding(l)
+            sage: print (len(d2.Tietze()))
+            13
         """
         l = conjugatingbraid(self, other)
         if not l:
@@ -1639,10 +1645,11 @@ class Braid(FiniteTypeArtinGroupElement):
             b0 = B._element_from_libbraiding(l)
             L = b0.left_normal_form()
             D1 = prod(L[1: ])
-            k = 2 * L[0].exponent_sum()/ n / (n - 1)
-            k = k % 2
-            D0 = B.delta()**k
-            return D0 * D1
+            k = 2 * L[0].exponent_sum() / n / (n - 1)
+            k = int(k % 2)
+            D0 = B.delta()
+            D0a = D0 ** k
+            return D0a * D1
 
     def is_conjugated(self, other):
         """
