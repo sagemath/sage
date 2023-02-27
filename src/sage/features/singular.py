@@ -1,7 +1,8 @@
 r"""
 Features for testing the presence of Singular
 """
-from . import Executable
+from . import Executable, PythonModule
+from .join_feature import JoinFeature
 from sage.env import SINGULAR_BIN
 
 
