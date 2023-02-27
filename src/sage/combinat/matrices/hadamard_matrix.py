@@ -2369,14 +2369,14 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
     r"""
     Construct a skew Hadamard matrix of order `n = 4(1 + q + q^2)` using Spence construction.
 
-    If `n = 4(1 + q + q^2) where `q` is a prime power such that either
+    If `n = 4(1 + q + q^2)` where `q` is a prime power such that either
     `1 + q + q^2` is a prime congruent to `3, 5, 7 \mod 8` or `3 + 2q + 2q^2` is
     a prime power, then a skew Hadamard matrix of order `n` can be constructed using
     the Goethals Seidel array. The four matrices `A, B, C, D` plugged into the
     GS-array are created using complementary difference sets of order `1 + q + q^2`
     (which exist if `q` satisfies the conditions above), and a cyclic planar
     difference set with parameters `(1 + q^2 + q^4, 1 + q^2, 1)`.
-    These are constructed by the functions  :func: `sage.combinat.designs.difference_family.complementary_difference_sets`
+    These are constructed by the functions :func:`sage.combinat.designs.difference_family.complementary_difference_sets`
     and :func:`sage.combinat.designs.difference_family.difference_family`.
 
     For more details, see [Spe1975b]_.
@@ -3347,12 +3347,12 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
 
     INPUT:
 
-    - ``M`` -- a sqaure matrix.
+    - ``M`` -- a square matrix.
 
     - ``N`` -- a square matrix.
 
-    - ``verbose`` (boolean) -- Default False. Whether to be verbose when the
-        matrices are not amicable Hadamard matrices.
+    - ``verbose`` -- boolean (default False). Whether to be verbose when the
+      matrices are not amicable Hadamard matrices.
 
     EXAMPLES::
 
@@ -3362,7 +3362,7 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
         sage: are_amicable_hadamard_matrices(M, N)
         True
 
-    If ``verbose`` is true, the function will be verbose when returning False:
+    If ``verbose`` is true, the function will be verbose when returning False::
 
         sage: N = matrix([[1, 1], [1, 1]])
         sage: are_amicable_hadamard_matrices(M, N, verbose=True)

@@ -1678,7 +1678,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     - ``q`` -- an odd prime power.
 
-    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
+    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
       can be constructed.
 
     - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
@@ -1955,7 +1955,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
 
     - ``n`` -- integer, the parameter of the supplementary difference sets.
 
-    - ``existence`` -- boolean (dafault False). If true, only check whether the
+    - ``existence`` -- boolean (default False). If true, only check whether the
       supplementary difference sets can be constructed.
 
     - ``check`` -- boolean (default True). If true, check that the sets are supplementary
@@ -1975,7 +1975,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_over_polynomial_ring
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)
 
-    If existence is ``True``, the function returns a boolean ::
+    If existence is ``True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set_over_polynomial_ring(81, existence=True)
         True
@@ -2056,7 +2056,7 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
 
-    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
+    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
       can be constructed.
 
     - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
@@ -2074,7 +2074,7 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_with_paley_todd
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(239)
 
-    If existence is ``True``, the function returns a boolean ::
+    If existence is ``True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set_with_paley_todd(239, existence=True)
         True
@@ -2151,7 +2151,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
 
     - ``n`` -- integer, the parameter of the supplementary difference set.
 
-    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
+    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
       can be constructed.
 
     - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
@@ -2169,7 +2169,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(103)
 
-    If existence is ``True``, the function returns a boolean ::
+    If existence is ``True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set(103, existence=True)
         True
@@ -2547,7 +2547,7 @@ def supplementary_difference_set(n, existence=False, check=True):
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set(191)
 
-    If existence is ``True``, the function returns a boolean ::
+    If existence is ``True``, the function returns a boolean::
 
         sage: supplementary_difference_set(191, existence=True)
         True
@@ -2773,7 +2773,7 @@ def complementary_difference_setsI(n, check=True):
 
     .. SEEALSO::
 
-        :func:`are_complementary_difference_set`
+        :func:`are_complementary_difference_sets`
         :func:`complementary_difference_sets`
     """
     if not (n % 4 == 3 and is_prime_power(n)):
@@ -2847,7 +2847,7 @@ def complementary_difference_setsII(n, check=True):
 
     .. SEEALSO::
 
-        :func:`are_complementary_difference_set`
+        :func:`are_complementary_difference_sets`
         :func:`complementary_difference_sets`
     """
     p, t = is_prime_power(n, get_data=True)
@@ -2927,7 +2927,7 @@ def complementary_difference_setsIII(n, check=True):
 
     .. SEEALSO::
 
-        :func:`are_complementary_difference_set`
+        :func:`are_complementary_difference_sets`
         :func:`complementary_difference_sets`
     """
     m = (n - 1) // 2
@@ -3016,7 +3016,7 @@ def complementary_difference_sets(n, existence=False, check=True):
 
     .. SEEALSO::
 
-        :func:`are_complementary_difference_set`
+        :func:`are_complementary_difference_sets`
     """
     if n % 2 == 0:
         if existence:
