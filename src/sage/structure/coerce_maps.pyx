@@ -34,16 +34,19 @@ cdef class DefaultConvertMap(Map):
         Maps of this type are morphisms in the category of sets with
         partial maps (see :trac:`15618`)::
 
-            sage: f = GF(11).convert_map_from(GF(7)); f
+            sage: f = GF(11).convert_map_from(GF(7)); f                         # optional - sage.libs.pari
             Conversion map:
               From: Finite Field of size 7
               To:   Finite Field of size 11
-            sage: f.parent()
-            Set of Morphisms from Finite Field of size 7 to Finite Field of size 11 in Category of sets with partial maps
+            sage: f.parent()                                                    # optional - sage.libs.pari
+            Set of Morphisms
+             from Finite Field of size 7
+             to Finite Field of size 11
+             in Category of sets with partial maps
 
         Test that :trac:`23211` is resolved::
 
-            sage: f._is_coercion
+            sage: f._is_coercion                                                # optional - sage.libs.pari
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
@@ -83,8 +86,8 @@ cdef class DefaultConvertMap(Map):
 
         EXAMPLES::
 
-            sage: f = GF(11).convert_map_from(GF(7))
-            sage: f._repr_type()
+            sage: f = GF(11).convert_map_from(GF(7))                            # optional - sage.libs.pari
+            sage: f._repr_type()                                                # optional - sage.libs.pari
             'Conversion'
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
@@ -265,13 +268,13 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f
+            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f                # optional - sage.libs.pari
             Conversion via _integer_ method map:
               From: Finite Field of size 5
               To:   Rational Field
-            sage: f(19)
+            sage: f(19)                                                         # optional - sage.libs.pari
             4
-            sage: f(19).parent()
+            sage: f(19).parent()                                                # optional - sage.libs.pari
             Rational Field
         """
         cdef Parent C = self._codomain

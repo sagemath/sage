@@ -147,7 +147,7 @@ class Sets(Category_singleton):
 
     We run some generic checks on P::
 
-        sage: TestSuite(P).run(verbose=True)
+        sage: TestSuite(P).run(verbose=True)                                    # optional - sage.libs.pari
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
@@ -867,11 +867,11 @@ class Sets(Category_singleton):
 
             1. as plain integers::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True)
+                sage: P = Poset((divisors(12), attrcall("divides")), facade=True)       # optional - sage.graphs, sage.combinat
 
             2. as integers, modified to be aware that their parent is `P`::
 
-                sage: Q = Poset((divisors(12), attrcall("divides")), facade=False)
+                sage: Q = Poset((divisors(12), attrcall("divides")), facade=False)      # optional - sage.graphs, sage.combinat
 
             The advantage of option 1. is that one needs not do
             conversions back and forth between `P` and `\ZZ`. The
@@ -885,23 +885,23 @@ class Sets(Category_singleton):
             To raise this ambiguity, one needs to explicitly specify
             the underlying poset as in `2 <_P 3`::
 
-                sage: P = Posets().example("facade")
-                sage: P.lt(2,3)
+                sage: P = Posets().example("facade")                                    # optional - sage.graphs, sage.combinat
+                sage: P.lt(2,3)                                                         # optional - sage.graphs, sage.combinat
                 False
 
             On the other hand, with option 2. and once constructed,
             the elements know unambiguously how to compare
             themselves::
 
-                sage: Q(2) < Q(3)
+                sage: Q(2) < Q(3)                                                       # optional - sage.graphs, sage.combinat
                 False
-                sage: Q(2) < Q(6)
+                sage: Q(2) < Q(6)                                                       # optional - sage.graphs, sage.combinat
                 True
 
             Beware that ``P(2)`` is still the integer `2`. Therefore
             ``P(2) < P(3)`` still compares `2` and `3` as integers!::
 
-                sage: P(2) < P(3)
+                sage: P(2) < P(3)                                                       # optional - sage.graphs, sage.combinat
                 True
 
             In short `P` being a facade parent is one of the programmatic
@@ -1190,12 +1190,12 @@ class Sets(Category_singleton):
             We try a non-reflexive equality::
 
                 sage: P = Sets().example("wrapper")
-                sage: P._test_elements_eq_reflexive()
+                sage: P._test_elements_eq_reflexive()                           # optional - sage.libs.pari
                 sage: eq = P.element_class.__eq__
 
                 sage: P.element_class.__eq__ = (lambda x, y:
                 ....:      False if eq(x, P(47)) and eq(y, P(47)) else eq(x, y))
-                sage: P._test_elements_eq_reflexive()
+                sage: P._test_elements_eq_reflexive()                           # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 AssertionError: 47 != 47
@@ -1226,7 +1226,7 @@ class Sets(Category_singleton):
             We test a non symmetric equality::
 
                 sage: P = Sets().example("wrapper")
-                sage: P._test_elements_eq_symmetric()
+                sage: P._test_elements_eq_symmetric()                           # optional - sage.libs.pari
                 sage: eq = P.element_class.__eq__
 
                 sage: def non_sym_eq(x, y):
@@ -1234,7 +1234,7 @@ class Sets(Category_singleton):
                 ....:    elif eq(x, P(47)) and eq(y, P(53)): return True
                 ....:    else:                               return eq(x, y)
                 sage: P.element_class.__eq__ = non_sym_eq
-                sage: P._test_elements_eq_symmetric()
+                sage: P._test_elements_eq_symmetric()                           # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 AssertionError: non symmetric equality: 47 == 53 but 53 != 47
@@ -1316,12 +1316,12 @@ class Sets(Category_singleton):
             We try a broken inequality::
 
                 sage: P = Sets().example("wrapper")
-                sage: P._test_elements_neq()
+                sage: P._test_elements_neq()                                    # optional - sage.libs.pari
                 sage: ne = P.element_class.__ne__
                 sage: eq = P.element_class.__eq__
 
                 sage: P.element_class.__ne__ = lambda x, y: False
-                sage: P._test_elements_neq()
+                sage: P._test_elements_neq()                                    # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 AssertionError: __eq__ and __ne__ inconsistency:
@@ -1626,21 +1626,21 @@ class Sets(Category_singleton):
             If `S` is a :class:`group <Groups>`, the result is its
             group algebra `KS`::
 
-                sage: S = DihedralGroup(4); S
+                sage: S = DihedralGroup(4); S                                   # optional - sage.groups
                     Dihedral group of order 8 as a permutation group
-                sage: A = S.algebra(QQ); A
+                sage: A = S.algebra(QQ); A                                      # optional - sage.groups
                 Algebra of Dihedral group of order 8 as a permutation group
                         over Rational Field
-                sage: A.category()
+                sage: A.category()                                              # optional - sage.groups
                 Category of finite group algebras over Rational Field
-                sage: a = A.an_element(); a
+                sage: a = A.an_element(); a                                     # optional - sage.groups
                 () + (1,3) + 2*(1,3)(2,4) + 3*(1,4,3,2)
 
             This space is endowed with an algebra structure, obtained
             by extending by bilinearity the multiplication of `G` to a
             multiplication on `RG`::
 
-                sage: a * a
+                sage: a * a                                                     # optional - sage.groups
                 6*() + 4*(2,4) + 3*(1,2)(3,4) + 12*(1,2,3,4) + 2*(1,3)
                  + 13*(1,3)(2,4) + 6*(1,4,3,2) + 3*(1,4)(2,3)
 
@@ -1832,11 +1832,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             EXAMPLES::
 
-                sage: f = ZZ.hom(GF(3)); f
+                sage: f = ZZ.hom(GF(3)); f                                      # optional - sage.libs.pari
                 Natural morphism:
                   From: Integer Ring
                   To:   Finite Field of size 3
-                sage: f.is_injective()
+                sage: f.is_injective()                                          # optional - sage.libs.pari
                 False
             """
             if self.domain().cardinality() <= 1:
@@ -1851,11 +1851,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             EXAMPLES::
 
-                sage: P = Partitions(6)
-                sage: H = Hom(P, ZZ)
-                sage: f = H(ZZ.sum)
-                sage: X = f.image()
-                sage: list(X)
+                sage: P = Partitions(6)                                         # optional - sage.combinat
+                sage: H = Hom(P, ZZ)                                            # optional - sage.combinat
+                sage: f = H(ZZ.sum)                                             # optional - sage.combinat
+                sage: X = f.image()                                             # optional - sage.combinat
+                sage: list(X)                                                   # optional - sage.combinat
                 [6]
             """
             D = self.domain()
@@ -2252,18 +2252,18 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.__iter__.__module__
                     'sage.categories.sets_cat'
 
-                    sage: F22 = GF(2).cartesian_product(GF(2))
-                    sage: list(F22)
+                    sage: F22 = GF(2).cartesian_product(GF(2))                  # optional - sage.libs.pari
+                    sage: list(F22)                                             # optional - sage.libs.pari
                     [(0, 0), (0, 1), (1, 0), (1, 1)]
 
-                    sage: C = cartesian_product([Permutations(10)]*4)
-                    sage: it = iter(C)
-                    sage: next(it)
+                    sage: C = cartesian_product([Permutations(10)]*4)           # optional - sage.combinat
+                    sage: it = iter(C)                                          # optional - sage.combinat
+                    sage: next(it)                                              # optional - sage.combinat
                     ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-                    sage: next(it)
+                    sage: next(it)                                              # optional - sage.combinat
                     ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -2272,8 +2272,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 When all factors (except possibly the first factor) are known to be finite, it
                 uses the lexicographic order::
 
-                    sage: it = iter(cartesian_product([ZZ, GF(2)]))
-                    sage: [next(it) for _ in range(10)]
+                    sage: it = iter(cartesian_product([ZZ, GF(2)]))             # optional - sage.libs.pari
+                    sage: [next(it) for _ in range(10)]                         # optional - sage.libs.pari
                     [(0, 0), (0, 1),
                      (1, 0), (1, 1),
                      (-1, 0), (-1, 1),
@@ -2293,8 +2293,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 An example with the first factor finite, the second infinite::
 
-                    sage: it = iter(cartesian_product([GF(2), ZZ]))
-                    sage: [next(it) for _ in range(11)]
+                    sage: it = iter(cartesian_product([GF(2), ZZ]))             # optional - sage.libs.pari
+                    sage: [next(it) for _ in range(11)]                         # optional - sage.libs.pari
                     [(0, 0),
                      (1, 0), (0, 1),
                      (1, 1), (0, -1),
@@ -2379,8 +2379,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: E = FiniteEnumeratedSet([1,2,3])
-                    sage: C = cartesian_product([E, SymmetricGroup(4)])
-                    sage: C.is_finite()
+                    sage: C = cartesian_product([E, SymmetricGroup(4)])                 # optional - sage.groups
+                    sage: C.is_finite()                                                 # optional - sage.groups
                     True
 
                     sage: cartesian_product([ZZ,ZZ]).is_finite()
@@ -2407,8 +2407,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: E = FiniteEnumeratedSet([1,2,3])
-                    sage: C = cartesian_product([E,SymmetricGroup(4)])
-                    sage: C.cardinality()
+                    sage: C = cartesian_product([E, SymmetricGroup(4)])                 # optional - sage.groups
+                    sage: C.cardinality()                                               # optional - sage.groups
                     72
 
                     sage: E = FiniteEnumeratedSet([])
@@ -2420,9 +2420,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.cardinality()
                     +Infinity
 
-                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()
+                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()    # optional - sage.libs.pari, sage.combinat
                     18144000
-                    sage: cartesian_product([GF(71)]*20).cardinality() == 71**20
+                    sage: cartesian_product([GF(71)]*20).cardinality() == 71**20        # optional - sage.libs.pari
                     True
                 """
                 f = self.cartesian_factors()
@@ -2453,8 +2453,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([Permutations(10)]*5)
-                    sage: C.random_element()           # random
+                    sage: C = cartesian_product([Permutations(10)]*5)                   # optional - sage.combinat
+                    sage: C.random_element()           # random                         # optional - sage.combinat
                     ([2, 9, 4, 7, 1, 8, 6, 10, 5, 3],
                      [8, 6, 5, 7, 1, 4, 9, 3, 10, 2],
                      [5, 10, 3, 8, 2, 9, 1, 4, 7, 6],
@@ -2651,10 +2651,10 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = GroupAlgebra(KleinFourGroup(), QQ)
-                    sage: F, arg = A.construction(); F, arg
+                    sage: A = GroupAlgebra(KleinFourGroup(), QQ)                        # optional - sage.groups
+                    sage: F, arg = A.construction(); F, arg                             # optional - sage.groups
                     (GroupAlgebraFunctor, Rational Field)
-                    sage: F(arg) is A
+                    sage: F(arg) is A                                                   # optional - sage.groups
                     True
 
                 This also works for structures such as monoid algebras (see
@@ -2682,14 +2682,14 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Groups().example().algebra(QQ); A
+                    sage: A = Groups().example().algebra(QQ); A                         # optional - sage.groups
                     Algebra of General Linear Group of degree 4 over Rational Field
                      over Rational Field
-                    sage: A._name = "foo"
-                    sage: A
+                    sage: A._name = "foo"                                               # optional - sage.groups
+                    sage: A                                                             # optional - sage.groups
                     foo over Rational Field
-                    sage: A = KleinFourGroup().algebra(ZZ)
-                    sage: A
+                    sage: A = KleinFourGroup().algebra(ZZ)                              # optional - sage.groups
+                    sage: A                                                             # optional - sage.groups
                     Algebra of The Klein 4 group of order 4, as a permutation group
                      over Integer Ring
                 """
@@ -2815,37 +2815,37 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 it is convenient to define shorthands for the various
                 realizations, but cumbersome to do it by hand::
 
-                    sage: S = SymmetricFunctions(ZZ); S
+                    sage: S = SymmetricFunctions(ZZ); S                                                         # optional - sage.combinat
                     Symmetric Functions over Integer Ring
-                    sage: s = S.s(); s
+                    sage: s = S.s(); s                                                                          # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the Schur basis
-                    sage: e = S.e(); e
+                    sage: e = S.e(); e                                                                          # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 This method automates the process::
 
-                    sage: S.inject_shorthands()
+                    sage: S.inject_shorthands()                                                                 # optional - sage.combinat
                     Defining e as shorthand for Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for Symmetric Functions over Integer Ring in the forgotten basis
                     Defining h as shorthand for Symmetric Functions over Integer Ring in the homogeneous basis
                     Defining m as shorthand for Symmetric Functions over Integer Ring in the monomial basis
                     Defining p as shorthand for Symmetric Functions over Integer Ring in the powersum basis
                     Defining s as shorthand for Symmetric Functions over Integer Ring in the Schur basis
-                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]
+                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]                                                # optional - sage.combinat
                     s[1] - 2*s[1, 1, 1] + s[1, 1, 1, 1] + s[2, 1] + 2*s[2, 1, 1] + s[2, 2] + 2*s[3] + s[3, 1]
 
-                    sage: e
+                    sage: e                                                                                     # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the elementary basis
-                    sage: p
+                    sage: p                                                                                     # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the powersum basis
-                    sage: s
+                    sage: s                                                                                     # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the Schur basis
 
                 Sometimes, like for symmetric functions, one can
                 request for all shorthands to be defined, including
                 less common ones::
 
-                    sage: S.inject_shorthands("all")
+                    sage: S.inject_shorthands("all")                                                            # optional - sage.combinat
                     Defining e as shorthand for Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for Symmetric Functions over Integer Ring in the forgotten basis
                     Defining h as shorthand for Symmetric Functions over Integer Ring in the homogeneous basis
@@ -2860,37 +2860,37 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 The messages can be silenced by setting ``verbose=False``::
 
-                    sage: Q = QuasiSymmetricFunctions(ZZ)
-                    sage: Q.inject_shorthands(verbose=False)
+                    sage: Q = QuasiSymmetricFunctions(ZZ)                                                       # optional - sage.combinat
+                    sage: Q.inject_shorthands(verbose=False)                                                    # optional - sage.combinat
 
-                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2
+                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2                                                          # optional - sage.combinat
                     5*F[1, 1, 1, 1] - 5*F[1, 1, 2] - 3*F[1, 2, 1] + 6*F[1, 3] +
                     2*F[2, 2] + F[3, 1] + F[4]
 
-                    sage: F
+                    sage: F                                                                                     # optional - sage.combinat
                     Quasisymmetric functions over the Integer Ring in the
                      Fundamental basis
-                    sage: M
+                    sage: M                                                                                     # optional - sage.combinat
                     Quasisymmetric functions over the Integer Ring in the
                      Monomial basis
 
                 One can also just import a subset of the shorthands::
 
-                    sage: SQ = SymmetricFunctions(QQ)
-                    sage: SQ.inject_shorthands(['p', 's'], verbose=False)
-                    sage: p
+                    sage: SQ = SymmetricFunctions(QQ)                                                           # optional - sage.combinat
+                    sage: SQ.inject_shorthands(['p', 's'], verbose=False)                                       # optional - sage.combinat
+                    sage: p                                                                                     # optional - sage.combinat
                     Symmetric Functions over Rational Field in the powersum basis
-                    sage: s
+                    sage: s                                                                                     # optional - sage.combinat
                     Symmetric Functions over Rational Field in the Schur basis
 
                 Note that ``e`` is left unchanged::
 
-                    sage: e
+                    sage: e                                                                                     # optional - sage.combinat
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 TESTS::
 
-                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()
+                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()                          # optional - sage.combinat
                     (True, True, True, True, True)
                 """
                 from sage.misc.misc import inject_variable

@@ -164,22 +164,22 @@ when the system has no solutions over the rationals.
         sage: factor(164878)
         2 * 7 * 11777
 
-        sage: I.change_ring(P.change_ring( GF(2) )).groebner_basis()
+        sage: I.change_ring(P.change_ring(GF(2))).groebner_basis()              # optional - sage.libs.pari
         [x + y + z, y^2 + y, y*z + y, z^2 + 1]
-        sage: I.change_ring(P.change_ring( GF(7) )).groebner_basis()
+        sage: I.change_ring(P.change_ring(GF(7))).groebner_basis()              # optional - sage.libs.pari
         [x - 1, y + 3, z - 2]
-        sage: I.change_ring(P.change_ring( GF(11777 ))).groebner_basis()
+        sage: I.change_ring(P.change_ring(GF(11777))).groebner_basis()          # optional - sage.libs.pari
         [x + 5633, y - 3007, z - 2626]
 
     The Groebner basis modulo any product of the prime factors is also non-trivial::
 
-        sage: I.change_ring(P.change_ring( IntegerModRing(2*7) )).groebner_basis()
+        sage: I.change_ring(P.change_ring(IntegerModRing(2 * 7))).groebner_basis()
         [x + 9*y + 13*z, y^2 + 3*y, y*z + 7*y + 6, 2*y + 6, z^2 + 3, 2*z + 10]
 
     Modulo any other prime the Groebner basis is trivial so there are
     no other solutions. For example::
 
-        sage: I.change_ring( P.change_ring( GF(3) ) ).groebner_basis()
+        sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()              # optional - sage.libs.pari
         [1]
 
 TESTS::
@@ -5150,12 +5150,12 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
 
         We compute a uniformly random element up to the provided degree. ::
 
-            sage: P.<x,y,z> = GF(127)[]
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: f = I.random_element(degree=4, compute_gb=True, terms=infinity)
-            sage: f.degree() <= 4
+            sage: P.<x,y,z> = GF(127)[]                                                         # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Katsura(P)                                               # optional - sage.libs.pari
+            sage: f = I.random_element(degree=4, compute_gb=True, terms=infinity)               # optional - sage.libs.pari
+            sage: f.degree() <= 4                                                               # optional - sage.libs.pari
             True
-            sage: len(list(f)) <= 35
+            sage: len(list(f)) <= 35                                                            # optional - sage.libs.pari
             True
 
         Note that sampling uniformly at random from the ideal at some large enough degree is
@@ -5163,42 +5163,43 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         basis if we can sample uniformly at random from an ideal::
 
             sage: n = 3; d = 4
-            sage: P = PolynomialRing(GF(127), n, 'x')
-            sage: I = sage.rings.ideal.Cyclic(P)
+            sage: P = PolynomialRing(GF(127), n, 'x')                                           # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Cyclic(P)                                                # optional - sage.libs.pari
 
         1. We sample `n^d` uniformly random elements in the ideal::
 
-            sage: F = Sequence(I.random_element(degree=d, compute_gb=True, terms=infinity) for _ in range(n^d))
+            sage: F = Sequence(I.random_element(degree=d, compute_gb=True, terms=infinity)      # optional - sage.libs.pari
+            ....:              for _ in range(n^d))
 
         2. We linearize and compute the echelon form::
 
-            sage: A,v = F.coefficient_matrix()
-            sage: A.echelonize()
+            sage: A, v = F.coefficient_matrix()                                                 # optional - sage.libs.pari
+            sage: A.echelonize()                                                                # optional - sage.libs.pari
 
         3. The result is the desired Gröbner basis::
 
-            sage: G = Sequence((A*v).list())
-            sage: G.is_groebner()
+            sage: G = Sequence((A * v).list())                                                  # optional - sage.libs.pari
+            sage: G.is_groebner()                                                               # optional - sage.libs.pari
             True
-            sage: Ideal(G) == I
+            sage: Ideal(G) == I                                                                 # optional - sage.libs.pari
             True
 
         We return some element in the ideal with no guarantee on the distribution::
 
-            sage: P = PolynomialRing(GF(127), 10, 'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: f = I.random_element(degree=3)
-            sage: f  # random
+            sage: P = PolynomialRing(GF(127), 10, 'x')                                          # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Katsura(P)                                               # optional - sage.libs.pari
+            sage: f = I.random_element(degree=3)                                                # optional - sage.libs.pari
+            sage: f  # random                                                                   # optional - sage.libs.pari
             -25*x0^2*x1 + 14*x1^3 + 57*x0*x1*x2 + ... + 19*x7*x9 + 40*x8*x9 + 49*x1
-            sage: f.degree()
+            sage: f.degree()                                                                    # optional - sage.libs.pari
             3
 
         We show that the default method does not sample uniformly at random from the ideal::
 
-            sage: P.<x,y,z> = GF(127)[]
-            sage: G = Sequence([x+7, y-2, z+110])
-            sage: I = Ideal([sum(P.random_element() * g for g in G) for _ in range(4)])
-            sage: all(I.random_element(degree=1) == 0 for _ in range(100))
+            sage: P.<x,y,z> = GF(127)[]                                                         # optional - sage.libs.pari
+            sage: G = Sequence([x+7, y-2, z+110])                                               # optional - sage.libs.pari
+            sage: I = Ideal([sum(P.random_element() * g for g in G) for _ in range(4)])         # optional - sage.libs.pari
+            sage: all(I.random_element(degree=1) == 0 for _ in range(100))                      # optional - sage.libs.pari
             True
 
         If degree equals the degree of the generators a random linear
@@ -5263,34 +5264,33 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^2)
-            sage: P.<x,y> = PolynomialRing(k,2)
-            sage: I = Ideal([x*y + 1, a*x + 1])
-            sage: I.variety()
+            sage: k.<a> = GF(2^2)                                                       # optional - sage.libs.pari
+            sage: P.<x,y> = PolynomialRing(k, 2)                                        # optional - sage.libs.pari
+            sage: I = Ideal([x*y + 1, a*x + 1])                                         # optional - sage.libs.pari
+            sage: I.variety()                                                           # optional - sage.libs.pari
             [{y: a, x: a + 1}]
-            sage: J = I.weil_restriction()
-            sage: J
+            sage: J = I.weil_restriction()                                              # optional - sage.libs.pari
+            sage: J                                                                     # optional - sage.libs.pari
             Ideal (x0*y0 + x1*y1 + 1, x1*y0 + x0*y1 + x1*y1, x1 + 1, x0 + x1) of
-            Multivariate Polynomial Ring in x0, x1, y0, y1 over Finite Field of size
-            2
-            sage: J += sage.rings.ideal.FieldIdeal(J.ring()) # ensure radical ideal
-            sage: J.variety()
+            Multivariate Polynomial Ring in x0, x1, y0, y1 over Finite Field of size 2
+            sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal    # optional - sage.libs.pari
+            sage: J.variety()                                                           # optional - sage.libs.pari
             [{y1: 1, y0: 0, x1: 1, x0: 1}]
 
-            sage: J.weil_restriction() # returns J
+            sage: J.weil_restriction() # returns J                                      # optional - sage.libs.pari
             Ideal (x0*y0 + x1*y1 + 1, x1*y0 + x0*y1 + x1*y1, x1 + 1, x0 + x1, x0^2 +
             x0, x1^2 + x1, y0^2 + y0, y1^2 + y1) of Multivariate Polynomial Ring in
             x0, x1, y0, y1 over Finite Field of size 2
 
-            sage: k.<a> = GF(3^5)
-            sage: P.<x,y,z> = PolynomialRing(k)
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: I.dimension()
+            sage: k.<a> = GF(3^5)                                                       # optional - sage.libs.pari
+            sage: P.<x,y,z> = PolynomialRing(k)                                         # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.libs.pari
+            sage: I.dimension()                                                         # optional - sage.libs.pari
             0
-            sage: I.variety()
+            sage: I.variety()                                                           # optional - sage.libs.pari
              [{z: 0, y: 0, x: 1}]
 
-            sage: J = I.weil_restriction(); J
+            sage: J = I.weil_restriction(); J                                           # optional - sage.libs.pari
             Ideal (x0 - y0 - z0 - 1, x1 - y1 - z1, x2 - y2 - z2, x3 - y3 - z3, x4 -
             y4 - z4, x0^2 + x2*x3 + x1*x4 - y0^2 - y2*y3 - y1*y4 - z0^2 - z2*z3 -
             z1*z4 - x0, -x0*x1 - x2*x3 - x3^2 - x1*x4 + x2*x4 + y0*y1 + y2*y3 + y3^2
@@ -5310,40 +5310,47 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             y3*z1 - y2*z2 - y1*z3 - y0*z4 - y4*z4 - y4) of Multivariate Polynomial
             Ring in x0, x1, x2, x3, x4, y0, y1, y2, y3, y4, z0, z1, z2, z3, z4 over
             Finite Field of size 3
-            sage: J += sage.rings.ideal.FieldIdeal(J.ring()) # ensure radical ideal
+            sage: J += sage.rings.ideal.FieldIdeal(J.ring()) # ensure radical ideal     # optional - sage.libs.pari
             sage: from sage.doctest.fixtures import reproducible_repr
-            sage: print(reproducible_repr(J.variety()))
-            [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0, y0: 0, y1: 0, y2: 0, y3: 0, y4: 0, z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
+            sage: print(reproducible_repr(J.variety()))                                 # optional - sage.libs.pari
+            [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
+              y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
+              z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
 
 
         Weil restrictions are often used to study elliptic curves over
         extension fields so we give a simple example involving those::
 
-            sage: K.<a> = QuadraticField(1/3)
-            sage: E = EllipticCurve(K,[1,2,3,4,5])
+            sage: K.<a> = QuadraticField(1/3)                                           # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [1,2,3,4,5])                                     # optional - sage.rings.number_field
 
         We pick a point on ``E``::
 
-            sage: p = E.lift_x(1); p
+            sage: p = E.lift_x(1); p                                                    # optional - sage.rings.number_field
             (1 : 2 : 1)
 
-            sage: I = E.defining_ideal(); I
-            Ideal (-x^3 - 2*x^2*z + x*y*z + y^2*z - 4*x*z^2 + 3*y*z^2 - 5*z^3) of Multivariate Polynomial Ring in x, y, z over Number Field in a with defining polynomial x^2 - 1/3 with a = 0.5773502691896258?
+            sage: I = E.defining_ideal(); I                                             # optional - sage.rings.number_field
+            Ideal (-x^3 - 2*x^2*z + x*y*z + y^2*z - 4*x*z^2 + 3*y*z^2 - 5*z^3)
+             of Multivariate Polynomial Ring in x, y, z
+              over Number Field in a with defining polynomial x^2 - 1/3
+               with a = 0.5773502691896258?
 
         Of course, the point ``p`` is a root of all generators of ``I``::
 
-            sage: I.subs(x=1,y=2,z=1)
-            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Number Field in a with defining polynomial x^2 - 1/3 with a = 0.5773502691896258?
+            sage: I.subs(x=1, y=2, z=1)                                                 # optional - sage.rings.number_field
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z
+             over Number Field in a with defining polynomial x^2 - 1/3
+              with a = 0.5773502691896258?
 
         ``I`` is also radical::
 
-            sage: I.radical() == I
+            sage: I.radical() == I                                                      # optional - sage.rings.number_field
             True
 
         So we compute its Weil restriction::
 
-            sage: J = I.weil_restriction()
-            sage: J
+            sage: J = I.weil_restriction()                                              # optional - sage.rings.number_field
+            sage: J                                                                     # optional - sage.rings.number_field
             Ideal (-x0^3 - x0*x1^2 - 2*x0^2*z0 - 2/3*x1^2*z0 + x0*y0*z0 + y0^2*z0 +
             1/3*x1*y1*z0 + 1/3*y1^2*z0 - 4*x0*z0^2 + 3*y0*z0^2 - 5*z0^3 -
             4/3*x0*x1*z1 + 1/3*x1*y0*z1 + 1/3*x0*y1*z1 + 2/3*y0*y1*z1 - 8/3*x1*z0*z1
@@ -5356,18 +5363,19 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
 
         We can check that the point ``p`` is still a root of all generators of ``J``::
 
-            sage: J.subs(x0=1,y0=2,z0=1,x1=0,y1=0,z1=0)
-            Ideal (0, 0) of Multivariate Polynomial Ring in x0, x1, y0, y1, z0, z1 over Rational Field
+            sage: J.subs(x0=1, y0=2, z0=1, x1=0, y1=0, z1=0)                            # optional - sage.rings.number_field
+            Ideal (0, 0) of Multivariate Polynomial Ring in x0, x1, y0, y1, z0, z1
+             over Rational Field
 
         Example for relative number fields::
 
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5-2)
-            sage: R.<x> = K[]
-            sage: L.<v> = K.extension(x^2+1)
-            sage: S.<x,y> = L[]
-            sage: I = S.ideal([y^2-x^3-1])
-            sage: I.weil_restriction()
+            sage: K.<w> = NumberField(x^5 - 2)                                          # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
+            sage: L.<v> = K.extension(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: S.<x,y> = L[]                                                         # optional - sage.rings.number_field
+            sage: I = S.ideal([y^2 - x^3 - 1])                                          # optional - sage.rings.number_field
+            sage: I.weil_restriction()                                                  # optional - sage.rings.number_field
             Ideal (-x0^3 + 3*x0*x1^2 + y0^2 - y1^2 - 1, -3*x0^2*x1 + x1^3 + 2*y0*y1)
             of Multivariate Polynomial Ring in x0, x1, y0, y1 over Number Field in w
             with defining polynomial x^5 - 2

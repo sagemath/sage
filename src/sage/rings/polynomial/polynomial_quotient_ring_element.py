@@ -7,8 +7,8 @@ EXAMPLES: We create a quotient of a univariate polynomial ring over
 ::
 
     sage: R.<x> = ZZ[]
-    sage: S.<a> = R.quotient(x^3 + 3*x -1)
-    sage: 2 * a^3
+    sage: S.<a> = R.quotient(x^3 + 3*x - 1)                                     # optional - sage.libs.pari
+    sage: 2 * a^3                                                               # optional - sage.libs.pari
     -6*a + 2
 
 Next we make a univariate polynomial ring over
@@ -16,24 +16,24 @@ Next we make a univariate polynomial ring over
 
 ::
 
-    sage: S1.<y> = S[]
+    sage: S1.<y> = S[]                                                          # optional - sage.libs.pari
 
 And, we quotient out that by `y^2 + a`.
 
 ::
 
-    sage: T.<z> = S1.quotient(y^2+a)
+    sage: T.<z> = S1.quotient(y^2 + a)                                          # optional - sage.libs.pari
 
 In the quotient `z^2` is `-a`.
 
 ::
 
-    sage: z^2
+    sage: z^2                                                                   # optional - sage.libs.pari
     -a
 
 And since `a^3 = -3x + 1`, we have::
 
-    sage: z^6
+    sage: z^6                                                                   # optional - sage.libs.pari
     3*a - 1
 
 ::
@@ -161,15 +161,15 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         EXAMPLES::
 
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: cc = K.hom([-i])
-            sage: S.<y> = K[]
-            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
-            sage: T.<t> = S.quotient(y*(y+1))
-            sage: phi = Q.hom([t+1], base_map=cc)
-            sage: phi(q)
+            sage: K.<i> = NumberField(x^2 + 1)                                  # optional - sage.rings.number_field
+            sage: cc = K.hom([-i])                                              # optional - sage.rings.number_field
+            sage: S.<y> = K[]                                                   # optional - sage.rings.number_field
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))                           # optional - sage.rings.number_field
+            sage: T.<t> = S.quotient(y*(y+1))                                   # optional - sage.rings.number_field
+            sage: phi = Q.hom([t+1], base_map=cc)                               # optional - sage.rings.number_field
+            sage: phi(q)                                                        # optional - sage.rings.number_field
             t + 1
-            sage: phi(i*q)
+            sage: phi(i*q)                                                      # optional - sage.rings.number_field
             -i*t - i
         """
         return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)
@@ -771,11 +771,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: R.<x> = GF(65537)[]
-            sage: m = x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7 + 17496*x^6 + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2 + 54266*x + 47805
-            sage: f = 20437*x^10 + 62630*x^9 + 63241*x^8 + 12820*x^7 + 42171*x^6 + 63091*x^5 + 15288*x^4 + 32516*x^3 + 2181*x^2 + 45236*x + 2447
-            sage: f_mod_m = R.quotient(m)(f)
-            sage: f_mod_m.rational_reconstruction()
+            sage: R.<x> = GF(65537)[]                                                       # optional - sage.libs.pari
+            sage: m = (x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7 + 17496*x^6    # optional - sage.libs.pari
+            ....:      + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2 + 54266*x + 47805)
+            sage: f = (20437*x^10 + 62630*x^9 + 63241*x^8 + 12820*x^7 + 42171*x^6           # optional - sage.libs.pari
+            ....:      + 63091*x^5 + 15288*x^4 + 32516*x^3 + 2181*x^2 + 45236*x + 2447)
+            sage: f_mod_m = R.quotient(m)(f)                                                # optional - sage.libs.pari
+            sage: f_mod_m.rational_reconstruction()                                         # optional - sage.libs.pari
             (51388*x^5 + 29141*x^4 + 59341*x^3 + 7034*x^2 + 14152*x + 23746,
              x^5 + 15208*x^4 + 19504*x^3 + 20457*x^2 + 11180*x + 28352)
         """

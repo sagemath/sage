@@ -27,7 +27,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
     EXAMPLES::
 
-        sage: LieConformalAlgebras(AA).Super()
+        sage: LieConformalAlgebras(AA).Super()                                  # optional - sage.rings.number_field
         Category of super Lie conformal algebras over Algebraic Real Field
 
     Notice that we can force to have a *purely even* super Lie
@@ -175,7 +175,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(AA).Super().Graded()
+            sage: LieConformalAlgebras(AA).Super().Graded()                             # optional - sage.rings.number_field
             Category of H-graded super Lie conformal algebras over Algebraic Real Field
         """
         def _repr_object_names(self):
@@ -184,7 +184,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).Graded()
+                sage: LieConformalAlgebras(QQbar).Graded()                              # optional - sage.rings.number_field
                 Category of H-graded Lie conformal algebras over Algebraic Field
             """
             return "H-graded {}".format(self.base_category()._repr_object_names())

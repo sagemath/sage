@@ -185,10 +185,10 @@ def matrix(*args, **kwds):
         sage: m = matrix(v); m; m.parent()
         [  1  10 100]
         Full MatrixSpace of 1 by 3 dense matrices over Integer Ring
-        sage: m = matrix(GF(7), v); m; m.parent()
+        sage: m = matrix(GF(7), v); m; m.parent()                               # optional - sage.libs.pari
         [1 3 2]
         Full MatrixSpace of 1 by 3 dense matrices over Finite Field of size 7
-        sage: m = matrix(GF(7), 3, 1, v); m; m.parent()
+        sage: m = matrix(GF(7), 3, 1, v); m; m.parent()                         # optional - sage.libs.pari
         [1]
         [3]
         [2]
@@ -196,15 +196,15 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: matrix(pari.mathilbert(3))
+        sage: matrix(pari.mathilbert(3))                                        # optional - sage.libs.pari
         [  1 1/2 1/3]
         [1/2 1/3 1/4]
         [1/3 1/4 1/5]
 
     ::
 
-        sage: g = graphs.PetersenGraph()
-        sage: m = matrix(g); m; m.parent()
+        sage: g = graphs.PetersenGraph()                                        # optional - sage.graphs
+        sage: m = matrix(g); m; m.parent()                                      # optional - sage.graphs
         [0 1 0 0 1 1 0 0 0 0]
         [1 0 1 0 0 0 1 0 0 0]
         [0 1 0 1 0 0 0 1 0 0]
@@ -542,10 +542,11 @@ def matrix(*args, **kwds):
         sage: v = vector(ZZ, [1, 10, 100])
         sage: m = matrix(ZZ['x'], v); m; m.parent()
         [  1  10 100]
-        Full MatrixSpace of 1 by 3 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+        Full MatrixSpace of 1 by 3 dense matrices
+         over Univariate Polynomial Ring in x over Integer Ring
         sage: matrix(ZZ, 10, 10, range(100)).parent()
         Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
-        sage: m = matrix(GF(7), [[1/3,2/3,1/2], [3/4,4/5,7]]); m; m.parent()
+        sage: m = matrix(GF(7), [[1/3,2/3,1/2], [3/4,4/5,7]]); m; m.parent()    # optional - sage.libs.pari
         [5 3 4]
         [6 5 0]
         Full MatrixSpace of 2 by 3 dense matrices over Finite Field of size 7

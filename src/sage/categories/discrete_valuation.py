@@ -20,7 +20,7 @@ class DiscreteValuationRings(Category_singleton):
 
     EXAMPLES::
 
-        sage: GF(7)[['x']] in DiscreteValuationRings()
+        sage: GF(7)[['x']] in DiscreteValuationRings()                          # optional - sage.libs.pari
         True
         sage: TestSuite(DiscreteValuationRings()).run()
     """
@@ -70,27 +70,27 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))
-                sage: M = matrix(4, 4, [ (t^(i+j)).add_bigoh(10)
-                ....:                    for i in range(4) for j in range(4) ])
-                sage: M
+                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.libs.pari
+                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)                         # optional - sage.libs.pari
+                ....:                   for i in range(4) for j in range(4)])
+                sage: M                                                                 # optional - sage.libs.pari
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: M.charpoly()   # indirect doctest
+                sage: M.charpoly()   # indirect doctest                                 # optional - sage.libs.pari
                 x^4 + (4 + 4*t^2 + 4*t^4 + 4*t^6 + O(t^10))*x^3
 
             Note that this function uses a Hessenberg-like algorithm
             that performs divisions. Hence, truncations may show up
             even if the input matrix is exact::
 
-                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])
-                sage: M
+                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])     # optional - sage.libs.pari
+                sage: M                                                                 # optional - sage.libs.pari
                 [    1     t   t^2]
                 [1 + t   t^2   t^3]
                 [  t^2   t^3   t^4]
-                sage: M.charpoly()
+                sage: M.charpoly()                                                      # optional - sage.libs.pari
                 x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
 
             Another example over the p-adics::
@@ -125,10 +125,10 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]
-                sage: (q^3).euclidean_degree()
+                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.libs.pari
+                sage: (q^3).euclidean_degree()                                          # optional - sage.libs.pari
                 3
-                sage: R(0).euclidean_degree()
+                sage: R(0).euclidean_degree()                                           # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 ValueError: Euclidean degree of the zero element not defined
@@ -145,12 +145,12 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]
-                sage: (q^2 + q).quo_rem(q)
+                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.libs.pari
+                sage: (q^2 + q).quo_rem(q)                                              # optional - sage.libs.pari
                 (1 + q, 0)
-                sage: (q + 1).quo_rem(q^2)
+                sage: (q + 1).quo_rem(q^2)                                              # optional - sage.libs.pari
                 (0, 1 + q)
-                sage: q.quo_rem(0)
+                sage: q.quo_rem(0)                                                      # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 ZeroDivisionError: Euclidean division by the zero element not defined
@@ -261,17 +261,17 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))
-                sage: K = R.fraction_field()
-                sage: H = matrix(K, 4, 4, [ (t^(i+j)).add_bigoh(10)
-                ....:                       for i in range(4) for j in range(4) ])
-                sage: H
+                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.libs.pari
+                sage: K = R.fraction_field()                                            # optional - sage.libs.pari
+                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)                      # optional - sage.libs.pari
+                ....:                      for i in range(4) for j in range(4)])
+                sage: H                                                                 # optional - sage.libs.pari
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: H.hessenbergize()
-                sage: H
+                sage: H.hessenbergize()                                                 # optional - sage.libs.pari
+                sage: H                                                                 # optional - sage.libs.pari
                 [              1 + O(t^10)   t + t^3 + t^5 + O(t^10)             t^2 + O(t^10)             t^3 + O(t^10)]
                 [              t + O(t^10) t^2 + t^4 + t^6 + O(t^10)             t^3 + O(t^10)             t^4 + O(t^10)]
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]

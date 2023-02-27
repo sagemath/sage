@@ -1678,30 +1678,30 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ....:         return a.parent()(D)
 
             sage: R.<x, y, z> = QQ['x, y, z']
-            sage: G = SymmetricGroup(3)
-            sage: act = SymmetricGroupAction(G, R)
+            sage: G = SymmetricGroup(3)                                         # optional - sage.groups
+            sage: act = SymmetricGroupAction(G, R)                              # optional - sage.groups
             sage: t = x + 2*y + 3*z
 
-            sage: act(G((1, 2)), t)
+            sage: act(G((1, 2)), t)                                             # optional - sage.groups
             2*x + y + 3*z
-            sage: act(G((2, 3)), t)
+            sage: act(G((2, 3)), t)                                             # optional - sage.groups
             x + 3*y + 2*z
-            sage: act(G((1, 2, 3)), t)
+            sage: act(G((1, 2, 3)), t)                                          # optional - sage.groups
             3*x + y + 2*z
 
         This should fail, since we have not registered the left
         action::
 
-            sage: G((1,2)) * t
+            sage: G((1,2)) * t                                                  # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: ...
 
         Now let's make it work::
 
-            sage: R._unset_coercions_used()
-            sage: R.register_action(act)
-            sage: G((1, 2)) * t
+            sage: R._unset_coercions_used()                                     # optional - sage.groups
+            sage: R.register_action(act)                                        # optional - sage.groups
+            sage: G((1, 2)) * t                                                 # optional - sage.groups
             2*x + y + 3*z
         """
         if self._coercions_used:
@@ -1762,35 +1762,35 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: S3 = AlternatingGroup(3)
-            sage: G = SL(3, QQ)
-            sage: p = S3[2]; p.matrix()
+            sage: S3 = AlternatingGroup(3)                                      # optional - sage.groups
+            sage: G = SL(3, QQ)                                                 # optional - sage.groups
+            sage: p = S3[2]; p.matrix()                                         # optional - sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
 
         In general one cannot mix matrices and permutations::
 
-            sage: G(p)
+            sage: G(p)                                                          # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: unable to convert (1,3,2) to a rational
-            sage: phi = S3.hom(lambda p: G(p.matrix()), codomain = G)
-            sage: phi(p)
+            sage: phi = S3.hom(lambda p: G(p.matrix()), codomain=G)             # optional - sage.groups
+            sage: phi(p)                                                        # optional - sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
-            sage: S3._unset_coercions_used()
-            sage: S3.register_embedding(phi)
+            sage: S3._unset_coercions_used()                                    # optional - sage.groups
+            sage: S3.register_embedding(phi)                                    # optional - sage.groups
 
         By :trac:`14711`, coerce maps should be copied when using outside of
         the coercion system::
 
-            sage: phi = copy(S3.coerce_embedding()); phi
+            sage: phi = copy(S3.coerce_embedding()); phi                        # optional - sage.groups
             Generic morphism:
               From: Alternating group of order 3!/2 as a permutation group
               To:   Special Linear Group of degree 3 over Rational Field
-            sage: phi(p)
+            sage: phi(p)                                                        # optional - sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
@@ -1798,11 +1798,11 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         This does not work since matrix groups are still old-style
         parents (see :trac:`14014`)::
 
-            sage: G(p)                               # todo: not implemented
+            sage: G(p)                               # todo: not implemented    # optional - sage.groups
 
         Though one can have a permutation act on the rows of a matrix::
 
-            sage: G(1) * p
+            sage: G(1) * p                                                      # optional - sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
@@ -2112,12 +2112,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         The following was fixed in :trac:`12969`::
 
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
-            sage: H = Sym.macdonald().H()
-            sage: P = Sym.macdonald().P()
-            sage: m = Sym.monomial()
-            sage: Ht = Sym.macdonald().Ht()
-            sage: phi = m.coerce_map_from(P)
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)               # optional - sage.combinat
+            sage: H = Sym.macdonald().H()                                       # optional - sage.combinat
+            sage: P = Sym.macdonald().P()                                       # optional - sage.combinat
+            sage: m = Sym.monomial()                                            # optional - sage.combinat
+            sage: Ht = Sym.macdonald().Ht()                                     # optional - sage.combinat
+            sage: phi = m.coerce_map_from(P)                                    # optional - sage.combinat
         """
         return copy(self._internal_coerce_map_from(S))
 
@@ -2148,15 +2148,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               To:   Rational Field
 
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
-            sage: P = Sym.macdonald().P()
-            sage: Ht = Sym.macdonald().Ht()
-            sage: Ht._internal_coerce_map_from(P)
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)               # optional - sage.combinat
+            sage: P = Sym.macdonald().P()                                       # optional - sage.combinat
+            sage: Ht = Sym.macdonald().Ht()                                     # optional - sage.combinat
+            sage: Ht._internal_coerce_map_from(P)                               # optional - sage.combinat
             (map internal to coercion system -- copy before use)
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
-            sage: copy(Ht._internal_coerce_map_from(P))
+            sage: copy(Ht._internal_coerce_map_from(P))                         # optional - sage.combinat
             Composite map:
               From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald P basis
               To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
