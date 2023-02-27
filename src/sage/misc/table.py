@@ -106,7 +106,8 @@ class table(SageObject):
     information.  The same goes for ``header_column``. Passing lists
     for both arguments simultaneously is not supported. ::
 
-        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]], header_row=["$x$", r"$\sin(x)$"], frame=True)
+        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]],                  # optional - sage.symbolic
+        ....:       header_row=["$x$", r"$\sin(x)$"], frame=True)
         +-----+-----------+
         | $x$ | $\sin(x)$ |
         +=====+===========+
@@ -122,7 +123,9 @@ class table(SageObject):
     You can create the transpose of this table in several ways, for
     example, "by hand," that is, changing the data defining the table::
 
-        sage: table(rows=[[x for x in [0..3]], [n(sin(x), digits=2) for x in [0..3]]], header_column=['$x$', r'$\sin(x)$'], frame=True)
+        sage: table(rows=[[x for x in [0..3]],                                  # optional - sage.symbolic
+        ....:             [n(sin(x), digits=2) for x in [0..3]]],
+        ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
@@ -132,7 +135,8 @@ class table(SageObject):
     or by passing the original data as the ``columns`` of the table
     and using ``header_column`` instead of ``header_row``::
 
-        sage: table(columns=[(x,n(sin(x), digits=2)) for x in [0..3]], header_column=['$x$', r'$\sin(x)$'], frame=True)
+        sage: table(columns=[(x, n(sin(x), digits=2)) for x in [0..3]],         # optional - sage.symbolic
+        ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
@@ -141,7 +145,8 @@ class table(SageObject):
 
     or by taking the :meth:`transpose` of the original table::
 
-        sage: table(rows=[(x,n(sin(x), digits=2)) for x in [0..3]], header_row=['$x$', r'$\sin(x)$'], frame=True).transpose()
+        sage: table(rows=[(x, n(sin(x), digits=2)) for x in [0..3]],            # optional - sage.symbolic
+        ....:       header_row=['$x$', r'$\sin(x)$'], frame=True).transpose()
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
         +-----------++------+------+------+------+
