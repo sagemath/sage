@@ -1664,7 +1664,7 @@ class Braid(FiniteTypeArtinGroupElement):
             False
             sage: l = sage.groups.braid.conjugatingbraid(a,c)
             sage: d1 == B._element_from_libbraiding(l)
-            True          
+            True
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
