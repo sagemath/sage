@@ -2379,7 +2379,7 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
     These are constructed by the functions  :func: `sage.combinat.designs.difference_family.complementary_difference_sets`
     and :func:`sage.combinat.designs.difference_family.difference_family`.
 
-    For more details, see [Spe1975]_
+    For more details, see [Spe1975b]_.
 
     INPUT:
 
