@@ -1450,6 +1450,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def left_normal_form(self):
         r"""
+        Return the left normal form of the braid.
+        
         A tuple of simple generators in the left normal form. The first
         element is a power of `\Delta`, and the rest are elements of the
         natural section lift from the corresponding symmetric group.
@@ -1463,6 +1465,11 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
+            sage: B = BraidGroup(3)
+            sage: B([1,2,-1]).left_normal_form()
+            (s0^-1*s1^-1*s0^-1, s1*s0, s0*s1)
+            sage: B([1,2,1]).left_normal_form()
+            (s0*s1*s0,)
         """
         l = leftnormalform(self)
         B = self.parent()
@@ -1540,6 +1547,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def right_normal_form(self):
         r"""
+        Return the right normal form of the braid.
+        
         A tuple of simple generators in the right normal form. The last
         element is a power of `\Delta`, and the rest are elements of the
         natural section lift from the corresponding symmetric group.
@@ -1644,6 +1653,18 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(3)
             sage: a = B([2, 2, -1, -1])
+            sage: b = B([2, 1, 2, 1])
+            sage: c = b * a / b
+            sage: d1 = a.conjugating_braid(c)
+            sage: print (d1)
+            s1*s0
+            sage: d1 * c / d1 == a
+            True
+            sage: d1 * a / d1 == c
+            False
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)
+            sage: d1 == B._element_from_libbraiding(l)
+            True          
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
@@ -1651,10 +1672,10 @@ class Braid(FiniteTypeArtinGroupElement):
             7
             sage: d1 * c / d1 == a
             True
-            sage: d1
-            s1^2*s0^2*s1^2*s0
             sage: d1 * a / d1 == c
             False
+            sage: d1
+            s1^2*s0^2*s1^2*s0
             sage: l = sage.groups.braid.conjugatingbraid(a,c)
             sage: d2 = B._element_from_libbraiding(l)
             sage: print (len(d2.Tietze()))
