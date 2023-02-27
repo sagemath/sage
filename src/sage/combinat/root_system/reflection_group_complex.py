@@ -205,6 +205,7 @@ from sage.combinat.root_system.reflection_group_element import ComplexReflection
 from sage.sets.family import Family
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
+from sage.combinat.permutation import Permutation
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.all import Matrix, identity_matrix
@@ -367,17 +368,21 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         type_str = type_str[:-3]
         return 'Reducible complex reflection group of rank %s and type %s' % (self._rank, type_str)
 
-    def __iter__(self):
+    def iteration_tracking_words(self):
         r"""
-        Return an iterator going through all elements in ``self``.
+        Return an iterator going through all elements in ``self`` that
+        tracks the reduced expressions.
+
+        This can be much slower than using the iteration as a permutation
+        group with strong generating set.
 
         EXAMPLES::
 
             sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-            sage: for w in W: w                                         # optional - gap3
+            sage: for w in W.iteration_tracking_words(): w              # optional - gap3
             ()
-            (1,3)(2,5)(4,6)
             (1,4)(2,3)(5,6)
+            (1,3)(2,5)(4,6)
             (1,6,2)(3,5,4)
             (1,2,6)(3,4,5)
             (1,5)(2,4)(3,6)

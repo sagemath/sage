@@ -1,7 +1,7 @@
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
-# https://trac.sagemath.org/ticket/18083
+# https://github.com/sagemath/sage/issues/18083
 
 r"""
 Object persistence
@@ -157,7 +157,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         ....:     _ = f.write(code)
         sage: load(t)
         sage: hello
-        <fortran object>
+        <fortran ...>
     """
     import sage.repl.load
     if len(filename) != 1:
@@ -298,7 +298,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }   
+    already_pickled = { }
 
     if compress:
         return comp.compress(gherkin)

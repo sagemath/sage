@@ -1058,7 +1058,7 @@ def is_QuadraticField(x) -> bool:
         doctest:warning...
         DeprecationWarning: is_QuadraticField is deprecated;
         use isinstance(..., sage.rings.abc.NumberField_quadratic instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         True
         sage: is_QuadraticField(NumberField(x^2 - 5, 'b'))
         True
@@ -1255,7 +1255,7 @@ def is_CyclotomicField(x) -> bool:
         doctest:warning...
         DeprecationWarning: is_CyclotomicField is deprecated;
         use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         False
         sage: is_CyclotomicField(CyclotomicField(4))
         True
@@ -1468,7 +1468,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         self._pari_bnf_certified = False
         self._integral_basis_dict = {}
         if embedding is not None:
-            # Since Trac #20827, an embedding is specified as a pair
+            # Since Issue #20827, an embedding is specified as a pair
             # (parent, x) with x the image of the distinguished
             # generator (previously, it was just given as x).  This
             # allows the UniqueFactory to distinguish embeddings into
@@ -3436,7 +3436,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: NumberField(x^2 + 3, 'a').latex_variable_name()
             doctest:...: DeprecationWarning: This method is replaced by ...
-            See https://trac.sagemath.org/30372 for details.
+            See https://github.com/sagemath/sage/issues/30372 for details.
             'a'
             sage: NumberField(x^3 + 3, 'theta3').latex_variable_name()
             '\\theta_{3}'
@@ -4142,7 +4142,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         from sage.rings.fast_arith import prime_range
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.arith.all import factor
+        from sage.arith.misc import factor
         split_primes = []
         for p in prime_range(B):
             Fp = GF(p)
@@ -6238,7 +6238,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L = K.extension(t^5-t+a, 'b')
             sage: L.galois_group()
             ...DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group 10T22 (S(5)[x]2) with order 240 of t^5 - t + a
 
         TESTS:
@@ -6247,10 +6247,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: G = NumberField(x^3-2, 'a').galois_group(type="pari")
             ...DeprecationWarning: the different Galois types have been merged into one class
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: G.group()
             ...DeprecationWarning: the group method is deprecated; you can use _pol_galgp if you really need it
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             PARI group [6, -1, 2, "S3"] of degree 3
         """
         if type is not None:
@@ -8063,7 +8063,7 @@ class NumberField_absolute(NumberField_generic):
             sage: L(a)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert a to Number Field in b with defining polynomial x^3 - 4*x + 1 with b = 1.860805853111704? (using the specified embeddings)
+            ValueError: cannot convert a to Number Field in b with defining polynomial x^3 - 4*x + 1 with b = 1.860805853111704? (using the specified embeddings)
 
         Subfields automatically come with an embedding::
 
@@ -8156,7 +8156,7 @@ class NumberField_absolute(NumberField_generic):
         f = x.minpoly()
         ys = f.roots(ring=K, multiplicities=False)
         if not ys:
-            raise ValueError("Cannot convert %s to %s (regardless of embeddings)" % (x, K))
+            raise ValueError("cannot convert %s to %s (regardless of embeddings)" % (x, K))
 
         # Define a function are_roots_equal to determine whether two
         # roots of f are equal.  A simple a == b does not suffice for
@@ -8213,7 +8213,7 @@ class NumberField_absolute(NumberField_generic):
             emb_y = y.polynomial()(Kgen)
             if are_roots_equal(emb_x, emb_y):
                 return y
-        raise ValueError("Cannot convert %s to %s (using the specified embeddings)" % (x, K))
+        raise ValueError("cannot convert %s to %s (using the specified embeddings)" % (x, K))
 
     def _coerce_map_from_(self, R):
         """
@@ -8317,7 +8317,7 @@ class NumberField_absolute(NumberField_generic):
             else:
                 # R is embedded, self isn't. So, we could only have
                 # the forgetful coercion. But this yields to non-commuting
-                # coercions, as was pointed out at ticket #8800
+                # coercions, as was pointed out at issue #8800
                 return None
 
     def base_field(self):
@@ -9358,7 +9358,7 @@ class NumberField_absolute(NumberField_generic):
             r1, r2 = K.signature()
             r = r1 + r2 - 1
 
-            from sage.rings.all import RealField
+            from sage.rings.real_mpfr import RealField
             Reals = RealField(prec)
 
             if x == 0:
@@ -11220,7 +11220,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                     if z == x:
                         return self.zeta(m)**(r+1)
                     z *= y
-            raise TypeError("Cannot coerce %s into %s" % (x, self))
+            raise TypeError("cannot coerce %s into %s" % (x, self))
         return self._element_class(self, x)
 
     def _coerce_from_gap(self, x):

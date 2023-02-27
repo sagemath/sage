@@ -3081,7 +3081,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: R = Poset([[0],[]])
             sage: R.list()
             [0]
-            sage: R.top() #Trac #10776
+            sage: R.top() #Issue #10776
             0
         """
         hasse_top = self._hasse_diagram.top()
@@ -5883,7 +5883,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: L = LatticePoset({}).with_bounds(); L
             Finite lattice containing 2 elements
-            sage: L.meet_irreducibles()  # Trac 21543
+            sage: L.meet_irreducibles()  # Issue 21543
             ['bottom']
 
             sage: Poset().with_bounds((None, 1))

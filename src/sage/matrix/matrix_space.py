@@ -679,7 +679,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.all import Modules, Algebras
+        from sage.categories.modules import Modules
+        from sage.categories.algebras import Algebras
         if nrows == ncols:
             category = Algebras(base_ring.category())
         else:
@@ -1208,7 +1209,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if B is not T:
                 # Matrix spaces over different base rings.
                 # TODO: make this an actual map induced by the map
-                # on the bases, see Trac #25540
+                # on the bases, see Issue #25540
                 return B.has_coerce_map_from(T)
 
             # Base ring and dimensions are the same. So the only

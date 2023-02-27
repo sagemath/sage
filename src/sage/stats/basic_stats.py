@@ -68,7 +68,7 @@ def mean(v):
         sage: mean([pi, e])
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mean is deprecated; use numpy.mean or numpy.nanmean instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*pi + 1/2*e
         sage: mean([])
         NaN
@@ -124,7 +124,7 @@ def mode(v):
         sage: mode(v)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mode is deprecated; use scipy.stats.mode or statistics.mode instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         [1]
         sage: v.count(1)
         3
@@ -197,13 +197,13 @@ def std(v, bias=False):
         sage: std([1..6], bias=True)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated; use numpy.std or numpy.nanstd instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.variance is deprecated; use numpy.var or numpy.nanvar instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mean is deprecated; use numpy.mean or numpy.nanmean instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*sqrt(35/3)
         sage: std([1..6], bias=False)
         sqrt(7/2)
@@ -282,7 +282,7 @@ def variance(v, bias=False):
         sage: variance([1..6])
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.variance is deprecated; use numpy.var or numpy.nanvar instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         7/2
         sage: variance([1..6], bias=True)
         35/12
@@ -388,7 +388,7 @@ def median(v):
         sage: median([1,2,3,4,5])
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.median is deprecated; use numpy.median or numpy.nanmedian instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         3
         sage: median([e, pi])
         1/2*pi + 1/2*e
@@ -444,7 +444,7 @@ def moving_average(v, n):
         sage: moving_average([1..10], 1)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.moving_average is deprecated; use pandas.Series.rolling instead
-        See https://trac.sagemath.org/29662 for details.
+        See https://github.com/sagemath/sage/issues/29662 for details.
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         sage: moving_average([1..10], 4)
         [5/2, 7/2, 9/2, 11/2, 13/2, 15/2, 17/2]

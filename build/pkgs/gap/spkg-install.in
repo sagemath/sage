@@ -32,7 +32,7 @@ sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
 # typically "expected" to be loaded: These are the default packages that are
 # autoloaded at GAP startup (via the PackagesToLoad UserPreference) with an
 # out-of-the-box GAP installation; see
-# https://trac.sagemath.org/ticket/22626#comment:393 for discussion on this
+# https://github.com/sagemath/sage/issues/22626#comment:393 for discussion on this
 #
 # Also include atlasrep which is a dependency of tomlib
 sdh_install \
