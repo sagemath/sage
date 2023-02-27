@@ -781,7 +781,7 @@ def orient_circuit(circuit, convex = False):
 
     OUTPUT:
 
-    The same circuit if it goes counterclockwise, and its reverse otherwise
+    The same circuit if it goes counterclockwise, and its reversed otherwise
 
     EXAMPLES::
 
@@ -792,7 +792,7 @@ def orient_circuit(circuit, convex = False):
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
-        sage: E.vertices(sort=True)
+        sage: E.vertices(sort = True)
         [A vertex at (-2, -2),
          A vertex at (-2, 2),
          A vertex at (2, -2),
@@ -1027,7 +1027,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     
 
-
 def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
@@ -1118,8 +1117,8 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
             e1 = (b, a, None)
             if e not in Edges:
                 Edges += [e, e1]
-                crd[e]=(Vreg1[i],)
-                crd[e1]=(Vreg1[i],)
+                crd[e] = (Vreg1[i],)
+                crd[e1] = (Vreg1[i],)
             else:
                 crd[e] += (Vreg1[i],)
                 crd[e1] += (Vreg1[i],)
