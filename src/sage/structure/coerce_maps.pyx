@@ -196,13 +196,13 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')
+            sage: var('t')                                                      # optional - sage.symbolic
             t
-            sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')            # optional - sage.symbolic
+            sage: mor(t^2/4 + 1)                                                # optional - sage.symbolic
             1/4*t^2 + 1
-            sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')       # optional - sage.symbolic
+            sage: mor(t^2/4 + 1)                                                # optional - sage.symbolic
             1 + 2*t^2
         """
         if isinstance(domain, type):
@@ -219,19 +219,19 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')
+            sage: var('t')                                                      # optional - sage.symbolic
             t
-            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')
-            sage: psi = copy(phi)    # indirect doctest
-            sage: psi
+            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')            # optional - sage.symbolic
+            sage: psi = copy(phi)    # indirect doctest                         # optional - sage.symbolic
+            sage: psi                                                           # optional - sage.symbolic
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi         # todo: comparison not implemented         # optional - sage.symbolic
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)                                                # optional - sage.symbolic
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)                              # optional - sage.symbolic
             True
         """
         slots = Map._extra_slots(self)
@@ -245,19 +245,19 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')
+            sage: var('t')                                                      # optional - sage.symbolic
             t
-            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')
-            sage: psi = copy(phi)    # indirect doctest
-            sage: psi
+            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')            # optional - sage.symbolic
+            sage: psi = copy(phi)    # indirect doctest                         # optional - sage.symbolic
+            sage: psi                                                           # optional - sage.symbolic
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi         # todo: comparison not implemented         # optional - sage.symbolic
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)                                                # optional - sage.symbolic
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)                              # optional - sage.symbolic
             True
         """
         self.method_name = _slots['method_name']
@@ -302,8 +302,8 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')
-            sage: f(x^2+1, check=True)
+            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')              # optional - sage.symbolic
+            sage: f(x^2 + 1, check=True)                                        # optional - sage.symbolic
             x^2 + 1
         """
         cdef Parent C = self._codomain
@@ -336,12 +336,12 @@ cdef class CallableConvertMap(Map):
 
         ::
 
-            sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)
-            sage: f(0)
+            sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)        # optional - sage.symbolic
+            sage: f(0)                                                                  # optional - sage.symbolic
             1.00000000000000
-            sage: f(1)
+            sage: f(1)                                                                  # optional - sage.symbolic
             2.71828182845905
-            sage: f(-3)
+            sage: f(-3)                                                                 # optional - sage.symbolic
             0.0497870683678639
         """
         if isinstance(domain, type):

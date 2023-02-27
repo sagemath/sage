@@ -520,14 +520,15 @@ cdef class ModuleAction(Action):
 
         See :trac:`19521`::
 
-            sage: Q.<y> = SR.subring(no_variables=True)[[]]
-            sage: (y / 1).parent()
+            sage: Q.<y> = SR.subring(no_variables=True)[[]]                     # optional - sage.symbolic
+            sage: (y / 1).parent()                                              # optional - sage.symbolic
             Power Series Ring in y over Symbolic Constants Subring
-            sage: R.<x> = SR.subring(no_variables=True)[]
-            sage: cm = sage.structure.element.get_coercion_model()
-            sage: cm.explain(x, 1, operator.truediv)
+            sage: R.<x> = SR.subring(no_variables=True)[]                       # optional - sage.symbolic
+            sage: cm = sage.structure.element.get_coercion_model()              # optional - sage.symbolic
+            sage: cm.explain(x, 1, operator.truediv)                            # optional - sage.symbolic
             Action discovered.
-                Right inverse action by Symbolic Constants Subring on Univariate Polynomial Ring in x over Symbolic Constants Subring
+                Right inverse action by Symbolic Constants Subring
+                 on Univariate Polynomial Ring in x over Symbolic Constants Subring
                 with precomposition on right by Conversion via _symbolic_ method map:
                   From: Integer Ring
                   To:   Symbolic Constants Subring
@@ -852,11 +853,11 @@ cdef class IntegerPowAction(IntegerAction):
 
     ::
 
-        sage: var('x,y')
+        sage: var('x,y')                                                        # optional - sage.symbolic
         (x, y)
-        sage: RDF('-2.3')^(x+y^3+sin(x))
+        sage: RDF('-2.3')^(x+y^3+sin(x))                                        # optional - sage.symbolic
         (-2.3)^(y^3 + x + sin(x))
-        sage: RDF('-2.3')^x
+        sage: RDF('-2.3')^x                                                     # optional - sage.symbolic
         (-2.3)^x
     """
     def __init__(self, Z, M, is_left=False, m=None):

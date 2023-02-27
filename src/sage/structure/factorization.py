@@ -207,7 +207,7 @@ class Factorization(SageObject):
         -1
         sage: loads(F.dumps()) == F
         True
-        sage: F = Factorization([(x,1/3)])
+        sage: F = Factorization([(x, 1/3)])                                     # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
@@ -1099,6 +1099,7 @@ class Factorization(SageObject):
             sage: f^4
             2^8 * 5^8
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 39*x - 91)                                                          # optional - sage.rings.number_field
             sage: F = K.factor(7); F                                                                            # optional - sage.rings.number_field
             (Fractional ideal (7, a)) * (Fractional ideal (7, a + 2)) * (Fractional ideal (7, a - 2))
