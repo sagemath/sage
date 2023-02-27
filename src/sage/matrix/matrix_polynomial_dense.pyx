@@ -3546,7 +3546,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
             sage: (F.minimal_approximant_basis(3, row_wise=True) ==             # optional - sage.libs.pari
             ....:  F.transpose().minimal_approximant_basis(
-            ....:      3, row_wise=False).transpose()
+            ....:      3, row_wise=False).transpose())
             True
 
         Errors are raised if the input dimensions are not sound::
