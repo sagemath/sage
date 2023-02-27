@@ -25,3 +25,35 @@ class Singular(Executable):
         """
         Executable.__init__(self, "singular", SINGULAR_BIN,
                             spkg='singular')
+
+
+class sage__libs__singular(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.singular`
+    (the library interface to Singular) and :mod:`sage.interfaces.singular` (the pexpect
+    interface to Singular). By design, we do not distinguish between these two, in order
+    to facilitate the conversion of code from the pexpect interface to the library
+    interface.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__singular
+        sage: sage__libs__singular().is_present()                       # optional - sage.libs.singular
+        FeatureTestResult('sage.libs.singular', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.singular import sage__libs__singular
+            sage: isinstance(sage__libs__singular(), sage__libs__singular)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.singular',
+                             [PythonModule('sage.libs.singular.singular'),
+                              PythonModule('sage.interfaces.singular')])
+
+
+def all_features():
+    return [Singular(),
+            sage__libs__singular()]
