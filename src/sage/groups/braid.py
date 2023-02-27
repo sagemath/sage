@@ -90,7 +90,7 @@ from sage.features import PythonModule
 
 
 lazy_import('sage.libs.braiding',
-            ['rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
+            ['leftnormalform','rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
             feature=PythonModule('sage.libs.braiding', spkg='libbraiding'))
@@ -1448,6 +1448,26 @@ class Braid(FiniteTypeArtinGroupElement):
             return {qa: C[qa].homology() for qa in C}
         return self.annular_khovanov_complex(qagrad, ring).homology()
 
+    def left_normal_form(self):
+        r"""
+        A tuple of simple generators in the left normal form. The first
+        element is a power of `\Delta`, and the rest are elements of the
+        natural section lift from the corresponding symmetric group.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 3, -1, 2, -3])
+            sage: b.left_normal_form()
+            (s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            sage: c = B([1])
+            sage: c.left_normal_form()
+            (1, s0)
+        """
+        l = leftnormalform(self)
+        B = self.parent()
+        return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
+
     def _left_normal_form_coxeter(self):
         r"""
         Return the left normal form of the braid, in permutation form.
@@ -1474,6 +1494,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         .. TODO::
 
+            This method is not used since the above left_normal_form is faster.
             Remove this method and use the default one from
             :meth:`sage.groups.artin.FiniteTypeArtinGroupElement.left_normal_form`.
         """
@@ -1518,8 +1539,10 @@ class Braid(FiniteTypeArtinGroupElement):
         return tuple([-delta] + form)
 
     def right_normal_form(self):
-        """
-        Return the right normal form of the braid.
+        r"""
+        A tuple of simple generators in the right normal form. The last
+        element is a power of `\Delta`, and the rest are elements of the
+        natural section lift from the corresponding symmetric group.
 
         EXAMPLES::
 
@@ -1609,16 +1632,13 @@ class Braid(FiniteTypeArtinGroupElement):
         b = leastcommonmultiple(self, other)
         return B._element_from_libbraiding(b)
 
-    def conjugating_braid(self, other, short = False):
+    def conjugating_braid(self, other):
         r"""
         Return a conjugating braid, if it exists.
 
         INPUT:
 
         - ``other`` -- the other braid to look for conjugating braid
-        
-        - ``short'' -- a boolean variable (default ``False``) to get a
-          shorter conugating braid
 
         EXAMPLES::
 
@@ -1626,7 +1646,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a = B([2, 2, -1, -1])
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
-            sage: d1 = a.conjugating_braid(c, short = True)
+            sage: d1 = a.conjugating_braid(c)
             sage: print (len(d1.Tietze()))
             7
             sage: d1 * c / d1 == a
@@ -1646,16 +1666,9 @@ class Braid(FiniteTypeArtinGroupElement):
         else:
             B = self.parent()
             n = B.strands()
-            b0 = B._element_from_libbraiding(l)
-            if not short:
-                return b0
-            L = b0.left_normal_form()
-            D1 = prod(L[1: ])
-            k = 2 * L[0].exponent_sum() / n / (n - 1)
-            k = int(k % 2)
-            D0 = B.delta()
-            D0a = D0 ** k
-            return D0a * D1
+            k = int(l[0][0] % 2)
+            b0 = B.delta() ** k * prod(B(a) for a in l[1:])
+            return b0
 
     def is_conjugated(self, other):
         """
@@ -1679,16 +1692,13 @@ class Braid(FiniteTypeArtinGroupElement):
         l = conjugatingbraid(self, other)
         return bool(l)
     
-    def pure_conjugating_braid(self, other, short = False):
+    def pure_conjugating_braid(self, other):
         r"""
         Return a pure conjugating braid, if it exists.
 
         INPUT:
 
         - ``other`` -- the other braid to look for conjugating braid
-        
-        - ``short'' -- a boolean variable (default ``False``) to get a
-          shorter conugating braid
 
         EXAMPLES::
 
@@ -1696,7 +1706,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a = B([1, 2, 3])
             sage: b = B([3, 2,])
             sage: c = b ^ 12 * a / b ^ 12
-            sage: d1 = a.conjugating_braid(c, short = True)
+            sage: d1 = a.conjugating_braid(c)
             sage: print (len(d1.Tietze()))
             30
             sage: print (d1.permutation())
@@ -1705,7 +1715,7 @@ class Braid(FiniteTypeArtinGroupElement):
             True
             sage: d1 * a / d1 == c
             False
-            sage: d2 = a.pure_conjugating_braid(c, short = True)
+            sage: d2 = a.pure_conjugating_braid(c)
             sage: print (len(d2.Tietze()))
             24
             sage: print (d2.permutation())
@@ -1715,34 +1725,30 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: print (d2)
             (s0*s1*s2^2*s1*s0)^4
         """
-        p1 = self.permutation()
-        p2 = other.permutation()
+        B = self.parent()
+        n = B.strands()
+        G = SymmetricGroup(n)
+        p1 = G(self.permutation())
+        p2 = G(other.permutation())
         if p1 != p2:
             return None
         l = conjugatingbraid(self, other)
         if not l:
             return None
-        else:
-            B = self.parent()
-            n = B.strands()
-            G = SymmetricGroup(n)
-            b0 = self.conjugating_braid(other)
-            p3 = G(b0.permutation().inverse())
-            if p3.order() > 1:
-                LB = self.centralizer()
-                LP = [G(_.permutation()) for _ in LB]
-                P = p3.word_problem(LP, display = False, as_list = True)
-                b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
-                b0 = b1 * b0
-            if not short:
-                return b0
-            L = b0.left_normal_form()
-            D1 = prod(L[1: ])
-            k = 2 * L[0].exponent_sum() / n / (n - 1)
-            k = int(k % 2)
-            D0 = B.delta()
-            D0a = D0 ** k
-            return D0a * D1
+        k = int(l[0][0] % 2)
+        b0 = B.delta() ** k * prod(B(a) for a in l[1:])
+        p3 = G(b0.permutation().inverse())
+        if p3.is_one():
+            return b0
+        LB = self.centralizer()
+        LP = [G(a.permutation()) for a in LB]
+        P = p3.word_problem(LP, display = False, as_list = True)
+        b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
+        b0 = b1 * b0
+        L = leftnormalform(b0)
+        k = int(L[0][0] % 2)
+        b0 = B.delta() ** k * prod(B(a) for a in L[1:])
+        return b0
 
     def ultra_summit_set(self):
         """
