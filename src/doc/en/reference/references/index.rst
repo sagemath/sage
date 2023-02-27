@@ -5568,6 +5568,11 @@ REFERENCES:
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
 
+.. [Spe1975] \E. Spence.
+            *Hadamard matrices from relative difference sets*,
+            Journal of Combinatorial Theory, Series A 19(3) (1975): 287-300.
+            :doi:`10.1016/0097-3165(75)90054-0`
+
 .. [Spe1975b] \E. Spence.
             *Skew-Hadamard Matrices of the Goethals-Seidel Type*,
             Canadian Journal of Mathematics  27(3) (1975): 555-560.
@@ -5717,11 +5722,6 @@ REFERENCES:
 .. [Sei2002] \T. R. Seifullin, *Computation of determinants, adjoint
              matrices, and characteristic polynomials without division*
              :doi:`10.1023/A:1021878507303`
-
-.. [Spe1975] \E. Spence.
-            *Hadamard matrices from relative difference sets*,
-            Journal of Combinatorial Theory, Series A 19(3) (1975): 287-300.
-            :doi:`10.1016/0097-3165(75)90054-0`
 
 .. [ST1981] \J. J. Seidel and D. E. Taylor,
             *Two-graphs, a second survey*.
