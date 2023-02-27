@@ -2304,13 +2304,22 @@ class Newform(ModularForm_abstract):
 
         EXAMPLES::
 
-            sage: f = Newforms(575, 2, names='a')[4]
-            sage: g, chi = f.minimal_twist(5)
+            sage: f = Newforms(121, 2)[3]
+            sage: g, chi = f.minimal_twist()
             sage: g
-            q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
+            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
             sage: chi
+            Dirichlet character modulo 11 of conductor 11 mapping 2 |--> -1
+            sage: f.twist(chi, level=11) == g
+            True
+
+            sage: f = Newforms(575, 2, names='a')[4]    # long time
+            sage: g, chi = f.minimal_twist(5)           # long time
+            sage: g                                     # long time
+            q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
+            sage: chi                                   # long time
             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
-            sage: f.twist(chi, level=g.level()) == g
+            sage: f.twist(chi, level=g.level()) == g    # long time
             True
         """
         if p is None:

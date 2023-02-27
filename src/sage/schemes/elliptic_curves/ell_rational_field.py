@@ -6983,7 +6983,7 @@ def integral_points_with_bounded_mw_coeffs(E, mw_base, N, x_bound):
         ....:     E = EllipticCurve([0,0,0,a,b])
         ....:     xs = [P[0] for P in E.integral_points()]
         ....:     return x in xs
-        sage: all(t(a,b,x) for a,b,x in [(-2,5, 1318), (4,-1, 4321),
+        sage: all(t(a,b,x) for a,b,x in [(-2,5, 1318), (4,-1, 4321),  # long time
         ....: (0,17, 5234), (11,4, 16833), (-13,37, 60721), (-12,-10, 80327),
         ....: (-7,22, 484961), (-9,28, 764396), (-13,4, 1056517), (-19,-51,
         ....: 2955980), (-24,124, 4435710), (-30,133, 5143326), (-37,60,

@@ -1219,9 +1219,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.arakelov_zhang_pairing(g)
             0.326954667248466
             sage: # Correct value should be = 0.323067...
-            sage: f.arakelov_zhang_pairing(g, n=9)
+            sage: f.arakelov_zhang_pairing(g, n=9)  # long time
             0.323091061918965
-            sage: _ - 0.323067
+            sage: _ - 0.323067                      # long time
             0.0000240619189654789
 
         Also from Prop. 18 of Petsche, Szpiro and Tucker, includes places of bad reduction::
@@ -5006,7 +5006,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
-            sage: f.multiplier_spectra(2, formal=True)
+            sage: f.multiplier_spectra(2, formal=True)  # long time
             [
             [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [0 0]  [0 0]
             [0 4], [0 0], [0 0], [0 4], [0 4], [0 0], [0 0], [0 4], [0 0], [0 0],
