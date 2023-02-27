@@ -234,6 +234,21 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 A = self.parent()
                 return A._from_dict({i + j: c for i, c in self})
 
+            def sum(self):
+                """
+                Return the sum of coefficients.
+
+                In the shifted basis, this is the evaluation at `x=0`.
+
+                EXAMPLES::
+
+                    sage: F = IntegerValuedPolynomialRing(ZZ).S()
+                    sage: B = F.basis()
+                    sage: (B[2]*B[4]).sum()
+                    1
+                """
+                return sum(c for _, c in self)
+
     class Shifted(CombinatorialFreeModule, BindableClass):
         r"""
         The integer-valued polynomial ring in the shifted basis.
@@ -250,7 +265,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             \sum_{k=0}^{n_1} (-1)^k \binom{n_1}{k}\binom{n_1+n_2-k}{n_1} S[n_1 + n_2 - k].
 
-        There is a conversion formula between the two bases::
+        There is a conversion formula between the two bases:
 
         .. MATH::
 
@@ -589,6 +604,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 This is the derivative at `-1` of the shift by one.
 
+                .. SEEALSO:: :meth:`derivative_at_minus_one`
+
                 EXAMPLES::
 
                     sage: F = IntegerValuedPolynomialRing(ZZ).S()
@@ -627,7 +644,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 Return the image by the shift of variables.
 
                 On polynomials, the action is the shift
-                on variables `x \mapsto x + 1`.
+                on variables `x \mapsto x + k`.
 
                 INPUT:
 
@@ -639,50 +656,42 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: S = A.basis()
                     sage: S[5].variable_shift()
                     S[0] + S[1] + S[2] + S[3] + S[4] + S[5]
-                """
-                if k == 0:
-                    return self
 
-                A = self.parent()
-                B = A.basis()
-                resu = A.linear_combination((B[j], c) for i, c in self
-                                            for j in range(i + 1))
-                if k == 1:
-                    return resu
-                return resu.variable_shift(k - 1)
-
-            def variable_unshift(self, k=1):
-                r"""
-                Return the image by the unshift of variables.
-
-                On polynomials, the action is the shift
-                on variables `x \mapsto x - k`.
-
-                INPUT:
-
-                - `k` -- integer (default: 1)
-
-                EXAMPLES::
-
-                    sage: A = IntegerValuedPolynomialRing(ZZ).S()
-                    sage: S = A.basis()
-                    sage: S[5].variable_unshift()
+                    sage: S[5].variable_shift(-1)
                     -S[4] + S[5]
+
+                TESTS::
+
+                    sage: S[5].variable_shift(0)
+                    S[5]
+                    sage: S[5].variable_shift().variable_shift(-1)
+                    S[5]
                 """
                 if k == 0:
                     return self
 
                 A = self.parent()
+
+                if k > 0:
+                    B = A.basis()
+                    resu = A.linear_combination((B[j], c) for i, c in self
+                                                for j in range(i + 1))
+                    if k == 1:
+                        return resu
+                    return resu.variable_shift(k - 1)
+
                 resu = self - A._from_dict({i - 1: c for i, c in self if i})
-                if k == 1:
+                if k == -1:
                     return resu
-                return resu.variable_unshift(k - 1)
+                return resu.variable_shift(k + 1)
 
             def derivative_at_minus_one(self):
                 """
                 Return the derivative at `-1`.
 
                 This is sometimes useful when `-1` is a root.
+
+                .. SEEALSO:: :meth:`umbra`
 
                 EXAMPLES::
 
@@ -695,7 +704,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             def polynomial(self):
                 """
-                Convert to a standard polynomial in `x`.
+                Convert to a polynomial in `x`.
 
                 EXAMPLES::
 
@@ -752,21 +761,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 anneau = PolynomialRing(self.parent().base_ring(), 'z')
                 return anneau(list(self.h_vector()))
 
-            def sum(self):
-                """
-                Return the sum of coefficients.
-
-                This is related to the evaluation at 0.
-
-                EXAMPLES::
-
-                    sage: F = IntegerValuedPolynomialRing(ZZ).S()
-                    sage: B = F.basis()
-                    sage: (B[2]*B[4]).sum()
-                    1
-                """
-                return sum(c for _, c in self)
-
     S = Shifted
 
     # =====     Another basis for the same algebra     =====
@@ -777,7 +771,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         The basis used here is given by `B[i] = \binom{n}{i}` for `i \in \NN`.
 
-        There is a conversion formula between the two bases::
+        There is a conversion formula between the two bases:
 
         .. MATH::
 
@@ -1104,7 +1098,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             def polynomial(self):
                 """
-                Convert to a standard polynomial in `x`.
+                Convert to a polynomial in `x`.
 
                 EXAMPLES::
 
