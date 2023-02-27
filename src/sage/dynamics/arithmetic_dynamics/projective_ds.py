@@ -76,7 +76,6 @@ from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (
     _fast_possible_periods,
     _all_periodic_points)
-from sage.functions.other import ceil
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.cachefunc import cached_method
@@ -118,7 +117,6 @@ from sage.schemes.projective.projective_space import ProjectiveSpace, is_Project
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
 
-lazy_import('sage.calculus.functions', 'jacobian')
 lazy_import("sage.functions.other", "ceil")
 lazy_import("sage.symbolic.constants", "e")
 
