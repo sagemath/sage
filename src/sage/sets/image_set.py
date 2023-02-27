@@ -336,9 +336,9 @@ class ImageSubobject(Parent):
         EXAMPLES::
 
             sage: from sage.sets.image_set import ImageSet
-            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S
+            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S                   # optional - sage.symbolic
             Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-            sage: S._sympy_()
+            sage: S._sympy_()                                                   # optional - sage.symbolic
             ImageSet(Lambda(x, sin(x)), Interval.open(0, pi/4))
         """
         from sympy import imageset
@@ -360,23 +360,23 @@ class ImageSet(ImageSubobject, Set_base, Set_add_sub_operators, Set_boolean_oper
 
     Symbolics::
 
-        sage: ImageSet(sin, RealSet.open(0, pi/4))
+        sage: ImageSet(sin, RealSet.open(0, pi/4))                                                  # optional - sage.symbolic
         Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-        sage: _.an_element()
+        sage: _.an_element()                                                                        # optional - sage.symbolic
         1/2*sqrt(-sqrt(2) + 2)
 
-        sage: sos(x,y) = x^2 + y^2; sos
+        sage: sos(x,y) = x^2 + y^2; sos                                                             # optional - sage.symbolic
         (x, y) |--> x^2 + y^2
-        sage: ImageSet(sos, ZZ^2)
+        sage: ImageSet(sos, ZZ^2)                                                                   # optional - sage.symbolic
         Image of
          Ambient free module of rank 2 over the principal ideal domain Integer Ring by
          The map (x, y) |--> x^2 + y^2 from Vector space of dimension 2 over Symbolic Ring
-        sage: _.an_element()
+        sage: _.an_element()                                                                        # optional - sage.symbolic
         1
-        sage: ImageSet(sos, Set([(3, 4), (3, -4)]))
+        sage: ImageSet(sos, Set([(3, 4), (3, -4)]))                                                 # optional - sage.symbolic
         Image of {...(3, -4)...} by
          The map (x, y) |--> x^2 + y^2 from Vector space of dimension 2 over Symbolic Ring
-        sage: _.an_element()
+        sage: _.an_element()                                                                        # optional - sage.symbolic
         25
     """
     pass
