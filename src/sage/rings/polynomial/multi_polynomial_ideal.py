@@ -2187,7 +2187,7 @@ class MPolynomialIdeal_singular_repr(
             return PolynomialSequence(nR, sorted([nR(f) for f in nIs],reverse=True), immutable=True)
 
         else:
-            raise TypeError("Cannot convert basis with given algorithm")
+            raise TypeError("cannot convert basis with given algorithm")
 
     @handle_AA_and_QQbar
     def elimination_ideal(self, variables, algorithm=None, *args, **kwds):

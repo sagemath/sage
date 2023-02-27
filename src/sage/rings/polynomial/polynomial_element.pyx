@@ -8027,11 +8027,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: f.roots(RR)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
             sage: f.roots(CC)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
 
         We can find roots of polynomials defined over `\ZZ` or `\QQ`
         over the `p`-adics, see :trac:`15422`::

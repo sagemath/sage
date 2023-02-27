@@ -561,7 +561,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: CF(E(5)) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: Cannot coerce zeta5 into Cyclotomic Field of order 7 and
+            TypeError: cannot coerce zeta5 into Cyclotomic Field of order 7 and
             degree 6
 
             sage: CF = CyclotomicField(10)

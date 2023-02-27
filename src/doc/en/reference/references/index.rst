@@ -624,7 +624,7 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
-.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+.. [BDKR2013] \D. Best, D.Ž. Đoković, H. Kharaghani and H. Ramp.
               *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
               Journal of Combinatorial Designs 21(1) (2013): 24-35.
               :doi:`10.1002/jcd.21318`
@@ -1220,6 +1220,11 @@ REFERENCES:
              Proc. London Math. Soc. (3) **77** (1998), 551–581.
              :mathscinet:`MR1643413`
 
+.. [BS1969] \D. Blatt, G. Szekeres.
+            *A Skew Hadamard Matrix of Order 52*,
+            Canadian Journal of Mathematics 21 (1969): 1319-1322.
+            :doi:`10.4153/CJM-1969-144-2`
+
 .. [BS1996] Eric Bach, Jeffrey Shallit. *Algorithmic Number Theory,
             Vol. 1: Efficient Algorithms*. MIT Press, 1996. ISBN
             978-0262024051.
@@ -1807,6 +1812,11 @@ REFERENCES:
             *Tracking p-adic precision*,
             LMS J. Comput. Math. **17** (2014), 274-294.
 
+.. [Connell1999] Ian Connell.
+                 *Elliptic Curve Handbook*.
+                 Online lecture notes, available at
+                 https://git.hackade.org/ben/tinycrypt/raw/branch/master/docs/Elliptic%20Curve%20Handbook.pdf
+
 .. [CS1986] \J. Conway and N. Sloane. *Lexicographic codes:
             error-correcting codes from game theory*, IEEE
             Trans. Infor. Theory **32** (1986) 337-348.
@@ -2058,14 +2068,39 @@ REFERENCES:
              and some constructions of de Luca and Rauzy*,
              Theoret. Comput. Sci.  255 (2001) 539--553.
 
-.. [Djo1992] \D. Đoković.
+.. [Djo1992a] \D. Đoković.
              *Construction of some new Hadamard matrices*,
              Bulletin of the Australian Mathematical Society 45(2) (1992): 327-332.
              :doi:`10.1017/S0004972700030185`
 
+.. [Djo1992b] \D. Đoković.
+             *Skew Hadamard matrices of order 4 x 37 and 4 x 43*,
+             Journal of Combinatorial Theory, Series A 61(2) (1992): 319-321.
+             :doi:`10.1016/0097-3165(92)90029-T`
+
+.. [Djo1992c] \D. Đoković.
+             *Ten New Orders for Hadamard Matrices of Skew Type*,
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+
 .. [Djo1994] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
+
+.. [Djo2008a] \D. Đoković.
+            *Skew-Hadamard matrices of orders 188 and 388 exist*,
+            International Mathematical Forum 3 no.22 (2008): 1063-1068.
+            :arxiv:`0704.0640`
+
+.. [Djo2008b] \D. Đoković.
+            *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
+            Journal of Combinatorial Designs 16 (2008): 493-498.
+            :arxiv:`0706.1973`
+
+.. [Djo2023a]  \D. Đoković.
+            *Skew-Hadamard matrices of order 276*.
+            :arxiv:`10.48550/ARXIV.2301.02751`
+
+.. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
 
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
@@ -2413,6 +2448,11 @@ REFERENCES:
             Proc. ISSAC-91, ACM Press, Bonn, 1991, pages 219-223;
             code, by I.A.Faradjev (with contributions by A.E.Brouwer,
             D.V.Pasechnik). https://github.com/dimpase/coco
+
+.. [FKS2004] \R. J. Fletcher, C. Koukouvinos and J. Seberry.
+            *New skew-Hadamard matrices of order 4·59 and new D-optimal designs of order 2·59*,
+            Discrete Mathematics 286(3) (2004): 251-253.
+            :doi:`10.1016/j.disc.2004.05.009`
 
 .. [FL2001] David Forge and Michel Las Vergnas.
             *Orlik-Solomon type algebras*. European J. Combin.
@@ -5514,6 +5554,11 @@ REFERENCES:
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
 
+.. [Spe1977] \E. Spence.
+            *Skew-Hadamard matrices of order 2(q + 1)*,
+            Discrete Mathematics 18(1) (1977): 79-85.
+            :doi:`10.1016/0012-365X(77)90009-7`
+
 .. [Spe2013] \D. Speyer, *An infinitely generated upper cluster algebra*,
              :arxiv:`1305.6867`.
 
@@ -5863,6 +5908,10 @@ REFERENCES:
             Hall-Littlewood vertex operators and generalized Kostka polynomials.
             Adv. Math. 158 (2001), no. 1, 66-85.
 
+.. [Sze1988] \G. Szekeres.
+            *A note on skew type orthogonal ±1 matrices*,
+            Combinatorics, Colloquia Mathematica Societatis, Janos Bolyai, 52 (1988): 489-498.
+
 .. _ref-T:
 
 **T**
@@ -6146,6 +6195,11 @@ REFERENCES:
              American Journal of Mathematics,
              pages 150--168, 1932,
              `available on JSTOR <http://www.jstor.org/stable/2371086>`_
+
+.. [Whi1971] \A. Whiteman.
+            *An infinite family of skew Hadamard matrices*,
+            Pacific Journal of Mathematics 38(3) (1971): 817-822.
+            :doi:`10.2140/pjm.1971.38.817`
 
 .. [White2015] Noah White.
                *The monodromy of real Bethe vectors for the Gaudin model*.
