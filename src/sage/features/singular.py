@@ -38,7 +38,7 @@ class sage__libs__singular(JoinFeature):
 
     EXAMPLES::
 
-        sage: from sage.features.sagemath import sage__libs__singular
+        sage: from sage.features.singular import sage__libs__singular
         sage: sage__libs__singular().is_present()                       # optional - sage.libs.singular
         FeatureTestResult('sage.libs.singular', True)
     """
