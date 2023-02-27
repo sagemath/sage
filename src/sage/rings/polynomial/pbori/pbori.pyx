@@ -178,7 +178,6 @@ native PolyBoRi counterparts. For instance, sets of points can be
 represented as tuples of tuples (Sage) or as ``BooleSet`` (PolyBoRi)
 and naturally the second option is faster.
 """
-
 from cpython.object cimport Py_EQ, Py_NE
 from cython.operator cimport dereference as deref
 from cysignals.memory cimport sig_malloc, sig_free
@@ -1098,12 +1097,10 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-
         -  ``gens`` - list or tuple of generators
 
         -  ``coerce`` - bool (default: True) automatically
            coerce the given polynomials to this ring to form the ideal
-
 
         EXAMPLES::
 
@@ -1219,7 +1216,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: B = BooleanPolynomialRing(n, 'x')
             sage: r = B.random_element(terms=(n/2)**2)
         """
-        from sage.rings.integer import Integer
         from sage.arith.misc import binomial
 
         if not vars_set:
@@ -1270,7 +1266,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-
         -  ``degree`` - maximum degree
 
         -  ``monom_counts`` - a list containing total number
@@ -1284,7 +1279,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         -  ``l`` - number of monomials to generate
 
-
         EXAMPLES::
 
             sage: P.<x,y,z> = BooleanPolynomialRing(3)
@@ -1292,8 +1286,6 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: all(t in [x, y, x*y, P(1)] for t in f.terms())
             True
         """
-        from sage.rings.integer import Integer
-        from sage.rings.integer_ring import ZZ
         if l == 0:
             return self._zero_element
         if l == 1:
@@ -1302,10 +1294,10 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             else:
                 return self._random_monomial_uniform(monom_counts, vars_set)
 
-        return self._random_uniform_rec(degree, monom_counts,
-                    vars_set, dfirst, l//2) + \
-               self._random_uniform_rec(degree, monom_counts,
-                    vars_set, dfirst, l - l//2)
+        return (self._random_uniform_rec(degree, monom_counts,
+                                         vars_set, dfirst, l // 2) +
+                self._random_uniform_rec(degree, monom_counts,
+                                         vars_set, dfirst, l - l // 2))
 
     def _random_monomial_uniform(self, monom_counts, vars_set):
         r"""
@@ -1314,13 +1306,11 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-
         -  ``monom_counts`` - list of number of monomials up
            to given degree
 
         -  ``vars_set`` - list of variable indices to use in
            the generated monomial
-
 
         EXAMPLES::
 
@@ -1360,11 +1350,9 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-
         -  ``degree`` - maximum degree
 
         -  ``vars_set`` - list of variable indices of self
-
 
         EXAMPLES::
 
@@ -1490,13 +1478,11 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
 
         INPUT:
 
-
         -  ``zeros`` - the set of interpolation points mapped
            to zero
 
         -  ``ones`` - the set of interpolation points mapped to
            one
-
 
         EXAMPLES:
 
@@ -1877,7 +1863,6 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
     INPUT:
 
     - ``polring`` - the polynomial ring our monomials lie in
-
 
     EXAMPLES::
 
@@ -2809,7 +2794,6 @@ cdef class BooleanMonomial(MonoidElement):
 
         - ``rhs`` - a boolean monomial
 
-
         EXAMPLES::
 
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
@@ -2952,7 +2936,6 @@ cdef class BooleanPolynomial(MPolynomial):
     INPUT:
 
     - ``parent`` - a boolean polynomial ring
-
 
     TESTS::
 
@@ -3822,9 +3805,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``mon`` - a monomial
-
 
         EXAMPLES::
 
@@ -3984,12 +3965,10 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``in_dict`` - (optional) dict with variable:value
            pairs
 
         -  ``**kwds`` - names parameters
-
 
         EXAMPLES::
 
@@ -4387,9 +4366,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``rhs`` - a boolean polynomial
-
 
         EXAMPLES::
 
@@ -4452,9 +4429,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``deg`` - a degree
-
 
         EXAMPLES::
 
@@ -4508,9 +4483,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``s`` - candidate points for evaluation to zero
-
 
         EXAMPLES::
 
@@ -4619,10 +4592,8 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-
         -  ``I`` - a list/set of polynomials in self.parent().
            If I is an ideal, the generators are used.
-
 
         EXAMPLES::
 
