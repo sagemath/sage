@@ -845,7 +845,7 @@ class OreFunction_with_large_center(OreFunction):
             3/(z^2 + 2)
 
         The reduced trace lies in the center of `S`, which is the fraction field
-        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`.::
+        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`::
 
             sage: tr.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
