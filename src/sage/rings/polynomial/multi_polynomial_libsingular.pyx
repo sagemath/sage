@@ -2085,7 +2085,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                 y += c * mul([x[i]**m[i] for i in m.nonzero_positions()])
             return y
 
-        cdef poly *_res  # contains the substituted polynomial
+        cdef poly *_res  # ownership will be transferred to us in the next line
         singular_polynomial_call(&_res, self._poly, _ring, coerced_x, MPolynomial_libsingular_get_element)
 
         res_parent = coercion_model.common_parent(parent._base, *x)
