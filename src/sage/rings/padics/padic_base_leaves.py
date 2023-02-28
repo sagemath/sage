@@ -904,7 +904,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             True
 
         Note that coerce map does not exist between ``p``-adic rings with
-        lattice precision and other ``p``-adic rings.::
+        lattice precision and other ``p``-adic rings. ::
 
             sage: S = Zp(2)
             sage: R.has_coerce_map_from(S)
