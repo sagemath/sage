@@ -638,7 +638,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
         TESTS:
 
-        This class is a singleton.::
+        This class is a singleton::
 
             sage: ParentNewtonPolygon() is ParentNewtonPolygon()
             True
