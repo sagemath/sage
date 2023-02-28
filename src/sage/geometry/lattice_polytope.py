@@ -103,7 +103,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.combinat.posets.posets import FinitePoset
 from sage.env import POLYTOPE_DATA_DIR
 from sage.geometry.cone import _ambient_space_point, integral_length
@@ -736,7 +736,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                                                      for point in points])
         M = self._embedding_matrix = H.basis_matrix().transpose()
         # In order to use facet normals obtained from subpolytopes, we
-        # need the following (see Trac #9188).
+        # need the following (see Issue #9188).
         # Basis for the ambient space with spanned subspace in front
         basis = M.columns() + M.integer_kernel().basis()
         # Let's represent it as columns of a matrix
@@ -5251,8 +5251,8 @@ def _palp_convert_permutation(permutation):
             elif o in range(65, 91):
                 i = o - 28
             else:
-                raise ValueError('Cannot convert PALP index '
-                                 + i + ' to number.')
+                raise ValueError('cannot convert PALP index '
+                                 + i + ' to number')
         return i
     n = len(permutation)
     domain = [from_palp_index(i) for i in permutation]
@@ -5260,6 +5260,7 @@ def _palp_convert_permutation(permutation):
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
     S = SymmetricGroup(n)
     return make_permgroup_element(S, domain)
+
 
 def _read_nef_x_partitions(data):
     r"""

@@ -205,7 +205,8 @@ from collections.abc import Hashable, Iterable, Container
 from copy import copy
 from warnings import warn
 
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -2570,7 +2571,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     # "ray in S" does not work because ray lies in a
                     # toric lattice and S is a "plain" vector space,
                     # and there is only a conversion (no coercion)
-                    # between them as of Trac ticket #10513.
+                    # between them as of Github issue #10513.
                     try:
                         S(ray)
                         subspace_rays.append(i)
@@ -4506,7 +4507,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
             def not_in_linear_subspace(x):
                 # "x in linear_subspace" does not work, due to absence
-                # of coercion maps as of Trac ticket #10513.
+                # of coercion maps as of Github issue #10513.
                 try:
                     linear_subspace(x)
                     return False
@@ -6746,7 +6747,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # maximum number of rays is unbounded, then r could be enormous
         # Ultimately that won't be a problem, because almost all of
         # those rays will be thrown out. However, as we discovered in
-        # Trac #24517, simply generating the random rays in the first
+        # Issue #24517, simply generating the random rays in the first
         # place (and storing them in a list) is problematic.
         #
         # Since the returns fall off around 2*d, we start with the

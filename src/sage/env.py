@@ -11,7 +11,8 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
-    sage: cmd = "from sage.all import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
+    sage: environment = "sage.all"
+    sage: cmd = f"from {environment} import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
     sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
     True
@@ -448,7 +449,8 @@ def cython_aliases(required_modules=None,
     We can use ``cython.parallel`` regardless of whether OpenMP is supported.
     This will run in parallel, if OpenMP is supported::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                                               # optional - sage.misc.cython
+        ....: '''
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
         ....: #distutils: extra_link_args = OPENMP_CFLAGS
         ....: from cython.parallel import prange

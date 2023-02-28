@@ -1567,7 +1567,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Comparing with/without constraint generation. Also double-checks ticket
+        Comparing with/without constraint generation. Also double-checks issue
         :trac:`12833`::
 
             sage: for i in range(20):
@@ -3472,7 +3472,7 @@ class DiGraph(GenericGraph):
 
             :meth:`is_aperiodic`
         """
-        from sage.arith.all import gcd
+        from sage.arith.misc import GCD as gcd
 
         g = 0
 

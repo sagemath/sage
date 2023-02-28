@@ -168,7 +168,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         wrapper.__wrapped__ = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
-        #Getting the signature right in documentation by Sphinx (Trac 9976)
+        #Getting the signature right in documentation by Sphinx (Issue 9976)
         #The attribute _sage_argspec_() is read by Sphinx if present and used
         #as the argspec of the function instead of using reflection.
         wrapper._sage_argspec_ = lambda: sage_getargspec(wrapped)
@@ -413,7 +413,7 @@ class suboptions():
             return func(*args, **kwds)
 
         # Add the options specified by @options to the signature of the wrapped
-        # function in the Sphinx-generated documentation (Trac 9976), using the
+        # function in the Sphinx-generated documentation (Issue 9976), using the
         # special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
@@ -496,7 +496,7 @@ class options():
             return func(*args, **options)
 
         #Add the options specified by @options to the signature of the wrapped
-        #function in the Sphinx-generated documentation (Trac 9976), using the
+        #function in the Sphinx-generated documentation (Issue 9976), using the
         #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
@@ -580,7 +580,7 @@ class rename_keyword():
 
         INPUT:
 
-        - ``deprecation`` -- integer. The trac ticket number where the
+        - ``deprecation`` -- integer. The github issue number where the
           deprecation was introduced.
 
         - the rest of the arguments is a list of keyword arguments in the
@@ -603,7 +603,7 @@ class rename_keyword():
 
             sage: r = rename_keyword(deprecation=13109, color='rgbcolor')
         """
-        assert deprecated is None, 'Use @rename_keyword(deprecation=<trac_number>, ...)'
+        assert deprecated is None, 'Use @rename_keyword(deprecation=<issue_number>, ...)'
         self.renames = renames
         self.deprecation = deprecation
 
@@ -641,7 +641,7 @@ class rename_keyword():
             () {'new_option': 1}
             sage: f(deprecated_option=1)
             doctest:...: DeprecationWarning: use the option 'new_option' instead of 'deprecated_option'
-            See http://trac.sagemath.org/13109 for details.
+            See https://github.com/sagemath/sage/issues/13109 for details.
             () {'new_option': 1}
         """
         @sage_wraps(func)

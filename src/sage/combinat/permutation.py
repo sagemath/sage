@@ -6817,6 +6817,11 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             True
             sage: P.has_coerce_map_from(Permutations(7))
             False
+
+            sage: P.has_coerce_map_from(groups.misc.Cactus(5))
+            True
+            sage: P.has_coerce_map_from(groups.misc.Cactus(7))
+            False
         """
         if isinstance(G, SymmetricGroup):
             D = G.domain()
@@ -6825,6 +6830,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             return self._from_permutation_group_element
         if isinstance(G, StandardPermutations_n) and G.n <= self.n:
             return True
+        from sage.groups.cactus_group import CactusGroup
+        if isinstance(G, CactusGroup) and G.n() <= self.n:
+            return self._from_cactus_group_element
         return super()._coerce_map_from_(G)
 
     def _from_permutation_group_element(self, x):
@@ -6840,6 +6848,21 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             [4, 3, 1, 2]
         """
         return self(x.domain())
+
+    def _from_cactus_group_element(self, x):
+        """
+        Return an element of ``self`` from a cactus group element.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: s12,s13,s23 = J3.gens()
+            sage: elt = s12 * s23 * s13
+            sage: P5 = Permutations(5)
+            sage: P5._from_cactus_group_element(elt)
+            [1, 3, 2, 4, 5]
+        """
+        return self(x.to_permutation())
 
     def as_permutation_group(self):
         """
@@ -7225,7 +7248,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_left_descent(2, mult='r2l')
                 True
@@ -7279,7 +7302,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 doctest:warning
                 ...
                 DeprecationWarning: The mult option is deprecated and ignored.
-                See https://trac.sagemath.org/27467 for details.
+                See https://github.com/sagemath/sage/issues/27467 for details.
                 True
                 sage: x.has_right_descent(3, mult='r2l')
                 True
@@ -9040,7 +9063,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
             sage: P = Permutations(3, avoiding=[[2,1,3],[1,2,3]])
             sage: P.a
             doctest:...: DeprecationWarning: The attribute a for the list of patterns to avoid is deprecated, use the method patterns instead.
-            See https://trac.sagemath.org/26810 for details.
+            See https://github.com/sagemath/sage/issues/26810 for details.
             ([2, 1, 3], [1, 2, 3])
         """
         from sage.misc.superseded import deprecation

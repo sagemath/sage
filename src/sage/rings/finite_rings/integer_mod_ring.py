@@ -62,7 +62,9 @@ AUTHORS:
 
 import sage.misc.prandom as random
 
-from sage.arith.all import factor, primitive_root, CRT_basis
+from sage.arith.misc import factor
+from sage.arith.misc import primitive_root
+from sage.arith.misc import CRT_basis
 import sage.rings.ring as ring
 import sage.rings.abc
 from . import integer_mod
@@ -255,7 +257,7 @@ def is_IntegerModRing(x):
         doctest:warning...
         DeprecationWarning: the function is_IntegerModRing is deprecated.
         Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
-        See https://trac.sagemath.org/32606 for details.
+        See https://github.com/sagemath/sage/issues/32606 for details.
         True
         sage: is_IntegerModRing(GF(13))
         True

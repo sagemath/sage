@@ -5,5 +5,5 @@ NOTE: all dependencies of GCC must be order-only dependencies
 (appearing after the | symbol). This is to prevent rebuilds of GCC
 even if the dependencies are updated. There is logic in the top-level
 configure file to ensure that GCC is rebuilt anyway if required. See
-https://trac.sagemath.org/ticket/24907
+https://github.com/sagemath/sage/issues/24907
 ------------------------------------------------------------------------

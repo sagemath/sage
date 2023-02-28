@@ -924,7 +924,7 @@ cdef inline fast_mul(a, n):
 
 cdef inline fast_mul_long(a, long s):
     # It's important to change the signed s to an unsigned n,
-    # since -LONG_MIN = LONG_MIN.  See Trac #17844.
+    # since -LONG_MIN = LONG_MIN.  See Issue #17844.
     cdef unsigned long n
     if s < 0:
         n = -s

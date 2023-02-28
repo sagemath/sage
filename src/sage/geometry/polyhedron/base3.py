@@ -593,7 +593,7 @@ class Polyhedron_base3(Polyhedron_base2):
              sage: P = polytopes.hypercube(4)
              sage: list(P.face_generator(dual=False))[:4]
              doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
-             See https://trac.sagemath.org/33646 for details.
+             See https://github.com/sagemath/sage/issues/33646 for details.
              [A 4-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 16 vertices,
               A -1-dimensional face of a Polyhedron in ZZ^4,
               A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 8 vertices,

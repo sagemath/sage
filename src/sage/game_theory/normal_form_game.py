@@ -2247,7 +2247,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2341,7 +2341,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: print('*game: player 1\n', legacy_format[0])
             *game: player 1
             H-representation

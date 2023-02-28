@@ -12,7 +12,7 @@ tests because they take a few minutes as of mid 2018, see :trac:`25431`::
 
     sage: R1 = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: R2 = ZpLF(2)
     sage: R3 = QpLC(2)
     sage: R4 = QpLF(2)

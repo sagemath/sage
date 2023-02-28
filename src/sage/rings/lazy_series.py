@@ -420,7 +420,7 @@ class LazyModuleElement(Element):
             sage: f = L([1,2,3])
             sage: f.coefficients(5)
             doctest:...: DeprecationWarning: the method coefficients now only returns the non-zero coefficients. Use __getitem__ instead.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             [1, 2, 3]
 
             sage: f = sin(x)
@@ -4278,7 +4278,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: lazy_exp = x.exponential(); lazy_exp
             doctest:...: DeprecationWarning: the method exponential is deprecated. Use exp instead.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
         """
         from sage.misc.superseded import deprecation
@@ -4297,7 +4297,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: a = L([1,2,3], constant=3)
             sage: a.compute_coefficients(5)
             doctest:...: DeprecationWarning: the method compute_coefficients obsolete and has no effect.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             sage: a
             1 + 2*z + 3*z^2 + 3*z^3 + 3*z^4 + O(z^5)
         """

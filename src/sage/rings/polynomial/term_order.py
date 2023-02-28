@@ -550,7 +550,7 @@ class TermOrder(SageObject):
         """
         Translate old pickled TermOrder objects.
 
-        See Trac :trac:`11316`.
+        See Issue :issue:`11316`.
 
         EXAMPLES::
 

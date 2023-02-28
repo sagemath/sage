@@ -2197,7 +2197,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R = QuaternionAlgebra(-11,-1).maximal_order()
             sage: R.unit_ideal().quaternion_order() is R
             doctest:...:  DeprecationWarning: quaternion_order() is deprecated, please use left_order() or right_order()
-            See https://trac.sagemath.org/31583 for details.
+            See https://github.com/sagemath/sage/issues/31583 for details.
             True
         """
         from sage.misc.superseded import deprecation
@@ -2229,7 +2229,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R = QuaternionAlgebra(-11,-1).maximal_order()
             sage: R.unit_ideal().ring() is R
             doctest:...:  DeprecationWarning: ring() will return the quaternion algebra in the future, please use left_order() or right_order()
-            See https://trac.sagemath.org/31583 for details.
+            See https://github.com/sagemath/sage/issues/31583 for details.
             True
         """
         from sage.misc.superseded import deprecation

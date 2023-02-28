@@ -3,7 +3,7 @@ On 32-bit architectures, longs are only 32 bits. The resulting overflow was
 causing an infinite loop in the 0602ResultantFanProjection test.
 
 References:
-https://trac.sagemath.org/ticket/32088
+https://github.com/sagemath/sage/issues/32088
 https://salsa.debian.org/math-team/gfan/-/commit/acaaa70
 https://github.com/void-linux/void-packages/pull/34182
 

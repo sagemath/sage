@@ -81,7 +81,7 @@ def sage_makedirs(dirname, mode=0o777):
         sage: sage_makedirs(DOT_SAGE) # no output
         doctest:warning...
         DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
-        See https://trac.sagemath.org/32987 for details.
+        See https://github.com/sagemath/sage/issues/32987 for details.
 
     The following fails because we are trying to create a directory in
     place of an ordinary file::
@@ -224,7 +224,7 @@ def SAGE_TMP():
         doctest:warning...
         DeprecationWarning: SAGE_TMP is deprecated; please use python's
         "tempfile" module instead.
-        See https://trac.sagemath.org/33213 for details.
+        See https://github.com/sagemath/sage/issues/33213 for details.
         l'.../temp/...'
 
     """
@@ -248,7 +248,7 @@ def ECL_TMP():
         doctest:warning...
         DeprecationWarning: ECL_TMP is deprecated and is no longer used
         by the ECL interface in sage
-        See https://trac.sagemath.org/33213 for details.
+        See https://github.com/sagemath/sage/issues/33213 for details.
         ...
 
     """
@@ -272,7 +272,7 @@ def SPYX_TMP():
         doctest:warning...
         DeprecationWarning: SPYX_TMP is deprecated;
         use sage.misc.temporary_file.spyx_tmp instead
-        See https://trac.sagemath.org/33213 for details.
+        See https://github.com/sagemath/sage/issues/33213 for details.
         ...
 
     """
@@ -538,7 +538,7 @@ def union(x, y=None):
 
         sage: answer = union([1,2,3,4], [5,6]); answer
         doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://trac.sagemath.org/32096 for details.
+        See https://github.com/sagemath/sage/issues/32096 for details.
         [1, 2, 3, 4, 5, 6]
         sage: union([1,2,3,4,5,6], [5,6]) == answer
         True
@@ -563,7 +563,7 @@ def uniq(x):
 
         sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
         doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://trac.sagemath.org/27014 for details.
+        See https://github.com/sagemath/sage/issues/27014 for details.
         [-13, -5, 1, 3, 8, 13]
     """
     # After deprecation period, rename _stable_uniq -> uniq

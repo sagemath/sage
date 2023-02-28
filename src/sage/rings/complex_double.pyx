@@ -131,7 +131,7 @@ def is_ComplexDoubleField(x):
         doctest:warning...
         DeprecationWarning: is_ComplexDoubleField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexDoubleField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: is_ComplexDoubleField(ComplexField(53))
         False
@@ -2482,7 +2482,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: CDF(1,5).algdep(2)
             x^2 - 2*x + 26
         """
-        from sage.arith.all import algdep
+        from sage.arith.misc import algdep
         return algdep(self, n)
 
 cdef class FloatToCDF(Morphism):
