@@ -344,7 +344,7 @@ class Subsets_s(Parent):
 
         TESTS:
 
-        ``__len__`` should return a Python int.::
+        ``__len__`` should return a Python int::
 
             sage: S = Subsets(Set([1,2,3]))
             sage: len(S)
