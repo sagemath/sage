@@ -43,6 +43,16 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
     `\binom{x}{n}` for `n \geq 0` (the *binomial basis*) and of
     the other sequence `\binom{x+n}{n}` for `n \geq 0` (the *shifted basis*).
 
+    These two bases are available as follows::
+
+        sage: B = IntegerValuedPolynomialRing(QQ).Binomial()
+        sage: S = IntegerValuedPolynomialRing(QQ).Shifted()
+
+    or by using the shortcuts::
+
+        sage: B = IntegerValuedPolynomialRing(QQ).B()
+        sage: S = IntegerValuedPolynomialRing(QQ).S()
+
     TESTS::
 
         sage: IntegerValuedPolynomialRing(24)
@@ -63,21 +73,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         S.module_morphism(B._from_shifted_basis, codomain=B).register_as_coercion()
 
     _shorthands = ["B", "S"]
-
-    def a_realization(self):
-        r"""
-        Return the default realization of ``self``.
-
-        This is the shifted basis.
-
-        EXAMPLES::
-
-            sage: A = IntegerValuedPolynomialRing(QQ)
-            sage: A.a_realization()
-            Integer-Valued Polynomial Ring over Rational Field
-            in the shifted basis
-        """
-        return self.S()
 
     def _repr_(self) -> str:
         r"""
@@ -234,7 +229,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 A = self.parent()
                 return A._from_dict({i + j: c for i, c in self})
 
-            def sum(self):
+            def sum_of_coefficients(self):
                 """
                 Return the sum of coefficients.
 
@@ -244,10 +239,26 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                     sage: F = IntegerValuedPolynomialRing(ZZ).S()
                     sage: B = F.basis()
-                    sage: (B[2]*B[4]).sum()
+                    sage: (B[2]*B[4]).sum_of_coefficients()
                     1
                 """
                 return sum(c for _, c in self)
+
+            def content(self):
+                """
+                Return the content of ``self``.
+
+                This is the gcd of the coefficients.
+
+                EXAMPLES::
+
+                    sage: F = IntegerValuedPolynomialRing(ZZ).S()
+                    sage: B = F.basis()
+                    sage: (3*B[4]+6*B[7]).content()
+                    3
+                """
+                from sage.arith.misc import gcd
+                return gcd(c for _, c in self)
 
     class Shifted(CombinatorialFreeModule, BindableClass):
         r"""
