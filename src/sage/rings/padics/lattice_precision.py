@@ -974,7 +974,7 @@ class DifferentialPrecisionGeneric(SageObject):
             [   0 2048]
 
         If the precision module does not project to a lattice,
-        an error is raised.::
+        an error is raised. ::
 
             sage: R = ZpLF(2, label='precision_lattice')
             sage: prec = R.precision()
