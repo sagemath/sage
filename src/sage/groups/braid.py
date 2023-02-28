@@ -1684,6 +1684,8 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: d2 = B._element_from_libbraiding(l)
             sage: print (len(d2.Tietze()))
             13
+            sage: print (c.conjugating_braid(b))
+            None
         """
         l = conjugatingbraid(self, other)
         if not l:
@@ -1749,6 +1751,20 @@ class Braid(FiniteTypeArtinGroupElement):
             True
             sage: print (d2)
             (s0*s1*s2^2*s1*s0)^4
+            sage: print(a.conjugating_braid(b))
+            None
+            sage: print(a.pure_conjugating_braid(b))
+            None
+            sage: a1=B([1])
+            sage: a2=B([2])
+            sage: a1.conjugating_braid(a2)
+            s1*s0
+            sage: a1.permutation()
+            [2, 1, 3, 4]
+            sage: a2.permutation()
+            [1, 3, 2, 4]
+            sage: print (a1.pure_conjugating_braid(a2))
+            None
         """
         B = self.parent()
         n = B.strands()
