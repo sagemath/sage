@@ -227,7 +227,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     B[3] + B[4]
                 """
                 A = self.parent()
-                return A._from_dict({i + j: c for i, c in self})
+                return A._from_dict({A._indices(i + j): c for i, c in self})
 
             def sum_of_coefficients(self):
                 """
