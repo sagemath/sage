@@ -1499,9 +1499,13 @@ class Braid(FiniteTypeArtinGroupElement):
             (-2, [3, 5, 4, 2, 6, 1], [1, 6, 3, 5, 2, 4], [5, 6, 2, 4, 1, 3],
              [3, 2, 4, 1, 5, 6], [1, 5, 2, 3, 4, 6])
 
+        .. NOTE::
+
+            This method is not used anymore since the above left_normal_form is faster.
+            It is kept here since it may be used elsewhere.
+
         .. TODO::
 
-            This method is not used since the above left_normal_form is faster.
             Remove this method and use the default one from
             :meth:`sage.groups.artin.FiniteTypeArtinGroupElement.left_normal_form`.
         """
