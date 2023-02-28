@@ -155,7 +155,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 EXAMPLES::
 
                     sage: A = IntegerValuedPolynomialRing(QQ).S()
-                    sage: A.degree_on_basis(4)  # indirect doctest
+                    sage: A.degree_on_basis(4)
                     4
                 """
                 return ZZ(m)
@@ -450,6 +450,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             INPUT:
 
             - ``h`` -- a tuple or vector
+
+            .. SEEALSO:: :meth:`Element.h_vector`
 
             EXAMPLES::
 
