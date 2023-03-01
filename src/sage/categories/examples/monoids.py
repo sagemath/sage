@@ -11,7 +11,7 @@ Examples of monoids
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from .semigroups import FreeSemigroup
 from sage.sets.family import Family
 

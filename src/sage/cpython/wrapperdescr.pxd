@@ -39,24 +39,25 @@ cdef inline wrapperbase* get_slotdef(wrapper_descriptor slotwrapper) except NULL
 
     TESTS::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                                                           # optional - sage.misc.cython
+        ....: '''
         ....: from sage.cpython.wrapperdescr cimport get_slotdef
         ....: from cpython.long cimport PyLong_FromVoidPtr
         ....: def py_get_slotdef(slotwrapper):
         ....:     return PyLong_FromVoidPtr(get_slotdef(slotwrapper))
         ....: ''')
-        sage: py_get_slotdef(object.__init__)  # random
+        sage: py_get_slotdef(object.__init__)  # random                         # optional - sage.misc.cython
         140016903442416
-        sage: py_get_slotdef(bytes.__lt__)  # random
+        sage: py_get_slotdef(bytes.__lt__)  # random                            # optional - sage.misc.cython
         140016903441800
-        sage: py_get_slotdef(bytes.__lt__) == py_get_slotdef(Integer.__lt__)
+        sage: py_get_slotdef(bytes.__lt__) == py_get_slotdef(Integer.__lt__)    # optional - sage.misc.cython
         True
-        sage: py_get_slotdef(bytes.__lt__) == py_get_slotdef(bytes.__gt__)
+        sage: py_get_slotdef(bytes.__lt__) == py_get_slotdef(bytes.__gt__)      # optional - sage.misc.cython
         False
         sage: class X():
         ....:     def __eq__(self, other):
         ....:         return False
-        sage: py_get_slotdef(X.__eq__)
+        sage: py_get_slotdef(X.__eq__)                                          # optional - sage.misc.cython
         Traceback (most recent call last):
         ...
         TypeError: Cannot convert ... to wrapper_descriptor
