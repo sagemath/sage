@@ -901,7 +901,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: P.<v> = GF(2)[]
+            sage: P.<v> = GF(2)[]                                               # optional - sage.libs.pari
             sage: P.quotient(v^2 - v).is_finite()                               # optional - sage.libs.pari
             True
         """
@@ -1563,6 +1563,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         The same algebra constructed in a different way::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 5)
             sage: K.class_group(())                                             # optional - sage.rings.number_field
             [((2, a + 1), 2)]
@@ -1650,6 +1651,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: K.unit_group()                                                # optional - sage.rings.number_field
             Unit group with structure C6 of Number Field in a
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u, o = K.S_units([])[0]; o
             6
@@ -1807,22 +1809,22 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-5)
-            sage: R.<x> = K[]
-            sage: D.<T> = R.quotient(x)
-            sage: D.selmer_generators((), 2)
+            sage: K.<a> = QuadraticField(-5)                                                        # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                                       # optional - sage.rings.number_field
+            sage: D.<T> = R.quotient(x)                                                             # optional - sage.rings.number_field
+            sage: D.selmer_generators((), 2)                                                        # optional - sage.rings.number_field
             [-1, 2]
-            sage: D.selmer_generators([K.ideal(2, -a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 2)                                        # optional - sage.rings.number_field
             [2, -1]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)                       # optional - sage.rings.number_field
             [2, a + 1, -1]
-            sage: D.selmer_generators((K.ideal(2, -a+1),K.ideal(3, a+1)), 4)
+            sage: D.selmer_generators((K.ideal(2, -a+1), K.ideal(3, a+1)), 4)                       # optional - sage.rings.number_field
             [2, a + 1, -1]
-            sage: D.selmer_generators([K.ideal(2, -a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 3)                                        # optional - sage.rings.number_field
             [2]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)                       # optional - sage.rings.number_field
             [2, a + 1]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)           # optional - sage.rings.number_field
             [2, a + 1, -a]
 
         """
