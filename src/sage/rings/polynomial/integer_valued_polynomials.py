@@ -53,6 +53,22 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         sage: B = IntegerValuedPolynomialRing(QQ).B()
         sage: S = IntegerValuedPolynomialRing(QQ).S()
 
+    There is a conversion formula between the two bases:
+
+    .. MATH::
+
+        \binom{x}{i} = \sum_{k=0}^{i} (-1)^{i-k} \binom{i}{k} \binom{x+k}{k}.
+
+    with inverse:
+
+    .. MATH::
+
+        \binom{x+i}{i} = \sum_{k=0}^{i} \binom{i}{k} \binom{x}{k}.
+
+    REFERENCES:
+
+    - :wikipedia:`Integer-valued polynomial`
+
     TESTS::
 
         sage: IntegerValuedPolynomialRing(24)
@@ -275,17 +291,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         .. MATH::
 
             \sum_{k=0}^{n_1} (-1)^k \binom{n_1}{k}\binom{n_1+n_2-k}{n_1} S[n_1 + n_2 - k].
-
-        There is a conversion formula between the two bases:
-
-        .. MATH::
-
-            \binom{x}{i} = \sum_{k=0}^{i} (-1)^{i-k} \binom{i}{k} \binom{x+k}{k}.
-
-
-        REFERENCES:
-
-        - :wikipedia:`Integer-valued polynomial`
 
         EXAMPLES::
 
@@ -784,12 +789,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         The basis used here is given by `B[i] = \binom{n}{i}` for `i \in \NN`.
 
-        There is a conversion formula between the two bases:
-
-        .. MATH::
-
-            \binom{x+i}{i} = \sum_{k=0}^{i} \binom{i}{k} \binom{x}{k}.
-
         Assuming `n_1 \leq n_2`, the product of two monomials `B[n_1] \cdot B[n_2]`
         is given by the sum
 
@@ -799,14 +798,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
         The product of two monomials is therefore a positive linear combination
         of monomials.
-
-        REFERENCES:
-
-        - :wikipedia:`Integer-valued polynomial`
-
-        INPUT:
-
-        - ``R`` -- ring
 
         EXAMPLES::
 
