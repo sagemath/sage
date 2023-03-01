@@ -531,9 +531,15 @@ class Documenter:
                                self.fullname, exc, type='autodoc')
                 args = None
 
-        result = self.env.events.emit_firstresult('autodoc-process-signature',
+        try:
+            result = self.env.events.emit_firstresult('autodoc-process-signature',
                                                   self.objtype, self.fullname,
                                                   self.object, self.options, args, retann)
+        except Exception:
+            signature = inspect.signature(self.object)
+            logger.warning(f"signature: {signature}")
+            raise
+
         if result:
             args, retann = result
 
