@@ -4956,7 +4956,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         most degree 4. For homogeneous systems this is equivalent to
         the largest degree in the Groebner basis::
 
-            sage: max(f.degree() for f in I.groebner_basis())
+            sage: max(f.degree() for f in I.groebner_basis())                                       # optional - sage.libs.pari
             4
 
         We increase the number of polynomials and observe a decrease
