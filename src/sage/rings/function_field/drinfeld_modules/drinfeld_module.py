@@ -49,14 +49,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
     finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
     morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
-    `\mathbb{F}_q[T]`*-field*. Let `K\{\tau\}` be the ring of Ore
+    `\mathbb{F}_q[T]`-*field*. Let `K\{\tau\}` be the ring of Ore
     polynomials with coefficients in `K`, whose multiplication is given
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
     A Drinfeld `\mathbb{F}_q[T]`-module over the base
     `\mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
-    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that `\Im(\phi) \not\subset K`
-    and `\phi` agrees with `\gamma` on `\mathbb{F}_q`.
+    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that `\mathrm{Im}(\phi)
+    \not\subset K` and `\phi` agrees with `\gamma` on `\mathbb{F}_q`.
 
     For `a` in `\mathbb{F}_q[T]`, `\phi(a)` is denoted `\phi_a`.
 
@@ -362,7 +362,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: P * phi(T) == psi(T) * P
         True
 
-    If the input does not define an isogeny, an exception is raised:
+    If the input does not define an isogeny, an exception is raised::
 
         sage: phi.velu(0)
         Traceback (most recent call last):
@@ -378,8 +378,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     The `\mathbb{F}_q[T]`-Drinfeld module `\phi` induces a special left
     `\mathbb{F}_q[T]`-module structure on any field extension `L/K`. Let
     `x \in L` and `a` be in the function ring; the action is defined as
-    `(a, x) \mapsto \phi_a(x)`. The method :meth:`action` returns an
-    ``Action`` object representing the Drinfeld module action.
+    `(a, x) \mapsto \phi_a(x)`. The method :meth:`action` returns a
+    :class:`sage.rings.function_field.drinfeld_modules.action.Action`
+    object representing the Drinfeld module action.
 
     .. NOTE::
 

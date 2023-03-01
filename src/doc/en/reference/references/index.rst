@@ -4638,7 +4638,7 @@ REFERENCES:
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
 
-.. [MS2019] \Y. Musleh and É. Schost. Computing the characteristic polynomial
+.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
             of a finite rank two Drinfeld module. In Proceedings of the 2019
             ACM on International Symposium on Symbolic and Algebraic
             Computation, pages 307–314. ACM, 2019.
@@ -6097,7 +6097,7 @@ REFERENCES:
              quaternion algebras and quadratic forms, to appear.
 
 .. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
-            Fields. Birkhäuser, 2006.
+            Fields. Birkh\"auser, 2006.
 
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.
