@@ -51,7 +51,6 @@ from ipywidgets.widgets.interaction import interactive, signature
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator
 from .widgets import EvalText, SageColorPicker
-from .widgets_sagenb import input_grid
 from sage.structure.element import parent
 import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
@@ -192,6 +191,8 @@ class sage_interactive(interactive):
         """
         # Support Sage matrices and colors
         if isinstance(abbrev, Matrix):
+            from .widgets_sagenb import input_grid
+
             return input_grid(abbrev.nrows(), abbrev.ncols(),
                               default=abbrev.list(), to_value=abbrev.parent())
         if isinstance(abbrev, Color):
