@@ -378,18 +378,18 @@ class MPolynomialIdeal_magma_repr:
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
-            sage: I = sage.rings.ideal.Cyclic(R,6)
-            sage: gb = I.groebner_basis('magma:GroebnerBasis') # indirect doctest; optional - magma
-            sage: len(gb)                                      # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                                                 # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Cyclic(R, 6)                                                                     # optional - sage.libs.pari
+            sage: gb = I.groebner_basis('magma:GroebnerBasis') # indirect doctest; optional - magma                     # optional - sage.libs.pari
+            sage: len(gb)                                      # optional - magma                                       # optional - sage.libs.pari
             45
 
          We may also pass a degree bound to Magma::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
-            sage: I = sage.rings.ideal.Cyclic(R,6)
-            sage: gb = I.groebner_basis('magma:GroebnerBasis', deg_bound=4) # indirect doctest; optional - magma
-            sage: len(gb)                                      # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                                                 # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Cyclic(R, 6)                                                                     # optional - sage.libs.pari
+            sage: gb = I.groebner_basis('magma:GroebnerBasis', deg_bound=4) # indirect doctest; optional - magma        # optional - sage.libs.pari
+            sage: len(gb)                                      # optional - magma                                       # optional - sage.libs.pari
             5
         """
         R   = self.ring()
@@ -1136,9 +1136,9 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(32003),order='degrevlex')
-            sage: I = ideal(x^2-y,x^3)
-            sage: I.dimension()
+            sage: P.<x,y,z> = PolynomialRing(GF(32003), order='degrevlex')                                                  # optional - sage.libs.pari
+            sage: I = ideal(x^2 - y, x^3)                                                                                   # optional - sage.libs.pari
+            sage: I.dimension()                                                                                             # optional - sage.libs.pari
             1
 
         If the ideal is the total ring, the dimension is `-1` by convention.
@@ -1150,22 +1150,22 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<x,y> = PolynomialRing(GF(2147483659^2),order='lex')
-            sage: I = R.ideal([x*y,x*y+1])
-            sage: I.dimension()
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')                                                   # optional - sage.libs.pari
+            sage: I = R.ideal([x*y, x*y+1])                                                                                 # optional - sage.libs.pari
+            sage: I.dimension()                                                                                             # optional - sage.libs.pari
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             -1
-            sage: I=ideal([x*(x*y+1),y*(x*y+1)])
-            sage: I.dimension()
+            sage: I=ideal([x*(x*y+1), y*(x*y+1)])                                                                           # optional - sage.libs.pari
+            sage: I.dimension()                                                                                             # optional - sage.libs.pari
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             1
-            sage: I = R.ideal([x^3*y,x*y^2])
-            sage: I.dimension()
+            sage: I = R.ideal([x^3*y, x*y^2])                                                                               # optional - sage.libs.pari
+            sage: I.dimension()                                                                                             # optional - sage.libs.pari
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             1
-            sage: R.<x,y> = PolynomialRing(GF(2147483659^2),order='lex')
-            sage: I = R.ideal(0)
-            sage: I.dimension()
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')                                                   # optional - sage.libs.pari
+            sage: I = R.ideal(0)                                                                                            # optional - sage.libs.pari
+            sage: I.dimension()                                                                                             # optional - sage.libs.pari
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             2
 
@@ -1177,9 +1177,9 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:trac:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]
-            sage: I = ideal(x^2-y,x^3-QQbar(-1))
-            sage: I.dimension()
+            sage: P.<x,y,z> = QQbar[]                                                                                       # optional - sage.rings.number_field
+            sage: I = ideal(x^2-y, x^3-QQbar(-1))                                                                           # optional - sage.rings.number_field
+            sage: I.dimension()                                                                                             # optional - sage.rings.number_field
             1
 
         .. NOTE::
@@ -1986,12 +1986,12 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
-            sage: I = sage.rings.ideal.Cyclic(R,4)
-            sage: I.basis_is_groebner()
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                             # optional - sage.libs.pari
+            sage: I = sage.rings.ideal.Cyclic(R, 4)                                                 # optional - sage.libs.pari
+            sage: I.basis_is_groebner()                                                             # optional - sage.libs.pari
             False
-            sage: I2 = Ideal(I.groebner_basis())
-            sage: I2.basis_is_groebner()
+            sage: I2 = Ideal(I.groebner_basis())                                                    # optional - sage.libs.pari
+            sage: I2.basis_is_groebner()                                                            # optional - sage.libs.pari
             True
 
         A more complicated example::
@@ -2018,12 +2018,12 @@ class MPolynomialIdeal_singular_repr(
                         + 1521*u5*u4*u3*h^3 - 3028*u4^2*u3*h^3 - 3028*u4*u3^2*h^3 + 1521*u5*u4*u2*h^3 - 3028*u4^2*u2*h^3 + 1521*u5*u3*u2*h^3 + 3420*u4*u3*u2*h^3, \
                        U5^2*U4*U3*U2*h + U5*U4^2*U3*U2*h + U5*U4*U3^2*U2*h + U5*U4*U3*U2^2*h + 2*U5^2*U4*U3*h^2 + 2*U5*U4^2*U3*h^2 + 2*U5*U4*U3^2*h^2 \
                         + 2*U5^2*U4*U2*h^2 + 2*U5*U4^2*U2*h^2 + 2*U5^2*U3*U2*h^2 - 2*U4^2*U3*U2*h^2 - 2*U5*U3^2*U2*h^2 - 2*U4*U3^2*U2*h^2 \
-                         - 2*U5*U4*U2^2*h^2 - 2*U5*U3*U2^2*h^2 - 2*U4*U3*U2^2*h^2 - U5*U4*U3*h^3 - U5*U4*U2*h^3 - U5*U3*U2*h^3 - U4*U3*U2*h^3]
+                         - 2*U5*U4*U2^2*h^2 - 2*U5*U3*U2^2*h^2 - 2*U4*U3*U2^2*h^2 - U5*U4*U3*h^3 - U5*U4*U2*h^3 - U5*U3*U2*h^3 - U4*U3*U2*h^3]  # optional - sage.libs.pari
 
-            sage: Ideal(l).basis_is_groebner()
+            sage: Ideal(l).basis_is_groebner()                                                      # optional - sage.libs.pari
             False
-            sage: gb = Ideal(l).groebner_basis()
-            sage: Ideal(gb).basis_is_groebner()
+            sage: gb = Ideal(l).groebner_basis()                                                    # optional - sage.libs.pari
+            sage: Ideal(gb).basis_is_groebner()                                                     # optional - sage.libs.pari
             True
 
         .. NOTE::
@@ -4940,16 +4940,16 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         We consider a homogeneous example::
 
             sage: n = 8
-            sage: K = GF(127)
-            sage: P = PolynomialRing(K,n,'x')
-            sage: s = [K.random_element() for _ in range(n)]
-            sage: L = []
-            sage: for i in range(2*n):
-            ....:     f = P.random_element(degree=2, terms=binomial(n,2))
+            sage: K = GF(127)                                                                       # optional - sage.libs.pari
+            sage: P = PolynomialRing(K, n, 'x')                                                     # optional - sage.libs.pari
+            sage: s = [K.random_element() for _ in range(n)]                                        # optional - sage.libs.pari
+            sage: L = []                                                                            # optional - sage.libs.pari
+            sage: for i in range(2 * n):                                                            # optional - sage.libs.pari
+            ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)
-            sage: I.degree_of_semi_regularity()
+            sage: I = Ideal(L)                                                                      # optional - sage.libs.pari
+            sage: I.degree_of_semi_regularity()                                                     # optional - sage.libs.pari
             4
 
         From this, we expect a Groebner basis computation to reach at
@@ -4962,29 +4962,29 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         We increase the number of polynomials and observe a decrease
         the degree of regularity::
 
-            sage: for i in range(2*n):
-            ....:     f = P.random_element(degree=2, terms=binomial(n,2))
+            sage: for i in range(2 * n):                                                            # optional - sage.libs.pari
+            ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)
-            sage: I.degree_of_semi_regularity()
+            sage: I = Ideal(L)                                                                      # optional - sage.libs.pari
+            sage: I.degree_of_semi_regularity()                                                     # optional - sage.libs.pari
             3
 
-            sage: max(f.degree() for f in I.groebner_basis())
+            sage: max(f.degree() for f in I.groebner_basis())                                       # optional - sage.libs.pari
             3
 
         The degree of regularity approaches 2 for quadratic systems as
         the number of polynomials approaches `n^2`::
 
-            sage: for i in range((n-4)*n):
-            ....:     f = P.random_element(degree=2, terms=binomial(n,2))
+            sage: for i in range((n-4) * n):                                                        # optional - sage.libs.pari
+            ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)
-            sage: I.degree_of_semi_regularity()
+            sage: I = Ideal(L)                                                                      # optional - sage.libs.pari
+            sage: I.degree_of_semi_regularity()                                                     # optional - sage.libs.pari
             2
 
-            sage: max(f.degree() for f in I.groebner_basis())
+            sage: max(f.degree() for f in I.groebner_basis())                                       # optional - sage.libs.pari
             2
 
         .. NOTE::

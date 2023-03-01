@@ -27,13 +27,13 @@ EXAMPLES:
 We construct the Frobenius morphism on `\GF{5}[x,y,z]` over
 `\GF{5}`::
 
-    sage: R.<x,y,z> = GF(5)[]
-    sage: frob = R.hom([x^5, y^5, z^5])
-    sage: frob(x^2 + 2*y - z^4)
+    sage: R.<x,y,z> = GF(5)[]                                                                       # optional - sage.libs.pari
+    sage: frob = R.hom([x^5, y^5, z^5])                                                             # optional - sage.libs.pari
+    sage: frob(x^2 + 2*y - z^4)                                                                     # optional - sage.libs.pari
     -z^20 + x^10 + 2*y^5
-    sage: frob((x + 2*y)^3)
+    sage: frob((x + 2*y)^3)                                                                         # optional - sage.libs.pari
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
-    sage: (x^5 + 2*y^5)^3
+    sage: (x^5 + 2*y^5)^3                                                                           # optional - sage.libs.pari
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
 
 We make a polynomial ring in one variable over a polynomial ring in
@@ -46,7 +46,7 @@ two variables::
 
 TESTS::
 
-    sage: PolynomialRing(GF(5), 3, 'xyz').objgens()
+    sage: PolynomialRing(GF(5), 3, 'xyz').objgens()                                                 # optional - sage.libs.pari
     (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,
     (x, y, z))
 """
