@@ -567,13 +567,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         implicitly calling ``_coerce_c_impl``::
 
             sage: z = polygen(QQ, 'z')
-            sage: W.<s>=NumberField(z^2+1)
-            sage: Q.<u,v,w> = W[]
-            sage: W1 = FractionField (Q)
-            sage: S.<x,y,z> = W1[]
-            sage: u + x
+            sage: W.<s> = NumberField(z^2 + 1)                                                      # optional - sage.rings.number_field
+            sage: Q.<u,v,w> = W[]                                                                   # optional - sage.rings.number_field
+            sage: W1 = FractionField(Q)                                                             # optional - sage.rings.number_field
+            sage: S.<x,y,z> = W1[]                                                                  # optional - sage.rings.number_field
+            sage: u + x                                                                             # optional - sage.rings.number_field
             x + u
-            sage: x + 1/u
+            sage: x + 1/u                                                                           # optional - sage.rings.number_field
             x + 1/u
         """
         try:
@@ -703,12 +703,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         EXAMPLES::
 
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)
-            sage: R.<x,y> = K[]
-            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()
-            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()]) # no coercion
+            sage: K.<i> = NumberField(t^2 + 1)                                                              # optional - sage.rings.number_field
+            sage: R.<x,y> = K[]                                                                             # optional - sage.rings.number_field
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                            # optional - sage.rings.number_field
+            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()]) # no coercion             # optional - sage.rings.number_field
             False
-            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()], base_map=K.hom([i5]))
+            sage: R._is_valid_homomorphism_(Q5, [Q5.teichmuller(2), Q5(6).log()], base_map=K.hom([i5]))     # optional - sage.rings.number_field
             True
         """
         if base_map is None:
@@ -725,33 +725,33 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)
-            sage: R._magma_init_(magma)                      # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)                              # optional - sage.libs.pari
+            sage: R._magma_init_(magma)                      # optional - magma                     # optional - sage.libs.pari
             'SageCreateWithNames(PolynomialRing(_sage_ref...,10,"grevlex"),["a","b","c","d","e","f","g","h","i","j"])'
-            sage: R.<y,z,w> = PolynomialRing(QQ,3)
-            sage: magma(R)                                   # optional - magma
+            sage: R.<y,z,w> = PolynomialRing(QQ, 3)                                                 # optional - sage.libs.pari
+            sage: magma(R)                                   # optional - magma                     # optional - sage.libs.pari
             Polynomial ring of rank 3 over Rational Field
             Order: Graded Reverse Lexicographical
             Variables: y, z, w
 
         A complicated nested example::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(9,'a')); S.<T,W> = R[]; S
+            sage: R.<a,b,c> = PolynomialRing(GF(9,'a')); S.<T,W> = R[]; S                           # optional - sage.libs.pari
             Multivariate Polynomial Ring in T, W over Multivariate
             Polynomial Ring in a, b, c over Finite Field in a of size 3^2
-            sage: magma(S)                                   # optional - magma
+            sage: magma(S)                                   # optional - magma                     # optional - sage.libs.pari
             Polynomial ring of rank 2 over Polynomial ring of rank 3
             over GF(3^2)
             Order: Graded Reverse Lexicographical
             Variables: T, W
 
 
-            sage: magma(PolynomialRing(GF(7),4, 'x'))        # optional - magma
+            sage: magma(PolynomialRing(GF(7),4, 'x'))        # optional - magma                     # optional - sage.libs.pari
             Polynomial ring of rank 4 over GF(7)
             Order: Graded Reverse Lexicographical
             Variables: x0, x1, x2, x3
 
-            sage: magma(PolynomialRing(GF(49,'a'),10, 'x'))  # optional - magma
+            sage: magma(PolynomialRing(GF(49,'a'),10, 'x'))  # optional - magma                     # optional - sage.libs.pari
             Polynomial ring of rank 10 over GF(7^2)
             Order: Graded Reverse Lexicographical
             Variables: x0, x1, x2, x3, x4, x5, x6, x7, x8, x9
@@ -785,11 +785,11 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
-            sage: F = CyclotomicField(8)
-            sage: P.<x,y> = F[]
-            sage: gap(P)     # indirect doctest
+            sage: F = CyclotomicField(8)                                                            # optional - sage.rings.number_field
+            sage: P.<x,y> = F[]                                                                     # optional - sage.rings.number_field
+            sage: gap(P)     # indirect doctest                                                     # optional - sage.rings.number_field
             PolynomialRing( CF(8), ["x", "y"] )
-            sage: libgap(P)
+            sage: libgap(P)                                                                         # optional - sage.rings.number_field
             <field in characteristic 0>[x,y]
         """
         L = ['"%s"' % t for t in self.variable_names()]
@@ -847,8 +847,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R = PolynomialRing(QQ, 'x', 3)
             sage: R.characteristic()
             0
-            sage: R = PolynomialRing(GF(7),'x', 20)
-            sage: R.characteristic()
+            sage: R = PolynomialRing(GF(7), 'x', 20)                                                # optional - sage.libs.pari
+            sage: R.characteristic()                                                                # optional - sage.libs.pari
             7
         """
         return self.base_ring().characteristic()
@@ -1332,11 +1332,11 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(127),3,order='lex')
-            sage: x > y^2
+            sage: P.<x,y,z> = PolynomialRing(GF(127), 3, order='lex')                               # optional - sage.libs.pari
+            sage: x > y^2                                                                           # optional - sage.libs.pari
             True
-            sage: Q.<x,y,z> = P.change_ring(order='degrevlex')
-            sage: x > y^2
+            sage: Q.<x,y,z> = P.change_ring(order='degrevlex')                                      # optional - sage.libs.pari
+            sage: x > y^2                                                                           # optional - sage.libs.pari
             False
         """
         if base_ring is None:

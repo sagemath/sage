@@ -310,13 +310,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials implemented via Singular::
 
-            sage: R.<x, y> = PolynomialRing(FiniteField(5))
-            sage: f = x^3*y^5 + x^7*y
-            sage: type(f)
+            sage: R.<x, y> = PolynomialRing(FiniteField(5))                                         # optional - sage.libs.pari
+            sage: f = x^3*y^5 + x^7*y                                                               # optional - sage.libs.pari
+            sage: type(f)                                                                           # optional - sage.libs.pari
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: f.derivative(x)
+            sage: f.derivative(x)                                                                   # optional - sage.libs.pari
             2*x^6*y - 2*x^2*y^5
-            sage: f.derivative(y)
+            sage: f.derivative(y)                                                                   # optional - sage.libs.pari
             x^7
 
         Generic multivariate polynomials::
@@ -367,7 +367,8 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f.polynomial(x)
             x^3 + (17*w^3 + 3*w)*x + w^5 + z^5
             sage: parent(f.polynomial(x))
-            Univariate Polynomial Ring in x over Multivariate Polynomial Ring in w, z over Rational Field
+            Univariate Polynomial Ring in x
+             over Multivariate Polynomial Ring in w, z over Rational Field
 
             sage: f.polynomial(w)
             w^5 + 17*x*w^3 + 3*x*w + z^5 + x^3
@@ -383,11 +384,11 @@ cdef class MPolynomial(CommutativePolynomial):
             z^5 + x*w*k*z + w^5 + 17*x*w^3 + x^3 + 3*x*w + 5
             sage: f.polynomial(k)
             x*w*z*k + w^5 + z^5 + 17*x*w^3 + x^3 + 3*x*w + 5
-            sage: R.<x,y>=GF(5)[]
-            sage: f=x^2+x+y
-            sage: f.polynomial(x)
+            sage: R.<x,y> = GF(5)[]                                                                 # optional - sage.libs.pari
+            sage: f = x^2 + x + y                                                                   # optional - sage.libs.pari
+            sage: f.polynomial(x)                                                                   # optional - sage.libs.pari
             x^2 + x + y
-            sage: f.polynomial(y)
+            sage: f.polynomial(y)                                                                   # optional - sage.libs.pari
             y + x^2 + x
         """
         cdef int ind
@@ -685,9 +686,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         In particular, this can be surprising in positive characteristic::
 
-            sage: R.<x,y> = GF(2)[]
-            sage: f = x + 1
-            sage: f.homogenize(x)
+            sage: R.<x,y> = GF(2)[]                                                                 # optional - sage.libs.pari
+            sage: f = x + 1                                                                         # optional - sage.libs.pari
+            sage: f.homogenize(x)                                                                   # optional - sage.libs.pari
             0
 
         TESTS::
@@ -842,21 +843,21 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + 3/5*y + 1
-            sage: f.change_ring(GF(7))
+            sage: f.change_ring(GF(7))                                                              # optional - sage.libs.pari
             x^3 + 2*y + 1
 
         ::
 
-            sage: R.<x,y> = GF(9,'a')[]
-            sage: (x+2*y).change_ring(GF(3))
+            sage: R.<x,y> = GF(9,'a')[]                                                             # optional - sage.libs.pari
+            sage: (x+2*y).change_ring(GF(3))                                                        # optional - sage.libs.pari
             x - y
 
         ::
 
-            sage: K.<z> = CyclotomicField(3)
-            sage: R.<x,y> = K[]
-            sage: f = x^2 + z*y
-            sage: f.change_ring(K.embeddings(CC)[1])
+            sage: K.<z> = CyclotomicField(3)                                                        # optional - sage.rings.number_field
+            sage: R.<x,y> = K[]                                                                     # optional - sage.rings.number_field
+            sage: f = x^2 + z*y                                                                     # optional - sage.rings.number_field
+            sage: f.change_ring(K.embeddings(CC)[1])                                                # optional - sage.rings.number_field
             x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
 
         TESTS:
@@ -888,25 +889,25 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y,z> = QQ[]
             sage: p = (x+y+z)**2 - 3 * (x+y)*(x+z)*(y+z)
-            sage: p.is_symmetric()
+            sage: p.is_symmetric()                                                                  # optional - sage.groups
             True
-            sage: (x + y - z).is_symmetric()
+            sage: (x + y - z).is_symmetric()                                                        # optional - sage.groups
             False
-            sage: R.one().is_symmetric()
+            sage: R.one().is_symmetric()                                                            # optional - sage.groups
             True
 
             sage: p = (x-y)*(y-z)*(z-x)
-            sage: p.is_symmetric()
+            sage: p.is_symmetric()                                                                  # optional - sage.groups
             False
-            sage: p.is_symmetric(AlternatingGroup(3))
+            sage: p.is_symmetric(AlternatingGroup(3))                                               # optional - sage.groups
             True
 
             sage: R.<x,y> = QQ[]
-            sage: ((x + y)**2).is_symmetric()
+            sage: ((x + y)**2).is_symmetric()                                                       # optional - sage.groups
             True
-            sage: R.one().is_symmetric()
+            sage: R.one().is_symmetric()                                                            # optional - sage.groups
             True
-            sage: (x + 2*y).is_symmetric()
+            sage: (x + 2*y).is_symmetric()                                                          # optional - sage.groups
             False
 
         An example with a GAP permutation group (here the quaternions)::
@@ -914,21 +915,21 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R = PolynomialRing(QQ, 'x', 8)
             sage: x = R.gens()
             sage: p = sum(prod(x[i] for i in e) for e in [(0,1,2), (0,1,7), (0,2,7), (1,2,7), (3,4,5), (3,4,6), (3,5,6), (4,5,6)])
-            sage: p.is_symmetric(libgap.TransitiveGroup(8, 5))
+            sage: p.is_symmetric(libgap.TransitiveGroup(8, 5))                                      # optional - sage.groups
             True
             sage: p = sum(prod(x[i] for i in e) for e in [(0,1,2), (0,1,7), (0,2,7), (1,2,7), (3,4,5), (3,4,6), (3,5,6)])
-            sage: p.is_symmetric(libgap.TransitiveGroup(8, 5))
+            sage: p.is_symmetric(libgap.TransitiveGroup(8, 5))                                      # optional - sage.groups
             False
 
         TESTS::
 
             sage: R = PolynomialRing(QQ, 'x', 3)
-            sage: R.one().is_symmetric(3)
+            sage: R.one().is_symmetric(3)                                                           # optional - sage.groups
             Traceback (most recent call last):
             ...
             ValueError: argument must be a permutation group
 
-            sage: R.one().is_symmetric(SymmetricGroup(4))
+            sage: R.one().is_symmetric(SymmetricGroup(4))                                           # optional - sage.groups
             Traceback (most recent call last):
             ...
             ValueError: invalid data to initialize a permutation
@@ -1030,12 +1031,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: k.<b> = GF(25); R.<x,y> = k[]
-            sage: f = y*x^2*b + x*(b+1) + 1
-            sage: magma = Magma()                       # so var names same below
-            sage: magma(f)                              # optional - magma
+            sage: k.<b> = GF(25); R.<x,y> = k[]                                                     # optional - sage.libs.pari
+            sage: f = y*x^2*b + x*(b+1) + 1                                                         # optional - sage.libs.pari
+            sage: magma = Magma()                       # so var names same below                   # optional - sage.libs.pari
+            sage: magma(f)                              # optional - magma                          # optional - sage.libs.pari
             b*x^2*y + b^22*x + 1
-            sage: f._magma_init_(magma)                 # optional - magma
+            sage: f._magma_init_(magma)                 # optional - magma                          # optional - sage.libs.pari
             '_sage_[...]!((_sage_[...]!(_sage_[...]))*_sage_[...]^2*_sage_[...]+(_sage_[...]!(_sage_[...] + 1))*_sage_[...]+(_sage_[...]!(1))*1)'
 
         A more complicated nested example::
@@ -1065,13 +1066,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x,y,z> = GF(101)['e,i'][]
-            sage: f = R('e*i') * x + y^2
-            sage: f._giac_init_()
+            sage: R.<x,y,z> = GF(101)['e,i'][]                                                      # optional - sage.libs.pari
+            sage: f = R('e*i') * x + y^2                                                            # optional - sage.libs.pari
+            sage: f._giac_init_()                                                                   # optional - sage.libs.pari
             '((1)*1)*sageVARy^2+((1)*sageVARe*sageVARi)*sageVARx'
-            sage: giac(f)
+            sage: giac(f)                                                                           # optional - sage.libs.pari
             sageVARy^2+sageVARe*sageVARi*sageVARx
-            sage: giac(R.zero())
+            sage: giac(R.zero())                                                                    # optional - sage.libs.pari
             0
         """
         g = ['sageVAR' + x for x in self.parent().variable_names()]
@@ -1115,20 +1116,20 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = 1 + x*y + x^3 + y^3
-            sage: P = f.newton_polytope()
-            sage: P
+            sage: P = f.newton_polytope()                                                           # optional - sage.geometry.polyhedron
+            sage: P                                                                                 # optional - sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: P.is_simple()
+            sage: P.is_simple()                                                                     # optional - sage.geometry.polyhedron
             True
 
         TESTS::
 
             sage: R.<x,y> = QQ[]
-            sage: R(0).newton_polytope()
+            sage: R(0).newton_polytope()                                                            # optional - sage.geometry.polyhedron
             The empty polyhedron in ZZ^0
-            sage: R(1).newton_polytope()
+            sage: R(1).newton_polytope()                                                            # optional - sage.geometry.polyhedron
             A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
-            sage: R(x^2+y^2).newton_polytope().integral_points()
+            sage: R(x^2+y^2).newton_polytope().integral_points()                                    # optional - sage.geometry.polyhedron
             ((0, 2), (1, 1), (2, 0))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
@@ -1278,32 +1279,32 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(9); R.<x,y> = k[];  f = x*a + 2*x^3*y*a + a
-            sage: f.map_coefficients(lambda a : a + 1)
+            sage: k.<a> = GF(9); R.<x,y> = k[];  f = x*a + 2*x^3*y*a + a                            # optional - sage.libs.pari
+            sage: f.map_coefficients(lambda a: a + 1)                                               # optional - sage.libs.pari
             (-a + 1)*x^3*y + (a + 1)*x + (a + 1)
 
         Examples with different base ring::
 
-            sage: R.<r> = GF(9); S.<s> = GF(81)
-            sage: h = Hom(R,S)[0]; h
+            sage: R.<r> = GF(9); S.<s> = GF(81)                                                     # optional - sage.libs.pari
+            sage: h = Hom(R,S)[0]; h                                                                # optional - sage.libs.pari
             Ring morphism:
               From: Finite Field in r of size 3^2
               To:   Finite Field in s of size 3^4
               Defn: r |--> 2*s^3 + 2*s^2 + 1
-            sage: T.<X,Y> = R[]
-            sage: f = r*X+Y
-            sage: g = f.map_coefficients(h); g
+            sage: T.<X,Y> = R[]                                                                     # optional - sage.libs.pari
+            sage: f = r*X + Y                                                                       # optional - sage.libs.pari
+            sage: g = f.map_coefficients(h); g                                                      # optional - sage.libs.pari
             (-s^3 - s^2 + 1)*X + Y
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Multivariate Polynomial Ring in X, Y over Finite Field in s of size 3^4
-            sage: h = lambda x: x.trace()
-            sage: g = f.map_coefficients(h); g
+            sage: h = lambda x: x.trace()                                                           # optional - sage.libs.pari
+            sage: g = f.map_coefficients(h); g                                                      # optional - sage.libs.pari
             X - Y
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Multivariate Polynomial Ring in X, Y over Finite Field in r of size 3^2
-            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g
+            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g                                 # optional - sage.libs.pari
             X - Y
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Multivariate Polynomial Ring in X, Y over Finite Field of size 3
 
         """
@@ -1327,10 +1328,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(9)
-            sage: R.<x,y> = PolynomialRing(k)
-            sage: f = (x-a)*(y-a)
-            sage: f._norm_over_nonprime_finite_field()
+            sage: k.<a> = GF(9)                                                                     # optional - sage.libs.pari
+            sage: R.<x,y> = PolynomialRing(k)                                                       # optional - sage.libs.pari
+            sage: f = (x-a) * (y-a)                                                                 # optional - sage.libs.pari
+            sage: f._norm_over_nonprime_finite_field()                                              # optional - sage.libs.pari
             x^2*y^2 - x^2*y - x*y^2 - x^2 + x*y - y^2 + x + y + 1
         """
         P = self.parent()
@@ -1751,10 +1752,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3)  ,'a')['x,y']
-            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']                      # optional - sage.rings.number_field, sage.symbolic
+            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                                      # optional - sage.rings.number_field, sage.symbolic
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
-            sage: f.denominator()
+            sage: f.denominator()                                                                   # optional - sage.rings.number_field, sage.symbolic
             102
 
         Finally, we try to compute the denominator of a polynomial with
@@ -1772,18 +1773,18 @@ cdef class MPolynomial(CommutativePolynomial):
         Check that the denominator is an element over the base whenever the base
         has no denominator function. This closes :trac:`9063`::
 
-            sage: R.<a,b,c> = GF(5)[]
-            sage: x = R(0)
-            sage: x.denominator()
+            sage: R.<a,b,c> = GF(5)[]                                                               # optional - sage.libs.pari
+            sage: x = R(0)                                                                          # optional - sage.libs.pari
+            sage: x.denominator()                                                                   # optional - sage.libs.pari
             1
-            sage: type(x.denominator())
+            sage: type(x.denominator())                                                             # optional - sage.libs.pari
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
-            sage: type(a.denominator())
+            sage: type(a.denominator())                                                             # optional - sage.libs.pari
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: from sage.rings.polynomial.multi_polynomial_element import MPolynomial
-            sage: isinstance(a / b, MPolynomial)
+            sage: isinstance(a / b, MPolynomial)                                                    # optional - sage.libs.pari
             False
-            sage: isinstance(a.numerator() / a.denominator(), MPolynomial)
+            sage: isinstance(a.numerator() / a.denominator(), MPolynomial)                          # optional - sage.libs.pari
             True
         """
         if self.degree() == -1:
@@ -1828,12 +1829,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3)  ,'a')['x,y']
-            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']                     # optional - sage.rings.number_field, sage.symbolic
+            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                                                # optional - sage.rings.number_field, sage.symbolic
             1/17*y^19 - 2/3*x + 1/3
-            sage: f.numerator()
+            sage: f.numerator()                                                                     # optional - sage.rings.number_field, sage.symbolic
             3*y^19 - 34*x + 17
-            sage: f == f.numerator()
+            sage: f == f.numerator()                                                                # optional - sage.rings.number_field, sage.symbolic
             False
 
         We try to compute the numerator of a polynomial with coefficients in
@@ -1852,12 +1853,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: K=NumberField(symbolic_expression('x^3+2'),'a')['x']['s,t']
-            sage: f=K.random_element()
-            sage: f.numerator() / f.denominator() == f
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']                    # optional - sage.rings.number_field, sage.symbolic
+            sage: f = K.random_element()                                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: f.numerator() / f.denominator() == f                                              # optional - sage.rings.number_field, sage.symbolic
             True
-            sage: R=RR['x,y,z']
-            sage: f=R.random_element()
+            sage: R = RR['x,y,z']
+            sage: f = R.random_element()
             sage: f.numerator() / f.denominator() == f
             True
         """
@@ -1941,38 +1942,38 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(7)[]
-            sage: p = x^3 + y + x*z^2
-            sage: p.weighted_degree({z:0, x:1, y:2})
+            sage: R.<x,y,z> = GF(7)[]                                                               # optional - sage.libs.pari
+            sage: p = x^3 + y + x*z^2                                                               # optional - sage.libs.pari
+            sage: p.weighted_degree({z:0, x:1, y:2})                                                # optional - sage.libs.pari
             3
-            sage: p.weighted_degree(1, 2, 0)
+            sage: p.weighted_degree(1, 2, 0)                                                        # optional - sage.libs.pari
             3
-            sage: p.weighted_degree((1, 4, 2))
+            sage: p.weighted_degree((1, 4, 2))                                                      # optional - sage.libs.pari
             5
-            sage: p.weighted_degree((1, 4, 1))
+            sage: p.weighted_degree((1, 4, 1))                                                      # optional - sage.libs.pari
             4
-            sage: p.weighted_degree(2**64, 2**50, 2**128)
+            sage: p.weighted_degree(2**64, 2**50, 2**128)                                           # optional - sage.libs.pari
             680564733841876926945195958937245974528
-            sage: q = R.random_element(100, 20) #random
-            sage: q.weighted_degree(1, 1, 1) == q.total_degree()
+            sage: q = R.random_element(100, 20) #random                                             # optional - sage.libs.pari
+            sage: q.weighted_degree(1, 1, 1) == q.total_degree()                                    # optional - sage.libs.pari
             True
 
         You may also work with negative weights
 
         ::
 
-            sage: p.weighted_degree(-1, -2, -1)
+            sage: p.weighted_degree(-1, -2, -1)                                                     # optional - sage.libs.pari
             -2
 
         Note that only integer weights are allowed
 
         ::
 
-            sage: p.weighted_degree(x,1,1)
+            sage: p.weighted_degree(x, 1, 1)                                                        # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Integer Ring
-            sage: p.weighted_degree(2/1,1,1)
+            sage: p.weighted_degree(2/1, 1, 1)                                                      # optional - sage.libs.pari
             6
 
         The ``weighted_degree`` coincides with the ``degree`` of a weighted
@@ -2506,16 +2507,16 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: (x+y).is_unit()
+            sage: R.<x,y> = QQbar[]                                                                 # optional - sage.rings.number_field
+            sage: (x + y).is_unit()                                                                 # optional - sage.rings.number_field
             False
-            sage: R(0).is_unit()
+            sage: R(0).is_unit()                                                                    # optional - sage.rings.number_field
             False
-            sage: R(-1).is_unit()
+            sage: R(-1).is_unit()                                                                   # optional - sage.rings.number_field
             True
-            sage: R(-1 + x).is_unit()
+            sage: R(-1 + x).is_unit()                                                               # optional - sage.rings.number_field
             False
-            sage: R(2).is_unit()
+            sage: R(2).is_unit()                                                                    # optional - sage.rings.number_field
             True
 
         Check that :trac:`22454` is fixed::
@@ -2552,8 +2553,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: (x+y).is_nilpotent()
+            sage: R.<x,y> = QQbar[]                                                                 # optional - sage.rings.number_field
+            sage: (x + y).is_nilpotent()                                                            # optional - sage.rings.number_field
             False
             sage: R(0).is_nilpotent()
             True
@@ -2584,8 +2585,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x,y> = QQbar[]
-            sage: (x + y)._test_subs()
+            sage: R.<x,y> = QQbar[]                                                                 # optional - sage.rings.number_field
+            sage: (x + y)._test_subs()                                                              # optional - sage.rings.number_field
         """
         if tester is None:
             tester = self._tester(**options)
