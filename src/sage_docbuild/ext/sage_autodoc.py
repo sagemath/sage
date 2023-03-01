@@ -982,7 +982,7 @@ class Documenter:
             sig = self.format_signature()
         except Exception as exc:
             logger.warning(__('error while formatting signature for %s: %s'),
-                           self.fullname, exc, type='autodoc')
+                           self.fullname, exc, type='autodoc', exc_info=True)
             return
 
         # generate the directive header and options, if applicable
