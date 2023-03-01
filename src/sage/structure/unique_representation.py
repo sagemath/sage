@@ -498,13 +498,13 @@ behaviour. However, they do not show the *unique* representation behaviour,
 since they are equal to groups created in a totally different way, namely to
 subgroups::
 
-    sage: G = SymmetricGroup(6)
-    sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])
-    sage: G is G3
+    sage: G = SymmetricGroup(6)                                                         # optional - sage.groups
+    sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])                                  # optional - sage.groups
+    sage: G is G3                                                                       # optional - sage.groups
     False
-    sage: type(G) == type(G3)
+    sage: type(G) == type(G3)                                                           # optional - sage.groups
     False
-    sage: G == G3
+    sage: G == G3                                                                       # optional - sage.groups
     True
 
 The unique representation behaviour can conveniently be implemented with a
@@ -517,9 +517,9 @@ For example, a symmetric function algebra is uniquely determined by the base
 ring. Thus, it is reasonable to use :class:`UniqueRepresentation` in this
 case::
 
-    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                        # optional - sage.combinat
     True
-    sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+    sage: issubclass(SymmetricFunctions, UniqueRepresentation)                          # optional - sage.combinat
     True
 
 :class:`UniqueRepresentation` differs from :class:`CachedRepresentation` only

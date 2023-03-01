@@ -457,21 +457,21 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-            sage: ascii_art(R[1,2,2,4])
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                                      # optional - sage.combinat
+            sage: ascii_art(R[1,2,2,4])                                                             # optional - sage.combinat
             R
                ****
               **
              **
              *
-            sage: Partitions.options(diagram_str="#", convention="french")
-            sage: ascii_art(R[1,2,2,4])
+            sage: Partitions.options(diagram_str="#", convention="french")                          # optional - sage.combinat
+            sage: ascii_art(R[1,2,2,4])                                                             # optional - sage.combinat
             R
              #
              ##
               ##
                ####
-            sage: Partitions.options._reset()
+            sage: Partitions.options._reset()                                                       # optional - sage.combinat
 
             sage: F.<a,b,c> = CombinatorialFreeModule(QQ)
             sage: ascii_art(a + 2*b)
@@ -493,23 +493,23 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-            sage: unicode_art(R[1,2,2,4])
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                                      # optional - sage.combinat
+            sage: unicode_art(R[1,2,2,4])                                                           # optional - sage.combinat
             R
                ┌┬┬┬┐
               ┌┼┼┴┴┘
              ┌┼┼┘
              ├┼┘
              └┘
-            sage: Partitions.options.convention="french"
-            sage: unicode_art(R[1,2,2,4])
+            sage: Partitions.options.convention="french"                                            # optional - sage.combinat
+            sage: unicode_art(R[1,2,2,4])                                                           # optional - sage.combinat
             R
              ┌┐
              ├┼┐
              └┼┼┐
               └┼┼┬┬┐
                └┴┴┴┘
-            sage: Partitions.options._reset()
+            sage: Partitions.options._reset()                                                       # optional - sage.combinat
 
             sage: F.<a,b,c> = CombinatorialFreeModule(QQ)
             sage: unicode_art(a + 2*b)
