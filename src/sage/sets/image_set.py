@@ -181,12 +181,12 @@ class ImageSubobject(Parent):
             sage: Im.ambient() is R
             True
 
-            sage: P = Partitions(3).map(attrcall('conjugate'))
-            sage: P.ambient() is None
+            sage: P = Partitions(3).map(attrcall('conjugate'))                                      # optional - sage.combinat
+            sage: P.ambient() is None                                                               # optional - sage.combinat
             True
 
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.ambient() is None
+            sage: R = Permutations(10).map(attrcall('reduced_word'))                                # optional - sage.combinat
+            sage: R.ambient() is None                                                               # optional - sage.combinat
             True
         """
         return self._map.codomain()
@@ -234,7 +234,7 @@ class ImageSubobject(Parent):
         r"""
         TESTS::
 
-            sage: Partitions(3).map(attrcall('conjugate'))
+            sage: Partitions(3).map(attrcall('conjugate'))                                          # optional - sage.combinat
             Image of Partitions of the integer 3 by
              The map *.conjugate() from Partitions of the integer 3
         """
@@ -294,12 +294,12 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: P = Partitions()
-            sage: H = Hom(P, ZZ)
-            sage: f = H(ZZ.sum)
-            sage: X = f.image()
-            sage: it = iter(X)
-            sage: [next(it) for _ in range(5)]
+            sage: P = Partitions()                                                                  # optional - sage.combinat
+            sage: H = Hom(P, ZZ)                                                                    # optional - sage.combinat
+            sage: f = H(ZZ.sum)                                                                     # optional - sage.combinat
+            sage: X = f.image()                                                                     # optional - sage.combinat
+            sage: it = iter(X)                                                                      # optional - sage.combinat
+            sage: [next(it) for _ in range(5)]                                                      # optional - sage.combinat
             [0, 1, 2, 3, 4]
         """
         if self._is_injective and self._is_injective != 'check':
@@ -322,8 +322,8 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
-            sage: R.an_element()
+            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))                              # optional - sage.groups
+            sage: R.an_element()                                                                    # optional - sage.groups
             [9, 8, 7, 6, 5, 4, 3, 2]
         """
         domain_element = self._domain_subset.an_element()
