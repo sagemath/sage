@@ -268,7 +268,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     As well as the j-invariant if the rank is two::
 
         sage: phi.j_invariant()  # j-invariant
-        1
+        [1]
 
     A Drinfeld `\mathbb{F}_q[T]`-module can be seen as an Ore polynomial
     with positive degree and constant coefficient `\gamma(T)`, where
