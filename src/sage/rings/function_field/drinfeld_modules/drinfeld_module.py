@@ -1063,26 +1063,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
         return isinstance(self, FiniteDrinfeldModule)
 
-    def j_invariant(self, k=1):
+    def j_invariant(self):
         r"""
-        Return the `k`-th `j`-invariant of the Drinfeld
-        `\mathbb{F}_q[T]`-module.
+        Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module, that
+        is the list of all its `j_k`-invariants.
 
-        Recall that the `k`-th `j`-invariant of a Drinfeld module `\phi` of any
-        rank is defined by
+        Recall that the `j_k`-invariant of a Drinfeld module `\phi` of any rank
+        is defined by:
 
         .. MATH::
 
             j_k(\phi) := g_k(\phi)^{(q^r - 1)/(q^\mathrm{gcd}(k, r) - 1)}}{g_r(\phi)^{(q^k - 1)/(q^{\mathrm{gcd}(k, r)} - 1)}
 
-        where `g_i(\phi)` is the `i`-th coefficient of the generator `\phi_T`.
+        where `1\leq k \leq r - 1` and `g_i(\phi)` is the `i`-th coefficient of
+        the generator.
 
-        INPUT:
-
-        - `k` (default: 1) - an integer greater of equal to one and less than
-          the rank.
-
-        OUTPUT: an element in the base codomain
+        OUTPUT: the list of all the `j_k`-invariants of ``self``.
 
         EXAMPLES::
 
@@ -1092,13 +1088,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.j_invariant()
-            z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2
+            [z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2]
             sage: psi = DrinfeldModule(A, [p_root, 1, 1])
             sage: psi.j_invariant()
-            1
+            [1]
             sage: rho = DrinfeldModule(A, [p_root, 0, 1])
             sage: rho.j_invariant()
-            0
+            [0]
 
         ::
 
@@ -1106,28 +1102,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
             sage: phi.j_invariant()
-            T^309
-            sage: phi.j_invariant(2)
-            1/T^3
-            sage: phi.j_invariant(3)
-            (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
-            sage: phi.j_invariant([[1, 2, 3, 4], [0, 7, 54, 11]])
-            (T^54 + 4*T^53 + T^52 + 4*T^51 + T^50 + 2*T^29 + 3*T^28 + 2*T^27 + 3*T^26 + 2*T^25 + T^4 + 4*T^3 + T^2 + 4*T + 1)/T^33
+            [T^309,
+             1/T^3,
+             (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93]
         """
-        # TODO: add documentation for this method
-        if isinstance(k, (int, Integer)):
-            r = self.rank()
-            if k <= 0 or k >= r:
-                raise ValueError(f"k (={k}) must be greater or equal to one and less than the rank (={r})")
-            q = self._Fq.order()
-            gk = self.coefficient(k)
-            gr = self.coefficient(r)
-            j_inv = gk**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) / gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1)))
-        elif isinstance(k, list):
-            j_inv = self.basic_j_invariant(k)
-        else:
-            raise TypeError("k must be an integer or a list of integers")
-        return j_inv
+        r = self._gen.degree()
+        q = self._Fq.order()
+        gr = self._gen[-1]
+        return [self._gen[k]**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) /\
+                gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1))) for k in range(1, r)]
 
     def basic_j_invariant(self, parameters, check=True):
         r"""
