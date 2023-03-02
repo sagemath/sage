@@ -230,7 +230,6 @@ A tower of mixed extensions::
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.functions.other import floor, binomial
 
 from .padic_general_extension_element import pAdicGeneralRingExtensionElement, pAdicGeneralFieldExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
@@ -614,6 +613,7 @@ def krasner_reduce(E):
                 slope = s
     val = valder + slope
     coeffs = [ ]
+    from sage.functions.other import floor
     for i in range(d):
         prec = floor(val - i/d) + 1
         coeffs.append(E[i].add_bigoh(prec).lift_to_precision())
