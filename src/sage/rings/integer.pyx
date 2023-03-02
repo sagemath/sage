@@ -571,7 +571,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: ZZ(pari(Qp(11)(11^-7)))
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert p-adic with negative valuation to an integer
+            TypeError: cannot convert p-adic with negative valuation to an integer
 
         Test converting a list with a very large base::
 
@@ -640,7 +640,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 if n == x:
                     mpz_set_pylong(self.value, n)
                 else:
-                    raise TypeError("Cannot convert non-integral float to integer")
+                    raise TypeError("cannot convert non-integral float to integer")
 
             elif isinstance(x, pari_gen):
                 global set_integer_from_gen
@@ -2951,12 +2951,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return n
 
-    def prime_divisors(self):
+    def prime_divisors(self, *args, **kwds):
         """
         Return the prime divisors of this integer, sorted in increasing order.
 
         If this integer is negative, we do *not* include -1 among
         its prime divisors, since -1 is not a prime number.
+
+        INPUT:
+
+        - ``limit`` -- (integer, optional keyword argument)
+          Return only prime divisors up to this bound, and the factorization
+          is done by checking primes up to ``limit`` using trial division.
+
+        Any additional arguments are passed on to the :meth:`factor` method.
 
         EXAMPLES::
 
@@ -2968,8 +2976,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             [2, 5]
             sage: a = 2004; a.prime_divisors()
             [2, 3, 167]
+
+        Setting the optional ``limit`` argument works as expected::
+
+            sage: a = 10^100 + 1
+            sage: a.prime_divisors()
+            [73, 137, 401, 1201, 1601, 1676321, 5964848081,
+             129694419029057750551385771184564274499075700947656757821537291527196801]
+            sage: a.prime_divisors(limit=10^3)
+            [73, 137, 401]
+            sage: a.prime_divisors(limit=10^7)
+            [73, 137, 401, 1201, 1601, 1676321]
         """
-        return [r[0] for r in self.factor()]
+        res = [r[0] for r in self.factor(*args, **kwds)]
+        limit = kwds.get('limit')
+        if limit is not None:
+            res = [r for r in res if r <= limit]
+        return res
 
     prime_factors = prime_divisors
 
@@ -7453,7 +7476,7 @@ cdef void fast_tp_dealloc(PyObject* o):
 
     # If we are recovering from an interrupt, throw the mpz_t away
     # without recycling or freeing it because it might be in an
-    # inconsistent state (see Trac #24986).
+    # inconsistent state (see Issue #24986).
     if sig_occurred() is NULL:
         if integer_pool_count < integer_pool_size:
             # Here we free any extra memory used by the mpz_t by

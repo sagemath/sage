@@ -1,4 +1,4 @@
-# Trac #33153: fflas-ffpack-2.4.3 is missing a return value in one of
+# Issue #33153: fflas-ffpack-2.4.3 is missing a return value in one of
 # its functions and runs afoul of -Werror=return-type. Compounding the
 # problem on openSUSE tumbleweed, the CFLAGS in python's sysconfig
 # contain -Werror=return-type and wind up being used to compile this

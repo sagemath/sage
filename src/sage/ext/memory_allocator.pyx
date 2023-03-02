@@ -27,7 +27,7 @@ cdef class MemoryAllocator:
         ....:     mem.aligned_allocarray(8, n, 8)
         ....: ''')
         doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-        See https://trac.sagemath.org/31591 for details.
+        See https://github.com/sagemath/sage/issues/31591 for details.
     """
     def __cinit__(self):
         """
@@ -44,7 +44,7 @@ cdef class MemoryAllocator:
             ....: ''')
             sage: foo()
             doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
+            See https://github.com/sagemath/sage/issues/31591 for details.
             1
             16
         """
