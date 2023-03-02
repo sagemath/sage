@@ -2047,7 +2047,7 @@ def sage_getdoc_original(obj):
     If an instance of a class does not have its own docstring, the docstring
     of its class results::
 
-        sage: sage_getdoc_original(sage.plot.colors.aliceblue) == sage_getdoc_original(sage.plot.colors.Color)
+        sage: sage_getdoc_original(sage.plot.colors.aliceblue) == sage_getdoc_original(sage.plot.colors.Color)          # optional - sage.plot
         True
 
     """

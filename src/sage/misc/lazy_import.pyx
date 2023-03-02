@@ -531,12 +531,12 @@ cdef class LazyImport():
 
            We access the ``plot`` method::
 
-               sage: Bar.plot
+               sage: Bar.plot                                                                       # optional - sage.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
 
-               sage: type(Foo.__dict__['plot'])
+               sage: type(Foo.__dict__['plot'])                                                     # optional - sage.plot
                <... 'function'>
         """
         # Don't use the namespace of the class definition
