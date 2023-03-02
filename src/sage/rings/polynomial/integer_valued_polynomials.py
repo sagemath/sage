@@ -171,6 +171,63 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 return ZZ(m)
 
+            def from_polynomial(self, p):
+                """
+                Convert a polynomial into the ring of integer-valued polynomials.
+
+                This raises a ``ValueError`` if this is not possible.
+
+                INPUT:
+
+                - ``p`` -- a polynomial in one variable
+
+                EXAMPLES::
+
+                    sage: A = IntegerValuedPolynomialRing(ZZ).S()
+                    sage: S = A.basis()
+                    sage: S[5].polynomial()
+                    1/120*x^5 + 1/8*x^4 + 17/24*x^3 + 15/8*x^2 + 137/60*x + 1
+                    sage: A.from_polynomial(_)
+                    S[5]
+                    sage: x = polygen(QQ, 'x')
+                    sage: A.from_polynomial(x)
+                    -S[0] + S[1]
+
+                    sage: A = IntegerValuedPolynomialRing(ZZ).B()
+                    sage: B = A.basis()
+                    sage: B[5].polynomial()
+                    1/120*x^5 - 1/12*x^4 + 7/24*x^3 - 5/12*x^2 + 1/5*x
+                    sage: A.from_polynomial(_)
+                    B[5]
+                    sage: x = polygen(QQ, 'x')
+                    sage: A.from_polynomial(x)
+                    B[1]
+
+                TESTS::
+
+                    sage: x = polygen(QQ,'x')
+                    sage: A.from_polynomial(x+1/3)
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: not a polynomial with integer values: 1/3
+                """
+                B = self.basis()
+                poly = self._poly
+                remain = p
+                result = self.zero()
+                while remain:
+                    N = remain.degree()
+                    top_coeff = remain.leading_coefficient() * factorial(N)
+                    try:
+                        top_coeff = self.base_ring()(top_coeff)
+                    except TypeError as exc:
+                        msg = 'not a polynomial with integer'
+                        msg += f' values: {top_coeff}'
+                        raise ValueError(msg) from exc
+                    remain += -top_coeff * poly(N)
+                    result += top_coeff * B[N]
+                return result
+
             def gen(self):
                 r"""
                 Return the generator of this algebra.
@@ -221,6 +278,31 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                      67/9
                 """
                 return self.polynomial()(v)
+
+            def polynomial(self):
+                """
+                Convert to a polynomial in `x`.
+
+                EXAMPLES::
+
+                    sage: F = IntegerValuedPolynomialRing(ZZ).S()
+                    sage: B = F.gen()
+                    sage: (B+1).polynomial()
+                    x + 2
+
+                    sage: F = IntegerValuedPolynomialRing(ZZ).B()
+                    sage: B = F.gen()
+                    sage: (B+1).polynomial()
+                    x + 1
+
+                TESTS::
+
+                    sage: F.zero().polynomial().parent()
+                    Univariate Polynomial Ring in x over Rational Field
+                """
+                R = PolynomialRing(QQ, 'x')
+                p = self.parent()._poly
+                return R.sum(c * p(i) for i, c in self)
 
             def shift(self, j=1):
                 """
@@ -420,45 +502,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             return self._from_dict({k: R((-1)**(i - k) * i.binomial(k))
                                     for k in range(i + 1)})
 
-        def from_polynomial(self, p):
-            """
-            Convert a polynomial into the ring of integer-valued polynomials.
-
-            This raises a ``ValueError`` if this is not possible.
-
-            INPUT:
-
-            - ``p`` -- a polynomial in one variable
-
-            EXAMPLES::
-
-                sage: A = IntegerValuedPolynomialRing(ZZ).S()
-                sage: S = A.basis()
-                sage: S[5].polynomial()
-                1/120*x^5 + 1/8*x^4 + 17/24*x^3 + 15/8*x^2 + 137/60*x + 1
-                sage: A.from_polynomial(_)
-                S[5]
-                sage: x = polygen(QQ, 'x')
-                sage: A.from_polynomial(x)
-                -S[0] + S[1]
-            """
-            B = self.basis()
-            x = p.parent().gen()
-            remain = p
-            result = self.zero()
-            while remain:
-                N = remain.degree()
-                top_coeff = remain.leading_coefficient() * factorial(N)
-                try:
-                    top_coeff = self.base_ring()(top_coeff)
-                except TypeError as exc:
-                    msg = 'not a polynomial with integer'
-                    msg += f' values: {top_coeff}'
-                    raise ValueError(msg) from exc
-                remain += -top_coeff * binomial(N + x, N)
-                result += top_coeff * B[N]
-            return result
-
         def from_h_vector(self, h):
             """
             Convert from some `h`-vector.
@@ -614,6 +657,19 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
             return self.base_ring().has_coerce_map_from(R)
 
+        def _poly(self, i):
+            """
+            Convert the basis element `S[i]` to a polynomial.
+
+            EXAMPLES::
+
+                sage: F = IntegerValuedPolynomialRing(ZZ).S()
+                sage: F._poly(4)
+                1/24*x^4 + 5/12*x^3 + 35/24*x^2 + 25/12*x + 1
+            """
+            x = polygen(QQ, 'x')
+            return binomial(x + i, i)
+
         class Element(CombinatorialFreeModule.Element):
 
             def umbra(self):
@@ -719,26 +775,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     1
                 """
                 return QQ.sum(c / QQ(i) for i, c in self if i)
-
-            def polynomial(self):
-                """
-                Convert to a polynomial in `x`.
-
-                EXAMPLES::
-
-                    sage: F = IntegerValuedPolynomialRing(ZZ).S()
-                    sage: B = F.gen()
-                    sage: (B+1).polynomial()
-                    x + 2
-
-                TESTS::
-
-                    sage: F.zero().polynomial().parent()
-                    Univariate Polynomial Ring in x over Rational Field
-                """
-                x = polygen(QQ, 'x')
-                R = x.parent()
-                return R.sum(c * binomial(x + i, i) for i, c in self)
 
             def h_vector(self):
                 """
@@ -931,51 +967,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             return self._from_dict({k: R(i.binomial(k))
                                     for k in range(i + 1)})
 
-        def from_polynomial(self, p):
-            """
-            Convert a polynomial into the ring of integer-valued polynomials.
-
-            This raises a ``ValueError`` if this is not possible.
-
-            INPUT:
-
-            - ``p`` -- a polynomial in one variable
-
-            EXAMPLES::
-
-                sage: A = IntegerValuedPolynomialRing(ZZ).B()
-                sage: B = A.basis()
-                sage: B[5].polynomial()
-                1/120*x^5 - 1/12*x^4 + 7/24*x^3 - 5/12*x^2 + 1/5*x
-                sage: A.from_polynomial(_)
-                B[5]
-                sage: x = polygen(QQ, 'x')
-                sage: A.from_polynomial(x)
-                B[1]
-
-            TESTS::
-
-                sage: x = polygen(QQ,'x')
-                sage: A.from_polynomial(x+1/3)
-                Traceback (most recent call last):
-                ...
-                ValueError: not a polynomial with integer values
-            """
-            B = self.basis()
-            x = p.parent().gen()
-            remain = p
-            result = self.zero()
-            while remain:
-                N = remain.degree()
-                top_coeff = remain.leading_coefficient() * factorial(N)
-                try:
-                    top_coeff = self.base_ring()(top_coeff)
-                except TypeError as exc:
-                    raise ValueError('not a polynomial with integer values') from exc
-                remain += -top_coeff * binomial(x, N)
-                result += top_coeff * B[N]
-            return result
-
         def _element_constructor_(self, x):
             r"""
             Convert ``x`` into ``self``.
@@ -1098,26 +1089,20 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
             return self.base_ring().has_coerce_map_from(R)
 
+        def _poly(self, i):
+            """
+            Convert the basis element `B[i]` to a polynomial.
+
+            EXAMPLES::
+
+                sage: F = IntegerValuedPolynomialRing(ZZ).B()
+                sage: F._poly(4)
+                1/24*x^4 - 1/4*x^3 + 11/24*x^2 - 1/4*x
+            """
+            x = polygen(QQ, 'x')
+            return binomial(x, i)
+
         class Element(CombinatorialFreeModule.Element):
-
-            def polynomial(self):
-                """
-                Convert to a polynomial in `x`.
-
-                EXAMPLES::
-
-                    sage: F = IntegerValuedPolynomialRing(ZZ).B()
-                    sage: B = F.gen()
-                    sage: (B+1).polynomial()
-                    x + 1
-
-                TESTS::
-
-                    sage: F.zero().polynomial().parent()
-                    Univariate Polynomial Ring in x over Rational Field
-                """
-                x = polygen(QQ, 'x')
-                R = x.parent()
-                return R.sum(c * binomial(x, i) for i, c in self)
+            pass
 
     B = Binomial
