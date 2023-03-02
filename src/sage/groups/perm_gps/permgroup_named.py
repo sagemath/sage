@@ -61,6 +61,8 @@ subgroups of index p
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
 
+-- SmallPermutationGroup, a permutation realization of an group specified by its GAP id.
+
 AUTHOR:
 
 - David Joyner (2007-06): split from permgp.py (suggested by Nick Alexander)
@@ -87,7 +89,9 @@ REFERENCES:
 from pathlib import Path
 
 from sage.rings.all import Integer
+from sage.interfaces.gap import gap
 from sage.libs.gap.libgap import libgap
+from sage.groups.perm_gps.permgroup import from_gap_list
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.all import factor, valuation
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
@@ -3435,3 +3439,69 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret = [self._m * i for i in reversed(range(self._n-1))]
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
+
+class SmallPermutationGroup(PermutationGroup_unique):
+    def __init__(self, order, gap_id):
+        r"""
+        A GAP SmallGroup, returned as a permutation group. GAP
+        contains a database of groups, identified by a GAP id,
+        a pair ``[n,k]`` consisting of ``n``, the order of the
+        group, and ``k``, an index determining the group
+        specifically. This class can construct the group
+        as a permutation group from this data.
+
+        INPUT:
+
+        - ``order`` -- the order of the group
+
+        - ``gap_id`` -- the numerical index in the GAP Id of the group
+
+        EXAMPLES::
+
+            sage: G = SmallPermutationGroup(12,4); G
+            Group of order 12 and GAP Id 4 as a permutation group
+            sage: G.gens()
+            ((1,2)(3,5)(4,10)(6,8)(7,12)(9,11),
+            (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
+            (1,4,8)(2,6,10)(3,7,11)(5,9,12))
+            sage: G.character_table()
+            [ 1  1  1  1  1  1]
+            [ 1 -1 -1  1  1 -1]
+            [ 1 -1  1  1 -1  1]
+            [ 1  1 -1  1 -1 -1]
+            [ 2  0 -2 -1  0  1]
+            [ 2  0  2 -1  0 -1]
+            sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..oeis(1)[n]])
+            True
+        """
+        self._order = order
+        self._gap_id = gap_id
+        self._gap_small_group = gap.SmallGroup(order,gap_id)
+        self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image()
+        gens = from_gap_list(None, self._gap_permutation_group.GeneratorsOfGroup())
+        PermutationGroup_generic.__init__(self, gens, self._gap_permutation_group.NrMovedPoints())
+
+    def _repr_(self):
+        r"""
+        EXAMPLES::
+
+            sage: G = SmallPermutationGroup(12,4); G
+            Group of order 12 and GAP Id 4 as a permutation group
+        """
+        return "Group of order %s and GAP Id %s as a permutation group"%(self._order, self._gap_id)
+
+    def gap_small_group(self):
+        r"""
+        Gap realizes some small groups as PermutationGroup, others as PcGroups
+        (polycyclic groups). The :class:`SmallPermutationGroup` class always
+        returns a PermutationGroup, but in the process of creating this group
+        a gap SmallGroup is generated. This method returns that group.
+
+        EXAMPLES::
+
+            sage: SmallPermutationGroup(168,41).gap_small_group()
+            Group( [ f1, f2, f3, f4, f5 ] )
+            sage: SmallPermutationGroup(168,42).gap_small_group()
+            Group( [ (3,4)(5,6), (1,2,3)(4,5,7) ] )
+        """
+        return self._gap_small_group
