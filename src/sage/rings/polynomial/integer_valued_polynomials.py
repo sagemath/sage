@@ -547,11 +547,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 if P is not self.base_ring():
                     return self.element_class(self, x.monomial_coefficients())
 
-            if isinstance(P, IntegerValuedPolynomialRing.Binomial):
-                phi = P.module_morphism(self._from_binomial_basis,
-                                        codomain=self)
-                return phi(x)
-
             # ok, not a integer-valued polynomial ring element
             R = self.base_ring()
             # coercion via base ring
@@ -653,7 +648,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             if isinstance(R, IntegerValuedPolynomialRing.Shifted):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
             if isinstance(R, IntegerValuedPolynomialRing.Binomial):
-                return self.base_ring().has_coerce_map_from(R.base_ring())
+                return R.module_morphism(self._from_binomial_basis,
+                                         codomain=self)
             return self.base_ring().has_coerce_map_from(R)
 
         def _poly(self, i):
@@ -990,11 +986,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 if P is not self.base_ring():
                     return self.element_class(self, x.monomial_coefficients())
 
-            if isinstance(P, IntegerValuedPolynomialRing.Shifted):
-                psi = P.module_morphism(self._from_shifted_basis,
-                                        codomain=self)
-                return psi(x)
-
             # ok, not a integer-valued polynomial ring element
             R = self.base_ring()
             # coercion via base ring
@@ -1092,7 +1083,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             if isinstance(R, IntegerValuedPolynomialRing.Binomial):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
             if isinstance(R, IntegerValuedPolynomialRing.Shifted):
-                return self.base_ring().has_coerce_map_from(R.base_ring())
+                return R.module_morphism(self._from_shifted_basis,
+                                         codomain=self)
             return self.base_ring().has_coerce_map_from(R)
 
         def _poly(self, i):
