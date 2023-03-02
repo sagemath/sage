@@ -247,6 +247,8 @@ def from_gap_list(G, src):
     """
     # src is a list of strings, each of which is a permutation of
     # integers in cycle notation. It may contain \n and spaces.
+    if G is None:
+        return [eval(("[%s]"%g).replace(" ","").replace("\n","").replace(")(","),(")) for g in src]
     src = [str(g)[1:].split(")(")
            for g in str(src).replace(" ","").replace("\n","")[1:-2].split("),")]
 
