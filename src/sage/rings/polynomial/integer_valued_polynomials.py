@@ -4,7 +4,7 @@ Integer-valued polynomial rings
 
 AUTHORS:
 
-- Frédéric Chapoton (2013-03): Initial version
+- Frédéric Chapoton (2023-03): Initial version
 """
 # ***************************************************************************
 #  Copyright (C) 2013 Frédéric Chapoton
@@ -34,7 +34,7 @@ from sage.structure.parent import Parent
 
 class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
     r"""
-    The integer-valued polynomial ring over a base ring.
+    The integer-valued polynomial ring over a base ring `R`.
 
     Integer-valued polynomial rings are commutative and associative
     algebras, with a basis indexed by non-negative integers.
@@ -57,7 +57,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
     .. MATH::
 
-        \binom{x}{i} = \sum_{k=0}^{i} (-1)^{i-k} \binom{i}{k} \binom{x+k}{k}.
+        \binom{x}{i} = \sum_{k=0}^{i} (-1)^{i-k} \binom{i}{k} \binom{x+k}{k}
 
     with inverse:
 
@@ -357,10 +357,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         r"""
         The integer-valued polynomial ring in the shifted basis.
 
-        Integer-valued polynomial rings are commutative and associative
-        algebras, with a basis indexed by non-negative integers.
-
-        The basis used here is given by `S[i] = \binom{i+n}{i}` for `i \in \NN`.
+        The basis used here is given by `S[i] = \binom{i+x}{i}` for `i \in \NN`.
 
         Assuming `n_1 \leq n_2`, the product of two monomials `S[n_1] \cdot S[n_2]`
         is given by the sum
@@ -825,7 +822,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         r"""
         The integer-valued polynomial ring in the binomial basis.
 
-        The basis used here is given by `B[i] = \binom{n}{i}` for `i \in \NN`.
+        The basis used here is given by `B[i] = \binom{x}{i}` for `i \in \NN`.
 
         Assuming `n_1 \leq n_2`, the product of two monomials `B[n_1] \cdot B[n_2]`
         is given by the sum
