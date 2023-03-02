@@ -1694,7 +1694,7 @@ class Braid(FiniteTypeArtinGroupElement):
             B = self.parent()
             n = B.strands()
             k = int(l[0][0] % 2)
-            b0 = B.delta() ** k * prod(B(a) for a in l[1:])
+            b0 = B.delta() ** k * B(prod(B(a) for a in l[1:]))
             return b0
 
     def is_conjugated(self, other):
@@ -1765,6 +1765,10 @@ class Braid(FiniteTypeArtinGroupElement):
             [1, 3, 2, 4]
             sage: print (a1.pure_conjugating_braid(a2))
             None
+            sage: (a1^2).conjugating_braid(a2^2)
+            s1*s0
+            sage: print ((a1^2).pure_conjugating_braid(a2^2))
+            None
         """
         B = self.parent()
         n = B.strands()
@@ -1773,22 +1777,22 @@ class Braid(FiniteTypeArtinGroupElement):
         p2 = G(other.permutation())
         if p1 != p2:
             return None
-        l = conjugatingbraid(self, other)
-        if not l:
+        b0 = self.conjugating_braid(other)
+        if not b0:
             return None
-        k = int(l[0][0] % 2)
-        b0 = B.delta() ** k * prod(B(a) for a in l[1:])
         p3 = G(b0.permutation().inverse())
         if p3.is_one():
             return b0
         LB = self.centralizer()
         LP = [G(a.permutation()) for a in LB]
+        if p3 not in G.subgroup(LP):
+            return None
         P = p3.word_problem(LP, display = False, as_list = True)
         b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
         b0 = b1 * b0
         L = leftnormalform(b0)
         k = int(L[0][0] % 2)
-        b0 = B.delta() ** k * prod(B(a) for a in L[1:])
+        b0 = B.delta() ** k * B(prod(B(a) for a in L[1:]))
         return b0
 
     def ultra_summit_set(self):
