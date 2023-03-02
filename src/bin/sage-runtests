@@ -97,6 +97,8 @@ if __name__ == "__main__":
                         help="path to a json dictionary for timings and failure status for each file from previous runs; it will be updated in this run")
     parser.add_argument("--baseline_stats_path", "--baseline-stats-path", default=None,
                         help="path to a json dictionary for timings and failure status for each file, to be used as a baseline; it will not be updated")
+    parser.add_argument("--asv_stats_path", "--asv-stats-path", default=None,
+                        help="path to a json dictionary for storing individual doctest timings for use with airspeed velocity speed regression testing")
 
     class GCAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):

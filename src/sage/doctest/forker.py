@@ -505,6 +505,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         - ``verbose`` -- boolean, determines whether verbose printing
           is enabled.
 
+        - ``sage_options`` -- dictionary with Sage options
+
         - ``optionflags`` -- Controls the comparison with the expected
           output.  See :mod:`testmod` for more information.
 
@@ -789,6 +791,13 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         # Restore the option flags (in case they were modified)
         self.optionflags = original_optionflags
+
+        if self.options.use_asv:
+            if failures == 0:
+                # We record the timing for this test for speed regression purposes
+                test.walltime = sum(example.walltime for example in test.examples)
+            else:
+                test.walltime = -1
 
         # Record and return the number of failures and tries.
         self._DocTestRunner__record_outcome(test, failures, tries)
@@ -1533,14 +1542,16 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     self._fakeout.start_spoofing()
             return returnval
 
-    def update_results(self, D):
+    def update_results(self, D, doctests):
         """
         When returning results we pick out the results of interest
         since many attributes are not pickleable.
 
         INPUT:
 
-        - ``D`` -- a dictionary to update with cputime and walltime
+        - ``D`` -- a dictionary to update with cputime and walltime (and asv_results if that option set)
+
+        - ``doctests`` -- a list of doctests
 
         OUTPUT:
 
@@ -1564,7 +1575,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             TestResults(failed=0, attempted=4)
             sage: T.stop().annotate(DTR)
             sage: D = DictAsObject({'cputime':[],'walltime':[],'err':None})
-            sage: DTR.update_results(D)
+            sage: DTR.update_results(D, doctests)
             0
             sage: sorted(list(D.items()))
             [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4), ('walltime', [...]), ('walltime_skips', 0)]
@@ -1576,6 +1587,37 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 D[key].append(self.__dict__[key])
         D['tests'] = self.total_performed_tests
         D['walltime_skips'] = self.total_walltime_skips
+        if self.options.use_asv:
+
+            def asv_label(test):
+                """
+                This information is hashed by asv to determine continuity for speed regressions
+                """
+                name = test.name
+                code = "".join([example.sage_source for example in test.examples])
+                opts = set()
+                for example in test.examples:
+                    # The added sig_on_count() test has no tags
+                    if hasattr(example, "optional_tags"):
+                        opts = opts.union(example.optional_tags)
+                olist = []
+                if "long" in opts:
+                    olist = ["long"]
+                    opts.remove("long")
+                olist.extend(sorted(opts))
+
+                import tempfile
+                tmp, fname = tempfile.mkstemp()
+                import os
+                tmp = os.fdopen(tmp, 'w')
+                tmp.write(f"{name}|{','.join(olist)}|{code}")
+                tmp.close()
+                return fname
+
+            D['asv_times'] = {}
+            for test in doctests:
+                if test.walltime > 0: # -1 indicates a failure, 0 means nothing was actually run
+                    D['asv_times'][asv_label(test)] = test.walltime
         if hasattr(self, 'failures'):
             D['failures'] = self.failures
             return self.failures
@@ -2389,8 +2431,9 @@ class DocTestTask():
         sage: sorted(results.keys())
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
-
     extra_globals = {}
+
+    runner = SageDocTestRunner
     """
     Extra objects to place in the global namespace in which tests are run.
     Normally this should be empty but there are special cases where it may
@@ -2467,7 +2510,7 @@ class DocTestTask():
         """
         result = None
         try:
-            runner = SageDocTestRunner(
+            runner = DocTestTask.runner(
                     SageOutputChecker(),
                     verbose=options.verbose,
                     outtmpfile=outtmpfile,
@@ -2487,7 +2530,7 @@ class DocTestTask():
                 for it in range(N):
                     doctests, extras = self._run(runner, options, results)
                     runner.summarize(options.verbose)
-                    if runner.update_results(results):
+                    if runner.update_results(results, doctests):
                         break
 
             if extras['tab']:

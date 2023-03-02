@@ -35,7 +35,8 @@ from sage.env import SAGE_SRC, SAGE_LIB
 
 # Python file parsing
 triple_quotes = re.compile(r"\s*[rRuU]*((''')|(\"\"\"))")
-name_regex = re.compile(r".*\s(\w+)([(].*)?:")
+paren_name_regex = re.compile(r".*\s(\w+)\s*[(].*:")
+noparen_name_regex = re.compile(r".*\s(\w+)\s*:")
 
 # LaTeX file parsing
 begin_verb = re.compile(r"\s*\\begin{verbatim}")
@@ -1100,14 +1101,19 @@ class PythonSource(SourceLanguage):
                 # quotematch wasn't None, but then we mishandle classes
                 # that don't have a docstring.
                 if not self.code_wrapping and self.last_indent >= 0 and indent > self.last_indent:
-                    name = name_regex.match(self.last_line)
+                    if "(" in self.last_line:
+                        name = paren_name_regex.match(self.last_line.replace("\n", ""))
+                    else:
+                        name = noparen_name_regex.match(self.last_line.replace("\n", ""))
                     if name:
                         name = name.groups()[0]
                         self.qualified_name[indent] = name
                     elif quotematch:
                         self.qualified_name[indent] = '?'
         self._update_quotetype(line)
-        if line[indent] != '#' and not self.code_wrapping:
+        if self.code_wrapping:
+            self.last_line += line
+        elif line[indent] != '#':
             self.last_line, self.last_indent = line, indent
         self.code_wrapping = not (self.paren_count == self.bracket_count == self.curly_count == 0)
         return quotematch
