@@ -351,7 +351,7 @@ class SageColorPicker(ColorPicker):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import SageColorPicker
-            sage: SageColorPicker().get_interact_value()
+            sage: SageColorPicker().get_interact_value()                                            # optional - sage.plot
             RGB color (0.0, 0.0, 0.0)
         """
         return Color(self.value)
