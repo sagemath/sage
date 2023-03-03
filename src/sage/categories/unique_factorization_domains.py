@@ -65,7 +65,7 @@ class UniqueFactorizationDomains(Category_singleton):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in UniqueFactorizationDomains()
+            sage: GF(4, "a") in UniqueFactorizationDomains()                                                            # optional - sage.libs.pari
             True
             sage: QQ in UniqueFactorizationDomains()
             True

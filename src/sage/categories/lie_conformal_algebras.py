@@ -219,7 +219,7 @@ class LieConformalAlgebras(Category_over_base_ring):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQ).example()
+            sage: LieConformalAlgebras(QQ).example()                                                                    # optional - sage.combinat, sage.modules
             The Virasoro Lie conformal algebra over Rational Field
         """
         from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra\
