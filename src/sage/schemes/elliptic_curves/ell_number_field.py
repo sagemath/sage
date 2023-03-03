@@ -388,7 +388,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             RR = RealField()
         else:
             RR = RealField(precision)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(RR, r)
         mat = M()
         for j in range(r):
@@ -1961,6 +1961,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK = EllipticCurve([0,0,0,i,i+3])
             sage: EK.torsion_subgroup ()
             Torsion Subgroup isomorphic to Trivial group associated to the Elliptic Curve defined by y^2 = x^3 + i*x + (i+3) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
+
+        .. SEEALSO::
+
+            Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
+            to determine the field of definition of the `\ell`-torsion subgroup.
         """
         from .ell_torsion import EllipticCurveTorsionSubgroup
         return EllipticCurveTorsionSubgroup(self)
@@ -3892,7 +3897,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             raise ValueError("points not linearly independent in saturation()")
         sat_reg = reg
 
-        from sage.rings.all import prime_range
+        from sage.rings.fast_arith import prime_range
         if full_saturation:
             if lower_ht_bound is None:
                 # TODO (robertwb): verify this for rank > 1

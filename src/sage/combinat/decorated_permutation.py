@@ -213,7 +213,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         if isinstance(pi, DecoratedPermutation):
             if pi.parent() is self:
                 return pi
-            raise ValueError("Cannot convert between decorated permutations of different sizes")
+            raise ValueError("cannot convert between decorated permutations of different sizes")
 
         pi = tuple(pi)
         if check and pi not in self:

@@ -363,7 +363,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         f = factor_trial_division(a, factor_limit)
     c = integer.smallInteger(1)
     # The sign is not handled by the loop below. We don't want to
-    # simplify (-1)^(2/3) to 1 (see Trac #15605), so we always move
+    # simplify (-1)^(2/3) to 1 (see Issue #15605), so we always move
     # the sign over to d. Note that the case (-1)^2 is already
     # handled by integer_rational_power() above.
     if a >= 0:
@@ -591,7 +591,7 @@ cdef class Rational(sage.structure.element.FieldElement):
                 set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
-                # See https://trac.sagemath.org/ticket/21124
+                # See https://github.com/sagemath/sage/issues/21124
                 xstr = x.str(base, truncate=(base == 10))
                 if '.' in xstr:
                     exp = (len(xstr) - (xstr.index('.') +1))
@@ -3579,7 +3579,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return True
 
-    #Function alias for checking if the number is a integer.Added to solve ticket 15500
+    #Function alias for checking if the number is a integer.  Added to solve issue 15500
     is_integer = is_integral
 
 

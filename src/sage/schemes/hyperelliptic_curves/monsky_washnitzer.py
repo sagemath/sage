@@ -46,7 +46,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import integer_ceil as ceil
+from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
@@ -58,9 +58,16 @@ from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.module import Module
-from sage.rings.all import (Integers, Integer, PolynomialRing, PowerSeriesRing,
-                            Rationals, Rational, LaurentSeriesRing, QQ, ZZ,
-                            IntegralDomain)
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField as Rationals
+from sage.rings.rational import Rational
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.ring import IntegralDomain
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.all import pAdicField
@@ -502,7 +509,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
                                   "coefficient ring (=%s) of Q" % base_ring)
 
         # CommutativeAlgebra.__init__ tries to establish a coercion
-        # from the base ring, by trac ticket #9138. The corresponding
+        # from the base ring, by github issue #9138. The corresponding
         # hom set is cached.  In order to use self as cache key, its
         # string representation is used. In otder to get the string
         # representation, we need to know the attributes _a and
@@ -2367,7 +2374,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         if R is None:
             R = Q.base_ring()
 
-        # Trac ticket #9138: CommutativeAlgebra.__init__ must not be
+        # Github issue #9138: CommutativeAlgebra.__init__ must not be
         # done so early.  It tries to register a coercion, but that
         # requires the hash being available.  But the hash, in its
         # default implementation, relies on the string representation,
@@ -2410,7 +2417,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Trac ticket #9138: Initialise the commutative algebra here!
+        # Github issue #9138: Initialise the commutative algebra here!
         # Below, we do self(self._poly_ring.gen(0)), which requires
         # the initialisation being finished.
         CommutativeAlgebra.__init__(self, R)

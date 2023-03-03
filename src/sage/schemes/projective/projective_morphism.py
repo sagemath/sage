@@ -62,7 +62,8 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.interfaces.singular import singular
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -1762,7 +1763,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 return self
         elif self.base_ring() != QQbar and K_pre.is_isomorphic(self.base_ring()):
             return self
-        # Trac 23808: The field K_pre returned above does not have its embedding set to be phi
+        # Issue 23808: The field K_pre returned above does not have its embedding set to be phi
         # and phi is forgotten, so we redefine K_pre to be a field K with phi as the specified
         # embedding:
         if K_pre is QQ:
@@ -1872,7 +1873,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1929,7 +1930,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
             sage: f.indeterminacy_points()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::
