@@ -239,22 +239,22 @@ def save(obj, filename, compress=True, **kwargs):
 
         sage: import tempfile
         sage: d = tempfile.TemporaryDirectory()
-        sage: a = matrix(2, [1,2,3,-5/2])
+        sage: a = matrix(2, [1,2, 3,-5/2])                                                                              # optional - sage.modules
         sage: objfile = os.path.join(d.name, 'test.sobj')
         sage: objfile_short = os.path.join(d.name, 'test')
-        sage: save(a, objfile)
-        sage: load(objfile_short)
+        sage: save(a, objfile)                                                                                          # optional - sage.modules
+        sage: load(objfile_short)                                                                                       # optional - sage.modules
         [   1    2]
         [   3 -5/2]
-        sage: E = EllipticCurve([-1,0])
-        sage: P = plot(E)
-        sage: save(P, objfile_short)   # saves the plot to "test.sobj"
-        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)
-        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))
+        sage: E = EllipticCurve([-1,0])                                                                                 # optional - sage.plot
+        sage: P = plot(E)                                                                                               # optional - sage.plot
+        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                                                  # optional - sage.plot
+        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)                                               # optional - sage.plot
+        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))                                             # optional - sage.plot
         Traceback (most recent call last):
         ...
         ValueError: allowed file extensions for images are '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
-        sage: print(load(objfile))
+        sage: print(load(objfile))                                                                                      # optional - sage.plot
         Graphics object consisting of 2 graphics primitives
         sage: save("A python string", os.path.join(d.name, 'test'))
         sage: load(objfile)
@@ -919,9 +919,9 @@ def loads(s, compress=True, **kwargs):
 
     EXAMPLES::
 
-        sage: a = matrix(2, [1,2,3,-4/3])
-        sage: s = dumps(a)
-        sage: loads(s)
+        sage: a = matrix(2, [1,2, 3,-4/3])                                                                              # optional - sage.modules
+        sage: s = dumps(a)                                                                                              # optional - sage.modules
+        sage: loads(s)                                                                                                  # optional - sage.modules
         [   1    2]
         [   3 -4/3]
 
@@ -1158,7 +1158,7 @@ def make_None(*args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.persist import make_None
-        sage: print(make_None(42, pi, foo='bar'))
+        sage: print(make_None(42, pi, foo='bar'))                                                                       # optional - sage.symbolic
         None
     """
     return None
