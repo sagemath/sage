@@ -8911,6 +8911,61 @@ cdef class Polynomial(CommutativePolynomial):
         else:
             return b
 
+    def is_lorentzian(self, explain=False):
+        r"""
+        Return ``True`` if this is a Lorentzian polynomial.
+
+        A univariate real polynomial is Lorentzian if and only if it is a
+        monomial with positive coefficient, or zero.  The definition is more
+        involved for multivariate real polynomials.
+
+        INPUT:
+
+        - ``explain`` -- boolean (default: ``False``); if ``True``
+          return a tuple whose first element is the boolean result of the test,
+          and the second element is a string describing the reason the test failed,
+          or ``None`` if the test succeeded
+
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: p1 = x^2
+            sage: p1.is_lorentzian()
+            True
+            sage: p2 = 1 + x^2
+            sage: p2.is_lorentzian()
+            False
+            sage: p3 = P.zero()
+            sage: p3.is_lorentzian()
+            True
+            sage: p4 = -2*x^3
+            sage: p4.is_lorentzian()
+            False
+
+        It is an error to check if a polynomial is Lorentzian if its base ring
+        is not a subring of the real numbers, as the notion is not defined in
+        this case::
+
+            sage: Q.<y> = CC[]
+            sage: q = y^2
+            sage: q.is_lorentzian()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_lorentzian only implemented for real polynomials
+
+        The method can give a reason for a polynomial failing to be Lorentzian::
+
+            sage: p = x^2 + 2*x
+            sage: p.is_lorentzian(explain=True)
+            (False, 'inhomogeneous')
+
+        REFERENCES:
+
+        For full definitions and related discussion, see [BrHu2019]_ and
+        [HMMS2019]_.
+        """
+        R = PolynomialRing(self.base_ring(), 1, [self.variable_name()])
+        return R(self).is_lorentzian(explain=explain)
 
     def variable_name(self):
         """
