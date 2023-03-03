@@ -5,21 +5,21 @@ EXAMPLES:
 
 We create the real double vector space of dimension `3`::
 
-    sage: V = RDF^3; V
+    sage: V = RDF^3; V                                                                  # optional - sage.modules
     Vector space of dimension 3 over Real Double Field
 
 Notice that this space is unique::
 
-    sage: V is RDF^3
+    sage: V is RDF^3                                                                    # optional - sage.modules
     True
-    sage: V is FreeModule(RDF, 3)
+    sage: V is FreeModule(RDF, 3)                                                       # optional - sage.modules
     True
-    sage: V is VectorSpace(RDF, 3)
+    sage: V is VectorSpace(RDF, 3)                                                      # optional - sage.modules
     True
 
 Also, you can instantly create a space of large dimension::
 
-    sage: V = RDF^10000
+    sage: V = RDF^10000                                                                 # optional - sage.modules
 
 TESTS:
 
@@ -1680,7 +1680,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF(1.5).__pari__()
+            sage: RDF(1.5).__pari__()                                                                                   # optional - sage.libs.pari
             1.50000000000000
         """
         global new_gen_from_real_double_element

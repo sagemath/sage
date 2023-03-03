@@ -322,9 +322,9 @@ class AnInfinity():
 
         EXAMPLES::
 
-            sage: pari(-oo)
+            sage: pari(-oo)                                                                                             # optional - sage.libs.pari
             -oo
-            sage: pari(oo)
+            sage: pari(oo)                                                                                              # optional - sage.libs.pari
             +oo
         """
         # For some reason, it seems problematic to import sage.libs.all.pari,
