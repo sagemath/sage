@@ -55,7 +55,7 @@ EXAMPLES::
 #*****************************************************************************/
 
 from sage.rings.real_mpfr import RR
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 

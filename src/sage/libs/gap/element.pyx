@@ -27,8 +27,8 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent import Parent
-from sage.rings.integer_ring import Z as ZZ
-from sage.rings.rational_field import Q as QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
