@@ -52,8 +52,8 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)
-                sage: W.graded_algebra()
+                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)                                                           # optional - sage.combinat, sage.modules
+                sage: W.graded_algebra()                                                                                # optional - sage.combinat, sage.modules
                 Graded Algebra of Differential Weyl algebra of
                  polynomials in x, y over Rational Field
             """

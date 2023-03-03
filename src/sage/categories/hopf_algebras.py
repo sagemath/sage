@@ -78,7 +78,7 @@ class HopfAlgebras(Category_over_base_ring):
 
             TESTS::
 
-                sage: all(x.antipode() * x == A.one() for x in A.basis())
+                sage: all(x.antipode() * x == A.one() for x in A.basis())               # optional - sage.groups
                 True
             """
             return self.parent().antipode(self)
