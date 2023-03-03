@@ -1139,9 +1139,9 @@ cdef class CoercionModel:
 
         Actions are detected and performed::
 
-            sage: M = matrix(ZZ, 2, 2, range(4))
-            sage: V = vector(ZZ, [5,7])
-            sage: cm.bin_op(M, V, operator.mul)
+            sage: M = matrix(ZZ, 2, 2, range(4))                                                                        # optional - sage.modules
+            sage: V = vector(ZZ, [5,7])                                                                                 # optional - sage.modules
+            sage: cm.bin_op(M, V, operator.mul)                                                                         # optional - sage.modules
             (7, 31)
 
         TESTS::
@@ -1265,14 +1265,14 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.canonical_coercion(mod(2, 10), 17)
             (2, 7)
-            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))
-            sage: x
+            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))                                         # optional - sage.modules
+            sage: x                                                                                                     # optional - sage.modules
             [1/2   0]
             [  0 1/2]
-            sage: y
+            sage: y                                                                                                     # optional - sage.modules
             [0 1]
             [2 3]
-            sage: parent(x) is parent(y)
+            sage: parent(x) is parent(y)                                                                                # optional - sage.modules
             True
 
         There is some support for non-Sage datatypes as well::
@@ -1297,7 +1297,7 @@ cdef class CoercionModel:
 
         We also make an exception for 0, even if `\ZZ` does not map in::
 
-            sage: canonical_coercion(vector([1, 2, 3]), 0)
+            sage: canonical_coercion(vector([1, 2, 3]), 0)                                                              # optional - sage.modules
             ((1, 2, 3), (0, 0, 0))
             sage: canonical_coercion(GF(5)(0), float(0))                        # optional - sage.libs.pari
             (0, 0)
