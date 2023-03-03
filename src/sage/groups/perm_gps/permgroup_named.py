@@ -3456,6 +3456,12 @@ class SmallPermutationGroup(PermutationGroup_generic):
 
         - ``gap_id`` -- the numerical index in the GAP Id of the group
 
+        Generators may be obtained through the :meth:`gens` method.
+        These could change for a particular group in later releases
+        of GAP. In many instances the degree of the constructed group
+        ``SmallPermutationGroup(n,k)`` will be a permutation group on
+        `n` letters, but this will not always be true.
+
         EXAMPLES::
 
             sage: G = SmallPermutationGroup(12,4); G
@@ -3485,7 +3491,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         self._gap_id = gap_id
         self._gap_small_group = gap.SmallGroup(order,gap_id)
         # self._gap_small_group = libgap.SmallGroup(order,gap_id) # Change requested by Dima
-        self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image()
+        self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         gens = from_gap_list(None, self._gap_permutation_group.GeneratorsOfGroup())
         PermutationGroup_generic.__init__(self, gens, self._gap_permutation_group.NrMovedPoints())
 
