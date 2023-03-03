@@ -112,7 +112,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 sage: CoxeterGroups().Finite().is_subcategory(C)
                 True
-                sage: SymmetricGroup(3) in C
+                sage: SymmetricGroup(3) in C                                                                            # optional - sage.groups
                 True
 
             .. NOTE::
@@ -149,12 +149,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,4)
-                sage: W.degrees()
+                sage: W = ColoredPermutations(1,4)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.degrees()                                                                                       # optional - sage.combinat, sage.groups
                 (2, 3, 4)
 
-                sage: W = ColoredPermutations(3,3)
-                sage: W.degrees()
+                sage: W = ColoredPermutations(3,3)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.degrees()                                                                                       # optional - sage.combinat, sage.groups
                 (3, 6, 9)
 
                 sage: W = ReflectionGroup(31)              # optional - gap3
@@ -171,12 +171,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,4)
-                sage: W.codegrees()
+                sage: W = ColoredPermutations(1,4)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.codegrees()                                                                                     # optional - sage.combinat, sage.groups
                 (2, 1, 0)
 
-                sage: W = ColoredPermutations(3,3)
-                sage: W.codegrees()
+                sage: W = ColoredPermutations(3,3)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.codegrees()                                                                                     # optional - sage.combinat, sage.groups
                 (6, 3, 0)
 
                 sage: W = ReflectionGroup(31)              # optional - gap3
@@ -199,27 +199,27 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Reducible real reflection group of rank 4 and type A2 x B2
                 sage: W._test_degrees()                    # optional - gap3
 
-                sage: W = SymmetricGroup(5)
-                sage: W._test_degrees()
+                sage: W = SymmetricGroup(5)                                                                             # optional - sage.groups
+                sage: W._test_degrees()                                                                                 # optional - sage.groups
 
             We now break the implementation of W.degrees and check that this is caught::
 
-                sage: W.degrees = lambda: (1/1,5)
-                sage: W._test_degrees()
+                sage: W.degrees = lambda: (1/1,5)                                                                       # optional - sage.groups
+                sage: W._test_degrees()                                                                                 # optional - sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the degrees should be integers
 
-                sage: W.degrees = lambda: (1,2,3)
-                sage: W._test_degrees()
+                sage: W.degrees = lambda: (1,2,3)                                                                       # optional - sage.groups
+                sage: W._test_degrees()                                                                                 # optional - sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the degrees should be larger than 2
 
             We restore W to its normal state::
 
-                sage: del W.degrees
-                sage: W._test_degrees()
+                sage: del W.degrees                                                                                     # optional - sage.groups
+                sage: W._test_degrees()                                                                                 # optional - sage.groups
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -254,27 +254,27 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Reducible real reflection group of rank 4 and type A2 x B2
                 sage: W._test_codegrees()                  # optional - gap3
 
-                sage: W = SymmetricGroup(5)
-                sage: W._test_codegrees()
+                sage: W = SymmetricGroup(5)                                                                             # optional - sage.groups
+                sage: W._test_codegrees()                                                                               # optional - sage.groups
 
             We now break the implementation of W.degrees and check that this is caught::
 
-                sage: W.codegrees = lambda: (1/1,5)
-                sage: W._test_codegrees()
+                sage: W.codegrees = lambda: (1/1,5)                                                                     # optional - sage.groups
+                sage: W._test_codegrees()                                                                               # optional - sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the codegrees should be integers
 
-                sage: W.codegrees = lambda: (2,1,-1)
-                sage: W._test_codegrees()
+                sage: W.codegrees = lambda: (2,1,-1)                                                                    # optional - sage.groups
+                sage: W._test_codegrees()                                                                               # optional - sage.groups
                 Traceback (most recent call last):
                 ...
                 AssertionError: the codegrees should be nonnegative
 
             We restore W to its normal state::
 
-                sage: del W.codegrees
-                sage: W._test_codegrees()
+                sage: del W.codegrees                                                                                   # optional - sage.groups
+                sage: W._test_codegrees()                                                                               # optional - sage.groups
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -311,14 +311,14 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3)
-                sage: W.number_of_reflection_hyperplanes()
+                sage: W = ColoredPermutations(1,3)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.number_of_reflection_hyperplanes()                                                              # optional - sage.combinat, sage.groups
                 3
-                sage: W = ColoredPermutations(2,3)
-                sage: W.number_of_reflection_hyperplanes()
+                sage: W = ColoredPermutations(2,3)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.number_of_reflection_hyperplanes()                                                              # optional - sage.combinat, sage.groups
                 9
-                sage: W = ColoredPermutations(4,3)
-                sage: W.number_of_reflection_hyperplanes()
+                sage: W = ColoredPermutations(4,3)                                                                      # optional - sage.combinat, sage.groups
+                sage: W.number_of_reflection_hyperplanes()                                                              # optional - sage.combinat, sage.groups
                 15
                 sage: W = ReflectionGroup((4,2,3))          # optional - gap3
                 sage: W.number_of_reflection_hyperplanes()  # optional - gap3

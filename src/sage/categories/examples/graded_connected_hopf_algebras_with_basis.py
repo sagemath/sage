@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Examples of graded connected Hopf algebras with basis
 """
