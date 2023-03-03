@@ -247,7 +247,7 @@ class Groups(CategoryWithAxiom):
                 sage: T = G.cayley_table()                                                                              # optional - sage.groups
                 sage: T.column_keys()                                                                                   # optional - sage.groups
                 ((), (5,6,7), ..., (1,4,2,3)(5,7))
-                sage: T
+                sage: T                                                                                                 # optional - sage.groups
                 *  a b c d e f g h i j k l
                  +------------------------
                 a| a b c d e f g h i j k l
@@ -452,29 +452,30 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: D = DihedralGroup(5)
-                sage: g = D((1,3,5,2,4))
-                sage: g.conjugacy_class()
+                sage: D = DihedralGroup(5)                                                                              # optional - sage.groups
+                sage: g = D((1,3,5,2,4))                                                                                # optional - sage.groups
+                sage: g.conjugacy_class()                                                                               # optional - sage.groups
                 Conjugacy class of (1,3,5,2,4) in Dihedral group of order 10 as a permutation group
 
-                sage: H = MatrixGroup([matrix(GF(5),2,[1,2, -1, 1]), matrix(GF(5),2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5),2,[1,2, -1, 1]))
-                sage: h.conjugacy_class()
+                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                                                   # optional - sage.groups, sage.libs.pari, sage.modules
+                ....:                  matrix(GF(5), 2, [1,1, 0,1])])
+                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                                                              # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: h.conjugacy_class()                                                                               # optional - sage.groups, sage.libs.pari, sage.modules
                 Conjugacy class of [1 2]
                 [4 1] in Matrix group over Finite Field of size 5 with 2 generators (
                 [1 2]  [1 1]
                 [4 1], [0 1]
                 )
 
-                sage: G = SL(2, GF(2))                                                                                  # optional - sage.groups
-                sage: g = G.gens()[0]                                                                                   # optional - sage.groups
-                sage: g.conjugacy_class()                                                                               # optional - sage.groups
+                sage: G = SL(2, GF(2))                                                                                  # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: g = G.gens()[0]                                                                                   # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: g.conjugacy_class()                                                                               # optional - sage.groups, sage.libs.pari, sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
-                sage: G = SL(2, QQ)                                                                                     # optional - sage.groups
-                sage: g = G([[1,1], [0,1]])                                                                             # optional - sage.groups
-                sage: g.conjugacy_class()                                                                               # optional - sage.groups
+                sage: G = SL(2, QQ)                                                                                     # optional - sage.groups, sage.modules
+                sage: g = G([[1,1], [0,1]])                                                                             # optional - sage.groups, sage.modules
+                sage: g.conjugacy_class()                                                                               # optional - sage.groups, sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Rational Field
             """

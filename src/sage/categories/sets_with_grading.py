@@ -161,9 +161,9 @@ class SetsWithGrading(Category):
 
             EXAMPLES::
 
-                sage: W = WeightedIntegerVectors([3,2,1]); W
+                sage: W = WeightedIntegerVectors([3,2,1]); W                                                            # optional - sage.combinat
                 Integer vectors weighted by [3, 2, 1]
-                sage: W.subset(4)
+                sage: W.subset(4)                                                                                       # optional - sage.combinat
                 Integer vectors of 4 weighted by [3, 2, 1]
             """
 

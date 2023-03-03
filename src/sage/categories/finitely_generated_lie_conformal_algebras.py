@@ -43,10 +43,10 @@ class FinitelyGeneratedLieConformalAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))
-                sage: V.some_elements()
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))                                # optional - sage.combinat, sage.modules
+                sage: V.some_elements()                                                                                 # optional - sage.combinat, sage.modules
                 [e, h, f, K, ...]
-                sage: all(v.parent() is V for v in V.some_elements())
+                sage: all(v.parent() is V for v in V.some_elements())                                                   # optional - sage.combinat, sage.modules
                 True
             """
             S = list(self.gens())
@@ -80,7 +80,7 @@ class FinitelyGeneratedLieConformalAlgebras(CategoryWithAxiom_over_base_ring):
                 EXAMPLES::
 
                     sage: C = LieConformalAlgebras(QQbar).FinitelyGenerated()                                           # optional - sage.rings.number_field
-                    sage: C.Super().Graded()
+                    sage: C.Super().Graded()                                                                            # optional - sage.rings.number_field
                     Category of H-graded super finitely generated lie conformal algebras over Algebraic Field
                 """
                 return "H-graded {}".format(self.base_category()._repr_object_names())

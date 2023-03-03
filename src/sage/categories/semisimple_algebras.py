@@ -96,13 +96,13 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)
-                sage: A.radical_basis()
+                sage: A = SymmetricGroup(4).algebra(QQ)                                 # optional - sage.groups
+                sage: A.radical_basis()                                                 # optional - sage.groups
                 ()
 
             TESTS::
 
-                sage: A.radical_basis.__module__
+                sage: A.radical_basis.__module__                                        # optional - sage.groups
                 'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
             return ()
