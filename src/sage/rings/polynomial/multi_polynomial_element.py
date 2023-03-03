@@ -1720,9 +1720,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         TESTS::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
-            sage: R.<x,y>=MPolynomialRing_polydict(GF(2),2,order='lex')
-            sage: f=x+y
-            sage: f.lt()
+            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')                                             # optional - sage.libs.pari
+            sage: f = x + y                                                                                             # optional - sage.libs.pari
+            sage: f.lt()                                                                                                # optional - sage.libs.pari
             x
         """
         try:
@@ -2336,9 +2336,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         Make sure the remainder returns the correct type, fixing :trac:`13903`::
 
-            sage: R.<y1,y2>=PolynomialRing(Qp(5),2, order='lex')
-            sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]
-            sage: type((y2^3).reduce(G))
+            sage: R.<y1,y2> = PolynomialRing(Qp(5), 2, order='lex')                                                     # optional - sage.rings.padics
+            sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]                                                                   # optional - sage.rings.padics
+            sage: type((y2^3).reduce(G))                                                                                # optional - sage.rings.padics
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
 
         TESTS:

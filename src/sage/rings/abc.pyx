@@ -402,14 +402,14 @@ class pAdicRing(EuclideanDomain):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(Zp(5), sage.rings.abc.pAdicRing)
+        sage: isinstance(Zp(5), sage.rings.abc.pAdicRing)                                                               # optional - sage.rings.padics
         True
-        sage: isinstance(Qp(5), sage.rings.abc.pAdicRing)
+        sage: isinstance(Qp(5), sage.rings.abc.pAdicRing)                                                               # optional - sage.rings.padics
         False
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.pAdicRing.__subclasses__()
+        sage: sage.rings.abc.pAdicRing.__subclasses__()                                                                 # optional - sage.rings.padics
         [<class 'sage.rings.padics.generic_nodes.pAdicRingGeneric'>]
 
         sage: len(sage.rings.abc.pAdicRing.__subclasses__()) <= 1
@@ -429,14 +429,14 @@ class pAdicField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(Zp(5), sage.rings.abc.pAdicField)
+        sage: isinstance(Zp(5), sage.rings.abc.pAdicField)                                                              # optional - sage.rings.padics
         False
-        sage: isinstance(Qp(5), sage.rings.abc.pAdicField)
+        sage: isinstance(Qp(5), sage.rings.abc.pAdicField)                                                              # optional - sage.rings.padics
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.pAdicField.__subclasses__()
+        sage: sage.rings.abc.pAdicField.__subclasses__()                                                                # optional - sage.rings.padics
         [<class 'sage.rings.padics.generic_nodes.pAdicFieldGeneric'>]
 
         sage: len(sage.rings.abc.pAdicField.__subclasses__()) <= 1

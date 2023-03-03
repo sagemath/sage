@@ -10,11 +10,11 @@ AUTHORS:
 
 TESTS::
 
-    sage: R = PolynomialRing(GF(2**8,'a'),10,'x', order='invlex')
-    sage: R == loads(dumps(R))
+    sage: R = PolynomialRing(GF(2**8,'a'), 10, 'x', order='invlex')                                                     # optional - sage.libs.pari
+    sage: R == loads(dumps(R))                                                                                          # optional - sage.libs.pari
     True
-    sage: P.<a,b> = PolynomialRing(GF(7), 2)
-    sage: f = (a^3 + 2*b^2*a)^7; f
+    sage: P.<a,b> = PolynomialRing(GF(7), 2)                                                                            # optional - sage.libs.pari
+    sage: f = (a^3 + 2*b^2*a)^7; f                                                                                      # optional - sage.libs.pari
     a^21 + 2*a^7*b^14
 
 """
@@ -478,25 +478,25 @@ def _singular_func(self, singular=singular):
 
     EXAMPLES::
 
-        sage: P.<a,b> = PolynomialRing(GF(7), 2)
-        sage: f = (a^3 + 2*b^2*a)^7; f
+        sage: P.<a,b> = PolynomialRing(GF(7), 2)                                                                        # optional - sage.libs.pari
+        sage: f = (a^3 + 2*b^2*a)^7; f                                                                                  # optional - sage.libs.pari
         a^21 + 2*a^7*b^14
-        sage: h = f._singular_(); h
+        sage: h = f._singular_(); h                                                                                     # optional - sage.libs.pari
         a^21+2*a^7*b^14
-        sage: P(h)
+        sage: P(h)                                                                                                      # optional - sage.libs.pari
         a^21 + 2*a^7*b^14
-        sage: P(h^20) == f^20
+        sage: P(h^20) == f^20                                                                                           # optional - sage.libs.pari
         True
 
-        sage: R.<x> = PolynomialRing(GF(7))
-        sage: f = (x^3 + 2*x^2*x)^7
-        sage: f
+        sage: R.<x> = PolynomialRing(GF(7))                                                                             # optional - sage.libs.pari
+        sage: f = (x^3 + 2*x^2*x)^7                                                                                     # optional - sage.libs.pari
+        sage: f                                                                                                         # optional - sage.libs.pari
         3*x^21
-        sage: h = f._singular_(); h
+        sage: h = f._singular_(); h                                                                                     # optional - sage.libs.pari
         3*x^21
-        sage: R(h)
+        sage: R(h)                                                                                                      # optional - sage.libs.pari
         3*x^21
-        sage: R(h^20) == f^20
+        sage: R(h^20) == f^20                                                                                           # optional - sage.libs.pari
         True
     """
     self.parent()._singular_(singular).set_ring()  # this is expensive
