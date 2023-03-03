@@ -360,7 +360,7 @@ def is_Element(x):
         sage: from sage.structure.element import is_Element
         sage: is_Element(2/3)
         True
-        sage: is_Element(QQ^3)
+        sage: is_Element(QQ^3)                                                                                          # optional - sage.modules
         False
     """
     return isinstance(x, Element)
@@ -654,7 +654,7 @@ cdef class Element(SageObject):
 
             sage: QQ.base_ring()
             Rational Field
-            sage: identity_matrix(3).base_ring()
+            sage: identity_matrix(3).base_ring()                                                                        # optional - sage.modules
             Integer Ring
         """
         return self._parent.base_ring()
@@ -1031,13 +1031,13 @@ cdef class Element(SageObject):
 
         Verify that :trac:`5185` is fixed::
 
-            sage: v = vector({1: 1, 3: -1})
-            sage: w = vector({1: -1, 3: 1})
-            sage: v + w
+            sage: v = vector({1: 1, 3: -1})                                                                             # optional - sage.modules
+            sage: w = vector({1: -1, 3: 1})                                                                             # optional - sage.modules
+            sage: v + w                                                                                                 # optional - sage.modules
             (0, 0, 0, 0)
-            sage: (v+w).is_zero()
+            sage: (v + w).is_zero()                                                                                     # optional - sage.modules
             True
-            sage: bool(v+w)
+            sage: bool(v + w)                                                                                           # optional - sage.modules
             False
 
         """
@@ -1497,13 +1497,13 @@ cdef class Element(SageObject):
 
         ::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                                                # optional - sage.modules
             An example of an algebra with basis: the free algebra
             on the generators ('a', 'b', 'c') over Rational Field
-            sage: x = A.an_element()
-            sage: x
+            sage: x = A.an_element()                                                                                    # optional - sage.modules
+            sage: x                                                                                                     # optional - sage.modules
             B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
-            sage: x.__mul__(x)
+            sage: x.__mul__(x)                                                                                          # optional - sage.modules
             B[word: ] + 4*B[word: a] + 4*B[word: aa] + 6*B[word: ab]
             + 2*B[word: abab] + 6*B[word: b] + 6*B[word: ba]
             + 2*B[word: bab] + 2*B[word: baba] + 3*B[word: babb]
@@ -2147,7 +2147,7 @@ def is_ModuleElement(x):
         sage: from sage.structure.element import is_ModuleElement
         sage: is_ModuleElement(2/3)
         True
-        sage: is_ModuleElement((QQ^3).0)
+        sage: is_ModuleElement((QQ^3).0)                                                                                # optional - sage.modules
         True
         sage: is_ModuleElement('a')
         False
@@ -2460,8 +2460,8 @@ cdef class ModuleElementWithMutability(ModuleElement):
         """
         EXAMPLES::
 
-            sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)
-            sage: type(v)
+            sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)                                          # optional - sage.modules
+            sage: type(v)                                                                                               # optional - sage.modules
             <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
@@ -2473,11 +2473,11 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
         EXAMPLES::
 
-            sage: v = vector([1..5]); v
+            sage: v = vector([1..5]); v                                                                                 # optional - sage.modules
             (1, 2, 3, 4, 5)
-            sage: v[1] = 10
-            sage: v.set_immutable()
-            sage: v[1] = 10
+            sage: v[1] = 10                                                                                             # optional - sage.modules
+            sage: v.set_immutable()                                                                                     # optional - sage.modules
+            sage: v[1] = 10                                                                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: vector is immutable; please change a copy instead (use copy())
@@ -2491,10 +2491,10 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
         EXAMPLES::
 
-            sage: v = vector(QQ['x,y'], [1..5]); v.is_mutable()
+            sage: v = vector(QQ['x,y'], [1..5]); v.is_mutable()                                                         # optional - sage.modules
             True
-            sage: v.set_immutable()
-            sage: v.is_mutable()
+            sage: v.set_immutable()                                                                                     # optional - sage.modules
+            sage: v.is_mutable()                                                                                        # optional - sage.modules
             False
         """
         return not self._is_immutable
@@ -2506,10 +2506,10 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
         EXAMPLES::
 
-            sage: v = vector(QQ['x,y'], [1..5]); v.is_immutable()
+            sage: v = vector(QQ['x,y'], [1..5]); v.is_immutable()                                                       # optional - sage.modules
             False
-            sage: v.set_immutable()
-            sage: v.is_immutable()
+            sage: v.set_immutable()                                                                                     # optional - sage.modules
+            sage: v.is_immutable()                                                                                      # optional - sage.modules
             True
         """
         return self._is_immutable
@@ -2846,8 +2846,8 @@ cdef class RingElement(ModuleElement):
             sage: a = QQ(0)
             sage: a.is_nilpotent()
             True
-            sage: m = matrix(QQ,3,[[3,2,3],[9,0,3],[-9,0,-3]])
-            sage: m.is_nilpotent()
+            sage: m = matrix(QQ, 3, [[3,2,3], [9,0,3], [-9,0,-3]])                                                      # optional - sage.modules
+            sage: m.is_nilpotent()                                                                                      # optional - sage.modules
             Traceback (most recent call last):
             ...
             AttributeError: ... object has no attribute 'is_nilpotent'
@@ -3391,195 +3391,251 @@ cdef class Vector(ModuleElementWithMutability):
 
         Here we test (vector * vector) multiplication::
 
-            sage: parent(vector(ZZ,[1,2])*vector(ZZ,[1,2]))
+            sage: parent(vector(ZZ, [1,2]) * vector(ZZ, [1,2]))                                                         # optional - sage.modules
             Integer Ring
-            sage: parent(vector(ZZ,[1,2])*vector(QQ,[1,2]))
+            sage: parent(vector(ZZ, [1,2]) * vector(QQ, [1,2]))                                                         # optional - sage.modules
             Rational Field
-            sage: parent(vector(QQ,[1,2])*vector(ZZ,[1,2]))
+            sage: parent(vector(QQ, [1,2]) * vector(ZZ, [1,2]))                                                         # optional - sage.modules
             Rational Field
-            sage: parent(vector(QQ,[1,2])*vector(QQ,[1,2]))
+            sage: parent(vector(QQ, [1,2]) * vector(QQ, [1,2]))                                                         # optional - sage.modules
             Rational Field
 
-            sage: parent(vector(QQ,[1,2,3,4])*vector(ZZ['x'],[1,2,3,4]))
+            sage: parent(vector(QQ, [1,2,3,4]) * vector(ZZ['x'], [1,2,3,4]))                                            # optional - sage.modules
             Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x'],[1,2,3,4])*vector(QQ,[1,2,3,4]))
+            sage: parent(vector(ZZ['x'], [1,2,3,4]) * vector(QQ, [1,2,3,4]))                                            # optional - sage.modules
             Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ,[1,2,3,4])*vector(ZZ['x']['y'],[1,2,3,4]))
+            sage: parent(vector(QQ, [1,2,3,4]) * vector(ZZ['x']['y'], [1,2,3,4]))                                       # optional - sage.modules
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2,3,4])*vector(QQ,[1,2,3,4]))
-            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-
-            sage: parent(vector(QQ['x'],[1,2,3,4])*vector(ZZ['x']['y'],[1,2,3,4]))
-            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2,3,4])*vector(QQ['x'],[1,2,3,4]))
+            sage: parent(vector(ZZ['x']['y'], [1,2,3,4]) * vector(QQ, [1,2,3,4]))                                       # optional - sage.modules
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ['y'],[1,2,3,4])*vector(ZZ['x']['y'],[1,2,3,4]))
+            sage: parent(vector(QQ['x'], [1,2,3,4]) * vector(ZZ['x']['y'], [1,2,3,4]))                                  # optional - sage.modules
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2,3,4])*vector(QQ['y'],[1,2,3,4]))
+            sage: parent(vector(ZZ['x']['y'], [1,2,3,4]) * vector(QQ['x'], [1,2,3,4]))                                  # optional - sage.modules
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(ZZ['x'],[1,2,3,4])*vector(ZZ['y'],[1,2,3,4]))
+            sage: parent(vector(QQ['y'], [1,2,3,4]) * vector(ZZ['x']['y'], [1,2,3,4]))                                  # optional - sage.modules
+            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2,3,4]) * vector(QQ['y'], [1,2,3,4]))                                  # optional - sage.modules
+            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+
+            sage: parent(vector(ZZ['x'], [1,2,3,4]) * vector(ZZ['y'], [1,2,3,4]))                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(ZZ['x'],[1,2,3,4])*vector(QQ['y'],[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(ZZ['x'], [1,2,3,4]) * vector(QQ['y'], [1,2,3,4]))                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(vector(QQ['x'],[1,2,3,4])*vector(ZZ['y'],[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(vector(QQ['x'], [1,2,3,4]) * vector(ZZ['y'], [1,2,3,4]))                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(QQ['x'],[1,2,3,4])*vector(QQ['y'],[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 4 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(QQ['x'], [1,2,3,4]) * vector(QQ['y'], [1,2,3,4]))                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 4 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * matrix) multiplication::
 
-            sage: parent(vector(ZZ,[1,2])*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(vector(ZZ, [1,2]) * matrix(ZZ, 2, 2, [1,2,3,4]))                                               # optional - sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            sage: parent(vector(QQ,[1,2])*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(vector(QQ, [1,2]) * matrix(ZZ, 2, 2, [1,2,3,4]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(vector(ZZ,[1,2])*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(vector(ZZ, [1,2]) * matrix(QQ, 2, 2, [1,2,3,4]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(vector(QQ,[1,2])*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(vector(QQ, [1,2]) * matrix(QQ, 2, 2, [1,2,3,4]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
 
-            sage: parent(vector(QQ,[1,2])*matrix(ZZ['x'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x'],[1,2])*matrix(QQ,2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ, [1,2]) * matrix(ZZ['x'], 2, 2, [1,2,3,4]))                                          # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x'], [1,2]) * matrix(QQ, 2, 2, [1,2,3,4]))                                          # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ,[1,2])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*matrix(QQ,2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ, [1,2]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                     # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * matrix(QQ, 2, 2, [1,2,3,4]))                                     # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ['x'],[1,2])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*matrix(QQ['x'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ['x'], [1,2]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * matrix(QQ['x'], 2, 2, [1,2,3,4]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ['y'],[1,2])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*matrix(QQ['y'],2,2,[1,2,3,4]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ['y'], [1,2]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(ZZ['x'],[1,2])*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            sage: parent(vector(ZZ['x'], [1,2]) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(ZZ['x'],[1,2])*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(ZZ['x'], [1,2]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(vector(QQ['x'],[1,2])*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(vector(QQ['x'], [1,2]) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(QQ['x'],[1,2])*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(QQ['x'], [1,2]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (vector * scalar) multiplication::
 
-            sage: parent(vector(ZZ,[1,2])*ZZ(1))
+            sage: parent(vector(ZZ, [1,2]) * ZZ(1))                                                                     # optional - sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            sage: parent(vector(QQ,[1,2])*ZZ(1))
+            sage: parent(vector(QQ, [1,2]) * ZZ(1))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(vector(ZZ,[1,2])*QQ(1))
+            sage: parent(vector(ZZ, [1,2]) * QQ(1))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(vector(QQ,[1,2])*QQ(1))
+            sage: parent(vector(QQ, [1,2]) * QQ(1))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
 
-            sage: parent(vector(QQ,[1,2])*ZZ['x'](1))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x'],[1,2])*QQ(1))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ, [1,2]) * ZZ['x'](1))                                                                # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x'], [1,2]) * QQ(1))                                                                # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ,[1,2])*ZZ['x']['y'](1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*QQ(1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ, [1,2]) * ZZ['x']['y'](1))                                                           # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * QQ(1))                                                           # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ['x'],[1,2])*ZZ['x']['y'](1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*QQ['x'](1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ['x'], [1,2]) * ZZ['x']['y'](1))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * QQ['x'](1))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(QQ['y'],[1,2])*ZZ['x']['y'](1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(vector(ZZ['x']['y'],[1,2])*QQ['y'](1))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(QQ['y'], [1,2]) * ZZ['x']['y'](1))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(vector(ZZ['x']['y'], [1,2]) * QQ['y'](1))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(vector(ZZ['x'],[1,2])*ZZ['y'](1))
+            sage: parent(vector(ZZ['x'], [1,2]) * ZZ['y'](1))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(ZZ['x'],[1,2])*QQ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(ZZ['x'], [1,2]) * QQ['y'](1))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(vector(QQ['x'],[1,2])*ZZ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring' and
+             'Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(vector(QQ['x'], [1,2]) * ZZ['y'](1))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(vector(QQ['x'],[1,2])*QQ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(vector(QQ['x'], [1,2]) * QQ['y'](1))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field' and
+             'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * vector) multiplication::
 
-            sage: parent(ZZ(1)*vector(ZZ,[1,2]))
+            sage: parent(ZZ(1) * vector(ZZ, [1,2]))                                                                     # optional - sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            sage: parent(QQ(1)*vector(ZZ,[1,2]))
+            sage: parent(QQ(1) * vector(ZZ, [1,2]))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(ZZ(1)*vector(QQ,[1,2]))
+            sage: parent(ZZ(1) * vector(QQ, [1,2]))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(QQ(1)*vector(QQ,[1,2]))
+            sage: parent(QQ(1) * vector(QQ, [1,2]))                                                                     # optional - sage.modules
             Vector space of dimension 2 over Rational Field
 
-            sage: parent(QQ(1)*vector(ZZ['x'],[1,2]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x'](1)*vector(QQ,[1,2]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ(1) * vector(ZZ['x'], [1,2]))                                                                # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x'](1) * vector(QQ, [1,2]))                                                                # optional - sage.modules
+            Ambient free module of rank 2
+             over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ(1)*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*vector(QQ,[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ(1) * vector(ZZ['x']['y'], [1,2]))                                                           # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * vector(QQ, [1,2]))                                                           # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ['x'](1)*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*vector(QQ['x'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ['x'](1) * vector(ZZ['x']['y'], [1,2]))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * vector(QQ['x'], [1,2]))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ['y'](1)*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*vector(QQ['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ['y'](1) * vector(ZZ['x']['y'], [1,2]))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * vector(QQ['y'], [1,2]))                                                      # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(ZZ['x'](1)*vector(ZZ['y'],[1,2]))
+            sage: parent(ZZ['x'](1) * vector(ZZ['y'], [1,2]))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(ZZ['x'](1)*vector(QQ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(ZZ['x'](1) * vector(QQ['y'], [1,2]))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(QQ['x'](1)*vector(ZZ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(QQ['x'](1) * vector(ZZ['y'], [1,2]))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(QQ['x'](1)*vector(QQ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(QQ['x'](1) * vector(QQ['y'], [1,2]))                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
         """
         if have_same_parent(left, right):
             return (<Vector>left)._dot_product_(<Vector>right)
@@ -3600,14 +3656,14 @@ cdef class Vector(ModuleElementWithMutability):
 
         TESTS::
 
-            sage: A = matrix([[1, 2], [0, 3]])
-            sage: b = vector([0, 1])
-            sage: x = b / A; x
+            sage: A = matrix([[1, 2], [0, 3]])                                                                          # optional - sage.modules
+            sage: b = vector([0, 1])                                                                                    # optional - sage.modules
+            sage: x = b / A; x                                                                                          # optional - sage.modules
             (0, 1/3)
-            sage: x == b * ~A
+            sage: x == b * ~A                                                                                           # optional - sage.modules
             True
-            sage: A = matrix([[1, 2], [0, 3], [1, 5]])
-            sage: (b / A) * A == b
+            sage: A = matrix([[1, 2], [0, 3], [1, 5]])                                                                  # optional - sage.modules
+            sage: (b / A) * A == b                                                                                      # optional - sage.modules
             True
         """
         right = py_scalar_to_element(right)
@@ -3634,31 +3690,31 @@ cdef class Vector(ModuleElementWithMutability):
 
         EXAMPLES::
 
-            sage: v = vector([1,2,3])
-            sage: v._magma_init_(magma)                 # optional - magma
+            sage: v = vector([1,2,3])                                                                                   # optional - sage.modules
+            sage: v._magma_init_(magma)                 # optional - magma                                              # optional - sage.modules
             '_sage_[...]![1,2,3]'
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: mv = magma(v); mv                     # optional - magma                                              # optional - sage.modules
             (1 2 3)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()                             # optional - magma                                              # optional - sage.modules
             ModTupRngElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()                           # optional - magma                                              # optional - sage.modules
             Full RSpace of degree 3 over Integer Ring
 
-            sage: v = vector(QQ, [1/2, 3/4, 5/6])
-            sage: mv = magma(v); mv                     # optional - magma
+            sage: v = vector(QQ, [1/2, 3/4, 5/6])                                                                       # optional - sage.modules
+            sage: mv = magma(v); mv                     # optional - magma                                              # optional - sage.modules
             (1/2 3/4 5/6)
-            sage: mv.Type()                             # optional - magma
+            sage: mv.Type()                             # optional - magma                                              # optional - sage.modules
             ModTupFldElt
-            sage: mv.Parent()                           # optional - magma
+            sage: mv.Parent()                           # optional - magma                                              # optional - sage.modules
             Full Vector space of degree 3 over Rational Field
 
         A more demanding example::
 
             sage: R.<x,y,z> = QQ[]
-            sage: v = vector([x^3, y, 2/3*z + x/y])
-            sage: magma(v)                              # optional - magma
+            sage: v = vector([x^3, y, 2/3*z + x/y])                                                                     # optional - sage.modules
+            sage: magma(v)                              # optional - magma                                              # optional - sage.modules
             (            x^3               y (2/3*y*z + x)/y)
-            sage: magma(v).Parent()                     # optional - magma
+            sage: magma(v).Parent()                     # optional - magma                                              # optional - sage.modules
             Full Vector space of degree 3 over Multivariate rational function field of rank 3 over Rational Field
         """
         V = magma(self._parent)
@@ -3693,210 +3749,266 @@ cdef class Matrix(ModuleElement):
 
         Here we test (matrix * matrix) multiplication::
 
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * matrix(ZZ, 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * matrix(ZZ, 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * matrix(QQ, 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * matrix(QQ, 2, 2, [1,2,3,4]))                                     # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*matrix(ZZ['x'],2,2,[1,2,3,4]))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * matrix(ZZ['x'], 2, 2, [1,2,3,4]))                                # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * matrix(QQ, 2, 2, [1,2,3,4]))                                # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*matrix(QQ,2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                           # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * matrix(QQ, 2, 2, [1,2,3,4]))                           # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*matrix(QQ['x'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                      # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * matrix(QQ['x'], 2, 2, [1,2,3,4]))                      # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['y'],2,2,[1,2,3,4])*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*matrix(QQ['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['y'], 2, 2, [1,2,3,4]) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                      # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                      # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         We test that the bug reported in :trac:`27352` has been fixed::
 
-            sage: A = matrix(QQ, [[1, 2], [-1, 0], [1, 1]])
-            sage: B = matrix(QQ, [[0, 4], [1, -1], [1, 2]])
-            sage: A*B
+            sage: A = matrix(QQ, [[1, 2], [-1, 0], [1, 1]])                                                             # optional - sage.modules
+            sage: B = matrix(QQ, [[0, 4], [1, -1], [1, 2]])                                                             # optional - sage.modules
+            sage: A * B                                                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 3 by 2 dense matrices over Rational Field' and 'Full MatrixSpace of 3 by 2 dense matrices over Rational Field'
 
         Here we test (matrix * vector) multiplication::
 
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*vector(ZZ,[1,2]))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * vector(ZZ, [1,2]))                                               # optional - sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*vector(ZZ,[1,2]))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * vector(ZZ, [1,2]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*vector(QQ,[1,2]))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * vector(QQ, [1,2]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*vector(QQ,[1,2]))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * vector(QQ, [1,2]))                                               # optional - sage.modules
             Vector space of dimension 2 over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*vector(ZZ['x'],[1,2]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*vector(QQ,[1,2]))
-            Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * vector(ZZ['x'], [1,2]))                                          # optional - sage.modules
+            Ambient free module of rank 2 over the principal ideal domain
+             Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * vector(QQ, [1,2]))                                          # optional - sage.modules
+            Ambient free module of rank 2 over the principal ideal domain
+             Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*vector(QQ,[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * vector(ZZ['x']['y'], [1,2]))                                     # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * vector(QQ, [1,2]))                                     # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*vector(QQ['x'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * vector(ZZ['x']['y'], [1,2]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * vector(QQ['x'], [1,2]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['y'],2,2,[1,2,3,4])*vector(ZZ['x']['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*vector(QQ['y'],[1,2]))
-            Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['y'], 2, 2, [1,2,3,4]) * vector(ZZ['x']['y'], [1,2]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * vector(QQ['y'], [1,2]))                                # optional - sage.modules
+            Ambient free module of rank 2 over the integral domain
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*vector(ZZ['y'],[1,2]))
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * vector(ZZ['y'], [1,2]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*vector(QQ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * vector(QQ['y'], [1,2]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*vector(ZZ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * vector(ZZ['y'], [1,2]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*vector(QQ['y'],[1,2]))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * vector(QQ['y'], [1,2]))                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Ambient free module of rank 2 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (matrix * scalar) multiplication::
 
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*ZZ(1))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * ZZ(1))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*ZZ(1))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * ZZ(1))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(matrix(ZZ,2,2,[1,2,3,4])*QQ(1))
+            sage: parent(matrix(ZZ, 2, 2, [1,2,3,4]) * QQ(1))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*QQ(1))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * QQ(1))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*ZZ['x'](1))
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * ZZ['x'](1))                                                      # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*QQ(1))
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * QQ(1))                                                      # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ,2,2,[1,2,3,4])*ZZ['x']['y'](1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*QQ(1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ, 2, 2, [1,2,3,4]) * ZZ['x']['y'](1))                                                 # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * QQ(1))                                                 # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*ZZ['x']['y'](1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*QQ['x'](1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * ZZ['x']['y'](1))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * QQ['x'](1))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(QQ['y'],2,2,[1,2,3,4])*ZZ['x']['y'](1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(matrix(ZZ['x']['y'],2,2,[1,2,3,4])*QQ['y'](1))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(QQ['y'], 2, 2, [1,2,3,4]) * ZZ['x']['y'](1))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]) * QQ['y'](1))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*ZZ['y'](1))
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * ZZ['y'](1))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(ZZ['x'],2,2,[1,2,3,4])*QQ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(ZZ['x'], 2, 2, [1,2,3,4]) * QQ['y'](1))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*ZZ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring' and
+             'Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * ZZ['y'](1))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(matrix(QQ['x'],2,2,[1,2,3,4])*QQ['y'](1))
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+              'Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(matrix(QQ['x'], 2, 2, [1,2,3,4]) * QQ['y'](1))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
+             'Univariate Polynomial Ring in y over Rational Field'
 
         Here we test (scalar * matrix) multiplication::
 
-            sage: parent(ZZ(1)*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(ZZ(1) * matrix(ZZ, 2, 2, [1,2,3,4]))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-            sage: parent(QQ(1)*matrix(ZZ,2,2,[1,2,3,4]))
+            sage: parent(QQ(1) * matrix(ZZ, 2, 2, [1,2,3,4]))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(ZZ(1)*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(ZZ(1) * matrix(QQ, 2, 2, [1,2,3,4]))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: parent(QQ(1)*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(QQ(1) * matrix(QQ, 2, 2, [1,2,3,4]))                                                           # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
-            sage: parent(QQ(1)*matrix(ZZ['x'],2,2,[1,2,3,4]))
+            sage: parent(QQ(1) * matrix(ZZ['x'], 2, 2, [1,2,3,4]))                                                      # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x'](1)*matrix(QQ,2,2,[1,2,3,4]))
+            sage: parent(ZZ['x'](1) * matrix(QQ, 2, 2, [1,2,3,4]))                                                      # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ(1)*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*matrix(QQ,2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ(1) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * matrix(QQ, 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ['x'](1)*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*matrix(QQ['x'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ['x'](1) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * matrix(QQ['x'], 2, 2, [1,2,3,4]))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices over
+             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(QQ['y'](1)*matrix(ZZ['x']['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
-            sage: parent(ZZ['x']['y'](1)*matrix(QQ['y'],2,2,[1,2,3,4]))
-            Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(QQ['y'](1) * matrix(ZZ['x']['y'], 2, 2, [1,2,3,4]))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            sage: parent(ZZ['x']['y'](1) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                            # optional - sage.modules
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
 
-            sage: parent(ZZ['x'](1)*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            sage: parent(ZZ['x'](1) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(ZZ['x'](1)*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(ZZ['x'](1) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Integer Ring' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
-            sage: parent(QQ['x'](1)*matrix(ZZ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Integer Ring' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            sage: parent(QQ['x'](1) * matrix(ZZ['y'], 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
-            sage: parent(QQ['x'](1)*matrix(QQ['y'],2,2,[1,2,3,4]))
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Integer Ring'
+            sage: parent(QQ['x'](1) * matrix(QQ['y'], 2, 2, [1,2,3,4]))                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Univariate Polynomial Ring in x over Rational Field' and 'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
+            TypeError: unsupported operand parent(s) for *:
+             'Univariate Polynomial Ring in x over Rational Field' and
+             'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
         Examples with matrices having matrix coefficients::
 
-            sage: m = matrix
-            sage: a = m([[m([[1,2],[3,4]]),m([[5,6],[7,8]])],[m([[9,10],[11,12]]),m([[13,14],[15,16]])]])
-            sage: 3*a
+            sage: m = matrix                                                                                            # optional - sage.modules
+            sage: a = m([[m([[1,2],[3,4]]),m([[5,6],[7,8]])],[m([[9,10],[11,12]]),m([[13,14],[15,16]])]])               # optional - sage.modules
+            sage: 3 * a                                                                                                 # optional - sage.modules
             [[ 3  6]
             [ 9 12] [15 18]
             [21 24]]
@@ -3904,9 +4016,9 @@ cdef class Matrix(ModuleElement):
             [33 36] [39 42]
             [45 48]]
 
-            sage: m = matrix
-            sage: a = m([[m([[1,2],[3,4]]),m([[5,6],[7,8]])],[m([[9,10],[11,12]]),m([[13,14],[15,16]])]])
-            sage: a*3
+            sage: m = matrix                                                                                            # optional - sage.modules
+            sage: a = m([[m([[1,2],[3,4]]),m([[5,6],[7,8]])],[m([[9,10],[11,12]]),m([[13,14],[15,16]])]])               # optional - sage.modules
+            sage: a * 3                                                                                                 # optional - sage.modules
             [[ 3  6]
             [ 9 12] [15 18]
             [21 24]]
@@ -3948,32 +4060,32 @@ cdef class Matrix(ModuleElement):
 
         EXAMPLES::
 
-            sage: a = matrix(ZZ, 2, range(4))
-            sage: operator.truediv(a, 5)
+            sage: a = matrix(ZZ, 2, range(4))                                                                           # optional - sage.modules
+            sage: operator.truediv(a, 5)                                                                                # optional - sage.modules
             [ 0 1/5]
             [2/5 3/5]
-            sage: a = matrix(ZZ, 2, range(4))
-            sage: b = matrix(ZZ, 2, [1,1,0,5])
-            sage: operator.truediv(a, b)
+            sage: a = matrix(ZZ, 2, range(4))                                                                           # optional - sage.modules
+            sage: b = matrix(ZZ, 2, [1,1,0,5])                                                                          # optional - sage.modules
+            sage: operator.truediv(a, b)                                                                                # optional - sage.modules
             [  0 1/5]
             [  2 1/5]
-            sage: c = matrix(QQ, 2, [3,2,5,7])
-            sage: operator.truediv(c, a)
+            sage: c = matrix(QQ, 2, [3,2,5,7])                                                                          # optional - sage.modules
+            sage: operator.truediv(c, a)                                                                                # optional - sage.modules
             [-5/2  3/2]
             [-1/2  5/2]
 
         TESTS::
 
-            sage: a = matrix(ZZ, [[1, 2], [0, 3]])
-            sage: b = matrix(ZZ, 3, 2, range(6))
-            sage: x = b / a; x
+            sage: a = matrix(ZZ, [[1, 2], [0, 3]])                                                                      # optional - sage.modules
+            sage: b = matrix(ZZ, 3, 2, range(6))                                                                        # optional - sage.modules
+            sage: x = b / a; x                                                                                          # optional - sage.modules
             [   0  1/3]
             [   2 -1/3]
             [   4   -1]
-            sage: x == b * ~a
+            sage: x == b * ~a                                                                                           # optional - sage.modules
             True
-            sage: a = matrix(ZZ, [[1, 2], [0, 3], [1, 5]])
-            sage: (b / a) * a == b
+            sage: a = matrix(ZZ, [[1, 2], [0, 3], [1, 5]])                                                              # optional - sage.modules
+            sage: (b / a) * a == b                                                                                      # optional - sage.modules
             True
         """
         if is_Matrix(right):
@@ -4280,8 +4392,8 @@ def is_AlgebraElement(x):
     TESTS::
 
         sage: from sage.structure.element import is_AlgebraElement
-        sage: R.<x,y> = FreeAlgebra(QQ,2)
-        sage: is_AlgebraElement(x*y)
+        sage: R.<x,y> = FreeAlgebra(QQ, 2)                                      # optional - sage.combinat, sage.modules
+        sage: is_AlgebraElement(x * y)                                          # optional - sage.combinat, sage.modules
         True
 
         sage: is_AlgebraElement(1)
@@ -4337,8 +4449,8 @@ cpdef canonical_coercion(x, y):
 
     EXAMPLES::
 
-        sage: A = Matrix([[0, 1], [1, 0]])
-        sage: canonical_coercion(A, 1)
+        sage: A = Matrix([[0, 1], [1, 0]])                                      # optional - sage.modules
+        sage: canonical_coercion(A, 1)                                          # optional - sage.modules
         (
         [0 1]  [1 0]
         [1 0], [0 1]

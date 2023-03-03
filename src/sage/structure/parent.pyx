@@ -86,7 +86,7 @@ TESTS:
 
 This came up in some subtle bug once::
 
-    sage: gp(2) + gap(3)
+    sage: gp(2) + gap(3)                                                                                            # optional - sage.libs.pari
     5
 """
 # ****************************************************************************
@@ -824,7 +824,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: ZZ._repr_option('ascii_art')
             False
-            sage: MatrixSpace(ZZ, 2)._repr_option('element_ascii_art')
+            sage: MatrixSpace(ZZ, 2)._repr_option('element_ascii_art')                                                  # optional - sage.modules
             True
         """
         if not isinstance(key, basestring):
@@ -1005,22 +1005,22 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
-            sage: ZZ^3
+            sage: ZZ^3                                                                                                  # optional - sage.modules
             Ambient free module of rank 3 over the principal ideal domain
              Integer Ring
-            sage: QQ^3
+            sage: QQ^3                                                                                                  # optional - sage.modules
             Vector space of dimension 3 over Rational Field
-            sage: QQ[x]^3
+            sage: QQ[x]^3                                                                                               # optional - sage.modules
             Ambient free module of rank 3 over the principal ideal domain
              Univariate Polynomial Ring in x over Rational Field
-            sage: IntegerModRing(6)^3
+            sage: IntegerModRing(6)^3                                                                                   # optional - sage.modules
             Ambient free module of rank 3 over Ring of integers modulo 6
 
             sage: 3^ZZ
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for ^: 'Integer Ring' and '<class 'sage.rings.integer_ring.IntegerRing_class'>'
-            sage: Partitions(3)^3
+            sage: Partitions(3)^3                                                                                       # optional - sage.combinat, sage.modules
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'Partitions_n_with_category' and 'int'
@@ -2544,10 +2544,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
-            sage: M = QQ['y']^3
-            sage: M.get_action(ZZ['x']['y'])
-            Right scalar multiplication by Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring on Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field
-            sage: print(M.get_action(ZZ['x']))
+            sage: M = QQ['y']^3                                                                                         # optional - sage.modules
+            sage: M.get_action(ZZ['x']['y'])                                                                            # optional - sage.modules
+            Right scalar multiplication by Univariate Polynomial Ring in y over Univariate Polynomial Ring in x
+             over Integer Ring on Ambient free module of rank 3
+              over the principal ideal domain Univariate Polynomial Ring in y over Rational Field
+            sage: print(M.get_action(ZZ['x']))                                                                          # optional - sage.modules
             None
         """
         action = self._get_action_(S, op, self_on_left)
@@ -2796,9 +2798,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: ZZ.is_exact()
             True
-            sage: Qp(7).is_exact()
+            sage: Qp(7).is_exact()                                                                                      # optional - sage.rings.padics
             False
-            sage: Zp(7, type='capped-abs').is_exact()
+            sage: Zp(7, type='capped-abs').is_exact()                                                                   # optional - sage.rings.padics
             False
         """
         return True
