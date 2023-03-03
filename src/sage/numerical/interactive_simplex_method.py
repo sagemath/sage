@@ -197,9 +197,9 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
 from sage.rings.infinity import Infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import Q as QQ
+from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from sage.rings.integer_ring import Z as ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")

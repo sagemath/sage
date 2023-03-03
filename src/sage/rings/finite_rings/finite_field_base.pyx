@@ -931,7 +931,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree()==1
+        return self.degree() == 1
 
     def modulus(self):
         r"""
@@ -1357,7 +1357,7 @@ cdef class FiniteField(Field):
             return True
         if isinstance(R, sage.rings.abc.IntegerModRing) and self.characteristic().divides(R.characteristic()):
             return R.hom((self.one(),), check=False)
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             if R is self:
                 return True
             from .residue_field import ResidueField_generic
@@ -2116,10 +2116,14 @@ def is_FiniteField(R):
     Return whether the implementation of ``R`` has the interface provided by
     the standard finite field implementation.
 
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
         sage: is_FiniteField(GF(9,'a'))
+        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         True
         sage: is_FiniteField(GF(next_prime(10^10)))
         True
@@ -2129,4 +2133,6 @@ def is_FiniteField(R):
         sage: is_FiniteField(Integers(7))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
     return isinstance(R, FiniteField)

@@ -18,7 +18,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.categories.map import Map
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
@@ -133,7 +133,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         from sage.schemes.projective.projective_space import ProjectiveSpace
         ambient_projective_space = ProjectiveSpace(n, R)
     if R in _Fields:
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return AffineSpace_finite_field(n, R, names,
                                             ambient_projective_space, default_embedding_index)
         else:
@@ -271,12 +271,12 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             TypeError: second argument (= Integer Ring) must be a finite field
         """
         if F is None:
-            if not is_FiniteField(self.base_ring()):
-                raise TypeError("base ring (= %s) must be a finite field"%self.base_ring())
-            return [ P for P in self ]
-        elif not is_FiniteField(F):
-            raise TypeError("second argument (= %s) must be a finite field"%F)
-        return [ P for P in self.base_extend(F) ]
+            if not isinstance(self.base_ring(), FiniteField):
+                raise TypeError("base ring (= %s) must be a finite field" % self.base_ring())
+            return [P for P in self]
+        elif not isinstance(F, FiniteField):
+            raise TypeError("second argument (= %s) must be a finite field" % F)
+        return [P for P in self.base_extend(F)]
 
     def __eq__(self, right):
         """

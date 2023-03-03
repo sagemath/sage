@@ -63,12 +63,11 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.arith.misc import GCD as gcd
 
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
@@ -230,7 +229,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         SchemeMorphism_polynomial.__init__(self, parent, polys, check)
 
         # used in _fast_eval and _fastpolys
-        self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
+        R = polys[0].base_ring()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
 
     def __call__(self, x, check=True):
         """
@@ -684,7 +684,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         R = self.base_ring()
         if R not in _Fields:
             return DynamicalSystem_affine(list(self), self.domain())
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(list(self), self.domain())
         return DynamicalSystem_affine_field(list(self), self.domain())
 
