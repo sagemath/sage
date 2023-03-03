@@ -252,7 +252,7 @@ def _extract_embedded_position(docstring):
 
        sage: from sage.misc.sageinspect import _extract_embedded_position
        sage: import inspect
-       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]
+       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]                                                   # optional - sage.symbolic
        'sage/calculus/var.pyx'
 
     TESTS:
@@ -1118,7 +1118,7 @@ def _sage_getargspec_from_ast(source):
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from_ast(s) == inspect.getfullargspec(context['f'])
         True
-        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])
+        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])  # optional - sage.modules, sage.graphs
         {True}
     """
     ast_args = ast.parse(source.lstrip()).body[0].args
