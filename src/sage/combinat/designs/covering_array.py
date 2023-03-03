@@ -326,7 +326,7 @@ class CoveringArray():
 
     def strength(self):
         r"""
-        Return the strength of the covering array, which is the paramter
+        Return the strength of the covering array, which is the parameter
         t, such that in any selection of t columns of the array, every
         t tuple appears at least once.
 
@@ -413,7 +413,7 @@ class CoveringArray():
     def levels(self):
         r"""
         Return the number of levels for the covering array, which is
-        the paramter v, such that v is the size of the symbol set of the
+        the parameter v, such that v is the size of the symbol set of the
         array.
 
         EXAMPLES::
