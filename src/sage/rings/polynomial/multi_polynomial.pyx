@@ -14,7 +14,6 @@ from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
-from sage.combinat.integer_lists.invlex import IntegerListsLex
 from itertools import chain
 
 from sage.misc.misc_c import prod
@@ -2758,6 +2757,8 @@ cdef class MPolynomial(CommutativePolynomial):
         if self.degree() == 2:
             quadratic_derivs = set([self])
         else:
+            from sage.combinat.integer_lists.invlex import IntegerListsLex
+
             gens = self.parent().gens()
             quadratic_derivs = set()
             multi_exponents = IntegerListsLex(self.degree() - 2, length=len(gens))
