@@ -40,11 +40,12 @@ or immediately during assignment like this::
 
 from sage.structure.sage_object import SageObject
 
-from sage.matrix.all import matrix, identity_matrix
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.special import identity_matrix
 from sage.geometry.all import Fan, LatticePolytope, ToricLattice
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.schemes.toric.variety import (DEFAULT_PREFIX,
                                         ToricVariety,
                                         normalize_names)

@@ -683,12 +683,14 @@ properly.
 #*****************************************************************************
 
 import os
+import re
 
 from sage.cpython.string import bytes_to_str
 from sage.misc.pager import pager
 from sage.misc.superseded import deprecation
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
+from sage.misc.cachefunc import cached_method
 
 
 class TachyonRT(SageObject):
@@ -799,6 +801,11 @@ class TachyonRT(SageObject):
             Parser failed due to an input file syntax error.
             Aborting render.
         """
+        if self.version() >= '0.99.2':
+            # this keyword was changed in 0.99.2
+            model = model.replace(
+                    "              focallength ",
+                    "              focaldist ")
         modelfile = tmp_filename(ext='.dat')
         with open(modelfile, 'w') as file:
             file.write(model)
@@ -851,6 +858,25 @@ class TachyonRT(SageObject):
         else:
             print(r)
 
+    @cached_method
+    def version(self):
+        """
+        Returns the version of the Tachyon raytracer being used.
+
+        TESTS::
+
+            sage: tachyon_rt.version()  # random
+            0.98.9
+            sage: tachyon_rt.version() >= '0.98.9'
+            True
+        """
+        with os.popen('tachyon') as f:
+            r = f.readline()
+        res = re.search(r"Version ([\d.]*)", r)
+        # debian patches tachyon so it won't report the version
+        # we hardcode '0.99' since that's indeed the version they ship
+        return res[1] if res else '0.99'
+
     def help(self, use_pager=True):
         """
         Deprecated: type 'sage.interfaces.tachyon?' for help
@@ -861,7 +887,7 @@ class TachyonRT(SageObject):
             sage: t = TachyonRT()
             sage: t.help(use_pager=False)
             doctest:...: DeprecationWarning: type 'sage.interfaces.tachyon?' for help
-            See https://trac.sagemath.org/34066 for details.
+            See https://github.com/sagemath/sage/issues/34066 for details.
         """
         deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
 

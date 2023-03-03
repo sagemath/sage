@@ -65,9 +65,9 @@ from .matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
 from .misc import matrix_integer_dense_rational_reconstruction
 
+from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import previous_prime, binomial
 from sage.rings.real_mpfr import create_RealNumber as RealNumber
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational

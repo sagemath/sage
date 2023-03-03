@@ -40,7 +40,8 @@ from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 
 from copy import copy
@@ -1226,7 +1227,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         if not is_ProjectiveSpace(self.codomain()):
             raise NotImplementedError("not implemented for subschemes")
 
-        # Trac #23808: Keep the embedding info associated with the number field K
+        # Issue #23808: Keep the embedding info associated with the number field K
         # used below, instead of in the separate embedding map phi which is
         # forgotten.
         K_pre,P,phi = number_field_elements_from_algebraics(list(self))

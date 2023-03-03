@@ -38,7 +38,7 @@ such that the coefficient corresponding to a word `w\in A^*` equals
         doctest:...: FutureWarning: This class/method/function is
         marked as experimental. It, its functionality or its interface
         might change without a formal deprecation.
-        See http://trac.sagemath.org/21202 for details.
+        See https://github.com/sagemath/sage/issues/21202 for details.
 
 
 Various
@@ -1687,7 +1687,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    @experimental(trac_number=21202)
+    @experimental(issue_number=21202)
     def __init__(self, coefficient_ring, indices, category, minimize_results):
         r"""
         See :class:`RecognizableSeriesSpace` for details.
