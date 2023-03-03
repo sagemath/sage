@@ -74,13 +74,14 @@ import sage.databases.cremona
 
 import sage.arith.all as arith
 import sage.rings.all as rings
-from sage.rings.all import (
-    PowerSeriesRing,
-    infinity as oo,
-    ZZ, QQ,
-    Integer,
-    IntegerRing, RealField,
-    ComplexField, RationalField)
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.infinity import Infinity as oo
+from sage.rings.integer_ring import ZZ, IntegerRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.rational_field import RationalField
 
 from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element
@@ -3436,7 +3437,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.Lambda(1.4+0.5*I, 50)
             -0.354172680517... + 0.874518681720...*I
         """
-        from sage.all import pi
+        from sage.symbolic.constants import pi
 
         s = C(s)
         N = self.conductor()
@@ -6013,7 +6014,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             roots.remove(e3)
             e1,e2 = roots
 
-        from sage.all import pi
+        from sage.symbolic.constants import pi
         e = R(1).exp()
         pi = R(pi)
 
@@ -7054,7 +7055,7 @@ def elliptic_curve_congruence_graph(curves):
         Graph on 12 vertices
     """
     from sage.graphs.graph import Graph
-    from sage.arith.all import lcm
+    from sage.arith.functions import lcm
     from sage.rings.fast_arith import prime_range
     from sage.misc.misc_c import prod
     G = Graph()

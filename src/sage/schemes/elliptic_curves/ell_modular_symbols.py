@@ -87,19 +87,22 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.modular.modsym.all import ModularSymbols
+from sage.arith.misc import (kronecker as kronecker_symbol,
+                             next_prime,
+                             prime_divisors,
+                             valuation)
 from sage.databases.cremona import parse_cremona_label
-
-from sage.arith.all import next_prime, kronecker_symbol, prime_divisors, valuation
+from sage.misc.verbose import verbose
+from sage.modular.cusps import Cusps
+from sage.modular.modsym.all import ModularSymbols
 from sage.rings.infinity import unsigned_infinity as infinity
 from sage.rings.integer import Integer
-from sage.modular.cusps import Cusps
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.misc.verbose import verbose
+from sage.structure.sage_object import SageObject
 
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from .constructor import EllipticCurve
+
 
 oo = Cusps(infinity)
 zero = Integer(0)
