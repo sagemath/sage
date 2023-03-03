@@ -4470,7 +4470,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if not (ch == 0 or is_prime(ch)):
             raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
 
-        from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+        from sage.rings.finite_rings.finite_field_base import FiniteField
 
         n = None
 
@@ -4480,7 +4480,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             except PariError:
                 raise NotImplementedError
 
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             v = [x.__pari__("a") for x in self.list()]
             f = pari(v).Polrev()
             G = list(f.factor())
@@ -4748,7 +4748,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         name = normalize_names(1, names)[0]
 
         from sage.rings.number_field.number_field_base import is_NumberField
-        from sage.rings.finite_rings.finite_field_base import is_FiniteField
+        from sage.rings.finite_rings.finite_field_base import FiniteField
 
         f = self.monic()            # Given polynomial, made monic
         F = f.parent().base_ring()  # Base field
@@ -4759,7 +4759,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if is_NumberField(F):
             from sage.rings.number_field.splitting_field import splitting_field
             return splitting_field(f, name, map, **kwds)
-        elif is_FiniteField(F):
+        elif isinstance(F, FiniteField):
             degree = lcm([f.degree() for f, _ in self.factor()])
             return F.extension(degree, name, map=map, **kwds)
 
