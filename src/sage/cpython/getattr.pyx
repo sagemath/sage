@@ -54,6 +54,7 @@ cdef class AttributeErrorMessage:
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
+        sage: x = polygen(ZZ, 'x')
         sage: QQ[x].gen().bla
         Traceback (most recent call last):
         ...
