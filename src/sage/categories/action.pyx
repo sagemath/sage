@@ -333,7 +333,7 @@ cdef class InverseAction(Action):
 
         sage: V = QQ^3                                                                                                  # optional - sage.modules
         sage: v = V((1, 2, 3))                                                                                          # optional - sage.modules
-        sage: cm = get_coercion_model()                                                                                 # optional - sage.modules
+        sage: cm = get_coercion_model()
 
         sage: a = cm.get_action(V, QQ, operator.mul)                                                                    # optional - sage.modules
         sage: a                                                                                                         # optional - sage.modules

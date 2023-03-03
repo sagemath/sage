@@ -312,42 +312,42 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
-                sage: x = X.basis()
-                sage: V = X.echelon_form([x[0]-x[1], x[0]-x[2],x[1]-x[2]]); V
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")                                             # optional - sage.modules
+                sage: x = X.basis()                                                                                     # optional - sage.modules
+                sage: V = X.echelon_form([x[0]-x[1], x[0]-x[2], x[1]-x[2]]); V                                          # optional - sage.modules
                 [x[0] - x[2], x[1] - x[2]]
-                sage: matrix(list(map(vector, V)))
+                sage: matrix(list(map(vector, V)))                                                                      # optional - sage.modules
                 [ 1  0 -1]
                 [ 0  1 -1]
 
             ::
 
-                sage: F = CombinatorialFreeModule(ZZ, [1,2,3,4])
-                sage: B = F.basis()
-                sage: elements = [B[1]-17*B[2]+6*B[3], B[1]-17*B[2]+B[4]]
-                sage: F.echelon_form(elements)
+                sage: F = CombinatorialFreeModule(ZZ, [1,2,3,4])                                                        # optional - sage.modules
+                sage: B = F.basis()                                                                                     # optional - sage.modules
+                sage: elements = [B[1]-17*B[2]+6*B[3], B[1]-17*B[2]+B[4]]                                               # optional - sage.modules
+                sage: F.echelon_form(elements)                                                                          # optional - sage.modules
                 [B[1] - 17*B[2] + B[4], 6*B[3] - B[4]]
 
             ::
 
-                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
-                sage: a,b,c = F.basis()
-                sage: F.echelon_form([8*a+b+10*c, -3*a+b-c, a-b-c])
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])                                                    # optional - sage.modules
+                sage: a,b,c = F.basis()                                                                                 # optional - sage.modules
+                sage: F.echelon_form([8*a+b+10*c, -3*a+b-c, a-b-c])                                                     # optional - sage.modules
                 [B['a'] + B['c'], B['b'] + 2*B['c']]
 
             ::
 
                 sage: R.<x,y> = QQ[]
-                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')
-                sage: x = C.basis()
-                sage: C.echelon_form([x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]])
+                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')                                              # optional - sage.modules
+                sage: x = C.basis()                                                                                     # optional - sage.modules
+                sage: C.echelon_form([x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]])                                       # optional - sage.modules
                 [x[0] - x[2], x[1] - x[2]]
 
             ::
 
-                sage: M = MatrixSpace(QQ, 3, 3)
-                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])
-                sage: M.echelon_form([A, A])
+                sage: M = MatrixSpace(QQ, 3, 3)                                                                         # optional - sage.modules
+                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])                                                          # optional - sage.modules
+                sage: M.echelon_form([A, A])                                                                            # optional - sage.modules
                 [
                 [0 0 1]
                 [0 0 0]
@@ -358,8 +358,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             We convert the input elements to ``self``::
 
-                sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-                sage: E.echelon_form([1, x + 2])
+                sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                                   # optional - sage.modules, sage.combinat
+                sage: E.echelon_form([1, x + 2])                                                                        # optional - sage.modules, sage.combinat
                 [1, x]
             """
             # Make sure elements consists of elements of ``self``
@@ -411,13 +411,13 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             of the symmetric group::
 
                 sage: G = SymmetricGroup(3); G.rename('S3')                     # optional - sage.groups
-                sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')    # optional - sage.groups
-                sage: action = lambda g, x: M.term(g(x))                        # optional - sage.groups
-                sage: I = M.invariant_module(G, action_on_basis=action); I      # optional - sage.groups
+                sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')    # optional - sage.groups                # optional - sage.modules
+                sage: action = lambda g, x: M.term(g(x))
+                sage: I = M.invariant_module(G, action_on_basis=action); I      # optional - sage.groups                # optional - sage.modules
                 (S3)-invariant submodule of M
-                sage: I.basis()                                                 # optional - sage.groups
+                sage: I.basis()                                                 # optional - sage.groups                # optional - sage.modules
                 Finite family {0: B[0]}
-                sage: [I.lift(b) for b in I.basis()]                            # optional - sage.groups
+                sage: [I.lift(b) for b in I.basis()]                            # optional - sage.groups                # optional - sage.modules
                 [M[1] + M[2] + M[3]]
 
                 sage: G.rename(); M.rename()  # reset the names
@@ -434,12 +434,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                  of (Dihedral group of order 8 as a permutation group)
                 sage: H.cardinality()                                           # optional - sage.groups
                 4
-                sage: A = G.algebra(QQ)                                         # optional - sage.groups
-                sage: I = A.invariant_module(H)                                 # optional - sage.groups
-                sage: [I.lift(b) for b in I.basis()]                            # optional - sage.groups
+                sage: A = G.algebra(QQ)                                         # optional - sage.groups                # optional - sage.modules
+                sage: I = A.invariant_module(H)                                 # optional - sage.groups                # optional - sage.modules
+                sage: [I.lift(b) for b in I.basis()]                            # optional - sage.groups                # optional - sage.modules
                 [() + (1,2,3,4) + (1,3)(2,4) + (1,4,3,2),
                  (2,4) + (1,2)(3,4) + (1,3) + (1,4)(2,3)]
-                sage: all(h * I.lift(b) == I.lift(b)                            # optional - sage.groups
+                sage: all(h * I.lift(b) == I.lift(b)                            # optional - sage.groups                # optional - sage.modules
                 ....:     for b in I.basis() for h in H)
                 True
             """
@@ -482,12 +482,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: M = CombinatorialFreeModule(QQ, [1,2,3])                              # optional - sage.groups
+                sage: M = CombinatorialFreeModule(QQ, [1,2,3])                              # optional - sage.groups    # optional - sage.modules
                 sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
-                sage: def action(g,x): return(M.term(g(x))) # permute coordinates           # optional - sage.groups
-                sage: T = M.twisted_invariant_module(G, [2,0,-1], action_on_basis=action)   # optional - sage.groups
-                sage: import __main__; __main__.action = action                             # optional - sage.groups
-                sage: TestSuite(T).run()                                                    # optional - sage.groups
+                sage: def action(g,x): return(M.term(g(x))) # permute coordinates
+                sage: T = M.twisted_invariant_module(G, [2,0,-1], action_on_basis=action)   # optional - sage.groups    # optional - sage.modules
+                sage: import __main__; __main__.action = action
+                sage: TestSuite(T).run()                                                    # optional - sage.groups    # optional - sage.modules
             """
 
             if action_on_basis is not None:
@@ -516,12 +516,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: v = vector([0, -1, -3])
-                sage: v.dense_coefficient_list()
+                sage: v = vector([0, -1, -3])                                                                           # optional - sage.modules
+                sage: v.dense_coefficient_list()                                                                        # optional - sage.modules
                 [0, -1, -3]
-                sage: v.dense_coefficient_list([2,1,0])
+                sage: v.dense_coefficient_list([2,1,0])                                                                 # optional - sage.modules
                 [-3, -1, 0]
-                sage: sorted(v.coefficients())
+                sage: sorted(v.coefficients())                                                                          # optional - sage.modules
                 [-3, -1]
             """
             if order is None:
@@ -537,11 +537,11 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: v = vector([0, -1, -3])
-                sage: v._vector_()
+                sage: v = vector([0, -1, -3])                                                                           # optional - sage.modules
+                sage: v._vector_()                                                                                      # optional - sage.modules
                 (0, -1, -3)
-                sage: C = CombinatorialFreeModule(QQ['x'], ['a','b','c'])
-                sage: C.an_element()._vector_()
+                sage: C = CombinatorialFreeModule(QQ['x'], ['a','b','c'])                                               # optional - sage.modules
+                sage: C.an_element()._vector_()                                                                         # optional - sage.modules
                 (2, 2, 3)
             """
             if order is None:
@@ -579,30 +579,30 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: X = CombinatorialFreeModule(ZZ, [1,2]); x = X.basis()
-                sage: Y = CombinatorialFreeModule(ZZ, [3,4]); y = Y.basis()
-                sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
+                sage: X = CombinatorialFreeModule(ZZ, [1,2]); x = X.basis()                                             # optional - sage.modules
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4]); y = Y.basis()                                             # optional - sage.modules
+                sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,            # optional - sage.modules
                 ....:                         codomain = Y)
-                sage: phi.matrix()
+                sage: phi.matrix()                                                                                      # optional - sage.modules
                 [1 2]
                 [3 5]
-                sage: phi.matrix(side="right")
+                sage: phi.matrix(side="right")                                                                          # optional - sage.modules
                 [1 3]
                 [2 5]
 
-                sage: phi.matrix().parent()
+                sage: phi.matrix().parent()                                                                             # optional - sage.modules
                 Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-                sage: phi.matrix(QQ).parent()
+                sage: phi.matrix(QQ).parent()                                                                           # optional - sage.modules
                 Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
             The resulting matrix is immutable::
 
-                sage: phi.matrix().is_mutable()
+                sage: phi.matrix().is_mutable()                                                                         # optional - sage.modules
                 False
 
             The zero morphism has a zero matrix::
 
-                sage: Hom(X,Y).zero().matrix()
+                sage: Hom(X, Y).zero().matrix()                                                                         # optional - sage.modules
                 [0 0]
                 [0 0]
 
@@ -611,10 +611,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Add support for morphisms where the codomain has a
                 different base ring than the domain::
 
-                    sage: Y = CombinatorialFreeModule(QQ, [3,4]); y = Y.basis()
-                    sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5/2*y[4]}.__getitem__,
+                    sage: Y = CombinatorialFreeModule(QQ, [3,4]); y = Y.basis()                                         # optional - sage.modules
+                    sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5/2*y[4]}.__getitem__,      # optional - sage.modules
                     ....:                         codomain = Y)
-                    sage: phi.matrix().parent()          # todo: not implemented
+                    sage: phi.matrix().parent()          # todo: not implemented                                        # optional - sage.modules
                     Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
                 This currently does not work because, in this case,
@@ -622,20 +622,20 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 additive groups (i.e. the intersection of the
                 categories of modules over `\ZZ` and over `\QQ`)::
 
-                    sage: phi.parent().homset_category()
+                    sage: phi.parent().homset_category()                                                                # optional - sage.modules
                     Category of commutative additive semigroups
-                    sage: phi.parent().homset_category() # todo: not implemented
+                    sage: phi.parent().homset_category() # todo: not implemented                                        # optional - sage.modules
                     Category of finite dimensional modules with basis over Integer Ring
 
             TESTS:
 
             Check that :trac:`23216` is fixed::
 
-                sage: X = CombinatorialFreeModule(QQ, [])
-                sage: Y = CombinatorialFreeModule(QQ, [1,2,3])
-                sage: Hom(X,Y).zero().matrix()
+                sage: X = CombinatorialFreeModule(QQ, [])                                                               # optional - sage.modules
+                sage: Y = CombinatorialFreeModule(QQ, [1,2,3])                                                          # optional - sage.modules
+                sage: Hom(X, Y).zero().matrix()                                                                         # optional - sage.modules
                 []
-                sage: Hom(X,Y).zero().matrix().parent()
+                sage: Hom(X, Y).zero().matrix().parent()                                                                # optional - sage.modules
                 Full MatrixSpace of 3 by 0 dense matrices over Rational Field
             """
             if base_ring is None:
@@ -665,41 +665,41 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: category = FiniteDimensionalModulesWithBasis(ZZ)
-                sage: X = CombinatorialFreeModule(ZZ, [1,2], category = category); X.rename("X"); x = X.basis()
-                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category = category); Y.rename("Y"); y = Y.basis()
-                sage: phi = X.module_morphism(on_basis = {1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
-                ....:                         codomain = Y, category = category)
-                sage: psi = ~phi
-                sage: psi
+                sage: X = CombinatorialFreeModule(ZZ, [1,2], category=category); X.rename("X"); x = X.basis()           # optional - sage.modules
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category=category); Y.rename("Y"); y = Y.basis()           # optional - sage.modules
+                sage: phi = X.module_morphism(on_basis={1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,              # optional - sage.modules
+                ....:                         codomain=Y, category=category)
+                sage: psi = ~phi                                                                                        # optional - sage.modules
+                sage: psi                                                                                               # optional - sage.modules
                 Generic morphism:
                   From: Y
                   To:   X
-                sage: psi.parent()
+                sage: psi.parent()                                                                                      # optional - sage.modules
                 Set of Morphisms from Y to X in Category of finite dimensional modules with basis over Integer Ring
-                sage: psi(y[3])
+                sage: psi(y[3])                                                                                         # optional - sage.modules
                 -5*B[1] + 3*B[2]
-                sage: psi(y[4])
+                sage: psi(y[4])                                                                                         # optional - sage.modules
                 2*B[1] - B[2]
-                sage: psi.matrix()
+                sage: psi.matrix()                                                                                      # optional - sage.modules
                 [-5  2]
                 [ 3 -1]
-                sage: psi(phi(x[1])), psi(phi(x[2]))
+                sage: psi(phi(x[1])), psi(phi(x[2]))                                                                    # optional - sage.modules
                 (B[1], B[2])
-                sage: phi(psi(y[3])), phi(psi(y[4]))
+                sage: phi(psi(y[3])), phi(psi(y[4]))                                                                    # optional - sage.modules
                 (B[3], B[4])
 
             We check that this function complains if the morphism is not invertible::
 
-                sage: phi = X.module_morphism(on_basis = {1: y[3] + y[4], 2: y[3] + y[4]}.__getitem__,
-                ....:                         codomain = Y, category = category)
-                sage: ~phi
+                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + y[4]}.__getitem__,                    # optional - sage.modules
+                ....:                         codomain=Y, category=category)
+                sage: ~phi                                                                                              # optional - sage.modules
                 Traceback (most recent call last):
                 ...
                 RuntimeError: morphism is not invertible
 
-                sage: phi = X.module_morphism(on_basis = {1: y[3] + y[4], 2: y[3] + 5*y[4]}.__getitem__,
-                ....:                         codomain = Y, category = category)
-                sage: ~phi
+                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + 5*y[4]}.__getitem__,                  # optional - sage.modules
+                ....:                         codomain=Y, category=category)
+                sage: ~phi                                                                                              # optional - sage.modules
                 Traceback (most recent call last):
                 ...
                 RuntimeError: morphism is not invertible
@@ -719,9 +719,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups
-                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups
-                sage: f.kernel_basis()                                                  # optional - sage.groups
+                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups        # optional - sage.modules
+                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups        # optional - sage.modules
+                sage: f.kernel_basis()                                                  # optional - sage.groups        # optional - sage.modules
                 ([1, 2, 3] - [3, 2, 1], [1, 3, 2] - [3, 2, 1], [2, 1, 3] - [3, 2, 1])
             """
             return tuple(map( self.domain().from_vector,
@@ -733,12 +733,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups
-                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups
-                sage: K = f.kernel()                                                    # optional - sage.groups
-                sage: K                                                                 # optional - sage.groups
+                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups        # optional - sage.modules
+                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups        # optional - sage.modules
+                sage: K = f.kernel()                                                    # optional - sage.groups        # optional - sage.modules
+                sage: K                                                                 # optional - sage.groups        # optional - sage.modules
                 Free module generated by {0, 1, 2} over Rational Field
-                sage: K.ambient()                                                       # optional - sage.groups
+                sage: K.ambient()                                                       # optional - sage.groups        # optional - sage.modules
                 Symmetric group algebra of order 3 over Rational Field
             """
             D = self.domain()
@@ -751,9 +751,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups
-                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups
-                sage: f.image_basis()                                                   # optional - sage.groups
+                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups        # optional - sage.modules
+                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups        # optional - sage.modules
+                sage: f.image_basis()                                                   # optional - sage.groups        # optional - sage.modules
                 ([1, 2, 3], [2, 3, 1], [3, 1, 2])
             """
             C = self.codomain()
@@ -765,9 +765,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups
-                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups
-                sage: f.image()                                                         # optional - sage.groups
+                sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                # optional - sage.groups        # optional - sage.modules
+                sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # optional - sage.groups        # optional - sage.modules
+                sage: f.image()                                                         # optional - sage.groups        # optional - sage.modules
                 Free module generated by {0, 1, 2} over Rational Field
             """
             C = self.codomain()
