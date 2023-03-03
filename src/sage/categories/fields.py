@@ -231,8 +231,8 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R.<x> = QQbar[]
-                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)
+                sage: R.<x> = QQbar[]                                           # optional - sage.rings.number_field
+                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)              # optional - sage.rings.number_field
                 x
 
             TESTS::

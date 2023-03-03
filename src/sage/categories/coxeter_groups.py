@@ -738,9 +738,9 @@ class CoxeterGroups(Category_singleton):
             representation of elements in the output cells but not the method
             used for the cell computation::
 
-                sage: W = CoxeterGroup('A2')
-                sage: KL_cells = W.kazhdan_lusztig_cells(side='right')
-                sage: set([tuple(sorted(C, key=lambda w: w.reduced_word()))
+                sage: W = CoxeterGroup('A2')                                                                            # optional - sage.combinat, sage.groups
+                sage: KL_cells = W.kazhdan_lusztig_cells(side='right')                                                  # optional - sage.combinat, sage.groups
+                sage: set([tuple(sorted(C, key=lambda w: w.reduced_word()))                                             # optional - sage.combinat, sage.groups
                 ....:      for C in KL_cells])
                 {(
                 [-1  1]  [ 0 -1]
@@ -758,11 +758,11 @@ class CoxeterGroups(Category_singleton):
                 [ 1  0]  [-1  1]
                 [ 1 -1], [-1  0]
                 )}
-                sage: len(KL_cells)
+                sage: len(KL_cells)                                                                                     # optional - sage.combinat, sage.groups
                 4
 
-                sage: W = CoxeterGroup('A2', implementation='permutation')
-                sage: len(W.kazhdan_lusztig_cells(side='right'))
+                sage: W = CoxeterGroup('A2', implementation='permutation')                                              # optional - sage.combinat, sage.groups
+                sage: len(W.kazhdan_lusztig_cells(side='right'))                                                        # optional - sage.combinat, sage.groups
                 4
 
             We compute the left cells in the Coxeter group of type `A_3`
@@ -825,8 +825,8 @@ class CoxeterGroups(Category_singleton):
 
             TESTS::
 
-                sage: W = CoxeterGroup(['A', 2, 1])
-                sage: W.kazhdan_lusztig_cells()
+                sage: W = CoxeterGroup(['A', 2, 1])                                                                     # optional - sage.combinat, sage.groups
+                sage: W.kazhdan_lusztig_cells()                                                                         # optional - sage.combinat, sage.groups
                 Traceback (most recent call last):
                 ...
                 ValueError: the Coxeter group must be finite to compute Kazhdan--Lusztig cells
@@ -1600,7 +1600,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroups().example()
                 sage: s = W.simple_reflections()
                 sage: w = s[0] * s[2]
-                sage: sorted(w.reduced_words())
+                sage: sorted(w.reduced_words())                                                                         # optional - sage.combinat
                 [[0, 2], [2, 0]]
 
                 sage: W = WeylGroup(['E', 6])                                                                           # optional - sage.combinat, sage.groups
@@ -2648,7 +2648,7 @@ class CoxeterGroups(Category_singleton):
                 s3*s4*s1*s2*s3*s4*s2*s3*s1
                 sage: v.apply_demazure_product((1,3,4,3), side='left')                                                  # optional - sage.combinat, sage.groups
                 s3*s4*s1*s2*s3*s4*s2*s3*s1
-                sage: v.apply_demazure_product(v)
+                sage: v.apply_demazure_product(v)                                                                       # optional - sage.combinat, sage.groups
                 s2*s3*s4*s1*s2*s3*s4*s2*s3*s2*s1
 
             """

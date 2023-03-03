@@ -541,7 +541,7 @@ class Magmas(Category_singleton):
 
                 TESTS::
 
-                    sage: S.is_empty.__module__
+                    sage: S.is_empty.__module__                                 # optional - sage.groups
                     'sage.categories.magmas'
                     sage: M.is_empty.__module__
                     'sage.categories.magmas'
@@ -872,8 +872,8 @@ class Magmas(Category_singleton):
             The default is to represent elements as lowercase
             ASCII letters.  ::
 
-                sage: G = CyclicPermutationGroup(5)
-                sage: G.multiplication_table()
+                sage: G = CyclicPermutationGroup(5)                                                                     # optional - sage.groups
+                sage: G.multiplication_table()                                                                          # optional - sage.groups
                 *  a b c d e
                  +----------
                 a| a b c d e

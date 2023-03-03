@@ -213,7 +213,7 @@ class DiscreteValuationFields(Category_singleton):
 
     EXAMPLES::
 
-        sage: Qp(7) in DiscreteValuationFields()
+        sage: Qp(7) in DiscreteValuationFields()                                                                        # optional - sage.rings.padics
         True
         sage: TestSuite(DiscreteValuationFields()).run()
     """
