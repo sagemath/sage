@@ -1149,15 +1149,16 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: Out = Sets().WithRealizations().example().Out(); Out
+                    sage: Out = Sets().WithRealizations().example().Out(); Out                                          # optional - sage.combinat, sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-                    sage: Out.product
-                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
-                    sage: Out.product.__module__
+                    sage: Out.product                                                                                   # optional - sage.combinat, sage.modules
+                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion
+                     of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
+                    sage: Out.product.__module__                                                                        # optional - sage.combinat, sage.modules
                     'sage.categories.magmas'
-                    sage: x = Out.an_element()
-                    sage: y = Out.an_element()
-                    sage: Out.product(x, y)
+                    sage: x = Out.an_element()                                                                          # optional - sage.combinat, sage.modules
+                    sage: y = Out.an_element()                                                                          # optional - sage.combinat, sage.modules
+                    sage: Out.product(x, y)                                                                             # optional - sage.combinat, sage.modules
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
 
                 """

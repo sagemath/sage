@@ -1029,8 +1029,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             TESTS::
 
                 sage: R.<x,y> = QQ[]
-                sage: W = DifferentialWeylAlgebra(R)
-                sage: W._sum_of_monomials([((1,0), (1,0)), ((0,0), (0,1))])
+                sage: W = DifferentialWeylAlgebra(R)                                                                    # optional - sage.combinat, sage.modules
+                sage: W._sum_of_monomials([((1,0), (1,0)), ((0,0), (0,1))])                                             # optional - sage.combinat, sage.modules
                 dy + x*dx
             """
             # This is the generic implementation. When implementing a
@@ -1441,12 +1441,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Test that ``coefficient`` also works for those parents that do
             not have an ``element_class``::
 
-                sage: H = pAdicWeightSpace(3)
-                sage: F = CombinatorialFreeModule(QQ, H)                                                                # optional - sage.modules
-                sage: hasattr(H, "element_class")
+                sage: H = pAdicWeightSpace(3)                                                                           # optional - sage.modules, sage.rings.padics
+                sage: F = CombinatorialFreeModule(QQ, H)                                                                # optional - sage.modules, sage.rings.padics
+                sage: hasattr(H, "element_class")                                                                       # optional - sage.modules, sage.rings.padics
                 False
-                sage: h = H.an_element()
-                sage: (2*F.monomial(h)).coefficient(h)                                                                  # optional - sage.modules
+                sage: h = H.an_element()                                                                                # optional - sage.modules, sage.rings.padics
+                sage: (2*F.monomial(h)).coefficient(h)                                                                  # optional - sage.modules, sage.rings.padics
                 2
             """
             # NT: coefficient_fast should be the default, just with appropriate assertions

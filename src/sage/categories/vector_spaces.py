@@ -253,7 +253,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                                                    # optional - sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -274,7 +274,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                                                    # optional - sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
