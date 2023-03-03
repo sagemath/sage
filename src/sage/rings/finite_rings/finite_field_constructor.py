@@ -791,24 +791,32 @@ GF = FiniteField = FiniteFieldFactory("FiniteField")
 
 def is_PrimeFiniteField(x):
     """
-    Returns True if x is a prime finite field.
+    Returns True if ``x`` is a prime finite field.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
         sage: is_PrimeFiniteField(QQ)
+        doctest:...: DeprecationWarning: the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_PrimeFiniteField(GF(7))
         True
-        sage: is_PrimeFiniteField(GF(7^2,'a'))
+        sage: is_PrimeFiniteField(GF(7^2, 'a'))
         False
-        sage: is_PrimeFiniteField(GF(next_prime(10^90,proof=False)))
+        sage: is_PrimeFiniteField(GF(next_prime(10^90, proof=False)))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead")
+
     from .finite_field_prime_modn import FiniteField_prime_modn
     from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
     return isinstance(x, FiniteField_prime_modn) or \
            (isinstance(x, FiniteField_generic) and x.degree() == 1)
+
 
 zech_log_bound = 2**16
