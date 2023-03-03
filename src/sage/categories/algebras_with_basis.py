@@ -91,9 +91,9 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_prod() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
-        sage: A.__class__
+        sage: A.__class__                                                                                               # optional - sage.combinat
         <class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category'>
-        sage: A.element_class
+        sage: A.element_class                                                                                           # optional - sage.combinat
         <class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category.element_class'>
 
     Please see the source code of `A` (with ``A??``) for how to
@@ -316,7 +316,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: A.one_basis()                                                                                         # optional - sage.combinat
                     word:
                     sage: B = tensor((A, A, A))                                                                                 # optional - sage.combinat
-                    sage: B.one_basis()
+                    sage: B.one_basis()                                                                                         # optional - sage.combinat
                     (word: , word: , word: )                                                                                    # optional - sage.combinat
                     sage: B.one()                                                                                               # optional - sage.combinat
                     B[word: ] # B[word: ] # B[word: ]

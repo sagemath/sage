@@ -371,11 +371,11 @@ class EnumeratedSets(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(stop=-3)
+                sage: P.unrank_range(stop=-3)                                                                           # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(start=-3)
+                sage: P.unrank_range(start=-3)                                                                          # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
