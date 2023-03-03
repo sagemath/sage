@@ -653,10 +653,10 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[191:263]
+        sage: identity_matrix(2).rook_vector.__doc__[191:263]                                                           # optional - sage.modules
         'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
 
-        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])
+        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])                                                   # optional - sage.modules
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
@@ -1396,8 +1396,8 @@ def my_getsource(obj, oname=''):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix)
-        sage: s[15:34]
+        sage: s = my_getsource(identity_matrix)                                                                         # optional - sage.modules
+        sage: s[15:34]                                                                                                  # optional - sage.modules
         'def identity_matrix'
     """
     try:
