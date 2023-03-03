@@ -47,14 +47,14 @@ This example illustrates generators for a free module over `\ZZ`.
 
 ::
 
-    sage: M = FreeModule(ZZ, 4)
-    sage: M
+    sage: M = FreeModule(ZZ, 4)                                                                                         # optional - sage.modules
+    sage: M                                                                                                             # optional - sage.modules
     Ambient free module of rank 4 over the principal ideal domain Integer Ring
-    sage: M.ngens()
+    sage: M.ngens()                                                                                                     # optional - sage.modules
     4
-    sage: M.gen(0)
+    sage: M.gen(0)                                                                                                      # optional - sage.modules
     (1, 0, 0, 0)
-    sage: M.gens()
+    sage: M.gens()                                                                                                      # optional - sage.modules
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
