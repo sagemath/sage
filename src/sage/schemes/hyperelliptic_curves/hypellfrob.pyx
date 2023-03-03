@@ -38,8 +38,9 @@ from libcpp.vector cimport vector
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
 from sage.libs.ntl.all import ZZ, ZZX
 from sage.matrix.constructor import Matrix
-from sage.rings.all import Qp, O as big_oh
-from sage.arith.all import is_prime
+from sage.rings.padics.factory import Qp
+from sage.rings.big_oh import O as big_oh
+from sage.arith.misc import is_prime
 
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
