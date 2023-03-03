@@ -31,7 +31,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
@@ -233,7 +233,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)
-        if is_FiniteField(base_field):
+        if isinstance(base_field, FiniteField):
             return ProjectiveConic_finite_field(P2, F)
         if is_RationalField(base_field):
             return ProjectiveConic_rational_field(P2, F)
