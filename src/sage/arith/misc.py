@@ -1515,13 +1515,13 @@ def divisors(n):
 
     This function works whenever one has unique factorization::
 
-        sage: K.<a> = QuadraticField(7)
-        sage: divisors(K.ideal(7))
+        sage: K.<a> = QuadraticField(7)                                                             # optional - sage.rings.number_field
+        sage: divisors(K.ideal(7))                                                                  # optional - sage.rings.number_field
         [Fractional ideal (1), Fractional ideal (a), Fractional ideal (7)]
-        sage: divisors(K.ideal(3))
+        sage: divisors(K.ideal(3))                                                                  # optional - sage.rings.number_field
         [Fractional ideal (1), Fractional ideal (3),
         Fractional ideal (a - 2), Fractional ideal (a + 2)]
-        sage: divisors(K.ideal(35))
+        sage: divisors(K.ideal(35))                                                                 # optional - sage.rings.number_field
         [Fractional ideal (1), Fractional ideal (5), Fractional ideal (a),
         Fractional ideal (7), Fractional ideal (5*a), Fractional ideal (35)]
 
@@ -2619,8 +2619,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     Any object which has a factor method can be factored like this::
 
-        sage: K.<i> = QuadraticField(-1)
-        sage: factor(122 - 454*i)
+        sage: K.<i> = QuadraticField(-1)                                                            # optional - sage.rings.number_field
+        sage: factor(122 - 454*i)                                                                   # optional - sage.rings.number_field
         (-i) * (-i - 2)^3 * (i + 1)^3 * (-2*i + 3) * (i + 4)
 
     To access the data in a factorization::
@@ -2696,8 +2696,8 @@ def radical(n, *args, **kwds):
         Traceback (most recent call last):
         ...
         ArithmeticError: radical of 0 is not defined
-        sage: K.<i> = QuadraticField(-1)
-        sage: radical(K(2))
+        sage: K.<i> = QuadraticField(-1)                                                            # optional - sage.rings.number_field
+        sage: radical(K(2))                                                                         # optional - sage.rings.number_field
         i + 1
 
     Tests with numpy and gmpy2 numbers::
