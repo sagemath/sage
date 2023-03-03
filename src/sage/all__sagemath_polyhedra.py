@@ -12,4 +12,3 @@ from sage.numerical.all__sagemath_polyhedra import *
 
 true = True
 false = False
-oo = infinity

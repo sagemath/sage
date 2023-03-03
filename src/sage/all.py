@@ -186,7 +186,6 @@ ZZ = IntegerRing()
 
 true = True
 false = False
-oo = infinity
 from sage.rings.imaginary_unit import I
 i = I
 

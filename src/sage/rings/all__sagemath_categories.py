@@ -24,6 +24,7 @@ Integers = IntegerModRing
 
 # Infinities
 from .infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
+oo = infinity
 
 # Quotient
 from .quotient_ring import QuotientRing
