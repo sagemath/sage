@@ -681,7 +681,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
             # If vertex u has k active neighbors, we have 2^k possibilities. We
             # use the binary representation of n_cpt[i] to indicate which of the
             # k neighbors are selected. We omit the empty neighborhood which is
-            # considered else where.
+            # considered elsewhere.
             n_cpt[i] -= 1
             c = n_cpt[i]
             if num_edges + _bitset_len(&c, 1) > max_edges:
