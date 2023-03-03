@@ -93,7 +93,7 @@ include sage/rings/polynomial/multi_polynomial_ring.p*
 include sage/rings/polynomial/multi_polynomial_ring_base.p*
 include sage/rings/polynomial/multi_polynomial_sequence.p*
 include sage/rings/polynomial/multi_polynomial_ideal.p*
-include sage/rings/polynomial/infinite_polynomial_ring.p*
+include sage/rings/polynomial/infinite_polynomial_*.p*
 include sage/rings/polynomial/commutative_polynomial.p*
 include sage/rings/polynomial/polynomial_compiled.p*
 include sage/rings/polynomial/polynomial_element.p*
