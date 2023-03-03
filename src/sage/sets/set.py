@@ -411,7 +411,7 @@ class Set_add_sub_operators:
 
         EXAMPLES::
 
-            sage: Set(RealField()) + Set(QQ^5)
+            sage: Set(RealField()) + Set(QQ^5)                                                                          # optional - sage.modules
              Set-theoretic union of
               Set of elements of Real Field with 53 bits of precision and
               Set of elements of Vector space of dimension 5 over Rational Field
@@ -785,9 +785,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1, 2, 3])
-            sage: list(X.subsets())
+            sage: list(X.subsets())                                             # optional - sage.combinat
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-            sage: list(X.subsets(2))
+            sage: list(X.subsets(2))                                            # optional - sage.combinat
             [{1, 2}, {1, 3}, {2, 3}]
         """
         from sage.combinat.subset import Subsets
@@ -1258,10 +1258,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
     EXAMPLES::
 
-        sage: X = Set(QQ^2)
+        sage: X = Set(QQ^2)                                                                                             # optional - sage.modules
         sage: Y = Set(ZZ)
         sage: from sage.sets.set import Set_object_binary
-        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S
+        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S                                                          # optional - sage.modules
         Set-theoretic union of
          Set of elements of Vector space of dimension 2 over Rational Field and
          Set of elements of Integer Ring
@@ -1275,9 +1275,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = QQ^2
+            sage: X = QQ^2                                                                                              # optional - sage.modules
             sage: Y = ZZ
-            sage: Set_object_binary(X, Y, "union", "\\cup")
+            sage: Set_object_binary(X, Y, "union", "\\cup")                                                             # optional - sage.modules
             Set-theoretic union of
              Set of elements of Vector space of dimension 2 over Rational Field and
              Set of elements of Integer Ring
@@ -1295,10 +1295,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = Set(QQ^2)
+            sage: X = Set(QQ^2)                                                                                         # optional - sage.modules
             sage: Y = Set(ZZ)
-            sage: S = Set_object_binary(X, Y, "union", "\\cup")
-            sage: type(S)
+            sage: S = Set_object_binary(X, Y, "union", "\\cup")                                                         # optional - sage.modules
+            sage: type(S)                                                                                               # optional - sage.modules
             <class 'sage.sets.set.Set_object_binary_with_category'>
         """
         self._X = X
@@ -1365,17 +1365,17 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)
+            sage: S = Set(QQ^2)                                                                                         # optional - sage.modules
             sage: T = Set(ZZ)
-            sage: X = S.union(T); X
+            sage: X = S.union(T); X                                                                                     # optional - sage.modules
             Set-theoretic union of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
-            sage: X.category()
+            sage: X.category()                                                                                          # optional - sage.modules
             Category of infinite sets
 
-            sage: latex(X)
+            sage: latex(X)                                                                                              # optional - sage.modules
             \Bold{Q}^{2} \cup \Bold{Z}
 
-            sage: TestSuite(X).run()
+            sage: TestSuite(X).run()                                                                                    # optional - sage.modules
         """
         if category is None:
             category = Sets()
@@ -1518,13 +1518,15 @@ class Set_object_intersection(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)
-            sage: T = Set(ZZ)
-            sage: X = S.intersection(T); X
-            Set-theoretic intersection of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
-            sage: X.category()
+            sage: S = Set(QQ^2)                                                                                         # optional - sage.modules
+            sage: T = Set(ZZ)                                                                                           # optional - sage.modules
+            sage: X = S.intersection(T); X                                                                              # optional - sage.modules
+            Set-theoretic intersection of
+             Set of elements of Vector space of dimension 2 over Rational Field and
+             Set of elements of Integer Ring
+            sage: X.category()                                                                                          # optional - sage.modules
             Category of enumerated sets
-            sage: latex(X)
+            sage: latex(X)                                                                                              # optional - sage.modules
             \Bold{Q}^{2} \cap \Bold{Z}
 
             sage: X = Set(IntegerRange(100)).intersection(Primes())

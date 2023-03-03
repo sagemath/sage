@@ -72,12 +72,12 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])
+            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])                                                            # optional - sage.modules
             sage: R.<x,y> = QQ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)
-            sage: Im = f.image()
-            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
+            sage: H = Hom(M, R, category=Sets())                                                                        # optional - sage.modules
+            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)                                 # optional - sage.modules
+            sage: Im = f.image()                                                                                        # optional - sage.modules
+            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',                                         # optional - sage.modules
             ....:                         '_test_some_elements', '_test_elements'])
         """
         if not is_Parent(domain_subset):
@@ -173,12 +173,12 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
-            sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: Im.ambient() is R
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                                                         # optional - sage.modules
+            sage: R.<x,y> = ZZ[]                                                                                        # optional - sage.modules
+            sage: H = Hom(M, R, category=Sets())                                                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                                                  # optional - sage.modules
+            sage: Im = f.image()                                                                                        # optional - sage.modules
+            sage: Im.ambient() is R                                                                                     # optional - sage.modules
             True
 
             sage: P = Partitions(3).map(attrcall('conjugate'))                                      # optional - sage.combinat
@@ -197,14 +197,14 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                                                         # optional - sage.modules
             sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: p = Im.lift(Im.an_element()); p
+            sage: H = Hom(M, R, category=Sets())                                                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                                                  # optional - sage.modules
+            sage: Im = f.image()                                                                                        # optional - sage.modules
+            sage: p = Im.lift(Im.an_element()); p                                                                       # optional - sage.modules
             2*x - 4
-            sage: p.parent() is R
+            sage: p.parent() is R                                                                                       # optional - sage.modules
             True
         """
         return x
@@ -219,13 +219,13 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
-            sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: p = 2 * x - 4
-            sage: Im.retract(p).parent()
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                                                         # optional - sage.modules
+            sage: R.<x,y> = ZZ[]                                                                                        # optional - sage.modules
+            sage: H = Hom(M, R, category=Sets())                                                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                                                  # optional - sage.modules
+            sage: Im = f.image()                                                                                        # optional - sage.modules
+            sage: p = 2 * x - 4                                                                                         # optional - sage.modules
+            sage: Im.retract(p).parent()                                                                                # optional - sage.modules
             Multivariate Polynomial Ring in x, y over Integer Ring
         """
         return x
@@ -251,8 +251,8 @@ class ImageSubobject(Parent):
         :meth:`~sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.map`
         defaults to ``is_injective=True``):
 
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.cardinality()
+            sage: R = Permutations(10).map(attrcall('reduced_word'))                                # optional - sage.combinat
+            sage: R.cardinality()                                                                   # optional - sage.combinat
             3628800
 
             sage: Evens = ZZ.map(lambda x: 2 * x)
