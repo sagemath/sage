@@ -446,8 +446,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']
-            sage: R(S.0)
+            sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']                                                          # optional - sage.rings.padics
+            sage: R(S.0)                                                                                                # optional - sage.rings.padics
             p
             sage: R = QQ['x,y,z,t,p']; S = ZZ['x']['y,z,t']['p']
             sage: z = S.base_ring().gen(1)
@@ -457,8 +457,8 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: z = S.base_ring().gen(1); p = S.0; x = S.base_ring().base_ring().gen()
             sage: R(z+p)
             z + p
-            sage: R = Qp(7)['x,y,z,p']; S = ZZ['x']['y,z,t']['p'] # shouldn't work, but should throw a better error
-            sage: R(S.0)
+            sage: R = Qp(7)['x,y,z,p']; S = ZZ['x']['y,z,t']['p'] # shouldn't work, but should throw a better error     # optional - sage.rings.padics
+            sage: R(S.0)                                                                                                # optional - sage.rings.padics
             p
 
         See :trac:`2601`::
@@ -1372,8 +1372,8 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x, y> = PolynomialRing(ZZ)
             sage: f = (y + 1)*x + 3*x**2
             sage: g = (y + 2)*x + 4*x**2
-            sage: M = f.sylvester_matrix(g, x)
-            sage: M
+            sage: M = f.sylvester_matrix(g, x)                                                                          # optional - sage.modules
+            sage: M                                                                                                     # optional - sage.modules
             [    3 y + 1     0     0]
             [    0     3 y + 1     0]
             [    4 y + 2     0     0]
@@ -1382,10 +1382,10 @@ cdef class MPolynomial(CommutativePolynomial):
         If the polynomials share a non-constant common factor then the
         determinant of the Sylvester matrix will be zero::
 
-            sage: M.determinant()
+            sage: M.determinant()                                                                                       # optional - sage.modules
             0
 
-            sage: f.sylvester_matrix(1 + g, x).determinant()
+            sage: f.sylvester_matrix(1 + g, x).determinant()                                                            # optional - sage.modules
             y^2 - y + 7
 
         If both polynomials are of positive degree with respect to variable, the
@@ -1393,7 +1393,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: f = R.random_element(4)
             sage: g = R.random_element(4)
-            sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)
+            sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)                                           # optional - sage.modules
             True
 
         TESTS:
@@ -1402,7 +1402,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: f = x + y
             sage: g = x + y
-            sage: f.sylvester_matrix(g)
+            sage: f.sylvester_matrix(g)                                                                                 # optional - sage.modules
             [1 y]
             [1 y]
 
@@ -1414,13 +1414,13 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: g = x + y
             sage: R.<x, y> = GF(25, 'a')[]
             sage: h = x + y
-            sage: f.sylvester_matrix(g, 'x')
+            sage: f.sylvester_matrix(g, 'x')                                                                            # optional - sage.modules
             [1 y]
             [1 y]
-            sage: g.sylvester_matrix(h, 'x')
+            sage: g.sylvester_matrix(h, 'x')                                                                            # optional - sage.modules
             [1 y]
             [1 y]
-            sage: f.sylvester_matrix(h, 'x')
+            sage: f.sylvester_matrix(h, 'x')                                                                            # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents: 'Multivariate Polynomial Ring in x, y over Rational Field' and 'Multivariate Polynomial Ring in x, y over Finite Field in a of size 5^2'
@@ -1428,31 +1428,31 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x + y
             sage: L.<x, z> = QQ[]
             sage: g = x + z
-            sage: f.sylvester_matrix(g)
+            sage: f.sylvester_matrix(g)                                                                                 # optional - sage.modules
             [1 y]
             [1 z]
 
         Corner cases::
 
-            sage: K.<x ,y>=QQ[]
-            sage: f = x^2+1
+            sage: K.<x, y>=QQ[]
+            sage: f = x^2 + 1
             sage: g = K(0)
-            sage: f.sylvester_matrix(g)
+            sage: f.sylvester_matrix(g)                                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: g.sylvester_matrix(f)
+            sage: g.sylvester_matrix(f)                                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: g.sylvester_matrix(g)
+            sage: g.sylvester_matrix(g)                                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: The Sylvester matrix is not defined for zero polynomials
-            sage: K(3).sylvester_matrix(x^2)
+            sage: K(3).sylvester_matrix(x^2)                                                                            # optional - sage.modules
             [3 0]
             [0 3]
-            sage: K(3).sylvester_matrix(K(4))
+            sage: K(3).sylvester_matrix(K(4))                                                                           # optional - sage.modules
             []
 
         """
@@ -1542,9 +1542,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Test polynomials over QQbar (:trac:`25265`)::
 
-            sage: R.<x,y>=QQbar[]
-            sage: f=x^5*y+3*x^2*y^2-2*x+y-1
-            sage: f.discriminant(y)
+            sage: R.<x,y> = QQbar[]                                                                                     # optional - sage.rings.number_field
+            sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1                                                                   # optional - sage.rings.number_field
+            sage: f.discriminant(y)                                                                                     # optional - sage.rings.number_field
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
 
         AUTHOR:
@@ -1624,7 +1624,7 @@ cdef class MPolynomial(CommutativePolynomial):
         The number of polynomials has to match the number of variables::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: y.macaulay_resultant(x+z)
+            sage: y.macaulay_resultant(x+z)                                                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: number of polynomials(= 2) must equal number of variables (= 3)
@@ -1632,7 +1632,7 @@ cdef class MPolynomial(CommutativePolynomial):
         The polynomials need to be all homogeneous::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: y.macaulay_resultant([x+z, z+x^3])
+            sage: y.macaulay_resultant([x+z, z+x^3])                                                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: resultant for non-homogeneous polynomials is not supported
@@ -1641,7 +1641,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: S.<x,y> = PolynomialRing(QQ, 2)
-            sage: y.macaulay_resultant(z+x,z)
+            sage: y.macaulay_resultant(z+x, z)                                                                          # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: not all inputs are polynomials in the calling ring
@@ -1649,15 +1649,15 @@ cdef class MPolynomial(CommutativePolynomial):
         The following example recreates Proposition 2.10 in Ch.3 of Using Algebraic Geometry::
 
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
-            sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,2])
-            sage: flist[0].macaulay_resultant(flist[1:])
+            sage: flist, R = K._macaulay_resultant_universal_polynomials([1,1,2])
+            sage: flist[0].macaulay_resultant(flist[1:])                                                                # optional - sage.modules
             u2^2*u4^2*u6 - 2*u1*u2*u4*u5*u6 + u1^2*u5^2*u6 - u2^2*u3*u4*u7 + u1*u2*u3*u5*u7 + u0*u2*u4*u5*u7 - u0*u1*u5^2*u7 + u1*u2*u3*u4*u8 - u0*u2*u4^2*u8 - u1^2*u3*u5*u8 + u0*u1*u4*u5*u8 + u2^2*u3^2*u9 - 2*u0*u2*u3*u5*u9 + u0^2*u5^2*u9 - u1*u2*u3^2*u10 + u0*u2*u3*u4*u10 + u0*u1*u3*u5*u10 - u0^2*u4*u5*u10 + u1^2*u3^2*u11 - 2*u0*u1*u3*u4*u11 + u0^2*u4^2*u11
 
         The following example degenerates into the determinant of a `3*3` matrix::
 
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
-            sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,1])
-            sage: flist[0].macaulay_resultant(flist[1:])
+            sage: flist, R = K._macaulay_resultant_universal_polynomials([1,1,1])
+            sage: flist[0].macaulay_resultant(flist[1:])                                                                # optional - sage.modules
             -u2*u4*u6 + u1*u5*u6 + u2*u3*u7 - u0*u5*u7 - u1*u3*u8 + u0*u4*u8
 
         The following example is by Patrick Ingram (:arxiv:`1310.4114`)::
@@ -1667,56 +1667,56 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f0 = y0*x2^2 - x0^2 + 2*x1*x2
             sage: f1 = y1*x2^2 - x1^2 + 2*x0*x2
             sage: f2 = x0*x1 - x2^2
-            sage: f0.macaulay_resultant(f1,f2)
+            sage: f0.macaulay_resultant(f1,f2)                                                                          # optional - sage.modules
             y0^2*y1^2 - 4*y0^3 - 4*y1^3 + 18*y0*y1 - 27
 
         a simple example with constant rational coefficients::
 
-            sage: R.<x,y,z,w> = PolynomialRing(QQ,4)
-            sage: w.macaulay_resultant([z,y,x])
+            sage: R.<x,y,z,w> = PolynomialRing(QQ, 4)
+            sage: w.macaulay_resultant([z, y, x])                                                                       # optional - sage.modules
             1
 
         an example where the resultant vanishes::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: (x+y).macaulay_resultant([y^2,x])
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: (x+y).macaulay_resultant([y^2, x])                                                                    # optional - sage.modules
             0
 
         an example of bad reduction at a prime ``p = 5``::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: y.macaulay_resultant([x^3+25*y^2*x,5*z])
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: y.macaulay_resultant([x^3 + 25*y^2*x, 5*z])                                                           # optional - sage.modules
             125
 
         The input can given as an unpacked list of polynomials::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: y.macaulay_resultant(x^3+25*y^2*x,5*z)
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: y.macaulay_resultant(x^3 + 25*y^2*x, 5*z)                                                             # optional - sage.modules
             125
 
         an example when the coefficients live in a finite field::
 
             sage: F = FiniteField(11)
             sage: R.<x,y,z,w> = PolynomialRing(F,4)
-            sage: z.macaulay_resultant([x^3,5*y,w])
+            sage: z.macaulay_resultant([x^3, 5*y, w])                                                                   # optional - sage.modules
             4
 
         example when the denominator in the algorithm vanishes(in this case
         the resultant is the constant term of the quotient of
         char polynomials of numerator/denominator)::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: y.macaulay_resultant([x+z, z^2])
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: y.macaulay_resultant([x + z, z^2])                                                                      # optional - sage.modules
             -1
 
         when there are only 2 polynomials, macaulay resultant degenerates to the traditional resultant::
 
-            sage: R.<x> = PolynomialRing(QQ,1)
-            sage: f =  x^2+1; g = x^5+1
+            sage: R.<x> = PolynomialRing(QQ, 1)
+            sage: f =  x^2+1; g = x^5 + 1
             sage: fh = f.homogenize()
             sage: gh = g.homogenize()
             sage: RH = fh.parent()
-            sage: f.resultant(g) == fh.macaulay_resultant(gh)
+            sage: f.resultant(g) == fh.macaulay_resultant(gh)                                                             # optional - sage.modules
             True
 
         """
@@ -1847,10 +1847,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: K.<x,y,z> = GF(3)['x, y, z']
-            sage: f = 2*x*z + 2*z^2 + 2*y + 1; f
+            sage: K.<x,y,z> = GF(3)['x, y, z']                                                                          # optional - sage.libs.pari
+            sage: f = 2*x*z + 2*z^2 + 2*y + 1; f                                                                        # optional - sage.libs.pari
             -x*z - z^2 - y + 1
-            sage: f.numerator()
+            sage: f.numerator()                                                                                         # optional - sage.libs.pari
             -x*z - z^2 - y + 1
 
         We check that the computation the numerator and denominator
@@ -2304,7 +2304,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,h> = PolynomialRing(QQ)
             sage: f = 19*x^8 - 262*x^7*h + 1507*x^6*h^2 - 4784*x^5*h^3 + 9202*x^4*h^4\
              -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
-            sage: f.reduced_form(prec=200, smallest_coeffs=False)
+            sage: f.reduced_form(prec=200, smallest_coeffs=False)                                                       # optional - sage.modules
             (
             -x^8 - 2*x^7*h + 7*x^6*h^2 + 16*x^5*h^3 + 2*x^4*h^4 - 2*x^3*h^5 + 4*x^2*h^6 - 5*h^8,
             <BLANKLINE>
@@ -2317,7 +2317,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: f = x^3 + 378666*x^2*y - 12444444*x*y^2 + 1234567890*y^3
             sage: j = f * (x-545*y)^9
-            sage: j.reduced_form(prec=200, smallest_coeffs=False)
+            sage: j.reduced_form(prec=200, smallest_coeffs=False)                                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: cannot have a root with multiplicity >= 12/2
@@ -2326,7 +2326,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = x^6 + 3*x^5*y - 8*x^4*y^2 - 2*x^3*y^3 - 44*x^2*y^4 - 8*x*y^5
-            sage: F.reduced_form(smallest_coeffs=False, prec=400)
+            sage: F.reduced_form(smallest_coeffs=False, prec=400)                                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
             ArithmeticError: Newton's method converged to z not in the upper half plane
@@ -2335,7 +2335,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = 5*x^2*y - 5*x*y^2 - 30*y^3
-            sage: F.reduced_form(smallest_coeffs=False)
+            sage: F.reduced_form(smallest_coeffs=False)                                                                 # optional - sage.modules
             (
                                         [1 1]
             5*x^2*y + 5*x*y^2 - 30*y^3, [0 1]
@@ -2345,7 +2345,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F=-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
-            sage: F.reduced_form(prec=50, smallest_coeffs=False)
+            sage: F.reduced_form(prec=50, smallest_coeffs=False)                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: accuracy of Newton's root not within tolerance(0.0000124... > 1e-06), increase precision
@@ -2359,14 +2359,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: F = - 8*x^4 - 3933*x^3*y - 725085*x^2*y^2 - 59411592*x*y^3 - 1825511633*y^4
-            sage: F.reduced_form(return_conjugation=False)
+            sage: F.reduced_form(return_conjugation=False)                                                              # optional - sage.modules
             x^4 + 9*x^3*y - 3*x*y^3 - 8*y^4
 
         ::
 
             sage: R.<x,y> = QQ[]
             sage: F = -2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3
-            sage: F.reduced_form()
+            sage: F.reduced_form()                                                                                      # optional - sage.modules
             (
                                                    [1 4]
             -2*x^3 - 22*x^2*y - 77*x*y^2 + 43*y^3, [0 1]
@@ -2376,7 +2376,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: F = -2*x^3 + 2*x^2*y + 3*x*y^2 + 127*y^3
-            sage: F.reduced_form(norm_type='height')
+            sage: F.reduced_form(norm_type='height')                                                                    # optional - sage.modules
             (
                                                     [5 4]
             -58*x^3 - 47*x^2*y + 52*x*y^2 + 43*y^3, [1 1]
@@ -2386,7 +2386,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: F = x^4 + x^3*y*z + y^2*z
-            sage: F.reduced_form()
+            sage: F.reduced_form()                                                                                      # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: (=x^3*y*z + x^4 + y^2*z) must have two variables
@@ -2395,7 +2395,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = PolynomialRing(ZZ)
             sage: F = - 8*x^6 - 3933*x^3*y - 725085*x^2*y^2 - 59411592*x*y^3 - 99*y^6
-            sage: F.reduced_form(return_conjugation=False)
+            sage: F.reduced_form(return_conjugation=False)                                                              # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: (=-8*x^6 - 99*y^6 - 3933*x^3*y - 725085*x^2*y^2 -
@@ -2406,7 +2406,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(RR)
             sage: F = 217.992172373276*x^3 + 96023.1505442490*x^2*y + 1.40987971253579e7*x*y^2\
             + 6.90016027113216e8*y^3
-            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8
+            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8                                                      # optional - sage.modules
             (
             -39.5673942565918*x^3 + 111.874026298523*x^2*y + 231.052762985229*x*y^2 - 138.380829811096*y^3,
             <BLANKLINE>
@@ -2419,7 +2419,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(CC)
             sage: F = (0.759099196558145 + 0.845425869641446*CC.0)*x^3 + (84.8317207268542 + 93.8840848648033*CC.0)*x^2*y\
             + (3159.07040755858 + 3475.33037377779*CC.0)*x*y^2 + (39202.5965389079 + 42882.5139724962*CC.0)*y^3
-            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-11
+            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-11                                                     # optional - sage.modules
             (
             (-0.759099196558145 - 0.845425869641446*I)*x^3 + (-0.571709908900118 - 0.0418133346027929*I)*x^2*y
             + (0.856525964330103 - 0.0721403997649759*I)*x*y^2 + (-0.965531044130330 + 0.754252314465703*I)*y^3,

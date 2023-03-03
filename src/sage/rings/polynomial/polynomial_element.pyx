@@ -488,12 +488,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         We evaluate a polynomial over a quaternion algebra::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-            sage: R.<w> = PolynomialRing(A,sparse=True)
-            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i
-            sage: f(i+j+1)
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                                                             # optional - sage.combinat, sage.modules
+            sage: R.<w> = PolynomialRing(A, sparse=True)                                                                # optional - sage.combinat, sage.modules
+            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                                  # optional - sage.combinat, sage.modules
+            sage: f(i+j+1)                                                                                              # optional - sage.combinat, sage.modules
             24 + 26*i - 10*j - 25*k
-            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i
+            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                           # optional - sage.combinat, sage.modules
             24 + 26*i - 10*j - 25*k
 
         The parent ring of the answer always "starts" with the parent of
@@ -504,17 +504,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = R(2/3)
-            sage: a = matrix(ZZ,2)
-            sage: b = f(a); b
+            sage: a = matrix(ZZ, 2)                                                                                     # optional - sage.combinat, sage.modules
+            sage: b = f(a); b                                                                                           # optional - sage.combinat, sage.modules
             [2/3   0]
             [  0 2/3]
-            sage: b.parent()
+            sage: b.parent()                                                                                            # optional - sage.combinat, sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: f = R(1)
-            sage: b = f(a); b
+            sage: b = f(a); b                                                                                           # optional - sage.combinat, sage.modules
             [1 0]
             [0 1]
-            sage: b.parent()
+            sage: b.parent()                                                                                            # optional - sage.combinat, sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
         ::
@@ -600,7 +600,7 @@ cdef class Polynomial(CommutativePolynomial):
             3
             sage: parent(f(0))
             Rational Field
-            sage: parent(f(Qp(5)(0)))
+            sage: parent(f(Qp(5)(0)))                                                                                   # optional - sage.rings.padics
             5-adic Field with capped relative precision 20
 
         TESTS:
@@ -1195,21 +1195,21 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: K.<u> = Qq(4)
-            sage: R.<x> = K[]
-            sage: f = x
-            sage: hash(f)
+            sage: K.<u> = Qq(4)                                                                                         # optional - sage.rings.padics
+            sage: R.<x> = K[]                                                                                           # optional - sage.rings.padics
+            sage: f = x                                                                                                 # optional - sage.rings.padics
+            sage: hash(f)                                                                                               # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
-            sage: f._cache_key()
+            sage: f._cache_key()                                                                                        # optional - sage.rings.padics
             (Univariate Polynomial Ring in x over 2-adic Unramified Extension Field in u defined by x^2 + x + 1,
              0,
              1 + O(2^20))
             sage: @cached_function
             ....: def foo(t): return t
             ....:
-            sage: foo(x)
+            sage: foo(x)                                                                                                # optional - sage.rings.padics
             (1 + O(2^20))*x
         """
         return (self._parent,) + tuple(self)
@@ -1246,9 +1246,9 @@ cdef class Polynomial(CommutativePolynomial):
         Verify that :trac:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
-            sage: K.<a> = Qq(9)
-            sage: R.<t> = K[]
-            sage: hash(t)
+            sage: K.<a> = Qq(9)                                                                                         # optional - sage.rings.padics
+            sage: R.<t> = K[]                                                                                           # optional - sage.rings.padics
+            sage: hash(t)                                                                                               # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
@@ -7358,8 +7358,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         This was fixed by :trac:`15422`::
 
-            sage: R.<s> = PolynomialRing(Qp(2))
-            sage: (s^2).discriminant()
+            sage: R.<s> = PolynomialRing(Qp(2))                                                                         # optional - sage.rings.padics
+            sage: (s^2).discriminant()                                                                                  # optional - sage.rings.padics
             0
 
         This was fixed by :trac:`16014`::
@@ -8048,19 +8048,19 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: pol = (x - 1)^2
-            sage: pol.roots(Qp(3,5))
+            sage: pol.roots(Qp(3, 5))                                                                                   # optional - sage.rings.padics
             [(1 + O(3^5), 2)]
 
         We lose precision if we first change coefficients to `\QQ_p`::
 
-            sage: pol.change_ring(Qp(3,5)).roots()
+            sage: pol.change_ring(Qp(3, 5)).roots()                                                                     # optional - sage.rings.padics
             [(1 + O(3^3), 2)]
 
-            sage: (pol - 3^6).roots(Qp(3,5))
+            sage: (pol - 3^6).roots(Qp(3, 5))                                                                           # optional - sage.rings.padics
             [(1 + 2*3^3 + 2*3^4 + O(3^5), 1), (1 + 3^3 + O(3^5), 1)]
-            sage: r = pol.roots(Zp(3,5), multiplicities=False); r
+            sage: r = pol.roots(Zp(3, 5), multiplicities=False); r                                                      # optional - sage.rings.padics
             [1 + O(3^5)]
-            sage: parent(r[0])
+            sage: parent(r[0])                                                                                          # optional - sage.rings.padics
             3-adic Ring with capped relative precision 5
 
         Spurious crash with pari-2.5.5, see :trac:`16165`::
@@ -8089,7 +8089,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Test that roots in fixed modulus p-adic fields work (:trac:`17598`)::
 
-            sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))
+            sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))                                                   # optional - sage.rings.padics
             2
 
         Check that :trac:`26421` is fixed::
@@ -8103,15 +8103,15 @@ cdef class Polynomial(CommutativePolynomial):
         Check that :trac:`31040` is fixed::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = Qq(3).extension(x^2 + 1)
-            sage: (x^2 + 1).roots(K)
+            sage: K.<a> = Qq(3).extension(x^2 + 1)                                                                      # optional - sage.rings.padics
+            sage: (x^2 + 1).roots(K)                                                                                    # optional - sage.rings.padics
             [(a + O(3^20), 1),
              (2*a + 2*a*3 + 2*a*3^2 + 2*a*3^3 + 2*a*3^4 + 2*a*3^5 + 2*a*3^6 + 2*a*3^7 + 2*a*3^8 + 2*a*3^9 + 2*a*3^10 + 2*a*3^11 + 2*a*3^12 + 2*a*3^13 + 2*a*3^14 + 2*a*3^15 + 2*a*3^16 + 2*a*3^17 + 2*a*3^18 + 2*a*3^19 + O(3^20),
               1)]
 
         Check that :trac:`31710` is fixed::
 
-            sage: CBF['x'].zero().roots(multiplicities=False)
+        sage: CBF['x'].zero().roots(multiplicities=False)
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
@@ -9094,11 +9094,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         Over `\QQ_5`::
 
-            sage: x = PolynomialRing(Qp(5),'x').gen()
-            sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2
-            sage: m = x^6
-            sage: n, d = p.rational_reconstruction(m, 3, 2)
-            sage: print(((p*d - n) % m ).is_zero())
+            sage: x = PolynomialRing(Qp(5), 'x').gen()                                                                  # optional - sage.rings.padics
+            sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2                                                           # optional - sage.rings.padics
+            sage: m = x^6                                                                                               # optional - sage.rings.padics
+            sage: n, d = p.rational_reconstruction(m, 3, 2)                                                             # optional - sage.rings.padics
+            sage: print(((p*d - n) % m ).is_zero())                                                                     # optional - sage.rings.padics
             True
 
         Can also be used to obtain known Padé approximations::
@@ -12004,9 +12004,9 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         Coefficients indistinguishable from 0 are not removed.
 
-            sage: R = Zp(5)
-            sage: S.<x> = R[]
-            sage: S([1,R(0,20)])
+            sage: R = Zp(5)                                                                                             # optional - sage.rings.padics
+            sage: S.<x> = R[]                                                                                           # optional - sage.rings.padics
+            sage: S([1, R(0, 20)])                                                                                      # optional - sage.rings.padics
             O(5^20)*x + 1 + O(5^20)
         """
         cdef list x = self.__coeffs
@@ -12040,27 +12040,27 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: K = Qp(3,10)
-            sage: R.<T> = K[]
-            sage: f = T + 2; f
+            sage: K = Qp(3, 10)                                                                                         # optional - sage.rings.padics
+            sage: R.<T> = K[]                                                                                           # optional - sage.rings.padics
+            sage: f = T + 2; f                                                                                          # optional - sage.rings.padics
             (1 + O(3^10))*T + 2 + O(3^10)
-            sage: f.degree()
+            sage: f.degree()                                                                                            # optional - sage.rings.padics
             1
-            sage: (f-T).degree()
+            sage: (f - T).degree()                                                                                      # optional - sage.rings.padics
             0
-            sage: (f-T).degree(secure=True)
+            sage: (f - T).degree(secure=True)                                                                           # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             PrecisionError: the leading coefficient is indistinguishable from 0
 
-            sage: x = O(3^5)
-            sage: li = [3^i * x for i in range(0,5)]; li
+            sage: x = O(3^5)                                                                                            # optional - sage.rings.padics
+            sage: li = [3^i * x for i in range(0,5)]; li                                                                # optional - sage.rings.padics
             [O(3^5), O(3^6), O(3^7), O(3^8), O(3^9)]
-            sage: f = R(li); f
+            sage: f = R(li); f                                                                                          # optional - sage.rings.padics
             O(3^9)*T^4 + O(3^8)*T^3 + O(3^7)*T^2 + O(3^6)*T + O(3^5)
-            sage: f.degree()
+            sage: f.degree()                                                                                            # optional - sage.rings.padics
             -1
-            sage: f.degree(secure=True)
+            sage: f.degree(secure=True)                                                                                 # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             PrecisionError: the leading coefficient is indistinguishable from 0
@@ -12092,20 +12092,20 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: K = Qp(3,10)
-            sage: R.<T> = K[]
-            sage: f = T + 2; f
+            sage: K = Qp(3, 10)                                                                                         # optional - sage.rings.padics
+            sage: R.<T> = K[]                                                                                           # optional - sage.rings.padics
+            sage: f = T + 2; f                                                                                          # optional - sage.rings.padics
             (1 + O(3^10))*T + 2 + O(3^10)
-            sage: f.degree()
+            sage: f.degree()                                                                                            # optional - sage.rings.padics
             1
-            sage: f.prec_degree()
+            sage: f.prec_degree()                                                                                       # optional - sage.rings.padics
             1
 
-            sage: g = f - T; g
+            sage: g = f - T; g                                                                                          # optional - sage.rings.padics
             O(3^10)*T + 2 + O(3^10)
-            sage: g.degree()
+            sage: g.degree()                                                                                            # optional - sage.rings.padics
             0
-            sage: g.prec_degree()
+            sage: g.prec_degree()                                                                                       # optional - sage.rings.padics
             1
 
         AUTHOR:
@@ -12188,13 +12188,13 @@ cdef class PolynomialBaseringInjection(Morphism):
     supposed to be the fastest maps for that purpose. See
     :trac:`9944`. ::
 
-        sage: R.<x> = Qp(3)[]
-        sage: R.coerce_map_from(R.base_ring())
+        sage: R.<x> = Qp(3)[]                                                                                           # optional - sage.rings.padics
+        sage: R.coerce_map_from(R.base_ring())                                                                          # optional - sage.rings.padics
         Polynomial base injection morphism:
           From: 3-adic Field with capped relative precision 20
           To:   Univariate Polynomial Ring in x over 3-adic Field with capped relative precision 20
-        sage: R.<x,y> = Qp(3)[]
-        sage: R.coerce_map_from(R.base_ring())
+        sage: R.<x,y> = Qp(3)[]                                                                                         # optional - sage.rings.padics
+        sage: R.coerce_map_from(R.base_ring())                                                                          # optional - sage.rings.padics
         Polynomial base injection morphism:
           From: 3-adic Field with capped relative precision 20
           To:   Multivariate Polynomial Ring in x, y over 3-adic Field with capped relative precision 20
@@ -12236,11 +12236,11 @@ cdef class PolynomialBaseringInjection(Morphism):
 
         ::
 
-            sage: R.<t> = Qp(2)[]
-            sage: f = R.convert_map_from(R.base_ring())    # indirect doctest
-            sage: f(Qp(2).one()*3)
+            sage: R.<t> = Qp(2)[]                                                                                       # optional - sage.rings.padics
+            sage: f = R.convert_map_from(R.base_ring())    # indirect doctest                                           # optional - sage.rings.padics
+            sage: f(Qp(2).one()*3)                                                                                      # optional - sage.rings.padics
             1 + 2 + O(2^20)
-            sage: (Qp(2).one()*3)*t
+            sage: (Qp(2).one()*3)*t                                                                                     # optional - sage.rings.padics
             (1 + 2 + O(2^20))*t
         """
         assert codomain.base_ring() is domain, "domain must be basering"
@@ -12304,8 +12304,8 @@ cdef class PolynomialBaseringInjection(Morphism):
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_element import PolynomialBaseringInjection
-            sage: m = PolynomialBaseringInjection(Qp(5), Qp(5)['x'])
-            sage: m(1 + O(5^11), absprec = 5)   # indirect doctest
+            sage: m = PolynomialBaseringInjection(Qp(5), Qp(5)['x'])                                                    # optional - sage.rings.padics
+            sage: m(1 + O(5^11), absprec=5)   # indirect doctest                                                        # optional - sage.rings.padics
             1 + O(5^11)
         """
         try:
