@@ -646,8 +646,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             in characteristic zero, the Cartan invariants matrix is
             the identity::
 
-                sage: A3 = SymmetricGroup(3).algebra(QQ)
-                sage: A3.cartan_invariants_matrix()
+                sage: A3 = SymmetricGroup(3).algebra(QQ)                                                                # optional - sage.groups, sage.modules
+                sage: A3.cartan_invariants_matrix()                                                                     # optional - sage.groups, sage.modules
                 [1 0 0]
                 [0 1 0]
                 [0 0 1]
@@ -656,7 +656,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             matrix counts the number of paths between two vertices::
 
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: A.cartan_invariants_matrix()
+                sage: A.cartan_invariants_matrix()                                                                      # optional - sage.modules
                 [1 2]
                 [0 1]
 
@@ -664,8 +664,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: Z12 = Monoids().Finite().example(); Z12
                 An example of a finite multiplicative monoid: the integers modulo 12
-                sage: A = Z12.algebra(QQ)
-                sage: A.cartan_invariants_matrix()
+                sage: A = Z12.algebra(QQ)                                                                               # optional - sage.modules
+                sage: A.cartan_invariants_matrix()                                                                      # optional - sage.modules
                 [1 0 0 0 0 0 0 0 0]
                 [0 1 0 0 0 0 0 0 0]
                 [0 0 2 0 0 0 0 0 0]
@@ -1021,11 +1021,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: S4 = SymmetricGroupAlgebra(QQ, 4)
-                sage: S4.is_commutative()
+                sage: S4 = SymmetricGroupAlgebra(QQ, 4)                                                                 # optional - sage.groups, sage.modules
+                sage: S4.is_commutative()                                                                               # optional - sage.groups, sage.modules
                 False
-                sage: S2 = SymmetricGroupAlgebra(QQ, 2)
-                sage: S2.is_commutative()
+                sage: S2 = SymmetricGroupAlgebra(QQ, 2)                                                                 # optional - sage.groups, sage.modules
+                sage: S2.is_commutative()                                                                               # optional - sage.groups, sage.modules
                 True
             """
             B = list(self.basis())
@@ -1049,23 +1049,23 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-                sage: a = QS3([2,1,3])
-                sage: a.to_matrix(side='left')
+                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                                                # optional - sage.groups, sage.modules
+                sage: a = QS3([2,1,3])                                                                                  # optional - sage.groups, sage.modules
+                sage: a.to_matrix(side='left')                                                                          # optional - sage.groups, sage.modules
                 [0 0 1 0 0 0]
                 [0 0 0 0 1 0]
                 [1 0 0 0 0 0]
                 [0 0 0 0 0 1]
                 [0 1 0 0 0 0]
                 [0 0 0 1 0 0]
-                sage: a.to_matrix(side='right')
+                sage: a.to_matrix(side='right')                                                                         # optional - sage.groups, sage.modules
                 [0 0 1 0 0 0]
                 [0 0 0 1 0 0]
                 [1 0 0 0 0 0]
                 [0 1 0 0 0 0]
                 [0 0 0 0 0 1]
                 [0 0 0 0 1 0]
-                sage: a.to_matrix(base_ring=RDF, side="left")
+                sage: a.to_matrix(base_ring=RDF, side="left")                                                           # optional - sage.groups, sage.modules
                 [0.0 0.0 1.0 0.0 0.0 0.0]
                 [0.0 0.0 0.0 0.0 1.0 0.0]
                 [1.0 0.0 0.0 0.0 0.0 0.0]

@@ -2466,7 +2466,7 @@ class CategoryWithAxiom(Category):
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive',
              'FiniteDimensional', 'Unital', 'WithBasis']
-            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())
+            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())                                                      # optional - sage.libs.pari
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive', 'Finite',
              'FiniteDimensional', 'Unital', 'WithBasis']
