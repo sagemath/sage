@@ -1528,9 +1528,13 @@ class PolynomialRing_general(ring.Algebra):
         base_ring = self.base_ring()
         if is_PolynomialRing(base_ring):
             return 0
-        from sage.matrix.matrix_space import MatrixSpace
-        if isinstance(base_ring, MatrixSpace):
-            return 0
+        try:
+            from sage.matrix.matrix_space import MatrixSpace
+        except ImportError:
+            pass
+        else:
+            if isinstance(base_ring, MatrixSpace):
+                return 0
         from sage.rings.fraction_field import FractionField_generic
         if isinstance(base_ring, FractionField_generic):
             return 1 << 60
