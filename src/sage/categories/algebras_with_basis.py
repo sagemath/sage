@@ -317,7 +317,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     word:
                     sage: B = tensor((A, A, A))                                                                                 # optional - sage.combinat
                     sage: B.one_basis()                                                                                         # optional - sage.combinat
-                    (word: , word: , word: )                                                                                    # optional - sage.combinat
+                    (word: , word: , word: )
                     sage: B.one()                                                                                               # optional - sage.combinat
                     B[word: ] # B[word: ] # B[word: ]
                 """
