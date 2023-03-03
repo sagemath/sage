@@ -89,7 +89,6 @@ REFERENCES:
 from pathlib import Path
 
 from sage.rings.all import Integer
-from sage.interfaces.gap import gap
 from sage.libs.gap.libgap import libgap
 from sage.groups.perm_gps.permgroup import from_gap_list
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -3489,11 +3488,10 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         self._order = order
         self._gap_id = gap_id
-        self._gap_small_group = gap.SmallGroup(order,gap_id)
-        # self._gap_small_group = libgap.SmallGroup(order,gap_id) # Change requested by Dima
+        self._gap_small_group = libgap.SmallGroup(order,gap_id)
         self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         gens = from_gap_list(None, self._gap_permutation_group.GeneratorsOfGroup())
-        PermutationGroup_generic.__init__(self, gens, self._gap_permutation_group.NrMovedPoints())
+        PermutationGroup_generic.__init__(self, gens, self._gap_permutation_group)
 
     def _repr_(self):
         r"""
@@ -3514,8 +3512,8 @@ class SmallPermutationGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: SmallPermutationGroup(168,41).gap_small_group()
-            Group( [ f1, f2, f3, f4, f5 ] )
+            <pc group of size 168 with 5 generators>
             sage: SmallPermutationGroup(168,42).gap_small_group()
-            Group( [ (3,4)(5,6), (1,2,3)(4,5,7) ] )
+            Group([ (3,4)(5,6), (1,2,3)(4,5,7) ])
         """
         return self._gap_small_group
