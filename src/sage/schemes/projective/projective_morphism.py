@@ -62,7 +62,8 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.interfaces.singular import singular
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
