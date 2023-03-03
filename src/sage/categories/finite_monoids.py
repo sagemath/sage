@@ -181,20 +181,20 @@ class FiniteMonoids(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: M = Monoids().Finite().example()
-                sage: M.rhodes_radical_congruence()
+                sage: M.rhodes_radical_congruence()                                                                     # optional - sage.groups, sage.modules
                 [(0, 6), (2, 8), (4, 10)]
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: H3 = HeckeMonoid(SymmetricGroup(3))
-                sage: H3.repr_element_method(style="reduced")
-                sage: H3.rhodes_radical_congruence()
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                                                 # optional - sage.groups, sage.modules
+                sage: H3 = HeckeMonoid(SymmetricGroup(3))                                                               # optional - sage.groups, sage.modules
+                sage: H3.repr_element_method(style="reduced")                                                           # optional - sage.groups, sage.modules
+                sage: H3.rhodes_radical_congruence()                                                                    # optional - sage.groups, sage.modules
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 
             By Maschke's theorem, every group algebra over `\QQ`
             is semisimple hence the Rhodes radical of a group must be trivial::
 
-                sage: SymmetricGroup(3).rhodes_radical_congruence()
+                sage: SymmetricGroup(3).rhodes_radical_congruence()                                                     # optional - sage.groups, sage.modules
                 []
-                sage: DihedralGroup(10).rhodes_radical_congruence()
+                sage: DihedralGroup(10).rhodes_radical_congruence()                                                     # optional - sage.groups, sage.modules
                 []
 
             REFERENCES:

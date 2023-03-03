@@ -70,9 +70,9 @@ def Realizations(self):
 
     The category of realizations of a given algebra::
 
-        sage: A = Sets().WithRealizations().example(); A
+        sage: A = Sets().WithRealizations().example(); A                                                                # optional - sage.combinat, sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
-        sage: A.Realizations()
+        sage: A.Realizations()                                                                                          # optional - sage.combinat, sage.modules
         Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
 
         sage: C = GradedHopfAlgebrasWithBasis(QQ).Realizations(); C
@@ -112,7 +112,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     EXAMPLES::
 
-        sage: A = Sets().WithRealizations().example(); A
+        sage: A = Sets().WithRealizations().example(); A                                                                # optional - sage.combinat, sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
 
     The role of this base class is to implement some technical goodies, like
@@ -120,7 +120,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
     implemented as a nested class in ``A``
     (see the :mod:`code of the example <sage.categories.examples.with_realizations.SubsetAlgebra>`)::
 
-        sage: C = A.Realizations(); C
+        sage: C = A.Realizations(); C                                                                                   # optional - sage.combinat, sage.modules
         Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
 
     as well as the name for that category.
@@ -130,15 +130,15 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
         TESTS::
 
             sage: from sage.categories.realizations import Category_realization_of_parent
-            sage: A = Sets().WithRealizations().example(); A
+            sage: A = Sets().WithRealizations().example(); A                                                            # optional - sage.combinat, sage.modules
             The subset algebra of {1, 2, 3} over Rational Field
-            sage: C = A.Realizations(); C
+            sage: C = A.Realizations(); C                                                                               # optional - sage.combinat, sage.modules
             Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
-            sage: isinstance(C, Category_realization_of_parent)
+            sage: isinstance(C, Category_realization_of_parent)                                                         # optional - sage.combinat, sage.modules
             True
-            sage: C.parent_with_realization
+            sage: C.parent_with_realization                                                                             # optional - sage.combinat, sage.modules
             The subset algebra of {1, 2, 3} over Rational Field
-            sage: TestSuite(C).run(skip=["_test_category_over_bases"])
+            sage: TestSuite(C).run(skip=["_test_category_over_bases"])                                                  # optional - sage.combinat, sage.modules
 
         .. TODO::
 

@@ -61,9 +61,9 @@ Let's check some memberships::
 
 For parametrized categories one can use the following shorthand::
 
-    sage: V in VectorSpaces
+    sage: V in VectorSpaces                                                                                             # optional - sage.modules
     True
-    sage: G in VectorSpaces
+    sage: G in VectorSpaces                                                                                             # optional - sage.groups
     False
 
 A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
@@ -1802,16 +1802,16 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: V3 = VectorSpaces(FiniteField(3))
+            sage: V3 = VectorSpaces(FiniteField(3))                                                                     # optional - sage.libs.pari
             sage: POSet = PartiallyOrderedSets()
-            sage: PoV3 = Category.join((V3, POSet))
-            sage: A3 = AlgebrasWithBasis(FiniteField(3))
-            sage: PoA3 = Category.join((A3, POSet))
-            sage: PoA3.is_subcategory(PoV3)
+            sage: PoV3 = Category.join((V3, POSet))                                                                     # optional - sage.libs.pari
+            sage: A3 = AlgebrasWithBasis(FiniteField(3))                                                                # optional - sage.libs.pari
+            sage: PoA3 = Category.join((A3, POSet))                                                                     # optional - sage.libs.pari
+            sage: PoA3.is_subcategory(PoV3)                                                                             # optional - sage.libs.pari
             True
-            sage: PoV3.is_subcategory(PoV3)
+            sage: PoV3.is_subcategory(PoV3)                                                                             # optional - sage.libs.pari
             True
-            sage: PoV3.is_subcategory(PoA3)
+            sage: PoV3.is_subcategory(PoA3)                                                                             # optional - sage.libs.pari
             False
         """
         if c is self:
