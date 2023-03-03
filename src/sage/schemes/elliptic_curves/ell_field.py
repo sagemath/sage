@@ -232,7 +232,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``D`` (must be nonzero) -- the twisting parameter..
+        - ``D`` (must be nonzero) -- the twisting parameter
 
         .. NOTE::
 
@@ -271,11 +271,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def sextic_twist(self, D):
         r"""
-        Return the quartic twist of this curve by `D`.
+        Return the sextic twist of this curve by `D`.
 
         INPUT:
 
-        - ``D`` (must be nonzero) -- the twisting parameter..
+        - ``D`` (must be nonzero) -- the twisting parameter
 
         .. NOTE::
 
@@ -1434,7 +1434,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
         if l is None:
-            from sage.rings.all import prime_range
+            from sage.rings.fast_arith import prime_range
             L = prime_range(max_l + 1)
         else:
             try:

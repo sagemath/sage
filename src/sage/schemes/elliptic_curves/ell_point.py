@@ -2833,7 +2833,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             4.0000000000000000000000000000000000000000000000000000000000
         """
         from sage.rings.number_field.number_field import refine_embedding
-        from sage.all import RealField, ComplexField, Infinity
+        from sage.rings.real_mpfr import RealField
+        from sage.rings.complex_mpfr import ComplexField
+        from sage.rings.infinity import Infinity
 
         E = self.curve()
         K = E.base_ring()
@@ -3254,7 +3256,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             0.70448375537782208460499649302 - 0.79246725643650979858266018068*I
         """
         from sage.rings.number_field.number_field import refine_embedding
-        from sage.rings.all import RealField, ComplexField, QQ
+        from sage.rings.real_mpfr import RealField
+        from sage.rings.complex_mpfr import ComplexField
+        from sage.rings.rational_field import QQ
 
         # Check the trivial case:
 
