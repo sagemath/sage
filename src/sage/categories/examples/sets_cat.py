@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Examples of sets
 """

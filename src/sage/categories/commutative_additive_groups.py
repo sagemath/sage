@@ -79,10 +79,10 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
                     sage: G((0,1)).additive_order()
                     +Infinity
 
-                    sage: K = GF(9)
-                    sage: H = cartesian_product([cartesian_product([Zmod(2),Zmod(9)]), K])
-                    sage: z = H(((1,2), K.gen()))
-                    sage: z.additive_order()
+                    sage: K = GF(9)                                                                                     # optional - sage.libs.pari
+                    sage: H = cartesian_product([cartesian_product([Zmod(2), Zmod(9)]), K])                             # optional - sage.libs.pari
+                    sage: z = H(((1,2), K.gen()))                                                                       # optional - sage.libs.pari
+                    sage: z.additive_order()                                                                            # optional - sage.libs.pari
                     18
                 """
                 from sage.rings.infinity import Infinity

@@ -41,7 +41,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).uniformizer()
+                sage: Zp(5).uniformizer()                                                                               # optional - sage.rings.padics
                 5 + O(5^21)
 
                 sage: K.<u> = QQ[[]]
@@ -56,7 +56,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).residue_field()
+                sage: Zp(5).residue_field()                                                                             # optional - sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = QQ[[]]
@@ -95,13 +95,13 @@ class DiscreteValuationRings(Category_singleton):
 
             Another example over the p-adics::
 
-                sage: R = Zp(5, print_mode="digits", prec=5)
-                sage: M = matrix(R, 3, 3, range(9))
-                sage: M
+                sage: R = Zp(5, print_mode="digits", prec=5)                                                            # optional - sage.rings.padics
+                sage: M = matrix(R, 3, 3, range(9))                                                                     # optional - sage.rings.padics
+                sage: M                                                                                                 # optional - sage.rings.padics
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: M.charpoly()
+                sage: M.charpoly()                                                                                      # optional - sage.rings.padics
                 ...00001*x^3 + ...44423*x^2 + ...44412*x + ...00000
             """
             return M._charpoly_hessenberg(var)
@@ -114,8 +114,8 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)
-                sage: x.valuation()
+                sage: x = Zp(5)(50)                                                                                     # optional - sage.rings.padics
+                sage: x.valuation()                                                                                     # optional - sage.rings.padics
                 2
             """
 
@@ -170,12 +170,12 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)
-                sage: x.is_unit()
+                sage: x = Zp(5)(50)                                                                                     # optional - sage.rings.padics
+                sage: x.is_unit()                                                                                       # optional - sage.rings.padics
                 False
 
-                sage: x = Zp(7)(50)
-                sage: x.is_unit()
+                sage: x = Zp(7)(50)                                                                                     # optional - sage.rings.padics
+                sage: x.is_unit()                                                                                       # optional - sage.rings.padics
                 True
             """
             return self.valuation() == 0
@@ -235,7 +235,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: Qp(5).uniformizer()
+                sage: Qp(5).uniformizer()                                                                               # optional - sage.rings.padics
                 5 + O(5^21)
             """
 
@@ -247,7 +247,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: Qp(5).residue_field()
+                sage: Qp(5).residue_field()                                                                             # optional - sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = LaurentSeriesRing(QQ)
@@ -279,14 +279,14 @@ class DiscreteValuationFields(Category_singleton):
 
             Another example over the p-adics::
 
-                sage: K = Qp(5, print_mode="digits", prec=5)
-                sage: H = matrix(K, 3, 3, range(9))
-                sage: H
+                sage: K = Qp(5, print_mode="digits", prec=5)                                                            # optional - sage.rings.padics
+                sage: H = matrix(K, 3, 3, range(9))                                                                     # optional - sage.rings.padics
+                sage: H                                                                                                 # optional - sage.rings.padics
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: H.hessenbergize()
-                sage: H
+                sage: H.hessenbergize()                                                                                 # optional - sage.rings.padics
+                sage: H                                                                                                 # optional - sage.rings.padics
                 [        0  ...00010  ...00002]
                 [ ...00003  ...00024 ...000010]
                 [ ...00000  ...44440  ...44443]
@@ -302,7 +302,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Qp(5)(50)
-                sage: x.valuation()
+                sage: x = Qp(5)(50)                                                                                     # optional - sage.rings.padics
+                sage: x.valuation()                                                                                     # optional - sage.rings.padics
                 2
             """
