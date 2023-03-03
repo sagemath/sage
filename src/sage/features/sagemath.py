@@ -144,6 +144,28 @@ class sage__libs__pari(JoinFeature):
                              [PythonModule('sage.libs.pari.convert_sage')])
 
 
+class sage__modules(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modules`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__modules
+        sage: sage__modules().is_present()  # optional - sage.modules
+        FeatureTestResult('sage.modules', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__modules
+            sage: isinstance(sage__modules(), sage__modules)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.modules',
+                             [PythonModule('sage.modules.free_module')])
+
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
@@ -303,6 +325,7 @@ def all_features():
             sage__graphs(),
             sage__groups(),
             sage__libs__pari(),
+            sage__modules(),
             sage__plot(),
             sage__rings__number_field(),
             sage__rings__padics(),
