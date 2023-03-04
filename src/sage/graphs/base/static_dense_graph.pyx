@@ -466,7 +466,7 @@ def _yield_results_for_digraph(G, edges, edges_only, labels, min_edges, max_edge
 def connected_full_subgraphs(G, edges_only=False, labels=False,
                              min_edges=None, max_edges=None):
     r"""
-    Iterator over the connected subgraphs of `G` with same vertex set.
+    Return an iterator over the connected subgraphs of `G` with same vertex set.
 
     This method implements a iterator over the connected subgraphs of the input
     (di)graph with the same ground set of vertices. That is, it iterates over
@@ -641,7 +641,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
     cdef int * order = <int *> mem.calloc(n, sizeof(int))
     cdef mp_bitcnt_t * n_cpt = <mp_bitcnt_t *> mem.calloc(n, sizeof(mp_bitcnt_t))
 
-    # We use a several bitsets to store the current boundary and active neighbors.
+    # We use several bitsets to store the current boundary and active neighbors.
     # We also need another bitset that we create at the same time
     cdef binary_matrix_t boundaries
     binary_matrix_init(boundaries, n + 1, n)
@@ -745,7 +745,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
                                 edges_only=False, labels=False, induced=True):
     r"""
-    Iterator over the induced connected subgraphs of order at most `k`.
+    Return an terator over the induced connected subgraphs of order at most `k`.
 
     This method implements a iterator over the induced connected subgraphs of
     the input (di)graph. An induced subgraph of a graph is another graph, formed
