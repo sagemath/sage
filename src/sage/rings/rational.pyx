@@ -525,7 +525,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             7
             sage: a.__init__('70', base=8); a
             56
-            sage: a.__init__(pari('2/3')); a
+            sage: a.__init__(pari('2/3')); a                                            # optional - sage.libs.pari
             2/3
             sage: a.__init__('-h/3ki', 32); a
             -17/3730

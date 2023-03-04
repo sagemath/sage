@@ -3581,14 +3581,14 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 
         We define ``0^0`` to be unity, :trac:`13894`::
 
-            sage: p = next_prime(10^5)
-            sage: R = Integers(p)
-            sage: R(0)^0
+            sage: p = next_prime(10^5)                                          # optional - sage.libs.pari
+            sage: R = Integers(p)                                               # optional - sage.libs.pari
+            sage: R(0)^0                                                        # optional - sage.libs.pari
             1
 
         The value returned from ``0^0`` should belong to our ring::
 
-            sage: type(R(0)^0) == type(R(0))
+            sage: type(R(0)^0) == type(R(0))                                    # optional - sage.libs.pari
             True
 
         When the modulus is ``1``, the only element in the ring is
@@ -3920,15 +3920,15 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     A big example for the binary case (:trac:`33961`)::
 
         sage: y = Mod(-7, 2^777)
-        sage: hex(y.sqrt()^2 - y)
+        sage: hex(y.sqrt()^2 - y)                                               # optional - sage.libs.pari
         '0x0'
 
     Testing with random squares in random rings::
 
-        sage: p = random_prime(999)
-        sage: e = randrange(1, 999)
-        sage: x = Zmod(p^e).random_element()
-        sage: (x^2).sqrt()^2 == x^2
+        sage: p = random_prime(999)                                             # optional - sage.libs.pari
+        sage: e = randrange(1, 999)                                             # optional - sage.libs.pari
+        sage: x = Zmod(p^e).random_element()                                    # optional - sage.libs.pari
+        sage: (x^2).sqrt()^2 == x^2                                             # optional - sage.libs.pari
         True
     """
     if a.is_zero() or a.is_one():

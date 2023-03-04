@@ -2345,7 +2345,7 @@ cdef class MPolynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             ValueError: accuracy of Newton's root not within tolerance(0.0000124... > 1e-06), increase precision
-            sage: F.reduced_form(prec=100, smallest_coeffs=False)
+            sage: F.reduced_form(prec=100, smallest_coeffs=False)                                                       # optional - sage.modules
             (
                                                                   [-1 -1]
             -x^5*y^2 - 24*x^3*y^4 - 3*x^2*y^5 - 2*x*y^6 + 16*y^7, [ 1  0]
@@ -2557,7 +2557,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = QQbar[]                                                                 # optional - sage.rings.number_field
             sage: (x + y).is_nilpotent()                                                            # optional - sage.rings.number_field
             False
-            sage: R(0).is_nilpotent()
+            sage: R(0).is_nilpotent()                                                               # optional - sage.rings.number_field
             True
             sage: _.<x,y> = Zmod(4)[]
             sage: (2*x).is_nilpotent()

@@ -272,22 +272,22 @@ where `<` is the lexicographic term order.
 
 EXAMPLES::
 
-    sage: m = matrix(2,[2,3,0,1]); m
+    sage: m = matrix(2, [2,3,0,1]); m                                                               # optional - sage.modules
     [2 3]
     [0 1]
-    sage: T = TermOrder(m); T
+    sage: T = TermOrder(m); T                                                                       # optional - sage.modules
     Matrix term order with matrix
     [2 3]
     [0 1]
-    sage: P.<a,b> = PolynomialRing(QQ,2,order=T)
-    sage: P
+    sage: P.<a,b> = PolynomialRing(QQ, 2, order=T)                                                  # optional - sage.modules
+    sage: P                                                                                         # optional - sage.modules
     Multivariate Polynomial Ring in a, b over Rational Field
-    sage: a > b
+    sage: a > b                                                                                     # optional - sage.modules
     False
-    sage: a^3 < b^2
+    sage: a^3 < b^2                                                                                 # optional - sage.modules
     True
-    sage: S = TermOrder('M(2,3,0,1)')
-    sage: T == S
+    sage: S = TermOrder('M(2,3,0,1)')                                                               # optional - sage.modules
+    sage: T == S                                                                                    # optional - sage.modules
     True
 
 Additionally all these monomial orders may be combined to product or block
@@ -1875,8 +1875,8 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: t = TermOrder("M(1,2,0,1)")
-            sage: t.matrix()
+            sage: t = TermOrder("M(1,2,0,1)")                                                       # optional - sage.modules
+            sage: t.matrix()                                                                        # optional - sage.modules
             [1 2]
             [0 1]
 

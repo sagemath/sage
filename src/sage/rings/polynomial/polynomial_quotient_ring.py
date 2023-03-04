@@ -1737,9 +1737,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: K.<a> = QuadraticField(-3)                                                                            # optional - sage.rings.number_field
+            sage: K.unit_group()                                                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 of
+             Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u = K.units()[0][0]
             sage: 2*u - 1 in {a, -a}
@@ -1756,19 +1757,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: y = polygen(K)
-            sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
-            sage: [u for u, o in L.units() if o is Infinity]
+            sage: K.<a> = QuadraticField(-3)                                                                            # optional - sage.rings.number_field
+            sage: y = polygen(K)                                                                                        # optional - sage.rings.number_field
+            sage: L.<b> = K['y'].quotient(y^3 + 5); L                                                                   # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in b over
+             Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
+            sage: [u for u, o in L.units() if o is Infinity]                                                            # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
-            sage: L.<b> = K.extension(y^3 + 5)
-            sage: L.unit_group()
-            Unit group with structure C6 x Z x Z of Number Field in b with defining polynomial x^3 + 5 over its base field
-            sage: L.unit_group().gens()    # abstract generators
+            sage: L.<b> = K.extension(y^3 + 5)                                                                          # optional - sage.rings.number_field
+            sage: L.unit_group()                                                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 x Z x Z of
+             Number Field in b with defining polynomial x^3 + 5 over its base field
+            sage: L.unit_group().gens()    # abstract generators                                                        # optional - sage.rings.number_field
             (u0, u1, u2)
-            sage: L.unit_group().gens_values()[1:]
+            sage: L.unit_group().gens_values()[1:]                                                                      # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2, 2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
 
         Note that all the returned values live where we expect them to::
@@ -2191,9 +2194,9 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         If the modulus of the domain and the codomain is the same, then the map
         is surjective iff the underlying map on the constants is::
 
-            sage: A.<a> = ZqCA(9)
-            sage: R.<x> = A[]
-            sage: S.<x> = A.fraction_field()[]
+            sage: A.<a> = ZqCA(9)                                               # optional - sage.libs.pari
+            sage: R.<x> = A[]                                                   # optional - sage.libs.pari
+            sage: S.<x> = A.fraction_field()[]                                  # optional - sage.libs.pari
             sage: f = S.quo(x^2 + 2).coerce_map_from(R.quo(x^2 + 2))            # optional - sage.libs.pari
             sage: f.is_surjective()                                             # optional - sage.libs.pari
             False

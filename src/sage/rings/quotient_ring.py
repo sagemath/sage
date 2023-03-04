@@ -336,12 +336,12 @@ def is_QuotientRing(x):
 
     ::
 
-        sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-        sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-        sage: Q = F.quo(I)
-        sage: is_QuotientRing(Q)
+        sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                             # optional - sage.combinat, sage.modules
+        sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                        # optional - sage.combinat, sage.modules
+        sage: Q = F.quo(I)                                                                          # optional - sage.combinat, sage.modules
+        sage: is_QuotientRing(Q)                                                                    # optional - sage.combinat, sage.modules
         True
-        sage: is_QuotientRing(F)
+        sage: is_QuotientRing(F)                                                                    # optional - sage.combinat, sage.modules
         False
     """
     return isinstance(x, QuotientRing_nc)
@@ -364,24 +364,26 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
     Here is a quotient of a free algebra by a twosided homogeneous ideal::
 
-        sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-        sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-        sage: Q.<a,b,c> = F.quo(I); Q
-        Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-        sage: a*b
+        sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                             # optional - sage.combinat, sage.modules
+        sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2]*F                                          # optional - sage.combinat, sage.modules
+        sage: Q.<a,b,c> = F.quo(I); Q                                                               # optional - sage.combinat, sage.modules
+        Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+         by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+        sage: a*b                                                                                   # optional - sage.combinat, sage.modules
         -b*c
-        sage: a^3
+        sage: a^3                                                                                   # optional - sage.combinat, sage.modules
         -b*c*a - b*c*b - b*c*c
 
     A quotient of a quotient is just the quotient of the original top
     ring by the sum of two ideals::
 
-        sage: J = Q*[a^3-b^3]*Q
-        sage: R.<i,j,k> = Q.quo(J); R
-        Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field by the ideal (-y*y*z - y*z*x - 2*y*z*z, x*y + y*z, x*x + x*y - y*x - y*y)
-        sage: i^3
+        sage: J = Q * [a^3 - b^3] * Q                                                               # optional - sage.combinat, sage.modules
+        sage: R.<i,j,k> = Q.quo(J); R                                                               # optional - sage.combinat, sage.modules
+        Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+         by the ideal (-y*y*z - y*z*x - 2*y*z*z, x*y + y*z, x*x + x*y - y*x - y*y)
+        sage: i^3                                                                                   # optional - sage.combinat, sage.modules
         -j*k*i - j*k*j - j*k*k
-        sage: j^3
+        sage: j^3                                                                                   # optional - sage.combinat, sage.modules
         -j*k*i - j*k*j - j*k*k
 
     For rings that *do* inherit from :class:`~sage.rings.ring.CommutativeRing`,
@@ -432,13 +434,14 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         EXAMPLES::
 
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-            sage: Q.<a,b,c> = F.quo(I); Q
-            Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-            sage: a*b
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                         # optional - sage.combinat, sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                    # optional - sage.combinat, sage.modules
+            sage: Q.<a,b,c> = F.quo(I); Q                                                           # optional - sage.combinat, sage.modules
+            Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+             by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+            sage: a*b                                                                               # optional - sage.combinat, sage.modules
             -b*c
-            sage: a^3
+            sage: a^3                                                                               # optional - sage.combinat, sage.modules
             -b*c*a - b*c*b - b*c*c
 
         """
@@ -479,10 +482,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
             sage: R.quotient_ring(I).construction()
             (QuotientFunctor, Univariate Polynomial Ring in x over Integer Ring)
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-            sage: Q = F.quo(I)
-            sage: Q.construction()
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                                             # optional - sage.combinat, sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat, sage.modules
+            sage: Q = F.quo(I)                                                                                          # optional - sage.combinat, sage.modules
+            sage: Q.construction()                                                                                      # optional - sage.combinat, sage.modules
             (QuotientFunctor, Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field)
 
         TESTS::
@@ -563,19 +566,19 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         The non-commutative case is more interesting::
 
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-            sage: Q = F.quo(I)
-            sage: Q.is_commutative()
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                                             # optional - sage.combinat, sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat, sage.modules
+            sage: Q = F.quo(I)                                                                                          # optional - sage.combinat, sage.modules
+            sage: Q.is_commutative()                                                                                    # optional - sage.combinat, sage.modules
             False
-            sage: Q.1*Q.2==Q.2*Q.1
+            sage: Q.1*Q.2 == Q.2*Q.1                                                                                    # optional - sage.combinat, sage.modules
             False
 
         In the next example, the generators apparently commute::
 
-            sage: J = F*[x*y-y*x,x*z-z*x,y*z-z*y,x^3-y^3]*F
-            sage: R = F.quo(J)
-            sage: R.is_commutative()
+            sage: J = F * [x*y - y*x, x*z - z*x, y*z - z*y, x^3 - y^3] * F                                              # optional - sage.combinat, sage.modules
+            sage: R = F.quo(J)                                                                                          # optional - sage.combinat, sage.modules
+            sage: R.is_commutative()                                                                                    # optional - sage.combinat, sage.modules
             True
 
         """

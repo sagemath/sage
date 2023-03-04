@@ -670,10 +670,14 @@ class Localization(IntegralDomain, UniqueRepresentation):
         if not type(extra_units) is list:
             extra_units = [extra_units]
 
-        from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-        if is_LaurentPolynomialRing(base_ring):
-            extra_units += list(base_ring.gens())
-            base_ring = base_ring.polynomial_ring()
+        try:
+            from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
+        except ImportError:
+            pass
+        else:
+            if is_LaurentPolynomialRing(base_ring):
+                extra_units += list(base_ring.gens())
+                base_ring = base_ring.polynomial_ring()
 
         if isinstance(base_ring, Localization):
             # don't allow recursive constructions
