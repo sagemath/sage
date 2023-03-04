@@ -910,36 +910,36 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: MS = MatrixSpace(QQ,2,2)
+            sage: MS = MatrixSpace(QQ,2,2)                                                                              # optional - sage.modules
 
         This matrix space is in fact an algebra, and in particular
         it is a ring, from the point of view of categories::
 
-            sage: MS.category()
+            sage: MS.category()                                                                                         # optional - sage.modules
             Category of infinite finite dimensional algebras with basis
              over (number fields and quotient fields and metric spaces)
-            sage: MS in Rings()
+            sage: MS in Rings()                                                                                         # optional - sage.modules
             True
 
         However, its class does not inherit from the base class
         ``Ring``::
 
-            sage: isinstance(MS,Ring)
+            sage: isinstance(MS, Ring)                                                                                  # optional - sage.modules
             False
 
         Its ``_mul_`` method is inherited from the category, and
         can be used to create a left or right ideal::
 
-            sage: MS._mul_.__module__
+            sage: MS._mul_.__module__                                                                                   # optional - sage.modules
             'sage.categories.rings'
-            sage: MS*MS.1      # indirect doctest
+            sage: MS * MS.1      # indirect doctest                                                                     # optional - sage.modules
             Left Ideal
             (
               [0 1]
               [0 0]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: MS*[MS.1,2]
+            sage: MS * [MS.1, 2]                                                                                        # optional - sage.modules
             Left Ideal
             (
               [0 1]
@@ -949,14 +949,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               [0 2]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: MS.1*MS
+            sage: MS.1 * MS                                                                                             # optional - sage.modules
             Right Ideal
             (
               [0 1]
               [0 0]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: [MS.1,2]*MS
+            sage: [MS.1, 2] * MS                                                                                        # optional - sage.modules
             Right Ideal
             (
               [0 1]
