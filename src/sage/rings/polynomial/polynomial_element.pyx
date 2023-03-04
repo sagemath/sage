@@ -8101,7 +8101,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         Check that :trac:`31710` is fixed::
 
-        sage: CBF['x'].zero().roots(multiplicities=False)
+            sage: CBF['x'].zero().roots(multiplicities=False)
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
