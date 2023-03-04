@@ -558,7 +558,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))
+        sage: has_latex_attr(identity_matrix(3))                                                    # optional - sage.modules
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -566,15 +566,15 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
-        sage: T = type(identity_matrix(3)); T
+        sage: T = type(identity_matrix(3)); T                                                       # optional - sage.modules
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
-        sage: hasattr(T, '_latex_')
+        sage: hasattr(T, '_latex_')                                                                 # optional - sage.modules
         True
-        sage: T._latex_()
+        sage: T._latex_()                                                                           # optional - sage.modules
         Traceback (most recent call last):
         ...
         TypeError: ..._latex_... needs an argument
-        sage: has_latex_attr(T)
+        sage: has_latex_attr(T)                                                                     # optional - sage.modules
         False
     """
     return hasattr(x, '_latex_') and not isinstance(x, type)
@@ -1213,18 +1213,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [17])
-            sage: latex(a)
+            sage: a = matrix(1, 1, [17])                                                # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{r}
             17
             \end{array}\right)
             sage: latex.matrix_delimiters("[", "]")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[\begin{array}{r}
             17
             \end{array}\right]
             sage: latex.matrix_delimiters(left="\\{")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left\{\begin{array}{r}
             17
             \end{array}\right]
@@ -1274,14 +1274,14 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = vector(QQ, [1,2,3])
-            sage: latex(a)
+            sage: a = vector(QQ, [1,2,3])                                               # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(1,\,2,\,3\right)
             sage: latex.vector_delimiters("[", "]")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[1,\,2,\,3\right]
             sage: latex.vector_delimiters(right="\\}")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
             ['[', '\\}']
@@ -1319,18 +1319,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [42])
-            sage: latex(a)
+            sage: a = matrix(1, 1, [42])                                                # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{r}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('c')
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{c}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('l')
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{l}
             42
             \end{array}\right)

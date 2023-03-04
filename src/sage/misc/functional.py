@@ -1205,14 +1205,14 @@ def minimal_polynomial(x, var='x'):
 
     EXAMPLES::
 
-        sage: a = matrix(ZZ, 2, [1..4])
-        sage: minpoly(a)
+        sage: a = matrix(ZZ, 2, [1..4])                                                                                 # optional - sage.modules
+        sage: minpoly(a)                                                                                                # optional - sage.modules
         x^2 - 5*x - 2
-        sage: minpoly(a,'t')
+        sage: minpoly(a, 't')                                                                                           # optional - sage.modules
         t^2 - 5*t - 2
-        sage: minimal_polynomial(a)
+        sage: minimal_polynomial(a)                                                                                     # optional - sage.modules
         x^2 - 5*x - 2
-        sage: minimal_polynomial(a,'theta')
+        sage: minimal_polynomial(a, 'theta')                                                                            # optional - sage.modules
         theta^2 - 5*theta - 2
     """
     try:

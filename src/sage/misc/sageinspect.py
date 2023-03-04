@@ -1880,9 +1880,9 @@ def sage_getdef(obj, obj_name=''):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getdef
-        sage: sage_getdef(identity_matrix)
+        sage: sage_getdef(identity_matrix)                                              # optional - sage.modules
         '(ring, n=0, sparse=False)'
-        sage: sage_getdef(identity_matrix, 'identity_matrix')
+        sage: sage_getdef(identity_matrix, 'identity_matrix')                           # optional - sage.modules
         'identity_matrix(ring, n=0, sparse=False)'
 
     Check that :trac:`6848` has been fixed::
@@ -2090,7 +2090,7 @@ def sage_getdoc(obj, obj_name='', embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: sage_getdoc(identity_matrix)[87:124]
+        sage: sage_getdoc(identity_matrix)[87:124]                                      # optional - sage.modules
         'Return the n x n identity matrix over'
         sage: def f(a,b,c,d=1): return a+b+c+d
         ...
@@ -2143,9 +2143,9 @@ def sage_getsource(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsource
-        sage: sage_getsource(identity_matrix)[19:60]
+        sage: sage_getsource(identity_matrix)[19:60]                                    # optional - sage.modules
         'identity_matrix(ring, n=0, sparse=False):'
-        sage: sage_getsource(identity_matrix)[19:60]
+        sage: sage_getsource(identity_matrix)[19:60]                                    # optional - sage.modules
         'identity_matrix(ring, n=0, sparse=False):'
 
     AUTHORS:
@@ -2322,9 +2322,9 @@ def sage_getsourcelines(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
-        sage: sage_getsourcelines(matrix)[1]
+        sage: sage_getsourcelines(matrix)[1]                                            # optional - sage.modules
         21
-        sage: sage_getsourcelines(matrix)[0][0]
+        sage: sage_getsourcelines(matrix)[0][0]                                         # optional - sage.modules
         'def matrix(*args, **kwds):\n'
 
     Some classes customize this using a ``_sage_src_lines_`` method,
@@ -2561,16 +2561,16 @@ def sage_getvariablename(self, omit_underscore_names=True):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getvariablename
-        sage: A = random_matrix(ZZ, 100)
-        sage: sage_getvariablename(A)
+        sage: A = random_matrix(ZZ, 100)                                                # optional - sage.modules
+        sage: sage_getvariablename(A)                                                   # optional - sage.modules
         'A'
-        sage: B = A
-        sage: sage_getvariablename(A)
+        sage: B = A                                                                     # optional - sage.modules
+        sage: sage_getvariablename(A)                                                   # optional - sage.modules
         ['A', 'B']
 
     If an object is not assigned to a variable, an empty list is returned::
 
-        sage: sage_getvariablename(random_matrix(ZZ, 60))
+        sage: sage_getvariablename(random_matrix(ZZ, 60))                               # optional - sage.modules
         []
     """
     result = []
