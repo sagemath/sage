@@ -55,8 +55,8 @@ cdef class GenericAction(Action):
         for otherwise they could be garbage collected, giving rise to
         random errors (see :trac:`18157`). ::
 
-            sage: M = MatrixSpace(ZZ,2)
-            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
+            sage: M = MatrixSpace(ZZ, 2)                                                                                # optional - sage.modules
+            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)                                         # optional - sage.modules
             Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring on Set P^1(QQ) of all cusps
 
             sage: Z6 = Zmod(6)
@@ -92,9 +92,9 @@ cdef class GenericAction(Action):
         errors (see :trac:`18157`). ::
 
 
-            sage: M = MatrixSpace(ZZ,2)
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
-            sage: A.codomain()
+            sage: M = MatrixSpace(ZZ,2)                                                                                 # optional - sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)                                     # optional - sage.modules
+            sage: A.codomain()                                                                                          # optional - sage.modules
             Set P^1(QQ) of all cusps
 
             sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
@@ -140,14 +140,14 @@ cdef class ActedUponAction(GenericAction):
         """
         TESTS::
 
-            sage: M = MatrixSpace(ZZ,2)
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
+            sage: M = MatrixSpace(ZZ,2)                                                                                 # optional - sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)                                     # optional - sage.modules
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                                                           # optional - sage.modules
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                                                               # optional - sage.modules
             Infinity
 
-            sage: type(A)
+            sage: type(A)                                                                                               # optional - sage.modules
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)
@@ -166,14 +166,14 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
 
         sage: from sage.structure.coerce_actions import detect_element_action
         sage: ZZx = ZZ['x']
-        sage: M = MatrixSpace(ZZ,2)
+        sage: M = MatrixSpace(ZZ, 2)                                                                                    # optional - sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
         Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
-        sage: detect_element_action(Cusps, M, False)
+        sage: detect_element_action(Cusps, M, False)                                                                    # optional - sage.modules
         Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring on Set P^1(QQ) of all cusps
-        sage: detect_element_action(Cusps, M, True),
+        sage: detect_element_action(Cusps, M, True),                                                                    # optional - sage.modules
         (None,)
         sage: detect_element_action(ZZ, QQ, True),
         (None,)
