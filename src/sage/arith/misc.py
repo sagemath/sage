@@ -2599,7 +2599,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         1
         sage: factor(-1)
         -1
-        sage: factor(2^(2^7)+1)
+        sage: factor(2^(2^7)+1)                                                                                         # optional - sage.libs.pari
         59649589127497217 * 5704689200685129054721
 
     Sage calls PARI's factor, which has proof False by default.
@@ -2609,12 +2609,12 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     ::
 
-        sage: factor(3^89-1, proof=False)
+        sage: factor(3^89-1, proof=False)                                                                               # optional - sage.libs.pari
         2 * 179 * 1611479891519807 * 5042939439565996049162197
 
     ::
 
-        sage: factor(2^197 + 1)  # long time (2s)
+        sage: factor(2^197 + 1)  # long time (2s)                                                                       # optional - sage.libs.pari
         3 * 197002597249 * 1348959352853811313 * 251951573867253012259144010843
 
     Any object which has a factor method can be factored like this::
@@ -2625,15 +2625,15 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     To access the data in a factorization::
 
-        sage: f = factor(420); f
+        sage: f = factor(420); f                                                                                        # optional - sage.libs.pari
         2^2 * 3 * 5 * 7
-        sage: [x for x in f]
+        sage: [x for x in f]                                                                                            # optional - sage.libs.pari
         [(2, 2), (3, 1), (5, 1), (7, 1)]
-        sage: [p for p,e in f]
+        sage: [p for p,e in f]                                                                                          # optional - sage.libs.pari
         [2, 3, 5, 7]
-        sage: [e for p,e in f]
+        sage: [e for p,e in f]                                                                                          # optional - sage.libs.pari
         [2, 1, 1, 1]
-        sage: [p^e for p,e in f]
+        sage: [p^e for p,e in f]                                                                                        # optional - sage.libs.pari
         [4, 3, 5, 7]
 
     We can factor Python, numpy and gmpy2 numbers::
@@ -2641,10 +2641,10 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         sage: factor(math.pi)
         3.141592653589793
         sage: import numpy
-        sage: factor(numpy.int8(30))
+        sage: factor(numpy.int8(30))                                                                                    # optional - sage.libs.pari
         2 * 3 * 5
         sage: import gmpy2
-        sage: factor(gmpy2.mpz(30))
+        sage: factor(gmpy2.mpz(30))                                                                                     # optional - sage.libs.pari
         2 * 3 * 5
 
     TESTS::
@@ -3010,11 +3010,11 @@ class Euler_Phi:
         1
         sage: euler_phi(2)
         1
-        sage: euler_phi(3)
+        sage: euler_phi(3)                                                                                              # optional - sage.libs.pari
         2
-        sage: euler_phi(12)
+        sage: euler_phi(12)                                                                                             # optional - sage.libs.pari
         4
-        sage: euler_phi(37)
+        sage: euler_phi(37)                                                                                             # optional - sage.libs.pari
         36
 
     Notice that euler_phi is defined to be 0 on negative numbers and
@@ -3033,7 +3033,7 @@ class Euler_Phi:
 
     ::
 
-        sage: euler_phi(21)
+        sage: euler_phi(21)                                                                                             # optional - sage.libs.pari
         12
         sage: [i for i in range(21) if gcd(21,i) == 1]
         [1, 2, 4, 5, 8, 10, 11, 13, 16, 17, 19, 20]
@@ -3043,22 +3043,22 @@ class Euler_Phi:
 
     ::
 
-        sage: len([i for i in range(21) if gcd(21,i) == 1]) == euler_phi(21)
+        sage: len([i for i in range(21) if gcd(21,i) == 1]) == euler_phi(21)                                            # optional - sage.libs.pari
         True
 
     The phi function also has a special plotting method.
 
     ::
 
-        sage: P = plot(euler_phi, -3, 71)
+        sage: P = plot(euler_phi, -3, 71)                                                                               # optional - sage.libs.pari, sage.plot
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: euler_phi(int8(37))
+        sage: euler_phi(int8(37))                                                                                       # optional - sage.libs.pari, sage.plot
         36
         sage: from gmpy2 import mpz
-        sage: euler_phi(mpz(37))
+        sage: euler_phi(mpz(37))                                                                                        # optional - sage.libs.pari, sage.plot
         36
 
     AUTHORS:
