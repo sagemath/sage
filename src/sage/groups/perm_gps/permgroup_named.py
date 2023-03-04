@@ -3492,9 +3492,9 @@ class SmallPermutationGroup(PermutationGroup_generic):
 
         TESTS::
 
-            # sage: TestSuite(SmallPermutationGroup(60,5)).run()
+            sage: TestSuite(SmallPermutationGroup(60,5)).run()
         """
-        self._order = order
+        self._n = order
         self._gap_id = gap_id
         self._gap_small_group = libgap.SmallGroup(order,gap_id)
         self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
@@ -3507,7 +3507,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
             sage: G = SmallPermutationGroup(12,4); G
             Group of order 12 and GAP Id 4 as a permutation group
         """
-        return "Group of order %s and GAP Id %s as a permutation group"%(self._order, self._gap_id)
+        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
 
     def gap_small_group(self):
         r"""
