@@ -104,6 +104,7 @@ include sage/rings/polynomial/multi_polynomial.p*
 include sage/rings/polynomial/multi_polynomial_element.p*
 include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
+include sage/rings/polynomial/flatten.p*
 
 graft sage/rings/semirings
 
