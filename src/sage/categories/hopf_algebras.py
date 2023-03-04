@@ -136,9 +136,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = SteenrodAlgebra(3)
-                    sage: a = A.an_element()
-                    sage: a, a.antipode()
+                    sage: A = SteenrodAlgebra(3)                                                                        # optional - sage.combinat, sage.modules
+                    sage: a = A.an_element()                                                                            # optional - sage.combinat, sage.modules
+                    sage: a, a.antipode()                                                                               # optional - sage.combinat, sage.modules
                     (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
                 """
                 return self.parent().antipode(self)

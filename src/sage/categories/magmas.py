@@ -946,16 +946,16 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: G = AlternatingGroup(3)
-                sage: T = G.multiplication_table()                                                                      # optional - sage.matrix
-                sage: T.column_keys()                                                                                   # optional - sage.matrix
+                sage: G = AlternatingGroup(3)                                                                           # optional - sage.groups
+                sage: T = G.multiplication_table()                                                                      # optional - sage.matrix    # optional - sage.groups
+                sage: T.column_keys()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 ((), (1,2,3), (1,3,2))
-                sage: T.translation()                                                                                   # optional - sage.matrix
+                sage: T.translation()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 {'a': (), 'b': (1,2,3), 'c': (1,3,2)}
-                sage: T.change_names(['x', 'y', 'z'])                                                                   # optional - sage.matrix
-                sage: T.translation()                                                                                   # optional - sage.matrix
+                sage: T.change_names(['x', 'y', 'z'])                                                                   # optional - sage.matrix    # optional - sage.groups
+                sage: T.translation()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 {'x': (), 'y': (1,2,3), 'z': (1,3,2)}
-                sage: T                                                                                                 # optional - sage.matrix
+                sage: T                                                                                                 # optional - sage.matrix    # optional - sage.groups
                 *  x y z
                  +------
                 x| x y z
