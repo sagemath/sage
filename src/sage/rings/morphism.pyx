@@ -2152,10 +2152,10 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
             sage: from sage.rings.morphism import RingHomomorphism_from_base
             sage: R.<x> = ZZ[]
-            sage: f = R.hom([2*x],R)
-            sage: P = MatrixSpace(R,2).Hom(MatrixSpace(R,2))
-            sage: g = RingHomomorphism_from_base(P,f)
-            sage: g
+            sage: f = R.hom([2*x], R)
+            sage: P = MatrixSpace(R, 2).Hom(MatrixSpace(R, 2))                                                          # optional - sage.modules
+            sage: g = RingHomomorphism_from_base(P, f)                                                                  # optional - sage.modules
+            sage: g                                                                                                     # optional - sage.modules
             Ring endomorphism of Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring
               Defn: Induced from base ring by
                     Ring endomorphism of Univariate Polynomial Ring in x over Integer Ring
@@ -2165,11 +2165,13 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         codomain are constructed in a compatible way. So, the following
         results in an error::
 
-            sage: P = MatrixSpace(R,2).Hom(R['t'])
-            sage: g = RingHomomorphism_from_base(P,f)
+            sage: P = MatrixSpace(R, 2).Hom(R['t'])                                                                     # optional - sage.modules
+            sage: g = RingHomomorphism_from_base(P, f)                                                                  # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: domain (Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring) and codomain (Univariate Polynomial Ring in t over Univariate Polynomial Ring in x over Integer Ring) must have the same functorial construction over their base rings
+            ValueError: domain (Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring)
+             and codomain (Univariate Polynomial Ring in t over Univariate Polynomial Ring in x over Integer Ring)
+             must have the same functorial construction over their base rings
         """
         RingHomomorphism.__init__(self, parent)
         if underlying.domain() != parent.domain().base():
@@ -2188,11 +2190,11 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
             sage: R.<x,y> = QQ[]
             sage: S.<z> = QQ[]
-            sage: f = R.hom([2*z,3*z],S)
-            sage: MR = MatrixSpace(R,2)
-            sage: MS = MatrixSpace(S,2)
-            sage: g = MR.hom(f,MS)
-            sage: g.underlying_map() == f
+            sage: f = R.hom([2*z, 3*z], S)
+            sage: MR = MatrixSpace(R, 2)                                                                                # optional - sage.modules
+            sage: MS = MatrixSpace(S, 2)                                                                                # optional - sage.modules
+            sage: g = MR.hom(f, MS)                                                                                     # optional - sage.modules
+            sage: g.underlying_map() == f                                                                               # optional - sage.modules
             True
         """
         return self._underlying
@@ -2295,16 +2297,16 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])              # optional - sage.libs.pari
             sage: f1 = R.hom([a, b])                                            # optional - sage.libs.pari
             sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])                # optional - sage.libs.pari
-            sage: MR = MatrixSpace(R, 2)                                        # optional - sage.libs.pari
-            sage: MQ = MatrixSpace(Q, 2)                                        # optional - sage.libs.pari
-            sage: f1M = MR.hom(f1, MQ)                                          # optional - sage.libs.pari
-            sage: f2M = MR.hom(f2, MQ)                                          # optional - sage.libs.pari
-            sage: f1M == f2M                                                    # optional - sage.libs.pari
+            sage: MR = MatrixSpace(R, 2)                                        # optional - sage.libs.pari             # optional - sage.modules
+            sage: MQ = MatrixSpace(Q, 2)                                        # optional - sage.libs.pari             # optional - sage.modules
+            sage: f1M = MR.hom(f1, MQ)                                          # optional - sage.libs.pari             # optional - sage.modules
+            sage: f2M = MR.hom(f2, MQ)                                          # optional - sage.libs.pari             # optional - sage.modules
+            sage: f1M == f2M                                                    # optional - sage.libs.pari             # optional - sage.modules
             True
 
         TESTS::
 
-            sage: f1M == loads(dumps(f1M))                                      # optional - sage.libs.pari
+            sage: f1M == loads(dumps(f1M))                                      # optional - sage.libs.pari             # optional - sage.modules
             True
         """
         if not isinstance(other, RingHomomorphism_from_base):

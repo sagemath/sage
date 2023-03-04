@@ -778,7 +778,7 @@ cdef class FractionFieldElement(FieldElement):
         TESTS::
 
             sage: K = Frac(ZZ['x'])
-            sage: QQ(K(x) / K(2*x))
+            sage: QQ(K(x) / K(2*x))                                             # optional - sage.symbolic
             1/2
         """
         return self._conversion(QQ)

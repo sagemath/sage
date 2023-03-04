@@ -380,7 +380,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation(4, F)
+            sage: R.interpolation(4, F)                                                             # optional - sage.modules
             x^3*y + z^2 + y + 25
 
 
@@ -388,7 +388,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation([3,1,2], F)
+            sage: R.interpolation([3,1,2], F)                                                       # optional - sage.modules
             x^3*y + z^2 + y + 25
 
 
@@ -400,7 +400,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....: (2,7,0),(1,10,13),(0,0,1),(-1,1,0),(2,5,3),(1,1,1),(7,4,11),
             ....: (12,1,9),(1,1,3),(4,-1,2),(0,1,5),(5,1,3),(3,1,-2),(2,11,3),
             ....: (4,12,19),(3,1,1),(5,2,-3),(12,1,1),(2,3,4)]
-            sage: R.interpolation([3,1,2], points, [F(*x) for x in points])
+            sage: R.interpolation([3,1,2], points, [F(*x) for x in points])                         # optional - sage.modules
             x^3*y + z^2 + y + 25
 
         ALGORITHM:
@@ -434,7 +434,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation(3,F)
+            sage: R.interpolation(3, F)                                                             # optional - sage.modules
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::

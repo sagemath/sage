@@ -564,7 +564,7 @@ cdef class PolyDict:
 
         Check that :trac:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])                                                        # optional - sage.libs.pari
             'x'
         """
         n = len(vars)

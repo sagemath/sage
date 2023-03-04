@@ -1392,9 +1392,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             5
             sage: K(23).nth_root(3)                                             # optional - sage.libs.pari
             29
-            sage: mod(225,2^5*3^2).nth_root(4, all=True)
+            sage: mod(225, 2^5*3^2).nth_root(4, all=True)                                                                   # optional - sage.rings.padics
             [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81, 273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
-            sage: mod(275,2^5*7^4).nth_root(7, all=True)
+            sage: mod(275, 2^5*7^4).nth_root(7, all=True)                                                                   # optional - sage.rings.padics
             [58235, 25307, 69211, 36283, 3355, 47259, 14331]
             sage: mod(1,8).nth_root(2,all=True)
             [1, 7, 5, 3]
