@@ -109,7 +109,7 @@ class CoveringArray():
         r"""
         Constructor function
 
-    EXAMPLES::
+        EXAMPLES::
 
         sage: from sage.combinat.designs.covering_array import CoveringArray
         sage: C = (('a','a','a','b'),\
@@ -154,8 +154,7 @@ class CoveringArray():
                    (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
         sage: CoveringArray(C)
         A 7 by 15 Covering Array with entries from [0, 1]
-
-    """
+        """
         #From the array input, grab the dimensions of the array
         N=len(Array)
         self.__n=N
@@ -341,8 +340,6 @@ class CoveringArray():
             sage: CA = CoveringArray(C,GF(2))
             sage: CA.strength()
             2
-
-
             sage: C2 = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),\
                     (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),\
                     (1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0),\
@@ -447,7 +444,6 @@ class CoveringArray():
             sage: CA = CoveringArray(C,GF(2))
             sage: CA.array_representation()
             ((0, 0, 0, 0), (0, 1, 1, 1), (1, 0, 1, 1), (1, 1, 0, 1), (1, 1, 1, 0))
-
         """
         return self.__array
 
@@ -501,7 +497,6 @@ class CoveringArray():
                     (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
             sage: CoveringArray(C)
             A 7 by 15 Covering Array with entries from [0, 1]
-
     """
         return 'A {} by {} Covering Array with entries from {}'.format(
             self.numrows(), self.numcols(), self.symbolset())
