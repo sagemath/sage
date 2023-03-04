@@ -14,5 +14,6 @@ Fusion Rings
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.algebras.fusion_rings.fusion_ring', ['FusionRing'])
+lazy_import('sage.algebras.fusion_rings.fusion_double', ['FusionDouble'])
 
 del lazy_import
