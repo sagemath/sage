@@ -128,10 +128,10 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.so(QQ, 5)
-                sage: L.e()
+                sage: L = lie_algebras.so(QQ, 5)                                                                        # optional - sage.combinat, sage.modules
+                sage: L.e()                                                                                             # optional - sage.combinat, sage.modules
                 Finite family {1: E[alpha[1]], 2: E[alpha[2]]}
-                sage: L.e(1)
+                sage: L.e(1)                                                                                            # optional - sage.combinat, sage.modules
                 E[alpha[1]]
             """
             E = self._part_generators(True)

@@ -1575,8 +1575,8 @@ class MatrixFunctor(ConstructionFunctor):
                 Ring endomorphism of Multivariate Polynomial Ring in x, y over Rational Field
                   Defn: x |--> x + y
                         y |--> x - y
-        sage: M = R([x,y,x*y,x+y])
-        sage: F(f)(M)
+        sage: M = R([x,y,x*y,x+y])                                                                                  # optional - sage.modules
+        sage: F(f)(M)                                                                                               # optional - sage.modules
         [    x + y     x - y]
         [x^2 - y^2       2*x]
 
@@ -1874,7 +1874,7 @@ class VectorFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: from sage.categories.pushout import VectorFunctor                                                     # optional - sage.modules
+            sage: from sage.categories.pushout import VectorFunctor
             sage: F1 = VectorFunctor(3, inner_product_matrix=Matrix(3, 3, range(9)))                                    # optional - sage.modules
             sage: F1.domain()                                                                                           # optional - sage.modules
             Category of commutative rings
@@ -2513,9 +2513,9 @@ class CompletionFunctor(ConstructionFunctor):
             5-adic Field with capped relative precision 100
             sage: F1(ZZ)                                                                                                # optional - sage.rings.padics
             5-adic Ring with capped relative precision 100
-            sage: F1.type is None
+            sage: F1.type is None                                                                                       # optional - sage.rings.padics
             True
-            sage: sorted(F1.extras.items())
+            sage: sorted(F1.extras.items())                                                                             # optional - sage.rings.padics
             []
             sage: F2 = RR.construction()[0]
             sage: F2
@@ -3909,7 +3909,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: f = lambda x: x^2
             sage: F = BlackBoxConstructionFunctor(f)
-            sage: F(ZZ)           # indirect doctest
+            sage: F(ZZ)           # indirect doctest                                                                    # optional - sage.modules
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
 
         """
