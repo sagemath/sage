@@ -359,7 +359,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^2 + 5*y
-            sage: f.change_ring(GF(5))
+            sage: f.change_ring(GF(5))                                          # optional - sage.libs.pari
             x^2
 
         ::
@@ -420,10 +420,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         EXAMPLES::
 
-            sage: R.<x,y>=QQbar[]
-            sage: -x
+            sage: R.<x,y>=QQbar[]                                               # optional - sage.rings.number_field
+            sage: -x                                                            # optional - sage.rings.number_field
             -x
-            sage: -(y-1)
+            sage: -(y-1)                                                        # optional - sage.rings.number_field
             -y + 1
         """
         return self*(-1)
@@ -2275,7 +2275,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: p.subresultants(q, y)                                                 # optional - sage.rings.number_field
             [2*x^6 + (-22)*x^5 + 102*x^4 + (-274)*x^3 + 488*x^2 + (-552)*x + 288,
              -x^3 - x^2*y + 6*x^2 + 5*x*y + (-11)*x + (-6)*y + 6]
-            sage: p.subresultants(q, x)
+            sage: p.subresultants(q, x)                                                 # optional - sage.rings.number_field
             [2*y^6 + (-22)*y^5 + 102*y^4 + (-274)*y^3 + 488*y^2 + (-552)*y + 288,
              x*y^2 + y^3 + (-5)*x*y + (-6)*y^2 + 6*x + 11*y - 6]
 

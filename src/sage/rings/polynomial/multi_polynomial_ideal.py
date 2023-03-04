@@ -3387,20 +3387,22 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False) # indirect doctest
-            sage: I #random
-            Left Ideal (y^2, x^2, z^2 - 1) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(I.gens(),key=str)
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)  # indirect doctest                                 # optional - sage.combinat, sage.modules
+            sage: I  # random                                                                                           # optional - sage.combinat, sage.modules
+            Left Ideal (y^2, x^2, z^2 - 1) of Noncommutative Multivariate Polynomial Ring in x, y, z
+             over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(I.gens(), key=str)                                                                             # optional - sage.combinat, sage.modules
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2-H.one()], side="twosided") #random
-            Twosided Ideal (y^2, x^2, z^2 - 1) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(H.ideal([y^2, x^2, z^2-H.one()], side="twosided").gens(),key=str)
+            sage: H.ideal([y^2, x^2, z^2-H.one()], side="twosided") #random                                             # optional - sage.combinat, sage.modules
+            Twosided Ideal (y^2, x^2, z^2 - 1) of Noncommutative Multivariate Polynomial Ring in x, y, z
+             over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(H.ideal([y^2, x^2, z^2-H.one()], side="twosided").gens(), key=str)                             # optional - sage.combinat, sage.modules
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2-H.one()], side="right")
+            sage: H.ideal([y^2, x^2, z^2-H.one()], side="right")                                                        # optional - sage.combinat, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: Only left and two-sided ideals are allowed.
@@ -3425,14 +3427,15 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: id = H.ideal(x + y, y + z)
-            sage: id.std()  # indirect doctest # random
-            Left Ideal (z, y, x) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(id.std().gens(),key=str)
+            sage: id = H.ideal(x + y, y + z)                                                                            # optional - sage.combinat, sage.modules
+            sage: id.std()  # indirect doctest # random                                                                 # optional - sage.combinat, sage.modules
+            Left Ideal (z, y, x) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(id.std().gens(), key=str)                                                                      # optional - sage.combinat, sage.modules
             [x, y, z]
         """
         from sage.libs.singular.function import singular_function
@@ -3449,14 +3452,16 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-            sage: I.std() #random
-            Left Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(I.std().gens(),key=str)
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                    # optional - sage.combinat, sage.modules
+            sage: I.std()  #random                                                                                      # optional - sage.combinat, sage.modules
+            Left Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(I.std().gens(), key=str)                                                                       # optional - sage.combinat, sage.modules
             [2*x*y - z - 1, x*z + x, x^2, y*z - y, y^2, z^2 - 1]
 
 
@@ -3464,25 +3469,35 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         Groebner basis. But if it is a two-sided ideal, then
         the output of std and :meth:`twostd` coincide::
 
-            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
-            sage: JL #random
-            Left Ideal (x^3, y^3, z^3 - 4*z) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JL.gens(),key=str)
+            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])                                                                   # optional - sage.combinat, sage.modules
+            sage: JL  #random                                                                                           # optional - sage.combinat, sage.modules
+            Left Ideal (x^3, y^3, z^3 - 4*z) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(JL.gens(), key=str)                                                                            # optional - sage.combinat, sage.modules
             [x^3, y^3, z^3 - 4*z]
-            sage: JL.std() #random
-            Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JL.std().gens(),key=str)
+            sage: JL.std()  #random                                                                                     # optional - sage.combinat, sage.modules
+            Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(JL.std().gens(), key=str)                                                                      # optional - sage.combinat, sage.modules
             [2*x*y*z - z^2 - 2*z, x*z^2 + 2*x*z, x^3, y*z^2 - 2*y*z, y^3, z^3 - 4*z]
-            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')
-            sage: JT #random
-            Twosided Ideal (x^3, y^3, z^3 - 4*z) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JT.gens(),key=str)
+            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')                                                  # optional - sage.combinat, sage.modules
+            sage: JT  #random                                                                                           # optional - sage.combinat, sage.modules
+            Twosided Ideal (x^3, y^3, z^3 - 4*z)
+             of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(JT.gens(), key=str)                                                                            # optional - sage.combinat, sage.modules
             [x^3, y^3, z^3 - 4*z]
-            sage: JT.std() #random
-            Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z, x^2*z + 2*x^2, y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JT.std().gens(),key=str)
-            [2*x*y*z - z^2 - 2*z, x*y^2 - y*z, x*z^2 + 2*x*z, x^2*y - x*z - 2*x, x^2*z + 2*x^2, x^3, y*z^2 - 2*y*z, y^2*z - 2*y^2, y^3, z^3 - 4*z]
-            sage: JT.std() == JL.twostd()
+            sage: JT.std()  #random                                                                                     # optional - sage.combinat, sage.modules
+            Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z,
+                            x^2*z + 2*x^2, y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: sorted(JT.std().gens(), key=str)                                                                      # optional - sage.combinat, sage.modules
+            [2*x*y*z - z^2 - 2*z, x*y^2 - y*z, x*z^2 + 2*x*z, x^2*y - x*z - 2*x, x^2*z + 2*x^2,
+             x^3, y*z^2 - 2*y*z, y^2*z - 2*y^2, y^3, z^3 - 4*z]
+            sage: JT.std() == JL.twostd()                                                                               # optional - sage.combinat, sage.modules
             True
 
         ALGORITHM: Uses Singular's std command
@@ -3499,18 +3514,22 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-            sage: I.elimination_ideal([x, z])
-            Left Ideal (y^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {...}
-            sage: J = I.twostd()
-            sage: J
-            Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {...}
-            sage: J.elimination_ideal([x, z])
-            Twosided Ideal (y^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {...}
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                    # optional - sage.combinat, sage.modules
+            sage: I.elimination_ideal([x, z])                                                                           # optional - sage.combinat, sage.modules
+            Left Ideal (y^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {...}
+            sage: J = I.twostd()                                                                                        # optional - sage.combinat, sage.modules
+            sage: J                                                                                                     # optional - sage.combinat, sage.modules
+            Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {...}
+            sage: J.elimination_ideal([x, z])                                                                           # optional - sage.combinat, sage.modules
+            Twosided Ideal (y^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {...}
 
 
         ALGORITHM: Uses Singular's eliminate command
@@ -3530,14 +3549,15 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-            sage: I.twostd() #random
-            Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field...
-            sage: sorted(I.twostd().gens(),key=str)
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                    # optional - sage.combinat, sage.modules
+            sage: I.twostd()  #random                                                                                   # optional - sage.combinat, sage.modules
+            Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field...
+            sage: sorted(I.twostd().gens(), key=str)                                                                    # optional - sage.combinat, sage.modules
             [2*x*y - z - 1, x*z + x, x^2, y*z - y, y^2, z^2 - 1]
 
         ALGORITHM: Uses Singular's twostd command
@@ -3556,13 +3576,13 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-           sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-           sage: H.<x,y,z> = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-           sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-           sage: I._groebner_strategy() #random
+           sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                         # optional - sage.combinat, sage.modules
+           sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                      # optional - sage.combinat, sage.modules
+           sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                     # optional - sage.combinat, sage.modules
+           sage: I._groebner_strategy()  #random                                                                        # optional - sage.combinat, sage.modules
            Groebner Strategy for ideal generated by 6 elements over
-           Noncommutative Multivariate Polynomial Ring in x, y, z over Rational
-           Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+            nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
 
         .. NOTE::
 
@@ -3584,25 +3604,24 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H.<x,y,z> = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False, side='twosided')
-            sage: Q = H.quotient(I); Q #random
-            Quotient of Noncommutative Multivariate Polynomial Ring in x, y, z
-             over Rational Field, nc-relations: {z*x: x*z + 2*x,
-             z*y: y*z - 2*y, y*x: x*y - z} by the ideal (y^2, x^2, z^2 - 1)
-            sage: Q.2^2 == Q.one()   # indirect doctest
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                     # optional - sage.combinat, sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False, side='twosided')                                   # optional - sage.combinat, sage.modules
+            sage: Q = H.quotient(I); Q  #random                                                                         # optional - sage.combinat, sage.modules
+            Quotient of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z} by the ideal (y^2, x^2, z^2 - 1)
+            sage: Q.2^2 == Q.one()   # indirect doctest                                                                 # optional - sage.combinat, sage.modules
             True
 
         Here, we see that the relation that we just found in the quotient
         is actually a consequence of the given relations::
 
-            sage: H.2^2-H.one() in I.std().gens()
+            sage: H.2^2 - H.one() in I.std().gens()                                                                     # optional - sage.combinat, sage.modules
             True
 
         Here is the corresponding direct test::
 
-            sage: I.reduce(z^2)
+            sage: I.reduce(z^2)                                                                                         # optional - sage.combinat, sage.modules
             1
 
         """
@@ -3614,21 +3633,26 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         We define a left and a two-sided ideal::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H.<x,y,z> = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
-            sage: JL.std() #random
-            Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')
-            sage: JT.std() #random
-            Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z, x^2*z + 2*x^2, y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                     # optional - sage.combinat, sage.modules
+            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])                                                                   # optional - sage.combinat, sage.modules
+            sage: JL.std()  #random                                                                                     # optional - sage.combinat, sage.modules
+            Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
+            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')                                                  # optional - sage.combinat, sage.modules
+            sage: JT.std()  #random                                                                                     # optional - sage.combinat, sage.modules
+            Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z,
+                            x^2*z + 2*x^2, y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of
+             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
+             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
 
         Apparently, ``x*y^2-y*z`` should be in the two-sided, but not
         in the left ideal::
 
-            sage: x*y^2-y*z in JL   #indirect doctest
+            sage: x*y^2-y*z in JL   #indirect doctest                                                                   # optional - sage.combinat, sage.modules
             False
-            sage: x*y^2-y*z in JT
+            sage: x*y^2-y*z in JT                                                                                       # optional - sage.combinat, sage.modules
             True
 
         """
@@ -3648,12 +3672,12 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-            sage: G = vector(I.gens()); G
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                    # optional - sage.combinat, sage.modules
+            sage: G = vector(I.gens()); G                                                                               # optional - sage.combinat, sage.modules
             d...: UserWarning: You are constructing a free module
             over a noncommutative ring. Sage does not have a concept
             of left/right and both sided modules, so be careful.
@@ -3665,7 +3689,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             It's also not guaranteed that all multiplications are
             done from the right side.
             (y^2, x^2, z^2 - 1)
-            sage: M = I.syzygy_module(); M
+            sage: M = I.syzygy_module(); M                                                                              # optional - sage.combinat, sage.modules
             [                                                                         -z^2 - 8*z - 15                                                                                        0                                                                                      y^2]
             [                                                                                       0                                                                          -z^2 + 8*z - 15                                                                                      x^2]
             [                                                              x^2*z^2 + 8*x^2*z + 15*x^2                                                              -y^2*z^2 + 8*y^2*z - 15*y^2                                                                   -4*x*y*z + 2*z^2 + 2*z]
@@ -3676,7 +3700,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             [                                                                           x^4*z + 4*x^4    -x^2*y^2*z + 4*x^2*y^2 - 4*x*y*z^2 + 32*x*y*z - 6*z^3 - 64*x*y + 66*z^2 - 240*z + 288                                                                                        0]
             [x^3*y^2*z + 4*x^3*y^2 + 18*x^2*y*z - 36*x*z^3 + 66*x^2*y - 432*x*z^2 - 1656*x*z - 2052*x                                      -x*y^4*z + 4*x*y^4 - 8*y^3*z^2 + 62*y^3*z - 114*y^3                                                                        48*y*z^2 - 36*y*z]
 
-            sage: M*G
+            sage: M*G                                                                                                   # optional - sage.combinat, sage.modules
             (0, 0, 0, 0, 0, 0, 0, 0, 0)
 
         ALGORITHM: Uses Singular's syz command
@@ -3703,12 +3727,12 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: H = A.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y})
-            sage: H.inject_variables()
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                                                        # optional - sage.combinat, sage.modules
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})                                             # optional - sage.combinat, sage.modules
+            sage: H.inject_variables()                                                                                  # optional - sage.combinat, sage.modules
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()],coerce=False)
-            sage: I.res(3)
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                                                    # optional - sage.combinat, sage.modules
+            sage: I.res(3)                                                                                              # optional - sage.combinat, sage.modules
             <Resolution>
         """
         if self.side() == 'twosided':

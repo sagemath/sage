@@ -549,14 +549,14 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(QQbar, sparse=True)
-            sage: f = (1+2*x)^3 + 3*x; f
+            sage: R.<x> = PolynomialRing(QQbar, sparse=True)                    # optional - sage.rings.number_field
+            sage: f = (1+2*x)^3 + 3*x; f                                        # optional - sage.rings.number_field
             8*x^3 + 12*x^2 + 9*x + 1
-            sage: g = f // (1+2*x); g
+            sage: g = f // (1+2*x); g                                           # optional - sage.rings.number_field
             4*x^2 + 4*x + 5/2
-            sage: f - g * (1+2*x)
+            sage: f - g * (1+2*x)                                               # optional - sage.rings.number_field
             -3/2
-            sage: f.quo_rem(1+2*x)
+            sage: f.quo_rem(1+2*x)                                              # optional - sage.rings.number_field
             (4*x^2 + 4*x + 5/2, -3/2)
 
         """
