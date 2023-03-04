@@ -1058,8 +1058,8 @@ def log(*args, **kwds):
         10
         sage: RDF(log(1024, 2))
         10.0
-        sage: log(10, 4)
-        1/2*log(10)/log(2)                                                                                              # optional - sage.symbolic
+        sage: log(10, 4)                                                                                                # optional - sage.symbolic
+        1/2*log(10)/log(2)
         sage: RDF(log(10, 4))                                                                                           # optional - sage.symbolic
         1.6609640474436813
         sage: log(10, 2)                                                                                                # optional - sage.symbolic
