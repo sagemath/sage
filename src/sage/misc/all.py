@@ -1,4 +1,4 @@
-from .all__sagemath_objects import *
+#from .all__sagemath_objects import *
 from .all__sagemath_environment import *
 from .all__sagemath_polyhedra import *
 from .all__sagemath_repl import *
