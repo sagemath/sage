@@ -417,7 +417,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [D{},
                  D{1} + D{1, 2} + D{2, 3} + D{3},
                  D{1, 2, 3} + D{1, 3} + D{2}]
-                sage: D.center_basis()
+                sage: D.center_basis()                                                                                  # optional - sage.combinat, sage.modules
                 (D{},
                  D{1} + D{1, 2} + D{2, 3} + D{3},
                  D{1, 2, 3} + D{1, 3} + D{2})
@@ -1116,7 +1116,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1]
 
                 sage: g = lie_algebras.sl(QQ, 2)                                                                        # optional - sage.combinat, sage.modules
-                sage: E,F,H = g.basis()
+                sage: E, F, H = g.basis()                                                                               # optional - sage.combinat, sage.modules
                 sage: n = g.subalgebra([F, H])                                                                          # optional - sage.combinat, sage.modules
                 sage: ascii_art(n.chevalley_eilenberg_complex())                                                        # optional - sage.combinat, sage.modules
                                         [0]

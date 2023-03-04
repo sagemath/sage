@@ -91,7 +91,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQbar).FinitelyGenerated().Graded()
+            sage: LieConformalAlgebras(QQbar).FinitelyGenerated().Graded()                                              # optional - sage.rings.number_field
             Category of H-graded finitely generated lie conformal algebras over Algebraic Field
         """
         def _repr_object_names(self):
@@ -100,7 +100,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()
+                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()                              # optional - sage.rings.number_field
                 Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
             """
             return "H-graded {}".format(self.base_category()._repr_object_names())

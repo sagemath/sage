@@ -2071,7 +2071,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: y = x.map_support_skip_none(lambda i: None); y                                                    # optional - sage.modules
                 0
-                sage: y.parent() is B
+                sage: y.parent() is B                                                                                   # optional - sage.modules
                 True
             """
             return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self) if fm is not None)

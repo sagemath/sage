@@ -348,7 +348,7 @@ class Groups(CategoryWithAxiom):
                 sage: G = AlternatingGroup(3)                                                                           # optional - sage.groups
                 sage: T = G.cayley_table()                                                                              # optional - sage.groups
                 sage: T.change_names('digits')                                                                          # optional - sage.groups
-                sage: T
+                sage: T                                                                                                 # optional - sage.groups
                 *  0 1 2
                  +------
                 0| 0 1 2
