@@ -398,23 +398,23 @@ def can_convert_to_singular(R):
 
     Avoid non absolute number fields (see :trac:`23535`)::
 
-        sage: K.<a,b> = NumberField([x^2-2,x^2-5])
-        sage: can_convert_to_singular(K['s,t'])
+        sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])                                                                 # optional - sage.rings.number_field
+        sage: can_convert_to_singular(K['s,t'])                                                                         # optional - sage.rings.number_field
         False
 
     Check for :trac:`33319`::
 
-        sage: R.<x,y> = GF((2^31-1)^3)[]
-        sage: R._has_singular
+        sage: R.<x,y> = GF((2^31-1)^3)[]                                                                                # optional - sage.libs.pari
+        sage: R._has_singular                                                                                           # optional - sage.libs.pari
         True
-        sage: R.<x,y> = GF((2^31+11)^2)[]
-        sage: R._has_singular
+        sage: R.<x,y> = GF((2^31+11)^2)[]                                                                               # optional - sage.libs.pari
+        sage: R._has_singular                                                                                           # optional - sage.libs.pari
         False
-        sage: R.<x,y> = GF(10^20-11)[]
-        sage: R._has_singular
+        sage: R.<x,y> = GF(10^20-11)[]                                                                                  # optional - sage.libs.pari
+        sage: R._has_singular                                                                                           # optional - sage.libs.pari
         True
-        sage: R.<x,y> = Zmod(10^20+1)[]
-        sage: R._has_singular
+        sage: R.<x,y> = Zmod(10^20+1)[]                                                                                 # optional - sage.libs.pari
+        sage: R._has_singular                                                                                           # optional - sage.libs.pari
         True
     """
     if R.ngens() == 0:

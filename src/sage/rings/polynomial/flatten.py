@@ -117,10 +117,10 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: R = QQbar['x','y']['a','b']
+            sage: R = QQbar['x','y']['a','b']                                                                           # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))
+            sage: f = FlatteningMorphism(R)                                                                             # optional - sage.rings.number_field
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                                                       # optional - sage.rings.number_field
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
@@ -369,7 +369,7 @@ class UnflatteningMorphism(Morphism):
             sage: rings = [ZZ['x']['y']['a,b,c']]
             sage: rings += [GF(4)['x','y']['a','b']]                                                                    # optional - sage.libs.pari
             sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]                                      # optional - sage.rings.number_field
-            sage: for R in :
+            sage: for R in rings:
             ....:    f = FlatteningMorphism(R)
             ....:    g = f.section()
             ....:    for _ in range(10):
