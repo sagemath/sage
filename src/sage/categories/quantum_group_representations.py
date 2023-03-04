@@ -146,7 +146,7 @@ class QuantumGroupRepresentations(Category_module):
 
                     EXAMPLES::
 
-                        sage: from sage.algebras.quantum_groups.representations import (
+                        sage: from sage.algebras.quantum_groups.representations import (                                # optional - sage.combinat, sage.modules
                         ....:  MinusculeRepresentation, AdjointRepresentation)
                         sage: R = ZZ['q'].fraction_field()
                         sage: KM = crystals.KirillovReshetikhin(['B',3,1], 3,1)                                         # optional - sage.combinat, sage.modules
@@ -407,7 +407,7 @@ class QuantumGroupRepresentations(Category_module):
 
             EXAMPLES::
 
-                sage: from sage.algebras.quantum_groups.representations import (
+                sage: from sage.algebras.quantum_groups.representations import (                                        # optional - sage.combinat, sage.modules
                 ....:  MinusculeRepresentation, AdjointRepresentation)
                 sage: C = crystals.Tableaux(['G',2], shape=[1,1])                                                       # optional - sage.combinat, sage.modules
                 sage: R = ZZ['q'].fraction_field()                                                                      # optional - sage.combinat, sage.modules
