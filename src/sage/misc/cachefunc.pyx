@@ -688,14 +688,14 @@ cdef class CachedFunction():
 
         TESTS::
 
-            sage: g = CachedFunction(number_of_partitions)
-            sage: g.__name__
+            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
+            sage: g.__name__                                                            # optional - sage.combinat
             'number_of_partitions'
-            sage: 'partitions' in sage.misc.sageinspect.sage_getdoc(g)
+            sage: 'partitions' in sage.misc.sageinspect.sage_getdoc(g)                  # optional - sage.combinat
             True
-            sage: g(5)
+            sage: g(5)                                                                  # optional - sage.combinat
             7
-            sage: g.cache
+            sage: g.cache                                                               # optional - sage.combinat
             {((5, 'default'), ()): 7}
             sage: def f(t=1): print(t)
             sage: h = CachedFunction(f)
@@ -897,8 +897,8 @@ cdef class CachedFunction():
         TESTS::
 
             sage: from sage.misc.sageinspect import sage_getsource
-            sage: g = CachedFunction(number_of_partitions)
-            sage: 'flint' in sage_getsource(g)  # indirect doctest
+            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
+            sage: 'flint' in sage_getsource(g)  # indirect doctest                      # optional - sage.combinat
             True
 
         """
@@ -949,16 +949,16 @@ cdef class CachedFunction():
 
         TESTS::
 
-            sage: g = CachedFunction(number_of_partitions)
-            sage: a = g(5)
-            sage: g.cache
+            sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
+            sage: a = g(5)                                                              # optional - sage.combinat
+            sage: g.cache                                                               # optional - sage.combinat
             {((5, 'default'), ()): 7}
-            sage: a = g(10^5)   # indirect doctest
-            sage: a == number_of_partitions(10^5)
+            sage: a = g(10^5)   # indirect doctest                                      # optional - sage.combinat
+            sage: a == number_of_partitions(10^5)                                       # optional - sage.combinat
             True
-            sage: a is g(10^5)
+            sage: a is g(10^5)                                                          # optional - sage.combinat
             True
-            sage: a is number_of_partitions(10^5)
+            sage: a is number_of_partitions(10^5)                                       # optional - sage.combinat
             True
 
         Check that :trac:`16316` has been fixed, i.e., caching works for
@@ -1074,14 +1074,14 @@ cdef class CachedFunction():
 
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)
-            sage: a = g(5)
-            sage: g.cache
+            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
+            sage: a = g(5)                                                      # optional - sage.combinat
+            sage: g.cache                                                       # optional - sage.combinat
             {((5, 'default'), ()): 7}
-            sage: g.set_cache(17, 5)
-            sage: g.cache
+            sage: g.set_cache(17, 5)                                            # optional - sage.combinat
+            sage: g.cache                                                       # optional - sage.combinat
             {((5, 'default'), ()): 17}
-            sage: g(5)
+            sage: g(5)                                                          # optional - sage.combinat
             17
 
         TESTS:
@@ -1175,8 +1175,8 @@ cdef class CachedFunction():
         """
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)
-            sage: g     # indirect doctest
+            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
+            sage: g     # indirect doctest                                      # optional - sage.combinat
             Cached version of <function number_of_partitions at 0x...>
         """
         try:
@@ -1190,12 +1190,12 @@ cdef class CachedFunction():
 
         EXAMPLES::
 
-            sage: g = CachedFunction(number_of_partitions)
-            sage: a = g(5)
-            sage: g.cache
+            sage: g = CachedFunction(number_of_partitions)                      # optional - sage.combinat
+            sage: a = g(5)                                                      # optional - sage.combinat
+            sage: g.cache                                                       # optional - sage.combinat
             {((5, 'default'), ()): 7}
-            sage: g.clear_cache()
-            sage: g.cache
+            sage: g.clear_cache()                                               # optional - sage.combinat
+            sage: g.cache                                                       # optional - sage.combinat
             {}
         """
         self.cache.clear()
@@ -3671,11 +3671,11 @@ class disk_cached_function:
         sage: dir = tmp_dir()
         sage: @disk_cached_function(dir)
         ....: def foo(x): return next_prime(2^x)%x
-        sage: x = foo(200);x
+        sage: x = foo(200); x                                                   # optional - sage.libs.pari
         11
         sage: @disk_cached_function(dir)
         ....: def foo(x): return 1/x
-        sage: foo(200)
+        sage: foo(200)                                                          # optional - sage.libs.pari
         11
         sage: foo.clear_cache()
         sage: foo(200)

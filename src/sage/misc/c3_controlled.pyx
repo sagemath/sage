@@ -196,21 +196,22 @@ key.
 We consider the smallest poset describing a class hierarchy admitting
 no MRO whatsoever::
 
-    sage: P = Poset({10: [9,8,7], 9:[6,1], 8:[5,2], 7:[4,3], 6: [3,2], 5:[3,1], 4: [2,1] }, linear_extension=True, facade=True)
+    sage: P = Poset({10: [9,8,7], 9: [6,1], 8: [5,2], 7: [4,3], 6: [3,2], 5: [3,1], 4: [2,1]},                          # optional - sage.combinat, sage.graphs
+    ....:           linear_extension=True, facade=True)
 
 And build a :class:`HierarchyElement` from it::
 
     sage: from sage.misc.c3_controlled import HierarchyElement
-    sage: x = HierarchyElement(10, P)
+    sage: x = HierarchyElement(10, P)                                                                                   # optional - sage.combinat, sage.graphs
 
 Here are its bases::
 
-    sage: HierarchyElement(10, P)._bases
+    sage: HierarchyElement(10, P)._bases                                                                                # optional - sage.combinat, sage.graphs
     [9, 8, 7]
 
 Using the standard ``C3`` algorithm fails::
 
-    sage: x.mro_standard
+    sage: x.mro_standard                                                                                                # optional - sage.combinat, sage.graphs
     Traceback (most recent call last):
     ...
     ValueError: Cannot merge the items 3, 3, 2.
@@ -219,18 +220,18 @@ We also get a failure when we relabel `P` according to another linear
 extension. For easy relabelling, we first need to set an appropriate
 default linear extension for `P`::
 
-    sage: linear_extension = list(reversed(IntegerRange(1,11)))
-    sage: P = P.with_linear_extension(linear_extension)
-    sage: list(P)
+    sage: linear_extension = list(reversed(IntegerRange(1, 11)))                                                        # optional - sage.combinat, sage.graphs
+    sage: P = P.with_linear_extension(linear_extension)                                                                 # optional - sage.combinat, sage.graphs
+    sage: list(P)                                                                                                       # optional - sage.combinat, sage.graphs
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 Now we play with a specific linear extension of `P`::
 
-    sage: Q = P.linear_extension([10, 9, 8, 7, 6, 5, 4, 1, 2, 3]).to_poset()
-    sage: Q.cover_relations()
+    sage: Q = P.linear_extension([10, 9, 8, 7, 6, 5, 4, 1, 2, 3]).to_poset()                                            # optional - sage.combinat, sage.graphs
+    sage: Q.cover_relations()                                                                                           # optional - sage.combinat, sage.graphs
     [[10, 9], [10, 8], [10, 7], [9, 6], [9, 3], [8, 5], [8, 2], [7, 4], [7, 1], [6, 2], [6, 1], [5, 3], [5, 1], [4, 3], [4, 2]]
-    sage: x = HierarchyElement(10, Q)
-    sage: x.mro_standard
+    sage: x = HierarchyElement(10, Q)                                                                                   # optional - sage.combinat, sage.graphs
+    sage: x.mro_standard                                                                                                # optional - sage.combinat, sage.graphs
     Traceback (most recent call last):
     ...
     ValueError: Cannot merge the items 2, 3, 3.
@@ -238,43 +239,43 @@ Now we play with a specific linear extension of `P`::
 On the other hand, both the instrumented ``C3`` algorithm, and the
 controlled ``C3`` algorithm give the desired MRO::
 
-    sage: x.mro
+    sage: x.mro                                                                                                         # optional - sage.combinat, sage.graphs
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    sage: x.mro_controlled
+    sage: x.mro_controlled                                                                                              # optional - sage.combinat, sage.graphs
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 The above checks, and more, can be run with::
 
-    sage: x._test_mro()
+    sage: x._test_mro()                                                                                                 # optional - sage.combinat, sage.graphs
 
 In practice, the control was achieved by adding the following bases::
 
-    sage: x._bases
+    sage: x._bases                                                                                                      # optional - sage.combinat, sage.graphs
     [9, 8, 7]
-    sage: x._bases_controlled
+    sage: x._bases_controlled                                                                                           # optional - sage.combinat, sage.graphs
     [9, 8, 7, 6, 5]
 
 Altogether, four bases were added for control::
 
-    sage: sum(len(HierarchyElement(q, Q)._bases) for q in Q)
+    sage: sum(len(HierarchyElement(q, Q)._bases) for q in Q)                                                            # optional - sage.combinat, sage.graphs
     15
-    sage: sum(len(HierarchyElement(q, Q)._bases_controlled) for q in Q)
+    sage: sum(len(HierarchyElement(q, Q)._bases_controlled) for q in Q)                                                 # optional - sage.combinat, sage.graphs
     19
 
 This information can also be recovered with::
 
-    sage: x.all_bases_len()
+    sage: x.all_bases_len()                                                                                             # optional - sage.combinat, sage.graphs
     15
-    sage: x.all_bases_controlled_len()
+    sage: x.all_bases_controlled_len()                                                                                  # optional - sage.combinat, sage.graphs
     19
 
 We now check that the ``C3`` algorithm fails for all linear extensions
 `l` of this poset, whereas both the instrumented and controlled ``C3``
 algorithms succeed; along the way, we collect some statistics::
 
-    sage: L = P.linear_extensions()
-    sage: stats = []
-    sage: for l in L:
+    sage: L = P.linear_extensions()                                                                                     # optional - sage.combinat, sage.graphs
+    sage: stats = []                                                                                                    # optional - sage.combinat, sage.graphs
+    sage: for l in L:                                                                                                   # optional - sage.combinat, sage.graphs
     ....:     x = HierarchyElement(10, l.to_poset())
     ....:     try: # Check that x.mro_standard always fails with a ValueError
     ....:         x.mro_standard
@@ -291,7 +292,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())
+    sage: sorted(Word(stats).evaluation_sparse())                                                                       # optional - sage.combinat, sage.graphs
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::

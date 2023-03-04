@@ -43,7 +43,7 @@ class AttrCallObject():
             sage: core(Partition([4,2]))                                        # optional - sage.combinat
             [4, 2]
 
-            sage: series = attrcall('series', x)
+            sage: series = attrcall('series', x)                                # optional - sage.symbolic
             sage: series(sin(x), 4)                                             # optional - sage.symbolic
             1*x + (-1/6)*x^3 + Order(x^4)
         """
