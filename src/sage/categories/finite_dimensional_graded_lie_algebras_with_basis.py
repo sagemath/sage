@@ -57,10 +57,10 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
                 sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                 sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},                                                         # optional - sage.combinat, sage.modules
                 ....:                nilpotent=True, category=C)
-                sage: L._test_grading()
+                sage: L._test_grading()                                                                                 # optional - sage.combinat, sage.modules
                 sage: L = LieAlgebra(QQ, {('x','y'): {'x': 1}},                                                         # optional - sage.combinat, sage.modules
                 ....:                nilpotent=True, category=C)
-                sage: L._test_grading()
+                sage: L._test_grading()                                                                                 # optional - sage.combinat, sage.modules
                 Traceback (most recent call last):
                 ...
                 AssertionError: Lie bracket [x, y] has degree 1, not degree 2

@@ -209,10 +209,10 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 Test the sign in the super tensor product::
 
-                    sage: A = SteenrodAlgebra(3)
-                    sage: x = A.Q(0)
-                    sage: y = x.coproduct()
-                    sage: y^2
+                    sage: A = SteenrodAlgebra(3)                                                                        # optional - sage.combinat, sage.modules
+                    sage: x = A.Q(0)                                                                                    # optional - sage.combinat, sage.modules
+                    sage: y = x.coproduct()                                                                             # optional - sage.combinat, sage.modules
+                    sage: y^2                                                                                           # optional - sage.combinat, sage.modules
                     0
 
                 TODO: optimize this implementation!

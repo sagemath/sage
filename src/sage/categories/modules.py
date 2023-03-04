@@ -361,9 +361,9 @@ class Modules(Category_module):
 
                 sage: Modules(ZZ).FinitelyPresented()
                 Category of finitely presented modules over Integer Ring
-                sage: A = SteenrodAlgebra(2)
-                sage: from sage.modules.fp_graded.module import FPModule
-                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()
+                sage: A = SteenrodAlgebra(2)                                                                            # optional - sage.combinat, sage.modules
+                sage: from sage.modules.fp_graded.module import FPModule                                                # optional - sage.combinat, sage.modules
+                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()                                                  # optional - sage.combinat, sage.modules
                 Category of finitely presented graded modules over mod 2 Steenrod algebra, milnor basis
 
             TESTS::
