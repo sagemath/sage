@@ -764,7 +764,10 @@ def lookup_global(name):
         try:
             import sage.all as all
         except ImportError:
-            import sage.all__sagemath_polyhedra as all
+            try:
+                import sage.all__sagemath_polyhedra as all
+            except ImportError:
+                import sage.all__sagemath_categories as all
     return getattr(all, name)
 
 
