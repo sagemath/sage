@@ -51,6 +51,8 @@ from sage.data_structures.binary_matrix cimport *
 from cysignals.signals cimport sig_on, sig_off, sig_check
 from memory_allocator cimport MemoryAllocator
 from itertools import product
+from sage.misc.flatten import flatten
+
 
 cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False):
     r"""
@@ -505,8 +507,8 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
         vertex, which represents a huge number of subsets. We have thus chosen
         to limit the degree of the vertices of the graphs that can be
         considered, even if the graph has a single connected subgraph (e.g., a
-        tree). This can certainly be improved using a decomposition into
-        biconnected components.
+        tree). It is therefore recommended to call this method on biconnected
+        components, as done in :meth:`connected_subgraph_iterator`.
 
     EXAMPLES:
 
@@ -830,6 +832,16 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
         sage: len(list(G.connected_subgraph_iterator(induced=False)))
         10
 
+        sage: G = DiGraph([(0, 1), (1, 0), (1, 2), (2, 1)])
+        sage: len(list(G.connected_subgraph_iterator()))
+        6
+        sage: len(list(G.connected_subgraph_iterator(vertices_only=True)))
+        6
+        sage: len(list(G.connected_subgraph_iterator(edges_only=True)))
+        6
+        sage: len(list(G.connected_subgraph_iterator(induced=False)))
+        18
+
     TESTS:
 
     The Path Graph of order `n` has `n (n + 1) / 2` connected subgraphs::
@@ -968,8 +980,35 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
                         else:
                             yield H
                     else:
-                        yield from connected_full_subgraphs(H, edges_only=edges_only,
-                                                            labels=labels)
+                        # We use a decomposition into biconnected components to
+                        # work on smaller graphs.
+                        if H.is_directed():
+                            blocks = H.to_undirected().blocks_and_cut_vertices()[0]
+                        else:
+                            blocks = H.blocks_and_cut_vertices()[0]
+                        if len(blocks) == 1:
+                            # H is strongly connected or biconnected
+                            yield from connected_full_subgraphs(H, edges_only=edges_only,
+                                                                labels=labels)
+                        else:
+                            L = []
+                            for bloc in blocks:
+                                if len(bloc) == 2:
+                                    bb = [[e] for e in H.edge_boundary(bloc, bloc, labels=labels)]
+                                    if len(bb) == 2:
+                                        # H is directed with edges (u, v) and (v, u)
+                                        bb.append(H.edge_boundary(bloc, bloc, labels=labels))
+                                    L.append(bb)
+                                else:
+                                    L.append(connected_full_subgraphs(H.subgraph(vertices=bloc),
+                                                                      edges_only=True, labels=labels))
+
+                            for edges in product(*L):
+                                good_edges = flatten(edges, ltypes=list)
+                                if edges_only:
+                                    yield list(good_edges)
+                                else:
+                                    yield H.subgraph(vertices=H, edges=good_edges)
 
             else:
                 # We cannot extend the current subset, either due to a lack of
