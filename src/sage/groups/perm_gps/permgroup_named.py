@@ -3497,8 +3497,8 @@ class SmallPermutationGroup(PermutationGroup_generic):
         self._n = order
         self._gap_id = gap_id
         self._gap_small_group = libgap.SmallGroup(order,gap_id)
-        self._gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
-        PermutationGroup_generic.__init__(self, gap_group=self._gap_permutation_group)
+        gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
+        PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 
     def _repr_(self):
         r"""
