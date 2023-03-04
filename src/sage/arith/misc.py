@@ -82,26 +82,26 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     EXAMPLES::
 
-        sage: algdep(1.888888888888888, 1)
+        sage: algdep(1.888888888888888, 1)                                                                              # optional - sage.libs.pari
         9*x - 17
-        sage: algdep(0.12121212121212,1)
+        sage: algdep(0.12121212121212, 1)                                                                               # optional - sage.libs.pari
         33*x - 4
-        sage: algdep(sqrt(2),2)
+        sage: algdep(sqrt(2), 2)                                                                                        # optional - sage.libs.pari, sage.symbolic
         x^2 - 2
 
     This example involves a complex number::
 
-        sage: z = (1/2)*(1 + RDF(sqrt(3)) *CC.0); z
+        sage: z = (1/2) * (1 + RDF(sqrt(3)) * CC.0); z                                                                  # optional - sage.symbolic
         0.500000000000000 + 0.866025403784439*I
-        sage: algdep(z, 6)
+        sage: algdep(z, 6)                                                                                              # optional - sage.symbolic
         x^2 - x + 1
 
     This example involves a `p`-adic number::
 
-        sage: K = Qp(3, print_mode = 'series')
-        sage: a = K(7/19); a
+        sage: K = Qp(3, print_mode='series')                                                                            # optional - sage.rings.padics
+        sage: a = K(7/19); a                                                                                            # optional - sage.rings.padics
         1 + 2*3 + 3^2 + 3^3 + 2*3^4 + 2*3^5 + 3^8 + 2*3^9 + 3^11 + 3^12 + 2*3^15 + 2*3^16 + 3^17 + 2*3^19 + O(3^20)
-        sage: algdep(a, 1)
+        sage: algdep(a, 1)                                                                                              # optional - sage.rings.padics
         19*x - 7
 
     These examples show the importance of proper precision control. We
@@ -109,82 +109,82 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     33'rd bit::
 
         sage: z = sqrt(RealField(200)(2)) + (1/2)^33
-        sage: p = algdep(z, 4); p
+        sage: p = algdep(z, 4); p                                                                                       # optional - sage.libs.pari
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: factor(p)
+        sage: factor(p)                                                                                                 # optional - sage.libs.pari
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: algdep(z, 4, known_bits=32)
+        sage: algdep(z, 4, known_bits=32)                                                                               # optional - sage.libs.pari
         x^2 - 2
-        sage: algdep(z, 4, known_digits=10)
+        sage: algdep(z, 4, known_digits=10)                                                                             # optional - sage.libs.pari
         x^2 - 2
-        sage: algdep(z, 4, use_bits=25)
+        sage: algdep(z, 4, use_bits=25)                                                                                 # optional - sage.libs.pari
         x^2 - 2
-        sage: algdep(z, 4, use_digits=8)
+        sage: algdep(z, 4, use_digits=8)                                                                                # optional - sage.libs.pari
         x^2 - 2
 
     Using the ``height_bound`` and ``proof`` parameters, we can see that
     `pi` is not the root of an integer polynomial of degree at most 5
     and coefficients bounded above by 10::
 
-        sage: algdep(pi.n(), 5, height_bound=10, proof=True) is None
+        sage: algdep(pi.n(), 5, height_bound=10, proof=True) is None                                                    # optional - sage.libs.pari, sage.symbolic
         True
 
     For stronger results, we need more precision::
 
-        sage: algdep(pi.n(), 5, height_bound=100, proof=True) is None
+        sage: algdep(pi.n(), 5, height_bound=100, proof=True) is None                                                   # optional - sage.libs.pari, sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: insufficient precision for non-existence proof
-        sage: algdep(pi.n(200), 5, height_bound=100, proof=True) is None
+        sage: algdep(pi.n(200), 5, height_bound=100, proof=True) is None                                                # optional - sage.libs.pari, sage.symbolic
         True
 
-        sage: algdep(pi.n(), 10, height_bound=10, proof=True) is None
+        sage: algdep(pi.n(), 10, height_bound=10, proof=True) is None                                                   # optional - sage.libs.pari, sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: insufficient precision for non-existence proof
-        sage: algdep(pi.n(200), 10, height_bound=10, proof=True) is None
+        sage: algdep(pi.n(200), 10, height_bound=10, proof=True) is None                                                # optional - sage.libs.pari, sage.symbolic
         True
 
     We can also use ``proof=True`` to get positive results::
 
-        sage: a = sqrt(2) + sqrt(3) + sqrt(5)
-        sage: algdep(a.n(), 8, height_bound=1000, proof=True)
+        sage: a = sqrt(2) + sqrt(3) + sqrt(5)                                                                           # optional - sage.libs.pari, sage.symbolic
+        sage: algdep(a.n(), 8, height_bound=1000, proof=True)                                                           # optional - sage.libs.pari, sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: insufficient precision for uniqueness proof
-        sage: f = algdep(a.n(1000), 8, height_bound=1000, proof=True); f
+        sage: f = algdep(a.n(1000), 8, height_bound=1000, proof=True); f                                                # optional - sage.libs.pari, sage.symbolic
         x^8 - 40*x^6 + 352*x^4 - 960*x^2 + 576
-        sage: f(a).expand()
+        sage: f(a).expand()                                                                                             # optional - sage.libs.pari, sage.symbolic
         0
 
     TESTS::
 
-        sage: algdep(complex("1+2j"), 4)
+        sage: algdep(complex("1+2j"), 4)                                                                                # optional - sage.libs.pari
         x^2 - 2*x + 5
 
     We get an irreducible polynomial even if PARI returns a reducible
     one::
 
         sage: z = CDF(1, RR(3).sqrt())/2
-        sage: pari(z).algdep(5)
+        sage: pari(z).algdep(5)                                                                                         # optional - sage.libs.pari
         x^5 + x^2
-        sage: algdep(z, 5)
+        sage: algdep(z, 5)                                                                                              # optional - sage.libs.pari
         x^2 - x + 1
 
     Check that cases where a constant polynomial might look better
     get handled correctly::
 
-        sage: z=CC(-1)**(1/3)
-        sage: algdep(z,1)
+        sage: z = CC(-1)**(1/3)
+        sage: algdep(z, 1)                                                                                              # optional - sage.libs.pari
         x
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8, float64
-        sage: algdep(float64(1.888888888888888), int8(1))
+        sage: algdep(float64(1.888888888888888), int8(1))                                                               # optional - sage.libs.pari
         9*x - 17
         sage: from gmpy2 import mpz, mpfr
-        sage: algdep(mpfr(1.888888888888888), mpz(1))
+        sage: algdep(mpfr(1.888888888888888), mpz(1))                                                                   # optional - sage.libs.pari
         9*x - 17
     """
     if proof and not height_bound:
@@ -519,7 +519,7 @@ def is_prime(n):
         sage: a = 2**2048 + 981
         sage: is_prime(a)    # not tested - takes ~ 1min
         sage: proof.arithmetic(False)
-        sage: is_prime(a)    # instantaneous!
+        sage: is_prime(a)    # instantaneous!                                                                           # optional - sage.libs.pari
         True
         sage: proof.arithmetic(True)
 
@@ -586,19 +586,19 @@ def is_pseudoprime(n):
 
     EXAMPLES::
 
-        sage: is_pseudoprime(389)
+        sage: is_pseudoprime(389)                                                                                       # optional - sage.libs.pari
         True
-        sage: is_pseudoprime(2000)
+        sage: is_pseudoprime(2000)                                                                                      # optional - sage.libs.pari
         False
-        sage: is_pseudoprime(2)
+        sage: is_pseudoprime(2)                                                                                         # optional - sage.libs.pari
         True
-        sage: is_pseudoprime(-1)
+        sage: is_pseudoprime(-1)                                                                                        # optional - sage.libs.pari
         False
         sage: factor(-6)
         -1 * 2 * 3
-        sage: is_pseudoprime(1)
+        sage: is_pseudoprime(1)                                                                                         # optional - sage.libs.pari
         False
-        sage: is_pseudoprime(-2)
+        sage: is_pseudoprime(-2)                                                                                        # optional - sage.libs.pari
         False
     """
     return ZZ(n).is_pseudoprime()
@@ -621,51 +621,51 @@ def is_prime_power(n, get_data=False):
 
     EXAMPLES::
 
-        sage: is_prime_power(389)
+        sage: is_prime_power(389)                                                                                       # optional - sage.libs.pari
         True
-        sage: is_prime_power(2000)
+        sage: is_prime_power(2000)                                                                                      # optional - sage.libs.pari
         False
-        sage: is_prime_power(2)
+        sage: is_prime_power(2)                                                                                         # optional - sage.libs.pari
         True
-        sage: is_prime_power(1024)
+        sage: is_prime_power(1024)                                                                                      # optional - sage.libs.pari
         True
-        sage: is_prime_power(1024, get_data=True)
+        sage: is_prime_power(1024, get_data=True)                                                                       # optional - sage.libs.pari
         (2, 10)
 
     The same results can be obtained with::
 
-        sage: 389.is_prime_power()
+        sage: 389.is_prime_power()                                                                                      # optional - sage.libs.pari
         True
-        sage: 2000.is_prime_power()
+        sage: 2000.is_prime_power()                                                                                     # optional - sage.libs.pari
         False
-        sage: 2.is_prime_power()
+        sage: 2.is_prime_power()                                                                                        # optional - sage.libs.pari
         True
-        sage: 1024.is_prime_power()
+        sage: 1024.is_prime_power()                                                                                     # optional - sage.libs.pari
         True
-        sage: 1024.is_prime_power(get_data=True)
+        sage: 1024.is_prime_power(get_data=True)                                                                        # optional - sage.libs.pari
         (2, 10)
 
     TESTS::
 
-        sage: is_prime_power(-1)
+        sage: is_prime_power(-1)                                                                                        # optional - sage.libs.pari
         False
-        sage: is_prime_power(1)
+        sage: is_prime_power(1)                                                                                         # optional - sage.libs.pari
         False
-        sage: is_prime_power(QQ(997^100))
+        sage: is_prime_power(QQ(997^100))                                                                               # optional - sage.libs.pari
         True
-        sage: is_prime_power(1/2197)
+        sage: is_prime_power(1/2197)                                                                                    # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
-        sage: is_prime_power("foo")
+        sage: is_prime_power("foo")                                                                                     # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 'foo' to an integer
         sage: from gmpy2 import mpz
-        sage: is_prime_power(mpz(389))
+        sage: is_prime_power(mpz(389))                                                                                  # optional - sage.libs.pari
         True
         sage: from numpy import int16
-        sage: is_prime_power(int16(389))
+        sage: is_prime_power(int16(389))                                                                                # optional - sage.libs.pari
         True
     """
     return ZZ(n).is_prime_power(get_data=get_data)
@@ -688,39 +688,39 @@ def is_pseudoprime_power(n, get_data=False):
 
     EXAMPLES::
 
-        sage: is_pseudoprime_power(389)
+        sage: is_pseudoprime_power(389)                                                                                 # optional - sage.libs.pari
         True
-        sage: is_pseudoprime_power(2000)
+        sage: is_pseudoprime_power(2000)                                                                                # optional - sage.libs.pari
         False
-        sage: is_pseudoprime_power(2)
+        sage: is_pseudoprime_power(2)                                                                                   # optional - sage.libs.pari
         True
-        sage: is_pseudoprime_power(1024)
+        sage: is_pseudoprime_power(1024)                                                                                # optional - sage.libs.pari
         True
-        sage: is_pseudoprime_power(-1)
+        sage: is_pseudoprime_power(-1)                                                                                  # optional - sage.libs.pari
         False
-        sage: is_pseudoprime_power(1)
+        sage: is_pseudoprime_power(1)                                                                                   # optional - sage.libs.pari
         False
-        sage: is_pseudoprime_power(997^100)
+        sage: is_pseudoprime_power(997^100)                                                                             # optional - sage.libs.pari
         True
 
     Use of the get_data keyword::
 
-        sage: is_pseudoprime_power(3^1024, get_data=True)
+        sage: is_pseudoprime_power(3^1024, get_data=True)                                                               # optional - sage.libs.pari
         (3, 1024)
-        sage: is_pseudoprime_power(2^256, get_data=True)
+        sage: is_pseudoprime_power(2^256, get_data=True)                                                                # optional - sage.libs.pari
         (2, 256)
-        sage: is_pseudoprime_power(31, get_data=True)
+        sage: is_pseudoprime_power(31, get_data=True)                                                                   # optional - sage.libs.pari
         (31, 1)
-        sage: is_pseudoprime_power(15, get_data=True)
+        sage: is_pseudoprime_power(15, get_data=True)                                                                   # optional - sage.libs.pari
         (15, 0)
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int16
-        sage: is_pseudoprime_power(int16(1024))
+        sage: is_pseudoprime_power(int16(1024))                                                                         # optional - sage.libs.pari
         True
         sage: from gmpy2 import mpz
-        sage: is_pseudoprime_power(mpz(1024))
+        sage: is_pseudoprime_power(mpz(1024))                                                                           # optional - sage.libs.pari
         True
     """
     return ZZ(n).is_prime_power(proof=False, get_data=get_data)
@@ -822,49 +822,49 @@ def prime_powers(start, stop=None):
 
     EXAMPLES::
 
-        sage: prime_powers(20)
+        sage: prime_powers(20)                                                                                          # optional - sage.libs.pari
         [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19]
-        sage: len(prime_powers(1000))
+        sage: len(prime_powers(1000))                                                                                   # optional - sage.libs.pari
         193
-        sage: len(prime_range(1000))
+        sage: len(prime_range(1000))                                                                                    # optional - sage.libs.pari
         168
 
-        sage: a = [z for z in range(95,1234) if is_prime_power(z)]
-        sage: b = prime_powers(95,1234)
-        sage: len(b)
+        sage: a = [z for z in range(95, 1234) if is_prime_power(z)]                                                     # optional - sage.libs.pari
+        sage: b = prime_powers(95, 1234)                                                                                # optional - sage.libs.pari
+        sage: len(b)                                                                                                    # optional - sage.libs.pari
         194
-        sage: len(a)
+        sage: len(a)                                                                                                    # optional - sage.libs.pari
         194
-        sage: a[:10]
+        sage: a[:10]                                                                                                    # optional - sage.libs.pari
         [97, 101, 103, 107, 109, 113, 121, 125, 127, 128]
-        sage: b[:10]
+        sage: b[:10]                                                                                                    # optional - sage.libs.pari
         [97, 101, 103, 107, 109, 113, 121, 125, 127, 128]
-        sage: a == b
+        sage: a == b                                                                                                    # optional - sage.libs.pari
         True
 
-        sage: prime_powers(100) == [i for i in range(100) if is_prime_power(i)]
+        sage: prime_powers(100) == [i for i in range(100) if is_prime_power(i)]                                         # optional - sage.libs.pari
         True
 
-        sage: prime_powers(10,7)
+        sage: prime_powers(10, 7)                                                                                       # optional - sage.libs.pari
         []
-        sage: prime_powers(-5)
+        sage: prime_powers(-5)                                                                                          # optional - sage.libs.pari
         []
-        sage: prime_powers(-1,3)
+        sage: prime_powers(-1, 3)                                                                                       # optional - sage.libs.pari
         [2]
 
     TESTS:
 
     Check that output are always Sage integers (:trac:`922`)::
 
-        sage: v = prime_powers(10)
-        sage: type(v[0])
+        sage: v = prime_powers(10)                                                                                      # optional - sage.libs.pari
+        sage: type(v[0])                                                                                                # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
 
-        sage: prime_powers(0,1)
+        sage: prime_powers(0, 1)                                                                                        # optional - sage.libs.pari
         []
-        sage: prime_powers(2)
+        sage: prime_powers(2)                                                                                           # optional - sage.libs.pari
         []
-        sage: prime_powers(3)
+        sage: prime_powers(3)                                                                                           # optional - sage.libs.pari
         [2]
 
         sage: prime_powers("foo")
@@ -879,18 +879,18 @@ def prime_powers(start, stop=None):
 
     Check that long input are accepted (:trac:`17852`)::
 
-        sage: prime_powers(6l)
+        sage: prime_powers(6l)                                                                                          # optional - sage.libs.pari
         [2, 3, 4, 5]
-        sage: prime_powers(6l,10l)
+        sage: prime_powers(6l, 10l)                                                                                     # optional - sage.libs.pari
         [7, 8, 9]
 
     Check numpy and gmpy2 support::
 
         sage: from numpy import int8
-        sage: prime_powers(int8(20))
+        sage: prime_powers(int8(20))                                                                                    # optional - sage.libs.pari
         [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19]
         sage: from gmpy2 import mpz
-        sage: prime_powers(mpz(20))
+        sage: prime_powers(mpz(20))                                                                                     # optional - sage.libs.pari
         [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19]
     """
     start = ZZ(start)
@@ -932,11 +932,11 @@ def primes_first_n(n, leave_pari=False):
 
     EXAMPLES::
 
-        sage: primes_first_n(10)
+        sage: primes_first_n(10)                                                                                        # optional - sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-        sage: len(primes_first_n(1000))
+        sage: len(primes_first_n(1000))                                                                                 # optional - sage.libs.pari
         1000
-        sage: primes_first_n(0)
+        sage: primes_first_n(0)                                                                                         # optional - sage.libs.pari
         []
     """
     if n < 0:
@@ -974,7 +974,7 @@ def eratosthenes(n):
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
         sage: len(eratosthenes(100))
         25
-        sage: eratosthenes(213) == prime_range(213)
+        sage: eratosthenes(213) == prime_range(213)                                                                     # optional - sage.libs.pari
         True
 
     TESTS::
@@ -1046,41 +1046,41 @@ def primes(start, stop=None, proof=None):
 
     EXAMPLES::
 
-        sage: for p in primes(5,10):
+        sage: for p in primes(5, 10):                                                                                   # optional - sage.libs.pari
         ....:     print(p)
         5
         7
-        sage: list(primes(13))
+        sage: list(primes(13))                                                                                          # optional - sage.libs.pari
         [2, 3, 5, 7, 11]
-        sage: list(primes(10000000000, 10000000100))
+        sage: list(primes(10000000000, 10000000100))                                                                    # optional - sage.libs.pari
         [10000000019, 10000000033, 10000000061, 10000000069, 10000000097]
-        sage: max(primes(10^100, 10^100+10^4, proof=False))
+        sage: max(primes(10^100, 10^100+10^4, proof=False))                                                             # optional - sage.libs.pari
         10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009631
-        sage: next(p for p in primes(10^20, infinity) if is_prime(2*p+1))
+        sage: next(p for p in primes(10^20, infinity) if is_prime(2*p+1))                                               # optional - sage.libs.pari
         100000000000000001243
 
 
     TESTS::
 
-        sage: for a in range(-10, 50):
+        sage: for a in range(-10, 50):                                                                                  # optional - sage.libs.pari
         ....:     for b in range(-10, 50):
         ....:         assert list(primes(a,b)) == list(filter(is_prime, range(a,b)))
-        sage: sum(primes(-10, 9973, proof=False)) == sum(filter(is_prime, range(-10, 9973)))
+        sage: sum(primes(-10, 9973, proof=False)) == sum(filter(is_prime, range(-10, 9973)))                            # optional - sage.libs.pari
         True
-        sage: for p in primes(10, infinity):
+        sage: for p in primes(10, infinity):                                                                            # optional - sage.libs.pari
         ....:     if p > 20: break
         ....:     print(p)
         11
         13
         17
         19
-        sage: next(p for p in primes(10,oo)) # checks alternate infinity notation
+        sage: next(p for p in primes(10,oo)) # checks alternate infinity notation                                       # optional - sage.libs.pari
         11
         sage: from numpy import int8
-        sage: list(primes(int8(13)))
+        sage: list(primes(int8(13)))                                                                                    # optional - sage.libs.pari
         [2, 3, 5, 7, 11]
         sage: from gmpy2 import mpz
-        sage: list(primes(mpz(13)))
+        sage: list(primes(mpz(13)))                                                                                     # optional - sage.libs.pari
         [2, 3, 5, 7, 11]
     """
     from sage.rings.infinity import infinity
@@ -1120,40 +1120,40 @@ def next_prime_power(n):
 
     EXAMPLES::
 
-        sage: next_prime_power(1)
+        sage: next_prime_power(1)                                                                                       # optional - sage.libs.pari
         2
-        sage: next_prime_power(2)
+        sage: next_prime_power(2)                                                                                       # optional - sage.libs.pari
         3
-        sage: next_prime_power(10)
+        sage: next_prime_power(10)                                                                                      # optional - sage.libs.pari
         11
-        sage: next_prime_power(7)
+        sage: next_prime_power(7)                                                                                       # optional - sage.libs.pari
         8
-        sage: next_prime_power(99)
+        sage: next_prime_power(99)                                                                                      # optional - sage.libs.pari
         101
 
     The same results can be obtained with::
 
-        sage: 1.next_prime_power()
+        sage: 1.next_prime_power()                                                                                      # optional - sage.libs.pari
         2
-        sage: 2.next_prime_power()
+        sage: 2.next_prime_power()                                                                                      # optional - sage.libs.pari
         3
-        sage: 10.next_prime_power()
+        sage: 10.next_prime_power()                                                                                     # optional - sage.libs.pari
         11
 
     Note that `2` is the smallest prime power::
 
-        sage: next_prime_power(-10)
+        sage: next_prime_power(-10)                                                                                     # optional - sage.libs.pari
         2
-        sage: next_prime_power(0)
+        sage: next_prime_power(0)                                                                                       # optional - sage.libs.pari
         2
 
     TESTS::
 
         sage: from numpy import int8
-        sage: next_prime_power(int8(10))
+        sage: next_prime_power(int8(10))                                                                                # optional - sage.libs.pari
         11
         sage: from gmpy2 import mpz
-        sage: next_prime_power(mpz(10))
+        sage: next_prime_power(mpz(10))                                                                                 # optional - sage.libs.pari
         11
     """
     return ZZ(n).next_prime_power()
@@ -1171,22 +1171,22 @@ def next_probable_prime(n):
 
     EXAMPLES::
 
-        sage: next_probable_prime(-100)
+        sage: next_probable_prime(-100)                                                                                 # optional - sage.libs.pari
         2
-        sage: next_probable_prime(19)
+        sage: next_probable_prime(19)                                                                                   # optional - sage.libs.pari
         23
-        sage: next_probable_prime(int(999999999))
+        sage: next_probable_prime(int(999999999))                                                                       # optional - sage.libs.pari
         1000000007
-        sage: next_probable_prime(2^768)
+        sage: next_probable_prime(2^768)                                                                                # optional - sage.libs.pari
         1552518092300708935148979488462502555256886017116696611139052038026050952686376886330878408828646477950487730697131073206171580044114814391444287275041181139204454976020849905550265285631598444825262999193716468750892846853816058039
 
     TESTS::
 
         sage: from numpy import int8
-        sage: next_probable_prime(int8(19))
+        sage: next_probable_prime(int8(19))                                                                             # optional - sage.libs.pari
         23
         sage: from gmpy2 import mpz
-        sage: next_probable_prime(mpz(19))
+        sage: next_probable_prime(mpz(19))                                                                              # optional - sage.libs.pari
         23
     """
     return ZZ(n).next_probable_prime()
@@ -1210,33 +1210,33 @@ def next_prime(n, proof=None):
 
     EXAMPLES::
 
-        sage: next_prime(-100)
+        sage: next_prime(-100)                                                                                          # optional - sage.libs.pari
         2
-        sage: next_prime(1)
+        sage: next_prime(1)                                                                                             # optional - sage.libs.pari
         2
-        sage: next_prime(2)
+        sage: next_prime(2)                                                                                             # optional - sage.libs.pari
         3
-        sage: next_prime(3)
+        sage: next_prime(3)                                                                                             # optional - sage.libs.pari
         5
-        sage: next_prime(4)
+        sage: next_prime(4)                                                                                             # optional - sage.libs.pari
         5
 
     Notice that the next_prime(5) is not 5 but 7.
 
     ::
 
-        sage: next_prime(5)
+        sage: next_prime(5)                                                                                             # optional - sage.libs.pari
         7
-        sage: next_prime(2004)
+        sage: next_prime(2004)                                                                                          # optional - sage.libs.pari
         2011
 
     TESTS::
 
         sage: from numpy import int8
-        sage: next_prime(int8(3))
+        sage: next_prime(int8(3))                                                                                       # optional - sage.libs.pari
         5
         sage: from gmpy2 import mpz
-        sage: next_probable_prime(mpz(3))
+        sage: next_probable_prime(mpz(3))                                                                               # optional - sage.libs.pari
         5
     """
     return ZZ(n).next_prime(proof)
@@ -1249,27 +1249,27 @@ def previous_prime(n):
 
     EXAMPLES::
 
-        sage: previous_prime(10)
+        sage: previous_prime(10)                                                                                        # optional - sage.libs.pari
         7
-        sage: previous_prime(7)
+        sage: previous_prime(7)                                                                                         # optional - sage.libs.pari
         5
-        sage: previous_prime(8)
+        sage: previous_prime(8)                                                                                         # optional - sage.libs.pari
         7
-        sage: previous_prime(7)
+        sage: previous_prime(7)                                                                                         # optional - sage.libs.pari
         5
-        sage: previous_prime(5)
+        sage: previous_prime(5)                                                                                         # optional - sage.libs.pari
         3
-        sage: previous_prime(3)
+        sage: previous_prime(3)                                                                                         # optional - sage.libs.pari
         2
-        sage: previous_prime(2)
+        sage: previous_prime(2)                                                                                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no previous prime
-        sage: previous_prime(1)
+        sage: previous_prime(1)                                                                                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no previous prime
-        sage: previous_prime(-20)
+        sage: previous_prime(-20)                                                                                       # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no previous prime
@@ -1277,10 +1277,10 @@ def previous_prime(n):
     TESTS::
 
         sage: from numpy import int8
-        sage: previous_prime(int8(7))
+        sage: previous_prime(int8(7))                                                                                   # optional - sage.libs.pari
         5
         sage: from gmpy2 import mpz
-        sage: previous_prime(mpz(7))
+        sage: previous_prime(mpz(7))                                                                                    # optional - sage.libs.pari
         5
     """
     n = ZZ(n) - 1
@@ -1315,52 +1315,52 @@ def previous_prime_power(n):
 
     EXAMPLES::
 
-        sage: previous_prime_power(3)
+        sage: previous_prime_power(3)                                                                                   # optional - sage.libs.pari
         2
-        sage: previous_prime_power(10)
+        sage: previous_prime_power(10)                                                                                  # optional - sage.libs.pari
         9
-        sage: previous_prime_power(7)
+        sage: previous_prime_power(7)                                                                                   # optional - sage.libs.pari
         5
-        sage: previous_prime_power(127)
+        sage: previous_prime_power(127)                                                                                 # optional - sage.libs.pari
         125
 
     The same results can be obtained with::
 
-        sage: 3.previous_prime_power()
+        sage: 3.previous_prime_power()                                                                                  # optional - sage.libs.pari
         2
-        sage: 10.previous_prime_power()
+        sage: 10.previous_prime_power()                                                                                 # optional - sage.libs.pari
         9
-        sage: 7.previous_prime_power()
+        sage: 7.previous_prime_power()                                                                                  # optional - sage.libs.pari
         5
-        sage: 127.previous_prime_power()
+        sage: 127.previous_prime_power()                                                                                # optional - sage.libs.pari
         125
 
     Input less than or equal to `2` raises errors::
 
-        sage: previous_prime_power(2)
+        sage: previous_prime_power(2)                                                                                   # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no prime power less than 2
-        sage: previous_prime_power(-10)
+        sage: previous_prime_power(-10)                                                                                 # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no prime power less than 2
 
     ::
 
-        sage: n = previous_prime_power(2^16 - 1)
-        sage: while is_prime(n):
+        sage: n = previous_prime_power(2^16 - 1)                                                                        # optional - sage.libs.pari
+        sage: while is_prime(n):                                                                                        # optional - sage.libs.pari
         ....:     n = previous_prime_power(n)
-        sage: factor(n)
+        sage: factor(n)                                                                                                 # optional - sage.libs.pari
         251^2
 
     TESTS::
 
         sage: from numpy import int8
-        sage: previous_prime_power(int8(10))
+        sage: previous_prime_power(int8(10))                                                                            # optional - sage.libs.pari
         9
         sage: from gmpy2 import mpz
-        sage: previous_prime_power(mpz(10))
+        sage: previous_prime_power(mpz(10))                                                                             # optional - sage.libs.pari
         9
     """
     return ZZ(n).previous_prime_power()
@@ -1388,42 +1388,42 @@ def random_prime(n, proof=None, lbound=2):
 
     EXAMPLES::
 
-        sage: p = random_prime(100000)
-        sage: p.is_prime()
+        sage: p = random_prime(100000)                                                                                  # optional - sage.libs.pari
+        sage: p.is_prime()                                                                                              # optional - sage.libs.pari
         True
-        sage: p <= 100000
+        sage: p <= 100000                                                                                               # optional - sage.libs.pari
         True
-        sage: random_prime(2)
+        sage: random_prime(2)                                                                                           # optional - sage.libs.pari
         2
 
     Here we generate a random prime between 100 and 200::
 
-        sage: p = random_prime(200, lbound=100)
-        sage: p.is_prime()
+        sage: p = random_prime(200, lbound=100)                                                                         # optional - sage.libs.pari
+        sage: p.is_prime()                                                                                              # optional - sage.libs.pari
         True
-        sage: 100 <= p <= 200
+        sage: 100 <= p <= 200                                                                                           # optional - sage.libs.pari
         True
 
     If all we care about is finding a pseudo prime, then we can pass
     in ``proof=False`` ::
 
-        sage: p = random_prime(200, proof=False, lbound=100)
-        sage: p.is_pseudoprime()
+        sage: p = random_prime(200, proof=False, lbound=100)                                                            # optional - sage.libs.pari
+        sage: p.is_pseudoprime()                                                                                        # optional - sage.libs.pari
         True
-        sage: 100 <= p <= 200
+        sage: 100 <= p <= 200                                                                                           # optional - sage.libs.pari
         True
 
     TESTS::
 
-        sage: type(random_prime(2))
+        sage: type(random_prime(2))                                                                                     # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
-        sage: type(random_prime(100))
+        sage: type(random_prime(100))                                                                                   # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
-        sage: random_prime(1, lbound=-2)   #caused Sage hang #10112
+        sage: random_prime(1, lbound=-2)   #caused Sage hang #10112                                                     # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: n must be greater than or equal to 2
-        sage: random_prime(126, lbound=114)
+        sage: random_prime(126, lbound=114)                                                                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: there are no primes between 114 and 126 (inclusive)
@@ -1592,13 +1592,13 @@ class Sigma:
 
     ::
 
-        sage: P = plot(sigma, 1, 100)
+        sage: P = plot(sigma, 1, 100)                                                                                   # optional - sage.plot
 
     This method also works with k-th powers.
 
     ::
 
-        sage: P = plot(sigma, 1, 100, k=2)
+        sage: P = plot(sigma, 1, 100, k=2)                                                                              # optional - sage.plot
 
     AUTHORS:
 
@@ -1978,11 +1978,11 @@ def xgcd(a, b):
         sage: g.xgcd(g + 2)                                                     # optional - sage.rings.number_field
         (1, 1/3*g, 0)
 
-        sage: R.<a,b> = K[]
-        sage: S.<y> = R.fraction_field()[]
-        sage: xgcd(y^2, a*y+b)
+        sage: R.<a,b> = K[]                                                     # optional - sage.rings.number_field
+        sage: S.<y> = R.fraction_field()[]                                      # optional - sage.rings.number_field
+        sage: xgcd(y^2, a*y + b)                                                # optional - sage.rings.number_field
         (1, a^2/b^2, ((-a)/b^2)*y + 1/b)
-        sage: xgcd((b+g)*y^2, (a+g)*y+b)
+        sage: xgcd((b+g)*y^2, (a+g)*y + b)                                      # optional - sage.rings.number_field
         (1, (a^2 + (2*g)*a + 3)/(b^3 + g*b^2), ((-a + (-g))/b^2)*y + 1/b)
 
     Here is an example of a xgcd for two polynomials over the integers, where the linear
@@ -2576,7 +2576,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         -1
         sage: f.value()
         -20
-        sage: factor( -next_prime(10^2) * next_prime(10^7) )
+        sage: factor(-next_prime(10^2) * next_prime(10^7))                                                              # optional - sage.libs.pari
         -1 * 101 * 10000019
 
     ::
@@ -2756,7 +2756,7 @@ def prime_divisors(n):
     For polynomials we get all irreducible factors::
 
         sage: R.<x> = PolynomialRing(QQ)
-        sage: prime_divisors(x^12 - 1)
+        sage: prime_divisors(x^12 - 1)                                                                                  # optional - sage.libs.pari
         [x - 1, x + 1, x^2 - x + 1, x^2 + 1, x^2 + x + 1, x^4 - x^2 + 1]
 
     Tests with numpy and gmpy2 numbers::
@@ -2933,32 +2933,32 @@ def is_squarefree(n):
 
     EXAMPLES::
 
-        sage: is_squarefree(100)
+        sage: is_squarefree(100)                                                                                        # optional - sage.libs.pari
         False
-        sage: is_squarefree(101)
+        sage: is_squarefree(101)                                                                                        # optional - sage.libs.pari
         True
 
         sage: R = ZZ['x']
         sage: x = R.gen()
-        sage: is_squarefree((x^2+x+1) * (x-2))
+        sage: is_squarefree((x^2+x+1) * (x-2))                                                                          # optional - sage.libs.pari
         True
-        sage: is_squarefree((x-1)**2 * (x-3))
+        sage: is_squarefree((x-1)**2 * (x-3))                                                                           # optional - sage.libs.pari
         False
 
-        sage: O = ZZ[sqrt(-1)]
-        sage: I = O.gen(1)
-        sage: is_squarefree(I+1)
+        sage: O = ZZ[sqrt(-1)]                                                                                          # optional - sage.rings.number_field, sage.symbolic
+        sage: I = O.gen(1)                                                                                              # optional - sage.rings.number_field, sage.symbolic
+        sage: is_squarefree(I + 1)                                                                                      # optional - sage.rings.number_field, sage.symbolic
         True
-        sage: is_squarefree(O(2))
+        sage: is_squarefree(O(2))                                                                                       # optional - sage.rings.number_field, sage.symbolic
         False
-        sage: O(2).factor()
+        sage: O(2).factor()                                                                                             # optional - sage.rings.number_field, sage.symbolic
         (-I) * (I + 1)^2
 
     This method fails on domains which are not Unique Factorization Domains::
 
-        sage: O = ZZ[sqrt(-5)]
-        sage: a = O.gen(1)
-        sage: is_squarefree(a - 3)
+        sage: O = ZZ[sqrt(-5)]                                                                                          # optional - sage.rings.number_field, sage.symbolic
+        sage: a = O.gen(1)                                                                                              # optional - sage.rings.number_field, sage.symbolic
+        sage: is_squarefree(a - 3)                                                                                      # optional - sage.rings.number_field, sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: non-principal ideal in factorization
@@ -3086,9 +3086,9 @@ class Euler_Phi:
         EXAMPLES::
 
             sage: from sage.arith.misc import Euler_Phi
-            sage: Euler_Phi()(10)
+            sage: Euler_Phi()(10)                                                                                       # optional - sage.libs.pari
             4
-            sage: Euler_Phi()(720)
+            sage: Euler_Phi()(720)                                                                                      # optional - sage.libs.pari
             192
         """
         if n <= 0:
@@ -3591,7 +3591,7 @@ def CRT_vectors(X, moduli):
         sage: CRT_vectors([[3,5,7],[3,5,11]], [2,3])
         [3, 5, 5]
 
-        sage: CRT_vectors([vector(ZZ, [2,3,1]), Sequence([1,7,8],ZZ)], [8,9])
+        sage: CRT_vectors([vector(ZZ, [2,3,1]), Sequence([1,7,8], ZZ)], [8,9])                                          # optional - sage.modules
         [10, 43, 17]
     """
     # First find the CRT basis:
@@ -3637,7 +3637,7 @@ def binomial(x, m, **kwds):
         10
         sage: binomial(2,0)
         1
-        sage: binomial(1/2, 0)
+        sage: binomial(1/2, 0)                                                                                          # optional - sage.libs.pari
         1
         sage: binomial(3,-1)
         0
@@ -3880,9 +3880,9 @@ def multinomial(*ks):
         618970023101454657175683075
         sage: multinomial([2^30, 2, 1])
         618970023101454657175683075
-        sage: multinomial(Composition([1, 3]))
+        sage: multinomial(Composition([1, 3]))                                                                          # optional - sage.combinat
         4
-        sage: multinomial(Partition([4, 2]))
+        sage: multinomial(Partition([4, 2]))                                                                            # optional - sage.combinat
         15
 
     TESTS:
@@ -4256,15 +4256,15 @@ def primitive_root(n, check=True):
 
     EXAMPLES::
 
-        sage: primitive_root(23)
+        sage: primitive_root(23)                                                                                        # optional - sage.libs.pari
         5
-        sage: primitive_root(-46)
+        sage: primitive_root(-46)                                                                                       # optional - sage.libs.pari
         5
-        sage: primitive_root(25)
+        sage: primitive_root(25)                                                                                        # optional - sage.libs.pari
         2
-        sage: print([primitive_root(p) for p in primes(100)])
+        sage: print([primitive_root(p) for p in primes(100)])                                                           # optional - sage.libs.pari
         [1, 2, 2, 3, 2, 2, 3, 2, 5, 2, 3, 2, 6, 3, 5, 2, 2, 2, 2, 7, 5, 3, 2, 3, 5]
-        sage: primitive_root(8)
+        sage: primitive_root(8)                                                                                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
@@ -4280,46 +4280,46 @@ def primitive_root(n, check=True):
     ::
 
         sage: n = 10^50 + 151   # a prime
-        sage: primitive_root(n)
+        sage: primitive_root(n)                                                                                         # optional - sage.libs.pari
         11
-        sage: primitive_root(n, check=False)
+        sage: primitive_root(n, check=False)                                                                            # optional - sage.libs.pari
         11
 
     TESTS:
 
     Various special cases::
 
-        sage: primitive_root(-1)
+        sage: primitive_root(-1)                                                                                        # optional - sage.libs.pari
         0
-        sage: primitive_root(0)
+        sage: primitive_root(0)                                                                                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
-        sage: primitive_root(1)
+        sage: primitive_root(1)                                                                                         # optional - sage.libs.pari
         0
-        sage: primitive_root(2)
+        sage: primitive_root(2)                                                                                         # optional - sage.libs.pari
         1
-        sage: primitive_root(3)
+        sage: primitive_root(3)                                                                                         # optional - sage.libs.pari
         2
-        sage: primitive_root(4)
+        sage: primitive_root(4)                                                                                         # optional - sage.libs.pari
         3
 
     We test that various numbers without primitive roots give
     an error - see :trac:`10836`::
 
-        sage: primitive_root(15)
+        sage: primitive_root(15)                                                                                        # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
-        sage: primitive_root(16)
+        sage: primitive_root(16)                                                                                        # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
-        sage: primitive_root(1729)
+        sage: primitive_root(1729)                                                                                      # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
-        sage: primitive_root(4*7^8)
+        sage: primitive_root(4*7^8)                                                                                     # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: no primitive root
@@ -4327,10 +4327,10 @@ def primitive_root(n, check=True):
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: primitive_root(int8(-46))
+        sage: primitive_root(int8(-46))                                                                                 # optional - sage.libs.pari
         5
         sage: from gmpy2 import mpz
-        sage: primitive_root(mpz(-46))
+        sage: primitive_root(mpz(-46))                                                                                  # optional - sage.libs.pari
         5
     """
     from sage.libs.pari.all import pari
@@ -4366,29 +4366,29 @@ def nth_prime(n):
 
     EXAMPLES::
 
-        sage: nth_prime(3)
+        sage: nth_prime(3)                                                                                              # optional - sage.libs.pari
         5
-        sage: nth_prime(10)
+        sage: nth_prime(10)                                                                                             # optional - sage.libs.pari
         29
-        sage: nth_prime(10^7)
+        sage: nth_prime(10^7)                                                                                           # optional - sage.libs.pari
         179424673
 
     ::
 
-        sage: nth_prime(0)
+        sage: nth_prime(0)                                                                                              # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: nth prime meaningless for non-positive n (=0)
 
     TESTS::
 
-        sage: all(prime_pi(nth_prime(j)) == j for j in range(1, 1000, 10))
+        sage: all(prime_pi(nth_prime(j)) == j for j in range(1, 1000, 10))                                              # optional - sage.libs.pari
         True
         sage: from numpy import int8
-        sage: nth_prime(int8(10))
+        sage: nth_prime(int8(10))                                                                                       # optional - sage.libs.pari
         29
         sage: from gmpy2 import mpz
-        sage: nth_prime(mpz(10))
+        sage: nth_prime(mpz(10))                                                                                        # optional - sage.libs.pari
         29
     """
     if n <= 0:
@@ -4454,22 +4454,22 @@ class Moebius:
 
     EXAMPLES::
 
-        sage: moebius(-5)
+        sage: moebius(-5)                                                                                               # optional - sage.libs.pari
         -1
-        sage: moebius(9)
+        sage: moebius(9)                                                                                                # optional - sage.libs.pari
         0
-        sage: moebius(12)
+        sage: moebius(12)                                                                                               # optional - sage.libs.pari
         0
-        sage: moebius(-35)
+        sage: moebius(-35)                                                                                              # optional - sage.libs.pari
         1
-        sage: moebius(-1)
+        sage: moebius(-1)                                                                                               # optional - sage.libs.pari
         1
-        sage: moebius(7)
+        sage: moebius(7)                                                                                                # optional - sage.libs.pari
         -1
 
     ::
 
-        sage: moebius(0)   # potentially nonstandard!
+        sage: moebius(0)   # potentially nonstandard!                                                                   # optional - sage.libs.pari
         0
 
     The moebius function even makes sense for non-integer inputs.
@@ -4483,10 +4483,10 @@ class Moebius:
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: moebius(int8(-5))
+        sage: moebius(int8(-5))                                                 # optional - sage.libs.pari
         -1
         sage: from gmpy2 import mpz
-        sage: moebius(mpz(-5))
+        sage: moebius(mpz(-5))                                                  # optional - sage.libs.pari
         -1
     """
     def __call__(self, n):
@@ -4494,7 +4494,7 @@ class Moebius:
         EXAMPLES::
 
             sage: from sage.arith.misc import Moebius
-            sage: Moebius().__call__(7)
+            sage: Moebius().__call__(7)                                         # optional - sage.libs.pari
             -1
         """
         n = py_scalar_to_element(n)
@@ -4575,12 +4575,12 @@ class Moebius:
 
         EXAMPLES::
 
-            sage: v = moebius.range(-10,10); v
+            sage: v = moebius.range(-10, 10); v                                                                         # optional - sage.libs.pari
             [1, 0, 0, -1, 1, -1, 0, -1, -1, 1, 0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-            sage: v == [moebius(n) for n in range(-10,10)]
+            sage: v == [moebius(n) for n in range(-10, 10)]                                                             # optional - sage.libs.pari
             True
-            sage: v = moebius.range(-1000, 2000, 4)
-            sage: v == [moebius(n) for n in range(-1000,2000, 4)]
+            sage: v = moebius.range(-1000, 2000, 4)                                                                     # optional - sage.libs.pari
+            sage: v == [moebius(n) for n in range(-1000, 2000, 4)]                                                      # optional - sage.libs.pari
             True
         """
         if stop is None:
@@ -4644,7 +4644,7 @@ def continuant(v, n=None):
         sage: q = continuant([1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10])
         sage: p/q
         517656/190435
-        sage: continued_fraction([2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10]).convergent(14)
+        sage: continued_fraction([2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10]).convergent(14)                         # optional - sage.libs.pari
         517656/190435
         sage: x = PolynomialRing(RationalField(),'x',5).gens()
         sage: continuant(x)
@@ -4711,18 +4711,18 @@ def number_of_divisors(n):
 
     EXAMPLES::
 
-        sage: number_of_divisors(100)
+        sage: number_of_divisors(100)                                                                                   # optional - sage.libs.pari
         9
-        sage: number_of_divisors(-720)
+        sage: number_of_divisors(-720)                                                                                  # optional - sage.libs.pari
         30
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: number_of_divisors(int8(100))
+        sage: number_of_divisors(int8(100))                                                                             # optional - sage.libs.pari
         9
         sage: from gmpy2 import mpz
-        sage: number_of_divisors(mpz(100))
+        sage: number_of_divisors(mpz(100))                                                                              # optional - sage.libs.pari
         9
     """
     m = ZZ(n)
@@ -4760,33 +4760,33 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
 
     EXAMPLES::
 
-        sage: hilbert_symbol (-1, -1, -1, algorithm='all')
+        sage: hilbert_symbol(-1, -1, -1, algorithm='all')                                                               # optional - sage.libs.pari
         -1
-        sage: hilbert_symbol (2,3, 5, algorithm='all')
+        sage: hilbert_symbol(2, 3, 5, algorithm='all')                                                                  # optional - sage.libs.pari
         1
-        sage: hilbert_symbol (4, 3, 5, algorithm='all')
+        sage: hilbert_symbol(4, 3, 5, algorithm='all')                                                                  # optional - sage.libs.pari
         1
-        sage: hilbert_symbol (0, 3, 5, algorithm='all')
+        sage: hilbert_symbol(0, 3, 5, algorithm='all')                                                                  # optional - sage.libs.pari
         0
-        sage: hilbert_symbol (-1, -1, 2, algorithm='all')
+        sage: hilbert_symbol(-1, -1, 2, algorithm='all')                                                                # optional - sage.libs.pari
         -1
-        sage: hilbert_symbol (1, -1, 2, algorithm='all')
+        sage: hilbert_symbol(1, -1, 2, algorithm='all')                                                                 # optional - sage.libs.pari
         1
-        sage: hilbert_symbol (3, -1, 2, algorithm='all')
+        sage: hilbert_symbol(3, -1, 2, algorithm='all')                                                                 # optional - sage.libs.pari
         -1
 
-        sage: hilbert_symbol(QQ(-1)/QQ(4), -1, 2) == -1
+        sage: hilbert_symbol(QQ(-1)/QQ(4), -1, 2) == -1                                                                 # optional - sage.libs.pari
         True
-        sage: hilbert_symbol(QQ(-1)/QQ(4), -1, 3) == 1
+        sage: hilbert_symbol(QQ(-1)/QQ(4), -1, 3) == 1                                                                  # optional - sage.libs.pari
         True
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: hilbert_symbol(int8(2),int8(3),int8(5),algorithm='all')
+        sage: hilbert_symbol(int8(2), int8(3), int8(5), algorithm='all')                                                # optional - sage.libs.pari
         1
         sage: from gmpy2 import mpz
-        sage: hilbert_symbol(mpz(2),mpz(3),mpz(5),algorithm='all')
+        sage: hilbert_symbol(mpz(2), mpz(3), mpz(5), algorithm='all')                                                   # optional - sage.libs.pari
         1
 
     AUTHORS:
@@ -4865,22 +4865,22 @@ def hilbert_conductor(a, b):
 
     EXAMPLES::
 
-        sage: hilbert_conductor(-1, -1)
+        sage: hilbert_conductor(-1, -1)                                                                                 # optional - sage.libs.pari
         2
-        sage: hilbert_conductor(-1, -11)
+        sage: hilbert_conductor(-1, -11)                                                                                # optional - sage.libs.pari
         11
-        sage: hilbert_conductor(-2, -5)
+        sage: hilbert_conductor(-2, -5)                                                                                 # optional - sage.libs.pari
         5
-        sage: hilbert_conductor(-3, -17)
+        sage: hilbert_conductor(-3, -17)                                                                                # optional - sage.libs.pari
         17
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: hilbert_conductor(int8(-3), int8(-17))
+        sage: hilbert_conductor(int8(-3), int8(-17))                                                                    # optional - sage.libs.pari
         17
         sage: from gmpy2 import mpz
-        sage: hilbert_conductor(mpz(-3), mpz(-17))
+        sage: hilbert_conductor(mpz(-3), mpz(-17))                                                                      # optional - sage.libs.pari
         17
 
     AUTHOR:
@@ -4908,19 +4908,19 @@ def hilbert_conductor_inverse(d):
 
     EXAMPLES::
 
-        sage: hilbert_conductor_inverse(2)
+        sage: hilbert_conductor_inverse(2)                                                                              # optional - sage.libs.pari
         (-1, -1)
-        sage: hilbert_conductor_inverse(3)
+        sage: hilbert_conductor_inverse(3)                                                                              # optional - sage.libs.pari
         (-1, -3)
-        sage: hilbert_conductor_inverse(6)
+        sage: hilbert_conductor_inverse(6)                                                                              # optional - sage.libs.pari
         (-1, 3)
-        sage: hilbert_conductor_inverse(30)
+        sage: hilbert_conductor_inverse(30)                                                                             # optional - sage.libs.pari
         (-3, -10)
-        sage: hilbert_conductor_inverse(4)
+        sage: hilbert_conductor_inverse(4)                                                                              # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: d needs to be squarefree
-        sage: hilbert_conductor_inverse(-1)
+        sage: hilbert_conductor_inverse(-1)                                                                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: d needs to be positive
@@ -4931,7 +4931,7 @@ def hilbert_conductor_inverse(d):
 
     TESTS::
 
-        sage: for i in range(100):
+        sage: for i in range(100):                                                                                      # optional - sage.libs.pari
         ....:     d = ZZ.random_element(2**32).squarefree_part()
         ....:     if hilbert_conductor(*hilbert_conductor_inverse(d)) != d:
         ....:         print("hilbert_conductor_inverse failed for d = {}".format(d))
@@ -4939,10 +4939,10 @@ def hilbert_conductor_inverse(d):
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8
-        sage: hilbert_conductor_inverse(int8(30))
+        sage: hilbert_conductor_inverse(int8(30))                                                                       # optional - sage.libs.pari
         (-3, -10)
         sage: from gmpy2 import mpz
-        sage: hilbert_conductor_inverse(mpz(30))
+        sage: hilbert_conductor_inverse(mpz(30))                                                                        # optional - sage.libs.pari
         (-3, -10)
     """
     Z = ZZ
@@ -5810,7 +5810,7 @@ def differences(lis, n=1):
 
     EXAMPLES::
 
-        sage: differences(prime_range(50))
+        sage: differences(prime_range(50))                                                                              # optional - sage.libs.pari
         [1, 2, 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4]
         sage: differences([i^2 for i in range(1,11)])
         [3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -5818,7 +5818,7 @@ def differences(lis, n=1):
         [10, 22, 40, 64, 94, 130, 172, 220, 274, 334, 400, 472, 550, 634, 724, 820, 922, 1030, 1144]
         sage: differences([i^3 - i^2 for i in range(1,21)], 2)
         [10, 16, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 100, 106, 112]
-        sage: differences([p - i^2 for i, p in enumerate(prime_range(50))], 3)
+        sage: differences([p - i^2 for i, p in enumerate(prime_range(50))], 3)                                          # optional - sage.libs.pari
         [-1, 2, -4, 4, -4, 4, 0, -6, 8, -6, 0, 4]
 
     Tests with numpy and gmpy2 numbers::
