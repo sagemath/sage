@@ -1416,11 +1416,11 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: Y = Set(ZZ^2).union(Set(ZZ^3))
-            sage: X = Set(ZZ^3).union(Set(ZZ^2))
-            sage: X == Y
+            sage: Y = Set(ZZ^2).union(Set(ZZ^3))                                                                        # optional - sage.modules
+            sage: X = Set(ZZ^3).union(Set(ZZ^2))                                                                        # optional - sage.modules
+            sage: X == Y                                                                                                # optional - sage.modules
             True
-            sage: Y == X
+            sage: Y == X                                                                                                # optional - sage.modules
             True
 
         This illustrates that equality testing for formal unions
