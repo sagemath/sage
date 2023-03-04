@@ -1185,7 +1185,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro)
+            sage: assert all(isinstance(v, Integer) for v in x.mro)                     # optional - sage.combinat, sage.graphs
         """
         bases = self._bases
         result, suggestion = C3_sorted_merge([base.mro for base in bases]+[[base.value for base in bases]], key=self._key)
@@ -1238,7 +1238,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro_standard)
+            sage: assert all(isinstance(v, Integer) for v in x.mro_standard)            # optional - sage.combinat, sage.graphs
         """
         bases = self._bases
         return [self.value] + C3_merge([base.mro_standard for base in bases]+[[base.value for base in bases]])
@@ -1273,7 +1273,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro_controlled)
+            sage: assert all(isinstance(v, Integer) for v in x.mro_controlled)          # optional - sage.combinat, sage.graphs
         """
         return [self.value] + C3_merge([base.mro_controlled for base in self._bases]+[self._bases_controlled])
 
