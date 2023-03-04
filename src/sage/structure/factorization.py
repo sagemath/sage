@@ -282,8 +282,8 @@ class Factorization(SageObject):
 
             sage: Factorization([(2, 7), (5,2), (2, 5)])
             2^12 * 5^2
-            sage: R.<a,b> = FreeAlgebra(QQ,2)
-            sage: Factorization([(a,1),(b,1),(a,2)])
+            sage: R.<a,b> = FreeAlgebra(QQ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: Factorization([(a,1), (b,1), (a,2)])                                              # optional - sage.combinat, sage.modules
             a * b * a^2
 
         Autosorting (the default) swaps around the factors below::
@@ -521,9 +521,9 @@ class Factorization(SageObject):
             sage: F.universe()
             Integer Ring
 
-            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: F = Factorization([(z, 2)], 3)
-            sage: (F*F^-1).universe()
+            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                                    # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(z, 2)], 3)                                                    # optional - sage.combinat, sage.modules
+            sage: (F*F^-1).universe()                                                               # optional - sage.combinat, sage.modules
             Free Algebra on 3 generators (x, y, z) over Rational Field
 
             sage: F = ModularSymbols(11,4).factorization()
@@ -581,11 +581,11 @@ class Factorization(SageObject):
             sage: F = K.factor(13)                                              # optional - sage.rings.number_field
             sage: F.is_commutative()                                            # optional - sage.rings.number_field
             True
-            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: F = Factorization([(z, 2)], 3)
-            sage: F.is_commutative()
+            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                                    # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(z, 2)], 3)                                                    # optional - sage.combinat, sage.modules
+            sage: F.is_commutative()                                                                # optional - sage.combinat, sage.modules
             False
-            sage: (F*F^-1).is_commutative()
+            sage: (F*F^-1).is_commutative()                                                         # optional - sage.combinat, sage.modules
             False
         """
         try:
@@ -621,12 +621,12 @@ class Factorization(SageObject):
 
         TESTS::
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (y,2)], simplify=False); F
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (y,2)], simplify=False); F                      # optional - sage.combinat, sage.modules
             x^3 * y^2 * y^2
-            sage: F.simplify(); F
+            sage: F.simplify(); F                                                                   # optional - sage.combinat, sage.modules
             x^3 * y^4
-            sage: F * Factorization([(y, -2)], 2)
+            sage: F * Factorization([(y, -2)], 2)                                                   # optional - sage.combinat, sage.modules
             (2) * x^3 * y^2
         """
         repeat = False
@@ -899,12 +899,12 @@ class Factorization(SageObject):
         EXAMPLES::
 
             sage: f = factor(-24)
-            sage: pari(f)
+            sage: pari(f)                                                                           # optional - sage.libs.pari
             [-1, 1; 2, 3; 3, 1]
 
             sage: R.<x> = QQ[]
             sage: g = factor(x^10 - 1)
-            sage: pari(g)
+            sage: pari(g)                                                                           # optional - sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
 
         """
@@ -1005,12 +1005,12 @@ class Factorization(SageObject):
             -2 * 3 * 5
             sage: a * -2
             -2 * 3 * 5
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: f = Factorization([(x,2),(y,3)]); f
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: f = Factorization([(x,2), (y,3)]); f                                              # optional - sage.combinat, sage.modules
             x^2 * y^3
-            sage: x * f
+            sage: x * f                                                                             # optional - sage.combinat, sage.modules
             x^3 * y^3
-            sage: f * x
+            sage: f * x                                                                             # optional - sage.combinat, sage.modules
             x^2 * y^3 * x
 
         Note that this does not automatically factor ``left``::
@@ -1037,12 +1037,12 @@ class Factorization(SageObject):
             sage: factor(-10) * factor(16)
             -1 * 2^5 * 5
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                                      # optional - sage.combinat, sage.modules
             x^3 * y^2 * x
-            sage: F*F
+            sage: F*F                                                                               # optional - sage.combinat, sage.modules
             x^3 * y^2 * x^4 * y^2 * x
-            sage: -1 * F
+            sage: -1 * F                                                                            # optional - sage.combinat, sage.modules
             (-1) * x^3 * y^2 * x
 
             sage: P.<x> = ZZ[]
@@ -1140,10 +1140,10 @@ class Factorization(SageObject):
             sage: F^-1
             2^-1 * 17^-1 * 59^-1
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (x,1)], 2); F
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)], 2); F                                   # optional - sage.combinat, sage.modules
             (2) * x^3 * y^2 * x
-            sage: F^-1
+            sage: F^-1                                                                              # optional - sage.combinat, sage.modules
             (1/2) * x^-1 * y^-2 * x^-3
         """
         return Factorization([(p,-e) for p,e in reversed(self)],
@@ -1161,12 +1161,12 @@ class Factorization(SageObject):
             sage: factor(-10) / factor(16)
             -1 * 2^-3 * 5
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                                      # optional - sage.combinat, sage.modules
             x^3 * y^2 * x
-            sage: G = Factorization([(y, 1), (x,1)],1); G
+            sage: G = Factorization([(y, 1), (x,1)],1); G                                           # optional - sage.combinat, sage.modules
             y * x
-            sage: F / G
+            sage: F / G                                                                             # optional - sage.combinat, sage.modules
             x^3 * y
         """
         if not isinstance(other, Factorization):
@@ -1184,10 +1184,10 @@ class Factorization(SageObject):
             sage: F.value()
             -2006
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                                      # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                                      # optional - sage.combinat, sage.modules
             x^3 * y^2 * x
-            sage: F.value()
+            sage: F.value()                                                                         # optional - sage.combinat, sage.modules
             x^3*y^2*x
         """
         from sage.misc.misc_c import prod

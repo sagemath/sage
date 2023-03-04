@@ -396,10 +396,10 @@ cdef class UniqueFactory(SageObject):
         Check that :trac:`16317` has been fixed, i.e., caching works for
         unhashable objects::
 
-            sage: K.<u> = Qq(4)
-            sage: d = test_factory.get_object(3.0, (K(1), 'c'), {})   # optional - sage.rings.padics
+            sage: K.<u> = Qq(4)                                                                     # optional - sage.rings.padics
+            sage: d = test_factory.get_object(3.0, (K(1), 'c'), {})                                 # optional - sage.rings.padics
             Making object (1 + O(2^20), 'c')
-            sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})  # optional - sage.rings.padics
+            sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})                                # optional - sage.rings.padics
             True
 
         """
@@ -540,12 +540,12 @@ cdef class UniqueFactory(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
-            sage: V = F(ZZ, 5)
-            sage: factory, data = F.reduce_data(V)
-            sage: factory(*data)
+            sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F   # optional - sage.modules
+            sage: V = F(ZZ, 5)                                                                      # optional - sage.modules
+            sage: factory, data = F.reduce_data(V)                                                  # optional - sage.modules
+            sage: factory(*data)                                                                    # optional - sage.modules
             Ambient free module of rank 5 over the principal ideal domain Integer Ring
-            sage: factory(*data) is V
+            sage: factory(*data) is V                                                               # optional - sage.modules
             True
 
             sage: from sage.structure.test_factory import test_factory
@@ -638,12 +638,12 @@ def generic_factory_unpickle(factory, *args):
 
     EXAMPLES::
 
-        sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
-        sage: V = F(ZZ, 5)
-        sage: func, data = F.reduce_data(V)
-        sage: func is sage.structure.factory.generic_factory_unpickle
+        sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F       # optional - sage.modules
+        sage: V = F(ZZ, 5)                                                                          # optional - sage.modules
+        sage: func, data = F.reduce_data(V)                                                         # optional - sage.modules
+        sage: func is sage.structure.factory.generic_factory_unpickle                               # optional - sage.modules
         True
-        sage: sage.structure.factory.generic_factory_unpickle(*data) is V
+        sage: sage.structure.factory.generic_factory_unpickle(*data) is V                           # optional - sage.modules
         True
 
     TESTS:
@@ -730,8 +730,8 @@ def generic_factory_reduce(self, proto):
 
     EXAMPLES::
 
-        sage: V = QQ^6
-        sage: sage.structure.factory.generic_factory_reduce(V, 1) == V.__reduce_ex__(1)
+        sage: V = QQ^6                                                                              # optional - sage.modules
+        sage: sage.structure.factory.generic_factory_reduce(V, 1) == V.__reduce_ex__(1)             # optional - sage.modules
         True
     """
     if self._factory_data is None:
