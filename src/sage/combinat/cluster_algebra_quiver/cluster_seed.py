@@ -81,16 +81,16 @@ class ClusterSeed(SageObject):
         sage: S = ClusterSeed(['A',[2,5],1]); S
         A seed for a cluster algebra of rank 7 of type ['A', [2, 5], 1]
 
-        sage: T = ClusterSeed( S ); T
+        sage: T = ClusterSeed(S); T
         A seed for a cluster algebra of rank 7 of type ['A', [2, 5], 1]
 
-        sage: T = ClusterSeed( S._M ); T
+        sage: T = ClusterSeed(S._M); T
         A seed for a cluster algebra of rank 7
 
-        sage: T = ClusterSeed( S.quiver()._digraph ); T
+        sage: T = ClusterSeed(S.quiver()._digraph); T
         A seed for a cluster algebra of rank 7
 
-        sage: T = ClusterSeed( S.quiver()._digraph.edges(sort=True) ); T
+        sage: T = ClusterSeed(S.quiver()._digraph.edges(sort=True)); T
         A seed for a cluster algebra of rank 7
 
         sage: S = ClusterSeed(['B',2]); S
@@ -877,21 +877,21 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',5])
-            sage: T = S.mutate( 2, inplace=False )
-            sage: S.__eq__( T )
+            sage: T = S.mutate(2, inplace=False)
+            sage: S.__eq__(T)
             False
 
-            sage: T.mutate( 2 )
-            sage: S.__eq__( T )
+            sage: T.mutate(2)
+            sage: S.__eq__(T)
             True
 
             sage: S = ClusterSeed(['A',2])
             sage: T = ClusterSeed(S)
-            sage: S.__eq__( T )
+            sage: S.__eq__(T)
             True
 
             sage: S.mutate([0,1,0,1,0])
-            sage: S.__eq__( T )
+            sage: S.__eq__(T)
             False
             sage: S.cluster()
             [x1, x0]
@@ -899,7 +899,7 @@ class ClusterSeed(SageObject):
             [x0, x1]
 
             sage: S.mutate([0,1,0,1,0])
-            sage: S.__eq__( T )
+            sage: S.__eq__(T)
             True
             sage: S.cluster()
             [x0, x1]
@@ -960,8 +960,8 @@ class ClusterSeed(SageObject):
         """
         name = self._description
         if self._mutation_type:
-            if type(self._mutation_type) in [QuiverMutationType_Irreducible,
-                                             QuiverMutationType_Reducible]:
+            if isinstance(self._mutation_type, (QuiverMutationType_Irreducible,
+                                                QuiverMutationType_Reducible)):
                 name += ' of type ' + str(self._mutation_type)
             # the following case allows description of 'undetermined finite mutation type'
             else:
@@ -2932,7 +2932,7 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',4])
-            sage: T = ClusterSeed( S.quiver().digraph().edges(sort=True), frozen=[3] )
+            sage: T = ClusterSeed(S.quiver().digraph().edges(sort=True), frozen=[3])
             sage: T.quiver().digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
@@ -3384,7 +3384,7 @@ class ClusterSeed(SageObject):
         Finite type examples not considered up to equivalence::
 
             sage: it = S.mutation_class_iter(up_to_equivalence=False)
-            sage: len( [T for T in it] )
+            sage: len([T for T in it])
             84
 
             sage: it = ClusterSeed(['A',2]).mutation_class_iter(return_paths=True,up_to_equivalence=False)
@@ -3474,7 +3474,7 @@ class ClusterSeed(SageObject):
                     i = sd[1].pop()
 
                     # If we aren't only sinking the source
-                    if not only_sink_source or all( entry >= 0 for entry in sd[0]._M.row( i ) ) or all( entry <= 0 for entry in sd[0]._M.row( i ) ):
+                    if not only_sink_source or all(entry >= 0 for entry in sd[0]._M.row(i)) or all(entry <= 0 for entry in sd[0]._M.row(i)):
                         # do an inplace mutation on our cluster (sd[0])
                         sd2 = sd[0].mutate(i, inplace=False, input_type="indices")
 
@@ -3591,7 +3591,7 @@ class ClusterSeed(SageObject):
         Finite type examples not considered up to equivalence::
 
             sage: it = S.cluster_class_iter(up_to_equivalence=False)
-            sage: len( [T for T in it] )
+            sage: len([T for T in it])
             84
 
             sage: it = ClusterSeed(['A',2]).cluster_class_iter(up_to_equivalence=False)
@@ -3639,7 +3639,7 @@ class ClusterSeed(SageObject):
             sage: S2.cluster_class()[0]
             [a, b, c]
         """
-        mc_iter = self.mutation_class_iter( depth=depth, show_depth=show_depth, up_to_equivalence=up_to_equivalence )
+        mc_iter = self.mutation_class_iter(depth=depth, show_depth=show_depth, up_to_equivalence=up_to_equivalence)
         for c in mc_iter:
             yield c.cluster()
 
@@ -3752,7 +3752,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['E',10])
             sage: it = S.b_matrix_class_iter(depth=3)
-            sage: len ( [T for T in it] )
+            sage: len ([T for T in it])
             266
 
         For a cluster seed from an arbitrarily labelled digraph::
@@ -3767,7 +3767,7 @@ class ClusterSeed(SageObject):
             ]
         """
         Q = self.quiver()
-        for M in Q.mutation_class_iter( depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix' ):
+        for M in Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix'):
             yield M
 
     def b_matrix_class(self, depth=infinity, up_to_equivalence=True):
@@ -3791,7 +3791,7 @@ class ClusterSeed(SageObject):
         if depth is infinity and not self.is_mutation_finite():
             raise ValueError('The B-matrix class can - for infinite mutation types - only be computed up to a given depth')
 
-        return list(self.b_matrix_class_iter( depth=depth, up_to_equivalence=up_to_equivalence ))
+        return list(self.b_matrix_class_iter(depth=depth, up_to_equivalence=up_to_equivalence))
 
     def variable_class_iter(self, depth=infinity, ignore_bipartite_belt=False):
         r"""
@@ -3872,7 +3872,7 @@ class ClusterSeed(SageObject):
             (x0^8 + 4*x0^6 + 3*x0^4*x1^2 + 2*x0^2*x1^4 + x1^6 + 6*x0^4 + 6*x0^2*x1^2 + 3*x1^4 + 4*x0^2 + 3*x1^2 + 1)/(x0^3*x1^4)
             (x0^6 + 3*x0^4 + 2*x0^2*x1^2 + x1^4 + 3*x0^2 + 2*x1^2 + 1)/(x0^2*x1^3)
         """
-        mut_iter = self.mutation_class_iter( depth=depth,show_depth=False )
+        mut_iter = self.mutation_class_iter(depth=depth,show_depth=False)
         var_class = set()
 
         for seed in mut_iter:
@@ -3888,8 +3888,8 @@ class ClusterSeed(SageObject):
                 seed2 = ClusterSeed(seed)
                 for c in seed.cluster():
                     if c not in var_class:
-                        yield ClusterVariable( FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n )
-                var_class = var_class.union( seed.cluster())
+                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                var_class = var_class.union(seed.cluster())
 
                 init_cluster = set(seed.cluster())
                 while not end and depth_counter < depth:
@@ -3901,8 +3901,8 @@ class ClusterSeed(SageObject):
                     if not end:
                         for c in seed.cluster():
                             if c not in var_class:
-                                yield ClusterVariable( FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n )
-                        var_class = var_class.union( seed.cluster() )
+                                yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                        var_class = var_class.union(seed.cluster())
                         seed2.mutate(bipartition[1])
                         seed2.mutate(bipartition[0])
                         if set(seed2.cluster()) in [set(seed.cluster()),init_cluster]:
@@ -3910,13 +3910,13 @@ class ClusterSeed(SageObject):
                         if not end:
                             for c in seed2.cluster():
                                 if c not in var_class:
-                                    yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n )
+                                    yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
                             var_class = var_class.union(seed2.cluster())
                 return
             else:
                 for c in seed.cluster():
                     if c not in var_class:
-                        yield ClusterVariable( FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
                 var_class = var_class.union(seed.cluster())
 
     def variable_class(self, depth=infinity, ignore_bipartite_belt=False):
@@ -3968,7 +3968,7 @@ class ClusterSeed(SageObject):
         else:
             return mt.is_finite()
 
-    def is_mutation_finite( self, nr_of_checks=None, return_path=False ):
+    def is_mutation_finite(self, nr_of_checks=None, return_path=False):
         r"""
         Returns True if ``self`` is of finite mutation type.
 
