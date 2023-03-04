@@ -60,6 +60,7 @@ include sage/misc/binary_tree.p*
 include sage/misc/derivative.p*
 include sage/misc/mrange.p*
 include sage/misc/defaults.p*
+include sage/misc/converting_dict.p*
 
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*

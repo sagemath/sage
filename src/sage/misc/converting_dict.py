@@ -2,7 +2,7 @@
 r"""
 Converting Dictionary
 
-At the moment, the only class contained in this model is a key
+At the moment, the only class contained in this module is a key
 converting dictionary, which applies some function (e.g. type
 conversion function) to all arguments used as keys.
 
@@ -27,12 +27,12 @@ This is used e.g. in the result of a variety, to allow access to the
 result no matter how a generator is identified::
 
     sage: K.<x,y> = QQ[]
-    sage: I = ideal([x^2+2*y-5,x+y+3])
-    sage: V = sorted(I.variety(AA), key=str)
-    sage: v = V[0]
-    sage: v['x'], v['y']
+    sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
+    sage: V = sorted(I.variety(AA), key=str)                                                    # optional - sage.rings.number_field
+    sage: v = V[0]                                                                              # optional - sage.rings.number_field
+    sage: v['x'], v['y']                                                                        # optional - sage.rings.number_field
     (-2.464101615137755?, -0.535898384862246?)
-    sage: list(v)[0].parent()
+    sage: list(v)[0].parent()                                                                   # optional - sage.rings.number_field
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
 """
 # ****************************************************************************
