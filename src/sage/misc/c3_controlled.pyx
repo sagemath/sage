@@ -1062,21 +1062,33 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             [10, 5, 2, 1]
         """
         from sage.categories.sets_cat import Sets
-        from sage.combinat.posets.poset_examples import Posets
-        from sage.graphs.digraph import DiGraph
-        if succ in Posets():
-            assert succ in Sets().Facade()
-            succ = succ.upper_covers
-        if isinstance(succ, DiGraph):
-            succ = succ.copy()
-            succ._immutable = True
-            succ = succ.neighbors_out
+
+        try:
+            from sage.combinat.posets.poset_examples import Posets
+        except ImportError:
+            pass
+        else:
+            if succ in Posets():
+                assert succ in Sets().Facade()
+                succ = succ.upper_covers
+
+        try:
+            from sage.graphs.digraph import DiGraph
+        except ImportError:
+            pass
+        else:
+            if isinstance(succ, DiGraph):
+                succ = succ.copy()
+                succ._immutable = True
+                succ = succ.neighbors_out
+
         if key is None:
             key = identity
 
         @cached_function
         def f(x):
             return typecall(cls, x, [f(y) for y in succ(x)], key, f)
+
         return f(value)
 
     def __init__(self, value, bases, key, from_value):
