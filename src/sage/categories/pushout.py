@@ -3286,7 +3286,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
             sage: K = Qp(3, 3)                                                                                          # optional - sage.rings.padics
             sage: R.<a> = K[]                                                                                           # optional - sage.rings.padics
-            sage: AEF = sage.categories.pushout.AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])
+            sage: AEF = sage.categories.pushout.AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])                     # optional - sage.rings.padics
             sage: AEF(K)                                                                                                # optional - sage.rings.padics
             3-adic Eisenstein Extension Field in a defined by a^2 - 3
 

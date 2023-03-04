@@ -81,7 +81,7 @@ Some challenges
       sage: GL(2,2).cardinality()                                               # optional - sage.groups
       6
 
-      sage: A = random_matrix(ZZ,6,3,x=7)
+      sage: A = random_matrix(ZZ, 6, 3, x=7)                                    # optional - sage.modules
       sage: L = LatticePolytope(A.rows())                                       # optional - sage.geometry.polyhedron
       sage: L.npoints()                # oops!   # random                       # optional - sage.geometry.polyhedron
       37
