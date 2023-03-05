@@ -1015,8 +1015,8 @@ class Rings(CategoryWithAxiom):
                 Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
 
                 sage: R.<t> = QQ[]
-                sage: der = R.derivation()
-                sage: R['d', der]
+                sage: der = R.derivation()                                                                              # optional - sage.modules
+                sage: R['d', der]                                                                                       # optional - sage.modules
                 Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
 
             We can also create power series rings by using double brackets::
