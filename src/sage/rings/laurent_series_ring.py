@@ -623,9 +623,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         A = self.base_ring()
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         from sage.rings.power_series_ring import is_PowerSeriesRing
-        from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+
         if ((is_LaurentSeriesRing(P) or
-             is_LaurentPolynomialRing(P) or
+             isinstance(P, LaurentPolynomialRing_generic) or
              is_PowerSeriesRing(P) or
              is_PolynomialRing(P))
             and P.variable_name() == self.variable_name()
