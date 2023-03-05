@@ -55,12 +55,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.arith.functions import lcm
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -69,10 +70,6 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 
 from sage.categories.sets_cat import Sets
-
-from sage.modules.free_module_element import vector
-
-from sage.matrix.constructor import matrix
 
 
 class FunctionFieldPlace(Element):
@@ -624,6 +621,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             sage: [p.gaps() for p in L.places()]  # indirect doctest                    # optional - sage.libs.pari
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
+        from sage.matrix.constructor import matrix
+
         F = self.function_field()
         n = F.degree()
         O = F.maximal_order()
@@ -753,6 +752,9 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             sage: [p._gaps_wronskian() for p in L.places()]                             # optional - sage.libs.pari
             [[1, 2, 4], [1, 2, 4], [1, 2, 4]]
         """
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+
         F = self.function_field()
         R,fr_R,to_R = self._residue_field()
         der = F.higher_derivation()
@@ -918,6 +920,9 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             to_K = lambda f: _to_K(to_F(f))
             return K, from_K, to_K
 
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+
         O = F.maximal_order()
         Obasis = O.basis()
 
@@ -985,7 +990,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             if a is not None:
                 K,fr_K,_ = self.place_below().residue_field()
                 b = fr_K(K.gen())
-                if isinstance(k, NumberField) or k is QQbar:
+                if isinstance(k, (NumberField, sage.rings.abc.AlgebraicField)):
                     kk = ZZ
                 else:
                     kk = k
