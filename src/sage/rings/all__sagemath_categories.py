@@ -36,6 +36,9 @@ from .localization import Localization
 from .fraction_field import FractionField
 Frac = FractionField
 
+# Function field
+from .function_field.all import *
+
 # Double precision floating point numbers
 from .real_double import RealDoubleField, RDF, RealDoubleElement
 

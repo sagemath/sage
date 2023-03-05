@@ -107,6 +107,13 @@ include sage/rings/polynomial/multi_polynomial_element.p*
 include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
 include sage/rings/polynomial/flatten.p*
+include sage/rings/polynomial/laurent_polynomial_ring_base.p*
+
+graft sage/rings/function_field
+exclude sage/rings/function_field/derivations.*                         # module elements
+exclude sage/rings/function_field/differential.*                        # module elements
+exclude sage/rings/function_field/divisor.*                             # module elements
+exclude sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
 
 graft sage/rings/semirings
 
