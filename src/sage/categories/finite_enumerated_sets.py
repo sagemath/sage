@@ -358,6 +358,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 self.tuple = self._tuple_from_list
                 self.unrank = self._unrank_from_list
                 name = self.__class__.__name__
+
                 class CachedIter(self.__class__):
                     def __iter__(self):
                         yield from self._list
