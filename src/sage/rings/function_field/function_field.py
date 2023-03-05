@@ -970,12 +970,12 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.space_of_differentials()
+            sage: K.space_of_differentials()                                            # optional - sage.modules
             Space of differentials of Rational function field in t over Rational Field
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.libs.pari
-            sage: L.space_of_differentials()                                            # optional - sage.libs.pari
+            sage: L.space_of_differentials()                                            # optional - sage.libs.pari, sage.modules
             Space of differentials of Function field in y
              defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
@@ -988,7 +988,7 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.space_of_holomorphic_differentials()
+            sage: K.space_of_holomorphic_differentials()                                # optional - sage.modules
             (Vector space of dimension 0 over Rational Field,
              Linear map:
                From: Vector space of dimension 0 over Rational Field
@@ -999,7 +999,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.libs.pari
-            sage: L.space_of_holomorphic_differentials()                                # optional - sage.libs.pari
+            sage: L.space_of_holomorphic_differentials()                                # optional - sage.libs.pari, sage.modules
             (Vector space of dimension 4 over Finite Field of size 5,
              Linear map:
                From: Vector space of dimension 4 over Finite Field of size 5
@@ -1026,7 +1026,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.libs.pari
-            sage: L.basis_of_holomorphic_differentials()                                # optional - sage.libs.pari
+            sage: L.basis_of_holomorphic_differentials()                                # optional - sage.libs.pari, sage.modules
             [((x/(x^3 + 4))*y) d(x),
              ((1/(x^3 + 4))*y) d(x),
              ((x/(x^3 + 4))*y^2) d(x),
@@ -1053,7 +1053,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # optional - sage.libs.pari
-            sage: L.divisor_group()                                                     # optional - sage.libs.pari
+            sage: L.divisor_group()                                                     # optional - sage.libs.pari, sage.modules
             Divisor group of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
         from .divisor import DivisorGroup
@@ -4190,7 +4190,7 @@ class RationalFunctionField(FunctionField):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: K.free_module()
+            sage: K.free_module()                                                                                       # optional - sage.modules
             (Vector space of dimension 1 over Rational function field in x over Rational Field, Isomorphism:
               From: Vector space of dimension 1 over Rational function field in x over Rational Field
               To:   Rational function field in x over Rational Field, Isomorphism:
@@ -4199,7 +4199,7 @@ class RationalFunctionField(FunctionField):
 
         TESTS::
 
-            sage: K.free_module()
+            sage: K.free_module()                                                                                       # optional - sage.modules
             (Vector space of dimension 1 over Rational function field in x over Rational Field, Isomorphism:
               From: Vector space of dimension 1 over Rational function field in x over Rational Field
               To:   Rational function field in x over Rational Field, Isomorphism:
@@ -4443,7 +4443,7 @@ class RationalFunctionField(FunctionField):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.different()
+            sage: K.different()                                                                                         # optional - sage.modules
             0
         """
         return self.divisor_group().zero()
@@ -4543,10 +4543,10 @@ class RationalFunctionField_char_zero(RationalFunctionField):
         EXAMPLES::
 
             sage: F.<x> = FunctionField(QQ)
-            sage: d = F.higher_derivation()
-            sage: [d(x^5,i) for i in range(10)]
+            sage: d = F.higher_derivation()                                             # optional - sage.modules
+            sage: [d(x^5,i) for i in range(10)]                                         # optional - sage.modules
             [x^5, 5*x^4, 10*x^3, 10*x^2, 5*x, 1, 0, 0, 0, 0]
-            sage: [d(x^9,i) for i in range(10)]
+            sage: [d(x^9,i) for i in range(10)]                                         # optional - sage.modules
             [x^9, 9*x^8, 36*x^7, 84*x^6, 126*x^5, 126*x^4, 84*x^3, 36*x^2, 9*x, 1]
         """
         from .derivations import FunctionFieldHigherDerivation_char_zero
