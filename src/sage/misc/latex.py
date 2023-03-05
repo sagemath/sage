@@ -184,7 +184,7 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ,3,range(9)), Matrix(ZZ,3,range(9))]) # indirect doctest
+        sage: latex([Matrix(ZZ, 3, range(9)), Matrix(ZZ, 3, range(9))]) # indirect doctest          # optional - sage.modules
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
         3 & 4 & 5 \\
