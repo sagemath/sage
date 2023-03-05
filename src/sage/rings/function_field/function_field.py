@@ -223,16 +223,12 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
 
-from sage.interfaces.singular import singular
-
 from sage.arith.functions import lcm
 
 from sage.rings.integer import Integer
 from sage.rings.ring import Field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-
-from sage.modules.free_module_element import vector
 
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
@@ -2179,7 +2175,8 @@ class FunctionField_polymod(FunctionField):
         # transcendental degree 1 over a rational function field of one variable
 
         if (isinstance(self._base_field, RationalFunctionField) and
-            self._base_field.constant_field().is_prime_field()):
+                self._base_field.constant_field().is_prime_field()):
+            from sage.interfaces.singular import singular
 
             # making the auxiliary ring which only has polynomials
             # with integral coefficients.
@@ -3364,6 +3361,7 @@ class FunctionField_global(FunctionField_simple):
         This method implements Algorithm 30 in [Hes2002b]_.
         """
         from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
 
         W = self(self.base_field().gen()).differential().divisor()
         basis = W._basis()

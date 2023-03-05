@@ -101,18 +101,12 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.arith.power import generic_power
 
-from sage.modules.free_module_element import vector
-
 from sage.categories.monoids import Monoids
 
 from sage.rings.infinity import infinity
 from sage.rings.ideal import Ideal_generic
 
-from sage.matrix.constructor import matrix
-
 from .divisor import divisor
-
-from .hermite_form_polynomial import reversed_hermite_form
 
 
 class FunctionFieldIdeal(Element):
@@ -1347,6 +1341,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: y^2 - 2 in I
             False
         """
+        from sage.modules.free_module_element import vector
+
         vec = self.ring().coordinate_vector(self._denominator * x)
         v = []
         for e in vec:
@@ -1559,6 +1555,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: x * I ==  I * J                                                                                       # optional - sage.libs.pari
             True
         """
+        from sage.modules.free_module_element import vector
+
         O = self._ring
         mul = O._mul_vecs
 
@@ -1592,6 +1590,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
 
         """
         from sage.matrix.special import block_matrix
+        from .hermite_form_polynomial import reversed_hermite_form
 
         A = self._hnf
         B = other._hnf
@@ -2013,6 +2012,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
 
         The method closely follows Algorithm 4.8.17 of [Coh1993]_.
         """
+        from sage.matrix.constructor import matrix
+
         if ideal.is_zero():
             return infinity
 

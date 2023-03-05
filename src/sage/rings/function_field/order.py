@@ -105,17 +105,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.modules.free_module_element import vector
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.algebras.all import FiniteDimensionalAlgebra
-
-from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
@@ -124,8 +124,6 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.euclidean_domains import EuclideanDomains
 
-from sage.matrix.special import block_matrix
-from sage.matrix.constructor import matrix
 
 from .ideal import (
     IdealMonoid,
@@ -1011,7 +1009,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         if F.is_global():
             R, _from_R, _to_R = self._residue_field_global(q, name=name)
-        elif isinstance(K, NumberField) or K is QQbar:
+        elif isinstance(K, (NumberField, sage.rings.abc.AlgebraicField)):
             if name is None:
                 name = 'a'
             if q.degree() == 1:
@@ -1454,6 +1452,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             Ideal (x^3 + 1) of Maximal order of Function field in y
             defined by y^2 + 6*x^3 + 6
         """
+        from sage.matrix.constructor import matrix
+
         R = self._module_base_ring._ring
 
         d = R(d) # make it sure that d is in the polynomial ring
@@ -1736,6 +1736,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             [      0     4*x 5*x + 3       0]
             [    4*x 5*x + 3       0   3*x^2]
         """
+        from sage.matrix.constructor import matrix
+
         rows = []
         for u in self.basis():
             row = []
@@ -1785,6 +1787,9 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
 
         """
+        from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
+        from sage.matrix.constructor import matrix
+
         F = self.function_field()
         n = F.degree()
 
@@ -1922,6 +1927,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             Ideal (x + 1) of Maximal order of Function field in y
             defined by y^3 + x^6 + x^4 + x^2
         """
+        from sage.matrix.constructor import matrix
+
         g = prime.gens()[0]
 
         if not (g.denominator() == 1 and g.numerator().is_irreducible()):
@@ -1947,7 +1954,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
         for g in self.basis():
             v = [to_Fp(c) for c in self._coordinate_vector(g**exp)]
             mat.append(v)
-        mat = matrix(Fp,mat)
+        mat = matrix(Fp, mat)
         ker = mat.kernel()
 
         # construct module generators of the p-radical
@@ -1983,6 +1990,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
              (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
              of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
         """
+        from sage.matrix.constructor import matrix
+
         F = self.function_field()
         n = F.degree()
 
@@ -2050,6 +2059,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             #############################
             # Buchman-Lenstra algorithm #
             #############################
+            from sage.matrix.special import block_matrix
+
             pO = self.ideal(p)
             Ip = self.p_radical(ideal)
             Ob = matrix.identity(Fp, n)
@@ -2592,6 +2603,8 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             # if n is large enough, and then J_n is the I with the spurious
             # factors removed. For a fractional ideal, we also need to find
             # the largest factor x^m that divides the denominator.
+            from sage.matrix.special import block_matrix
+
             d = ideal.denominator()
             h = ideal.hnf()
             x = d.parent().gen()
@@ -2742,6 +2755,8 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             [    0   1/x]
             [  1/x 1/x^2]
         """
+        from sage.matrix.constructor import matrix
+
         rows = []
         for u in self.basis():
             row = []
