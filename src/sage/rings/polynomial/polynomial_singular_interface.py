@@ -222,8 +222,8 @@ class PolynomialRing_singular_repr:
 
             sage: w = var('w')
 
-            sage: R.<x> = PolynomialRing(NumberField(w^2+1,'s'))
-            sage: singular(R)
+            sage: R.<x> = PolynomialRing(NumberField(w^2 + 1, 's'))                                                     # optional - sage.rings.number_field
+            sage: singular(R)                                                                                           # optional - sage.rings.number_field
             polynomial ring, over a field, global ordering
             //   coefficients: QQ[s]/(s^2+1)
             //   number of vars : 1
@@ -231,8 +231,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x', implementation="singular")
-            sage: singular(R)
+            sage: R = PolynomialRing(GF(127), 'x', implementation="singular")                                           # optional - sage.libs.pari
+            sage: singular(R)                                                                                           # optional - sage.libs.pari
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -258,8 +258,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127),'x')
-            sage: singular(R)
+            sage: R = PolynomialRing(GF(127), 'x')                                                                      # optional - sage.libs.pari
+            sage: singular(R)                                                                                           # optional - sage.libs.pari
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -313,11 +313,11 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: k.<a> = FiniteField(25)
-            sage: R = k['x']
-            sage: K = R.fraction_field()
-            sage: S = K['y']
-            sage: singular(S)
+            sage: k.<a> = FiniteField(25)                                                                               # optional - sage.libs.pari
+            sage: R = k['x']                                                                                            # optional - sage.libs.pari
+            sage: K = R.fraction_field()                                                                                # optional - sage.libs.pari
+            sage: S = K['y']                                                                                            # optional - sage.libs.pari
+            sage: singular(S)                                                                                           # optional - sage.libs.pari
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/5(x)
             //   number of vars : 2
