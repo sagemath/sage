@@ -515,7 +515,7 @@ def _pth_root_in_prime_field(e):
 
     TESTS::
 
-        sage: from sage.rings.function_field.maps import _pth_root_in_prime_field
+        sage: from sage.rings.function_field.derivations import _pth_root_in_prime_field
         sage: p = 5
         sage: F.<a> = GF(p)                                                                         # optional - sage.libs.pari
         sage: e = F.random_element()                                                                # optional - sage.libs.pari
@@ -531,7 +531,7 @@ def _pth_root_in_finite_field(e):
 
     TESTS::
 
-        sage: from sage.rings.function_field.maps import _pth_root_in_finite_field
+        sage: from sage.rings.function_field.derivations import _pth_root_in_finite_field
         sage: p = 3
         sage: F.<a> = GF(p^2)                                                                       # optional - sage.libs.pari
         sage: e = F.random_element()                                                                # optional - sage.libs.pari
