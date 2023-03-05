@@ -114,6 +114,7 @@ exclude sage/rings/function_field/derivations.*                         # module
 exclude sage/rings/function_field/differential.*                        # module elements
 exclude sage/rings/function_field/divisor.*                             # module elements
 exclude sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
+exclude sage/rings/function_field/function_field_valuation.*            # ??
 
 graft sage/rings/semirings
 
