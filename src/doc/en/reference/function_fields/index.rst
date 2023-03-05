@@ -18,6 +18,7 @@ algebraic closure of `\QQ`.
    sage/rings/function_field/divisor
    sage/rings/function_field/differential
    sage/rings/function_field/valuation_ring
+   sage/rings/function_field/derivations
    sage/rings/function_field/maps
    sage/rings/function_field/extensions
    sage/rings/function_field/constructor
