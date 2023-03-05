@@ -2966,13 +2966,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         A non-commutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-            sage: R.<w> = PolynomialRing(A)
-            sage: f = i*w + j
-            sage: g = k*w + 1
-            sage: f._mul_generic(g)
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
+            sage: f = i*w + j                                                           # optional - sage.combinat, sage.modules
+            sage: g = k*w + 1                                                           # optional - sage.combinat, sage.modules
+            sage: f._mul_generic(g)                                                     # optional - sage.combinat, sage.modules
             -j*w^2 + 2*i*w + j
-            sage: g._mul_generic(f)
+            sage: g._mul_generic(f)                                                     # optional - sage.combinat, sage.modules
             j*w^2 + j
 
 
@@ -3186,13 +3186,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         A noncommutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-            sage: R.<w> = PolynomialRing(A)
-            sage: f = i*w + j
-            sage: g = k*w + 1
-            sage: f._mul_karatsuba(g,0)
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
+            sage: f = i*w + j                                                           # optional - sage.combinat, sage.modules
+            sage: g = k*w + 1                                                           # optional - sage.combinat, sage.modules
+            sage: f._mul_karatsuba(g,0)                                                 # optional - sage.combinat, sage.modules
             -j*w^2 + 2*i*w + j
-            sage: g._mul_karatsuba(f,0)
+            sage: g._mul_karatsuba(f,0)                                                 # optional - sage.combinat, sage.modules
             j*w^2 + j
 
         TESTS::
@@ -3218,28 +3218,28 @@ cdef class Polynomial(CommutativePolynomial):
 
         Random tests for noncommutative rings::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-            sage: R.<w> = PolynomialRing(A)
-            sage: f = R.random_element(randint(10,100))
-            sage: g = R.random_element(randint(10,100))
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
+            sage: f = R.random_element(randint(10,100))                                 # optional - sage.combinat, sage.modules
+            sage: g = R.random_element(randint(10,100))                                 # optional - sage.combinat, sage.modules
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)                            # optional - sage.combinat, sage.modules
             True
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)                           # optional - sage.combinat, sage.modules
             True
-            sage: g = R.random_element(0)
-            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)
+            sage: g = R.random_element(0)                                               # optional - sage.combinat, sage.modules
+            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)                            # optional - sage.combinat, sage.modules
             True
-            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)
+            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)                            # optional - sage.combinat, sage.modules
             True
 
         Polynomials over matrices::
 
-            sage: K = PolynomialRing(MatrixSpace(QQ,2),'x')
-            sage: f = K.random_element(randint(5,10))
-            sage: g = K.random_element(randint(5,10))
-            sage: h1 = f._mul_generic(g)
-            sage: h2 = f._mul_karatsuba(g,randint(0,10))
-            sage: h1 == h2
+            sage: K = PolynomialRing(MatrixSpace(QQ, 2), 'x')                           # optional - sage.modules
+            sage: f = K.random_element(randint(5, 10))                                  # optional - sage.modules
+            sage: g = K.random_element(randint(5, 10))                                  # optional - sage.modules
+            sage: h1 = f._mul_generic(g)                                                # optional - sage.modules
+            sage: h2 = f._mul_karatsuba(g,randint(0, 10))                               # optional - sage.modules
+            sage: h1 == h2                                                              # optional - sage.modules
             True
         """
         if self.is_zero():
@@ -11731,12 +11731,12 @@ cdef class Polynomial_generic_dense(Polynomial):
         Polynomials over noncommutative rings are also allowed
         (after :trac:`34733`)::
 
-            sage: HH = QuaternionAlgebra(QQ, -1, -1)
-            sage: P.<x> = HH[]
-            sage: f = P.random_element(5)
-            sage: g = P.random_element((0, 5))
-            sage: q, r = f.quo_rem(g)
-            sage: f == q*g + r
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)                            # optional - sage.combinat, sage.modules
+            sage: P.<x> = HH[]                                                  # optional - sage.combinat, sage.modules
+            sage: f = P.random_element(5)                                       # optional - sage.combinat, sage.modules
+            sage: g = P.random_element((0, 5))                                  # optional - sage.combinat, sage.modules
+            sage: q, r = f.quo_rem(g)                                           # optional - sage.combinat, sage.modules
+            sage: f == q*g + r                                                  # optional - sage.combinat, sage.modules
             True
 
         TESTS:
