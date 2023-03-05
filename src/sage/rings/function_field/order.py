@@ -109,13 +109,11 @@ import sage.rings.abc
 
 from sage.misc.cachefunc import cached_method
 
-from sage.modules.free_module_element import vector
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
@@ -123,7 +121,6 @@ from sage.structure.unique_representation import CachedRepresentation, UniqueRep
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.euclidean_domains import EuclideanDomains
-
 
 from .ideal import (
     IdealMonoid,
@@ -135,8 +132,6 @@ from .ideal import (
     FunctionFieldIdealInfinite_module,
     FunctionFieldIdealInfinite_rational,
     FunctionFieldIdealInfinite_polymod)
-
-from .hermite_form_polynomial import reversed_hermite_form
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
@@ -1238,7 +1233,9 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         """
         FunctionFieldMaximalOrder.__init__(self, field, ideal_class)
 
+        from sage.modules.free_module_element import vector
         from .function_field import FunctionField_integral
+
         if isinstance(field, FunctionField_integral):
             basis = field._maximal_order_basis()
         else:
@@ -1453,6 +1450,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             defined by y^2 + 6*x^3 + 6
         """
         from sage.matrix.constructor import matrix
+        from .hermite_form_polynomial import reversed_hermite_form
 
         R = self._module_base_ring._ring
 
@@ -1681,6 +1679,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             sage: O._coordinate_vector(x*y)                                                         # optional - sage.libs.pari, sage.modules
             (0, x, 0, 0)
         """
+        from sage.modules.free_module_element import vector
+
         v = self._module.coordinate_vector(self._to_module(e), check=False)
         return vector([c.numerator() for c in v])
 
@@ -1789,6 +1789,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         """
         from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
         from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
 
         F = self.function_field()
         n = F.degree()
@@ -1928,6 +1929,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             defined by y^3 + x^6 + x^4 + x^2
         """
         from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
 
         g = prime.gens()[0]
 
@@ -2060,6 +2062,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             # Buchman-Lenstra algorithm #
             #############################
             from sage.matrix.special import block_matrix
+            from sage.modules.free_module_element import vector
 
             pO = self.ideal(p)
             Ip = self.p_radical(ideal)
@@ -2604,6 +2607,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             # factors removed. For a fractional ideal, we also need to find
             # the largest factor x^m that divides the denominator.
             from sage.matrix.special import block_matrix
+            from .hermite_form_polynomial import reversed_hermite_form
 
             d = ideal.denominator()
             h = ideal.hnf()

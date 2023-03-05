@@ -106,8 +106,6 @@ from sage.categories.monoids import Monoids
 from sage.rings.infinity import infinity
 from sage.rings.ideal import Ideal_generic
 
-from .divisor import divisor
-
 
 class FunctionFieldIdeal(Element):
     """
@@ -478,6 +476,8 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor()                                                                                           # optional - sage.libs.pari
             - Place (1/x, 1/x*y)
         """
+        from .divisor import divisor
+
         if self.is_zero():
             raise ValueError("not defined for zero ideal")
 
@@ -510,6 +510,8 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_zeros()                                                                                  # optional - sage.libs.pari
             2*Place (x + 1, x*y)
         """
+        from .divisor import divisor
+
         if self.is_zero():
             raise ValueError("not defined for zero ideal")
 
@@ -542,6 +544,8 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_poles()                                                                                  # optional - sage.libs.pari
             Place (x, x*y)
         """
+        from .divisor import divisor
+
         if self.is_zero():
             raise ValueError("not defined for zero ideal")
 
