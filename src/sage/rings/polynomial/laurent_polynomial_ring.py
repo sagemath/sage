@@ -55,14 +55,23 @@ def is_LaurentPolynomialRing(R):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-        sage: P = PolynomialRing(QQ,2,'x')
+        sage: P = PolynomialRing(QQ, 2, 'x')
         sage: is_LaurentPolynomialRing(P)
+        doctest:warning...
+        DeprecationWarning: is_LaurentPolynomialRing is deprecated; use isinstance(...,
+        sage.rings.polynomial.laurent_polynomial_ring_base.LaurentPolynomialRing_generic) instead
+        See https://github.com/sagemath/sage/issues/35229 for details.
         False
 
         sage: R = LaurentPolynomialRing(QQ,3,'x')
         sage: is_LaurentPolynomialRing(R)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35229,
+                "is_LaurentPolynomialRing is deprecated; use "
+                "isinstance(..., sage.rings.polynomial.laurent_polynomial_ring_base."
+                "LaurentPolynomialRing_generic) instead")
     return isinstance(R, LaurentPolynomialRing_generic)
 
 
