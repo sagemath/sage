@@ -1610,7 +1610,7 @@ class Sigma:
 
         sage: sigma(100,4)
         106811523
-        sage: sigma(factorial(100),3).mod(144169)
+        sage: sigma(factorial(100),3).mod(144169)                                                                       # optional - sage.libs.pari
         3672
         sage: sigma(factorial(150),12).mod(691)
         176
@@ -1800,8 +1800,8 @@ def gcd(a, b=None, **kwargs):
     Verify that objects without gcd methods but which cannot be
     coerced to ZZ or QQ raise an error::
 
-        sage: F.<a,b> = FreeMonoid(2)
-        sage: gcd(a,b)
+        sage: F.<a,b> = FreeMonoid(2)                                               # optional - sage.groups
+        sage: gcd(a, b)                                                             # optional - sage.groups
         Traceback (most recent call last):
         ...
         TypeError: unable to call gcd with a
