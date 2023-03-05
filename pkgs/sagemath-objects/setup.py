@@ -33,9 +33,9 @@ from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     '.', ['sage'])   # for now, we do the filtering using MANIFEST
 
-log.warn('python_packages = {0}'.format(python_packages))
-log.warn('python_modules = {0}'.format(python_modules))
-log.warn('cython_modules = {0}'.format(cython_modules))
+log.debug('python_packages = {0}'.format(python_packages))
+log.debug('python_modules = {0}'.format(python_modules))
+log.debug('cython_modules = {0}'.format(cython_modules))
 
 setup(
     cmdclass = cmdclass,
