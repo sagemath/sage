@@ -133,9 +133,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         sage: y2 = y*1
         sage: y2 is y
         False
-        sage: L.<w>=K.extension(x - y^2)
-        sage: M.<w>=K.extension(x - y2^2)
-        sage: L is M
+        sage: L.<w> = K.extension(x - y^2)                                              # optional - sage.libs.singular
+        sage: M.<w> = K.extension(x - y2^2)                                             # optional - sage.libs.singular
+        sage: L is M                                                                    # optional - sage.libs.singular
         True
     """
     def create_key(self,polynomial,names):
@@ -147,7 +147,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # optional - sage.libs.singular
 
         TESTS:
 
@@ -155,12 +155,12 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z - 1)
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.singular
+            sage: R.<z> = L[]                                                           # optional - sage.libs.singular
+            sage: M.<z> = L.extension(z - 1)                                            # optional - sage.libs.singular
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z - 1)
-            sage: M is N
+            sage: N.<z> = K.extension(z - 1)                                            # optional - sage.libs.singular
+            sage: M is N                                                                # optional - sage.libs.singular
             False
 
         """
@@ -179,10 +179,10 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest
-            sage: y2 = y*1
-            sage: M.<w> = K.extension(x - y2^2) # indirect doctest
-            sage: L is M
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # optional - sage.libs.singular
+            sage: y2 = y*1                                                              # optional - sage.libs.singular
+            sage: M.<w> = K.extension(x - y2^2) # indirect doctest                      # optional - sage.libs.singular
+            sage: L is M                                                                # optional - sage.libs.singular
             True
         """
         from . import function_field
@@ -206,5 +206,5 @@ class FunctionFieldExtensionFactory(UniqueFactory):
                     return function_field.FunctionField_char_zero(f, names)
         return function_field.FunctionField_polymod(f, names)
 
-FunctionFieldExtension=FunctionFieldExtensionFactory(
+FunctionFieldExtension = FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")

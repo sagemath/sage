@@ -866,10 +866,10 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         ::
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^3 + Y - x^4)
+            sage: L.<y> = K.extension(Y^3 + Y - x^4)                                    # optional - sage.libs.singular
             sage: O = K.maximal_order()
             sage: I = O.ideal(x)
-            sage: [p.residue_field() for p in L.places_above(I.place())]
+            sage: [p.residue_field() for p in L.places_above(I.place())]                # optional - sage.libs.singular
             [(Rational Field, Ring morphism:
                 From: Rational Field
                 To:   Valuation ring at Place (x, y, y^2), Ring morphism:
@@ -880,7 +880,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 To:   Valuation ring at Place (x, x*y, y^2 + 1), Ring morphism:
                 From: Valuation ring at Place (x, x*y, y^2 + 1)
                 To:   Number Field in s with defining polynomial x^2 - 2*x + 2)]
-            sage: for p in L.places_above(I.place()):
+            sage: for p in L.places_above(I.place()):                                   # optional - sage.libs.singular
             ....:    k, fr_k, to_k = p.residue_field()
             ....:    assert all(fr_k(k(e)) == e for e in range(10))
             ....:    assert all(to_k(fr_k(e)) == e for e in [k.random_element() for i in [1..10]])
@@ -888,10 +888,10 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         ::
 
             sage: K.<x> = FunctionField(QQbar); _.<Y> = K[]                             # optional - sage.rings.number_field
-            sage: L.<y> = K.extension(Y^3 + Y - x^4)                                    # optional - sage.rings.number_field
-            sage: O = K.maximal_order()                                                 # optional - sage.rings.number_field
-            sage: I = O.ideal(x)                                                        # optional - sage.rings.number_field
-            sage: [p.residue_field() for p in L.places_above(I.place())]                # optional - sage.rings.number_field
+            sage: L.<y> = K.extension(Y^3 + Y - x^4)                                    # optional - sage.libs.singular, sage.rings.number_field
+            sage: O = K.maximal_order()                                                 # optional - sage.libs.singular, sage.rings.number_field
+            sage: I = O.ideal(x)                                                        # optional - sage.libs.singular, sage.rings.number_field
+            sage: [p.residue_field() for p in L.places_above(I.place())]                # optional - sage.libs.singular, sage.rings.number_field
             [(Algebraic Field, Ring morphism:
                 From: Algebraic Field
                 To:   Valuation ring at Place (x, y - I, y^2 + 1), Ring morphism:
@@ -1115,10 +1115,10 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: p = L.places_finite()[0]
-            sage: p.valuation_ring()
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
+            sage: p.valuation_ring()                                                    # optional - sage.libs.pari
             Valuation ring at Place (x, x*y)
         """
         from .valuation_ring import FunctionFieldValuationRing

@@ -84,7 +84,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.libs.pari
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.libs.pari
             sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.libs.pari
-            sage: TestSuite(E).run(skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(E).run(skip=['_test_elements', '_test_pickling'])           # optional - sage.libs.pari
         """
         k = F.constant_base_field()
         F_base = F.base_field()
@@ -120,10 +120,10 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
-            sage: E = F.extension_constant_field(GF(2^3))
-            sage: E.top()
+            sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]                             # optional - sage.libs.pari
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                        # optional - sage.libs.pari
+            sage: E = F.extension_constant_field(GF(2^3))                               # optional - sage.libs.pari
+            sage: E.top()                                                               # optional - sage.libs.pari
             Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return self._F_ext
