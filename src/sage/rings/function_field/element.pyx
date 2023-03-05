@@ -20,16 +20,16 @@ Arithmetic with rational functions::
 
 Derivatives of elements in separable extensions::
 
-    sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-    sage: (y^3 + x).derivative()
+    sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                     # optional - sage.libs.pari
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.libs.pari
+    sage: (y^3 + x).derivative()                                                        # optional - sage.libs.pari
     ((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3
 
 The divisor of an element of a global function field::
 
-    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-    sage: y.divisor()
+    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                     # optional - sage.libs.pari
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.libs.pari
+    sage: y.divisor()                                                                   # optional - sage.libs.pari
     - Place (1/x, 1/x*y)
      - Place (x, x*y)
      + 2*Place (x + 1, x*y)
@@ -387,26 +387,26 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.differential()
             (-1/t^2) d(t)
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x +1/x)
-            sage: (y^3 + x).differential()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x +1/x)                                 # optional - sage.libs.pari
+            sage: (y^3 + x).differential()                                              # optional - sage.libs.pari
             (((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3) d(x)
 
         TESTS:
 
         Verify that :trac:`27712` is resolved::
 
-            sage: K.<x> = FunctionField(GF(31))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z^2 - y)
+            sage: K.<x> = FunctionField(GF(31))                                         # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.pari
+            sage: R.<z> = L[]                                                           # optional - sage.libs.pari
+            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.libs.pari
 
-            sage: x.differential()
+            sage: x.differential()                                                      # optional - sage.libs.pari
             d(x)
-            sage: y.differential()
+            sage: y.differential()                                                      # optional - sage.libs.pari
             (16/x*y) d(x)
-            sage: z.differential()
+            sage: z.differential()                                                      # optional - sage.libs.pari
             (8/x*z) d(x)
         """
         F = self.parent()
@@ -427,9 +427,9 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.derivative()
             (-t^2 - 2*t - 1/3)/(t^4 - 2/3*t^2 + 1/9)
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (y^3 + x).derivative()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (y^3 + x).derivative()                                                # optional - sage.libs.pari
             ((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3
         """
         D = self.parent().derivation()
@@ -456,9 +456,9 @@ cdef class FunctionFieldElement(FieldElement):
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (y^3 + x).higher_derivative(2)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (y^3 + x).higher_derivative(2)                                        # optional - sage.libs.pari
             1/x^3*y + (x^6 + x^4 + x^3 + x^2 + x + 1)/x^5
         """
         D = self.parent().higher_derivation()
@@ -471,18 +471,18 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor()
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.libs.pari
+            sage: f.divisor()                                                           # optional - sage.libs.pari
             3*Place (1/x)
              - Place (x)
              - Place (x^2 + x + 1)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: y.divisor()
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: y.divisor()                                                           # optional - sage.libs.pari
             - Place (1/x, 1/x*y)
              - Place (x, x*y)
              + 2*Place (x + 1, x*y)
@@ -501,16 +501,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor_of_zeros()
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.libs.pari
+            sage: f.divisor_of_zeros()                                                  # optional - sage.libs.pari
             3*Place (1/x)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (x/y).divisor_of_zeros()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (x/y).divisor_of_zeros()                                              # optional - sage.libs.pari
             3*Place (x, x*y)
         """
         if self.is_zero():
@@ -527,17 +527,17 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: f = 1/(x^3 + x^2 + x)
-            sage: f.divisor_of_poles()
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.libs.pari
+            sage: f.divisor_of_poles()                                                  # optional - sage.libs.pari
             Place (x)
              + Place (x^2 + x + 1)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (x/y).divisor_of_poles()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (x/y).divisor_of_poles()                                              # optional - sage.libs.pari
             Place (1/x, 1/x*y) + 2*Place (x + 1, x*y)
         """
         if self.is_zero():
@@ -554,16 +554,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: f = 1/(x^3 + x^2 + x)
-            sage: f.zeros()
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.libs.pari
+            sage: f.zeros()                                                             # optional - sage.libs.pari
             [Place (1/x)]
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (x/y).zeros()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (x/y).zeros()                                                         # optional - sage.libs.pari
             [Place (x, x*y)]
         """
         return self.divisor_of_zeros().support()
@@ -574,16 +574,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: f = 1/(x^3 + x^2 + x)
-            sage: f.poles()
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.libs.pari
+            sage: f.poles()                                                             # optional - sage.libs.pari
             [Place (x), Place (x^2 + x + 1)]
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: (x/y).poles()
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: (x/y).poles()                                                         # optional - sage.libs.pari
             [Place (1/x, 1/x*y), Place (x + 1, x*y)]
         """
         return self.divisor_of_poles().support()
@@ -598,10 +598,10 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: p = L.places_infinite()[0]
-            sage: y.valuation(p)
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: p = L.places_infinite()[0]                                            # optional - sage.libs.pari
+            sage: y.valuation(p)                                                        # optional - sage.libs.pari
             -1
 
         ::
@@ -633,23 +633,23 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(5))
-            sage: p = K.place_infinite()
-            sage: f = 1/t^2 + 3
-            sage: f.evaluate(p)
+            sage: K.<t> = FunctionField(GF(5))                                          # optional - sage.libs.pari
+            sage: p = K.place_infinite()                                                # optional - sage.libs.pari
+            sage: f = 1/t^2 + 3                                                         # optional - sage.libs.pari
+            sage: f.evaluate(p)                                                         # optional - sage.libs.pari
             3
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
-            sage: p, = L.places_infinite()
-            sage: p, = L.places_infinite()
-            sage: (y + x).evaluate(p)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
+            sage: p, = L.places_infinite()                                              # optional - sage.libs.pari
+            sage: p, = L.places_infinite()                                              # optional - sage.libs.pari
+            sage: (y + x).evaluate(p)                                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: has a pole at the place
-            sage: (y/x + 1).evaluate(p)
+            sage: (y/x + 1).evaluate(p)                                                 # optional - sage.libs.pari
             1
         """
         R, fr_R, to_R = place._residue_field()
@@ -682,9 +682,9 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: f = (x+1)/(x-1)
-            sage: f.is_nth_power(2)
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: f = (x+1)/(x-1)                                                       # optional - sage.libs.pari
+            sage: f.is_nth_power(2)                                                     # optional - sage.libs.pari
             False
         """
         raise NotImplementedError("is_nth_power() not implemented for generic elements")
@@ -708,10 +708,10 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: L(y^27).nth_root(27)
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.pari
+            sage: L(y^27).nth_root(27)                                                  # optional - sage.libs.pari
             y
         """
         raise NotImplementedError("nth_root() not implemented for generic elements")
@@ -965,22 +965,22 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: L(y^3).nth_root(3)
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.pari
+            sage: L(y^3).nth_root(3)                                                    # optional - sage.libs.pari
             y
-            sage: L(y^9).nth_root(-9)
+            sage: L(y^9).nth_root(-9)                                                   # optional - sage.libs.pari
             1/x*y
 
         This also works for inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 - x^2)
-            sage: L(x).nth_root(3)^3
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^3 - x^2)                                        # optional - sage.libs.pari
+            sage: L(x).nth_root(3)^3                                                    # optional - sage.libs.pari
             x
-            sage: L(x^9).nth_root(-27)^-27
+            sage: L(x^9).nth_root(-27)^-27                                              # optional - sage.libs.pari
             x^9
 
         """
@@ -1026,12 +1026,12 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: y.is_nth_power(2)
+            sage: K.<x> = FunctionField(GF(4))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.pari
+            sage: y.is_nth_power(2)                                                     # optional - sage.libs.pari
             False
-            sage: L(x).is_nth_power(2)
+            sage: L(x).is_nth_power(2)                                                  # optional - sage.libs.pari
             True
 
         """
@@ -1063,10 +1063,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: (y^3).nth_root(3)  # indirect doctest
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.libs.pari
+            sage: (y^3).nth_root(3)  # indirect doctest                                 # optional - sage.libs.pari
             y
         """
         cdef Py_ssize_t deg = self._parent.degree()
@@ -1128,7 +1128,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<a> = FunctionField(QQ)
-            sage: ((a+1)/(a-1)).__pari__()
+            sage: ((a+1)/(a-1)).__pari__()                                              # optional - sage.libs.pari
             (a + 1)/(a - 1)
 
         """
@@ -1366,9 +1366,9 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: f.valuation(t^2 - 1/3)
             -3
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: p = K.places_finite()[0]
-            sage: (1/x^2).valuation(p)
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: p = K.places_finite()[0]                                              # optional - sage.libs.pari
+            sage: (1/x^2).valuation(p)                                                  # optional - sage.libs.pari
             -2
         """
         from .place import FunctionFieldPlace
@@ -1396,10 +1396,10 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: f = 9 * (t+1)^6 / (t^2 - 2*t + 1); f.is_square()
             True
 
-            sage: K.<t> = FunctionField(GF(5))
-            sage: (-t^2).is_square()
+            sage: K.<t> = FunctionField(GF(5))                                          # optional - sage.libs.pari
+            sage: (-t^2).is_square()                                                    # optional - sage.libs.pari
             True
-            sage: (-t^2).sqrt()
+            sage: (-t^2).sqrt()                                                         # optional - sage.libs.pari
             2*t
         """
         return self._x.is_square()
@@ -1454,15 +1454,15 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: f = (x+1)/(x-1)
-            sage: f.is_nth_power(1)
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: f = (x+1)/(x-1)                                                       # optional - sage.libs.pari
+            sage: f.is_nth_power(1)                                                     # optional - sage.libs.pari
             True
-            sage: f.is_nth_power(3)
+            sage: f.is_nth_power(3)                                                     # optional - sage.libs.pari
             False
-            sage: (f^3).is_nth_power(3)
+            sage: (f^3).is_nth_power(3)                                                 # optional - sage.libs.pari
             True
-            sage: (f^9).is_nth_power(-9)
+            sage: (f^9).is_nth_power(-9)                                                # optional - sage.libs.pari
             True
         """
         if n == 1:
@@ -1505,17 +1505,17 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
-            sage: f = (x+1)/(x+2)
-            sage: f.nth_root(1)
+            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.libs.pari
+            sage: f = (x+1)/(x+2)                                                       # optional - sage.libs.pari
+            sage: f.nth_root(1)                                                         # optional - sage.libs.pari
             (x + 1)/(x + 2)
-            sage: f.nth_root(3)
+            sage: f.nth_root(3)                                                         # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: element is not an n-th power
-            sage: (f^3).nth_root(3)
+            sage: (f^3).nth_root(3)                                                     # optional - sage.libs.pari
             (x + 1)/(x + 2)
-            sage: (f^9).nth_root(-9)
+            sage: (f^9).nth_root(-9)                                                    # optional - sage.libs.pari
             (x + 2)/(x + 1)
         """
         if n == 0:

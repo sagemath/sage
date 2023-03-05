@@ -78,10 +78,10 @@ affinoid contained in the unit disk::
 
 Run test suite for some other classical places over large ground fields::
 
-    sage: K.<t> = FunctionField(GF(3))
-    sage: M.<x> = FunctionField(K)
-    sage: v = M.valuation(x^3 - t)
-    sage: TestSuite(v).run(max_runs=10) # long time
+    sage: K.<t> = FunctionField(GF(3))                                                  # optional - sage.libs.pari
+    sage: M.<x> = FunctionField(K)                                                      # optional - sage.libs.pari
+    sage: v = M.valuation(x^3 - t)                                                      # optional - sage.libs.pari
+    sage: TestSuite(v).run(max_runs=10) # long time                                     # optional - sage.libs.pari
 
 Run test suite for extensions over the infinite place::
 
@@ -112,9 +112,9 @@ Run test suite for extensions which come from the splitting in the base field::
 
 Run test suite for a finite place with residual degree and ramification::
 
-    sage: K.<t> = FunctionField(GF(3))
-    sage: L.<x> = FunctionField(K)
-    sage: v = L.valuation(x^6 - t)
+    sage: K.<t> = FunctionField(GF(3))                                                  # optional - sage.libs.pari
+    sage: L.<x> = FunctionField(K)                                                      # optional - sage.libs.pari
+    sage: v = L.valuation(x^6 - t)                                                      # optional - sage.libs.pari
     sage: TestSuite(v).run(max_runs=10) # long time
 
 Run test suite for a valuation which is backed by limit valuation::
@@ -351,11 +351,11 @@ class FunctionFieldValuationFactory(UniqueFactory):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L) # indirect doctest
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L) # indirect doctest                                 # optional - sage.libs.pari
 
         """
         from sage.categories.function_fields import FunctionFields
@@ -509,14 +509,14 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Iterated extensions over the infinite place::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z^2 - y)
-            sage: w.extension(M) # squarefreeness is not implemented here
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L)                                                    # optional - sage.libs.pari
+            sage: R.<z> = L[]                                                           # optional - sage.libs.pari
+            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.libs.pari
+            sage: w.extension(M) # squarefreeness is not implemented here               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -536,13 +536,13 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Test that this works in towers::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y - x)
-            sage: R.<z> = L[]
-            sage: L.<z> = L.extension(z - y)
-            sage: v = K.valuation(x)
-            sage: v.extensions(L)
+            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y - x)                                            # optional - sage.libs.pari
+            sage: R.<z> = L[]                                                           # optional - sage.libs.pari
+            sage: L.<z> = L.extension(z - y)                                            # optional - sage.libs.pari
+            sage: v = K.valuation(x)                                                    # optional - sage.libs.pari
+            sage: v.extensions(L)                                                       # optional - sage.libs.pari
             [(x)-adic valuation]
         """
         K = self.domain()
@@ -587,10 +587,10 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
     TESTS::
 
-        sage: K.<x> = FunctionField(GF(2))
-        sage: v = K.valuation(x) # indirect doctest
+        sage: K.<x> = FunctionField(GF(2))                                                                              # optional - sage.libs.pari
+        sage: v = K.valuation(x) # indirect doctest                                                                     # optional - sage.libs.pari
         sage: from sage.rings.function_field.function_field_valuation import RationalFunctionFieldValuation_base
-        sage: isinstance(v, RationalFunctionFieldValuation_base)
+        sage: isinstance(v, RationalFunctionFieldValuation_base)                                                        # optional - sage.libs.pari
         True
 
     """
@@ -630,10 +630,10 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
 
     TESTS::
 
-        sage: K.<x> = FunctionField(GF(5))
-        sage: v = K.valuation(x) # indirect doctest
+        sage: K.<x> = FunctionField(GF(5))                                                                              # optional - sage.libs.pari
+        sage: v = K.valuation(x)  # indirect doctest                                                                    # optional - sage.libs.pari
         sage: from sage.rings.function_field.function_field_valuation import ClassicalFunctionFieldValuation_base
-        sage: isinstance(v, ClassicalFunctionFieldValuation_base)
+        sage: isinstance(v, ClassicalFunctionFieldValuation_base)                                                       # optional - sage.libs.pari
         True
 
     """
@@ -998,14 +998,14 @@ class FiniteRationalFunctionFieldValuation(InducedRationalFunctionFieldValuation
 
     A finite place with ramification::
 
-        sage: K.<t> = FunctionField(GF(3))
-        sage: L.<x> = FunctionField(K)
-        sage: u = L.valuation(x^3 - t); u
+        sage: K.<t> = FunctionField(GF(3))                                                                              # optional - sage.libs.pari
+        sage: L.<x> = FunctionField(K)                                                                                  # optional - sage.libs.pari
+        sage: u = L.valuation(x^3 - t); u                                                                               # optional - sage.libs.pari
         (x^3 + 2*t)-adic valuation
 
     A finite place with residual degree and ramification::
 
-        sage: q = L.valuation(x^6 - t); q
+        sage: q = L.valuation(x^6 - t); q                                                                               # optional - sage.libs.pari
         (x^6 + 2*t)-adic valuation
 
     """
@@ -1176,8 +1176,8 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(2))
-        sage: v = K.valuation(1/x); v
+        sage: K.<x> = FunctionField(GF(2))                                                                              # optional - sage.libs.pari
+        sage: v = K.valuation(1/x); v                                                                                   # optional - sage.libs.pari
         Valuation at the infinite place
 
     """
@@ -1185,10 +1185,10 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
         r"""
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: v = K.valuation(1/x)
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
             sage: from sage.rings.function_field.function_field_valuation import FunctionFieldMappedValuation_base
-            sage: isinstance(v, FunctionFieldMappedValuation_base)
+            sage: isinstance(v, FunctionFieldMappedValuation_base)                                                      # optional - sage.libs.pari
             True
 
         """
@@ -1204,12 +1204,12 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)
-            sage: w._to_base_domain(y)
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L)                                                                                    # optional - sage.libs.pari
+            sage: w._to_base_domain(y)                                                                                  # optional - sage.libs.pari
             x^2*y
 
         """
@@ -1221,12 +1221,12 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)
-            sage: w._from_base_domain(w._to_base_domain(y))
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L)                                                                                    # optional - sage.libs.pari
+            sage: w._from_base_domain(w._to_base_domain(y))                                                             # optional - sage.libs.pari
             y
 
         r"""
@@ -1238,12 +1238,12 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)
-            sage: 3*w
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L)                                                                                    # optional - sage.libs.pari
+            sage: 3*w                                                                                                   # optional - sage.libs.pari
             3 * (x)-adic valuation (in Rational function field in x over Finite Field of size 2 after x |--> 1/x)
 
         """
@@ -1258,11 +1258,11 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: v.extension(L) # indirect doctest
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: v.extension(L) # indirect doctest                                                                     # optional - sage.libs.pari
             Valuation at the infinite place
 
         """
@@ -1297,8 +1297,8 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(2))
-        sage: v = K.valuation(1/x); v
+        sage: K.<x> = FunctionField(GF(2))                                                                              # optional - sage.libs.pari
+        sage: v = K.valuation(1/x); v                                                                                   # optional - sage.libs.pari
         Valuation at the infinite place
 
     """
@@ -1306,10 +1306,10 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
         r"""
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: v = K.valuation(1/x)
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
             sage: from sage.rings.function_field.function_field_valuation import FunctionFieldMappedValuationRelative_base
-            sage: isinstance(v, FunctionFieldMappedValuationRelative_base)
+            sage: isinstance(v, FunctionFieldMappedValuationRelative_base)                                              # optional - sage.libs.pari
             True
 
         """
@@ -1323,8 +1323,8 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: K.valuation(1/x).restriction(GF(2))
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: K.valuation(1/x).restriction(GF(2))                                                                   # optional - sage.libs.pari
             Trivial valuation on Finite Field of size 2
 
         """
@@ -1416,17 +1416,17 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(2))
-        sage: R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 + y + x^3)
-        sage: v = K.valuation(1/x)
-        sage: w = v.extension(L)
+        sage: K.<x> = FunctionField(GF(2))                                                                              # optional - sage.libs.pari
+        sage: R.<y> = K[]                                                                                               # optional - sage.libs.pari
+        sage: L.<y> = K.extension(y^2 + y + x^3)                                                                        # optional - sage.libs.pari
+        sage: v = K.valuation(1/x)                                                                                      # optional - sage.libs.pari
+        sage: w = v.extension(L)                                                                                        # optional - sage.libs.pari
 
-        sage: w(x)
+        sage: w(x)                                                                                                      # optional - sage.libs.pari
         -1
-        sage: w(y)
+        sage: w(y)                                                                                                      # optional - sage.libs.pari
         -3/2
-        sage: w.uniformizer()
+        sage: w.uniformizer()                                                                                           # optional - sage.libs.pari
         1/x^2*y
 
     TESTS::
@@ -1442,11 +1442,11 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L); w
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L); w                                                                                 # optional - sage.libs.pari
             Valuation at the infinite place
 
             sage: K.<x> = FunctionField(QQ)
@@ -1469,12 +1469,12 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 + y + x^3)
-            sage: v = K.valuation(1/x)
-            sage: w = v.extension(L)
-            sage: w.restriction(K) is v
+            sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
+            sage: R.<y> = K[]                                                                                           # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                                                    # optional - sage.libs.pari
+            sage: v = K.valuation(1/x)                                                                                  # optional - sage.libs.pari
+            sage: w = v.extension(L)                                                                                    # optional - sage.libs.pari
+            sage: w.restriction(K) is v                                                                                 # optional - sage.libs.pari
             True
         """
         if ring.is_subring(self.domain().base()):

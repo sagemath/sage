@@ -54,10 +54,10 @@ class FunctionFieldFactory(UniqueFactory):
 
         sage: K.<x> = FunctionField(QQ); K
         Rational function field in x over Rational Field
-        sage: L.<y> = FunctionField(GF(7)); L
+        sage: L.<y> = FunctionField(GF(7)); L                                           # optional - sage.libs.pari
         Rational function field in y over Finite Field of size 7
-        sage: R.<z> = L[]
-        sage: M.<z> = L.extension(z^7-z-y); M
+        sage: R.<z> = L[]                                                               # optional - sage.libs.pari
+        sage: M.<z> = L.extension(z^7 - z - y); M                                       # optional - sage.libs.pari
         Function field in z defined by z^7 + 6*z + 6*y
 
     TESTS::
@@ -66,8 +66,8 @@ class FunctionFieldFactory(UniqueFactory):
         sage: L.<x> = FunctionField(QQ)
         sage: K is L
         True
-        sage: M.<x> = FunctionField(GF(7))
-        sage: K is M
+        sage: M.<x> = FunctionField(GF(7))                                              # optional - sage.libs.pari
+        sage: K is M                                                                    # optional - sage.libs.pari
         False
         sage: N.<y> = FunctionField(QQ)
         sage: K is N
