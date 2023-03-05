@@ -49,8 +49,8 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             TESTS::
 
-                sage: E.<x,y> = ExteriorAlgebra(QQ)
-                sage: [b.antipode() for b in E.basis()]
+                sage: E.<x,y> = ExteriorAlgebra(QQ)                                                                     # optional - sage.combinat, sage.modules
+                sage: [b.antipode() for b in E.basis()]                                                                 # optional - sage.combinat, sage.modules
                 [1, -x, -y, x*y]
             """
             if self.antipode_on_basis is not NotImplemented:
