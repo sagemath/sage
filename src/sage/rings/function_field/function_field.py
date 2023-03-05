@@ -221,10 +221,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.misc.cachefunc import cached_method
-
 from sage.arith.functions import lcm
-
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.ring import Field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -234,12 +233,11 @@ from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
 from sage.structure.category_object import CategoryObject
 
-from .differential import DifferentialsSpace, DifferentialsSpace_global
-
 from .element import (
     FunctionFieldElement,
     FunctionFieldElement_rational,
     FunctionFieldElement_polymod)
+
 
 def is_FunctionField(x):
     """
@@ -274,7 +272,7 @@ class FunctionField(Field):
         sage: K
         Rational function field in x over Rational Field
     """
-    _differentials_space = DifferentialsSpace
+    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace')
 
     def __init__(self, base_field, names, category=FunctionFields()):
         """
@@ -3070,7 +3068,7 @@ class FunctionField_char_zero(FunctionField_simple):
               From: Function field in y defined by y^3 + (-x^3 + 1)/(x^3 - 2)
               To:   Function field in y defined by y^3 + (-x^3 + 1)/(x^3 - 2)
         """
-        from .maps import FunctionFieldHigherDerivation_char_zero
+        from .derivations import FunctionFieldHigherDerivation_char_zero
         return FunctionFieldHigherDerivation_char_zero(self)
 
 
@@ -3105,7 +3103,7 @@ class FunctionField_global(FunctionField_simple):
         sage: L.genus()                                                                 # optional - sage.libs.pari
         0
     """
-    _differentials_space = DifferentialsSpace_global
+    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
     def __init__(self, polynomial, names):
         """
@@ -3154,7 +3152,7 @@ class FunctionField_global(FunctionField_simple):
               From: Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
               To:   Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
-        from .maps import FunctionFieldHigherDerivation_global
+        from .derivations import FunctionFieldHigherDerivation_global
         return FunctionFieldHigherDerivation_global(self)
 
     def get_place(self, degree):
@@ -4551,7 +4549,7 @@ class RationalFunctionField_char_zero(RationalFunctionField):
             sage: [d(x^9,i) for i in range(10)]
             [x^9, 9*x^8, 36*x^7, 84*x^6, 126*x^5, 126*x^4, 84*x^3, 36*x^2, 9*x, 1]
         """
-        from .maps import FunctionFieldHigherDerivation_char_zero
+        from .derivations import FunctionFieldHigherDerivation_char_zero
         return FunctionFieldHigherDerivation_char_zero(self)
 
 
@@ -4559,7 +4557,7 @@ class RationalFunctionField_global(RationalFunctionField):
     """
     Rational function field over finite fields.
     """
-    _differentials_space = DifferentialsSpace_global
+    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
     def places(self, degree=1):
         """
@@ -4681,5 +4679,5 @@ class RationalFunctionField_global(RationalFunctionField):
             sage: [d(x^7,i) for i in range(10)]                                         # optional - sage.libs.pari
             [x^7, 2*x^6, x^5, 0, 0, x^2, 2*x, 1, 0, 0]
         """
-        from .maps import RationalFunctionFieldHigherDerivation_global
+        from .derivations import RationalFunctionFieldHigherDerivation_global
         return RationalFunctionFieldHigherDerivation_global(self)
