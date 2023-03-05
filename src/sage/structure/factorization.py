@@ -288,7 +288,7 @@ class Factorization(SageObject):
 
         Autosorting (the default) swaps around the factors below::
 
-            sage: F = Factorization([(ZZ^3, 2), (ZZ^2, 5)], cr=True); F
+            sage: F = Factorization([(ZZ^3, 2), (ZZ^2, 5)], cr=True); F                             # optional - sage.modules
             (Ambient free module of rank 2 over the principal ideal domain Integer Ring)^5 *
             (Ambient free module of rank 3 over the principal ideal domain Integer Ring)^2
         """
@@ -862,7 +862,7 @@ class Factorization(SageObject):
             -1 \cdot 2^{2} \cdot 5^{2}
             sage: f._latex_()
             '-1 \\cdot 2^{2} \\cdot 5^{2}'
-            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_() # trac 12178
+            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_() # trac 12178                         # optional - sage.rings.number_field
             '(x^{2} + x + 1.000000000000000?)'
         """
         if len(self) == 0:
@@ -1106,10 +1106,10 @@ class Factorization(SageObject):
             sage: F^9                                                                                           # optional - sage.rings.number_field
             (Fractional ideal (7, a))^9 * (Fractional ideal (7, a + 2))^9 * (Fractional ideal (7, a - 2))^9
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                                                  # optional - sage.combinat, sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                                                  # optional - sage.combinat, sage.modules
             x^3 * y^2 * x
-            sage: F**2
+            sage: F**2                                                                                          # optional - sage.combinat, sage.modules
             x^3 * y^2 * x^4 * y^2 * x
         """
         from sage.rings.integer import Integer

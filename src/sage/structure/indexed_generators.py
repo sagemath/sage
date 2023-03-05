@@ -192,8 +192,8 @@ class IndexedGenerators():
 
         ::
 
-            sage: X = SchubertPolynomialRing(QQ)
-            sage: X.prefix()
+            sage: X = SchubertPolynomialRing(QQ)                                                                        # optional - sage.combinat
+            sage: X.prefix()                                                                                            # optional - sage.combinat
             'X'
         """
         return self._print_options['prefix']
