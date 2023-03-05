@@ -6,8 +6,6 @@ from .all__sagemath_repl import *
 lazy_import('sage.misc.misc', 'union',
             deprecation=32096)
 
-from .banner import version, banner
-
 from .dev_tools import runsnake, import_statements
 
 from .sage_timeit_class import timeit
@@ -27,12 +25,6 @@ lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
                                   'experimental_packages', 'package_versions'))
 
 lazy_import('sage.misc.pager', 'pager')
-
-lazy_import('sage.misc.sagedoc', ['browse_sage_doc',
-        'search_src', 'search_def', 'search_doc',
-        'tutorial', 'reference', 'manual', 'developer',
-        'constructions', 'help'])
-lazy_import('pydoc', 'help', 'python_help')
 
 from .classgraph import class_graph
 
