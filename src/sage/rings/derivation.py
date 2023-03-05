@@ -391,13 +391,13 @@ class RingDerivationModule(Module, UniqueRepresentation):
             constants, sharp = self._base_derivation._constants
             self._constants = (constants, False)  # can we do better?
         elif isinstance(domain, RationalFunctionField):
-            from sage.rings.function_field.maps import FunctionFieldDerivation_rational
+            from sage.rings.function_field.derivations import FunctionFieldDerivation_rational
             self.Element = FunctionFieldDerivation_rational
             self._gens = self._basis = [ None ]
             self._dual_basis = [ domain.gen() ]
         elif isinstance(domain, FunctionField):
             if domain.is_separable():
-                from sage.rings.function_field.maps import FunctionFieldDerivation_separable
+                from sage.rings.function_field.derivations import FunctionFieldDerivation_separable
                 self._base_derivation = RingDerivationModule(domain.base_ring(), defining_morphism)
                 self.Element = FunctionFieldDerivation_separable
                 try:
@@ -410,7 +410,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
                 except NotImplementedError:
                     pass
             else:
-                from sage.rings.function_field.maps import FunctionFieldDerivation_inseparable
+                from sage.rings.function_field.derivations import FunctionFieldDerivation_inseparable
                 M, f, self._t = domain.separable_model()
                 self._base_derivation = RingDerivationModule(M, defining_morphism * f)
                 self._d = self._base_derivation(None)
