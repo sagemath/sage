@@ -90,7 +90,6 @@ from pathlib import Path
 
 from sage.rings.all import Integer
 from sage.libs.gap.libgap import libgap
-from sage.groups.perm_gps.permgroup import from_gap_list
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.all import factor, valuation
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
