@@ -54,20 +54,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.morphism import Morphism, SetMorphism
-from sage.categories.map import Map
+from sage.arith.misc import binomial
 from sage.categories.homset import Hom
+from sage.categories.map import Map
+from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.sets_cat import Sets
-
+from sage.rings.derivation import RingDerivationWithoutTwist
 from sage.rings.infinity import infinity
 from sage.rings.morphism import RingHomomorphism
-from sage.rings.derivation import RingDerivationWithoutTwist
-
-from sage.modules.free_module_element import vector
-
-from sage.functions.other import binomial
-
-from sage.matrix.constructor import matrix
 
 
 class FunctionFieldDerivation(RingDerivationWithoutTwist):
@@ -807,6 +801,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
             sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari, sage.modules
             sage: TestSuite(h).run(skip=['_test_category'])                                         # optional - sage.libs.pari, sage.modules
         """
+        from sage.matrix.constructor import matrix
+
         FunctionFieldHigherDerivation.__init__(self, field)
 
         self._p = field.characteristic()
@@ -996,6 +992,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
             sage: h._pth_root((x^2 + y^2)^2)                                                        # optional - sage.libs.pari, sage.modules
             y^2 + x^2
         """
+        from sage.modules.free_module_element import vector
+
         K = self._field.base_field()  # rational function field
         p = self._p
 
