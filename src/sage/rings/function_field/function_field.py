@@ -223,7 +223,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 from sage.rings.integer import Integer
 from sage.rings.ring import Field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -272,7 +272,7 @@ class FunctionField(Field):
         sage: K
         Rational function field in x over Rational Field
     """
-    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace')
+    _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace')
 
     def __init__(self, base_field, names, category=FunctionFields()):
         """
@@ -3103,7 +3103,7 @@ class FunctionField_global(FunctionField_simple):
         sage: L.genus()                                                                 # optional - sage.libs.pari
         0
     """
-    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace_global')
+    _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
     def __init__(self, polynomial, names):
         """
@@ -4557,7 +4557,7 @@ class RationalFunctionField_global(RationalFunctionField):
     """
     Rational function field over finite fields.
     """
-    _differentials_space = lazy_import('sage.rings.function_field.differential', 'DifferentialsSpace_global')
+    _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
     def places(self, degree=1):
         """
