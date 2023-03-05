@@ -424,8 +424,8 @@ class Permutation(CombinatorialElement):
         sage: Permutation( [[], []] )
         []
     """
-    @rename_keyword(deprecation=35233, check_input='check')
     @staticmethod
+    @rename_keyword(deprecation=35233, check_input='check')
     def __classcall_private__(cls, l, check=True):
         """
         Return a permutation in the general permutations parent.
