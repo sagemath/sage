@@ -561,9 +561,9 @@ cdef class MPolynomial(CommutativePolynomial):
         Verify that :trac:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
-            sage: K.<a> = Qq(9)
-            sage: R.<t,s> = K[]
-            sage: hash(t)
+            sage: K.<a> = Qq(9)                                                                                         # optional - sage.rings.padics
+            sage: R.<t,s> = K[]                                                                                         # optional - sage.rings.padics
+            sage: hash(t)                                                                                               # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
