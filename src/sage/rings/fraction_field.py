@@ -1220,10 +1220,10 @@ class FractionFieldEmbeddingSection(Section):
         Over inexact rings, we have to take the precision of the denominators
         into account::
 
-            sage: R=ZpCR(2)
-            sage: S.<x> = R[]
-            sage: f = x/S(R(3,absprec=2))
-            sage: S(f)
+            sage: R = ZpCR(2)                                                   # optional - sage.rings.padics
+            sage: S.<x> = R[]                                                   # optional - sage.rings.padics
+            sage: f = x/S(R(3, absprec=2))                                      # optional - sage.rings.padics
+            sage: S(f)                                                          # optional - sage.rings.padics
             (1 + 2 + O(2^2))*x
 
         Test for Localization::
