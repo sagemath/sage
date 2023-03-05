@@ -1432,7 +1432,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
     TESTS::
 
         sage: from sage.rings.function_field.function_field_valuation import FunctionFieldExtensionMappedValuation
-        sage: isinstance(w, FunctionFieldExtensionMappedValuation)
+        sage: isinstance(w, FunctionFieldExtensionMappedValuation)                                                      # optional - sage.libs.pari
         True
 
     """
