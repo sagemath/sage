@@ -490,7 +490,7 @@ cdef class CoercionModel:
          over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
         (x*y + 1)/y
-        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0
+        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0                          # optional - sage.modules
         [(2*x + 1)/x           0]
         [          0 (2*x + 1)/x]
         sage: f = ZZ['x,y,z'].0 + QQ['w,x,z,a'].0; f
@@ -1444,28 +1444,28 @@ cdef class CoercionModel:
         Note that to break symmetry, if there is a coercion map in both
         directions, the parent on the left is used::
 
-            sage: V = QQ^3
-            sage: W = V.__class__(QQ, 3)
-            sage: V == W
+            sage: V = QQ^3                                                              # optional - sage.modules
+            sage: W = V.__class__(QQ, 3)                                                # optional - sage.modules
+            sage: V == W                                                                # optional - sage.modules
             True
-            sage: V is W
+            sage: V is W                                                                # optional - sage.modules
             False
-            sage: cm = sage.structure.element.get_coercion_model()
-            sage: cm.coercion_maps(V, W)
+            sage: cm = sage.structure.element.get_coercion_model()                      # optional - sage.modules
+            sage: cm.coercion_maps(V, W)                                                # optional - sage.modules
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: cm.coercion_maps(W, V)
+            sage: cm.coercion_maps(W, V)                                                # optional - sage.modules
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: v = V([1,2,3])
-            sage: w = W([1,2,3])
-            sage: parent(v+w) is V
+            sage: v = V([1,2,3])                                                        # optional - sage.modules
+            sage: w = W([1,2,3])                                                        # optional - sage.modules
+            sage: parent(v + w) is V                                                    # optional - sage.modules
             True
-            sage: parent(w+v) is W
+            sage: parent(w + v) is W                                                    # optional - sage.modules
             True
 
         TESTS:
