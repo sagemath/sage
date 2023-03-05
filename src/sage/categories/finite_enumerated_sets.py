@@ -257,15 +257,14 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             .. WARNING::
 
-                The overriding of ``self.__iter__`` to use the cache
-                is ignored upon calls such as ``for x in C:`` or
-                ``list(C)`` (which essentially ruins its purpose).
-                Indeed, Python looks up the ``__iter__`` method
-                directly in the class of ``C``, bypassing ``C``'s
-                dictionary (see the Python reference manual,
-                `Special method lookup for new-style classes <http://docs.python.org/reference/datamodel.html#special-method-lookup-for-new-style-classes>`_)
+                It is not enough to assign ``self.__iter__`` to a new
+                method, we have to override the class.  Indeed,
+                Python looks up the ``__iter__`` method directly in
+                the class of ``C``, bypassing ``C``'s dictionary (see
+                the Python reference manual,
+                `<https://docs.python.org/3/reference/datamodel.html#special-lookup>`_)
 
-                Let's take an example::
+                Let's take an example, illustrating that we do the right thing::
 
                     sage: class Example(Parent):
                     ....:     def __init__(self):
@@ -276,11 +275,11 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     sage: C = Example()
                     sage: list(C)
                     hello!
-                    ...
+                    hello!
                     [1, 2, 3]
                     sage: list(C)
                     hello!
-                    ...
+                    hello!
                     [1, 2, 3]
 
                 Note that ``hello!`` actually gets printed more than once in
@@ -294,11 +293,10 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     sage: C.list()
                     [1, 2, 3]
 
-                Now we would want the original iterator of ``C`` not
-                to be called anymore, but that's not the case::
+                Now the original iterator of ``C`` is also not called
+                anymore::
 
                     sage: list(C)
-                    hello!
                     [1, 2, 3]
 
             TESTS:
@@ -316,6 +314,13 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 <bound method EnumeratedSets.ParentMethods._unrank_from_iterator of FreshExample>
                 sage: C.cardinality
                 <bound method FiniteEnumeratedSets.ParentMethods._cardinality_from_iterator of FreshExample>
+                sage: C.__iter__
+                <bound method Example.__iter__ of FreshExample>
+                sage: C.__class__
+                <class '__main__.FreshExample_with_category'>
+
+            We now trigger the caching::
+
                 sage: l1 = C.list(); l1
                 [1, 2, 3]
                 sage: C.list
@@ -325,7 +330,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C.cardinality
                 <bound method FiniteEnumeratedSets.ParentMethods._cardinality_from_list of FreshExample>
                 sage: C.__iter__
-                <bound method EnumeratedSets.ParentMethods._iterator_from_list of FreshExample>
+                <bound method FiniteEnumeratedSets.ParentMethods._list_from_iterator.<locals>.CachedIter.__iter__ of FreshExample>
+                sage: C.__class__
+                <class 'sage.categories.finite_enumerated_sets.FreshExample_with_category'>
 
             We finally check that nothing breaks before and after
             calling explicitly the method ``.list()``::
@@ -337,6 +344,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C.list()
                 [1, 2, 3]
                 sage: TestSuite(C).run()
+
             """
             try:
                 if self._list is not None:
@@ -346,10 +354,15 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             result = tuple(self.__iter__())
             try:
                 self._list = result
-                self.__iter__ = self._iterator_from_list
                 self.cardinality = self._cardinality_from_list
                 self.tuple = self._tuple_from_list
                 self.unrank = self._unrank_from_list
+                name = self.__class__.__name__
+                class CachedIter(self.__class__):
+                    def __iter__(self):
+                        yield from self._list
+                self.__class__ = CachedIter
+                self.__class__.__qualname__ = name
             except AttributeError:
                 pass
             return list(result)
