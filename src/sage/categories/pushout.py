@@ -1833,10 +1833,11 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('t', multi_variate=True)
             sage: F1.merge(F2)
             LaurentPolynomialFunctor
-            sage: F1.merge(F2)(LaurentPolynomialRing(GF(2),'a'))
+            sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))                                                       # optional - sage.libs.pari
             Multivariate Laurent Polynomial Ring in a, t over Finite Field of size 2
-            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2),'a'))
-            Univariate Laurent Polynomial Ring in t over Univariate Laurent Polynomial Ring in a over Finite Field of size 2
+            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))                                                       # optional - sage.libs.pari
+            Univariate Laurent Polynomial Ring in t over
+             Univariate Laurent Polynomial Ring in a over Finite Field of size 2
 
         """
         if self == other or isinstance(other, PolynomialFunctor) and self.var == other.var:
