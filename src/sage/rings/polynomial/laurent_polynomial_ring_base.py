@@ -182,6 +182,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         """
         from sage.categories.pushout import LaurentPolynomialFunctor
+        from .laurent_polynomial_ring import LaurentPolynomialRing
+
         vars = self.variable_names()
         if len(vars) == 1:
             return LaurentPolynomialFunctor(vars[0], False), self.base_ring()
