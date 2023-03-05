@@ -213,7 +213,7 @@ class SetsWithGrading(Category):
                 sage: N.generating_series()
                 1/(-z + 1)
 
-                sage: Permutations().generating_series()
+                sage: Permutations().generating_series()                                                                # optional - sage.combinat
                 1 + z + 2*z^2 + 6*z^3 + 24*z^4 + 120*z^5 + 720*z^6 + O(z^7)
 
              .. TODO::
