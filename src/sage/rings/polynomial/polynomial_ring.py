@@ -1297,9 +1297,9 @@ class PolynomialRing_general(ring.Algebra):
             sage: S.<t> = R[]
             sage: S.krull_dimension()
             2
-            sage: for n in range(10):
-            ....:  S = PolynomialRing(S,'w')
-            sage: S.krull_dimension()
+            sage: for n in range(10):                                           # optional - sage.libs.pari
+            ....:     S = PolynomialRing(S, 'w')
+            sage: S.krull_dimension()                                           # optional - sage.libs.pari
             12
         """
         return self.base_ring().krull_dimension() + 1
