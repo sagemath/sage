@@ -325,7 +325,7 @@ class Category(UniqueRepresentation, SageObject):
     On the other hand, identical hierarchies of classes are,
     preferably, built only once (e.g. for categories over a base ring)::
 
-        sage: Algebras(GF(5)).parent_class is Algebras(GF(7)).parent_class
+        sage: Algebras(GF(5)).parent_class is Algebras(GF(7)).parent_class                                              # optional - sage.libs.pari
         True
         sage: F = FractionField(ZZ['t'])
         sage: Coalgebras(F).parent_class is Coalgebras(FractionField(F['x'])).parent_class
