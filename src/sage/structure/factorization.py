@@ -70,22 +70,22 @@ that the unit part is not discarded from factorizations::
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F
+    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
     (-5) * (x - 3) * (x - 2)
-    sage: F.unit()
+    sage: F.unit()                                                                      # optional - sage.libs.pari
     -5
-    sage: F.value()
+    sage: F.value()                                                                     # optional - sage.libs.pari
     -5*x^2 + 25*x - 30
 
 The underlying list is the list of pairs `(p_i, e_i)`, where each
 `p_i` is a 'prime' and each `e_i` is an integer. The unit part
 is discarded by the list::
 
-    sage: list(F)
+    sage: list(F)                                                                       # optional - sage.libs.pari
     [(x - 3, 1), (x - 2, 1)]
-    sage: len(F)
+    sage: len(F)                                                                        # optional - sage.libs.pari
     2
-    sage: F[1]
+    sage: F[1]                                                                          # optional - sage.libs.pari
     (x - 2, 1)
 
 In the ring `\ZZ[x]`, the integer `-5` is not a unit, so the
@@ -414,7 +414,7 @@ class Factorization(SageObject):
             sage: x = polygen(QQ)
             sage: x^2 - 1 > x^2 - 4
             True
-            sage: factor(x^2 - 1) > factor(x^2 - 4)
+            sage: factor(x^2 - 1) > factor(x^2 - 4)                                     # optional - sage.libs.pari
             True
         """
         if not isinstance(other, Factorization):
@@ -552,11 +552,11 @@ class Factorization(SageObject):
         possible::
 
             sage: g = x^2 - 1
-            sage: F = factor(g); F
+            sage: F = factor(g); F                                                      # optional - sage.libs.pari
             (x - 1) * (x + 1)
-            sage: F.universe()
+            sage: F.universe()                                                          # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
-            sage: F.base_change(ZZ)
+            sage: F.base_change(ZZ)                                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Impossible to coerce the factors of (x - 1) * (x + 1) into Integer Ring
@@ -603,14 +603,14 @@ class Factorization(SageObject):
         EXAMPLES::
 
             sage: x = polygen(QQ,'x')
-            sage: F = factor(x^6 - 1); F
+            sage: F = factor(x^6 - 1); F                                                # optional - sage.libs.pari
             (x - 1) * (x + 1) * (x^2 - x + 1) * (x^2 + x + 1)
-            sage: F._set_cr(True); F
+            sage: F._set_cr(True); F                                                    # optional - sage.libs.pari
             (x - 1) *
             (x + 1) *
             (x^2 - x + 1) *
             (x^2 + x + 1)
-            sage: F._set_cr(False); F
+            sage: F._set_cr(False); F                                                   # optional - sage.libs.pari
             (x - 1) * (x + 1) * (x^2 - x + 1) * (x^2 + x + 1)
         """
         self.__cr = bool(cr)
@@ -674,14 +674,14 @@ class Factorization(SageObject):
 
         We create a factored polynomial::
 
-            sage: x = polygen(QQ,'x')
-            sage: F = factor(x^3 + 1); F
+            sage: x = polygen(QQ, 'x')
+            sage: F = factor(x^3 + 1); F                                                # optional - sage.libs.pari
             (x + 1) * (x^2 - x + 1)
 
         We sort it by decreasing degree::
 
-            sage: F.sort(key=lambda x:(-x[0].degree(), x))
-            sage: F
+            sage: F.sort(key=lambda x: (-x[0].degree(), x))                             # optional - sage.libs.pari
+            sage: F                                                                     # optional - sage.libs.pari
             (x^2 - x + 1) * (x + 1)
         """
         if len(self) == 0:
@@ -903,7 +903,7 @@ class Factorization(SageObject):
             [-1, 1; 2, 3; 3, 1]
 
             sage: R.<x> = QQ[]
-            sage: g = factor(x^10 - 1)
+            sage: g = factor(x^10 - 1)                                                              # optional - sage.libs.pari
             sage: pari(g)                                                                           # optional - sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
 
@@ -1214,7 +1214,7 @@ class Factorization(SageObject):
             2 * 5
 
             sage: R.<x> = ZZ[]
-            sage: (factor(-20).gcd(factor(5*x+10))).universe()
+            sage: (factor(-20).gcd(factor(5*x+10))).universe()                                      # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
         """
         if not isinstance(other, Factorization):
@@ -1256,7 +1256,7 @@ class Factorization(SageObject):
             2^4 * 5
 
             sage: R.<x> = ZZ[]
-            sage: (factor(-20).lcm(factor(5*x+10))).universe()
+            sage: (factor(-20).lcm(factor(5*x + 10))).universe()                                    # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
         """
         if not isinstance(other, Factorization):
