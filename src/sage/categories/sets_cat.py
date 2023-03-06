@@ -1717,29 +1717,29 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 sage: F = FiniteEnumeratedSets().example(); F
                 An example of a finite enumerated set: {1,2,3}
-                sage: sF = F._sympy_(); sF
+                sage: sF = F._sympy_(); sF                                                          # optional - sympy
                 SageSet(An example of a finite enumerated set: {1,2,3})
-                sage: sF.is_finite_set
+                sage: sF.is_finite_set                                                              # optional - sympy
                 True
-                sage: bool(sF)
+                sage: bool(sF)                                                                      # optional - sympy
                 True
-                sage: len(sF)
+                sage: len(sF)                                                                       # optional - sympy
                 3
-                sage: list(sF)
+                sage: list(sF)                                                                      # optional - sympy
                 [1, 2, 3]
-                sage: from sympy import FiniteSet
-                sage: FiniteSet.fromiter(sF)  # random - this output format is sympy >= 1.9
+                sage: from sympy import FiniteSet                                                   # optional - sympy
+                sage: FiniteSet.fromiter(sF)  # random - this output format is sympy >= 1.9         # optional - sympy
                 FiniteSet(1, 2, 3)
 
-                sage: RR._sympy_().is_finite_set
+                sage: RR._sympy_().is_finite_set                                                    # optional - sympy
                 False
 
                 sage: F = Family([1, 2])
                 sage: F is Family([1, 2])
                 False
-                sage: sF = F._sympy_(); sF
+                sage: sF = F._sympy_(); sF                                                          # optional - sympy
                 SageSet(Family (1, 2))
-                sage: sF._sage_() is F
+                sage: sF._sage_() is F                                                              # optional - sympy
                 True
             """
             from sage.interfaces.sympy_wrapper import SageSet

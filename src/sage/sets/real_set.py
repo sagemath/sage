@@ -2806,21 +2806,21 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         EXAMPLES::
 
-            sage: RealSet()._sympy_()
+            sage: RealSet()._sympy_()                                                               # optional - sympy
             EmptySet
-            sage: RealSet.point(5)._sympy_()  # random - this output format is sympy >= 1.9
+            sage: RealSet.point(5)._sympy_()  # random - this output format is sympy >= 1.9         # optional - sympy
             {5}
-            sage: (RealSet.point(1).union(RealSet.point(2)))._sympy_()  # random
+            sage: (RealSet.point(1).union(RealSet.point(2)))._sympy_()  # random                    # optional - sympy
             {1, 2}
-            sage: (RealSet(1, 2).union(RealSet.closed(3, 4)))._sympy_()
+            sage: (RealSet(1, 2).union(RealSet.closed(3, 4)))._sympy_()                             # optional - sympy
             Union(Interval.open(1, 2), Interval(3, 4))
-            sage: RealSet(-oo, oo)._sympy_()
+            sage: RealSet(-oo, oo)._sympy_()                                                        # optional - sympy
             Reals
 
         Infinities are not elements::
 
-            sage: import sympy
-            sage: RealSet(-oo, oo)._sympy_().contains(sympy.oo)
+            sage: import sympy                                                                      # optional - sympy
+            sage: RealSet(-oo, oo)._sympy_().contains(sympy.oo)                                     # optional - sympy
             False
         """
         from sympy import Reals, Union

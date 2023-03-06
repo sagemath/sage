@@ -761,10 +761,10 @@ def integral(x, *args, **kwds):
         sage: _ = var('a,b,x')                                                                                          # optional - sage.symbolic
         sage: integrate(sin(x)*tan(x)/(1-cos(x)), x, a, b, algorithm='sympy')                                           # optional - sage.symbolic
         -integrate(sin(x)*tan(x)/(cos(x) - 1), x, a, b)
-        sage: import sympy                                                                                              # optional - sage.symbolic
-        sage: x, y, z = sympy.symbols('x y z')                                                                          # optional - sage.symbolic
-        sage: f = sympy.Function('f')                                                                                   # optional - sage.symbolic
-        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                                                     # optional - sage.symbolic
+        sage: import sympy                                                                                              # optional - sympy
+        sage: x, y, z = sympy.symbols('x y z')                                                                          # optional - sympy
+        sage: f = sympy.Function('f')                                                                                   # optional - sympy
+        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                                                     # optional - sympy, sage.symbolic
         integrate(integrate(integrate(f(x, y, z), x), y), z)
 
     Ensure that the following integral containing a signum term from
@@ -1976,9 +1976,9 @@ def sqrt(x, *args, **kwds):
 
     One can use numpy input as well::
 
-        sage: import numpy
-        sage: a = numpy.arange(2,5)
-        sage: sqrt(a)
+        sage: import numpy                                                              # optional - numpy
+        sage: a = numpy.arange(2,5)                                                     # optional - numpy
+        sage: sqrt(a)                                                                   # optional - numpy
         array([1.41421356, 1.73205081, 2.        ])
     """
     if isinstance(x, float):
