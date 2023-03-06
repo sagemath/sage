@@ -33,13 +33,13 @@ exclude sage/categories/with_realizations.*
 include sage/interfaces/abc.p*
 
 
-include sage/rings/ideal.*
-include sage/rings/ring.*
 graft sage/typeset                     # dep of sage.categories.tensor
 
+include sage/rings/ring.*
 include sage/rings/quotient_ring*.p*
 include sage/rings/homset.p*
 include sage/rings/ideal*.p*
+include sage/rings/noncommutative_ideals.p*
 include sage/rings/localization.p*
 include sage/rings/morphism.p*
 
@@ -62,6 +62,7 @@ include sage/misc/mrange.p*
 include sage/misc/defaults.p*
 include sage/misc/converting_dict.p*
 include sage/misc/parser.p*
+include sage/misc/method_decorator.p*
 
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
@@ -109,6 +110,7 @@ include sage/rings/polynomial/term_order.p*
 include sage/rings/polynomial/flatten.p*
 include sage/rings/polynomial/laurent_polynomial_ring_base.p*
 include sage/rings/polynomial/ideal.p*
+include sage/rings/polynomial/toy*.p*
 
 graft sage/rings/function_field
 exclude sage/rings/function_field/derivations.*                         # module elements
