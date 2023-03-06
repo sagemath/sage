@@ -600,8 +600,8 @@ class Pi(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.pi == pi # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: sympy.pi == pi # indirect doctest                                     # optional - sympy
             True
         """
         import sympy
@@ -740,10 +740,10 @@ class NotANumber(Constant):
 
         EXAMPLES::
 
-            sage: bool(NaN._sympy_()._sage_() == NaN)
+            sage: bool(NaN._sympy_()._sage_() == NaN)                                   # optional - sympy
             True
-            sage: import sympy
-            sage: sympy.nan == NaN  # this should be fixed
+            sage: import sympy                                                          # optional - sympy
+            sage: sympy.nan == NaN  # this should be fixed                              # optional - sympy
             False
         """
         import sympy
@@ -845,8 +845,8 @@ class GoldenRatio(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.GoldenRatio == golden_ratio # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: sympy.GoldenRatio == golden_ratio # indirect doctest                  # optional - sympy
             True
         """
         import sympy
@@ -999,8 +999,8 @@ class EulerGamma(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.EulerGamma == euler_gamma # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: sympy.EulerGamma == euler_gamma # indirect doctest                    # optional - sympy
             True
         """
         import sympy
@@ -1069,8 +1069,8 @@ class Catalan(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.Catalan == catalan # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: sympy.Catalan == catalan # indirect doctest                           # optional - sympy
             True
         """
         import sympy
