@@ -107,16 +107,17 @@ def deprecation_cython(issue_number, message, stacklevel=3):
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
-        sage: cython('''                                                                        # optional - sage.misc.cython
+        sage: cython(                                                                       # optional - sage.misc.cython
+        ....: '''
         ....: from sage.misc.superseded import deprecation_cython, deprecation
         ....: def foo1():
-        ....:     deprecation_cython(100,"boo")
+        ....:     deprecation_cython(100, "boo")
         ....: def foo2():
-        ....:     deprecation(100,"boo")
+        ....:     deprecation(100, "boo")
         ....: ''')
         sage: def foo3():
-        ....:     deprecation(100,"boo")
-        sage: if True:  # Execute the three "with" blocks as one doctest
+        ....:     deprecation(100, "boo")
+        sage: if True:  # Execute the three "with" blocks as one doctest                    # optional - sage.misc.cython
         ....:     with warnings.catch_warnings(record=True) as w1:
         ....:        warnings.simplefilter("always")
         ....:        foo1()
@@ -126,9 +127,9 @@ def deprecation_cython(issue_number, message, stacklevel=3):
         ....:     with warnings.catch_warnings(record=True) as w3:
         ....:        warnings.simplefilter("always")
         ....:        foo3()
-        sage: w1[0].filename == w3[0].filename
+        sage: w1[0].filename == w3[0].filename                                              # optional - sage.misc.cython
         True
-        sage: w2[0].filename == w3[0].filename
+        sage: w2[0].filename == w3[0].filename                                              # optional - sage.misc.cython
         False
      """
     warning(issue_number, message, DeprecationWarning, stacklevel)
