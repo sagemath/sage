@@ -248,12 +248,12 @@ def CycleGraph(n):
 
     Compare plotting using the predefined layout and networkx::
 
-        sage: import networkx
-        sage: n = networkx.cycle_graph(23)
-        sage: spring23 = Graph(n)
-        sage: posdict23 = graphs.CycleGraph(23)
-        sage: spring23.show()  # long time
-        sage: posdict23.show()  # long time
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.cycle_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
+        sage: posdict23 = graphs.CycleGraph(23)                                         # optional - networkx
+        sage: spring23.show()  # long time                                              # optional - networkx
+        sage: posdict23.show()  # long time                                             # optional - networkx
 
     We next view many cycle graphs as a Sage graphics array. First we use the
     ``CycleGraph`` constructor, which fills in the position dictionary::
@@ -275,17 +275,17 @@ def CycleGraph(n):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx
 
     TESTS:
 
@@ -349,27 +349,27 @@ def CompleteGraph(n):
 
     We compare to plotting with the spring-layout algorithm::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.complete_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx
 
     Compare the constructors (results will vary)::
 
-        sage: import networkx
-        sage: t = cputime()
-        sage: n = networkx.complete_graph(389); spring389 = Graph(n)
-        sage: cputime(t)  # random
+        sage: import networkx                                                           # optional - networkx
+        sage: t = cputime()                                                             # optional - networkx
+        sage: n = networkx.complete_graph(389); spring389 = Graph(n)                    # optional - networkx
+        sage: cputime(t)  # random                                                      # optional - networkx
         0.59203700000000126
         sage: t = cputime()
         sage: posdict389 = graphs.CompleteGraph(389)
@@ -378,11 +378,11 @@ def CompleteGraph(n):
 
     We compare plotting::
 
-        sage: import networkx
-        sage: n = networkx.complete_graph(23)
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.complete_graph(23)                                           # optional - networkx
         sage: spring23 = Graph(n)
         sage: posdict23 = graphs.CompleteGraph(23)
-        sage: spring23.show()  # long time
+        sage: spring23.show()  # long time                                              # optional - networkx
         sage: posdict23.show()  # long time
     """
     G = Graph(n, name="Complete graph")
@@ -438,19 +438,19 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     Two ways of constructing the complete bipartite graph, using different
     layout algorithms::
 
-        sage: import networkx
-        sage: n = networkx.complete_bipartite_graph(389, 157); spring_big = Graph(n)   # long time
+        sage: import networkx                                                                       # optional - networkx
+        sage: n = networkx.complete_bipartite_graph(389, 157); spring_big = Graph(n)   # long time  # optional - networkx
         sage: posdict_big = graphs.CompleteBipartiteGraph(389, 157)                    # long time
 
     Compare the plotting::
 
-        sage: n = networkx.complete_bipartite_graph(11, 17)
-        sage: spring_med = Graph(n)
+        sage: n = networkx.complete_bipartite_graph(11, 17)                                         # optional - networkx
+        sage: spring_med = Graph(n)                                                                 # optional - networkx
         sage: posdict_med = graphs.CompleteBipartiteGraph(11, 17)
 
     Notice here how the spring-layout tends to center the nodes of `n1`::
 
-        sage: spring_med.show()  # long time
+        sage: spring_med.show()  # long time                                                        # optional - networkx
         sage: posdict_med.show()  # long time
 
     View many complete bipartite graphs with a Sage Graphics Array, with this
@@ -473,17 +473,17 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                                    # optional - networkx
         ....:     spr = networkx.complete_bipartite_graph(i+1,4)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                                    # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                                 # optional - networkx
+        sage: G.show()  # long time                                                                 # optional - networkx
 
     :trac:`12155`::
 
@@ -933,9 +933,9 @@ def GridGraph(dim_list):
 
         sage: dim = [randint(1,4) for i in range(4)]
         sage: g = graphs.GridGraph(dim)
-        sage: import networkx
-        sage: h = Graph( networkx.grid_graph(list(dim)) )
-        sage: g.is_isomorphic(h)
+        sage: import networkx                                                                       # optional - networkx
+        sage: h = Graph(networkx.grid_graph(list(dim)))                                             # optional - networkx
+        sage: g.is_isomorphic(h)                                                                    # optional - networkx
         True
 
     Trivial cases::
@@ -1223,14 +1223,14 @@ def StarGraph(n):
 
     EXAMPLES::
 
-        sage: import networkx
+        sage: import networkx                                                                       # optional - networkx
 
     Compare the plots::
 
-        sage: n = networkx.star_graph(23)
-        sage: spring23 = Graph(n)
+        sage: n = networkx.star_graph(23)                                                           # optional - networkx
+        sage: spring23 = Graph(n)                                                                   # optional - networkx
         sage: posdict23 = graphs.StarGraph(23)
-        sage: spring23.show()  # long time
+        sage: spring23.show()  # long time                                                          # optional - networkx
         sage: posdict23.show()  # long time
 
     View many star graphs as a Sage Graphics Array

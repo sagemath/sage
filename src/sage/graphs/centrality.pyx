@@ -99,11 +99,11 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
     Compare with NetworkX::
 
-        sage: import networkx
-        sage: g = graphs.RandomGNP(100, .2)
-        sage: nw = networkx.betweenness_centrality(g.networkx_graph())
-        sage: sg = centrality_betweenness(g)
-        sage: max(abs(nw[x] - sg[x]) for x in g) # abs tol 1e-10
+        sage: import networkx                                                                       # optional - networkx
+        sage: g = graphs.RandomGNP(100, .2)                                                         # optional - networkx
+        sage: nw = networkx.betweenness_centrality(g.networkx_graph())                              # optional - networkx
+        sage: sg = centrality_betweenness(g)                                                        # optional - networkx
+        sage: max(abs(nw[x] - sg[x]) for x in g) # abs tol 1e-10                                    # optional - networkx
         0
 
     Stupid cases::
