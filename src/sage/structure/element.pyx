@@ -896,17 +896,17 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.mpmath.all import mp, mpmathify
-            sage: mp.dps = 30
-            sage: 25._mpmath_(53)
+            sage: from sage.libs.mpmath.all import mp, mpmathify                        # optional - mpmath
+            sage: mp.dps = 30                                                           # optional - mpmath
+            sage: 25._mpmath_(53)                                                       # optional - mpmath
             mpf('25.0')
-            sage: mpmathify(3+4*I)
+            sage: mpmathify(3+4*I)                                                      # optional - mpmath
             mpc(real='3.0', imag='4.0')
-            sage: mpmathify(1+pi)
+            sage: mpmathify(1+pi)                                                       # optional - mpmath
             mpf('4.14159265358979323846264338327933')
-            sage: (1+pi)._mpmath_(10)
+            sage: (1+pi)._mpmath_(10)                                                   # optional - mpmath
             mpf('4.140625')
-            sage: (1+pi)._mpmath_(mp.prec)
+            sage: (1+pi)._mpmath_(mp.prec)                                              # optional - mpmath
             mpf('4.14159265358979323846264338327933')
         """
         return self.n(prec)._mpmath_(prec=prec)
