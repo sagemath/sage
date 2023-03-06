@@ -268,7 +268,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     As well as the j-invariant if the rank is two::
 
         sage: phi.j_invariant()  # j-invariant
-        [1]
+        1
 
     A Drinfeld `\mathbb{F}_q[T]`-module can be seen as an Ore polynomial
     with positive degree and constant coefficient `\gamma(T)`, where
@@ -1064,22 +1064,53 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
         return isinstance(self, FiniteDrinfeldModule)
 
-    def j_invariant(self):
+    def j_invariant(self, parameter=None, check=True):
         r"""
-        Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module, that
-        is the list of all its `j_k`-invariants.
+        Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module for
+        the given parameter.
 
-        Recall that the `j_k`-invariant of a Drinfeld module `\phi` of any rank
-        is defined by:
+        Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r`. Then then
+        `[[k_1, \ldots, k_n], [d_1, \ldots, d_n, d_r]]`-`j`-invariant of `\phi`
+        is defined by
 
         .. MATH::
 
-            j_k(\phi) := g_k(\phi)^{(q^r - 1)/(q^\mathrm{gcd}(k, r) - 1)}}{g_r(\phi)^{(q^k - 1)/(q^{\mathrm{gcd}(k, r)} - 1)}
+            j_k(\phi) := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
-        where `1\leq k \leq r - 1` and `g_i(\phi)` is the `i`-th coefficient of
-        the generator.
+        where `1\leq k_i \leq r - 1` and the integers `d_i` satisfies the
+        *weight-0 condition*:
 
-        OUTPUT: the list of all the `j_k`-invariants of ``self``.
+        .. MATH::
+
+            d_1 (q^{k_1} - 1) + d_2 (q^{k_2} - 1) + ... + d_{n} (q^{k_n} - 1) = d_r (q^r - 1)
+
+        Furthermore, if `\gcd(d_1,\ldots, d_n, d_r) = 1` and
+
+        .. MATH::
+
+            0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad (1 \leq i \leq n)
+
+        then the `j`-invariant is called *basic*. See the method
+        meth:`basic_j_invariants_parameters` for computing the list of all basic
+        `j`-invariant parameters.
+
+        INPUT:
+
+        - ``parameter`` (integer or list, default: None) -- this parameter is
+          either a list of two lists or an integer between 1 and `r-1` (`r` is
+          the rank). If ``parameter`` is a list of lists, then it must be of the
+          form ``[[k1, k2, ..., kn], [d1, d2, ..., dn, dr]]`` where the ``ki``
+          and ``di`` are integers satisfying the weight-0 condition described
+          above. If ``parameter`` is an integer ``k`` then the method returns
+          the ``j``-invariant associated to the parameter ``[[k], [dk, dr]]``.
+          If the rank of the Drinfeld module is 2, then the method returns by
+          default the usual `j`-invariant.
+
+        - ``check`` (bool, default: ``True``) -- if this flag is set to
+          ``False`` then the code will not check if the given parameter satisfy
+          the weight-0 condition.
+
+        OUTPUT: the `j`-invariant of ``self`` for the given parameter.
 
         EXAMPLES::
 
@@ -1089,29 +1120,71 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.j_invariant()
-            [z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2]
+            z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2
             sage: psi = DrinfeldModule(A, [p_root, 1, 1])
             sage: psi.j_invariant()
-            [1]
+            1
             sage: rho = DrinfeldModule(A, [p_root, 0, 1])
             sage: rho.j_invariant()
-            [0]
+            0
 
         ::
 
             sage: A = GF(5)['T']
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
-            sage: phi.j_invariant()
-            [T^309,
-             1/T^3,
-             (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93]
+            sage: phi.j_invariant(1)
+            T^309
+            sage: phi.j_invariant(2)
+            1/T^3
+            sage: phi.j_invariant(3)
+            (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
+
+        ::
+
+            sage: Fq.<a> = GF(7)
+            sage: A.<T> = Fq[]
+            sage: phi = DrinfeldModule(A, [a, a^2 + a, 0, 3*a, a^2+1])
+            sage: J = phi.j_invariant([[1, 3], [267, 269, 39]]); J
+            5
+            sage: J == (phi.coefficient(1)**267)*(phi.coefficient(3)**269)/(phi.coefficient(4)**39)
+            True
+            sage: phi.j_invariant([[3], [400, 57]])
+            4
+            sage: phi.j_invariant([[3], [400, 57]]) == phi.j_invariant(3)
+            True
         """
         r = self._gen.degree()
         q = self._Fq.order()
-        gr = self._gen[-1]
-        return [self._gen[k]**(Integer((q**r - 1)/(q**gcd(k, r) - 1))) /\
-                gr**(Integer((q**k - 1)/(q**gcd(k, r) - 1))) for k in range(1, r)]
+        if parameter is None:
+            if r != 2:
+                raise ValueError("input 'parameter' must be different from "
+                                 "None if the rank is greater than 2")
+            return self._gen[1]**(q+1)/self._gen[2]
+        if isinstance(parameter, (int, Integer)):
+            if parameter <= 0 or parameter >= r:
+                raise ValueError(f"input 'parameter' must be greater or "
+                                 "equal to 1 or less than the rank (={r})")
+            dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
+            dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
+            return self._gen[parameter]**dk / self._gen[-1]**dr
+        elif isinstance(parameter, list):
+            if len(parameter) != 2:
+                raise ValueError("input 'parameter' must be of length 2")
+        else:
+            raise TypeError("input 'parameter' must be a list or an integer")
+        dr = parameter[1][-1]
+        if check:
+            # check that the following equation is satisfied:
+            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
+            right = dr*(q**r - 1)
+            left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
+                       range(len(parameter[0])))
+            if left != right:
+                raise ValueError("input 'parameter' does not defines a basic "
+                                 "j-invariant")
+        num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
+        return num/(self._gen[-1]**dr)
 
     def basic_j_invariant(self, parameters, check=True):
         r"""
