@@ -1175,52 +1175,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise TypeError("input 'parameter' must be a list or an integer")
         dr = parameter[1][-1]
         if check:
-            # check that the following equation is satisfied:
+            # check that the weight-0 condition is statisfied:
             # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             right = dr*(q**r - 1)
             left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
                        range(len(parameter[0])))
             if left != right:
-                raise ValueError("input 'parameter' does not defines a basic "
-                                 "j-invariant")
+                raise ValueError("input 'parameter' does not satisfy the "
+                                 "weight-0 condition")
         num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
         return num/(self._gen[-1]**dr)
-
-    def basic_j_invariant(self, parameters, check=True):
-        r"""
-        Return the basic J-invariant corresponding to the given parameters.
-
-        EXAMPLES::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: c = T^4 + 3*T^2 + T
-            sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
-            sage: phi.basic_j_invariant([[1, 2, 3], [20, 7, 2]])
-            (T^7 + 2*T^6 + T^5 + T^2 + 2*T + 1)/(T^4 + 2*T^2 + 1)
-            sage: phi.basic_j_invariant([[1, 2, 3], [1, 1, 1]])
-            Traceback (most recent call last):
-            ...
-            ValueError: the given parameters does not defines a basic j-invariant
-        """
-        # TODO: add doctests, fix pep8, define the parameters, implement j_invariantS.
-        # TODO: delete this method?
-        r = self._gen.degree()
-        q = self._Fq.order()
-        if not isinstance(parameters, list):
-            raise TypeError("parameters must be a list")
-        dr = parameters[1][-1]
-        if check:
-            # check that the following equation is satisfied:
-            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
-            right = dr*(q**r - 1)
-            left = sum(parameters[1][i]*(q**(parameters[0][i]) - 1) for i in range(len(parameters[0]) - 1))
-            if left != right:
-                raise ValueError("the given parameters does not defines a basic\
-                                 j-invariant")
-        gr = self.coefficients()[-1]
-        num = prod(self._gen[k]**d for k, d in zip(parameters[0][:-1], parameters[1][:-1]))
-        return num/(gr**dr)
 
     def basic_j_invariants_parameters(self, param=None):
         """
@@ -1345,7 +1309,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # check that all the nonzero basic j-invariants agree
         isom = True
         for p in self.basic_j_invariants_parameters():
-            if self.basic_j_invariant(p, check=False) != psi.basic_j_invariant(p, check=False):
+            if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
                 isom = False
                 break
         return isom
