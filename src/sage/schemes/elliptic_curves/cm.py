@@ -784,12 +784,6 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     # global hDf_dict, only including those (D,f) for which |D|*f**2
     # <= B if B was provided:
 
-    T = hDf_dict.copy()
-
-    if not count:
-        for h in T:
-            T[h] = [Df for Df in T[h] if Df[0].abs()*Df[1]**2<=B]
-
     # h_dict caches the class number h of all discriminants previously
     # encountered; we will use the function OrderClassNumber() to
     # quicky compute the class number of non-fundamental discriminants
@@ -797,10 +791,15 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     # keys of h_dict include nonfundamental discriminants, but we only
     # update it with fundamental ones.
 
+    from collections import defaultdict
+    T = defaultdict(set)
     h_dict = {}
     for h, Dflist in hDf_dict.items():
         for D0,f in Dflist:
             h_dict[D0*f**2] = h
+        if not count:
+            Dflist = [Df for Df in Dflist if Df[0].abs()*Df[1]**2<=B]
+        T[h] = set(Dflist)
 
     # We do not need to certify the class number from :pari:`qfbclassno` for discriminants under 2*10^10
     if B < 2*10**10:
@@ -827,16 +826,12 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
         # If the class number of this order is within the range, then store (D0,f)
         if h <= hmax:
-            z = (D0, f)
-            if h in T:
-                if z not in T[h]:
-                    T[h].append(z)
-            else:
-                T[h] = [z]
+            T[h].add((D0,f))
 
     # sort each list of (D,f) pairs by (|D|,f)
 
     for h in T:
+        T[h] = list(T[h])
         T[h].sort(key=lambda Df: (Df[0].abs(), Df[1]))
 
     # count is None precisely when the user provided a value of B
@@ -846,7 +841,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
             if len(T[h]) != count[h]:
                 raise RuntimeError("number of discriminants inconsistent with Watkins's table")
         # 2. Update the global dict
-        hDf_dict.update(T)
+        hDf_dict.update(dict(T))
 
     return T
 
