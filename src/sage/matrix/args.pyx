@@ -216,23 +216,23 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=CALLABLE; entries=<function ...>>
         [1 2]
         [3 4]
-        sage: from numpy import array
-        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized(); ma.matrix()
+        sage: from numpy import array                                                                                   # optional - numpy
+        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized(); ma.matrix()                                        # optional - numpy
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=SEQ_SEQ; entries=array([[1, 2],
                [3, 4]])>
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()                                    # optional - numpy
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Double Field; typ=MATRIX; entries=[1.0 2.0]
         [3.0 4.0]>
         [1.0 2.0]
         [3.0 4.0]
-        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()                     # optional - numpy
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Field with 20 bits of precision; typ=MATRIX; entries=[1.0 2.0]
         [3.0 4.0]>
         [1.0000 2.0000]
         [3.0000 4.0000]
-        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized(); ma.matrix()                                        # optional - sage.graphs
         <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices over Integer Ring; typ=MATRIX; entries=[0 1 1]
         [1 0 1]
         [1 1 0]>
