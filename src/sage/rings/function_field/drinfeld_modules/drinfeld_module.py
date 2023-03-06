@@ -895,10 +895,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``coeff_indices`` (list, default: ``None``) -- a list of indices for
-          the coefficients of the Drinfeld module. If specific indices are
-          given, then the method will return only the basic `j`-invariant
-          parameters that involves these indices.
+        - ``coeff_indices`` (list or tuple, default: ``None``) -- a list or a
+          tuple of indices for the coefficients of the Drinfeld module. If
+          this option is not ``None``, then the method will return only the basic
+          `j`-invariant parameters that involves the given indices. By default,
+          the method will use all the coefficients.
 
         - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
           will return only the parameters for which the basic `j`-invariant is
@@ -918,30 +919,41 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
             sage: phi.basic_j_invariant_parameters()
-            [[[1, 2], [1, 5, 1]],
-             [[1, 2], [7, 4, 1]],
-             [[1, 2], [13, 3, 1]],
-             [[1, 2], [19, 2, 1]],
-             [[1, 2], [25, 1, 1]],
-             [[1, 2], [31, 0, 1]],
-             [[1, 2], [8, 9, 2]],
-             [[1, 2], [20, 7, 2]],
-             [[1, 2], [9, 14, 3]],
-             [[1, 2], [15, 13, 3]],
-             [[1, 2], [27, 11, 3]],
-             [[1, 2], [10, 19, 4]],
-             [[1, 2], [22, 17, 4]],
-             [[1, 2], [11, 24, 5]],
-             [[1, 2], [17, 23, 5]],
-             [[1, 2], [23, 22, 5]],
-             [[1, 2], [29, 21, 5]],
-             [[1, 2], [0, 31, 6]],
-             [[1, 2], [12, 29, 6]],
-             [[1, 2], [31, 31, 7]]]
-            sage: phi.basic_j_invariant_parameters([1])
-            [[[1], [31, 1]]]
-            sage: phi.basic_j_invariant_parameters([2])
-            [[[2], [31, 6]]]
+            [((1, 2), (1, 5, 1)),
+             ((1, 2), (7, 4, 1)),
+             ((1, 2), (13, 3, 1)),
+             ((1, 2), (19, 2, 1)),
+             ((1, 2), (25, 1, 1)),
+             ((1, 2), (31, 0, 1)),
+             ((1, 2), (8, 9, 2)),
+             ((1, 2), (20, 7, 2)),
+             ((1, 2), (9, 14, 3)),
+             ((1, 2), (15, 13, 3)),
+             ((1, 2), (27, 11, 3)),
+             ((1, 2), (10, 19, 4)),
+             ((1, 2), (22, 17, 4)),
+             ((1, 2), (11, 24, 5)),
+             ((1, 2), (17, 23, 5)),
+             ((1, 2), (23, 22, 5)),
+             ((1, 2), (29, 21, 5)),
+             ((1, 2), (0, 31, 6)),
+             ((1, 2), (12, 29, 6)),
+             ((1, 2), (31, 31, 7))]
+
+        If a list of indices is given, then only the parameters involving those
+        coefficients will be computed::
+
+            sage: A = GF(3)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T, 2, T, 2*T, T^3, T^4 + T^2 + 1])
+            sage: phi.basic_j_invariant_parameters([1, 5])
+            [((1, 5), (273, 91, 31)),
+             ((1, 5), (297, 163, 55)),
+             ((1, 5), (295, 157, 53)),
+             ((1, 5), (265, 67, 23)),
+             ((1, 5), (357, 343, 115)),
+             ...
+             ((1, 5), (146, 74, 25))]
 
         Use ``nonzero=True`` to speed up the computations for Drinfeld modules
         for which some coefficients are zero::
@@ -950,13 +962,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 0, T+1, 0, 1, 0, T])
             sage: phi.basic_j_invariant_parameters(nonzero=True)
-            [[[2, 4], [260, 641, 26]],
-             [[2, 4], [157, 19, 1]],
-             [[2, 4], [27, 24, 1]],
-             [[2, 4], [188, 143, 6]],
-             [[2, 4], [401, 260, 11]],
+            [((2, 4), (260, 641, 26)),
+             ((2, 4), (157, 19, 1)),
+             ((2, 4), (27, 24, 1)),
+             ((2, 4), (188, 143, 6)),
+             ((2, 4), (401, 260, 11)),
              ...
-             [[2, 4], [288, 39, 2]]]
+             ((2, 4), (288, 39, 2))]
         """
         r = self._gen.degree()
         if coeff_indices is None:
@@ -965,7 +977,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                     self.coefficients(sparse=False)[1:-1], start=1) if g]
             else:
                 coeff_indices = list(range(1, r))
-        elif isinstance(coeff_indices, list):  # check if coeff_indices is valid
+        elif isinstance(coeff_indices, (tuple, list)):  # check if coeff_indices is valid
+            coeff_indices = list(coeff_indices)
             if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
                 raise TypeError("the elements of the list coeff_indices must be integers")
             if max(coeff_indices) >= r or min(coeff_indices) <= 0:
@@ -977,7 +990,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if nonzero:
                 coeff_indices = [k for k in coeff_indices if self._gen[k]]
         else:
-            raise TypeError("input coeff_indices is invalid")
+            raise TypeError("input coeff_indices must be None, a tuple or a list")
         # Create the equation and inequalities for the polyhedron:
         q = self._Fq.order()
         equation = [0]
@@ -1005,7 +1018,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Compute its integral points
         integral_points = polyhedron.integral_points()
 
-        return [[coeff_indices, list(p)] for p in integral_points if gcd(p) == 1]
+        return [(tuple(coeff_indices), tuple(p)) for p in integral_points if gcd(p) == 1]
 
     def coefficient(self, n):
         r"""
@@ -1281,8 +1294,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             `j`-invariant for the parameter `[[1], [q+1, 1]]`.
 
         - ``check`` (bool, default: ``True``) -- if this flag is set to
-          ``False`` then the code will not check if the given parameter satisfy
-          the weight-0 condition.
+          ``False`` then the code will not check if the given parameter is valid
+          and satisfy the weight-0 condition.
 
         OUTPUT: the `j`-invariant of ``self`` for the given parameter.
 
@@ -1324,13 +1337,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: Fq.<a> = GF(7)
             sage: A.<T> = Fq[]
             sage: phi = DrinfeldModule(A, [a, a^2 + a, 0, 3*a, a^2+1])
-            sage: J = phi.j_invariant([[1, 3], [267, 269, 39]]); J
+            sage: J = phi.j_invariant(((1, 3), (267, 269, 39))); J
             5
             sage: J == (phi.coefficient(1)**267)*(phi.coefficient(3)**269)/(phi.coefficient(4)**39)
             True
-            sage: phi.j_invariant([[3], [400, 57]])
+            sage: phi.j_invariant(((3,), (400, 57)))
             4
-            sage: phi.j_invariant([[3], [400, 57]]) == phi.j_invariant(3)
+            sage: phi.j_invariant(((3,), (400, 57))) == phi.j_invariant(3)
             True
 
         The list of all basic `j`-invariant parameters can be retrieved using
@@ -1359,23 +1372,35 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
             dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
-        elif isinstance(parameter, list):
+        elif isinstance(parameter, tuple):
             if len(parameter) != 2:
                 raise ValueError("input 'parameter' must be of length 2")
+            if check:
+                if not isinstance(parameter[0], tuple):
+                    raise TypeError("first entry of input 'parameter' must be "
+                                    "a tuple")
+                if not isinstance(parameter[1], tuple):
+                    raise TypeError("second entry of input 'parameter' must be "
+                                    "a tuple")
+                if not all(isinstance(p, (int, Integer)) for p in parameter[0]):
+                    raise TypeError("first tuple of input 'parameter' must "
+                                    "contain only integers")
+                if not all(isinstance(p, (int, Integer)) for p in parameter[1]):
+                    raise TypeError("second tuple of input 'parameter' must "
+                                    "contain only integers")
+                # check that the weight-0 condition is statisfied:
+                # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
+                right = parameter[1][-1]*(q**r - 1)
+                left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
+                        range(len(parameter[0])))
+                if left != right:
+                    raise ValueError("input 'parameter' does not satisfy the "
+                                    "weight-0 condition")
         else:
-            raise TypeError("input 'parameter' must be a list or an integer")
-        dr = parameter[1][-1]
-        if check:
-            # check that the weight-0 condition is statisfied:
-            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
-            right = dr*(q**r - 1)
-            left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
-                       range(len(parameter[0])))
-            if left != right:
-                raise ValueError("input 'parameter' does not satisfy the "
-                                 "weight-0 condition")
+            raise TypeError("input 'parameter' must be a tuple of length 2 or "
+                            "an integer")
         num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
-        return num/(self._gen[-1]**dr)
+        return num/(self._gen[-1]**parameter[1][-1])
 
     def morphism(self):
         r"""
