@@ -234,36 +234,40 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from warnings import warn
 
-from sage.interfaces.singular import singular as singular_default
-from sage.interfaces.magma import magma as magma_default
-
-from sage.interfaces.expect import StdOutContext
-
-from sage.rings.ideal import Ideal_generic
-from sage.rings.noncommutative_ideals import Ideal_nc
-from sage.rings.integer import Integer
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import (richcmp_method, op_EQ, op_NE,
-                                    op_LT, op_GT, op_LE, op_GE, rich_to_bool)
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose, get_verbose
-from sage.misc.method_decorator import MethodDecorator
-
-from sage.rings.integer_ring import ZZ
 import sage.rings.abc
 import sage.rings.polynomial.toy_buchberger as toy_buchberger
 import sage.rings.polynomial.toy_variety as toy_variety
 import sage.rings.polynomial.toy_d_basis as toy_d_basis
 
-from warnings import warn
-
+from sage.misc.cachefunc import cached_method
+from sage.misc.method_decorator import MethodDecorator
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose, get_verbose
+from sage.rings.ideal import Ideal_generic
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.structure.sequence import Sequence
+from sage.structure.richcmp import (richcmp_method, op_EQ, op_NE,
+                                    op_LT, op_GT, op_LE, op_GE, rich_to_bool)
 
-from sage.interfaces.magma import magma_gb_standard_options
-from sage.interfaces.singular import singular_gb_standard_options
-from sage.libs.singular.standard_options import libsingular_gb_standard_options
+
+try:
+    from sage.interfaces.expect import StdOutContext
+    from sage.interfaces.singular import singular as singular_default, singular_gb_standard_options
+    from sage.libs.singular.standard_options import libsingular_gb_standard_options
+except ImportError:
+    singular_default = None
+    singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
+
+try:
+    from sage.interfaces.magma import magma as magma_default, magma_gb_standard_options
+except ImportError:
+    magma_default = None
+    magma_gb_standard_options = MethodDecorator
 
 
 class RequireField(MethodDecorator):
