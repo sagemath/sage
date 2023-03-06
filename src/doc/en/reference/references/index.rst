@@ -1869,9 +1869,9 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
-             no. 8, 2687-2727. 
+             no. 8, 2687-2727.
 
 .. [CW2015] Cui, S. X. and Wang, Z. (2015). Universal quantum computation with
             metaplectic anyons. Journal of Mathematical Physics, 56(3), 032202.
@@ -2235,7 +2235,7 @@ REFERENCES:
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
 
-.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and 
+.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
 .. _ref-E:
@@ -3461,7 +3461,7 @@ REFERENCES:
             :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
 
 .. [JS2021] \D. Jahn, C. Stump.
-            *Bruhat intervals, subword complexes and brick polyhedra for 
+            *Bruhat intervals, subword complexes and brick polyhedra for
             finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
@@ -4980,6 +4980,11 @@ REFERENCES:
 .. [Pos2005] \A. Postnikov, Affine approach to quantum Schubert
              calculus, Duke Math. J. 128 (2005) 473-509
 
+.. [Pot1998] Potemine, I.Y.,
+             Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
+             Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
+             :doi:`10.1023/A:1009724323513`
+
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.
              Tropical and Non-Archimedean
@@ -6377,7 +6382,7 @@ REFERENCES:
             Combinatorics, 19(1), P53, 2012. :doi:`10.37236/2087`
 
 .. [Zie1959] \N. Zierler. *Linear Recurring Sequences*.
-             Journal of the Society for Industrial and Applied Mathematics 7(1) 
+             Journal of the Society for Industrial and Applied Mathematics 7(1)
              (1959): 31-48. :doi:`10.1137/0107003`
 
 .. [Zie1998] \G. M. Ziegler. *Shelling polyhedral 3-balls and

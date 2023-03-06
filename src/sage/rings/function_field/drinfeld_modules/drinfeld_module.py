@@ -265,7 +265,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.height()
         1
 
-    As well as the j-invariant if the rank is two::
+    As well as the j-invariant::
 
         sage: phi.j_invariant()  # j-invariant
         1
@@ -887,7 +887,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return DrinfeldModuleAction(self)
 
     def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
-        """
+        r"""
         Return the list of basic `j`-invariant parameters.
 
         See the method :meth:`j_invariant` for the definition of the basic
@@ -897,12 +897,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``coeff_indices`` (list, default: ``None``) -- a list of indices for
           the coefficients of the Drinfeld module. If specific indices are
-          chosen, then the method will return only the basic `j`-invariant
-          parameters that involves the given indices.
+          given, then the method will return only the basic `j`-invariant
+          parameters that involves these indices.
 
         - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
           will return only the parameters for which the basic `j`-invariant is
           nonzero
+
+        .. WARNING::
+
+            The usage of this method can be very computationally expensive
+            depending if the given Drinfeld module is of rank strictly greater
+            4 and for large value of `q`. Setting the ``nonzero`` flag to
+            ``True`` can speed up the computation considerably if the Drinfeld
+            module possesses multiple zero coefficients.
 
         EXAMPLES::
 
@@ -934,8 +942,21 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             [[[1], [31, 1]]]
             sage: phi.basic_j_invariant_parameters([2])
             [[[2], [31, 6]]]
+
+        Use ``nonzero=True`` to speed up the computations for Drinfeld modules
+        for which some coefficients are zero::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 0, T+1, 0, 1, 0, T])
             sage: phi.basic_j_invariant_parameters(nonzero=True)
-            [[[2], [31, 6]]]
+            [[[2, 4], [260, 641, 26]],
+             [[2, 4], [157, 19, 1]],
+             [[2, 4], [27, 24, 1]],
+             [[2, 4], [188, 143, 6]],
+             [[2, 4], [401, 260, 11]],
+             ...
+             [[2, 4], [288, 39, 2]]]
         """
         r = self._gen.degree()
         if coeff_indices is None:
@@ -1228,13 +1249,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         .. MATH::
 
-            d_1 (q^{k_1} - 1) + d_2 (q^{k_2} - 1) + ... + d_{n} (q^{k_n} - 1) = d_r (q^r - 1)
+            d_1 (q^{k_1} - 1) + d_2 (q^{k_2} - 1) + ... + d_{n} (q^{k_n} - 1) = d_r (q^r - 1).
 
         Furthermore, if `\gcd(d_1,\ldots, d_n, d_r) = 1` and
 
         .. MATH::
 
-            0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad (1 \leq i \leq n)
+            0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad 1 \leq i \leq n,
 
         then the `j`-invariant is called *basic*. See the method
         :meth:`basic_j_invariant_parameters` for computing the list of all basic
@@ -1244,19 +1265,31 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``parameter`` (integer or list, default: None) -- this parameter is
           either a list of two lists or an integer between 1 and `r-1` (`r` is
-          the rank). If ``parameter`` is a list of lists, then it must be of the
-          form ``[[k1, k2, ..., kn], [d1, d2, ..., dn, dr]]`` where the ``ki``
-          and ``di`` are integers satisfying the weight-0 condition described
-          above. If ``parameter`` is an integer ``k`` then the method returns
-          the ``j``-invariant associated to the parameter ``[[k], [dk, dr]]``.
-          If the rank of the Drinfeld module is 2, then the method returns by
-          default the usual `j`-invariant.
+          the rank).
+
+          - If ``parameter`` is a list of two lists, then it must be of the
+            form `[[k_1, k_2, \ldots, k_n], [d_1, d_2, \ldots, d_n, d_r]]` where
+            the `k_i` and `d_i` are integers satisfying the weight-0 condition
+            described above. In this case the method returns the associated
+            `j`-invariant;
+
+          - If ``parameter`` is an integer `k` then the method returns
+            the ``j``-invariant associated to the parameter `[[k], [d_k, d_r]]`;
+
+          - If ``parameter`` is ``None`` and the rank of the Drinfeld module is
+            2, then the method returns its usual `j`-invariant, that is the
+            `j`-invariant for the parameter `[[1], [q+1, 1]]`.
 
         - ``check`` (bool, default: ``True``) -- if this flag is set to
           ``False`` then the code will not check if the given parameter satisfy
           the weight-0 condition.
 
         OUTPUT: the `j`-invariant of ``self`` for the given parameter.
+
+        REFERENCE:
+
+        The notion of basic `j`-invariant was introduced by Potemine in
+        _[Pot1998].
 
         EXAMPLES::
 
@@ -1299,6 +1332,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             4
             sage: phi.j_invariant([[3], [400, 57]]) == phi.j_invariant(3)
             True
+
+        The list of all basic `j`-invariant parameters can be retrieved using
+        the method :meth:`basic_j_invariant_parameters`::
+
+            sage: A = GF(3)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2 + T + 1, 0, T^4 + 1, T - 1])
+            sage: param = phi.basic_j_invariant_parameters(nonzero=True)
+            sage: phi.j_invariant(param[0])
+            T^13 + 2*T^12 + T + 2
+            sage: phi.j_invariant(param[1])
+            T^35 + 2*T^31 + T^27 + 2*T^8 + T^4 + 2
         """
         r = self._gen.degree()
         q = self._Fq.order()
