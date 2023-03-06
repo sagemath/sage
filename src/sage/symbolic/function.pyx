@@ -433,8 +433,8 @@ cdef class Function(SageObject):
 
         We can also handle numpy types::
 
-            sage: import numpy
-            sage: sin(numpy.arange(5))
+            sage: import numpy                                                          # optional - numpy
+            sage: sin(numpy.arange(5))                                                  # optional - numpy
             array([ 0.        ,  0.84147098,  0.90929743,  0.14112001, -0.7568025 ])
 
         Symbolic functions evaluate non-exact input numerically, and return
@@ -483,9 +483,10 @@ cdef class Function(SageObject):
 
         Make sure we can pass mpmath arguments (:trac:`13608`)::
 
-            sage: import mpmath
-            sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))
-            mpc(real='0.86807452059118713192871150787046523179886', imag='1.3246769633571289324095313649562791720086')
+            sage: import mpmath                                                         # optional - mpmath
+            sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))              # optional - mpmath
+            mpc(real='0.86807452059118713192871150787046523179886',
+                imag='1.3246769633571289324095313649562791720086')
 
         Check that :trac:`10133` is fixed::
 
@@ -504,11 +505,11 @@ cdef class Function(SageObject):
 
         Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
 
-            sage: import numpy
-            sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
-            sage: real_part(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)                       # optional - numpy
+            sage: real_part(a)                                                          # optional - numpy
             array([ 1., -2.])
-            sage: imag_part(a)
+            sage: imag_part(a)                                                          # optional - numpy
             array([ 2., -3.])
         """
         if self._nargs > 0 and len(args) != self._nargs:
@@ -742,13 +743,13 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(5)
-            sage: csc(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(5)                                                   # optional - numpy
+            sage: csc(a)                                                                # optional - numpy
             doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([        inf,  1.18839511,  1.09975017,  7.0861674 , -1.32134871])
 
-            sage: factorial(a)
+            sage: factorial(a)                                                          # optional - numpy
             Traceback (most recent call last):
             ...
             NotImplementedError: The Function factorial does not support numpy arrays as arguments
@@ -769,8 +770,8 @@ cdef class Function(SageObject):
         implementation, using sage reals instead of mpmath ones. This
         might change when aliases for these functions are established::
 
-            sage: import mpmath
-            sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))
+            sage: import mpmath                                                         # optional - mpmath
+            sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))                  # optional - mpmath
             mpf('0.52359877559829887307710723054658381403157')
 
         TESTS:
@@ -779,7 +780,7 @@ cdef class Function(SageObject):
         not using mpmath, we have to create a custom function which
         will certainly never get created in mpmath. ::
 
-            sage: import mpmath
+            sage: import mpmath                                                         # optional - mpmath
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class NoMpmathFn(BuiltinFunction):
             ....:         def _eval_(self, arg):
@@ -787,13 +788,13 @@ cdef class Function(SageObject):
             ....:                 prec = parent.prec()
             ....:                 assert parent == RealField(prec)
             ....:                 return prec
-            sage: noMpmathFn = NoMpmathFn("noMpmathFn")
-            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
+            sage: noMpmathFn = NoMpmathFn("noMpmathFn")                                 # optional - mpmath
+            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))           # optional - mpmath
             64
-            sage: mpmath.noMpmathFn = lambda x: 123
-            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
+            sage: mpmath.noMpmathFn = lambda x: 123                                     # optional - mpmath
+            sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))           # optional - mpmath
             123
-            sage: del mpmath.noMpmathFn
+            sage: del mpmath.noMpmathFn                                                 # optional - mpmath
 
         """
         import mpmath
@@ -944,16 +945,16 @@ cdef class BuiltinFunction(Function):
             (1.5430806348152437-0j)
             sage: assert type(_) is complex
 
-            sage: import mpmath
-            sage: cos(mpmath.mpf('1.321412'))
+            sage: import mpmath                                                         # optional - mpmath
+            sage: cos(mpmath.mpf('1.321412'))                                           # optional - mpmath
             mpf('0.24680737898640387')
-            sage: cos(mpmath.mpc(1,1))
+            sage: cos(mpmath.mpc(1,1))                                                  # optional - mpmath
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
-            sage: import numpy
-            sage: sin(numpy.int32(0))
+            sage: import numpy                                                          # optional - numpy
+            sage: sin(numpy.int32(0))                                                   # optional - numpy
             0.0
-            sage: type(_)
+            sage: type(_)                                                               # optional - numpy
             <class 'numpy.float64'>
 
         TESTS::

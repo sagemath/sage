@@ -661,25 +661,25 @@ class SympyConverter(Converter):
 
     EXAMPLES::
 
-        sage: import sympy
+        sage: import sympy                                                              # optional - sympy
         sage: var('x,y')
         (x, y)
         sage: f = exp(x^2) - arcsin(pi+x)/y
-        sage: f._sympy_()
+        sage: f._sympy_()                                                               # optional - sympy
         exp(x**2) - asin(x + pi)/y
-        sage: _._sage_()
+        sage: _._sage_()                                                                # optional - sympy
         -arcsin(pi + x)/y + e^(x^2)
 
-        sage: sympy.sympify(x) # indirect doctest
+        sage: sympy.sympify(x) # indirect doctest                                       # optional - sympy
         x
 
     TESTS:
 
     Make sure we can convert I (:trac:`6424`)::
 
-        sage: bool(I._sympy_() == I)
+        sage: bool(I._sympy_() == I)                                                    # optional - sympy
         True
-        sage: (x+I)._sympy_()
+        sage: (x+I)._sympy_()                                                           # optional - sympy
         x + I
 
     """
@@ -687,9 +687,9 @@ class SympyConverter(Converter):
         """
         TESTS::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()  # indirect doctest
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()  # indirect doctest                              # optional - sympy
+            sage: TestSuite(s).run(skip="_test_pickling")                               # optional - sympy
         """
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -698,11 +698,11 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
             sage: f(x, y) = x^2 + y^2; f
             (x, y) |--> x^2 + y^2
-            sage: s(f)
+            sage: s(f)                                                                  # optional - sympy
             Lambda((x, y), x**2 + y**2)
         """
         if isinstance(ex, Expression) and ex.is_callable():
@@ -715,12 +715,12 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
             sage: f = SR(2)
-            sage: s.pyobject(f, f.pyobject())
+            sage: s.pyobject(f, f.pyobject())                                           # optional - sympy
             2
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.core.numbers.Integer'>
         """
         try:
@@ -732,10 +732,10 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
             sage: f = x + 2
-            sage: s.arithmetic(f, f.operator())
+            sage: s.arithmetic(f, f.operator())                                         # optional - sympy
             x + 2
         """
         import sympy
@@ -758,11 +758,11 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
-            sage: s.symbol(x)
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
+            sage: s.symbol(x)                                                           # optional - sympy
             x
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.core.symbol.Symbol'>
         """
         import sympy
@@ -772,16 +772,16 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: import operator
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
-            sage: s.relation(x == 3, operator.eq)
+            sage: import operator                                                       # optional - sympy
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
+            sage: s.relation(x == 3, operator.eq)                                       # optional - sympy
             Eq(x, 3)
-            sage: s.relation(pi < 3, operator.lt)
+            sage: s.relation(pi < 3, operator.lt)                                       # optional - sympy
             pi < 3
-            sage: s.relation(x != pi, operator.ne)
+            sage: s.relation(x != pi, operator.ne)                                      # optional - sympy
             Ne(x, pi)
-            sage: s.relation(x > 0, operator.gt)
+            sage: s.relation(x > 0, operator.gt)                                        # optional - sympy
             x > 0
         """
         from sympy import Eq, Ne, Gt, Lt, Ge, Le
@@ -792,15 +792,15 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage: from sage.symbolic.expression_conversions import SympyConverter
-            sage: s = SympyConverter()
+            sage: from sage.symbolic.expression_conversions import SympyConverter       # optional - sympy
+            sage: s = SympyConverter()                                                  # optional - sympy
             sage: f = sin(2)
-            sage: s.composition(f, f.operator())
+            sage: s.composition(f, f.operator())                                        # optional - sympy
             sin(2)
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             sin
             sage: f = arcsin(2)
-            sage: s.composition(f, f.operator())
+            sage: s.composition(f, f.operator())                                        # optional - sympy
             asin(2)
         """
         g = ex.operands()
@@ -824,26 +824,26 @@ class SympyConverter(Converter):
         EXAMPLES::
 
             sage: t = SR._force_pyobject((3, 4, e^x))
-            sage: t._sympy_()
+            sage: t._sympy_()                                                           # optional - sympy
             (3, 4, e^x)
             sage: t = SR._force_pyobject((cos(x),))
-            sage: t._sympy_()
+            sage: t._sympy_()                                                           # optional - sympy
             (cos(x),)
 
         TESTS::
 
-            sage: from sage.symbolic.expression_conversions import sympy_converter
+            sage: from sage.symbolic.expression_conversions import sympy_converter      # optional - sympy
             sage: F = hypergeometric([1/3,2/3],[1,1],x)
-            sage: F._sympy_()
+            sage: F._sympy_()                                                           # optional - sympy
             hyper((1/3, 2/3), (1, 1), x)
 
             sage: F = hypergeometric([1/3,2/3],[1],x)
-            sage: F._sympy_()
+            sage: F._sympy_()                                                           # optional - sympy
             hyper((1/3, 2/3), (1,), x)
 
             sage: var('a,b,c,d')
             (a, b, c, d)
-            sage: hypergeometric((a,b,),(c,),d)._sympy_()
+            sage: hypergeometric((a,b,),(c,),d)._sympy_()                               # optional - sympy
             hyper((a, b), (c,), d)
         """
         return tuple(ex.operands())
@@ -864,20 +864,20 @@ class SympyConverter(Converter):
             (x, y)
 
             sage: f_sage = function('f_sage')(x, y)
-            sage: f_sympy = f_sage._sympy_()
+            sage: f_sympy = f_sage._sympy_()                                            # optional - sympy
 
             sage: df_sage = f_sage.diff(x, 2, y, 1); df_sage
             diff(f_sage(x, y), x, x, y)
-            sage: df_sympy = df_sage._sympy_(); df_sympy
+            sage: df_sympy = df_sage._sympy_(); df_sympy                                # optional - sympy
             Derivative(f_sage(x, y), (x, 2), y)
-            sage: df_sympy == f_sympy.diff(x, 2, y, 1)
+            sage: df_sympy == f_sympy.diff(x, 2, y, 1)                                  # optional - sympy
             True
 
         Check that :trac:`28964` is fixed::
 
             sage: f = function('f')
             sage: _ = var('x,t')
-            sage: diff(f(x, t), x)._sympy_(), diff(f(x, t), t)._sympy_()
+            sage: diff(f(x, t), x)._sympy_(), diff(f(x, t), t)._sympy_()                # optional - sympy
             (Derivative(f(x, t), x), Derivative(f(x, t), t))
 
         Check differentiating by variables with multiple occurrences
@@ -885,15 +885,15 @@ class SympyConverter(Converter):
 
             sage: f = function('f')
             sage: _ = var('x1,x2,x3,x,t')
-            sage: f(x, x, t).diff(x)._sympy_()._sage_()
+            sage: f(x, x, t).diff(x)._sympy_()._sage_()                                 # optional - sympy
             D[0](f)(x, x, t) + D[1](f)(x, x, t)
 
             sage: g = f(x1, x2, x3, t).diff(x1, 2, x2).subs(x1==x, x2==x, x3==x); g
             D[0, 0, 1](f)(x, x, x, t)
-            sage: g._sympy_()
+            sage: g._sympy_()                                                           # optional - sympy
             Subs(Derivative(f(_xi_1, _xi_2, x, t), (_xi_1, 2), _xi_2),
                  (_xi_1, _xi_2), (x, x))
-            sage: assert g._sympy_()._sage_() == g
+            sage: assert g._sympy_()._sage_() == g                                      # optional - sympy
 
         Check that the use of dummy variables does not cause a collision::
 
@@ -901,7 +901,7 @@ class SympyConverter(Converter):
             sage: _ = var('x1,x2,x,xi_1')
             sage: g = f(x1, x2, xi_1).diff(x1).subs(x1==x, x2==x); g
             D[0](f)(x, x, xi_1)
-            sage: assert g._sympy_()._sage_() == g
+            sage: assert g._sympy_()._sage_() == g                                      # optional - sympy
         """
         import sympy
 
