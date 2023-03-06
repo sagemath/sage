@@ -176,7 +176,7 @@ def hilbert_class_polynomial(D, algorithm=None):
 
 def is_HCP(f, check_monic_irreducible=True):
     r"""
-    Return ``True``, `D` if ``f`` is the Hilbert Class Polynomial `H_D`, else ``False``, 0.
+    Determine whether a polynomial is a Hilbert Class Polynomial.
 
     INPUT:
 
@@ -187,7 +187,8 @@ def is_HCP(f, check_monic_irreducible=True):
 
     OUTPUT:
 
-    (integer) -- `D` if ``f`` is the Hilbert Class Polynomial (HCP) `H_D`, else 0.
+    (integer) -- either `D` if ``f`` is the Hilbert Class Polynomial
+    `H_D` for discriminant `D`, or `0` if not an HCP.
 
     ALGORITHM:
 
@@ -209,35 +210,34 @@ def is_HCP(f, check_monic_irreducible=True):
         sage: max(c for c in H).ndigits()
         2774
         sage: is_HCP(H)
-        (True, -1856563)
+        -1856563
 
     Testing polynomials which are not HCPs is faster::
 
         sage: is_HCP(H+1)
-        (False, 0)
+        0
 
 
     TESTS::
 
         sage: from sage.schemes.elliptic_curves.cm import is_HCP
-        sage: all(is_HCP(hilbert_class_polynomial(D))==(True,D) for D in srange(-4,-100,-1) if D.is_discriminant())
+        sage: all(is_HCP(hilbert_class_polynomial(D))==D for D in srange(-4,-100,-1) if D.is_discriminant())
         True
-        sage: all(is_HCP(hilbert_class_polynomial(D)+1)==(False,0) for D in srange(-4,-100,-1) if D.is_discriminant())
+        sage: all(not is_HCP(hilbert_class_polynomial(D)+1) for D in srange(-4,-100,-1) if D.is_discriminant())
         True
-
     """
     zero = ZZ(0)
     # optional check that input is monic and irreducible
     if check_monic_irreducible:
         try:
             if not (all(c in ZZ for c in f) and f.is_monic()):
-                return (False, zero)
+                return zero
             f = f.change_ring(ZZ)
         except AttributeError:
-            return (False, zero)
+            return zero
 
     h = f.degree()
-    h2list = [d for d in h.divisors() if (d-h)%2==0 and d.prime_to_m_part(2)==1]
+    h2list = [d for d in h.divisors() if (d-h)%2 == 0 and d.prime_to_m_part(2) == 1]
     pmin = 33 * (h**2 * (RR(h+2).log().log()+2)**2).ceil()
     # Guarantees 4*p > |D| for fundamental D under GRH
     p = pmin-1
@@ -247,30 +247,25 @@ def is_HCP(f, check_monic_irreducible=True):
         p = next_prime(p)
         n += 1
         fp = f.change_ring(GF(p))
-        # Compute X^p-X mod fp manually, avoiding quotient ring which is slower
-        r = zpow = z = fp.parent().gen()
-        m = p>>1
-        while m:
-            zpow = (zpow**2) % fp
-            if m & 1:
-                r = (zpow * r) % fp
-            m >>= 1
-        # now r = X^p mod fp
-        d = (r-z).gcd(fp).degree()  # number of roots mod p
-        if d==0:
+        # Compute X^p-X mod fp
+        z = fp.parent().gen()
+        r = pow(z, p, fp) - z
+        d = r.gcd(fp).degree()  # number of roots mod p
+        if d == 0:
             continue
         if not fp.is_squarefree():
             continue
         if d<h and d not in h2list:
-            return (False, zero)
+            return zero
         jp = fp.any_root(degree=-1, assume_squarefree=True)
         E = EllipticCurve(j=jp)
         if E.is_supersingular():
             continue
-        D = E.endomorphism_discriminant_from_class_number(h)
-        if not D:
-            return (False, zero)
-        return (True, D) if f == hilbert_class_polynomial(D) else (False, zero)
+        try:
+            D = E.endomorphism_discriminant_from_class_number(h)
+        except ValueError:
+            return zero
+        return D if f == hilbert_class_polynomial(D) else zero
 
 def OrderClassNumber(D0,h0,f):
     r"""
@@ -308,7 +303,7 @@ def OrderClassNumber(D0,h0,f):
     """
     if not D0.is_fundamental_discriminant():
         raise ValueError("{} is not a fundamental discriminant".format(D0))
-    if not D0.is_fundamental_discriminant() or f <= 0:
+    if f <= 0:
         raise ValueError("{} is not a positive integer".format(f))
     if f == 1:
         return h0
@@ -550,7 +545,7 @@ watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (268
 
 # The keys are integers 1--100 and the value for each h is (|D|,n)
 # where |D| is the largest discriminant of an imaginary quadratic
-# field with class number h, and n is the number of such fields.
+# order with class number h, and n is the number of such orders.
 # These are all *unconditional* (not dependent on GRH).
 
 klaise_table = {1: (163, 13), 2: (427, 29), 3: (907, 25), 4: (1555, 84), 5: (2683, 29), 6: (4075, 101),
@@ -589,7 +584,7 @@ def largest_fundamental_disc_with_class_number(h):
         `\QQ(\sqrt{D})`, so this function gives the number of such
         fields of each class number `h\le100`.  It is easy to extend
         this to larger class number conditional on the GRH, but much
-        harder to obyain unconditional results.
+        harder to obtain unconditional results.
 
     INPUT:
 
@@ -663,7 +658,9 @@ def largest_disc_with_class_number(h):
         ...
         NotImplementedError: largest discriminant not available for class number 101
 
-    For most `h\le100`, the largest fundamental discriminant with class number `h` is also the largest discriminant, but this is not the case for `h=`::
+    For most `h\le100`, the largest fundamental discriminant with
+    class number `h` is also the largest discriminant, but this is not
+    the case for some `h`::
 
         sage: from sage.schemes.elliptic_curves.cm import largest_disc_with_class_number, largest_fundamental_disc_with_class_number
         sage: [h for h in range(1,101) if largest_disc_with_class_number(h)[0] != largest_fundamental_disc_with_class_number(h)[0]]
@@ -672,6 +669,7 @@ def largest_disc_with_class_number(h):
         (3763, 51)
         sage: largest_disc_with_class_number(6)
         (4075, 101)
+
     """
     h = Integer(h)
     if h <= 0:
@@ -683,7 +681,7 @@ def largest_disc_with_class_number(h):
         raise NotImplementedError("largest discriminant not available for class number %s" % h)
 
 # This dict has class numbers h as keys, the value at h is a complete
-# list of paits (D0,f) such that D=D0*f**2 has class number h.  We
+# list of pairs (D0,f) such that D=D0*f**2 has class number h.  We
 # initialise it with h=1 only; other values will be added by calls to
 # discriminants_with_bounded_class_number().
 
@@ -691,13 +689,11 @@ hDf_dict = {ZZ(1): [(ZZ(D), ZZ(h)) for D,h in
                     [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2),
                      (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]]}
 
-@cached_function
 def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
-    r"""
-    Return a dictionary with keys class numbers `h\le hmax` and values the
+    r"""Return a dictionary with keys class numbers `h\le hmax` and values the
     list of all pairs `(D_0, f)`, with `D_0<0` a fundamental discriminant such
     that `D=D_0f^2` has class number `h`.  If the optional bound `B` is given,
-    return only those pairs with fundamental `|D| \le B`.
+    return only those pairs with `|D| \le B`.
 
     INPUT:
 
@@ -712,9 +708,11 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     - dictionary
 
-    In case `B` is not given, for ``hmax`` at most 100 we use the
-    tables from [Watkins2004]_ and [Klaise2012]_ to compute a `B` that
-    captures all `h` up to `hmax` (only available for `hmax\le100`).
+    .. NOTE::
+
+       In case `B` is not given, then ``hmax`` must be at most 100; we
+       use the tables from [Watkins2004]_ and [Klaise2012]_ to compute
+       a `B` that captures all `h` up to `hmax`.
 
     EXAMPLES::
 
@@ -741,7 +739,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     global hDf_dict
 
     # Easy case where we have already computed and cached the relevant values
-    if hDf_dict and hmax <= max(hDf_dict.keys()):
+    if hDf_dict and hmax <= max(hDf_dict):
         T = {h:Dflist for h,Dflist in hDf_dict.items() if h<=hmax}
         if B:
             for h in T:
@@ -754,11 +752,14 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     proof = get_flag(proof, 'number_field')
 
     if B is None:
-        # Determine how far we have to go by applying Watkins + Klaise's results.
-        v = [largest_disc_with_class_number(h) for h in range(1, hmax+1)]
-        B = max([b for b,_ in v])
-        #print("Testing all discriminants up to {}".format(B))
-        count = [0] + [cnt for _,cnt in v]
+        if hmax <= 100:
+            # Determine how far we have to go by applying Watkins + Klaise's results.
+            v = [largest_disc_with_class_number(h) for h in range(1, hmax+1)]
+            B = max([b for b,_ in v])
+            #print("Testing all discriminants up to {}".format(B))
+            count = [0] + [cnt for _,cnt in v]
+        else:
+            raise ValueError("if hmax>100 you must specify a discriminant bound B")
     else:
         # Nothing to do -- set to None so we can use this later to know not
         # to do a double check about how many we find.
@@ -797,8 +798,8 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         for D0,f in Dflist:
             h_dict[D0*f**2] = h
 
-    # We do not need to certaify the class number from :pari:`qfbclassno` for discriminants under 2*10^10
-    if B > 2*10**10:
+    # We do not need to certify the class number from :pari:`qfbclassno` for discriminants under 2*10^10
+    if B < 2*10**10:
         proof = False
 
     for D in xsrange(-3, -B-1, -1):
@@ -834,7 +835,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     for h in T:
         T[h].sort(key=lambda Df: (Df[0].abs(), Df[1]))
 
-    # count is None unless the user provided a value of B
+    # count is None precisely when the user provided a value of B
     if count is not None:
         # 1. Check that we found the right number of discriminants
         for h in T:
@@ -847,16 +848,18 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
 
 @cached_function
-def is_cm_j_invariant(j, method='CremonaSutherland'):
+def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     r"""Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
 
     INPUT:
 
     - ``j`` -- an element of a number field `K`
 
-    - ``method`` (string, default 'CremonaSutherland') -- the method
+    - ``algorithm`` (string, default 'CremonaSutherland') -- the algorithm
       used, either 'CremonaSutherland' (the default, very much faster
       for all but very small degrees), 'exhaustive' or 'reduction'
+
+    - ``method`` (string) -- deprecated name for ``algorithm``
 
     OUTPUT:
 
@@ -872,7 +875,7 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
     :func:`is_HCP` which implements Algorithm 2 of [CreSuth2023]_ by
     Cremona and Sutherland.
 
-    Two older methods are available, both of which are much slower
+    Two older algorithms are available, both of which are much slower
     except for very small degrees.
 
     Method 'exhaustive' makes use of the complete and unconditionsl classification of
@@ -917,6 +920,11 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
         True
 
     """
+    if method:
+        if not algorithm:
+            algorithm = method
+        raise DeprecationWarning("'method' is deprecated, use 'algorithm instead'")
+
     # First we check that j is an algebraic number:
     from sage.rings.all import NumberFieldElement, NumberField
     if not isinstance(j, NumberFieldElement) and j not in QQ:
@@ -938,7 +946,7 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
 
     # Next we find its minimal polynomial of j:
 
-    if j.parent().absolute_degree()==2:
+    if j.parent().absolute_degree() == 2:
         jpol = j.absolute_minpoly() # no algorithm parameter
     else:
         jpol = j.absolute_minpoly(algorithm='pari')
@@ -951,9 +959,9 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
     # Otherwise test whether it is a Hilbert Class Polynomial
     # (using the fact that we know that it is monic and irreducible):
 
-    if method == 'CremonaSutherland':
-        flag, D = is_HCP(jpol, check_monic_irreducible=False)
-        if flag:
+    if algorithm == 'CremonaSutherland':
+        D = is_HCP(jpol, check_monic_irreducible=False)
+        if D:
             D0 = D.squarefree_part()
             if D0%4 !=1:
                 D0 *= 4
@@ -963,7 +971,7 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
             return (False, None)
 
     h = jpol.degree()
-    if method in ['exhaustive', 'old']:
+    if algorithm in ['exhaustive', 'old']:
         if h>100:
             raise NotImplementedError("CM data only available for class numbers up to 100")
         for d,f in cm_orders(h):
@@ -971,10 +979,10 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
                 return (True, (d,f))
         return (False, None)
 
-    if method not in ['reduction', 'new']:
-        raise ValueError("Invalid method {} in is_cm_j_invariant".format(method))
+    if algorithm not in ['reduction', 'new']:
+        raise ValueError("Invalid algorithm {} in is_cm_j_invariant".format(algorithm))
 
-    # Now we use the reduction method
+    # Now we use the reduction algorithm
 
     # If the degree h is less than the degree of j.parent() we recreate j as an element
     # of Q(j, and replace j by a clone whose parent is Q(j), if necessary:
@@ -1024,7 +1032,7 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
         DP = aP**2 - 4*P.norm()
         dP = DP.squarefree_part()
         fP = ZZ(DP//dP).isqrt()
-        if cmd==0:      # first one, so store d and f
+        if cmd == 0:      # first one, so store d and f
             cmd = dP
             cmf = fP
         elif cmd != dP: # inconsistent with previous
@@ -1032,8 +1040,8 @@ def is_cm_j_invariant(j, method='CremonaSutherland'):
         else:           # consistent d, so update f
             cmf = cmf.gcd(fP)
 
-    if cmd==0: # no conclusion, we found no degree 1 primes, revert to default method
-        return is_cm_j_invariant(j, method='CremonaSutherland')
+    if cmd == 0: # no conclusion, we found no degree 1 primes, revert to default algorithm
+        return is_cm_j_invariant(j)
 
     # it looks like cm by disc cmd * f**2 where f divides cmf
 
