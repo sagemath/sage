@@ -2186,6 +2186,8 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             True
         """
         if mod > 2 and self._gens_two_vecs is not None:
+            from sage.matrix.constructor import matrix
+
             O = self._ring
             mul = O._mul_vecs
             R = self._hnf.base_ring()
