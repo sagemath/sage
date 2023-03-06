@@ -231,7 +231,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: NN = NonNegativeIntegers()
-            sage: NN._sympy_()
+            sage: NN._sympy_()                                                          # optional - sympy
             Naturals0
         """
         from sympy import Naturals0
