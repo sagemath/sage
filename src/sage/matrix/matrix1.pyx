@@ -699,23 +699,26 @@ cdef class Matrix(Matrix0):
         Type ``numpy.typecodes`` for a list of the possible
         typecodes::
 
-            sage: import numpy
-            sage: sorted(numpy.typecodes.items())
-            [('All', '?bhilqpBHILQPefdgFDGSUVOMm'), ('AllFloat', 'efdgFDG'), ('AllInteger', 'bBhHiIlLqQpP'), ('Character', 'c'), ('Complex', 'FDG'), ('Datetime', 'Mm'), ('Float', 'efdg'), ('Integer', 'bhilqp'), ('UnsignedInteger', 'BHILQP')]
+            sage: import numpy                                                                      # optional - numpy
+            sage: sorted(numpy.typecodes.items())                                                   # optional - numpy
+            [('All', '?bhilqpBHILQPefdgFDGSUVOMm'), ('AllFloat', 'efdgFDG'),
+             ('AllInteger', 'bBhHiIlLqQpP'), ('Character', 'c'), ('Complex', 'FDG'),
+             ('Datetime', 'Mm'), ('Float', 'efdg'), ('Integer', 'bhilqp'),
+             ('UnsignedInteger', 'BHILQP')]
 
         Alternatively, numpy automatically calls this function (via
         the magic :meth:`__array__` method) to convert Sage matrices
         to numpy arrays::
 
-            sage: import numpy
-            sage: b=numpy.array(a); b
+            sage: import numpy                                                                      # optional - numpy
+            sage: b = numpy.array(a); b                                                             # optional - numpy
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype
+            sage: b.dtype                                                                           # optional - numpy
             dtype('int32')  # 32-bit
             dtype('int64')  # 64-bit
-            sage: b.shape
+            sage: b.shape                                                                           # optional - numpy
             (3, 4)
         """
         import numpy

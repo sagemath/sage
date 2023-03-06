@@ -347,27 +347,27 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     must be contiguous, so column-wise slices of numpy matrices will
     raise an exception. ::
 
-        sage: import numpy
-        sage: x = numpy.random.randn(10)
-        sage: y = vector(x)
-        sage: parent(y)
+        sage: import numpy                                                              # optional - numpy
+        sage: x = numpy.random.randn(10)                                                # optional - numpy
+        sage: y = vector(x)                                                             # optional - numpy
+        sage: parent(y)                                                                 # optional - numpy
         Vector space of dimension 10 over Real Double Field
-        sage: parent(vector(RDF, x))
+        sage: parent(vector(RDF, x))                                                    # optional - numpy
         Vector space of dimension 10 over Real Double Field
-        sage: parent(vector(CDF, x))
+        sage: parent(vector(CDF, x))                                                    # optional - numpy
         Vector space of dimension 10 over Complex Double Field
-        sage: parent(vector(RR, x))
+        sage: parent(vector(RR, x))                                                     # optional - numpy
         Vector space of dimension 10 over Real Field with 53 bits of precision
-        sage: v = numpy.random.randn(10) * complex(0,1)
-        sage: w = vector(v)
-        sage: parent(w)
+        sage: v = numpy.random.randn(10) * complex(0,1)                                 # optional - numpy
+        sage: w = vector(v)                                                             # optional - numpy
+        sage: parent(w)                                                                 # optional - numpy
         Vector space of dimension 10 over Complex Double Field
 
     Multi-dimensional arrays are not supported::
 
-        sage: import numpy as np
-        sage: a = np.array([[1, 2, 3], [4, 5, 6]], np.float64)
-        sage: vector(a)
+        sage: import numpy as np                                                        # optional - numpy
+        sage: a = np.array([[1, 2, 3], [4, 5, 6]], np.float64)                          # optional - numpy
+        sage: vector(a)                                                                 # optional - numpy
         Traceback (most recent call last):
         ...
         TypeError: cannot convert 2-dimensional array to a vector
@@ -392,21 +392,21 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     If the argument is a vector, it doesn't change the base ring. This
     fixes :trac:`6643`::
 
-        sage: K.<sqrt3> = QuadraticField(3)
-        sage: u = vector(K, (1/2, sqrt3/2) )
-        sage: vector(u).base_ring()
+        sage: K.<sqrt3> = QuadraticField(3)                                                         # optional - sage.rings.number_field
+        sage: u = vector(K, (1/2, sqrt3/2))                                                         # optional - sage.rings.number_field
+        sage: vector(u).base_ring()                                                                 # optional - sage.rings.number_field
         Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
-        sage: v = vector(K, (0, 1) )
-        sage: vector(v).base_ring()
+        sage: v = vector(K, (0, 1))                                                                 # optional - sage.rings.number_field
+        sage: vector(v).base_ring()                                                                 # optional - sage.rings.number_field
         Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
 
     Constructing a vector from a numpy array behaves as expected::
 
-        sage: import numpy
-        sage: a=numpy.array([1,2,3])
-        sage: v=vector(a); v
+        sage: import numpy                                                                          # optional - numpy
+        sage: a = numpy.array([1,2,3])                                                              # optional - numpy
+        sage: v = vector(a); v                                                                      # optional - numpy
         (1, 2, 3)
-        sage: parent(v)
+        sage: parent(v)                                                                             # optional - numpy
         Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
     Complex numbers can be converted naturally to a sequence of length 2.  And
@@ -452,14 +452,14 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v = vector(QQ, w, immutable=True)
         sage: v.is_immutable()
         True
-        sage: import numpy as np
-        sage: w = np.array([1, 2, pi], float)
-        sage: v = vector(w, immutable=True)
-        sage: v.is_immutable()
+        sage: import numpy as np                                                                    # optional - numpy
+        sage: w = np.array([1, 2, pi], float)                                                       # optional - numpy
+        sage: v = vector(w, immutable=True)                                                         # optional - numpy
+        sage: v.is_immutable()                                                                      # optional - numpy
         True
-        sage: w = np.array([i, 2, 3], complex)
-        sage: v = vector(w, immutable=True)
-        sage: v.is_immutable()
+        sage: w = np.array([i, 2, 3], complex)                                                      # optional - numpy
+        sage: v = vector(w, immutable=True)                                                         # optional - numpy
+        sage: v.is_immutable()                                                                      # optional - numpy
         True
 
     TESTS:
@@ -1074,48 +1074,48 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector([1,2,3])
-            sage: v.numpy()
+            sage: v.numpy()                                                             # optional - numpy
             array([1, 2, 3], dtype=object)
-            sage: v.numpy() * v.numpy()
+            sage: v.numpy() * v.numpy()                                                 # optional - numpy
             array([1, 4, 9], dtype=object)
 
-            sage: vector(QQ, [1, 2, 5/6]).numpy()
+            sage: vector(QQ, [1, 2, 5/6]).numpy()                                       # optional - numpy
             array([1, 2, 5/6], dtype=object)
 
         By default the ``object`` `dtype <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_ is used.
         Alternatively, the desired dtype can be passed in as a parameter::
 
             sage: v = vector(QQ, [1, 2, 5/6])
-            sage: v.numpy()
+            sage: v.numpy()                                                             # optional - numpy
             array([1, 2, 5/6], dtype=object)
-            sage: v.numpy(dtype=float)
+            sage: v.numpy(dtype=float)                                                  # optional - numpy
             array([1.        , 2.        , 0.83333333])
-            sage: v.numpy(dtype=int)
+            sage: v.numpy(dtype=int)                                                    # optional - numpy
             array([1, 2, 0])
-            sage: import numpy
-            sage: v.numpy(dtype=numpy.uint8)
+            sage: import numpy                                                          # optional - numpy
+            sage: v.numpy(dtype=numpy.uint8)                                            # optional - numpy
             array([1, 2, 0], dtype=uint8)
 
         Passing a dtype of None will let numpy choose a native type, which can
         be more efficient but may have unintended consequences::
 
-            sage: v.numpy(dtype=None)
+            sage: v.numpy(dtype=None)                                                   # optional - numpy
             array([1.        , 2.        , 0.83333333])
 
             sage: w = vector(ZZ, [0, 1, 2^63 -1]); w
             (0, 1, 9223372036854775807)
-            sage: wn = w.numpy(dtype=None); wn
+            sage: wn = w.numpy(dtype=None); wn                                          # optional - numpy
             array([                  0,                   1, 9223372036854775807]...)
-            sage: wn.dtype
+            sage: wn.dtype                                                              # optional - numpy
             dtype('int64')
-            sage: w.dot_product(w)
+            sage: w.dot_product(w)                                                      # optional - numpy
             85070591730234615847396907784232501250
-            sage: wn.dot(wn)        # overflow
+            sage: wn.dot(wn)        # overflow                                          # optional - numpy
             2
 
         Numpy can give rather obscure errors; we wrap these to give a bit of context::
 
-            sage: vector([1, 1/2, QQ['x'].0]).numpy(dtype=float)
+            sage: vector([1, 1/2, QQ['x'].0]).numpy(dtype=float)                        # optional - numpy
             Traceback (most recent call last):
             ...
             ValueError: Could not convert vector over Univariate Polynomial Ring in x over Rational Field to numpy array of type <... 'float'>: setting an array element with a sequence.

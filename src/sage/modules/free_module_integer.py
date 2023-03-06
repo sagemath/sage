@@ -156,10 +156,10 @@ def IntegerLattice(basis, lll_reduce=True):
     Sage also interfaces with fpylll's lattice generator::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: from fpylll import IntegerMatrix
-        sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)
-        sage: A = A.to_matrix(matrix(ZZ, 8, 8))
-        sage: IntegerLattice(A, lll_reduce=False)
+        sage: from fpylll import IntegerMatrix                                          # optional - fpylll
+        sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)                # optional - fpylll
+        sage: A = A.to_matrix(matrix(ZZ, 8, 8))                                         # optional - fpylll
+        sage: IntegerLattice(A, lll_reduce=False)                                       # optional - fpylll
         Free module of degree 8 and rank 8 over Integer Ring
         User basis matrix:
         [   1024  829556  161099   11567  521155  769480  639201  689979]
