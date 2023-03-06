@@ -108,6 +108,7 @@ include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
 include sage/rings/polynomial/flatten.p*
 include sage/rings/polynomial/laurent_polynomial_ring_base.p*
+include sage/rings/polynomial/ideal.p*
 
 graft sage/rings/function_field
 exclude sage/rings/function_field/derivations.*                         # module elements
