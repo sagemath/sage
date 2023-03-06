@@ -38,8 +38,8 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:     def reduce(self,x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
-    sage: F.<x,y,z> = FreeAlgebra(QQ, 3)
-    sage: I3 = PowerIdeal(F,3); I3
+    sage: F.<x,y,z> = FreeAlgebra(QQ, 3)                                                # optional - sage.combinat, sage.modules
+    sage: I3 = PowerIdeal(F,3); I3                                                      # optional - sage.combinat, sage.modules
     Twosided Ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y,
     x*z^2, y*x^2, y*x*y, y*x*z, y^2*x, y^3, y^2*z, y*z*x, y*z*y, y*z^2,
     z*x^2, z*x*y, z*x*z, z*y*x, z*y^2, z*y*z, z^2*x, z^2*y, z^3) of
@@ -49,33 +49,33 @@ Free algebras have a custom quotient method that serves at creating
 finite dimensional quotients defined by multiplication matrices. We
 are bypassing it, so that we obtain the default quotient::
 
-    sage: Q3.<a,b,c> = F.quotient(I3)
-    sage: Q3
+    sage: Q3.<a,b,c> = F.quotient(I3)                                                   # optional - sage.combinat, sage.modules
+    sage: Q3                                                                            # optional - sage.combinat, sage.modules
     Quotient of Free Algebra on 3 generators (x, y, z) over Rational Field by
     the ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y, x*z^2,
     y*x^2, y*x*y, y*x*z, y^2*x, y^3, y^2*z, y*z*x, y*z*y, y*z^2, z*x^2, z*x*y,
     z*x*z, z*y*x, z*y^2, z*y*z, z^2*x, z^2*y, z^3)
-    sage: (a+b+2)^4
+    sage: (a+b+2)^4                                                                     # optional - sage.combinat, sage.modules
     16 + 32*a + 32*b + 24*a^2 + 24*a*b + 24*b*a + 24*b^2
-    sage: Q3.is_commutative()
+    sage: Q3.is_commutative()                                                           # optional - sage.combinat, sage.modules
     False
 
 Even though `Q_3` is not commutative, there is commutativity for
 products of degree three::
 
-    sage: a*(b*c)-(b*c)*a==F.zero()
+    sage: a*(b*c)-(b*c)*a==F.zero()                                                     # optional - sage.combinat, sage.modules
     True
 
 If we quotient out all terms of degree two then of course the resulting
 quotient ring is commutative::
 
-    sage: I2 = PowerIdeal(F,2); I2
+    sage: I2 = PowerIdeal(F,2); I2                                                      # optional - sage.combinat, sage.modules
     Twosided Ideal (x^2, x*y, x*z, y*x, y^2, y*z, z*x, z*y, z^2) of Free Algebra
     on 3 generators (x, y, z) over Rational Field
-    sage: Q2.<a,b,c> = F.quotient(I2)
-    sage: Q2.is_commutative()
+    sage: Q2.<a,b,c> = F.quotient(I2)                                                   # optional - sage.combinat, sage.modules
+    sage: Q2.is_commutative()                                                           # optional - sage.combinat, sage.modules
     True
-    sage: (a+b+2)^4
+    sage: (a+b+2)^4                                                                     # optional - sage.combinat, sage.modules
     16 + 32*a + 32*b
 
 Since :trac:`7797`, there is an implementation of free algebras
@@ -84,16 +84,17 @@ letterplace wrapper allows to provide the above toy example more
 easily::
 
     sage: from itertools import product
-    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-    sage: Q3 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=3)]*F)
-    sage: Q3
-    Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field by the ideal (x*x*x, x*x*y, x*x*z, x*y*x, x*y*y, x*y*z, x*z*x, x*z*y, x*z*z, y*x*x, y*x*y, y*x*z, y*y*x, y*y*y, y*y*z, y*z*x, y*z*y, y*z*z, z*x*x, z*x*y, z*x*z, z*y*x, z*y*y, z*y*z, z*z*x, z*z*y, z*z*z)
-    sage: Q3.0*Q3.1-Q3.1*Q3.0
+    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')                     # optional - sage.combinat, sage.modules
+    sage: Q3 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=3)]*F)              # optional - sage.combinat, sage.modules
+    sage: Q3                                                                            # optional - sage.combinat, sage.modules
+    Quotient of Free Associative Unital Algebra on 3 generators (x, y, z)
+     over Rational Field by the ideal (x*x*x, x*x*y, x*x*z, x*y*x, x*y*y, x*y*z, x*z*x, x*z*y, x*z*z, y*x*x, y*x*y, y*x*z, y*y*x, y*y*y, y*y*z, y*z*x, y*z*y, y*z*z, z*x*x, z*x*y, z*x*z, z*y*x, z*y*y, z*y*z, z*z*x, z*z*y, z*z*z)
+    sage: Q3.0*Q3.1 - Q3.1*Q3.0                                                         # optional - sage.combinat, sage.modules
     xbar*ybar - ybar*xbar
-    sage: Q3.0*(Q3.1*Q3.2)-(Q3.1*Q3.2)*Q3.0
+    sage: Q3.0*(Q3.1*Q3.2) - (Q3.1*Q3.2)*Q3.0                                           # optional - sage.combinat, sage.modules
     0
-    sage: Q2 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=2)]*F)
-    sage: Q2.is_commutative()
+    sage: Q2 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=2)]*F)              # optional - sage.combinat, sage.modules
+    sage: Q2.is_commutative()                                                           # optional - sage.combinat, sage.modules
     True
 
 """

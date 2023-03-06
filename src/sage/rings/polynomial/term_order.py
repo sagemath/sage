@@ -683,10 +683,10 @@ class TermOrder(SageObject):
 
         Check that :trac:`29635` is fixed::
 
-            sage: T = PolynomialRing(GF(101^5), 'u,v,w', order=TermOrder('degneglex')).term_order()
-            sage: T.singular_str()
+            sage: T = PolynomialRing(GF(101^5), 'u,v,w', order=TermOrder('degneglex')).term_order()     # optional - sage.libs.pari
+            sage: T.singular_str()                                                                      # optional - sage.libs.pari
             '(a(1:3),ls(3))'
-            sage: (T + T).singular_str()
+            sage: (T + T).singular_str()                                                                # optional - sage.libs.pari
             '(a(1:3),ls(3),a(1:3),ls(3))'
         """
         if isinstance(name, TermOrder):
