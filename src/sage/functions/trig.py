@@ -336,9 +336,9 @@ class Function_cot(GinacFunction):
         """
         EXAMPLES::
 
-             sage: import numpy
-             sage: a = numpy.arange(2, 5)
-             sage: cot(a)
+             sage: import numpy                                                         # optional - numpy
+             sage: a = numpy.arange(2, 5)                                               # optional - numpy
+             sage: cot(a)                                                               # optional - numpy
              array([-0.45765755, -7.01525255,  0.86369115])
         """
         return 1.0 / tan(x)
@@ -406,9 +406,9 @@ class Function_sec(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: sec(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: sec(a)                                                                # optional - numpy
             array([-2.40299796, -1.01010867, -1.52988566])
         """
         return 1 / cos(x)
@@ -476,9 +476,9 @@ class Function_csc(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: csc(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: csc(a)                                                                # optional - numpy
             array([ 1.09975017,  7.0861674 , -1.32134871])
         """
         return 1 / sin(x)
@@ -745,9 +745,9 @@ class Function_arccot(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: arccot(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: arccot(a)                                                             # optional - numpy
             array([0.46364761, 0.32175055, 0.24497866])
         """
         return math.pi / 2 - arctan(x)
@@ -805,9 +805,9 @@ class Function_arccsc(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: arccsc(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: arccsc(a)                                                             # optional - numpy
             array([0.52359878, 0.33983691, 0.25268026])
         """
         return arcsin(1.0 / x)
@@ -867,9 +867,9 @@ class Function_arcsec(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: arcsec(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: arcsec(a)                                                             # optional - numpy
             array([1.04719755, 1.23095942, 1.31811607])
         """
         return arccos(1.0 / x)
@@ -943,16 +943,16 @@ class Function_arctan2(GinacFunction):
 
         The function also works with numpy arrays as input::
 
-            sage: import numpy
-            sage: a = numpy.linspace(1, 3, 3)
-            sage: b = numpy.linspace(3, 6, 3)
-            sage: atan2(a, b)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.linspace(1, 3, 3)                                           # optional - numpy
+            sage: b = numpy.linspace(3, 6, 3)                                           # optional - numpy
+            sage: atan2(a, b)                                                           # optional - numpy
             array([0.32175055, 0.41822433, 0.46364761])
 
-            sage: atan2(1,a)
+            sage: atan2(1,a)                                                            # optional - numpy
             array([0.78539816, 0.46364761, 0.32175055])
 
-            sage: atan2(a, 1)
+            sage: atan2(a, 1)                                                           # optional - numpy
             array([0.78539816, 1.10714872, 1.24904577])
 
         TESTS::

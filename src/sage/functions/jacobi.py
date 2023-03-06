@@ -208,70 +208,70 @@ class Jacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq
-            sage: almosteq(n(jacobi_nd(8, 0, hold=True)), n(jacobi_nd(8, 0)))
+            sage: from mpmath import almosteq                                           # optional - mpmath
+            sage: almosteq(n(jacobi_nd(8, 0, hold=True)), n(jacobi_nd(8, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_nd(1, 1, hold=True)), n(jacobi_nd(1, 1)))
+            sage: almosteq(n(jacobi_nd(1, 1, hold=True)), n(jacobi_nd(1, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_nd(0, -5, hold=True)), n(jacobi_nd(0, -5)))
+            sage: almosteq(n(jacobi_nd(0, -5, hold=True)), n(jacobi_nd(0, -5)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_ns(-4, 0, hold=True)), n(jacobi_ns(-4, 0)))
+            sage: almosteq(n(jacobi_ns(-4, 0, hold=True)), n(jacobi_ns(-4, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_ns(-2, 1, hold=True)), n(jacobi_ns(-2, 1)))
+            sage: almosteq(n(jacobi_ns(-2, 1, hold=True)), n(jacobi_ns(-2, 1)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_nc(2, 0, hold=True)), n(jacobi_nc(2, 0)))
+            sage: almosteq(n(jacobi_nc(2, 0, hold=True)), n(jacobi_nc(2, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_nc(1, 1, hold=True)), n(jacobi_nc(1, 1)))
+            sage: almosteq(n(jacobi_nc(1, 1, hold=True)), n(jacobi_nc(1, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_nc(0, 0, hold=True)), n(jacobi_nc(0, 0)))
+            sage: almosteq(n(jacobi_nc(0, 0, hold=True)), n(jacobi_nc(0, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dn(-10, 0, hold=True)), n(jacobi_dn(-10, 0)))
+            sage: almosteq(n(jacobi_dn(-10, 0, hold=True)), n(jacobi_dn(-10, 0)))       # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dn(-1, 1, hold=True)), n(jacobi_dn(-1, 1)))
+            sage: almosteq(n(jacobi_dn(-1, 1, hold=True)), n(jacobi_dn(-1, 1)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dn(0, 3, hold=True)), n(jacobi_dn(0, 3)))
+            sage: almosteq(n(jacobi_dn(0, 3, hold=True)), n(jacobi_dn(0, 3)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_ds(2, 0, hold=True)), n(jacobi_ds(2, 0)))
+            sage: almosteq(n(jacobi_ds(2, 0, hold=True)), n(jacobi_ds(2, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dc(-1, 0, hold=True)), n(jacobi_dc(-1, 0)))
+            sage: almosteq(n(jacobi_dc(-1, 0, hold=True)), n(jacobi_dc(-1, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dc(-8, 1, hold=True)), n(jacobi_dc(-8, 1)))
+            sage: almosteq(n(jacobi_dc(-8, 1, hold=True)), n(jacobi_dc(-8, 1)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_dc(0, -10, hold=True)), n(jacobi_dc(0, -10)))
+            sage: almosteq(n(jacobi_dc(0, -10, hold=True)), n(jacobi_dc(0, -10)))       # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sn(-7, 0, hold=True)), n(jacobi_sn(-7, 0)))
+            sage: almosteq(n(jacobi_sn(-7, 0, hold=True)), n(jacobi_sn(-7, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sn(-3, 1, hold=True)), n(jacobi_sn(-3, 1)))
+            sage: almosteq(n(jacobi_sn(-3, 1, hold=True)), n(jacobi_sn(-3, 1)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sn(0, -6, hold=True)), n(jacobi_sn(0, -6)))
+            sage: almosteq(n(jacobi_sn(0, -6, hold=True)), n(jacobi_sn(0, -6)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sd(4, 0, hold=True)), n(jacobi_sd(4, 0)))
+            sage: almosteq(n(jacobi_sd(4, 0, hold=True)), n(jacobi_sd(4, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sd(0, 1, hold=True)), n(jacobi_sd(0, 1)))
+            sage: almosteq(n(jacobi_sd(0, 1, hold=True)), n(jacobi_sd(0, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sd(0, 3, hold=True)), n(jacobi_sd(0, 3)))
+            sage: almosteq(n(jacobi_sd(0, 3, hold=True)), n(jacobi_sd(0, 3)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sc(-9, 0, hold=True)), n(jacobi_sc(-9, 0)))
+            sage: almosteq(n(jacobi_sc(-9, 0, hold=True)), n(jacobi_sc(-9, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sc(0, 1, hold=True)), n(jacobi_sc(0, 1)))
+            sage: almosteq(n(jacobi_sc(0, 1, hold=True)), n(jacobi_sc(0, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_sc(0, -10, hold=True)), n(jacobi_sc(0, -10)))
+            sage: almosteq(n(jacobi_sc(0, -10, hold=True)), n(jacobi_sc(0, -10)))       # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cn(-2, 0, hold=True)), n(jacobi_cn(-2, 0)))
+            sage: almosteq(n(jacobi_cn(-2, 0, hold=True)), n(jacobi_cn(-2, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cn(6, 1, hold=True)), n(jacobi_cn(6, 1)))
+            sage: almosteq(n(jacobi_cn(6, 1, hold=True)), n(jacobi_cn(6, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cn(0, -10, hold=True)), n(jacobi_cn(0, -10)))
+            sage: almosteq(n(jacobi_cn(0, -10, hold=True)), n(jacobi_cn(0, -10)))       # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cd(9, 0, hold=True)), n(jacobi_cd(9, 0)))
+            sage: almosteq(n(jacobi_cd(9, 0, hold=True)), n(jacobi_cd(9, 0)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cd(-8, 1, hold=True)), n(jacobi_cd(-8, 1)))
+            sage: almosteq(n(jacobi_cd(-8, 1, hold=True)), n(jacobi_cd(-8, 1)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cd(0, 1, hold=True)), n(jacobi_cd(0, 1)))
+            sage: almosteq(n(jacobi_cd(0, 1, hold=True)), n(jacobi_cd(0, 1)))           # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cs(-9, 0, hold=True)), n(jacobi_cs(-9, 0)))
+            sage: almosteq(n(jacobi_cs(-9, 0, hold=True)), n(jacobi_cs(-9, 0)))         # optional - mpmath
             True
-            sage: almosteq(n(jacobi_cs(-6, 1, hold=True)), n(jacobi_cs(-6, 1)))
+            sage: almosteq(n(jacobi_cs(-6, 1, hold=True)), n(jacobi_cs(-6, 1)))         # optional - mpmath
             True
         """
         if self.kind == 'nd':
@@ -371,16 +371,16 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
-            sage: from mpmath import almosteq
+            sage: from mpmath import almosteq                                           # optional - mpmath
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
-            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),
+            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # optional - mpmath
             ....:          jacobi_sn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),
+            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),                     # optional - mpmath
             ....:          jacobi_cn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),
+            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),                     # optional - mpmath
             ....:          jacobi_dn(a, b), abs_eps=0.01)
             True
         """
@@ -560,77 +560,77 @@ class InverseJacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq
-            sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
+            sage: from mpmath import almosteq                                           # optional - mpmath
+            sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_cd(1, -8)))
             True
-            sage: almosteq(n(inverse_jacobi_cn(0, -5, hold=True)),
+            sage: almosteq(n(inverse_jacobi_cn(0, -5, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_cn(0, -5)))
             True
-            sage: almosteq(n(inverse_jacobi_cn(1, -8, hold=True)),
+            sage: almosteq(n(inverse_jacobi_cn(1, -8, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_cn(1, -8)))
             True
-            sage: almosteq(n(inverse_jacobi_cs(7, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_cs(7, 1, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_cs(7, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_dc(3, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_dc(3, 0, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_dc(3, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_dc(1, 7, hold=True)),
+            sage: almosteq(n(inverse_jacobi_dc(1, 7, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_dc(1, 7)))
             True
-            sage: almosteq(n(inverse_jacobi_dn(1, -1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_dn(1, -1, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_dn(1, -1)))
             True
-            sage: almosteq(n(inverse_jacobi_ds(7, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_ds(7, 0, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_ds(7, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_ds(5, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_ds(5, 1, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_ds(5, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_nc(-2, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_nc(-2, 0, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_nc(-2, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_nc(-1, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_nc(-1, 1, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_nc(-1, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_nc(1, 4, hold=True)),
+            sage: almosteq(n(inverse_jacobi_nc(1, 4, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_nc(1, 4)))
             True
-            sage: almosteq(n(inverse_jacobi_nd(9, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_nd(9, 1, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_nd(9, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_nd(1, -9, hold=True)),
+            sage: almosteq(n(inverse_jacobi_nd(1, -9, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_nd(1, -9)))
             True
-            sage: almosteq(n(inverse_jacobi_ns(-6, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_ns(-6, 0, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_ns(-6, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_ns(6, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_ns(6, 1, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_ns(6, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_sc(9, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sc(9, 0, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_sc(9, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_sc(8, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sc(8, 1, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_sc(8, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_sc(0, -8, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sc(0, -8, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_sc(0, -8)))
             True
-            sage: almosteq(n(inverse_jacobi_sd(-1, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sd(-1, 0, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_sd(-1, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_sd(-2, 1, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sd(-2, 1, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_sd(-2, 1)))
             True
-            sage: almosteq(n(inverse_jacobi_sd(0, -2, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sd(0, -2, hold=True)),                      # optional - mpmath
             ....:          n(inverse_jacobi_sd(0, -2)))
             True
-            sage: almosteq(n(inverse_jacobi_sn(0, 0, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sn(0, 0, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_sn(0, 0)))
             True
-            sage: almosteq(n(inverse_jacobi_sn(0, 6, hold=True)),
+            sage: almosteq(n(inverse_jacobi_sn(0, 6, hold=True)),                       # optional - mpmath
             ....:          n(inverse_jacobi_sn(0, 6)))
             True
         """
@@ -726,55 +726,55 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
-            sage: from mpmath import almosteq
+            sage: from mpmath import almosteq                                                                           # optional - mpmath
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
             sage: m = var('m')
-            sage: almosteq(abs((diff(jacobi_cd(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_cd(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_cd(x, m), x).subs(x=jacobi_cd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_cn(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_cn(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_cn(x, m), x).subs(x=jacobi_cn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_cs(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_cs(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_cs(x, m), x).subs(x=jacobi_cs(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_dc(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_dc(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_dc(x, m), x).subs(x=jacobi_dc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_dn(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_dn(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_dn(x, m), x).subs(x=jacobi_dn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_ds(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_ds(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_ds(x, m), x).subs(x=jacobi_ds(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_nc(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_nc(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_nc(x, m), x).subs(x=jacobi_nc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_nd(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_nd(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_nd(x, m), x).subs(x=jacobi_nd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_ns(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_ns(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_ns(x, m), x).subs(x=jacobi_ns(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sc(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_sc(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_sc(x, m), x).subs(x=jacobi_sc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sd(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_sd(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_sd(x, m), x).subs(x=jacobi_sd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sn(x, m), x) *
+            sage: almosteq(abs((diff(jacobi_sn(x, m), x) *                                                              # optional - mpmath
             ....:               diff(inverse_jacobi_sn(x, m), x).subs(x=jacobi_sn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
@@ -1143,129 +1143,129 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipfun, chop
+        sage: from mpmath import ellipfun, chop                                         # optional - mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 0), 0))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 0), 0))                   # optional - mpmath
         mpf('0.59999999999999998')
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 1), 1))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 1), 1))                   # optional - mpmath
         mpf('0.59999999999999998')
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0, -3), -3))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0, -3), -3))                   # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', -1, 4), 4))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', -1, 4), 4))                    # optional - mpmath
         mpf('-1.0')
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.3, 4), 4))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.3, 4), 4))                   # optional - mpmath
         mpf('0.29999999999999999')
-        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.8, 4), 4))
+        sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.8, 4), 4))                   # optional - mpmath
         mpf('0.80000000000000004')
 
-        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.8, 0), 0))
+        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.8, 0), 0))                   # optional - mpmath
         mpf('0.80000000000000004')
-        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -0.7, 1), 1))
+        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -0.7, 1), 1))                  # optional - mpmath
         mpf('-0.69999999999999996')
-        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.01, 2), 2))
+        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.01, 2), 2))                  # optional - mpmath
         mpf('0.01')
-        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0, 2), 2))
+        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0, 2), 2))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -10, 6), 6))
+        sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -10, 6), 6))                   # optional - mpmath
         mpf('-10.0')
 
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -10, 0), 0))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -10, 0), 0))                   # optional - mpmath
         mpf('-9.9999999999999982')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 50, 1), 1))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 50, 1), 1))                    # optional - mpmath
         mpf('50.000000000000071')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 1, 5), 5))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 1, 5), 5))                     # optional - mpmath
         mpf('1.0')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 0.5, -5), -5))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 0.5, -5), -5))                 # optional - mpmath
         mpf('0.5')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -0.75, -15), -15))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -0.75, -15), -15))             # optional - mpmath
         mpf('-0.75000000000000022')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 10, 0.8), 0.8))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 10, 0.8), 0.8))                # optional - mpmath
         mpf('9.9999999999999982')
-        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -2, 0.9), 0.9))
+        sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -2, 0.9), 0.9))                # optional - mpmath
         mpf('-2.0')
 
-        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -4, 0), 0))
+        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -4, 0), 0))                    # optional - mpmath
         mpf('-3.9999999999999987')
-        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 1), 1))
+        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 1), 1))                     # optional - mpmath
         mpf('7.0000000000000009')
-        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 3), 3))
+        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 3), 3))                     # optional - mpmath
         mpf('7.0')
-        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 0, 2), 2))
+        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 0, 2), 2))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -18, -4), -4))
+        sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -18, -4), -4))                 # optional - mpmath
         mpf('-17.999999999999925')
 
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.3, 1), 1))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.3, 1), 1))                  # optional - mpmath
         mpf('-0.29999999999999999')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 1, -1), -1))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 1, -1), -1))                   # optional - mpmath
         mpf('1.0')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 0.8, 0.5), 0.5))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 0.8, 0.5), 0.5))               # optional - mpmath
         mpf('0.80000000000000004')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 5, -4), -4))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 5, -4), -4))                   # optional - mpmath
         mpf('5.0')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 0.4, 0.5), 0.5))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 0.4, 0.5), 0.5))               # optional - mpmath
         mpf('0.40000000000000002')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.4, 0.5), 0.5))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.4, 0.5), 0.5))              # optional - mpmath
         mpf('-0.40000000000000002')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.9, 0.5), 0.5))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.9, 0.5), 0.5))              # optional - mpmath
         mpf('-0.90000000000000002')
-        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -1.9, 0.2), 0.2))
+        sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -1.9, 0.2), 0.2))              # optional - mpmath
         mpf('-1.8999999999999999')
 
-        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -1.9, 1), 1))
+        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -1.9, 1), 1))                  # optional - mpmath
         mpf('-1.8999999999999999')
-        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 1, -1), -1))
+        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 1, -1), -1))                   # optional - mpmath
         mpf('1.0')
-        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 11, -6), -6))
+        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 11, -6), -6))                  # optional - mpmath
         mpf('11.0')
-        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 0, 8), 8))
+        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 0, 8), 8))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -3, 0.8), 0.8))
+        sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -3, 0.8), 0.8))                # optional - mpmath
         mpf('-2.9999999999999996')
 
-        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -3, 0), 0))
+        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -3, 0), 0))                    # optional - mpmath
         mpf('-3.0')
-        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 2, 1), 1))
+        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 2, 1), 1))                     # optional - mpmath
         mpf('2.0')
-        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 0, 9), 9))
+        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 0, 9), 9))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -7, 3), 3))
+        sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -7, 3), 3))                    # optional - mpmath
         mpf('-7.0')
 
-        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -7, 0), 0))
+        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -7, 0), 0))                    # optional - mpmath
         mpf('-6.9999999999999991')
-        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 8, 1), 1))
+        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 8, 1), 1))                     # optional - mpmath
         mpf('8.0')
-        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 2, 6), 6))
+        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 2, 6), 6))                     # optional - mpmath
         mpf('2.0')
-        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 0, 4), 4))
+        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 0, 4), 4))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -6, 8), 8))
+        sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -6, 8), 8))                    # optional - mpmath
         mpf('-6.0000000000000018')
 
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))                    # optional - mpmath
         mpf('-6.0000000000000009')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))                     # optional - mpmath
         mpf('1.0')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))                     # optional - mpmath
         mpf('6.0000000000000027')
 
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))                     # optional - mpmath
         mpf('5.0000000000000018')
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))                    # optional - mpmath
         mpf('-4.0000000000000018')
 
-        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', -4, 0), 0))
+        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', -4, 0), 0))                    # optional - mpmath
         mpf('-3.9999999999999991')
-        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 7, 1), 1))
+        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 7, 1), 1))                     # optional - mpmath
         mpf('7.0')
-        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 0, 9), 9))
+        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 0, 9), 9))                     # optional - mpmath
         mpf('0.0')
-        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 8, 0.8), 0.8))
+        sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 8, 0.8), 0.8))                 # optional - mpmath
         mpf('7.9999999999999991')
 
-        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))
+        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))               # optional - mpmath
         mpf('4.0')
     """
     from mpmath import mp
@@ -1611,19 +1611,19 @@ def jacobi_am_f(x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipf
+        sage: from mpmath import ellipf                                                 # optional - mpmath
         sage: from sage.functions.jacobi import jacobi_am_f
-        sage: ellipf(jacobi_am_f(0.5, 1), 1)
+        sage: ellipf(jacobi_am_f(0.5, 1), 1)                                            # optional - mpmath
         mpf('0.5')
-        sage: ellipf(jacobi_am(3, 0.3), 0.3)
+        sage: ellipf(jacobi_am(3, 0.3), 0.3)                                            # optional - mpmath
         mpf('3.0')
-        sage: ellipf(jacobi_am_f(2, -0.5), -0.5)
+        sage: ellipf(jacobi_am_f(2, -0.5), -0.5)                                        # optional - mpmath
         mpf('2.0')
-        sage: jacobi_am_f(2, -0.5)
+        sage: jacobi_am_f(2, -0.5)                                                      # optional - mpmath
         mpf('2.2680930777934176')
-        sage: jacobi_am_f(-2, -0.5)
+        sage: jacobi_am_f(-2, -0.5)                                                     # optional - mpmath
         mpf('-2.2680930777934176')
-        sage: jacobi_am_f(-3, 2)
+        sage: jacobi_am_f(-3, 2)                                                        # optional - mpmath
         mpf('0.36067407399586108')
     """
     from mpmath import mp

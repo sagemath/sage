@@ -65,7 +65,7 @@ class Function_sinh(GinacFunction):
 
             sage: latex(sinh(x))
             \sinh\left(x\right)
-            sage: sinh(x)._sympy_()
+            sage: sinh(x)._sympy_()                                                     # optional - sympy
             sinh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
@@ -102,7 +102,7 @@ class Function_cosh(GinacFunction):
 
             sage: latex(cosh(x))
             \cosh\left(x\right)
-            sage: cosh(x)._sympy_()
+            sage: cosh(x)._sympy_()                                                     # optional - sympy
             cosh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
@@ -164,7 +164,7 @@ class Function_tanh(GinacFunction):
 
             sage: latex(tanh(x))
             \tanh\left(x\right)
-            sage: tanh(x)._sympy_()
+            sage: tanh(x)._sympy_()                                                     # optional - sympy
             tanh(x)
 
         Check that real/imaginary parts are correct (:trac:`20098`)::
@@ -222,7 +222,7 @@ class Function_coth(GinacFunction):
             -1/sinh(x)^2
             sage: latex(coth(x))
             \coth\left(x\right)
-            sage: coth(x)._sympy_()
+            sage: coth(x)._sympy_()                                                     # optional - sympy
             coth(x)
         """
         GinacFunction.__init__(self, "coth", latex_name=r"\coth")
@@ -231,9 +231,9 @@ class Function_coth(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: coth(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: coth(a)                                                               # optional - numpy
             array([1.03731472, 1.00496982, 1.00067115])
         """
         return 1.0 / tanh(x)
@@ -276,7 +276,7 @@ class Function_sech(GinacFunction):
             -sech(x)*tanh(x)
             sage: latex(sech(x))
             \operatorname{sech}\left(x\right)
-            sage: sech(x)._sympy_()
+            sage: sech(x)._sympy_()                                                     # optional - sympy
             sech(x)
         """
         GinacFunction.__init__(self, "sech", latex_name=r"\operatorname{sech}",)
@@ -285,9 +285,9 @@ class Function_sech(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: sech(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: sech(a)                                                               # optional - numpy
             array([0.26580223, 0.09932793, 0.03661899])
         """
         return 1.0 / cosh(x)
@@ -328,7 +328,7 @@ class Function_csch(GinacFunction):
             -coth(x)*csch(x)
             sage: latex(csch(x))
             \operatorname{csch}\left(x\right)
-            sage: csch(x)._sympy_()
+            sage: csch(x)._sympy_()                                                     # optional - sympy
             csch(x)
         """
         GinacFunction.__init__(self, "csch", latex_name=r"\operatorname{csch}")
@@ -337,9 +337,9 @@ class Function_csch(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2, 5)
-            sage: csch(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2, 5)                                                # optional - numpy
+            sage: csch(a)                                                               # optional - numpy
             array([0.27572056, 0.09982157, 0.03664357])
         """
         return 1.0 / sinh(x)
@@ -403,7 +403,7 @@ class Function_arcsinh(GinacFunction):
             arcsinh
             sage: latex(asinh(x))
             \operatorname{arsinh}\left(x\right)
-            sage: asinh(x)._sympy_()
+            sage: asinh(x)._sympy_()                                                    # optional - sympy
             asinh(x)
         """
         GinacFunction.__init__(self, "arcsinh",
@@ -489,7 +489,7 @@ class Function_arccosh(GinacFunction):
             arccosh
             sage: latex(acosh(x))
             \operatorname{arcosh}\left(x\right)
-            sage: acosh(x)._sympy_()
+            sage: acosh(x)._sympy_()                                                    # optional - sympy
             acosh(x)
         """
         GinacFunction.__init__(self, "arccosh",
@@ -549,7 +549,7 @@ class Function_arctanh(GinacFunction):
             arctanh
             sage: latex(atanh(x))
             \operatorname{artanh}\left(x\right)
-            sage: atanh(x)._sympy_()
+            sage: atanh(x)._sympy_()                                                    # optional - sympy
             atanh(x)
         """
         GinacFunction.__init__(self, "arctanh",
@@ -593,7 +593,7 @@ class Function_arccoth(GinacFunction):
 
             sage: latex(acoth(x))
             \operatorname{arcoth}\left(x\right)
-            sage: acoth(x)._sympy_()
+            sage: acoth(x)._sympy_()                                                    # optional - sympy
             acoth(x)
 
         Check that :trac:`23636` is fixed::
@@ -611,9 +611,9 @@ class Function_arccoth(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.arange(2,5)
-            sage: acoth(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.arange(2,5)                                                 # optional - numpy
+            sage: acoth(a)                                                              # optional - numpy
             array([0.54930614, 0.34657359, 0.25541281])
         """
         return arctanh(1.0 / x)
@@ -644,7 +644,7 @@ class Function_arcsech(GinacFunction):
             -1/(sqrt(-x^2 + 1)*x)
             sage: latex(asech(x))
             \operatorname{arsech}\left(x\right)
-            sage: asech(x)._sympy_()
+            sage: asech(x)._sympy_()                                                    # optional - sympy
             asech(x)
         """
         GinacFunction.__init__(self, "arcsech",
@@ -657,9 +657,9 @@ class Function_arcsech(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.linspace(0,1,3)
-            sage: asech(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.linspace(0,1,3)                                             # optional - numpy
+            sage: asech(a)                                                              # optional - numpy
             doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([       inf,  1.3169579,  0.       ])
         """
@@ -698,7 +698,7 @@ class Function_arccsch(GinacFunction):
 
             sage: acsch(float(0.1))
             2.99822295029797
-            sage: acsch(x)._sympy_()
+            sage: acsch(x)._sympy_()                                                    # optional - sympy
             acsch(x)
         """
         GinacFunction.__init__(self, "arccsch",
@@ -711,9 +711,9 @@ class Function_arccsch(GinacFunction):
         """
         EXAMPLES::
 
-            sage: import numpy
-            sage: a = numpy.linspace(0,1,3)
-            sage: acsch(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.linspace(0,1,3)                                             # optional - numpy
+            sage: acsch(a)                                                              # optional - numpy
             doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([        inf,  1.44363548,  0.88137359])
         """
