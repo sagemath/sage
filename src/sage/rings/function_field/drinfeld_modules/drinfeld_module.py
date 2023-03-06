@@ -886,6 +886,106 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
         return DrinfeldModuleAction(self)
 
+    def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
+        """
+        Return the list of basic `j`-invariant parameters.
+
+        See the method :meth:`j_invariant` for the definition of the basic
+        `j`-invariant parameters.
+
+        INPUT:
+
+        - ``coeff_indices`` (list, default: ``None``) -- a list of indices for
+          the coefficients of the Drinfeld module. If specific indices are
+          chosen, then the method will return only the basic `j`-invariant
+          parameters that involves the given indices.
+
+        - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
+          will return only the parameters for which the basic `j`-invariant is
+          nonzero
+
+        EXAMPLES::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
+            sage: phi.basic_j_invariant_parameters()
+            [[[1, 2], [1, 5, 1]],
+             [[1, 2], [7, 4, 1]],
+             [[1, 2], [13, 3, 1]],
+             [[1, 2], [19, 2, 1]],
+             [[1, 2], [25, 1, 1]],
+             [[1, 2], [31, 0, 1]],
+             [[1, 2], [8, 9, 2]],
+             [[1, 2], [20, 7, 2]],
+             [[1, 2], [9, 14, 3]],
+             [[1, 2], [15, 13, 3]],
+             [[1, 2], [27, 11, 3]],
+             [[1, 2], [10, 19, 4]],
+             [[1, 2], [22, 17, 4]],
+             [[1, 2], [11, 24, 5]],
+             [[1, 2], [17, 23, 5]],
+             [[1, 2], [23, 22, 5]],
+             [[1, 2], [29, 21, 5]],
+             [[1, 2], [0, 31, 6]],
+             [[1, 2], [12, 29, 6]],
+             [[1, 2], [31, 31, 7]]]
+            sage: phi.basic_j_invariant_parameters([1])
+            [[[1], [31, 1]]]
+            sage: phi.basic_j_invariant_parameters([2])
+            [[[2], [31, 6]]]
+            sage: phi.basic_j_invariant_parameters(nonzero=True)
+            [[[2], [31, 6]]]
+        """
+        r = self._gen.degree()
+        if coeff_indices is None:
+            if nonzero:
+                coeff_indices = [k for k, g in enumerate(
+                    self.coefficients(sparse=False)[1:-1], start=1) if g]
+            else:
+                coeff_indices = list(range(1, r))
+        elif isinstance(coeff_indices, list):  # check if coeff_indices is valid
+            if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
+                raise TypeError("the elements of the list coeff_indices must be integers")
+            if max(coeff_indices) >= r or min(coeff_indices) <= 0:
+                raise ValueError(f"the maximum or the minimum of the list" \
+                    "coeff_indices must be > 0 and < {r} respectively")
+            if not all(coeff_indices[i] < coeff_indices[i+1] for i in range(len(coeff_indices) - 1)):
+                raise ValueError(f"the elements of coeff_indices should be distinct" \
+                    "and sorted")
+            if nonzero:
+                coeff_indices = [k for k in coeff_indices if self._gen[k]]
+        else:
+            raise TypeError("input coeff_indices is invalid")
+        # Create the equation and inequalities for the polyhedron:
+        q = self._Fq.order()
+        equation = [0]
+        inequalities = []
+        for idx, i in enumerate(coeff_indices):
+            # create the equation:
+            #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
+            equation.append(q**i - 1)
+
+            # create inequalities of the form 0 <= delta_i
+            lower_bounds = [0]*(len(coeff_indices) + 2)
+            lower_bounds[idx + 1] = 1
+
+            # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
+            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(coeff_indices) + 1)
+            upper_bounds[idx + 1] = -1
+
+            inequalities.extend((lower_bounds, upper_bounds))
+
+        equation.append(1 - q**r)
+
+        # Create the polyhedron defined by the equation and the inequalities.
+        polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
+
+        # Compute its integral points
+        integral_points = polyhedron.integral_points()
+
+        return [[coeff_indices, list(p)] for p in integral_points if gcd(p) == 1]
+
     def coefficient(self, n):
         r"""
         Return the `n`-th coefficient of the generator.
@@ -1064,6 +1164,52 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
         return isinstance(self, FiniteDrinfeldModule)
 
+    def is_isomorphic(self, psi):
+        r"""
+        Return ``True``  whether ``self`` is isomorphic to the Drinfeld module
+        `\psi`.
+
+        EXAMPLES::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: c = T^4 + 3*T^2 + T
+            sage: phi = DrinfeldModule(A, [T, T^3, T^9, T])
+            sage: psi = DrinfeldModule(A, [T, c^4*T^3, c^(24)*T^9, c^(124)*T])
+            sage: phi.is_isomorphic(psi)
+            True
+            sage: phi0 = DrinfeldModule(A, [T, 1, 1, 1])
+            sage: phi.is_isomorphic(phi0)
+            False
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [T, 1, 0, 1, 0, 0, 0, T^2, 1, 1])
+            sage: phi.is_isomorphic(phi)
+            True
+            sage: psi = DrinfeldModule(A, [T, 1, 0, 1, 0, T, 0, T^2, 1, 1])
+            sage: phi.is_isomorphic(psi)
+            False
+        """
+        # trivial checks:
+        if self._gen == psi._gen:
+            return True
+        if self._gen.degree() != psi._gen.degree():
+            return False
+        if self._gen.degree() == 1:
+            return True
+        # check if self and psi are patterned alike:
+        if not all(bool(g_self) == bool(g_psi) for g_self, g_psi in\
+            zip(self._gen.coefficients(sparse=False), psi._gen.coefficients(sparse=False))):
+            return False
+        # check that all the nonzero basic j-invariants agree
+        isom = True
+        for p in self.basic_j_invariant_parameters(nonzero=True):
+            if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
+                isom = False
+                break
+        return isom
+
     def j_invariant(self, parameter=None, check=True):
         r"""
         Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module for
@@ -1185,152 +1331,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                                  "weight-0 condition")
         num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
         return num/(self._gen[-1]**dr)
-
-    def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
-        """
-        Return the list of basic `j`-invariant parameters.
-
-        See the method :meth:`j_invariant` for the definition of the basic
-        `j`-invariant parameters.
-
-        INPUT:
-
-        - ``coeff_indices`` (list, default: ``None``) -- a list of indices for
-          the coefficients of the Drinfeld module. If specific indices are
-          chosen, then the method will return only the basic `j`-invariant
-          parameters that involves the given indices.
-
-        - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
-          will return only the parameters for which the basic `j`-invariant is
-          nonzero
-
-        EXAMPLES::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
-            sage: phi.basic_j_invariant_parameters()
-            [[[1, 2], [1, 5, 1]],
-             [[1, 2], [7, 4, 1]],
-             [[1, 2], [13, 3, 1]],
-             [[1, 2], [19, 2, 1]],
-             [[1, 2], [25, 1, 1]],
-             [[1, 2], [31, 0, 1]],
-             [[1, 2], [8, 9, 2]],
-             [[1, 2], [20, 7, 2]],
-             [[1, 2], [9, 14, 3]],
-             [[1, 2], [15, 13, 3]],
-             [[1, 2], [27, 11, 3]],
-             [[1, 2], [10, 19, 4]],
-             [[1, 2], [22, 17, 4]],
-             [[1, 2], [11, 24, 5]],
-             [[1, 2], [17, 23, 5]],
-             [[1, 2], [23, 22, 5]],
-             [[1, 2], [29, 21, 5]],
-             [[1, 2], [0, 31, 6]],
-             [[1, 2], [12, 29, 6]],
-             [[1, 2], [31, 31, 7]]]
-            sage: phi.basic_j_invariant_parameters([1])
-            [[[1], [31, 1]]]
-            sage: phi.basic_j_invariant_parameters([2])
-            [[[2], [31, 6]]]
-            sage: phi.basic_j_invariant_parameters(nonzero=True)
-            [[[2], [31, 6]]]
-        """
-        r = self._gen.degree()
-        if coeff_indices is None:
-            if nonzero:
-                coeff_indices = [k for k, g in enumerate(
-                    self.coefficients(sparse=False)[1:-1], start=1) if g]
-            else:
-                coeff_indices = list(range(1, r))
-        elif isinstance(coeff_indices, list):  # check if coeff_indices is valid
-            if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
-                raise TypeError("the elements of the list coeff_indices must be integers")
-            if max(coeff_indices) >= r or min(coeff_indices) <= 0:
-                raise ValueError(f"the maximum or the minimum of the list" \
-                    "coeff_indices must be > 0 and < {r} respectively")
-            if not all(coeff_indices[i] < coeff_indices[i+1] for i in range(len(coeff_indices) - 1)):
-                raise ValueError(f"the elements of coeff_indices should be distinct" \
-                    "and sorted")
-            if nonzero:
-                coeff_indices = [k for k in coeff_indices if self._gen[k]]
-        else:
-            raise TypeError("input coeff_indices is invalid")
-        # Create the equation and inequalities for the polyhedron:
-        q = self._Fq.order()
-        equation = [0]
-        inequalities = []
-        for idx, i in enumerate(coeff_indices):
-            # create the equation:
-            #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
-            equation.append(q**i - 1)
-
-            # create inequalities of the form 0 <= delta_i
-            lower_bounds = [0]*(len(coeff_indices) + 2)
-            lower_bounds[idx + 1] = 1
-
-            # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
-            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(coeff_indices) + 1)
-            upper_bounds[idx + 1] = -1
-
-            inequalities.extend((lower_bounds, upper_bounds))
-
-        equation.append(1 - q**r)
-
-        # Create the polyhedron defined by the equation and the inequalities.
-        polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
-
-        # Compute its integral points
-        integral_points = polyhedron.integral_points()
-
-        return [[coeff_indices, list(p)] for p in integral_points if gcd(p) == 1]
-
-    def is_isomorphic(self, psi):
-        r"""
-        Return ``True``  whether ``self`` is isomorphic to the Drinfeld module
-        `\psi`.
-
-        EXAMPLES::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: c = T^4 + 3*T^2 + T
-            sage: phi = DrinfeldModule(A, [T, T^3, T^9, T])
-            sage: psi = DrinfeldModule(A, [T, c^4*T^3, c^(24)*T^9, c^(124)*T])
-            sage: phi.is_isomorphic(psi)
-            True
-            sage: phi0 = DrinfeldModule(A, [T, 1, 1, 1])
-            sage: phi.is_isomorphic(phi0)
-            False
-
-        ::
-
-            sage: phi = DrinfeldModule(A, [T, 1, 0, 1, 0, 0, 0, T^2, 1, 1])
-            sage: phi.is_isomorphic(phi)
-            True
-            sage: psi = DrinfeldModule(A, [T, 1, 0, 1, 0, T, 0, T^2, 1, 1])
-            sage: phi.is_isomorphic(psi)
-            False
-        """
-        # trivial checks:
-        if self._gen == psi._gen:
-            return True
-        if self._gen.degree() != psi._gen.degree():
-            return False
-        if self._gen.degree() == 1:
-            return True
-        # check if self and psi are patterned alike:
-        if not all(bool(g_self) == bool(g_psi) for g_self, g_psi in\
-            zip(self._gen.coefficients(sparse=False), psi._gen.coefficients(sparse=False))):
-            return False
-        # check that all the nonzero basic j-invariants agree
-        isom = True
-        for p in self.basic_j_invariant_parameters(nonzero=True):
-            if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
-                isom = False
-                break
-        return isom
 
     def morphism(self):
         r"""
