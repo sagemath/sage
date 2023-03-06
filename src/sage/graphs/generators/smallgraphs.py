@@ -1804,9 +1804,9 @@ def ChvatalGraph():
 
     TESTS::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: G = graphs.ChvatalGraph()
-        sage: G.is_isomorphic(Graph(networkx.chvatal_graph()))
+        sage: G.is_isomorphic(Graph(networkx.chvatal_graph()))                          # optional - networkx
         True
     """
     edges = {0: [1, 4, 6, 9], 1: [2, 5, 7], 2: [3, 6, 8], 3: [4, 7, 9],
@@ -2835,9 +2835,9 @@ def HeawoodGraph():
 
     TESTS::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: G = graphs.HeawoodGraph()
-        sage: G.is_isomorphic(Graph(networkx.heawood_graph()))
+        sage: G.is_isomorphic(Graph(networkx.heawood_graph()))                          # optional - networkx
         True
     """
     edges = {0: [1, 5, 13], 1: [2, 10], 2: [3, 7], 3: [4, 12], 4: [5, 9],
@@ -3294,9 +3294,9 @@ def KrackhardtKiteGraph():
 
     TESTS::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: G = graphs.KrackhardtKiteGraph()
-        sage: G.is_isomorphic(Graph(networkx.krackhardt_kite_graph()))
+        sage: G.is_isomorphic(Graph(networkx.krackhardt_kite_graph()))                  # optional - networkx
         True
     """
     edges = {0: [1, 2, 3, 5], 1: [3, 4, 6], 2: [3, 5], 3: [4, 5, 6],
