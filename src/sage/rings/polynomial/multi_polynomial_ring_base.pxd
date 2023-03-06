@@ -9,3 +9,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
     cdef public dict _magma_cache
 
     cdef _coerce_c_impl(self, x)
+
+
+cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
+    pass
