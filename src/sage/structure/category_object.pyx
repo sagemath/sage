@@ -360,8 +360,8 @@ cdef class CategoryObject(SageObject):
 
         ::
 
-            sage: B.<z> = EquationOrder(x^2 + 3)
-            sage: z.minpoly()
+            sage: B.<z> = EquationOrder(x^2 + 3)                                # optional - sage.rings.number_field
+            sage: z.minpoly()                                                   # optional - sage.rings.number_field
             x^2 + 3
         """
         return self._defining_names()[:n]
@@ -389,18 +389,18 @@ cdef class CategoryObject(SageObject):
         For orders, we correctly use the ring generator, see
         :trac:`15348`::
 
-            sage: B.<z> = EquationOrder(x^2 + 3)
-            sage: B._defining_names()
+            sage: B.<z> = EquationOrder(x^2 + 3)                                # optional - sage.rings.number_field
+            sage: B._defining_names()                                           # optional - sage.rings.number_field
             (z,)
 
         For vector spaces and free modules, we get a basis (which can
         be different from the given generators)::
 
-            sage: V = ZZ^3
-            sage: V._defining_names()
+            sage: V = ZZ^3                                                              # optional - sage.modules
+            sage: V._defining_names()                                                   # optional - sage.modules
             ((1, 0, 0), (0, 1, 0), (0, 0, 1))
-            sage: W = V.span([(0, 1, 0), (1/2, 1, 0)])
-            sage: W._defining_names()
+            sage: W = V.span([(0, 1, 0), (1/2, 1, 0)])                                  # optional - sage.modules
+            sage: W._defining_names()                                                   # optional - sage.modules
             ((1/2, 0, 0), (0, 1, 0))
         """
         return self.gens()
