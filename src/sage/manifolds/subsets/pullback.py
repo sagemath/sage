@@ -261,23 +261,23 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         PPL polyhedra and not-necessarily-closed polyhedra::
 
-            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System
-            sage: u = Variable(0)
-            sage: v = Variable(1)
-            sage: CS = Constraint_System()
-            sage: CS.insert(0 < u)
-            sage: CS.insert(u < 1)
-            sage: CS.insert(0 < v)
-            sage: CS.insert(v < 1)
-            sage: CS.insert(u + v <= 3)       # redundant inequality
-            sage: P = NNC_Polyhedron(CS); P
+            sage: from ppl import Variable, C_Polyhedron, NNC_Polyhedron, Constraint_System                             # optional - pplpy
+            sage: u = Variable(0)                                                                                       # optional - pplpy
+            sage: v = Variable(1)                                                                                       # optional - pplpy
+            sage: CS = Constraint_System()                                                                              # optional - pplpy
+            sage: CS.insert(0 < u)                                                                                      # optional - pplpy
+            sage: CS.insert(u < 1)                                                                                      # optional - pplpy
+            sage: CS.insert(0 < v)                                                                                      # optional - pplpy
+            sage: CS.insert(v < 1)                                                                                      # optional - pplpy
+            sage: CS.insert(u + v <= 3)       # redundant inequality                                                    # optional - pplpy
+            sage: P = NNC_Polyhedron(CS); P                                                                             # optional - pplpy
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 4 closure_points
-            sage: ManifoldSubsetPullback._is_open(P)
+            sage: ManifoldSubsetPullback._is_open(P)                                                                    # optional - pplpy
             True
-            sage: CS.insert(u + v <= 1)
-            sage: T = NNC_Polyhedron(CS); T
+            sage: CS.insert(u + v <= 1)                                                                                 # optional - pplpy
+            sage: T = NNC_Polyhedron(CS); T                                                                             # optional - pplpy
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 3 closure_points
-            sage: ManifoldSubsetPullback._is_open(T)
+            sage: ManifoldSubsetPullback._is_open(T)                                                                    # optional - pplpy
             False
 
         """

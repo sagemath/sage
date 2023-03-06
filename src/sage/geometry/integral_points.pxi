@@ -488,15 +488,15 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Using a PPL polyhedron::
 
-        sage: from ppl import Variable, Generator_System, C_Polyhedron, point
-        sage: gs = Generator_System()
-        sage: x = Variable(0); y = Variable(1); z = Variable(2)
-        sage: gs.insert(point(0*x + 1*y + 0*z))
-        sage: gs.insert(point(0*x + 1*y + 3*z))
-        sage: gs.insert(point(3*x + 1*y + 0*z))
-        sage: gs.insert(point(3*x + 1*y + 3*z))
-        sage: poly = C_Polyhedron(gs)
-        sage: rectangular_box_points([0]*3, [3]*3, poly)
+        sage: from ppl import Variable, Generator_System, C_Polyhedron, point                       # optional - pplpy
+        sage: gs = Generator_System()                                                               # optional - pplpy
+        sage: x = Variable(0); y = Variable(1); z = Variable(2)                                     # optional - pplpy
+        sage: gs.insert(point(0*x + 1*y + 0*z))                                                     # optional - pplpy
+        sage: gs.insert(point(0*x + 1*y + 3*z))                                                     # optional - pplpy
+        sage: gs.insert(point(3*x + 1*y + 0*z))                                                     # optional - pplpy
+        sage: gs.insert(point(3*x + 1*y + 3*z))                                                     # optional - pplpy
+        sage: poly = C_Polyhedron(gs)                                                               # optional - pplpy
+        sage: rectangular_box_points([0]*3, [3]*3, poly)                                            # optional - pplpy
         ((0, 1, 0), (0, 1, 1), (0, 1, 2), (0, 1, 3), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3),
          (2, 1, 0), (2, 1, 1), (2, 1, 2), (2, 1, 3), (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 1, 3))
 
@@ -1131,16 +1131,16 @@ cdef class InequalityCollection:
 
         EXAMPLES::
 
-            sage: from ppl import Variable, Generator_System, C_Polyhedron, point
-            sage: gs = Generator_System()
-            sage: x = Variable(0); y = Variable(1); z = Variable(2)
-            sage: gs.insert(point(0*x + 0*y + 1*z))
-            sage: gs.insert(point(0*x + 3*y + 1*z))
-            sage: gs.insert(point(3*x + 0*y + 1*z))
-            sage: gs.insert(point(3*x + 3*y + 1*z))
-            sage: poly = C_Polyhedron(gs)
-            sage: from sage.geometry.integral_points import InequalityCollection
-            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )
+            sage: from ppl import Variable, Generator_System, C_Polyhedron, point       # optional - pplpy
+            sage: gs = Generator_System()                                               # optional - pplpy
+            sage: x = Variable(0); y = Variable(1); z = Variable(2)                     # optional - pplpy
+            sage: gs.insert(point(0*x + 0*y + 1*z))                                     # optional - pplpy
+            sage: gs.insert(point(0*x + 3*y + 1*z))                                     # optional - pplpy
+            sage: gs.insert(point(3*x + 0*y + 1*z))                                     # optional - pplpy
+            sage: gs.insert(point(3*x + 3*y + 1*z))                                     # optional - pplpy
+            sage: poly = C_Polyhedron(gs)                                               # optional - pplpy
+            sage: from sage.geometry.integral_points import InequalityCollection        # optional - pplpy
+            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )                    # optional - pplpy
             The collection of inequalities
             integer: (0, 1, 0) x + -1 >= 0
             integer: (0, -1, 0) x + 1 >= 0
