@@ -221,12 +221,12 @@ def find_objects_from_name(name, module_name=None):
         sage: dt.find_objects_from_name('FareySymbol')
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
-        sage: import sympy
-        sage: dt.find_objects_from_name('RR')
+        sage: import sympy                                                              # optional - sympy
+        sage: dt.find_objects_from_name('RR')                                           # optional - sympy
         [Real Field with 53 bits of precision, RR]
-        sage: dt.find_objects_from_name('RR', 'sage')
+        sage: dt.find_objects_from_name('RR', 'sage')                                   # optional - sympy
         [Real Field with 53 bits of precision]
-        sage: dt.find_objects_from_name('RR', 'sympy')
+        sage: dt.find_objects_from_name('RR', 'sympy')                                  # optional - sympy
         [RR]
 
     Examples that do not belong to the global namespace but in a loaded module::

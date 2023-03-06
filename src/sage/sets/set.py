@@ -839,7 +839,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
             sage: X = Set(ZZ); X
             Set of elements of Integer Ring
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Integers
         """
         from sage.interfaces.sympy import sympy_init
@@ -1221,16 +1221,16 @@ class Set_object_enumerated(Set_object):
 
             sage: X = Set({1, 2, 3}); X
             {1, 2, 3}
-            sage: sX = X._sympy_(); sX
+            sage: sX = X._sympy_(); sX                                                  # optional - sympy
             Set(1, 2, 3)
-            sage: sX.is_empty is None
+            sage: sX.is_empty is None                                                   # optional - sympy
             True
 
             sage: Empty = Set([]); Empty
             {}
-            sage: sEmpty = Empty._sympy_(); sEmpty
+            sage: sEmpty = Empty._sympy_(); sEmpty                                      # optional - sympy
             EmptySet
-            sage: sEmpty.is_empty
+            sage: sEmpty.is_empty                                                       # optional - sympy
             True
         """
         from sympy import Set, EmptySet
@@ -1499,7 +1499,7 @@ class Set_object_union(Set_object_binary):
 
             sage: X = Set(ZZ).union(Set([1/2])); X
             Set-theoretic union of Set of elements of Integer Ring and {1/2}
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Union(Integers, Set(1/2))
         """
         from sympy import Union
@@ -1680,7 +1680,7 @@ class Set_object_intersection(Set_object_binary):
             Set-theoretic intersection of
              Set of elements of Integer Ring and
              Set of elements of [3/2, 11/2]
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Range(2, 6, 1)
         """
         from sympy import Intersection
@@ -1849,7 +1849,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Integer Ring
             sage: X.category()
             Category of sets
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Complement(Rationals, Integers)
 
             sage: X = Set(ZZ).difference(Set(QQ)); X
@@ -1858,7 +1858,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Rational Field
             sage: X.category()
             Category of enumerated sets
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             EmptySet
         """
         from sympy import Complement
@@ -2025,7 +2025,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             Set-theoretic symmetric difference of
              Set of elements of Integer Ring and
              {0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3}
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Union(Complement(Integers, Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3)),
                   Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
         """

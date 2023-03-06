@@ -1356,22 +1356,22 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
-        sage: sage_getfile(Sq)
+        sage: sage_getfile(Sq)                                                          # optional - sage.combinat, sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)
         '...sage/symbolic/expression.pyx'
 
     The following tests against some bugs fixed in :trac:`9976`::
 
-        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk
-        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk
-        sage: sage_getfile(obj)
+        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk                     # optional - sage.combinat
+        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk                     # optional - sage.combinat
+        sage: sage_getfile(obj)                                                         # optional - sage.combinat
         '...sage/combinat/partition_algebra.py'
 
     And here is another bug, fixed in :trac:`11298`::
 
         sage: P.<x,y> = QQ[]
-        sage: sage_getfile(P)
+        sage: sage_getfile(P)                                                           # optional - sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
     A problem fixed in :trac:`16309`::
@@ -1437,7 +1437,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
-        sage: sage_getfile_relative(Sq)
+        sage: sage_getfile_relative(Sq)                                                 # optional - sage.combinat, sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)
         'sage/symbolic/expression.pyx'
@@ -1508,19 +1508,23 @@ def sage_getargspec(obj):
 
     We now run sage_getargspec on some functions from the Sage library::
 
-        sage: sage_getargspec(identity_matrix)
-        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None, defaults=(0, False), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage_getargspec(identity_matrix)                                                                          # optional - sage.modules
+        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None, defaults=(0, False),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(factor)
-        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'], varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'], varargs=None, varkw='kwds',
+                    defaults=(None, False, 'pari', 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In the case of a class or a class instance, the ``ArgSpec`` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
         sage: sage_getargspec(P)
-        FullArgSpec(args=['base_ring', 'n', 'names', 'order'], varargs=None, varkw=None, defaults=('degrevlex',), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['base_ring', 'n', 'names', 'order'], varargs=None, varkw=None,
+                    defaults=('degrevlex',), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(P.__class__)
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds', defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds', defaults=(0,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following tests against various bugs that were fixed in
     :trac:`9976`::
