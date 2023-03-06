@@ -237,6 +237,9 @@ def is_HCP(f, check_monic_irreducible=True):
         except AttributeError:
             return zero
 
+    from sage.rings.real_mpfr import RR
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
     h = f.degree()
     h2list = [d for d in h.divisors() if (d-h)%2 == 0 and d.prime_to_m_part(2) == 1]
     pmin = 33 * (h**2 * (RR(h+2).log().log()+2)**2).ceil()
