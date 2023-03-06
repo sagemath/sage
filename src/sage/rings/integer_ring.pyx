@@ -552,14 +552,14 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         Coercions are available from numpy integer types::
 
-            sage: import numpy
-            sage: ZZ.coerce(numpy.int8('1'))
+            sage: import numpy                                                          # optional - numpy
+            sage: ZZ.coerce(numpy.int8('1'))                                            # optional - numpy
             1
-            sage: ZZ.coerce(numpy.int32('32'))
+            sage: ZZ.coerce(numpy.int32('32'))                                          # optional - numpy
             32
-            sage: ZZ.coerce(numpy.int64('-12'))
+            sage: ZZ.coerce(numpy.int64('-12'))                                         # optional - numpy
             -12
-            sage: ZZ.coerce(numpy.uint64('11'))
+            sage: ZZ.coerce(numpy.uint64('11'))                                         # optional - numpy
             11
 
         TESTS::

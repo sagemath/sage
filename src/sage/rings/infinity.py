@@ -567,8 +567,8 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
         Sage can understand SymPy's complex infinity (:trac:`17493`)::
 
-            sage: import sympy
-            sage: SR(sympy.zoo)
+            sage: import sympy                                                          # optional - sympy
+            sage: SR(sympy.zoo)                                                         # optional - sympy
             Infinity
 
         Some equality checks::
@@ -942,12 +942,12 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: SR(unsigned_infinity)._sympy_()
+            sage: import sympy                                                          # optional - sympy
+            sage: SR(unsigned_infinity)._sympy_()                                       # optional - sympy
             zoo
-            sage: gamma(-3)._sympy_() is sympy.factorial(-2)
+            sage: gamma(-3)._sympy_() is sympy.factorial(-2)                            # optional - sympy
             True
-            sage: gamma(-3) is sympy.factorial(-2)._sage_()
+            sage: gamma(-3) is sympy.factorial(-2)._sage_()                             # optional - sympy
             True
         """
         import sympy
@@ -1622,12 +1622,12 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: bool(-oo == -sympy.oo)
+            sage: import sympy                                                          # optional - sympy
+            sage: bool(-oo == -sympy.oo)                                                # optional - sympy
             True
-            sage: bool(SR(-oo) == -sympy.oo)
+            sage: bool(SR(-oo) == -sympy.oo)                                            # optional - sympy
             True
-            sage: bool((-oo)._sympy_() == -sympy.oo)
+            sage: bool((-oo)._sympy_() == -sympy.oo)                                    # optional - sympy
             True
 
         """
@@ -1723,10 +1723,10 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: bool(oo == sympy.oo) # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: bool(oo == sympy.oo) # indirect doctest                               # optional - sympy
             True
-            sage: bool(SR(oo) == sympy.oo)
+            sage: bool(SR(oo) == sympy.oo)                                              # optional - sympy
             True
         """
         import sympy

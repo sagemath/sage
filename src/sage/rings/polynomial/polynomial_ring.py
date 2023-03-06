@@ -212,11 +212,11 @@ def is_PolynomialRing(x):
 
     ::
 
-        sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R
+        sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R                              # optional - sage.libs.singular
         Multivariate Polynomial Ring in w over Integer Ring
-        sage: is_PolynomialRing(R)
+        sage: is_PolynomialRing(R)                                                                  # optional - sage.libs.singular
         False
-        sage: type(R)
+        sage: type(R)                                                                               # optional - sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
     return isinstance(x, PolynomialRing_general)
@@ -2861,7 +2861,7 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             False
 
             sage: S.<x> = Zp(5)[]                                                                                       # optional - sage.rings.padics
-            sage: isinstance(S, PolynomialRing_cdvr)
+            sage: isinstance(S, PolynomialRing_cdvr)                                                                    # optional - sage.rings.padics
             True
         """
         if element_class is None:

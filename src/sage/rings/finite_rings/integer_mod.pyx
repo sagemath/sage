@@ -721,7 +721,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         Examples like this took extremely long before :trac:`32375`::
 
-            sage: (Mod(5, 123337052926643**4) ^ (10^50-1)).log(5)
+            sage: (Mod(5, 123337052926643**4) ^ (10^50-1)).log(5)               # optional - sage.libs.pari
             99999999999999999999999999999999999999999999999999
 
         We check that non-existence of solutions is detected:
@@ -1036,7 +1036,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             sage: Mod(3,17).is_square()
             False
-            sage: Mod(9,17).is_square()
+            sage: Mod(9,17).is_square()                                         # optional - sage.libs.pari
             True
             sage: Mod(9,17*19^2).is_square()
             True
@@ -1132,7 +1132,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             86
             sage: mod(7, 18).sqrt()
             5
-            sage: a = mod(14, 5^60).sqrt()
+            sage: a = mod(14, 5^60).sqrt()                                      # optional - sage.libs.pari
             sage: a*a
             14
             sage: mod(15, 389).sqrt(extend=False)
@@ -1384,38 +1384,39 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
 
-            sage: K = GF(31)                                                    # optional - sage.libs.pari
-            sage: a = K(22)                                                     # optional - sage.libs.pari
-            sage: K(22).nth_root(7)                                             # optional - sage.libs.pari
+            sage: K = GF(31)                                                                        # optional - sage.libs.pari
+            sage: a = K(22)                                                                         # optional - sage.libs.pari
+            sage: K(22).nth_root(7)                                                                 # optional - sage.libs.pari
             13
-            sage: K(25).nth_root(5)                                             # optional - sage.libs.pari
+            sage: K(25).nth_root(5)                                                                 # optional - sage.libs.pari
             5
-            sage: K(23).nth_root(3)                                             # optional - sage.libs.pari
+            sage: K(23).nth_root(3)                                                                 # optional - sage.libs.pari
             29
-            sage: mod(225, 2^5*3^2).nth_root(4, all=True)                                                                   # optional - sage.rings.padics
-            [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81, 273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
-            sage: mod(275, 2^5*7^4).nth_root(7, all=True)                                                                   # optional - sage.rings.padics
+            sage: mod(225, 2^5*3^2).nth_root(4, all=True)                                           # optional - sage.rings.padics
+            [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81,
+             273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
+            sage: mod(275, 2^5*7^4).nth_root(7, all=True)                                           # optional - sage.rings.padics
             [58235, 25307, 69211, 36283, 3355, 47259, 14331]
-            sage: mod(1,8).nth_root(2,all=True)
+            sage: mod(1,8).nth_root(2, all=True)                                                    # optional - sage.rings.padics
             [1, 7, 5, 3]
-            sage: mod(4,8).nth_root(2,all=True)
+            sage: mod(4,8).nth_root(2, all=True)                                                    # optional - sage.rings.padics
             [2, 6]
-            sage: mod(1,16).nth_root(4,all=True)
+            sage: mod(1,16).nth_root(4, all=True)                                                   # optional - sage.rings.padics
             [1, 15, 13, 3, 9, 7, 5, 11]
             sage: (mod(22,31)^200).nth_root(200)
             5
-            sage: mod(3,6).nth_root(0,all=True)
+            sage: mod(3,6).nth_root(0, all=True)                                                    # optional - sage.rings.padics
             []
             sage: mod(3,6).nth_root(0)
             Traceback (most recent call last):
             ...
             ValueError
-            sage: mod(1,6).nth_root(0,all=True)
+            sage: mod(1,6).nth_root(0, all=True)                                                    # optional - sage.rings.padics
             [1, 2, 3, 4, 5]
 
         TESTS::
 
-            sage: for p in [1009,2003,10007,100003]:
+            sage: for p in [1009,2003,10007,100003]:                                                # optional - sage.libs.pari
             ....:     K = GF(p)
             ....:     for r in (p-1).divisors():
             ....:         if r == 1: continue
@@ -1440,7 +1441,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         We check that :trac:`13172` is resolved::
 
-            sage: mod(-1, 4489).nth_root(2, all=True)
+            sage: mod(-1, 4489).nth_root(2, all=True)                                               # optional - sage.rings.padics
             []
 
         We check that :trac:`32084` is fixed::
@@ -1451,7 +1452,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         Check that the code path cunningham might be used::
 
             sage: a = Mod(9,11)
-            sage: a.nth_root(2, False, True, 'Johnston', cunningham = True) # optional - cunningham_tables
+            sage: a.nth_root(2, False, True, 'Johnston', cunningham=True) # optional - cunningham_tables
             [3, 8]
 
         ALGORITHM:
@@ -1746,16 +1747,16 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             True
             sage: mod(3,4).is_primitive_root()
             True
-            sage: mod(2,7).is_primitive_root()
+            sage: mod(2,7).is_primitive_root()                                          # optional - sage.libs.pari
             False
-            sage: mod(3,98).is_primitive_root()
+            sage: mod(3,98).is_primitive_root()                                         # optional - sage.libs.pari
             True
-            sage: mod(11,1009^2).is_primitive_root()
+            sage: mod(11,1009^2).is_primitive_root()                                    # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: for p in prime_range(3,12):
+            sage: for p in prime_range(3,12):                                           # optional - sage.libs.pari
             ....:     for k in range(1,4):
             ....:         for even in [1,2]:
             ....:             n = even*p^k
@@ -1775,7 +1776,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: mod(0, 1).is_primitive_root()
             True
 
-            sage: all(not mod(p^j, p^k).is_primitive_root()
+            sage: all(not mod(p^j, p^k).is_primitive_root()                             # optional - sage.libs.pari
             ....:     for p in prime_range(3, 12)
             ....:     for k in srange(1, 4)
             ....:     for j in srange(0, k))
@@ -1830,11 +1831,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: Mod(-1,5).multiplicative_order()
+            sage: Mod(-1,5).multiplicative_order()                                      # optional - sage.libs.pari
             2
-            sage: Mod(1,5).multiplicative_order()
+            sage: Mod(1,5).multiplicative_order()                                       # optional - sage.libs.pari
             1
-            sage: Mod(0,5).multiplicative_order()
+            sage: Mod(0,5).multiplicative_order()                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: multiplicative order of 0 not defined since it is not a unit modulo 5
@@ -2914,16 +2915,16 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             86
             sage: mod(7, 18).sqrt()
             5
-            sage: a = mod(14, 5^60).sqrt()                                      # optional - sage.libs.pari
-            sage: a*a                                                           # optional - sage.libs.pari
+            sage: a = mod(14, 5^60).sqrt()                                              # optional - sage.libs.pari
+            sage: a*a                                                                   # optional - sage.libs.pari
             14
             sage: mod(15, 389).sqrt(extend=False)
             Traceback (most recent call last):
             ...
             ValueError: self must be a square
-            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
+            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)                                # optional - sage.libs.pari
             9
-            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
+            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)                               # optional - sage.libs.pari
             25
 
         ::

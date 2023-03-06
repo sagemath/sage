@@ -230,10 +230,10 @@ specified if given a non-interval and an interval::
 
 TESTS::
 
-    sage: import numpy
-    sage: RIF(2) == numpy.int8('2')
+    sage: import numpy                                                                  # optional - numpy
+    sage: RIF(2) == numpy.int8('2')                                                     # optional - numpy
     True
-    sage: numpy.int8('2') == RIF(2)
+    sage: numpy.int8('2') == RIF(2)                                                     # optional - numpy
     True
     sage: RIF(0,1) < float('2')
     Traceback (most recent call last):

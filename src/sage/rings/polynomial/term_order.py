@@ -657,7 +657,7 @@ class TermOrder(SageObject):
 
             sage: T = TermOrder('degrevlex')
             sage: R.<x,y,z> = PolynomialRing(QQ, order=T)
-            sage: R._singular_()
+            sage: R._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: QQ
             // number of vars : 3
@@ -673,7 +673,7 @@ class TermOrder(SageObject):
             sage: S = R.change_ring(order=T2)
             sage: S == T
             False
-            sage: S._singular_()
+            sage: S._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: QQ
             // number of vars : 3
@@ -1677,7 +1677,7 @@ class TermOrder(SageObject):
             sage: T = P.term_order()
             sage: T.singular_str()
             '(a(1:2),ls(2),a(1:2),ls(2))'
-            sage: P._singular_()
+            sage: P._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 4
@@ -1699,7 +1699,7 @@ class TermOrder(SageObject):
             sage: T = TermOrder("degneglex", 2) + TermOrder("degneglex", 2)
             sage: T._singular_ringorder_column = 0
             sage: P = PolynomialRing(QQ, 4, names='x', order=T)
-            sage: P._singular_()
+            sage: P._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: QQ
             // number of vars : 4
@@ -1717,7 +1717,7 @@ class TermOrder(SageObject):
 
             sage: T._singular_ringorder_column = 1
             sage: P = PolynomialRing(QQ, 4, names='y', order=T)
-            sage: P._singular_()
+            sage: P._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: QQ
             // number of vars : 4
@@ -1735,7 +1735,7 @@ class TermOrder(SageObject):
 
             sage: T._singular_ringorder_column = 2
             sage: P = PolynomialRing(QQ, 4, names='z', order=T)
-            sage: P._singular_()
+            sage: P._singular_()                                                                    # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: QQ
             // number of vars : 4
@@ -2156,9 +2156,9 @@ def termorder_from_singular(S):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.term_order import termorder_from_singular
-        sage: singular.eval('ring r1 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp)')
+        sage: singular.eval('ring r1 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp)')  # optional - sage.libs.singular
         ''
-        sage: termorder_from_singular(singular)
+        sage: termorder_from_singular(singular)                                         # optional - sage.libs.singular
         Block term order with blocks:
         (Matrix term order with matrix
         [1 2]
@@ -2170,7 +2170,7 @@ def termorder_from_singular(S):
     This information is reflected in ``_singular_ringorder_column`` attribute of
     the term order. ::
 
-        sage: singular.ring(0, '(x,y,z,w)', '(C,dp(2),lp(2))')
+        sage: singular.ring(0, '(x,y,z,w)', '(C,dp(2),lp(2))')                          # optional - sage.libs.singular
         polynomial ring, over a field, global ordering
         // coefficients: QQ
         // number of vars : 4
@@ -2179,15 +2179,15 @@ def termorder_from_singular(S):
         //                  : names    x y
         //        block   3 : ordering lp
         //                  : names    z w
-        sage: T = termorder_from_singular(singular)
-        sage: T
+        sage: T = termorder_from_singular(singular)                                     # optional - sage.libs.singular
+        sage: T                                                                         # optional - sage.libs.singular
         Block term order with blocks:
         (Degree reverse lexicographic term order of length 2,
          Lexicographic term order of length 2)
-        sage: T._singular_ringorder_column
+        sage: T._singular_ringorder_column                                              # optional - sage.libs.singular
         0
 
-        sage: singular.ring(0, '(x,y,z,w)', '(c,dp(2),lp(2))')
+        sage: singular.ring(0, '(x,y,z,w)', '(c,dp(2),lp(2))')                          # optional - sage.libs.singular
         polynomial ring, over a field, global ordering
         // coefficients: QQ
         // number of vars : 4
@@ -2196,12 +2196,12 @@ def termorder_from_singular(S):
         //                  : names    x y
         //        block   3 : ordering lp
         //                  : names    z w
-        sage: T = termorder_from_singular(singular)
-        sage: T
+        sage: T = termorder_from_singular(singular)                                     # optional - sage.libs.singular
+        sage: T                                                                         # optional - sage.libs.singular
         Block term order with blocks:
         (Degree reverse lexicographic term order of length 2,
          Lexicographic term order of length 2)
-        sage: T._singular_ringorder_column
+        sage: T._singular_ringorder_column                                              # optional - sage.libs.singular
         1
 
     TESTS:
@@ -2209,16 +2209,16 @@ def termorder_from_singular(S):
     Check that ``degneglex`` term orders are converted correctly
     (:trac:`29635`)::
 
-        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:4),ls(4))')
-        sage: termorder_from_singular(singular).singular_str()
+        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:4),ls(4))')                       # optional - sage.libs.singular
+        sage: termorder_from_singular(singular).singular_str()                          # optional - sage.libs.singular
         '(a(1:4),ls(4))'
-        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:2),ls(2),a(1:2),ls(2))')
-        sage: termorder_from_singular(singular).singular_str()
+        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:2),ls(2),a(1:2),ls(2))')          # optional - sage.libs.singular
+        sage: termorder_from_singular(singular).singular_str()                          # optional - sage.libs.singular
         '(a(1:2),ls(2),a(1:2),ls(2))'
-        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:2),ls(2),C,a(1:2),ls(2))')
-        sage: termorder_from_singular(singular).singular_str()
+        sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:2),ls(2),C,a(1:2),ls(2))')        # optional - sage.libs.singular
+        sage: termorder_from_singular(singular).singular_str()                          # optional - sage.libs.singular
         '(a(1:2),ls(2),C,a(1:2),ls(2))'
-        sage: PolynomialRing(QQ, 'x,y', order='degneglex')('x^2')._singular_().sage()
+        sage: PolynomialRing(QQ, 'x,y', order='degneglex')('x^2')._singular_().sage()   # optional - sage.libs.singular
         x^2
     """
     from sage.rings.integer_ring import ZZ

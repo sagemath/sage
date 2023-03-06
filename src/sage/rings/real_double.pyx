@@ -27,8 +27,8 @@ Test NumPy conversions::
 
     sage: RDF(1).__array_interface__
     {'typestr': '=f8'}
-    sage: import numpy
-    sage: numpy.array([RDF.pi()]).dtype
+    sage: import numpy                                                                  # optional - numpy
+    sage: numpy.array([RDF.pi()]).dtype                                                 # optional - numpy
     dtype('float64')
 """
 
@@ -332,10 +332,10 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: RLF(2/3) + RDF(1)
             1.6666666666666665
 
-            sage: import numpy
-            sage: RDF.coerce(numpy.int8('1'))
+            sage: import numpy                                                          # optional - numpy
+            sage: RDF.coerce(numpy.int8('1'))                                           # optional - numpy
             1.0
-            sage: RDF.coerce(numpy.float64('1'))
+            sage: RDF.coerce(numpy.float64('1'))                                        # optional - numpy
             1.0
 
             sage: RDF.coerce(pi)
@@ -2058,7 +2058,7 @@ cdef class RealDoubleElement(FieldElement):
 
             sage: r = sqrt(RDF(2)); r
             1.4142135623730951
-            sage: r.algebraic_dependency(5)
+            sage: r.algebraic_dependency(5)                                             # optional - sage.libs.pari
             x^2 - 2
         """
         return sage.arith.all.algdep(self,n)

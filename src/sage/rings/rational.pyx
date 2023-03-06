@@ -460,17 +460,17 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     Conversions from numpy::
 
-        sage: import numpy as np
-        sage: QQ(np.int8('-15'))
+        sage: import numpy as np                                                                    # optional - numpy
+        sage: QQ(np.int8('-15'))                                                                    # optional - numpy
         -15
-        sage: QQ(np.int16('-32'))
+        sage: QQ(np.int16('-32'))                                                                   # optional - numpy
         -32
-        sage: QQ(np.int32('-19'))
+        sage: QQ(np.int32('-19'))                                                                   # optional - numpy
         -19
-        sage: QQ(np.uint32('1412'))
+        sage: QQ(np.uint32('1412'))                                                                 # optional - numpy
         1412
 
-        sage: QQ(np.float16('12'))
+        sage: QQ(np.float16('12'))                                                                  # optional - numpy
         12
 
     Conversions from gmpy2::
@@ -998,12 +998,12 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: n = 1/2; n._sympy_()
+            sage: n = 1/2; n._sympy_()                                                  # optional - sympy
             1/2
-            sage: n = -1/5; n._sympy_()
+            sage: n = -1/5; n._sympy_()                                                 # optional - sympy
             -1/5
-            sage: from sympy import Symbol
-            sage: QQ(1)+Symbol('x')*QQ(2)
+            sage: from sympy import Symbol                                              # optional - sympy
+            sage: QQ(1) + Symbol('x')*QQ(2)                                             # optional - sympy
             2*x + 1
         """
         import sympy
@@ -1071,16 +1071,16 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: numpy.array([1, 2, 3/1])
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.array([1, 2, 3/1])                                              # optional - numpy
             array([1, 2, 3])
 
-            sage: numpy.array(QQ(2**40)).dtype
+            sage: numpy.array(QQ(2**40)).dtype                                          # optional - numpy
             dtype('int64')
-            sage: numpy.array(QQ(2**400)).dtype
+            sage: numpy.array(QQ(2**400)).dtype                                         # optional - numpy
             dtype('O')
 
-            sage: numpy.array([1, 1/2, 3/4])
+            sage: numpy.array([1, 1/2, 3/4])                                            # optional - numpy
             array([1.  , 0.5 , 0.75])
         """
         if mpz_cmp_ui(mpq_denref(self.value), 1) == 0:

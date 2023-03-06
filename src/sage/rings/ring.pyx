@@ -457,12 +457,12 @@ cdef class Ring(ParentWithGens):
 
         The following was implemented in :trac:`7797`::
 
-            sage: A = SteenrodAlgebra(2)
-            sage: A*[A.1+A.2,A.1^2]
+            sage: A = SteenrodAlgebra(2)                                                            # optional - sage.combinat, sage.modules
+            sage: A * [A.1+A.2, A.1^2]                                                              # optional - sage.combinat, sage.modules
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-            sage: [A.1+A.2,A.1^2]*A
+            sage: [A.1+A.2, A.1^2] * A                                                              # optional - sage.combinat, sage.modules
             Right Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-            sage: A*[A.1+A.2,A.1^2]*A
+            sage: A * [A.1+A.2, A.1^2] * A                                                          # optional - sage.combinat, sage.modules
             Twosided Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
 
         """
@@ -1372,8 +1372,9 @@ cdef class CommutativeRing(Ring):
 
             sage: R = QQ['x']
             sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')
-            Univariate Quotient Polynomial Ring in a over Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
+            sage: R.extension(y^2 - 5, 'a')                                     # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in a over
+             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
 
         ::
 
@@ -1464,18 +1465,18 @@ cdef class CommutativeRing(Ring):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: M = R.derivation_module(); M
+            sage: M = R.derivation_module(); M                                                      # optional - sage.modules
             Module of derivations over Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gens()
+            sage: M.gens()                                                                          # optional - sage.modules
             (d/dx, d/dy, d/dz)
 
         We can specify a different codomain::
 
             sage: K = R.fraction_field()
-            sage: M = R.derivation_module(K); M
+            sage: M = R.derivation_module(K); M                                                     # optional - sage.modules
             Module of derivations from Multivariate Polynomial Ring in x, y, z over
              Rational Field to Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gen() / x
+            sage: M.gen() / x                                                                       # optional - sage.modules
             1/x*d/dx
 
         Here is an example with a non-canonical defining morphism::
@@ -1488,30 +1489,30 @@ cdef class CommutativeRing(Ring):
               Defn: x |--> 0
                     y |--> 1
                     z |--> 2
-            sage: M = R.derivation_module(ev)
-            sage: M
+            sage: M = R.derivation_module(ev)                                                       # optional - sage.modules
+            sage: M                                                                                 # optional - sage.modules
             Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field to Rational Field
 
         Elements in `M` acts as derivations at `(0,1,2)`::
 
-            sage: Dx = M.gen(0); Dx
+            sage: Dx = M.gen(0); Dx                                                                 # optional - sage.modules
             d/dx
-            sage: Dy = M.gen(1); Dy
+            sage: Dy = M.gen(1); Dy                                                                 # optional - sage.modules
             d/dy
-            sage: Dz = M.gen(2); Dz
+            sage: Dz = M.gen(2); Dz                                                                 # optional - sage.modules
             d/dz
             sage: f = x^2 + y^2 + z^2
-            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
+            sage: Dx(f)  # = 2*x evaluated at (0,1,2)                                               # optional - sage.modules
             0
-            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
+            sage: Dy(f)  # = 2*y evaluated at (0,1,2)                                               # optional - sage.modules
             2
-            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
+            sage: Dz(f)  # = 2*z evaluated at (0,1,2)                                               # optional - sage.modules
             4
 
         An example with a twisting homomorphism::
 
             sage: theta = R.hom([x^2, y^2, z^2])
-            sage: M = R.derivation_module(twist=theta); M
+            sage: M = R.derivation_module(twist=theta); M                                           # optional - sage.modules
             Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
              over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
 
@@ -1550,23 +1551,23 @@ cdef class CommutativeRing(Ring):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: R.derivation()
+            sage: R.derivation()                                                                    # optional - sage.modules
             d/dx
 
         In that case, ``arg`` could be a generator::
 
-            sage: R.derivation(y)
+            sage: R.derivation(y)                                                                   # optional - sage.modules
             d/dy
 
         or a list of coefficients::
 
-            sage: R.derivation([1,2,3])
+            sage: R.derivation([1,2,3])                                                             # optional - sage.modules
             d/dx + 2*d/dy + 3*d/dz
 
         It is not possible to define derivations with respect to a
         polynomial which is not a variable::
 
-            sage: R.derivation(x^2)
+            sage: R.derivation(x^2)                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: unable to create the derivation
@@ -1575,18 +1576,18 @@ cdef class CommutativeRing(Ring):
 
             sage: R.<x,y,z> = QQ[]
             sage: theta = R.hom([x^2, y^2, z^2])
-            sage: f = R.derivation(twist=theta); f
+            sage: f = R.derivation(twist=theta); f                                                  # optional - sage.modules
             0
-            sage: f.parent()
+            sage: f.parent()                                                                        # optional - sage.modules
             Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
              over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
 
         Specifying a scalar, the returned twisted derivation is the
         corresponding multiple of `\theta - id`::
 
-            sage: R.derivation(1, twist=theta)
+            sage: R.derivation(1, twist=theta)                                                      # optional - sage.modules
             [x |--> x^2, y |--> y^2, z |--> z^2] - id
-            sage: R.derivation(x, twist=theta)
+            sage: R.derivation(x, twist=theta)                                                      # optional - sage.modules
             x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
 
         """

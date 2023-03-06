@@ -2570,11 +2570,11 @@ cdef class ComplexToCDF(Morphism):
 
     EXAMPLES::
 
-        sage: import numpy
-        sage: f = CDF.coerce_map_from(numpy.complex_)
-        sage: f(numpy.complex_(I))
+        sage: import numpy                                                              # optional - numpy
+        sage: f = CDF.coerce_map_from(numpy.complex_)                                   # optional - numpy
+        sage: f(numpy.complex_(I))                                                      # optional - numpy
         1.0*I
-        sage: f(numpy.complex_(I)).parent()
+        sage: f(numpy.complex_(I)).parent()                                             # optional - numpy
         Complex Double Field
     """
     def __init__(self, R):
@@ -2590,8 +2590,8 @@ cdef class ComplexToCDF(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: CDF(numpy.complex_(I))    # indirect doctest
+            sage: import numpy                                                          # optional - numpy
+            sage: CDF(numpy.complex_(I))    # indirect doctest                          # optional - numpy
             1.0*I
         """
         cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
@@ -2604,9 +2604,9 @@ cdef class ComplexToCDF(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex_)
-            sage: f._repr_type()
+            sage: import numpy                                                          # optional - numpy
+            sage: f = sage.rings.complex_double.ComplexToCDF(numpy.complex_)            # optional - numpy
+            sage: f._repr_type()                                                        # optional - numpy
             'Native'
         """
         return "Native"

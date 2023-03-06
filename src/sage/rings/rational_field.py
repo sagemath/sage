@@ -837,7 +837,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         """
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        from sage.rings.padics.factory import Qp
         from sage.modules.free_module import VectorSpace
         from sage.matrix.constructor import matrix
         from sage.sets.primes import Primes
@@ -863,6 +862,7 @@ class RationalField(Singleton, number_field_base.NumberField):
                 if check and not is_prime(p):
                     raise ValueError("all entries in list must be prime"
                                     " or -1 for infinite place")
+                from sage.rings.padics.factory import Qp
                 R = Qp(p)
                 if R(b).is_square():
                     raise ValueError("second argument must be a nonsquare with"
@@ -1429,7 +1429,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QS2gens                                                               # optional - sage.rings.number_field
             [-1]
 
-            sage: all(QQ.selmer_space([], p)[0].dimension() == 0 for p in primes(3,10))
+            sage: all(QQ.selmer_space([], p)[0].dimension() == 0 for p in primes(3, 10))            # optional - sage.libs.pari
             True
 
         In general there is one generator for each `p\in S`, and an
@@ -1595,7 +1595,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ._sympy_()
+            sage: QQ._sympy_()                                                          # optional - sympy
             Rationals
         """
         from sympy import Rationals
@@ -1641,20 +1641,20 @@ class RationalField(Singleton, number_field_base.NumberField):
         TESTS::
 
             sage: R.<x> = QQ[]
-            sage: QQ._factor_univariate_polynomial( x )
+            sage: QQ._factor_univariate_polynomial(x)                                               # optional - sage.libs.pari
             x
-            sage: QQ._factor_univariate_polynomial( 2*x )
+            sage: QQ._factor_univariate_polynomial(2*x)                                             # optional - sage.libs.pari
             (2) * x
-            sage: QQ._factor_univariate_polynomial( (x^2 - 1/4)^4 )
+            sage: QQ._factor_univariate_polynomial((x^2 - 1/4)^4)                                   # optional - sage.libs.pari
             (x - 1/2)^4 * (x + 1/2)^4
-            sage: QQ._factor_univariate_polynomial( (2*x + 1) * (3*x^2 - 5)^2 )
+            sage: QQ._factor_univariate_polynomial((2*x + 1) * (3*x^2 - 5)^2)                       # optional - sage.libs.pari
             (18) * (x + 1/2) * (x^2 - 5/3)^2
-            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))
-            sage: QQ._factor_univariate_polynomial(f)
+            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))                                 # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(f)                                               # optional - sage.libs.pari
             (1751787911376562500) * (x^2 + 1/2) * (x^3 + 1/3)^2 * (x^5 + 1/5)^4 * (x^7 + 1/7)^6
-            sage: QQ._factor_univariate_polynomial( 10*x^5 - 1 )
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 1)                                      # optional - sage.libs.pari
             (10) * (x^5 - 1/10)
-            sage: QQ._factor_univariate_polynomial( 10*x^5 - 10 )
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 10)                                     # optional - sage.libs.pari
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
 
         """
