@@ -669,11 +669,11 @@ def add_lightness_smoothing_to_rgb(rgb, delta):
 
     We can call this on grids of values::
 
-        sage: import numpy as np
-        sage: from sage.plot.complex_plot import add_lightness_smoothing_to_rgb
-        sage: add_lightness_smoothing_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4
+        sage: import numpy as np                                                                                        # optional - numpy
+        sage: from sage.plot.complex_plot import add_lightness_smoothing_to_rgb                                         # optional - numpy
+        sage: add_lightness_smoothing_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4          # optional - numpy
         array([[[0.75  , 0.8125, 0.875 ]]])
-        sage: add_lightness_smoothing_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4
+        sage: add_lightness_smoothing_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4          # optional - numpy
         array([[[0.75  , 0.8125, 0.875 ]]])
     """
     import numpy as np
@@ -731,21 +731,21 @@ def add_contours_to_rgb(rgb, delta, dark_rate=0.5):
 
     EXAMPLES::
 
-        sage: import numpy as np
-        sage: from sage.plot.complex_plot import add_contours_to_rgb
-        sage: add_contours_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4
+        sage: import numpy as np                                                                                        # optional - numpy
+        sage: from sage.plot.complex_plot import add_contours_to_rgb                                                    # optional - numpy
+        sage: add_contours_to_rgb(np.array([[[0, 0.25, 0.5]]]), np.array([[0.75]]))  # abs tol 1e-4                     # optional - numpy
         array([[[0.25 , 0.625, 1.   ]]])
-        sage: add_contours_to_rgb(np.array([[[0, 0, 0]]]), np.array([[1]]))  # abs tol 1e-4
+        sage: add_contours_to_rgb(np.array([[[0, 0, 0]]]), np.array([[1]]))  # abs tol 1e-4                             # optional - numpy
         array([[[0.5, 0.5, 0.5]]])
-        sage: add_contours_to_rgb(np.array([[[1, 1, 1]]]), np.array([[-0.5]])) # abs tol 1e-4
+        sage: add_contours_to_rgb(np.array([[[1, 1, 1]]]), np.array([[-0.5]])) # abs tol 1e-4                           # optional - numpy
         array([[[0.75, 0.75, 0.75]]])
 
     Raising ``dark_rate`` leads to bigger adjustments::
 
-        sage: add_contours_to_rgb(np.array([[[0.5, 0.5, 0.5]]]),  # abs tol 1e-4
+        sage: add_contours_to_rgb(np.array([[[0.5, 0.5, 0.5]]]),  # abs tol 1e-4                                        # optional - numpy
         ....:                     np.array([[0.5]]), dark_rate=0.1)
         array([[[0.55, 0.55, 0.55]]])
-        sage: add_contours_to_rgb(np.array([[[0.5, 0.5, 0.5]]]),  # abs tol 1e-4
+        sage: add_contours_to_rgb(np.array([[[0.5, 0.5, 0.5]]]),  # abs tol 1e-4                                        # optional - numpy
         ....:                     np.array([[0.5]]), dark_rate=0.5)
         array([[[0.75, 0.75, 0.75]]])
     """

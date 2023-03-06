@@ -496,8 +496,8 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     As does plotting of NumPy arrays::
 
-        sage: import numpy
-        sage: matrix_plot(numpy.random.rand(10, 10))
+        sage: import numpy                                                              # optional - numpy
+        sage: matrix_plot(numpy.random.rand(10, 10))                                    # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     A plot title can be added to the matrix plot.::

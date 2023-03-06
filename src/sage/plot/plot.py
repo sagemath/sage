@@ -683,16 +683,16 @@ def SelectiveFormatter(formatter, skip_values):
 
         sage: from sage.plot.plot import SelectiveFormatter
         sage: import matplotlib.pyplot as plt
-        sage: import numpy
-        sage: fig=plt.figure()
-        sage: ax=fig.add_subplot(111)
-        sage: t = numpy.arange(0.0, 2.0, 0.01)
-        sage: s = numpy.sin(2*numpy.pi*t)
-        sage: p = ax.plot(t, s)
-        sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
-        sage: ax.xaxis.set_major_formatter(formatter)
+        sage: import numpy                                                                          # optional - numpy
+        sage: fig = plt.figure()
+        sage: ax = fig.add_subplot(111)
+        sage: t = numpy.arange(0.0, 2.0, 0.01)                                                      # optional - numpy
+        sage: s = numpy.sin(2*numpy.pi*t)                                                           # optional - numpy
+        sage: p = ax.plot(t, s)                                                                     # optional - numpy
+        sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(), skip_values=[0,1])       # optional - numpy
+        sage: ax.xaxis.set_major_formatter(formatter)                                               # optional - numpy
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                                 # optional - numpy
         ....:     fig.savefig(f.name)
 
     """
@@ -717,16 +717,16 @@ def SelectiveFormatter(formatter, skip_values):
 
                     sage: from sage.plot.plot import SelectiveFormatter
                     sage: import matplotlib.pyplot as plt
-                    sage: import numpy
-                    sage: fig=plt.figure()
-                    sage: ax=fig.add_subplot(111)
-                    sage: t = numpy.arange(0.0, 2.0, 0.01)
-                    sage: s = numpy.sin(2*numpy.pi*t)
-                    sage: line=ax.plot(t, s)
-                    sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
-                    sage: ax.xaxis.set_major_formatter(formatter)
+                    sage: import numpy                                                                                  # optional - numpy
+                    sage: fig = plt.figure()
+                    sage: ax = fig.add_subplot(111)
+                    sage: t = numpy.arange(0.0, 2.0, 0.01)                                                              # optional - numpy
+                    sage: s = numpy.sin(2*numpy.pi*t)                                                                   # optional - numpy
+                    sage: line = ax.plot(t, s)                                                                          # optional - numpy
+                    sage: formatter = SelectiveFormatter(ax.xaxis.get_major_formatter(), skip_values=[0,1])             # optional - numpy
+                    sage: ax.xaxis.set_major_formatter(formatter)                                                       # optional - numpy
                     sage: from tempfile import NamedTemporaryFile
-                    sage: with NamedTemporaryFile(suffix=".png") as f:
+                    sage: with NamedTemporaryFile(suffix=".png") as f:                                                  # optional - numpy
                     ....:     fig.savefig(f.name)
                 """
                 self.formatter=formatter
@@ -2896,8 +2896,8 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     You can provide a numpy array.::
 
-        sage: import numpy
-        sage: list_plot(numpy.arange(10))
+        sage: import numpy                                                              # optional - numpy
+        sage: list_plot(numpy.arange(10))                                               # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2908,7 +2908,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     ::
 
-        sage: list_plot(numpy.array([[1,2], [2,3], [3,4]]))
+        sage: list_plot(numpy.array([[1,2], [2,3], [3,4]]))                             # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
