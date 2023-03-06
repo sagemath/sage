@@ -295,8 +295,8 @@ class Ideal_generic(MonoidElement):
         the generators are not represented from left to right but from
         top to bottom. This is the case, e.g., for matrices::
 
-            sage: MS = MatrixSpace(QQ,2,2)
-            sage: MS*[MS.1,2]
+            sage: MS = MatrixSpace(QQ, 2, 2)                                            # optional - sage.modules
+            sage: MS * [MS.1, 2]                                                        # optional - sage.modules
             Left Ideal
             (
               [0 1]
@@ -470,11 +470,11 @@ class Ideal_generic(MonoidElement):
 
         And `p`-adic numbers::
 
-            sage: R = Zp(7, prec=10); R
+            sage: R = Zp(7, prec=10); R                                                             # optional - sage.rings.padics
             7-adic Ring with capped relative precision 10
-            sage: I = 7*R; I
+            sage: I = 7*R; I                                                                        # optional - sage.rings.padics
             Principal ideal (7 + O(7^11)) of 7-adic Ring with capped relative precision 10
-            sage: I.base_ring()
+            sage: I.base_ring()                                                                     # optional - sage.rings.padics
             7-adic Ring with capped relative precision 10
         """
         return self.ring().base_ring()
@@ -1699,7 +1699,7 @@ class Ideal_fractional(Ideal_generic):
         EXAMPLES::
 
             sage: from sage.rings.ideal import Ideal_fractional
-            sage: K.<a> = NumberField(x^2 + 1)
+            sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: Ideal_fractional(K, [a]) # indirect doctest
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1
         """
