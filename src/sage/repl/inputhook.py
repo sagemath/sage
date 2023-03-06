@@ -47,15 +47,25 @@ def install():
     """
     Install the Sage input hook
 
-    EXAMPLES::
+    EXAMPLES:
+
+    Make sure ipython is running so we really test this function::
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: get_test_shell()
+        <sage.repl.interpreter.SageTestShell object at ...>
+
+    Run the function twice, to check it is idempotent (see :trac:`35235`)::
 
         sage: from sage.repl.inputhook import install
+        sage: install()
         sage: install()
     """
     ip = get_ipython()
     if not ip:
         return   # Not running in ipython, e.g. doctests
-    ip.enable_gui('sage')
+    if ip._inputhook != sage_inputhook:
+        ip.enable_gui('sage')
 
 
 def uninstall():
