@@ -76,7 +76,7 @@ from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField, NumberField as NumberField_constructor
+from sage.rings.number_field.number_field import CyclotomicField, NumberField
 from sage.rings.number_field.number_field_base import NumberField as NumberField_base
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField, QQ, is_RationalField
