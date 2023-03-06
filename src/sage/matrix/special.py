@@ -748,36 +748,36 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     NumPy arrays may be used as input. ::
 
-        sage: import numpy
-        sage: entries = numpy.array([1.2, 5.6]); entries
+        sage: import numpy                                                              # optional - numpy
+        sage: entries = numpy.array([1.2, 5.6]); entries                                # optional - numpy
         array([1.2, 5.6])
-        sage: A = diagonal_matrix(3, entries); A
+        sage: A = diagonal_matrix(3, entries); A                                        # optional - numpy
         [1.2 0.0 0.0]
         [0.0 5.6 0.0]
         [0.0 0.0 0.0]
-        sage: A.parent()
+        sage: A.parent()                                                                # optional - numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
         sage: j = complex(0,1)
-        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries
+        sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries                   # optional - numpy
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
-        sage: A = diagonal_matrix(entries); A
+        sage: A = diagonal_matrix(entries); A                                           # optional - numpy
         [2.0 + 1.0*I         0.0         0.0]
         [        0.0         8.1         0.0]
         [        0.0         0.0 3.4 + 2.6*I]
-        sage: A.parent()
+        sage: A.parent()                                                                # optional - numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
-        sage: entries = numpy.array([4, 5, 6])
-        sage: A = diagonal_matrix(entries); A
+        sage: entries = numpy.array([4, 5, 6])                                          # optional - numpy
+        sage: A = diagonal_matrix(entries); A                                           # optional - numpy
         [4 0 0]
         [0 5 0]
         [0 0 6]
-        sage: A.parent()
+        sage: A.parent()                                                                # optional - numpy
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
 
-        sage: entries = numpy.array([4.1, 5.2, 6.3])
-        sage: A = diagonal_matrix(ZZ, entries); A
+        sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # optional - numpy
+        sage: A = diagonal_matrix(ZZ, entries); A                                       # optional - numpy
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 4.1 to an element of Integer Ring
