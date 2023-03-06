@@ -1091,7 +1091,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad (1 \leq i \leq n)
 
         then the `j`-invariant is called *basic*. See the method
-        meth:`basic_j_invariants_parameters` for computing the list of all basic
+        :meth:`basic_j_invariant_parameters` for computing the list of all basic
         `j`-invariant parameters.
 
         INPUT:
@@ -1186,73 +1186,92 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
         return num/(self._gen[-1]**dr)
 
-    def basic_j_invariants_parameters(self, param=None):
+    def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
         """
-        Return the list of basic j-invariants parameters.
+        Return the list of basic `j`-invariant parameters.
+
+        See the method :meth:`j_invariant` for the definition of the basic
+        `j`-invariant parameters.
+
+        INPUT:
+
+        - ``coeff_indices`` (list, default: ``None``) -- a list of indices for
+          the coefficients of the Drinfeld module. If specific indices are
+          chosen, then the method will return only the basic `j`-invariant
+          parameters that involves the given indices.
+
+        - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
+          will return only the parameters for which the basic `j`-invariant is
+          nonzero
 
         EXAMPLES::
 
             sage: A = GF(5)['T']
             sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1, T+1, T^2 + 1])
-            sage: phi.basic_j_invariants_parameters()
-            [[[1, 2, 3], [1, 5, 1]],
-             [[1, 2, 3], [7, 4, 1]],
-             [[1, 2, 3], [13, 3, 1]],
-             [[1, 2, 3], [19, 2, 1]],
-             [[1, 2, 3], [25, 1, 1]],
-             [[1, 2, 3], [31, 0, 1]],
-             [[1, 2, 3], [8, 9, 2]],
-             [[1, 2, 3], [20, 7, 2]],
-             [[1, 2, 3], [9, 14, 3]],
-             [[1, 2, 3], [15, 13, 3]],
-             [[1, 2, 3], [27, 11, 3]],
-             [[1, 2, 3], [10, 19, 4]],
-             [[1, 2, 3], [22, 17, 4]],
-             [[1, 2, 3], [11, 24, 5]],
-             [[1, 2, 3], [17, 23, 5]],
-             [[1, 2, 3], [23, 22, 5]],
-             [[1, 2, 3], [29, 21, 5]],
-             [[1, 2, 3], [0, 31, 6]],
-             [[1, 2, 3], [12, 29, 6]],
-             [[1, 2, 3], [31, 31, 7]]]
-            sage: phi.basic_j_invariants_parameters([1])
-            [[[1, 3], [31, 1]]]
-            sage: phi.basic_j_invariants_parameters([2])
-            [[[2, 3], [31, 6]]]
+            sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
+            sage: phi.basic_j_invariant_parameters()
+            [[[1, 2], [1, 5, 1]],
+             [[1, 2], [7, 4, 1]],
+             [[1, 2], [13, 3, 1]],
+             [[1, 2], [19, 2, 1]],
+             [[1, 2], [25, 1, 1]],
+             [[1, 2], [31, 0, 1]],
+             [[1, 2], [8, 9, 2]],
+             [[1, 2], [20, 7, 2]],
+             [[1, 2], [9, 14, 3]],
+             [[1, 2], [15, 13, 3]],
+             [[1, 2], [27, 11, 3]],
+             [[1, 2], [10, 19, 4]],
+             [[1, 2], [22, 17, 4]],
+             [[1, 2], [11, 24, 5]],
+             [[1, 2], [17, 23, 5]],
+             [[1, 2], [23, 22, 5]],
+             [[1, 2], [29, 21, 5]],
+             [[1, 2], [0, 31, 6]],
+             [[1, 2], [12, 29, 6]],
+             [[1, 2], [31, 31, 7]]]
+            sage: phi.basic_j_invariant_parameters([1])
+            [[[1], [31, 1]]]
+            sage: phi.basic_j_invariant_parameters([2])
+            [[[2], [31, 6]]]
+            sage: phi.basic_j_invariant_parameters(nonzero=True)
+            [[[2], [31, 6]]]
         """
         r = self._gen.degree()
-        if param is None:
-            param = [idx for idx, c in enumerate(
-                self.coefficients(sparse=False)[1:-1], start=1) if c]
-        elif isinstance(param, list):  # check if param is valid
-            if not all(isinstance(k, (int, Integer)) for k in param):
-                raise TypeError("the elements of the list param must be integers")
-            if max(param) >= r or min(param) <= 0:
+        if coeff_indices is None:
+            if nonzero:
+                coeff_indices = [k for k, g in enumerate(
+                    self.coefficients(sparse=False)[1:-1], start=1) if g]
+            else:
+                coeff_indices = list(range(1, r))
+        elif isinstance(coeff_indices, list):  # check if coeff_indices is valid
+            if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
+                raise TypeError("the elements of the list coeff_indices must be integers")
+            if max(coeff_indices) >= r or min(coeff_indices) <= 0:
                 raise ValueError(f"the maximum or the minimum of the list" \
-                    "param must be > 0 and < {r} respectively")
-            if not all(param[i] < param[i+1] for i in range(len(param) - 1)):
-                raise ValueError(f"the elements of param should be distinct" \
+                    "coeff_indices must be > 0 and < {r} respectively")
+            if not all(coeff_indices[i] < coeff_indices[i+1] for i in range(len(coeff_indices) - 1)):
+                raise ValueError(f"the elements of coeff_indices should be distinct" \
                     "and sorted")
-        elif param == "all":
-            param = list(range(1, r))
+            if nonzero:
+                coeff_indices = [k for k in coeff_indices if self._gen[k]]
         else:
-            raise TypeError("input param is invalid")
+            raise TypeError("input coeff_indices is invalid")
         # Create the equation and inequalities for the polyhedron:
         q = self._Fq.order()
         equation = [0]
         inequalities = []
-        for idx, i in enumerate(param):
+        for idx, i in enumerate(coeff_indices):
             # create the equation:
             #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             equation.append(q**i - 1)
 
             # create inequalities of the form 0 <= delta_i
-            lower_bounds = [0]*(len(param) + 2)
+            lower_bounds = [0]*(len(coeff_indices) + 2)
             lower_bounds[idx + 1] = 1
 
             # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
-            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(param) + 1)
+            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(coeff_indices) + 1)
             upper_bounds[idx + 1] = -1
 
             inequalities.extend((lower_bounds, upper_bounds))
@@ -1265,8 +1284,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Compute its integral points
         integral_points = polyhedron.integral_points()
 
-        param.append(r)
-        return [[param, list(p)] for p in integral_points if gcd(p) == 1]
+        return [[coeff_indices, list(p)] for p in integral_points if gcd(p) == 1]
 
     def is_isomorphic(self, psi):
         r"""
@@ -1308,7 +1326,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return False
         # check that all the nonzero basic j-invariants agree
         isom = True
-        for p in self.basic_j_invariants_parameters():
+        for p in self.basic_j_invariant_parameters(nonzero=True):
             if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
                 isom = False
                 break
