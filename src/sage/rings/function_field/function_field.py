@@ -1049,8 +1049,8 @@ class FunctionField(Field):
             Divisor group of Rational function field in t over Rational Field
 
             sage: _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # optional - sage.singular
-            sage: L.divisor_group()                                                     # optional - sage.modules, sage.singular
+            sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # optional - sage.libs.singular
+            sage: L.divisor_group()                                                     # optional - sage.modules, sage.libs.singular
             Divisor group of Function field in y defined by y^3 + (-t^3 + 1)/(t^3 - 2)
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.libs.pari
