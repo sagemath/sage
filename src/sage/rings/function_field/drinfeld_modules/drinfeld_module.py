@@ -1316,16 +1316,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module for
         the given parameter.
 
-        Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r`. Then then
-        `[[k_1, \ldots, k_n], [d_1, \ldots, d_n, d_r]]`-`j`-invariant of `\phi`
+        Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r`. Then the
+        *`((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r)`-`j`-invariant* of `\phi`
         is defined by
 
         .. MATH::
 
-            j_k(\phi) := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            j_{k_1, \ldots, k_n}^{}(\phi)^{d_1, \ldots, d_n, d_r} := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
-        where `1\leq k_i \leq r - 1` and the integers `d_i` satisfies the
-        *weight-0 condition*:
+        where `1\leq k_1 < k_2 < \ldots < k_n \leq r - 1` and the integers `d_i`
+        satisfies the *weight-0 condition*:
 
         .. MATH::
 
@@ -1343,22 +1343,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``parameter`` (integer or list, default: None) -- this parameter is
-          either a list of two lists or an integer between 1 and `r-1` (`r` is
+        - ``parameter`` (integer or tuple, default: None) -- this parameter is
+          either a tuple of two tuples or an integer between 1 and `r-1` (`r` is
           the rank).
 
-          - If ``parameter`` is a list of two lists, then it must be of the
-            form `[[k_1, k_2, \ldots, k_n], [d_1, d_2, \ldots, d_n, d_r]]` where
+          - If ``parameter`` is a tuple of two tuples, then it must be of the
+            form `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))` where
             the `k_i` and `d_i` are integers satisfying the weight-0 condition
             described above. In this case the method returns the associated
             `j`-invariant;
 
           - If ``parameter`` is an integer `k` then the method returns
-            the ``j``-invariant associated to the parameter `[[k], [d_k, d_r]]`;
+            the ``j``-invariant associated to the parameter `((k,), (d_k, d_r))`;
 
           - If ``parameter`` is ``None`` and the rank of the Drinfeld module is
             2, then the method returns its usual `j`-invariant, that is the
-            `j`-invariant for the parameter `[[1], [q+1, 1]]`.
+            `j`-invariant for the parameter `((1,), (q+1, 1))`.
 
         - ``check`` (bool, default: ``True``) -- if this flag is set to
           ``False`` then the code will not check if the given parameter is valid
@@ -1369,7 +1369,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         REFERENCE:
 
         The notion of basic `j`-invariant was introduced by Potemine in
-        _[Pot1998].
+        [Pot1998]_.
 
         EXAMPLES::
 
