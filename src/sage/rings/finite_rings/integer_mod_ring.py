@@ -831,8 +831,8 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         This should be very fast::
 
-            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]
-            sage: x / R.base_ring()(2)
+            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]                         # optional - sage.libs.pari
+            sage: x / R.base_ring()(2)                                                              # optional - sage.libs.pari
             500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000013365000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000401*x
         """
         return self

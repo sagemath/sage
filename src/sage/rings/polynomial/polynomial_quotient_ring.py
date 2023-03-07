@@ -5,14 +5,14 @@ Quotients of Univariate Polynomial Rings
 EXAMPLES::
 
     sage: R.<x> = QQ[]
-    sage: S = R.quotient(x**3-3*x+1, 'alpha')
-    sage: S.gen()**2 in S
+    sage: S = R.quotient(x**3 - 3*x + 1, 'alpha')                                       # optional - sage.libs.pari
+    sage: S.gen()**2 in S                                                               # optional - sage.libs.pari
     True
-    sage: x in S
+    sage: x in S                                                                        # optional - sage.libs.pari
     True
-    sage: S.gen() in R
+    sage: S.gen() in R                                                                  # optional - sage.libs.pari
     False
-    sage: 1 in S
+    sage: 1 in S                                                                        # optional - sage.libs.pari
     True
 
 TESTS::
@@ -127,12 +127,12 @@ class PolynomialQuotientRingFactory(UniqueFactory):
     polynomial ring over `\QQ`::
 
         sage: R = PolynomialRing(RationalField(), 'x'); x = R.gen()
-        sage: S = R.quotient(x^3 + 2*x - 5, 'a')
-        sage: S
+        sage: S = R.quotient(x^3 + 2*x - 5, 'a')                                                            # optional - sage.libs.pari
+        sage: S                                                                                             # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^3 + 2*x - 5
-        sage: S.is_field()
+        sage: S.is_field()                                                                                  # optional - sage.libs.pari
         True
-        sage: S.degree()
+        sage: S.degree()                                                                                    # optional - sage.libs.pari
         3
 
     There are conversion functions for easily going back and forth
@@ -192,13 +192,13 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
         Consequently, you get two distinct objects::
 
-            sage: S = PolynomialQuotientRing(R, x + 1); S
+            sage: S = PolynomialQuotientRing(R, x + 1); S                                           # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x + 1
-            sage: T = PolynomialQuotientRing(R, 2*x + 2); T
+            sage: T = PolynomialQuotientRing(R, 2*x + 2); T                                         # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus 2*x + 2
-            sage: S is T
+            sage: S is T                                                                            # optional - sage.libs.pari
             False
-            sage: S == T
+            sage: S == T                                                                            # optional - sage.libs.pari
             False
 
         In most applications this will not be a concern since the calling code
@@ -233,7 +233,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: PolynomialQuotientRing.create_object((8, 0, 0), (R, x^2 - 1, ('xbar')))
+            sage: PolynomialQuotientRing.create_object((8, 0, 0), (R, x^2 - 1, ('xbar')))           # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
 
         """
@@ -446,18 +446,18 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<alpha> = R.quotient(x^3-3*x+1)
-            sage: S(x)
+            sage: S.<alpha> = R.quotient(x^3 - 3*x + 1)                                                     # optional - sage.libs.pari
+            sage: S(x)                                                                                      # optional - sage.libs.pari
             alpha
-            sage: S(x^3)
+            sage: S(x^3)                                                                                    # optional - sage.libs.pari
             3*alpha - 1
-            sage: S([1,2])
+            sage: S([1,2])                                                                                  # optional - sage.libs.pari
             2*alpha + 1
-            sage: S([1,2,3,4,5])
+            sage: S([1,2,3,4,5])                                                                            # optional - sage.libs.pari
             18*alpha^2 + 9*alpha - 3
-            sage: S(S.gen()+1)
+            sage: S(S.gen()+1)                                                                              # optional - sage.libs.pari
             alpha + 1
-            sage: S(S.gen()^10+1)
+            sage: S(S.gen()^10+1)                                                                           # optional - sage.libs.pari
             90*alpha^2 - 109*alpha + 28
 
         TESTS:

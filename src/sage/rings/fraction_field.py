@@ -1235,10 +1235,10 @@ class FractionFieldEmbeddingSection(Section):
         Test for Localization::
 
             sage: R.<x> = ZZ[]
-            sage: L = Localization(R, x**2+2*x+ 1)
-            sage: 1/(x+1) in L               # indirect doctest
+            sage: L = Localization(R, x**2 + 2*x + 1)                           # optional - sage.libs.pari
+            sage: 1/(x + 1) in L                        # indirect doctest      # optional - sage.libs.pari
             True
-            sage: 1/(x+2) in L               # indirect doctest
+            sage: 1/(x + 2) in L                        # indirect doctest      # optional - sage.libs.pari
             False
         """
         codom = self.codomain()
