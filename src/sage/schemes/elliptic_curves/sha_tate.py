@@ -80,12 +80,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import (
-    Integer,
-    RealField,
-    RationalField,
-    RIF,
-    ZZ)
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealField
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfi import RIF
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import log
 from math import sqrt
 from sage.misc.verbose import verbose

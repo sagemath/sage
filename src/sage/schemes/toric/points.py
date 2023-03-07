@@ -39,7 +39,7 @@ from copy import copy
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.parallel.decorate import Parallel
 
