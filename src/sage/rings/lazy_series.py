@@ -3388,9 +3388,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         Given two Laurent series `f` and `g` over the same base ring, the
         composition `(f \circ g)(z) = f(g(z))` is defined if and only if:
 
-        - `g = 0` and `val(f) >= 0`,
+        - `g = 0` and `\mathrm{val}(f) >= 0`,
         - `g` is non-zero and `f` has only finitely many non-zero coefficients,
-        - `g` is non-zero and `val(g) > 0`.
+        - `g` is non-zero and `\mathrm{val}(g) > 0`.
 
         INPUT:
 
@@ -3574,7 +3574,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             y
 
         We look at cases where the composition does not exist.
-        `g = 0` and `val(f) < 0`::
+        `g = 0` and `\mathrm{val}(f) < 0`::
 
             sage: g = L(0)
             sage: f = z^-1 + z^-2
@@ -3585,7 +3585,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             ...
             ZeroDivisionError: the valuation of the series must be nonnegative
 
-        `g \neq 0` and `val(g) \leq 0` and `f` has infinitely many
+        `g \neq 0` and `\mathrm{val}(g) \leq 0` and `f` has infinitely many
         non-zero coefficients::
 
             sage: g = z^-1 + z^-2
@@ -3797,7 +3797,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         The compositional inverse exists if and only if:
 
-        - `val(f) = 1`, or
+        - `\mathrm{val}(f) = 1`, or
 
         - `f = a + b z` with `a, b \neq 0`, or
 
@@ -3870,7 +3870,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             ...
             ValueError: compositional inverse does not exist
 
-        `val(f) != 1` and `f(0) * f(1) = 0`::
+        `\mathrm{val}(f) != 1` and `f(0) * f(1) = 0`::
 
             sage: (z^2).revert()
             Traceback (most recent call last):
@@ -4348,7 +4348,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         - `g_i` is zero, or
         - setting all variables except the `i`th in `f` to zero
           yields a polynomial, or
-        - `val(g_i) > 0`.
+        - `\mathrm{val}(g_i) > 0`.
 
         If `f` is a univariate 'exact' series, we can check whether
         `f` is a actually a polynomial.  However, if `f` is a
@@ -4621,7 +4621,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         The compositional inverse exists if and only if:
 
-        - `val(f) = 1`, or
+        - `\mathrm{val}(f) = 1`, or
 
         - `f = a + b z` with `a, b \neq 0`
 
@@ -4681,7 +4681,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             ...
             ValueError: compositional inverse does not exist
 
-        `val(f) != 1` and `f(0) * f(1) = 0`::
+        `\mathrm{val}(f) != 1` and `f(0) * f(1) = 0`::
 
             sage: (z^2).revert()
             Traceback (most recent call last):
@@ -5290,7 +5290,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         - setting all alphabets except the `i`th in `f` to zero
           yields a symmetric function with only finitely many
           non-zero coefficients, or
-        - `val(g) > 0`.
+        - `\mathrm{val}(g) > 0`.
 
         If `f` is a univariate 'exact' lazy symmetric function, we
         can check whether `f` has only finitely many non-zero
@@ -5489,7 +5489,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         The compositional inverse exists if and only if:
 
-        - `val(f) = 1`, or
+        - `\mathrm{val}(f) = 1`, or
 
         - `f = a + b p_1` with `a, b \neq 0`.
 
