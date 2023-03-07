@@ -49,6 +49,15 @@ ideal = Ideal
 # Semirings
 from .semirings.all import *
 
+# Power series rings
+from .power_series_ring import PowerSeriesRing
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=33602)
+
+del lazy_import
+
 from .finite_rings.all__sagemath_categories import *
 from .number_field.all__sagemath_categories import *
 from .padics.all__sagemath_categories import *

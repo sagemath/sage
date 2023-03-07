@@ -7,7 +7,12 @@ The class ``PowerSeries_poly`` provides additional methods for univariate power 
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from .infinity import infinity, is_Infinite
-from sage.libs.pari.all import pari_gen, PariError
+
+try:
+    from sage.libs.pari.all import pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    PariError = ()
 
 
 cdef class PowerSeries_poly(PowerSeries):
