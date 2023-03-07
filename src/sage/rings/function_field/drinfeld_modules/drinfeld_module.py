@@ -969,6 +969,32 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((2, 4), (401, 260, 11)),
              ...
              ((2, 4), (288, 39, 2))]
+
+        TESTS::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
+            sage: phi.basic_j_invariant_parameters([1, 'x'])
+            Traceback (most recent call last):
+            ...
+            TypeError: the elements of the list 'coeff_indices' must be integers
+            sage: phi.basic_j_invariant_parameters([1, 10])
+            Traceback (most recent call last):
+            ...
+            ValueError: the maximum or the minimum of the list coeff_indices must be > 0 and < 3 respectively
+            sage: phi.basic_j_invariant_parameters([1, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the elements of coeff_indices should be distinct and sorted
+            sage: phi.basic_j_invariant_parameters([2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the elements of coeff_indices should be distinct and sorted
+            sage: phi.basic_j_invariant_parameters('x')
+            Traceback (most recent call last):
+            ...
+            TypeError: input 'coeff_indices' must be NoneType, a tuple or a list
         """
         r = self._gen.degree()
         if coeff_indices is None:
@@ -980,17 +1006,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         elif isinstance(coeff_indices, (tuple, list)):  # check if coeff_indices is valid
             coeff_indices = list(coeff_indices)
             if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
-                raise TypeError("the elements of the list coeff_indices must be integers")
+                raise TypeError("the elements of the list 'coeff_indices' "
+                                "must be integers")
             if max(coeff_indices) >= r or min(coeff_indices) <= 0:
-                raise ValueError(f"the maximum or the minimum of the list" \
-                    "coeff_indices must be > 0 and < {r} respectively")
-            if not all(coeff_indices[i] < coeff_indices[i+1] for i in range(len(coeff_indices) - 1)):
-                raise ValueError(f"the elements of coeff_indices should be distinct" \
-                    "and sorted")
+                raise ValueError("the maximum or the minimum of the list "
+                    f"coeff_indices must be > 0 and < {r} respectively")
+            if not all(coeff_indices[i] < coeff_indices[i+1] for i in
+                       range(len(coeff_indices) - 1)):
+                raise ValueError("the elements of coeff_indices should be "
+                                 "distinct and sorted")
             if nonzero:
                 coeff_indices = [k for k in coeff_indices if self._gen[k]]
         else:
-            raise TypeError("input coeff_indices must be None, a tuple or a list")
+            raise TypeError("input 'coeff_indices' must be NoneType, a tuple "
+                            "or a list")
         # Create the equation and inequalities for the polyhedron:
         q = self._Fq.order()
         equation = [0]
@@ -1403,7 +1432,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant()
             Traceback (most recent call last):
             ...
-            ValueError: input 'parameter' must be different from None if the rank is greater than 2
+            TypeError: input 'parameter' must be different from NoneType if the rank is greater than 2
             sage: phi.j_invariant(-1)
             Traceback (most recent call last):
             ...
@@ -1447,8 +1476,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         if parameter is None:
             if r != 2:
-                raise ValueError("input 'parameter' must be different from "
-                                 "None if the rank is greater than 2")
+                raise TypeError("input 'parameter' must be different from "
+                                 "NoneType if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if isinstance(parameter, (int, Integer)):
             if parameter <= 0 or parameter >= r:
@@ -1474,7 +1503,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if not all(isinstance(p, (int, Integer)) for p in parameter[1]):
                 raise TypeError("second tuple of input 'parameter' must "
                                 "contain only integers")
-            if not check:
+            if check:
                 # check that the weight-0 condition is statisfied:
                 # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
                 right = parameter[1][-1]*(q**r - 1)
