@@ -119,6 +119,13 @@ exclude sage/rings/function_field/divisor.*                             # module
 exclude sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
 exclude sage/rings/function_field/function_field_valuation.*            # ??
 
+include sage/rings/power_series_mpoly.p*
+include sage/rings/power_series_poly.p*
+include sage/rings/power_series_ring_element.p*
+include sage/rings/power_series_ring.p*
+include sage/rings/multi_power_series_ring.py
+include sage/rings/multi_power_series_ring_element.py
+
 graft sage/rings/semirings
 
 include sage/sets/cartesian_product.py
