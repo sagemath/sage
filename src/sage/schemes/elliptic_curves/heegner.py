@@ -92,30 +92,34 @@ The above is consistent with the following analytic computation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import (richcmp_method, richcmp,
-                                    richcmp_not_equal, rich_to_bool)
-
 import sage.rings.abc
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
 import sage.rings.all as rings
-from sage.rings.all import (ZZ, GF, QQ, CDF,
-                            Integers, RealField, ComplexField, QuadraticField)
-from sage.arith.all import (gcd, xgcd, lcm, prime_divisors, factorial,
-        binomial)
+
+from sage.arith.functions import lcm
+from sage.arith.misc import (binomial, factorial, prime_divisors,
+                             GCD as gcd, XGCD as xgcd)
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.modsym.p1list import P1List
+from sage.rings.complex_double import CDF
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.factorint import factor_trial_division
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import QuadraticField
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
 from sage.quadratic_forms.all import (BinaryQF,
                                       BinaryQF_reduced_representatives)
-from sage.matrix.all import MatrixSpace, matrix
-
-from sage.modular.modsym.p1list import P1List
-
+from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import (richcmp_method, richcmp,
+                                    richcmp_not_equal, rich_to_bool)
 
 ###############################################################################
 #
@@ -6822,7 +6826,7 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None):
     else:
         H = 4*h
     p = 3
-    from sage.all import next_prime
+    from sage.arith.misc import next_prime
     while True:
         c = H/(2*p**2) + B
         if c < max_height:
