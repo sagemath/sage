@@ -445,7 +445,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f[1:4]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a start is not defined
+            IndexError: polynomial slicing with a start is not defined
         """
         if isinstance(n, slice):
             return PowerSeries_poly(self._parent, self.polynomial()[n],
