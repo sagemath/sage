@@ -2806,17 +2806,17 @@ class QuotientFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: P.<x,y> = ZZ[]
-        sage: Q = P.quo([x^2+y^2]*P)
-        sage: F = Q.construction()[0]
-        sage: F(QQ['x','y'])
+        sage: Q = P.quo([x^2 + y^2] * P)                                                                                # optional - sage.libs.pari
+        sage: F = Q.construction()[0]                                                                                   # optional - sage.libs.pari
+        sage: F(QQ['x','y'])                                                                                            # optional - sage.libs.pari
         Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
-        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2+y^2]*QQ['x','y'])
+        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])                                              # optional - sage.libs.pari
         True
-        sage: F(QQ['x','y','z'])
+        sage: F(QQ['x','y','z'])                                                                                        # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         CoercionException: Cannot apply this quotient functor to Multivariate Polynomial Ring in x, y, z over Rational Field
-        sage: F(QQ['y','z'])
+        sage: F(QQ['y','z'])                                                                                            # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: Could not find a mapping of the passed element to this ring.
@@ -2845,21 +2845,21 @@ class QuotientFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import QuotientFunctor
             sage: P.<t> = ZZ[]
-            sage: F = QuotientFunctor([5+t^2]*P)
-            sage: F(P)
+            sage: F = QuotientFunctor([5 + t^2] * P)
+            sage: F(P)                                                                                                  # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in tbar over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])
+            sage: F(QQ['t'])                                                                                            # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in tbar over Rational Field with modulus t^2 + 5
-            sage: F = QuotientFunctor([5+t^2]*P,names='s')
-            sage: F(P)
+            sage: F = QuotientFunctor([5 + t^2] * P, names='s')
+            sage: F(P)                                                                                                  # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in s over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])
+            sage: F(QQ['t'])                                                                                            # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in s over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5] * ZZ, as_field=True)
             sage: F(ZZ)                                                                                                 # optional - sage.libs.pari
             Finite Field of size 5
             sage: F = QuotientFunctor([5] * ZZ)
-            sage: F(ZZ)
+            sage: F(ZZ)                                                                                                 # optional - sage.libs.pari
             Ring of integers modulo 5
 
         """
@@ -2886,10 +2886,10 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x,y> = ZZ[]
-            sage: Q = P.quo([2+x^2,3*x+y^2])
-            sage: F = Q.construction()[0]; F
+            sage: Q = P.quo([2 + x^2, 3*x + y^2])                                                                       # optional - sage.libs.pari
+            sage: F = Q.construction()[0]; F                                                                            # optional - sage.libs.pari
             QuotientFunctor
-            sage: F(QQ['x','y'])     # indirect doctest
+            sage: F(QQ['x','y'])     # indirect doctest                                                                 # optional - sage.libs.pari
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + 2, y^2 + 3*x)
 
         Note that the ``quo()`` method of a field used to return the
@@ -2933,14 +2933,14 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
-            sage: F == loads(dumps(F))
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                    # optional - sage.libs.pari
+            sage: F == loads(dumps(F))                                                                                  # optional - sage.libs.pari
             True
             sage: P2.<x,y> = QQ[]
-            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
+            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.libs.pari
             False
             sage: P3.<x> = ZZ[]
-            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
+            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.libs.pari
             True
         """
         if not isinstance(other, QuotientFunctor):
@@ -2958,14 +2958,14 @@ class QuotientFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
-            sage: F != loads(dumps(F))
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                    # optional - sage.libs.pari
+            sage: F != loads(dumps(F))                                                                                  # optional - sage.libs.pari
             False
             sage: P2.<x,y> = QQ[]
-            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
+            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.libs.pari
             True
             sage: P3.<x> = ZZ[]
-            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]
+            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.libs.pari
             False
         """
         return not (self == other)
@@ -2984,10 +2984,10 @@ class QuotientFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
-            sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])
+            sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])                                                                       # optional - sage.libs.pari
+            sage: Q2 = P.quo([(x^2+1)^2*(x^5+3)])                                                                       # optional - sage.libs.pari
             sage: from sage.categories.pushout import pushout
-            sage: pushout(Q1,Q2)    # indirect doctest
+            sage: pushout(Q1,Q2)    # indirect doctest                                                                  # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^4 + 2*x^2 + 1
 
         The following was fixed in :trac:`8800`::
