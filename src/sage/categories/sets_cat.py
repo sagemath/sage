@@ -2563,9 +2563,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: ZZ3 = cartesian_product([ZZ, ZZ, ZZ])
-                    sage: sZZ3 = ZZ3._sympy_(); sZZ3
+                    sage: sZZ3 = ZZ3._sympy_(); sZZ3                                                                    # optional - sympy
                     ProductSet(Integers, Integers, Integers)
-                    sage: (1, 2, 3) in sZZ3
+                    sage: (1, 2, 3) in sZZ3                                                                             # optional - sympy
                     True
                 """
                 from sympy import ProductSet
