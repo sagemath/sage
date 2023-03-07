@@ -2444,15 +2444,19 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             ...
             ValueError: unknown implementation 'superfast' for dense polynomial rings over Finite Field in z6 of size 2^6
         """
-        implementation = self._implementation_names(implementation, base_ring)[0]
-        if implementation == "NTL":
-            from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
-            from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
-            from sage.rings.polynomial.polynomial_zz_pex import Polynomial_ZZ_pEX
-
-            p = base_ring.characteristic()
-            self._modulus = ntl_ZZ_pEContext(ntl_ZZ_pX(list(base_ring.modulus()), p))
-            element_class = Polynomial_ZZ_pEX
+        if element_class is None:
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "NTL":
+                    try:
+                        from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
+                        from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
+                        from sage.rings.polynomial.polynomial_zz_pex import Polynomial_ZZ_pEX
+                    except ImportError:
+                        continue
+                    p = base_ring.characteristic()
+                    self._modulus = ntl_ZZ_pEContext(ntl_ZZ_pX(list(base_ring.modulus()), p))
+                    element_class = Polynomial_ZZ_pEX
+                break
         PolynomialRing_field.__init__(self, base_ring, sparse=False, name=name,
                                       element_class=element_class)
 
@@ -3052,19 +3056,26 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
         """
         if element_class is None:
-            implementation = self._implementation_names(implementation, base_ring)[0]
-            if implementation == "FLINT":
-                from .polynomial_zmod_flint import \
-                        Polynomial_zmod_flint as element_class
-                self._implementation_repr = ''
-            elif implementation == "NTL":
-                modulus = base_ring.order()
-                from . import polynomial_modn_dense_ntl as modn_dense_ntl
-                if modulus < ZZ(modn_dense_ntl.zz_p_max):
-                    element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_zz
-                else:
-                    element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ
-                self._implementation_repr = ' (using NTL)'
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "FLINT":
+                    try:
+                        from .polynomial_zmod_flint import Polynomial_zmod_flint as element_class
+                    except ImportError:
+                        continue
+                    self._implementation_repr = ''
+                elif implementation == "NTL":
+                    modulus = base_ring.order()
+                    try:
+                        from . import polynomial_modn_dense_ntl as modn_dense_ntl
+                    except ImportError:
+                        continue
+                    if modulus < ZZ(modn_dense_ntl.zz_p_max):
+                        element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_zz
+                    else:
+                        element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ
+                    self._implementation_repr = ' (using NTL)'
+                break
+
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
                 element_class=element_class, category=category)
 
@@ -3177,7 +3188,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
                                  PolynomialRing_dense_mod_n,
                                  PolynomialRing_singular_repr):
-    def __init__(self, base_ring, name="x", implementation=None, category=None):
+    def __init__(self, base_ring, name="x", implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -3213,19 +3224,28 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: R is S
             True
         """
-        implementation = self._implementation_names(implementation, base_ring)[0]
-        if implementation == "FLINT":
-            from .polynomial_zmod_flint import \
-                    Polynomial_zmod_flint as element_class
-            self._implementation_repr = ''
-        elif implementation == "NTL":
-            from .polynomial_modn_dense_ntl import \
-                    Polynomial_dense_mod_p as element_class
-            self._implementation_repr = ' (using NTL)'
-        elif implementation == "GF2X":
-            from .polynomial_gf2x import \
-                    Polynomial_GF2X as element_class
-            self._implementation_repr = ' (using GF2X)'
+        if element_class is None:
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "FLINT":
+                    try:
+                        from .polynomial_zmod_flint import Polynomial_zmod_flint as element_class
+                    except ImportError:
+                        continue
+                    self._implementation_repr = ''
+                elif implementation == "NTL":
+                    try:
+                        from .polynomial_modn_dense_ntl import Polynomial_dense_mod_p as element_class
+                    except ImportError:
+                        continue
+                    self._implementation_repr = ' (using NTL)'
+                elif implementation == "GF2X":
+                    try:
+                        from .polynomial_gf2x import Polynomial_GF2X as element_class
+                    except ImportError:
+                        continue
+                    self._implementation_repr = ' (using GF2X)'
+                break
+
         PolynomialRing_dense_mod_n.__init__(self, base_ring, name=name,
                 element_class=element_class, category=category)
 
