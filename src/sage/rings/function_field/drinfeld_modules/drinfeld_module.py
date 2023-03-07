@@ -34,6 +34,7 @@ from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_string import _LazyString
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.ring_extension import RingExtension_generic
@@ -1318,7 +1319,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r` with
         `g_r \neq 0`. Then the
-        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r)`-`j`*-invariant* of `\phi`
+        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r))`-`j`*-invariant* of `\phi`
         is defined by
 
         .. MATH::
@@ -1344,15 +1345,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``parameter`` (integer or tuple, default: None) -- this parameter is
-          either a tuple of two tuples or an integer between 1 and `r-1` (`r` is
-          the rank).
+        - ``parameter`` (integer, tuple or list, default: None) -- this
+          parameter is either a list, a tuple or an integer between 1 and
+          `r-1` (`r` is the rank).
 
-          - If ``parameter`` is a tuple of two tuples, then it must be of the
-            form `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))` where
+          - If ``parameter`` is a list or a tuple, then it must be of the form:
+            `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))` where
             the `k_i` and `d_i` are integers satisfying the weight-0 condition
-            described above. In this case the method returns the associated
-            `j`-invariant;
+            described above.
 
           - If ``parameter`` is an integer `k` then the method returns
             the ``j``-invariant associated to the parameter `((k,), (d_k, d_r))`;
@@ -1400,7 +1400,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant(3)
             (T^156 + T^155 + T^151 + T^150 + T^131 + T^130 + T^126 + T^125 + T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1)/T^93
 
-        ::
+        The parameter can either be a tuple or a list::
 
             sage: Fq.<a> = GF(7)
             sage: A.<T> = Fq[]
@@ -1409,9 +1409,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             5
             sage: J == (phi.coefficient(1)**267)*(phi.coefficient(3)**269)/(phi.coefficient(4)**39)
             True
-            sage: phi.j_invariant(((3,), (400, 57)))
+            sage: phi.j_invariant([[3], [400, 57]])
             4
-            sage: phi.j_invariant(((3,), (400, 57))) == phi.j_invariant(3)
+            sage: phi.j_invariant([[3], [400, 57]]) == phi.j_invariant(3)
             True
 
         The list of all basic `j`-invariant parameters can be retrieved using
@@ -1442,7 +1442,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant('x')
             Traceback (most recent call last):
             ...
-            TypeError: input 'parameter' must be a tuple of length 2 or an integer
+            TypeError: input 'parameter' must be a tuple or a list of length 2 or an integer
             sage: phi.j_invariant((1, 2, 3))
             Traceback (most recent call last):
             ...
@@ -1450,23 +1450,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant(('x', (1, 2, 3)))
             Traceback (most recent call last):
             ...
-            TypeError: first entry of input 'parameter' must be a tuple
+            TypeError: first component of input 'parameter' must be a tuple or a list
             sage: phi.j_invariant(((1, 2), 'x'))
             Traceback (most recent call last):
             ...
-            TypeError: second entry of input 'parameter' must be a tuple
+            TypeError: second component of input 'parameter' must be a tuple or a list
             sage: phi.j_invariant(((1, 2, 3, 4, 5), (2, 1)))
             Traceback (most recent call last):
             ...
-            ValueError: tuples of input 'parameters' are of incorrect length
+            ValueError: components of input 'parameters' are of incorrect length
             sage: phi.j_invariant(((1, 'x'), (2, 3, 8)))
             Traceback (most recent call last):
             ...
-            TypeError: first tuple of input 'parameter' must contain only integers
+            TypeError: first component of input 'parameter' must contain only integers
             sage: phi.j_invariant(((1, 2), (2, 3, 'x')))
             Traceback (most recent call last):
             ...
-            TypeError: second tuple of input 'parameter' must contain only integers
+            TypeError: second component of input 'parameter' must contain only integers
             sage: phi.j_invariant(((1, 2), (4, 3, 7)))
             Traceback (most recent call last):
             ...
@@ -1481,29 +1481,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise TypeError("input 'parameter' must be different from "
                                  "NoneType if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
-        if isinstance(parameter, (int, Integer)):
+        if parameter in ZZ:
             if parameter <= 0 or parameter >= r:
                 raise ValueError("input 'parameter' must be >= 1 or < the "
                                  f"rank (={r})")
             dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
             dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
-        elif isinstance(parameter, tuple):
+        elif isinstance(parameter, (tuple, list)):
             if len(parameter) != 2:
                 raise ValueError("input 'parameter' must be of length 2")
-            if not isinstance(parameter[0], tuple):
-                raise TypeError("first entry of input 'parameter' must be "
-                                "a tuple")
-            if not isinstance(parameter[1], tuple):
-                raise TypeError("second entry of input 'parameter' must be "
-                                "a tuple")
+            if not isinstance(parameter[0], (tuple, list)):
+                raise TypeError("first component of input 'parameter' must be "
+                                "a tuple or a list")
+            if not isinstance(parameter[1], (tuple, list)):
+                raise TypeError("second component of input 'parameter' must be "
+                                "a tuple or a list")
             if not len(parameter[0]) < r or not len(parameter[1]) == len(parameter[0]) + 1:
-                raise ValueError("tuples of input 'parameters' are of incorrect length")
-            if not all(isinstance(p, (int, Integer)) for p in parameter[0]):
-                raise TypeError("first tuple of input 'parameter' must "
+                raise ValueError("components of input 'parameters' are of "
+                                 "incorrect length")
+            if not all(p in ZZ for p in parameter[0]):
+                raise TypeError("first component of input 'parameter' must "
                                 "contain only integers")
-            if not all(isinstance(p, (int, Integer)) for p in parameter[1]):
-                raise TypeError("second tuple of input 'parameter' must "
+            if not all(p in ZZ for p in parameter[1]):
+                raise TypeError("second component of input 'parameter' must "
                                 "contain only integers")
             if check:
                 # check that the weight-0 condition is statisfied:
@@ -1515,8 +1516,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                     raise ValueError("input 'parameter' does not satisfy the "
                                     "weight-0 condition")
         else:
-            raise TypeError("input 'parameter' must be a tuple of length 2 or "
-                            "an integer")
+            raise TypeError("input 'parameter' must be a tuple or a list of "
+                            "length 2 or an integer")
         num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
         return num/(self._gen[-1]**parameter[1][-1])
 
