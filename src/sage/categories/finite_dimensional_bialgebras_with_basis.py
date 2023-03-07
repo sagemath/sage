@@ -27,5 +27,5 @@ def FiniteDimensionalBialgebrasWithBasis(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import BialgebrasWithBasis
+    from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
     return BialgebrasWithBasis(base_ring).FiniteDimensional()

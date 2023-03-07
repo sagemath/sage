@@ -98,7 +98,8 @@ class SpecFunctor(Functor, UniqueRepresentation):
             Spec functor from Category of commutative rings to
              Category of schemes over Rational Field
         """
-        from sage.categories.all import CommutativeRings, Schemes
+        from sage.categories.commutative_rings import CommutativeRings
+        from sage.categories.schemes import Schemes
 
         if base_ring is None:
             domain = CommutativeRings()

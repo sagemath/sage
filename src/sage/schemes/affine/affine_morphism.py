@@ -59,7 +59,7 @@ from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
