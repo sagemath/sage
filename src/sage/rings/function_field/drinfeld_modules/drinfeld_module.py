@@ -1394,6 +1394,54 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             T^13 + 2*T^12 + T + 2
             sage: phi.j_invariant(param[1])
             T^35 + 2*T^31 + T^27 + 2*T^8 + T^4 + 2
+
+        TESTS::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
+            sage: phi.j_invariant()
+            Traceback (most recent call last):
+            ...
+            ValueError: input 'parameter' must be different from None if the rank is greater than 2
+            sage: phi.j_invariant(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: input 'parameter' must be >= 1 or < the rank (=4)
+            sage: phi.j_invariant('x')
+            Traceback (most recent call last):
+            ...
+            TypeError: input 'parameter' must be a tuple of length 2 or an integer
+            sage: phi.j_invariant((1, 2, 3))
+            Traceback (most recent call last):
+            ...
+            ValueError: input 'parameter' must be of length 2
+            sage: phi.j_invariant(('x', (1, 2, 3)))
+            Traceback (most recent call last):
+            ...
+            TypeError: first entry of input 'parameter' must be a tuple
+            sage: phi.j_invariant(((1, 2), 'x'))
+            Traceback (most recent call last):
+            ...
+            TypeError: second entry of input 'parameter' must be a tuple
+            sage: phi.j_invariant(((1, 2, 3, 4, 5), (2, 1)))
+            Traceback (most recent call last):
+            ...
+            ValueError: tuples of input 'parameters' are of incorrect length
+            sage: phi.j_invariant(((1, 'x'), (2, 3, 8)))
+            Traceback (most recent call last):
+            ...
+            TypeError: first tuple of input 'parameter' must contain only integers
+            sage: phi.j_invariant(((1, 2), (2, 3, 'x')))
+            Traceback (most recent call last):
+            ...
+            TypeError: second tuple of input 'parameter' must contain only integers
+            sage: phi.j_invariant(((1, 2), (4, 3, 7)))
+            Traceback (most recent call last):
+            ...
+            ValueError: input 'parameter' does not satisfy the weight-0 condition
+            sage: phi.j_invariant(((1, 2), (4, 3, 7)), check=False)
+            1/T^13
         """
         r = self._gen.degree()
         q = self._Fq.order()
@@ -1404,27 +1452,29 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return self._gen[1]**(q+1)/self._gen[2]
         if isinstance(parameter, (int, Integer)):
             if parameter <= 0 or parameter >= r:
-                raise ValueError(f"input 'parameter' must be greater or "
-                                 "equal to 1 or less than the rank (={r})")
+                raise ValueError("input 'parameter' must be >= 1 or < the "
+                                 f"rank (={r})")
             dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
             dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
         elif isinstance(parameter, tuple):
             if len(parameter) != 2:
                 raise ValueError("input 'parameter' must be of length 2")
-            if check:
-                if not isinstance(parameter[0], tuple):
-                    raise TypeError("first entry of input 'parameter' must be "
-                                    "a tuple")
-                if not isinstance(parameter[1], tuple):
-                    raise TypeError("second entry of input 'parameter' must be "
-                                    "a tuple")
-                if not all(isinstance(p, (int, Integer)) for p in parameter[0]):
-                    raise TypeError("first tuple of input 'parameter' must "
-                                    "contain only integers")
-                if not all(isinstance(p, (int, Integer)) for p in parameter[1]):
-                    raise TypeError("second tuple of input 'parameter' must "
-                                    "contain only integers")
+            if not isinstance(parameter[0], tuple):
+                raise TypeError("first entry of input 'parameter' must be "
+                                "a tuple")
+            if not isinstance(parameter[1], tuple):
+                raise TypeError("second entry of input 'parameter' must be "
+                                "a tuple")
+            if not len(parameter[0]) < r or not len(parameter[1]) == len(parameter[0]) + 1:
+                raise ValueError("tuples of input 'parameters' are of incorrect length")
+            if not all(isinstance(p, (int, Integer)) for p in parameter[0]):
+                raise TypeError("first tuple of input 'parameter' must "
+                                "contain only integers")
+            if not all(isinstance(p, (int, Integer)) for p in parameter[1]):
+                raise TypeError("second tuple of input 'parameter' must "
+                                "contain only integers")
+            if not check:
                 # check that the weight-0 condition is statisfied:
                 # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
                 right = parameter[1][-1]*(q**r - 1)
