@@ -3054,7 +3054,7 @@ class Euler_Phi:
 
     Tests with numpy and gmpy2 numbers::
 
-        sage: from numpy import int8
+        sage: from numpy import int8                                                                                    # optional - numpy
         sage: euler_phi(int8(37))                                                                                       # optional - numpy, sage.libs.pari, sage.plot
         36
         sage: from gmpy2 import mpz
@@ -3179,7 +3179,7 @@ def carmichael_lambda(n):
 
     The Carmichael function of the first ten primes::
 
-        sage: list(map(carmichael_lambda, primes_first_n(10)))
+        sage: list(map(carmichael_lambda, primes_first_n(10)))                          # optional - sage.libs.pari
         [1, 2, 4, 6, 10, 12, 16, 18, 22, 28]
 
     Cases where the Carmichael function is equivalent to the Euler phi
