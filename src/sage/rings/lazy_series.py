@@ -4346,7 +4346,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         `1\leq k\leq n`:
 
         - `g_i` is zero, or
-        - setting all variables except the `i`th in `f` to zero
+        - setting all variables except the `i`-th in `f` to zero
           yields a polynomial, or
         - `\mathrm{val}(g_i) > 0`.
 
