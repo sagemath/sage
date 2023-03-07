@@ -523,8 +523,6 @@ class NewtonPolygon_element(Element):
         return parent(polyhedron)
 
 
-
-
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
     r"""
     Construct a Newton polygon.

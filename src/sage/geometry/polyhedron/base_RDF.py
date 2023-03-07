@@ -6,7 +6,6 @@ from sage.rings.real_double import RDF
 from .base import Polyhedron_base
 
 
-
 class Polyhedron_RDF(Polyhedron_base):
     """
     Base class for polyhedra over ``RDF``.

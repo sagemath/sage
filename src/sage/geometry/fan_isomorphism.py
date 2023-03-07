@@ -16,7 +16,6 @@ from sage.matrix.constructor import column_matrix, matrix
 from sage.geometry.cone import Cone
 
 
-
 class FanNotIsomorphicError(Exception):
     """
     Exception to return if there is no fan isomorphism

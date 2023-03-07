@@ -179,7 +179,6 @@ def LatticePolytope_PPL(*args):
     return polytope_class(gs)
 
 
-
 ########################################################################
 class LatticePolytope_PPL_class(C_Polyhedron):
     """

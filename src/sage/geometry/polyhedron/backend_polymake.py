@@ -688,7 +688,6 @@ class Polyhedron_polymake(Polyhedron_base):
             inequalities = self.inequalities()
             equations = self.equations()
 
-
         p = self._polymake_polytope_from_Vrepresentation_and_Hrepresentation([vertices, rays, lines], [inequalities, equations])
         if p is not None:
             self._polymake_polytope = p

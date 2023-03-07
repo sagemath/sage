@@ -709,7 +709,6 @@ class InterfaceFunctionElement(SageObject):
         return M.help(self._name)
 
 
-
 def is_InterfaceElement(x):
     """
     Return True if ``x`` is of type :class:`InterfaceElement`.
@@ -1099,7 +1098,6 @@ class InterfaceElement(Element):
             return sage.misc.sage_eval.sage_eval(string)
         except Exception:
             raise NotImplementedError("Unable to parse output: %s" % string)
-
 
     def sage(self, *args, **kwds):
         """

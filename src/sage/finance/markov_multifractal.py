@@ -261,7 +261,6 @@ class MarkovSwitchingMultifractal:
                    self.__kbar, self.gamma())
 
 
-
 ## def ml_estimation(v, kbar, M):
 ##     """
 ##     Compute parameters that model the time series v,

@@ -6653,7 +6653,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 msg += 'where d is the dimension of the given lattice.'
                 raise ValueError(msg)
 
-
     # Now that we've sanity-checked our parameters, we can massage the
     # min/maxes for (non-)solid cones. It doesn't violate the user's
     # expectation to increase a minimum, decrease a maximum, or fix an
@@ -6779,7 +6778,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             rays.append(L.random_element())
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
-
 
         if strictly_convex is not None:
             if strictly_convex:

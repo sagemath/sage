@@ -172,7 +172,6 @@ def GL(n, R, var='a'):
                                          category=cat)
 
 
-
 ###############################################################################
 # Special Linear Group
 ###############################################################################
@@ -255,7 +254,6 @@ def SL(n, R, var='a'):
     except ValueError:
         return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
                                          category=cat)
-
 
 
 ########################################################################

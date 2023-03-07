@@ -145,7 +145,6 @@ class PSage(Sage):
         except ExceptionPexpect:
             return "<<currently executing code>>"
 
-
     def get(self, var):
         """
         Get the value of the variable var.

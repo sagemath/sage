@@ -539,7 +539,6 @@ class Polyhedron_ppl(Polyhedron_mutable):
         return cs
 
 
-
 #########################################################################
 class Polyhedron_QQ_ppl(Polyhedron_ppl, Polyhedron_QQ):
     r"""

@@ -478,7 +478,6 @@ http://fricas.sourceforge.net.
 
         return ')read %s )quiet' % filename
 
-
     def _remote_tmpfile(self):
         """
         Return a remote tmpfile ending with ".input" used to buffer long

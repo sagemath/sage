@@ -9,7 +9,6 @@ from sage.groups.matrix_gps.group_element import MatrixGroupElement_gap
 from sage.groups.matrix_gps.linear import GL, LinearMatrixGroup_generic
 
 
-
 class LegacyMatrixGroup(FinitelyGeneratedMatrixGroup_gap):
 
     def __setstate__(self, state):

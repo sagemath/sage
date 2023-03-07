@@ -2015,7 +2015,6 @@ class Stream_plethysm(Stream_binary):
 #                             " support")
         return self._left._approximate_order * self._right._approximate_order
 
-
     def get_coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of ``self``.
@@ -2764,7 +2763,6 @@ class Stream_shift(Stream):
             3
         """
         return self._series.order() + self._shift
-
 
     def __getitem__(self, n):
         """

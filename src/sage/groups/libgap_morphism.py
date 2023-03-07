@@ -280,7 +280,6 @@ class GroupMorphism_libgap(Morphism):
         Morphism.__init__(self, homset)
         self._phi = gap_hom
 
-
     def __reduce__(self):
         r"""
         Implements pickling.
@@ -553,7 +552,6 @@ class GroupMorphism_libgap(Morphism):
         preimage = phi.PreImage(S.gap())
         return self.domain()._subgroup_constructor(preimage)
 
-
     def section(self):
         r"""
         This method returns a section map of self by use of :meth:`lift`.
@@ -627,7 +625,6 @@ class GroupHomset_libgap(HomsetWithBase):
         HomsetWithBase.__init__(self, G, H, category, check=check, base=ZZ)
 
     Element = GroupMorphism_libgap
-
 
     def _element_constructor_(self, x, check=True, **options):
         r"""

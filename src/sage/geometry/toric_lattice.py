@@ -1287,7 +1287,6 @@ class ToricLattice_sublattice(ToricLattice_sublattice_with_basis,
     pass
 
 
-
 class ToricLattice_quotient_element(FGP_Element):
     r"""
     Create an element of a toric lattice quotient.

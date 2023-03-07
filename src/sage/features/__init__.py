@@ -252,7 +252,6 @@ class Feature(TrivialUniqueRepresentation):
         return self._cache_resolution
 
 
-
 class FeatureNotPresentError(RuntimeError):
     r"""
     A missing feature error.

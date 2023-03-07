@@ -273,7 +273,6 @@ for hints on how to do that).
         i = s.find('=')
         return s[i+1:].strip('\n')
 
-
     def console(self):
         matlab_console()
 

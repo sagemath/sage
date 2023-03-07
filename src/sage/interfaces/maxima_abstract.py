@@ -1033,7 +1033,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             cmd += ', %s)'%options
         self(cmd)
 
-
     def plot_multilist(self, pts_list, options=None):
         r"""
         Plots a list of list of points pts_list=[pts1,pts2,...,ptsn],
