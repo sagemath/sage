@@ -892,8 +892,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             True
 
             sage: P.<x> = QQ[]
-            sage: R = QuotientRing(P, x^2+1)
-            sage: R.is_noetherian()
+            sage: R = QuotientRing(P, x^2 + 1)                                          # optional - sage.libs.pari
+            sage: R.is_noetherian()                                                     # optional - sage.libs.pari
             True
 
         If the cover ring of ``self`` is not Noetherian, we currently
@@ -904,8 +904,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: R.is_noetherian()
             False
             sage: I = R.ideal([x[1]^2, x[2]])
-            sage: S = R.quotient(I)
-            sage: S.is_noetherian()
+            sage: S = R.quotient(I)                                                     # optional - sage.libs.pari
+            sage: S.is_noetherian()                                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -931,8 +931,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         ::
 
             sage: P.<x> = QQ[]
-            sage: Q = QuotientRing(P, x^2 + 1)
-            sage: Q.cover_ring()
+            sage: Q = QuotientRing(P, x^2 + 1)                                          # optional - sage.libs.pari
+            sage: Q.cover_ring()                                                        # optional - sage.libs.pari
             Univariate Polynomial Ring in x over Rational Field
         """
         return self.__R
@@ -1440,12 +1440,12 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         ::
 
             sage: R.<T> = QQ[]
-            sage: S.<t> = R.quotient(T^3-1)
-            sage: 1 in S.ideal(t^2-1)
+            sage: S.<t> = R.quotient(T^3 - 1)                                           # optional - sage.libs.pari
+            sage: 1 in S.ideal(t^2 - 1)                                                 # optional - sage.libs.pari
             False
-            sage: 7 in S.ideal(t^2+1)
+            sage: 7 in S.ideal(t^2 + 1)                                                 # optional - sage.libs.pari
             True
-            sage: 5-5*t in S.ideal(t^2-1)
+            sage: 5-5*t in S.ideal(t^2 - 1)                                             # optional - sage.libs.pari
             True
         """
         R = self.ring()

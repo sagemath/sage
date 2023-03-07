@@ -1687,14 +1687,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         Even noncommutative ones::
 
-            sage: M = MatrixSpace(ZZ,2)
-            sage: x = polygen(M)
-            sage: p = M([1,2,3,4])*x^3 + M([-1,0,0,1])*x^2 + M([1,3,-1,0])*x + M.one()
-            sage: q = p.inverse_series_trunc(5)
-            sage: (p*q).truncate(5) == M.one()
+            sage: M = MatrixSpace(ZZ,2)                                                                                 # optional - sage.modules
+            sage: x = polygen(M)                                                                                        # optional - sage.modules
+            sage: p = M([1,2,3,4])*x^3 + M([-1,0,0,1])*x^2 + M([1,3,-1,0])*x + M.one()                                  # optional - sage.modules
+            sage: q = p.inverse_series_trunc(5)                                                                         # optional - sage.modules
+            sage: (p*q).truncate(5) == M.one()                                                                          # optional - sage.modules
             True
-            sage: q = p.inverse_series_trunc(13)
-            sage: (p*q).truncate(13) == M.one()
+            sage: q = p.inverse_series_trunc(13)                                                                        # optional - sage.modules
+            sage: (p*q).truncate(13) == M.one()                                                                         # optional - sage.modules
             True
 
         TESTS::
@@ -4099,7 +4099,7 @@ cdef class Polynomial(CommutativePolynomial):
              ...
              NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
              sage: R.base_ring()._factor_univariate_polynomial = lambda f: f.change_ring(ZZ).factor()
-             sage: (x^2).factor()
+             sage: (x^2).factor()                                                       # optional - sage.libs.pari
              x^2
              sage: del R.base_ring()._factor_univariate_polynomial # clean up
 
@@ -5097,8 +5097,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^2-x+2
             sage: f.is_primitive(24, [2,3])
             True
-            sage: x=polygen(Integers(103)); f=x^2+1
-            sage: f.is_primitive()
+            sage: x = polygen(Integers(103)); f = x^2 + 1
+            sage: f.is_primitive()                                              # optional - sage.libs.pari
             False
         """
         R = self.base_ring()
@@ -5222,7 +5222,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ['x']
             sage: f = x - 3
-            sage: f.root_field('b')
+            sage: f.root_field('b')                                                                             # optional - sage.rings.number_field
             Rational Field
 
         ::
