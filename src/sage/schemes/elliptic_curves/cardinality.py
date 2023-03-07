@@ -21,7 +21,10 @@ AUTHORS:
 # ****************************************************************************
 from .constructor import EllipticCurve, EllipticCurve_from_j
 from sage.schemes.curves.projective_curve import Hasse_bounds
-from sage.rings.all import Integer, ZZ, GF, polygen
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.groups.generic import order_from_bounds
 
 
