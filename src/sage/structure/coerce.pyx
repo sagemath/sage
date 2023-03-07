@@ -391,7 +391,7 @@ def parent_is_real_numerical(P):
     EXAMPLES::
 
         sage: from sage.structure.coerce import parent_is_real_numerical
-        sage: import gmpy2, numpy
+        sage: import gmpy2
         sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF, int, float, gmpy2.mpq]]
         [True, True, True, True, True, True, True]
         sage: parent_is_real_numerical(QuadraticField(2))
