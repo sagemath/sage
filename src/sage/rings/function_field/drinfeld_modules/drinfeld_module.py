@@ -10,8 +10,9 @@ class
 
 AUTHORS:
 
-- Antoine Leudière (2022-04)
-- Xavier Caruso (2022-06)
+- Antoine Leudière (2022-04): initial version
+- Xavier Caruso (2022-06): initial version
+- David Ayotte (2023-03): added basic `j`-invariants
 """
 
 # *****************************************************************************
