@@ -172,7 +172,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-
+from sage.rings.power_series_ring_element import PowerSeries
 from .polynomial_element import PolynomialBaseringInjection
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
@@ -474,7 +474,7 @@ class PolynomialRing_general(ring.Algebra):
                 return self(x.polynomial())
             except AttributeError:
                 pass
-        elif isinstance(x, sage.rings.power_series_ring_element.PowerSeries):
+        elif isinstance(x, PowerSeries):
             x = x.truncate()
         return C(self, x, check, is_gen, construct=construct, **kwds)
 
@@ -2477,9 +2477,13 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         R = self.base_ring()
         p = R.characteristic()
         if p != 0 and R.is_prime_field():
-            from sage.rings.fraction_field_FpT import FpT
-            if 2 < p and p < FpT.INTEGER_LIMIT:
-                return FpT(self)
+            try:
+                from sage.rings.fraction_field_FpT import FpT
+            except ImportError:
+                pass
+            else:
+                if 2 < p and p < FpT.INTEGER_LIMIT:
+                    return FpT(self)
         from sage.rings.fraction_field import FractionField_1poly_field
         return FractionField_1poly_field(self)
 
