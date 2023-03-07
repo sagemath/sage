@@ -95,28 +95,28 @@ factorization has three factors::
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F
+    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
     (-1) * 5 * (x - 3) * (x - 2)
-    sage: F.universe()
+    sage: F.universe()                                                                  # optional - sage.libs.pari
     Univariate Polynomial Ring in x over Integer Ring
-    sage: F.unit()
+    sage: F.unit()                                                                      # optional - sage.libs.pari
     -1
-    sage: list(F)
+    sage: list(F)                                                                       # optional - sage.libs.pari
     [(5, 1), (x - 3, 1), (x - 2, 1)]
-    sage: F.value()
+    sage: F.value()                                                                     # optional - sage.libs.pari
     -5*x^2 + 25*x - 30
-    sage: len(F)
+    sage: len(F)                                                                        # optional - sage.libs.pari
     3
 
 On the other hand, -1 is a unit in `\ZZ`, so it is included in the unit::
 
     sage: x = ZZ['x'].0
-    sage: f = -1*(x-2)*(x-3)
-    sage: F = f.factor(); F
+    sage: f = -1*(x-2)*(x-3)                                                            # optional - sage.libs.pari
+    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
     (-1) * (x - 3) * (x - 2)
-    sage: F.unit()
+    sage: F.unit()                                                                      # optional - sage.libs.pari
     -1
-    sage: list(F)
+    sage: list(F)                                                                       # optional - sage.libs.pari
     [(x - 3, 1), (x - 2, 1)]
 
 Factorizations can involve fairly abstract mathematical objects::
