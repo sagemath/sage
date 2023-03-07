@@ -1316,13 +1316,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module for
         the given parameter.
 
-        Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r`. Then the
-        *`((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r)`-`j`-invariant* of `\phi`
+        Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r` with
+        `g_r \neq 0`. Then the
+        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r)`-`j`*-invariant* of `\phi`
         is defined by
 
         .. MATH::
 
-            j_{k_1, \ldots, k_n}^{}(\phi)^{d_1, \ldots, d_n, d_r} := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi) := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
         where `1\leq k_1 < k_2 < \ldots < k_n \leq r - 1` and the integers `d_i`
         satisfies the *weight-0 condition*:
