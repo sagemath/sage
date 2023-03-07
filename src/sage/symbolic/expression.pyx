@@ -10605,17 +10605,16 @@ cdef class Expression(Expression_abc):
 
         .. NOTE::
 
-           When using algorithm='maxima', this just sends the expression to Maxima
-           and converts it back to Sage. When algorith='sympy',
+           When using ``algorithm='maxima'``, this just sends the expression to Maxima
+           and converts it back to Sage. When ``algorithm='sympy'``,
            sympy's simplify method is used.
+
         INPUT:
 
-            - ``self`` -- an expression with held operations
-            - ``algorithm`` - (default: ``'maxima'``)  one of
-
-                    - ``'maxima'`` - use Maxima (the default)
-
-                    - ``'sympy'`` - use SymPy
+        - ``self`` -- an expression with held operations
+        - ``algorithm`` - (default: ``'maxima'``)  one of
+            - ``'maxima'`` - use Maxima (the default)
+            - ``'sympy'`` - use SymPy
 
         .. SEEALSO::
 
@@ -10648,7 +10647,7 @@ cdef class Expression(Expression_abc):
             sage: forget()
 
         Check that simplifying with sympy works correctly::
-        
+
             sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
             sage: expr.simplify(algorithm='sympy')
             1/5*sqrt(5) - 1/5
