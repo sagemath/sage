@@ -363,10 +363,10 @@ cdef class Ring(ParentWithGens):
 
         Here is an example over a non-commutative ring::
 
-            sage: A = SteenrodAlgebra(2)
-            sage: A.ideal(A.1,A.2^2)
+            sage: A = SteenrodAlgebra(2)                                                                                # optional - sage.combinat, sage.modules
+            sage: A.ideal(A.1, A.2^2)                                                                                   # optional - sage.combinat, sage.modules
             Twosided Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
-            sage: A.ideal(A.1,A.2^2,side='left')
+            sage: A.ideal(A.1, A.2^2, side='left')                                                                      # optional - sage.combinat, sage.modules
             Left Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
 
         TESTS:
@@ -602,10 +602,10 @@ cdef class Ring(ParentWithGens):
 
         Make sure that :trac:`13644` is fixed::
 
-            sage: K = Qp(3)
-            sage: R.<a> = K[]
-            sage: L.<a> = K.extension(a^2-3)
-            sage: L.ideal(a)
+            sage: K = Qp(3)                                                                         # optional - sage.rings.padics
+            sage: R.<a> = K[]                                                                       # optional - sage.rings.padics
+            sage: L.<a> = K.extension(a^2-3)                                                        # optional - sage.rings.padics
+            sage: L.ideal(a)                                                                        # optional - sage.rings.padics
             Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """

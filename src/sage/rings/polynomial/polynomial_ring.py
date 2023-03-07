@@ -1693,25 +1693,27 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: I = (x^2-1)*R
-            sage: R.quotient_by_principal_ideal(I)
-            Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
+            sage: I = (x^2 - 1) * R
+            sage: R.quotient_by_principal_ideal(I)                                      # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in xbar
+             over Rational Field with modulus x^2 - 1
 
         The same example, using the polynomial instead of the ideal,
         and customizing the variable name::
 
             sage: R.<x> = QQ[]
-            sage: R.quotient_by_principal_ideal(x^2-1, names=('foo',))
-            Univariate Quotient Polynomial Ring in foo over Rational Field with modulus x^2 - 1
+            sage: R.quotient_by_principal_ideal(x^2 - 1, names=('foo',))                # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in foo
+             over Rational Field with modulus x^2 - 1
 
         TESTS:
 
         Quotienting by the zero ideal returns ``self`` (:trac:`5978`)::
 
             sage: R = QQ['x']
-            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R
+            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R                    # optional - sage.libs.pari
             True
-            sage: R.quotient_by_principal_ideal(0) is R
+            sage: R.quotient_by_principal_ideal(0) is R                                 # optional - sage.libs.pari
             True
         """
         from sage.rings.ideal import Ideal
@@ -3135,15 +3137,15 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 
         Non-maximal ideals are not accepted::
 
-            sage: R.residue_field(t^2 + 1)
+            sage: R.residue_field(t^2 + 1)                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(0)
+            sage: R.residue_field(0)                                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(1)
+            sage: R.residue_field(1)                                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
