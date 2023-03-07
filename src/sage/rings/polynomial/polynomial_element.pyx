@@ -1562,21 +1562,23 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = RDF[]
             sage: epsilon = RDF(1).ulp()*50   # Allow an error of up to 50 ulp
-            sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14
+            sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14                                             # optional - sage.modules
             0.4*x^4 - 0.2*x^3 - 0.4*x^2 + 0.2*x + 0.8
-            sage: poly = f * (x^2 + 1) % (x^5 + x + 1)
+            sage: poly = f * (x^2 + 1) % (x^5 + x + 1)                                                                  # optional - sage.modules
             sage: # Remove noisy zero terms:
-            sage: parent(poly)([ 0.0 if abs(c)<=epsilon else c for c in poly.coefficients(sparse=False) ])
+            sage: parent(poly)([0.0 if abs(c) <= epsilon else c                                                         # optional - sage.modules
+            ....:               for c in poly.coefficients(sparse=False)])
             1.0
-            sage: f = inverse_mod(x^3 - x + 1, x - 2); f
+            sage: f = inverse_mod(x^3 - x + 1, x - 2); f                                                                # optional - sage.modules
             0.14285714285714285
-            sage: f * (x^3 - x + 1) % (x - 2)
+            sage: f * (x^3 - x + 1) % (x - 2)                                                                           # optional - sage.modules
             1.0
-            sage: g = 5*x^3+x-7; m = x^4-12*x+13; f = inverse_mod(g, m); f
+            sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; f = inverse_mod(g, m); f                                      # optional - sage.modules
             -0.0319636125...*x^3 - 0.0383269759...*x^2 - 0.0463050900...*x + 0.346479687...
-            sage: poly = f*g % m
+            sage: poly = f*g % m                                                                                        # optional - sage.modules
             sage: # Remove noisy zero terms:
-            sage: parent(poly)([ 0.0 if abs(c)<=epsilon else c for c in poly.coefficients(sparse=False) ])  # abs tol 1e-14
+            sage: parent(poly)([0.0 if abs(c) <= epsilon else c                     # abs tol 1e-14                     # optional - sage.modules
+            ....:               for c in poly.coefficients(sparse=False)])
             1.0000000000000004
 
         ALGORITHM: Solve the system as + mt = 1, returning s as the inverse
@@ -7576,9 +7578,9 @@ cdef class Polynomial(CommutativePolynomial):
         ::
 
             sage: f = -19*x + 884736
-            sage: f.roots()
+            sage: f.roots()                                                             # optional - sage.libs.pari
             [(884736/19, 1)]
-            sage: (f^20).roots()
+            sage: (f^20).roots()                                                        # optional - sage.libs.pari
             [(884736/19, 20)]
 
         ::
@@ -8469,10 +8471,10 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: Pols.<n> = QQ[]
-            sage: pol = (n - 1/2)^2*(n - 1)^2*(n-2)
-            sage: rts = pol.roots(ZZ, multiplicities=False); rts
+            sage: pol = (n - 1/2)^2 * (n - 1)^2 * (n - 2)
+            sage: rts = pol.roots(ZZ, multiplicities=False); rts                                    # optional - sage.libs.pari
             [2, 1]
-            sage: rts[0].parent()
+            sage: rts[0].parent()                                                                   # optional - sage.libs.pari
             Integer Ring
 
             sage: Pols_x.<x> = QQ[]
@@ -9416,7 +9418,7 @@ cdef class Polynomial(CommutativePolynomial):
         polynomial in `\QQ[x]`, but not in `\ZZ[x]`::
 
             sage: R.<x> = ZZ[]
-            sage: R(2*x).is_irreducible()
+            sage: R(2*x).is_irreducible()                                               # optional - sage.libs.pari
             False
             sage: R.<x> = QQ[]
             sage: R(2*x).is_irreducible()
@@ -9606,19 +9608,19 @@ cdef class Polynomial(CommutativePolynomial):
         computations::
 
             sage: R.<x> = ZZ[]
-            sage: (2*x).is_squarefree()
+            sage: (2*x).is_squarefree()                                                 # optional - sage.libs.pari
             True
-            sage: (4*x).is_squarefree()
+            sage: (4*x).is_squarefree()                                                 # optional - sage.libs.pari
             False
-            sage: (2*x^2).is_squarefree()
+            sage: (2*x^2).is_squarefree()                                               # optional - sage.libs.pari
             False
-            sage: R(0).is_squarefree()
+            sage: R(0).is_squarefree()                                                  # optional - sage.libs.pari
             False
-            sage: S.<y> = QQ[]
-            sage: R.<x> = S[]
-            sage: (2*x*y).is_squarefree()
+            sage: S.<y> = QQ[]                                                          # optional - sage.libs.pari
+            sage: R.<x> = S[]                                                           # optional - sage.libs.pari
+            sage: (2*x*y).is_squarefree()                                               # optional - sage.libs.pari
             True
-            sage: (2*x*y^2).is_squarefree()
+            sage: (2*x*y^2).is_squarefree()                                             # optional - sage.libs.pari
             False
 
         In positive characteristic, we compute the square-free
@@ -10038,7 +10040,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")        # optional - sage.libs.pari
             False
-            sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")
+            sage: (x^16 + x^14 - x^10 + x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")        # optional - sage.libs.pari
             False
 
             sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")        # optional - sage.libs.pari

@@ -67,9 +67,9 @@ cdef class FractionFieldElement(FieldElement):
 
     Test if :trac:`5451` is fixed::
 
-        sage: A = FiniteField(9,'theta')['t']
-        sage: K.<t> = FractionField(A)
-        sage: f= 2/(t^2+2*t); g =t^9/(t^18 + t^10 + t^2);f+g
+        sage: A = FiniteField(9,'theta')['t']                                           # optional - sage.libs.pari
+        sage: K.<t> = FractionField(A)                                                  # optional - sage.libs.pari
+        sage: f = 2/(t^2 + 2*t); g = t^9/(t^18 + t^10 + t^2); f + g                     # optional - sage.libs.pari
         (2*t^15 + 2*t^14 + 2*t^13 + 2*t^12 + 2*t^11 + 2*t^10 + 2*t^9 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1)/(t^17 + t^9 + t)
 
     Test if :trac:`8671` is fixed::
@@ -396,10 +396,10 @@ cdef class FractionFieldElement(FieldElement):
 
         Check that :trac:`25199` is fixed::
 
-            sage: R.<x,y,z>=QQbar[]
-            sage: hash(R.0)==hash(FractionField(R).0)
+            sage: R.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
+            sage: hash(R.0) == hash(FractionField(R).0)                                 # optional - sage.rings.number_field
             True
-            sage: ((x+1)/(x^2+1)).subs({x:1})
+            sage: ((x+1)/(x^2+1)).subs({x: 1})                                          # optional - sage.rings.number_field
             1
         """
         if self.__denominator.is_one():
@@ -1108,11 +1108,11 @@ cdef class FractionFieldElement(FieldElement):
 
         Check that inexact elements are treated correctly::
 
-            sage: K=Qp(2,5)
-            sage: R.<x> = K[]
-            sage: L = R.fraction_field()
-            sage: S.<y> = L[]
-            sage: y(K(1,1)/x)
+            sage: K = Qp(2,5)                                                   # optional - sage.rings.padics
+            sage: R.<x> = K[]                                                   # optional - sage.rings.padics
+            sage: L = R.fraction_field()                                        # optional - sage.rings.padics
+            sage: S.<y> = L[]                                                   # optional - sage.rings.padics
+            sage: y(K(1,1)/x)                                                   # optional - sage.rings.padics
             (1 + O(2))/((1 + O(2))*x)
         """
         if self.numerator().is_one():
@@ -1206,7 +1206,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
 
             sage: R.<t> = QQ[]
             sage: h = (t^14 + 2*t^12 - 4*t^11 - 8*t^9 + 6*t^8 + 12*t^6 - 4*t^5 - 8*t^3 + t^2 + 2)/(t^6 + 6*t^5 + 9*t^4 - 2*t^2 - 12*t - 18)
-            sage: h.support()
+            sage: h.support()                                                           # optional - sage.libs.pari
             [t - 1, t + 3, t^2 + 2, t^2 + t + 1, t^4 - 2]
         """
         L = [fac[0] for fac in self.numerator().factor()] + [fac[0] for fac in self.denominator().factor()]

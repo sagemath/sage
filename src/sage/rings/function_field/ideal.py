@@ -847,13 +847,13 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: p = O.ideal(x)
-            sage: p.valuation(O.ideal(x+1))  # indirect doctest
+            sage: p.valuation(O.ideal(x + 1))  # indirect doctest                                                       # optional - sage.libs.pari
             0
-            sage: p.valuation(O.ideal(x^2))  # indirect doctest
+            sage: p.valuation(O.ideal(x^2))    # indirect doctest                                                       # optional - sage.libs.pari
             2
-            sage: p.valuation(O.ideal(1/x^3))  # indirect doctest
+            sage: p.valuation(O.ideal(1/x^3))  # indirect doctest                                                       # optional - sage.libs.pari
             -3
-            sage: p.valuation(O.ideal(0))  # indirect doctest
+            sage: p.valuation(O.ideal(0))      # indirect doctest                                                       # optional - sage.libs.pari
             +Infinity
         """
         return ideal.gen().valuation(self.gen())

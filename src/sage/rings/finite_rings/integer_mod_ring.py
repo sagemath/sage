@@ -408,23 +408,23 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         16
         sage: Z16.characteristic()
         16
-        sage: gens = Z16.unit_gens()
-        sage: gens
+        sage: gens = Z16.unit_gens()                                                                # optional - sage.groups
+        sage: gens                                                                                  # optional - sage.groups
         (15, 5)
-        sage: a = gens[0]
-        sage: b = gens[1]
-        sage: def powa(i): return a**i
-        sage: def powb(i): return b**i
-        sage: gp_exp = FF.unit_group_exponent()
-        sage: gp_exp
+        sage: a = gens[0]                                                                           # optional - sage.groups
+        sage: b = gens[1]                                                                           # optional - sage.groups
+        sage: def powa(i): return a**i                                                              # optional - sage.groups
+        sage: def powb(i): return b**i                                                              # optional - sage.groups
+        sage: gp_exp = FF.unit_group_exponent()                                                     # optional - sage.groups
+        sage: gp_exp                                                                                # optional - sage.groups
         28
-        sage: [powa(i) for i in range(15)]
+        sage: [powa(i) for i in range(15)]                                                          # optional - sage.groups
         [1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1]
-        sage: [powb(i) for i in range(15)]
+        sage: [powb(i) for i in range(15)]                                                          # optional - sage.groups
         [1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9]
-        sage: a.multiplicative_order()
+        sage: a.multiplicative_order()                                                              # optional - sage.groups
         2
-        sage: b.multiplicative_order()
+        sage: b.multiplicative_order()                                                              # optional - sage.groups
         4
         sage: TestSuite(Z16).run()
 
