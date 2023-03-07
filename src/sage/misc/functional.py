@@ -295,9 +295,9 @@ def discriminant(x):
     EXAMPLES::
 
         sage: R.<x> = PolynomialRing(QQ)
-        sage: S = R.quotient(x^29 - 17*x - 1, 'alpha')
-        sage: K = S.number_field()                                                                                      # optional - sage.rings.number_field
-        sage: discriminant(K)                                                                                           # optional - sage.rings.number_field
+        sage: S = R.quotient(x^29 - 17*x - 1, 'alpha')                                                                  # optional - sage.libs.pari
+        sage: K = S.number_field()                                                                                      # optional - sage.libs.pari, sage.rings.number_field
+        sage: discriminant(K)                                                                                           # optional - sage.libs.pari, sage.rings.number_field
         -15975100446626038280218213241591829458737190477345113376757479850566957249523
     """
     return x.discriminant()
@@ -1000,8 +1000,8 @@ def lift(x):
     We lift an element of a quotient polynomial ring::
 
         sage: R.<x> = QQ['x']
-        sage: S.<xmod> = R.quo(x^2 + 1)
-        sage: lift(xmod-7)
+        sage: S.<xmod> = R.quo(x^2 + 1)                                                                                 # optional - sage.libs.pari
+        sage: lift(xmod - 7)                                                                                            # optional - sage.libs.pari
         x - 7
     """
     try:
@@ -1232,11 +1232,11 @@ def multiplicative_order(x):
     EXAMPLES::
 
         sage: a = mod(5,11)
-        sage: multiplicative_order(a)
+        sage: multiplicative_order(a)                                                                                   # optional - sage.libs.pari
         5
-        sage: multiplicative_order(mod(2,11))
+        sage: multiplicative_order(mod(2,11))                                                                           # optional - sage.libs.pari
         10
-        sage: multiplicative_order(mod(2,12))
+        sage: multiplicative_order(mod(2,12))                                                                           # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ArithmeticError: multiplicative order of 2 not defined since it is not a unit modulo 12
@@ -1657,7 +1657,7 @@ def rank(x):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3, 4,5,6, 7,8,9])                                                                              # optional - sage.modules
-        sage: rank(A)
+        sage: rank(A)                                                                                                   # optional - sage.modules
         2
 
     We compute the rank of an elliptic curve::
@@ -1816,7 +1816,7 @@ def squarefree_part(x):
         sage: x = QQ['x'].0
         sage: S = squarefree_part(-9*x*(x-6)^7*(x-3)^2); S
         -9*x^2 + 54*x
-        sage: S.factor()
+        sage: S.factor()                                                                                                # optional - sage.libs.pari
         (-9) * (x - 6) * x
 
     ::
@@ -1825,7 +1825,7 @@ def squarefree_part(x):
         x^10 - x^9 + 3*x^8 + 3*x^5 - 2*x^4 - x^3 - 2*x - 1
         sage: g = squarefree_part(f); g
         x^4 - x^3 + x^2 - 1
-        sage: g.factor()
+        sage: g.factor()                                                                                                # optional - sage.libs.pari
         (x - 1) * (x^3 + x + 1)
     """
     try:

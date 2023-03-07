@@ -158,7 +158,7 @@ cdef class ArgumentFixer:
 
             sage: from sage.misc.function_mangling import ArgumentFixer
             sage: g = ArgumentFixer(number_of_partitions)                                                               # optional - sage.combinat
-            sage: g
+            sage: g                                                                                                     # optional - sage.combinat
             Argument Fixer of <function number_of_partitions at 0x...>
         """
         return "Argument Fixer of %s"%self.f

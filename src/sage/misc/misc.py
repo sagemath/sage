@@ -554,15 +554,15 @@ class BackslashOperator:
         """
         EXAMPLES::
 
-            sage: A = random_matrix(ZZ, 4)
-            sage: while A.rank() != 4:
+            sage: A = random_matrix(ZZ, 4)                                                          # optional - sage.modules
+            sage: while A.rank() != 4:                                                              # optional - sage.modules
             ....:     A = random_matrix(ZZ, 4)
-            sage: B = random_matrix(ZZ, 4)
-            sage: temp = A * BackslashOperator()
-            sage: temp.left is A
+            sage: B = random_matrix(ZZ, 4)                                                          # optional - sage.modules
+            sage: temp = A * BackslashOperator()                                                    # optional - sage.modules
+            sage: temp.left is A                                                                    # optional - sage.modules
             True
-            sage: X = temp * B
-            sage: A * X == B
+            sage: X = temp * B                                                                      # optional - sage.modules
+            sage: A * X == B                                                                        # optional - sage.modules
             True
         """
         self.left = left
@@ -572,16 +572,16 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: A = matrix(RDF, 5, 5, 2)
-            sage: b = vector(RDF, 5, range(5))
-            sage: v = A \ b
-            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
+            sage: A = matrix(RDF, 5, 5, 2)                                                          # optional - sage.modules
+            sage: b = vector(RDF, 5, range(5))                                                      # optional - sage.modules
+            sage: v = A \ b                                                                         # optional - sage.modules
+            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"            # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A._backslash_(b)
-            sage: v.zero_at(1e-19)
+            sage: v = A._backslash_(b)                                                              # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                                  # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A * BackslashOperator() * b
-            sage: v.zero_at(1e-19)
+            sage: v = A * BackslashOperator() * b                                                   # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                                  # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
         return self.left._backslash_(right)
