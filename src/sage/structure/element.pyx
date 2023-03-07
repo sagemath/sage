@@ -4365,10 +4365,10 @@ cdef class FieldElement(CommutativeRingElement):
         Test if :trac:`8671` is fixed::
 
             sage: R.<x,y> = QQ[]
-            sage: S.<a,b> = R.quo(y^2 + 1)
-            sage: S.is_field = lambda : False
-            sage: F = Frac(S); u = F.one()
-            sage: u.quo_rem(u)
+            sage: S.<a,b> = R.quo(y^2 + 1)                                              # optional - sage.libs.pari
+            sage: S.is_field = lambda: False                                            # optional - sage.libs.pari
+            sage: F = Frac(S); u = F.one()                                              # optional - sage.libs.pari
+            sage: u.quo_rem(u)                                                          # optional - sage.libs.pari
             (1, 0)
         """
         if not isinstance(right, FieldElement) or not (parent(right) is self._parent):
