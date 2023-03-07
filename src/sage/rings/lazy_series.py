@@ -584,7 +584,7 @@ class LazyModuleElement(Element):
 
     def truncate(self, d):
         r"""
-        Return this series with its terms of degree >= ``d`` truncated.
+        Return this series with its terms of degree `\geq` ``d`` truncated.
 
         INPUT:
 
@@ -3388,7 +3388,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         Given two Laurent series `f` and `g` over the same base ring, the
         composition `(f \circ g)(z) = f(g(z))` is defined if and only if:
 
-        - `g = 0` and `\mathrm{val}(f) >= 0`,
+        - `g = 0` and `\mathrm{val}(f) \geq 0`,
         - `g` is non-zero and `f` has only finitely many non-zero coefficients,
         - `g` is non-zero and `\mathrm{val}(g) > 0`.
 
@@ -4287,7 +4287,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
     def compute_coefficients(self, i):
         r"""
-        Computes all the coefficients of self up to i.
+        Computes all the coefficients of ``self`` up to ``i``.
 
         This method is deprecated, it has no effect anymore.
 
@@ -5287,7 +5287,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         is defined if and only if for each `1\leq k\leq n`:
 
         - `g_i = 0`, or
-        - setting all alphabets except the `i`th in `f` to zero
+        - setting all alphabets except the `i`-th in `f` to zero
           yields a symmetric function with only finitely many
           non-zero coefficients, or
         - `\mathrm{val}(g) > 0`.
