@@ -1020,6 +1020,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         return [(tuple(coeff_indices), tuple(p)) for p in integral_points if gcd(p) == 1]
 
+    def basic_j_invariants(self):
+        r"""
+        Return a dictionnary whose keys are the basic `j`-invariants parameters
+        and values are the associated `j`-invariant.
+
+        See the method :meth:`j_invariant` for the definition of the basic
+        `j`-invariants.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi.basic_j_invariants()
+            {((1,), (26, 1)): z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2}
+
+        ::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T + 2, T+1, 1])
+            sage: J_phi = phi.basic_j_invariants(); J_phi
+            {((1, 2), (0, 31, 6)): T^31 + T^30 + T^26 + T^25 + T^6 + T^5 + T + 1,
+             ((1, 2), (1, 5, 1)): T^6 + 2*T^5 + T + 2,
+             ((1, 2), (7, 4, 1)): T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3,
+             ((1, 2), (8, 9, 2)): T^17 + 2*T^15 + T^14 + 4*T^13 + 4*T^11 + 4*T^10 + 3*T^9 + 2*T^8 + 3*T^7 + 2*T^6 + 3*T^5 + 2*T^4 + 3*T^3 + 4*T^2 + 3*T + 1,
+             ((1, 2), (9, 14, 3)): T^23 + 2*T^22 + 2*T^21 + T^19 + 4*T^18 + T^17 + 4*T^16 + T^15 + 4*T^14 + 2*T^12 + 4*T^11 + 4*T^10 + 2*T^8 + 4*T^7 + 4*T^6 + 2*T^4 + T^2 + 2*T + 2,
+             ((1, 2), (10, 19, 4)): T^29 + 4*T^28 + T^27 + 4*T^26 + T^25 + 2*T^24 + 3*T^23 + 2*T^22 + 3*T^21 + 2*T^20 + 4*T^19 + T^18 + 4*T^17 + T^16 + 4*T^15 + T^9 + 4*T^8 + T^7 + 4*T^6 + T^5 + 4*T^4 + T^3 + 4*T^2 + T + 4,
+             ...
+             ((1, 2), (31, 31, 7)): T^62 + 3*T^61 + 2*T^60 + 3*T^57 + 4*T^56 + T^55 + 2*T^52 + T^51 + 4*T^50 + 3*T^37 + 4*T^36 + T^35 + 4*T^32 + 2*T^31 + 3*T^30 + T^27 + 3*T^26 + 2*T^25 + 2*T^12 + T^11 + 4*T^10 + T^7 + 3*T^6 + 2*T^5 + 4*T^2 + 2*T + 3}
+            sage: J_phi[((1, 2), (7, 4, 1))]
+            T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
+        """
+        return {p: self.j_invariant(p, check=False) for p in self.basic_j_invariant_parameters()}
+
     def coefficient(self, n):
         r"""
         Return the `n`-th coefficient of the generator.
