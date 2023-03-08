@@ -867,11 +867,11 @@ class Sets(Category_singleton):
 
             1. as plain integers::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True)       # optional - sage.graphs, sage.combinat
+                sage: P = Poset((divisors(12), attrcall("divides")), facade=True)       # optional - sage.graphs sage.combinat
 
             2. as integers, modified to be aware that their parent is `P`::
 
-                sage: Q = Poset((divisors(12), attrcall("divides")), facade=False)      # optional - sage.graphs, sage.combinat
+                sage: Q = Poset((divisors(12), attrcall("divides")), facade=False)      # optional - sage.graphs sage.combinat
 
             The advantage of option 1. is that one needs not do
             conversions back and forth between `P` and `\ZZ`. The
@@ -885,23 +885,23 @@ class Sets(Category_singleton):
             To raise this ambiguity, one needs to explicitly specify
             the underlying poset as in `2 <_P 3`::
 
-                sage: P = Posets().example("facade")                                    # optional - sage.graphs, sage.combinat
-                sage: P.lt(2,3)                                                         # optional - sage.graphs, sage.combinat
+                sage: P = Posets().example("facade")                                    # optional - sage.graphs sage.combinat
+                sage: P.lt(2,3)                                                         # optional - sage.graphs sage.combinat
                 False
 
             On the other hand, with option 2. and once constructed,
             the elements know unambiguously how to compare
             themselves::
 
-                sage: Q(2) < Q(3)                                                       # optional - sage.graphs, sage.combinat
+                sage: Q(2) < Q(3)                                                       # optional - sage.graphs sage.combinat
                 False
-                sage: Q(2) < Q(6)                                                       # optional - sage.graphs, sage.combinat
+                sage: Q(2) < Q(6)                                                       # optional - sage.graphs sage.combinat
                 True
 
             Beware that ``P(2)`` is still the integer `2`. Therefore
             ``P(2) < P(3)`` still compares `2` and `3` as integers!::
 
-                sage: P(2) < P(3)                                                       # optional - sage.graphs, sage.combinat
+                sage: P(2) < P(3)                                                       # optional - sage.graphs sage.combinat
                 True
 
             In short `P` being a facade parent is one of the programmatic
@@ -976,10 +976,10 @@ class Sets(Category_singleton):
                 sage: A._element_constructor_                                                                           # optional - sage.modules
                 <bound method FreeModule_ambient_field._element_constructor_ of Vector space of dimension 3 over Rational Field>
 
-                sage: B = SymmetricGroup(3).algebra(ZZ)                                                                 # optional - sage.groups, sage.modules
-                sage: B.element_class                                                                                   # optional - sage.groups, sage.modules
+                sage: B = SymmetricGroup(3).algebra(ZZ)                                                                 # optional - sage.groups sage.modules
+                sage: B.element_class                                                                                   # optional - sage.groups sage.modules
                 <...SymmetricGroupAlgebra_n_with_category.element_class'>
-                sage: B._element_constructor_                                                                           # optional - sage.groups, sage.modules
+                sage: B._element_constructor_                                                                           # optional - sage.groups sage.modules
                 <bound method SymmetricGroupAlgebra_n._element_constructor_ of Symmetric group algebra of order 3 over Integer Ring>
             """
             if hasattr(self, "element_class"):
@@ -1663,16 +1663,16 @@ class Sets(Category_singleton):
 
                 sage: from sage.categories.additive_groups import AdditiveGroups
                 sage: S = GF(7)                                                                                         # optional - sage.libs.pari
-                sage: A = S.algebra(QQ, category=AdditiveGroups()); A                                                   # optional - sage.libs.pari, sage.modules
+                sage: A = S.algebra(QQ, category=AdditiveGroups()); A                                                   # optional - sage.libs.pari sage.modules
                 Algebra of Finite Field of size 7 over Rational Field
-                sage: A.category()                                                                                      # optional - sage.libs.pari, sage.modules
+                sage: A.category()                                                                                      # optional - sage.libs.pari sage.modules
                 Category of finite dimensional additive group algebras
                          over Rational Field
 
-                sage: a = A(S(1))                                                                                       # optional - sage.libs.pari, sage.modules
-                sage: a                                                                                                 # optional - sage.libs.pari, sage.modules
+                sage: a = A(S(1))                                                                                       # optional - sage.libs.pari sage.modules
+                sage: a                                                                                                 # optional - sage.libs.pari sage.modules
                 1
-                sage: 1 + a * a * a                                                                                     # optional - sage.libs.pari, sage.modules
+                sage: 1 + a * a * a                                                                                     # optional - sage.libs.pari sage.modules
                 0 + 3
 
             Note that the ``category`` keyword needs to be fed with
@@ -2420,7 +2420,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.cardinality()
                     +Infinity
 
-                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()    # optional - sage.libs.pari, sage.combinat
+                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()    # optional - sage.libs.pari sage.combinat
                     18144000
                     sage: cartesian_product([GF(71)]*20).cardinality() == 71**20        # optional - sage.libs.pari
                     True
@@ -2634,7 +2634,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 sage: Sets().Algebras(QQ).extra_super_categories()
                 [Category of vector spaces with basis over Rational Field]
 
-                sage: Sets().example().algebra(ZZ).categories()                                                         # optional - sage.groups, sage.modules
+                sage: Sets().example().algebra(ZZ).categories()                                                         # optional - sage.groups sage.modules
                 [Category of set algebras over Integer Ring,
                  Category of modules with basis over Integer Ring,
                  ...
@@ -2913,9 +2913,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.a_realization()                                                                     # optional - sage.combinat, sage.modules
+                    sage: A.a_realization()                                                                     # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
                 """
 
@@ -2926,9 +2926,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.realizations()                                                                      # optional - sage.combinat, sage.modules
+                    sage: A.realizations()                                                                      # optional - sage.combinat sage.modules
                     [The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis, The subset algebra of {1, 2, 3} over Rational Field in the In basis, The subset algebra of {1, 2, 3} over Rational Field in the Out basis]
 
                 .. NOTE::
@@ -2946,22 +2946,22 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.facade_for()                                                                        # optional - sage.combinat, sage.modules
+                    sage: A.facade_for()                                                                        # optional - sage.combinat sage.modules
                     [The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis,
                      The subset algebra of {1, 2, 3} over Rational Field in the In basis,
                      The subset algebra of {1, 2, 3} over Rational Field in the Out basis]
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: f = A.F().an_element(); f                                                             # optional - sage.combinat, sage.modules
+                    sage: f = A.F().an_element(); f                                                             # optional - sage.combinat sage.modules
                     F[{}] + 2*F[{1}] + 3*F[{2}] + F[{1, 2}]
-                    sage: i = A.In().an_element(); i                                                            # optional - sage.combinat, sage.modules
+                    sage: i = A.In().an_element(); i                                                            # optional - sage.combinat sage.modules
                     In[{}] + 2*In[{1}] + 3*In[{2}] + In[{1, 2}]
-                    sage: o = A.Out().an_element(); o                                                           # optional - sage.combinat, sage.modules
+                    sage: o = A.Out().an_element(); o                                                           # optional - sage.combinat sage.modules
                     Out[{}] + 2*Out[{1}] + 3*Out[{2}] + Out[{1, 2}]
-                    sage: f in A, i in A, o in A                                                                # optional - sage.combinat, sage.modules
+                    sage: f in A, i in A, o in A                                                                # optional - sage.combinat sage.modules
                     (True, True, True)
                 """
                 return self.realizations()
@@ -2973,9 +2973,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     """
                     EXAMPLES::
 
-                        sage: A = Sets().WithRealizations().example(); A                                        # optional - sage.combinat, sage.modules
+                        sage: A = Sets().WithRealizations().example(); A                                        # optional - sage.combinat sage.modules
                         The subset algebra of {1, 2, 3} over Rational Field
-                        sage: A.Realizations().super_categories()                                               # optional - sage.combinat, sage.modules
+                        sage: A.Realizations().super_categories()                                               # optional - sage.combinat sage.modules
                         [Category of realizations of sets]
                     """
                     return [Sets().Realizations()]
@@ -2986,9 +2986,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.an_element()        # indirect doctest                                              # optional - sage.combinat, sage.modules
+                    sage: A.an_element()        # indirect doctest                                              # optional - sage.combinat sage.modules
                     F[{}] + 2*F[{1}] + 3*F[{2}] + F[{1, 2}]
 
                 TESTS:
@@ -2996,9 +2996,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 Check that we are consistent no matter which basis is
                 created first::
 
-                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)                                      # optional - sage.combinat, sage.graphs, sage.modules
-                    sage: I = M.I()                                                                             # optional - sage.combinat, sage.graphs, sage.modules
-                    sage: M._an_element_()                                                                      # optional - sage.combinat, sage.graphs, sage.modules
+                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)                                      # optional - sage.combinat sage.graphs sage.modules
+                    sage: I = M.I()                                                                             # optional - sage.combinat sage.graphs sage.modules
+                    sage: M._an_element_()                                                                      # optional - sage.combinat sage.graphs sage.modules
                     2*E[0] + 2*E[1] + 3*E[2]
                 """
                 return self.a_realization().an_element()
@@ -3011,19 +3011,19 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.an_element() in A                                                                   # optional - sage.combinat, sage.modules
+                    sage: A.an_element() in A                                                                   # optional - sage.combinat sage.modules
                     True
-                    sage: A.In().an_element() in A                                                              # optional - sage.combinat, sage.modules
+                    sage: A.In().an_element() in A                                                              # optional - sage.combinat sage.modules
                     True
-                    sage: A.F().an_element() in A                                                               # optional - sage.combinat, sage.modules
+                    sage: A.F().an_element() in A                                                               # optional - sage.combinat sage.modules
                     True
-                    sage: A.Out().an_element() in A                                                             # optional - sage.combinat, sage.modules
+                    sage: A.Out().an_element() in A                                                             # optional - sage.combinat sage.modules
                     True
-                    sage: 1 in A                                                                                # optional - sage.combinat, sage.modules
+                    sage: 1 in A                                                                                # optional - sage.combinat sage.modules
                     True
-                    sage: QQ['x'].an_element() in A                                                             # optional - sage.combinat, sage.modules
+                    sage: QQ['x'].an_element() in A                                                             # optional - sage.combinat sage.modules
                     False
                 """
                 return any(x in realization for realization in self.realizations())
@@ -3038,8 +3038,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 TESTS::
 
-                    sage: A = Sets().WithRealizations().example()                                               # optional - sage.combinat, sage.modules
-                    sage: A.realizations()    # indirect doctest                                                # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example()                                               # optional - sage.combinat sage.modules
+                    sage: A.realizations()    # indirect doctest                                                # optional - sage.combinat sage.modules
                     [The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis,
                      The subset algebra of {1, 2, 3} over Rational Field in the In basis,
                      The subset algebra of {1, 2, 3} over Rational Field in the Out basis]
@@ -3053,11 +3053,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: In = A.In(); In                                                                       # optional - sage.combinat, sage.modules
+                    sage: In = A.In(); In                                                                       # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the In basis
-                    sage: In.realization_of()                                                                   # optional - sage.combinat, sage.modules
+                    sage: In.realization_of()                                                                   # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
                 """
                 for category in self.categories():
@@ -3073,11 +3073,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: In = A.In(); In                                                                       # optional - sage.combinat, sage.modules
+                    sage: In = A.In(); In                                                                       # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the In basis
-                    sage: In._realization_name()                                                                # optional - sage.combinat, sage.modules
+                    sage: In._realization_name()                                                                # optional - sage.combinat sage.modules
                     'In'
                 """
                 # The __base__ gets rid of the with_category
@@ -3088,9 +3088,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                            # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: In = A.In(); In                                                                       # optional - sage.combinat, sage.modules
+                    sage: In = A.In(); In                                                                       # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the In basis
 
                 In the example above, :meth:`repr` was overridden by
@@ -3102,8 +3102,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: from sage.categories.realizations import Realizations
                     sage: class Blah(Parent):
                     ....:     pass
-                    sage: P = Blah(category=Sets.WithRealizations.ParentMethods.Realizations(A))                # optional - sage.combinat, sage.modules
-                    sage: P     # indirect doctest                                                              # optional - sage.combinat, sage.modules
+                    sage: P = Blah(category=Sets.WithRealizations.ParentMethods.Realizations(A))                # optional - sage.combinat sage.modules
+                    sage: P     # indirect doctest                                                              # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the realization Blah
                 """
                 return "{} in the realization {}".format(self.realization_of(), self._realization_name())

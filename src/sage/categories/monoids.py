@@ -379,7 +379,7 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: AA(sqrt(~2)).inverse()                                    # optional - sage.symbolic, sage.rings.number_field
+                sage: AA(sqrt(~2)).inverse()                                    # optional - sage.symbolic sage.rings.number_field
                 1.414213562373095?
             """
             # Nota Bene: Element classes should implement ``__invert__`` only.
@@ -447,18 +447,18 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                                                    # optional - sage.combinat, sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                                                    # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.one.__module__                                                                              # optional - sage.combinat, sage.modules
+                    sage: A.one.__module__                                                                              # optional - sage.combinat sage.modules
                     'sage.categories.monoids'
-                    sage: A.one()                                                                                       # optional - sage.combinat, sage.modules
+                    sage: A.one()                                                                                       # optional - sage.combinat sage.modules
                     F[{}]
 
                 TESTS::
 
-                    sage: A.one() is A.a_realization().one()                                                            # optional - sage.combinat, sage.modules
+                    sage: A.one() is A.a_realization().one()                                                            # optional - sage.combinat sage.modules
                     True
-                    sage: A._test_one()                                                                                 # optional - sage.combinat, sage.modules
+                    sage: A._test_one()                                                                                 # optional - sage.combinat sage.modules
                 """
                 return self.a_realization().one()
 
@@ -559,13 +559,13 @@ class Monoids(CategoryWithAxiom):
                     Family (B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], B[9], B[10], B[11])
 
 
-                    sage: GroupAlgebras(QQ).example(AlternatingGroup(10)).algebra_generators()                          # optional - sage.groups, sage.modules
+                    sage: GroupAlgebras(QQ).example(AlternatingGroup(10)).algebra_generators()                          # optional - sage.groups sage.modules
                     Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
 
-                    sage: A = DihedralGroup(3).algebra(QQ); A                                                           # optional - sage.groups, sage.modules
+                    sage: A = DihedralGroup(3).algebra(QQ); A                                                           # optional - sage.groups sage.modules
                     Algebra of Dihedral group of order 6 as a permutation group
                      over Rational Field
-                    sage: A.algebra_generators()                                                                        # optional - sage.groups, sage.modules
+                    sage: A.algebra_generators()                                                                        # optional - sage.groups sage.modules
                     Family ((1,2,3), (1,3))
                 """
                 monoid = self.basis().keys()
@@ -583,14 +583,14 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: SG4 = SymmetricGroupAlgebra(ZZ,4)                                                             # optional - sage.groups, sage.modules
-                    sage: SG4(1).is_central()                                                                           # optional - sage.groups, sage.modules
+                    sage: SG4 = SymmetricGroupAlgebra(ZZ,4)                                                             # optional - sage.groups sage.modules
+                    sage: SG4(1).is_central()                                                                           # optional - sage.groups sage.modules
                     True
-                    sage: SG4(Permutation([1,3,2,4])).is_central()                                                      # optional - sage.groups, sage.modules
+                    sage: SG4(Permutation([1,3,2,4])).is_central()                                                      # optional - sage.groups sage.modules
                     False
-                    sage: A = GroupAlgebras(QQ).example(); A                                                            # optional - sage.groups, sage.modules
+                    sage: A = GroupAlgebras(QQ).example(); A                                                            # optional - sage.groups sage.modules
                     Algebra of Dihedral group of order 8 as a permutation group over Rational Field
-                    sage: sum(i for i in A.basis()).is_central()                                                        # optional - sage.groups, sage.modules
+                    sage: sum(i for i in A.basis()).is_central()                                                        # optional - sage.groups sage.modules
                     True
                 """
                 return all(i * self == self * i
@@ -677,10 +677,10 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: G1 = SymmetricGroup(3)                                                                        # optional - sage.groups, sage.modules
-                    sage: G2 = SL(2, 3)                                                                                 # optional - sage.groups, sage.modules
-                    sage: G = cartesian_product([G1, G2])                                                               # optional - sage.groups, sage.modules
-                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()                                              # optional - sage.groups, sage.modules
+                    sage: G1 = SymmetricGroup(3)                                                                        # optional - sage.groups sage.modules
+                    sage: G2 = SL(2, 3)                                                                                 # optional - sage.groups sage.modules
+                    sage: G = cartesian_product([G1, G2])                                                               # optional - sage.groups sage.modules
+                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()                                              # optional - sage.groups sage.modules
                     12
                 """
                 from sage.rings.infinity import Infinity
@@ -697,10 +697,10 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: a1 = Permutation((4,2,1,3))                                                                   # optional - sage.groups, sage.modules
-                    sage: a2 = SL(2, 3)([2,1,1,1])                                                                      # optional - sage.groups, sage.modules
-                    sage: h = cartesian_product([a1, a2])                                                               # optional - sage.groups, sage.modules
-                    sage: ~h                                                                                            # optional - sage.groups, sage.modules
+                    sage: a1 = Permutation((4,2,1,3))                                                                   # optional - sage.groups sage.modules
+                    sage: a2 = SL(2, 3)([2,1,1,1])                                                                      # optional - sage.groups sage.modules
+                    sage: h = cartesian_product([a1, a2])                                                               # optional - sage.groups sage.modules
+                    sage: ~h                                                                                            # optional - sage.groups sage.modules
                     ([2, 4, 1, 3], [1 2]
                     [2 2])
                 """

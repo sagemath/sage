@@ -74,7 +74,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma2 = groups.permutation.Cyclic(2)                                                             # optional - sage.groups
                 sage: BSigma2 = Sigma2.nerve()                                                                          # optional - sage.groups
-                sage: BSigma2.cohomology(4, base_ring=GF(2))                                                            # optional - sage.groups, sage.libs.pari
+                sage: BSigma2.cohomology(4, base_ring=GF(2))                                                            # optional - sage.groups sage.libs.pari
                 Vector space of dimension 1 over Finite Field of size 2
 
             The `k`-simplices of the nerve are named after the chains
@@ -105,7 +105,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma3 = groups.permutation.Symmetric(3)                                                          # optional - sage.groups
                 sage: BSigma3 = Sigma3.nerve()                                                                          # optional - sage.groups
-                sage: BSigma3.homology(range(4), base_ring=GF(3))                                                       # optional - sage.groups, sage.libs.pari
+                sage: BSigma3.homology(range(4), base_ring=GF(3))                                                       # optional - sage.groups sage.libs.pari
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                 1: Vector space of dimension 0 over Finite Field of size 3,
                 2: Vector space of dimension 0 over Finite Field of size 3,
@@ -144,7 +144,7 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: len(BSigma3.n_cells(3))                                                                           # optional - sage.groups
                 125
 
-                sage: BC3.homology(range(5), base_ring=GF(3))                                                           # optional - sage.groups, sage.libs.pari
+                sage: BC3.homology(range(5), base_ring=GF(3))                                                           # optional - sage.groups sage.libs.pari
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 1 over Finite Field of size 3,
                  2: Vector space of dimension 1 over Finite Field of size 3,
@@ -152,7 +152,7 @@ class FiniteMonoids(CategoryWithAxiom):
                  4: Vector space of dimension 1 over Finite Field of size 3}
 
                 sage: BC5 = groups.permutation.Cyclic(5).nerve()                                                        # optional - sage.groups
-                sage: BC5.homology(range(5), base_ring=GF(5))                                                           # optional - sage.groups, sage.libs.pari
+                sage: BC5.homology(range(5), base_ring=GF(5))                                                           # optional - sage.groups sage.libs.pari
                 {0: Vector space of dimension 0 over Finite Field of size 5,
                 1: Vector space of dimension 1 over Finite Field of size 5,
                 2: Vector space of dimension 1 over Finite Field of size 5,
@@ -181,20 +181,20 @@ class FiniteMonoids(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: M = Monoids().Finite().example()
-                sage: M.rhodes_radical_congruence()                                                                     # optional - sage.groups, sage.modules
+                sage: M.rhodes_radical_congruence()                                                                     # optional - sage.groups sage.modules
                 [(0, 6), (2, 8), (4, 10)]
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid                                                 # optional - sage.groups, sage.modules
-                sage: H3 = HeckeMonoid(SymmetricGroup(3))                                                               # optional - sage.groups, sage.modules
-                sage: H3.repr_element_method(style="reduced")                                                           # optional - sage.groups, sage.modules
-                sage: H3.rhodes_radical_congruence()                                                                    # optional - sage.groups, sage.modules
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                                                 # optional - sage.groups sage.modules
+                sage: H3 = HeckeMonoid(SymmetricGroup(3))                                                               # optional - sage.groups sage.modules
+                sage: H3.repr_element_method(style="reduced")                                                           # optional - sage.groups sage.modules
+                sage: H3.rhodes_radical_congruence()                                                                    # optional - sage.groups sage.modules
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 
             By Maschke's theorem, every group algebra over `\QQ`
             is semisimple hence the Rhodes radical of a group must be trivial::
 
-                sage: SymmetricGroup(3).rhodes_radical_congruence()                                                     # optional - sage.groups, sage.modules
+                sage: SymmetricGroup(3).rhodes_radical_congruence()                                                     # optional - sage.groups sage.modules
                 []
-                sage: DihedralGroup(10).rhodes_radical_congruence()                                                     # optional - sage.groups, sage.modules
+                sage: DihedralGroup(10).rhodes_radical_congruence()                                                     # optional - sage.groups sage.modules
                 []
 
             REFERENCES:

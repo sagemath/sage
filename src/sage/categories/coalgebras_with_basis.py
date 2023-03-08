@@ -61,11 +61,11 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups, sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                                                          # optional - sage.groups, sage.modules
-                sage: A.coproduct_on_basis(a)                                                                           # optional - sage.groups, sage.modules
+                sage: (a, b) = A._group.gens()                                                                          # optional - sage.groups sage.modules
+                sage: A.coproduct_on_basis(a)                                                                           # optional - sage.groups sage.modules
                 B[(1,2,3)] # B[(1,2,3)]
             """
 
@@ -80,13 +80,13 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups, sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                sage: a, b = A.algebra_generators()                                                                     # optional - sage.groups, sage.modules
-                sage: a, A.coproduct(a)                                                                                 # optional - sage.groups, sage.modules
+                sage: a, b = A.algebra_generators()                                                                     # optional - sage.groups sage.modules
+                sage: a, A.coproduct(a)                                                                                 # optional - sage.groups sage.modules
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
-                sage: b, A.coproduct(b)                                                                                 # optional - sage.groups, sage.modules
+                sage: b, A.coproduct(b)                                                                                 # optional - sage.groups sage.modules
                 (B[(1,3)], B[(1,3)] # B[(1,3)])
 
             """
@@ -113,11 +113,11 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups, sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                                                          # optional - sage.groups, sage.modules
-                sage: A.counit_on_basis(a)                                                                              # optional - sage.groups, sage.modules
+                sage: (a, b) = A._group.gens()                                                                          # optional - sage.groups sage.modules
+                sage: A.counit_on_basis(a)                                                                              # optional - sage.groups sage.modules
                 1
             """
 
@@ -130,13 +130,13 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups, sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                sage: a, b = A.algebra_generators()                                                                     # optional - sage.groups, sage.modules
-                sage: a, A.counit(a)                                                                                    # optional - sage.groups, sage.modules
+                sage: a, b = A.algebra_generators()                                                                     # optional - sage.groups sage.modules
+                sage: a, A.counit(a)                                                                                    # optional - sage.groups sage.modules
                 (B[(1,2,3)], 1)
-                sage: b, A.counit(b)                                                                                    # optional - sage.groups, sage.modules
+                sage: b, A.counit(b)                                                                                    # optional - sage.groups sage.modules
                 (B[(1,3)], 1)
 
             """

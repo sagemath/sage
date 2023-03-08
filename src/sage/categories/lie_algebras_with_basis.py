@@ -141,8 +141,8 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: L = LieAlgebra(QQ, 'x,y', {('x','y'): {'x':1}})                                                   # optional - sage.combinat, sage.modules
-                sage: L.dimension()                                                                                     # optional - sage.combinat, sage.modules
+                sage: L = LieAlgebra(QQ, 'x,y', {('x','y'): {'x':1}})                                                   # optional - sage.combinat sage.modules
+                sage: L.dimension()                                                                                     # optional - sage.combinat sage.modules
                 2
             """
             return self.basis().cardinality()
@@ -154,8 +154,8 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.sl(QQ, 2)                                                                        # optional - sage.combinat, sage.modules
-                sage: PBW = L.pbw_basis()                                                                               # optional - sage.combinat, sage.modules
+                sage: L = lie_algebras.sl(QQ, 2)                                                                        # optional - sage.combinat sage.modules
+                sage: PBW = L.pbw_basis()                                                                               # optional - sage.combinat sage.modules
             """
             from sage.algebras.lie_algebras.poincare_birkhoff_witt \
                 import PoincareBirkhoffWittBasis

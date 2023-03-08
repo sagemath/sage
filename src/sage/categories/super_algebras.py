@@ -76,14 +76,14 @@ class SuperAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")                                                    # optional - sage.combinat, sage.modules
-                sage: T = A.tensor(A,A); T                                                                              # optional - sage.combinat, sage.modules
+                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")                                                    # optional - sage.combinat sage.modules
+                sage: T = A.tensor(A,A); T                                                                              # optional - sage.combinat sage.modules
                 A # A # A
-                sage: T in Algebras(ZZ).Graded().SignedTensorProducts()                                                 # optional - sage.combinat, sage.modules
+                sage: T in Algebras(ZZ).Graded().SignedTensorProducts()                                                 # optional - sage.combinat sage.modules
                 True
-                sage: T in Algebras(ZZ).Graded().TensorProducts()                                                       # optional - sage.combinat, sage.modules
+                sage: T in Algebras(ZZ).Graded().TensorProducts()                                                       # optional - sage.combinat sage.modules
                 False
-                sage: A.rename(None)                                                                                    # optional - sage.combinat, sage.modules
+                sage: A.rename(None)                                                                                    # optional - sage.combinat sage.modules
 
             This also works when the other elements do not have
             a signed tensor product (:trac:`31266`)::
