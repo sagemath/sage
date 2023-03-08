@@ -104,24 +104,24 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
     Using ``ConditionSet`` without predicates provides a way of attaching variable names
     to a set::
 
-        sage: Z3 = ConditionSet(ZZ^3, vars=['x', 'y', 'z']); Z3
+        sage: Z3 = ConditionSet(ZZ^3, vars=['x', 'y', 'z']); Z3                                     # optional - sage.modules
         { (x, y, z) ∈ Ambient free module of rank 3 over the principal ideal domain Integer Ring }
-        sage: Z3.variable_names()
+        sage: Z3.variable_names()                                                                   # optional - sage.modules
         ('x', 'y', 'z')
-        sage: Z3.arguments()
+        sage: Z3.arguments()                                                                        # optional - sage.modules
         (x, y, z)
 
-        sage: Q4.<a, b, c, d> = ConditionSet(QQ^4); Q4
+        sage: Q4.<a, b, c, d> = ConditionSet(QQ^4); Q4                                              # optional - sage.modules
         { (a, b, c, d) ∈ Vector space of dimension 4 over Rational Field }
-        sage: Q4.variable_names()
+        sage: Q4.variable_names()                                                                   # optional - sage.modules
         ('a', 'b', 'c', 'd')
-        sage: Q4.arguments()
+        sage: Q4.arguments()                                                                        # optional - sage.modules
         (a, b, c, d)
 
     TESTS::
 
-        sage: TestSuite(P_inter_B).run(skip='_test_pickling')  # cannot pickle lambdas
-        sage: TestSuite(P_inter_B_again).run()
+        sage: TestSuite(P_inter_B).run(skip='_test_pickling')  # cannot pickle lambdas              # optional - sage.geometry.polyhedron
+        sage: TestSuite(P_inter_B_again).run()                                                      # optional - sage.geometry.polyhedron, sage.symbolic
     """
     @staticmethod
     def __classcall_private__(cls, universe, *predicates, vars=None, names=None, category=None):
@@ -346,7 +346,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             { (x, y, z) ∈ Ambient free module of rank 3 over the principal
                           ideal domain Integer Ring : sqrt(x^2 + y^2 + z^2) < 12 }
             sage: predicate = SmallTriples._predicates[0]                                           # optional - sage.symbolic
-            sage: element = TripleDigits((1, 2, 3))
+            sage: element = TripleDigits((1, 2, 3))                                                 # optional - sage.symbolic
             sage: SmallTriples._call_predicate(predicate, element)                                  # optional - sage.symbolic
             sqrt(14) < 12
 
