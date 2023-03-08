@@ -1867,7 +1867,7 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
     EXAMPLES::
 
         sage: from sage.misc.functional import _do_sqrt
-        sage: _do_sqrt(3)
+        sage: _do_sqrt(3)                                                                                               # optional - sage.symbolic
         sqrt(3)
         sage: _do_sqrt(3, prec=10)
         1.7
@@ -1922,7 +1922,7 @@ def sqrt(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: sqrt(-1)
+        sage: sqrt(-1)                                                                                                  # optional - sage.symbolic
         I
         sage: sqrt(2)                                                                                                   # optional - sage.symbolic
         sqrt(2)
@@ -2004,7 +2004,7 @@ def transpose(x):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3, 4,5,6, 7,8,9])                                                                              # optional - sage.modules
-        sage: transpose(A)
+        sage: transpose(A)                                                                                              # optional - sage.modules
         [1 4 7]
         [2 5 8]
         [3 6 9]

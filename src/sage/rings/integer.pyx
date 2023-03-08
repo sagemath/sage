@@ -1007,9 +1007,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: ex = SR(ZZ(7)); ex
+            sage: ex = SR(ZZ(7)); ex                                                    # optional - sage.symbolic
             7
-            sage: parent(ex)
+            sage: parent(ex)                                                            # optional - sage.symbolic
             Symbolic Ring
         """
         return sring._force_pyobject(self, force=True)
@@ -4603,13 +4603,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: gamma(5)
+            sage: gamma(5)                                                          # optional - sage.symbolic
             24
-            sage: gamma(0)
+            sage: gamma(0)                                                          # optional - sage.symbolic
             Infinity
-            sage: gamma(-1)
+            sage: gamma(-1)                                                         # optional - sage.symbolic
             Infinity
-            sage: gamma(-2^150)
+            sage: gamma(-2^150)                                                     # optional - sage.symbolic
             Infinity
         """
         if mpz_sgn(self.value) > 0:

@@ -423,14 +423,14 @@ class Polynomial_generic_sparse(Polynomial):
         EXAMPLES::
 
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
-            sage: e = RDF(e)
-            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14
+            sage: e = RDF(e)                                                            # optional - sage.symbolic
+            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14             # optional - sage.symbolic
             20.085536923187664*w^3 + 7.3890560989306495*w^2 + 2.718281828459045*w + 1.0
-            sage: f[1]  # abs tol 5e-16
+            sage: f[1]  # abs tol 5e-16                                                 # optional - sage.symbolic
             2.718281828459045
-            sage: f[5]
+            sage: f[5]                                                                  # optional - sage.symbolic
             0.0
-            sage: f[-1]
+            sage: f[-1]                                                                 # optional - sage.symbolic
             0.0
             sage: R.<x> = PolynomialRing(RealField(19), sparse=True)
             sage: f = (2-3.5*x)^3; f

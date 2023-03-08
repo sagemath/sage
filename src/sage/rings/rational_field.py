@@ -772,37 +772,37 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)                     # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)                     # optional - sage.libs.pari, sage.modules, sage.rings.padics
             -9867
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)                  # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)                  # optional - sage.libs.pari, sage.modules, sage.rings.padics
             -33
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                                        # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                                        # optional - sage.libs.pari, sage.modules, sage.rings.padics
             15
 
         TESTS::
 
-            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)
+            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)                                          # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             TypeError: first argument must be a list or integer
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)                                        # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: second argument must be nonzero
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)                                    # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: list should be of even cardinality
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)                                        # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: all entries in list must be prime or -1 for
@@ -810,7 +810,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)
+            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)                                        # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: second argument must be a nonsquare with
@@ -818,14 +818,14 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))                                  # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             TypeError: second argument must be a rational number
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)                                       # optional - sage.libs.pari, sage.modules
             Traceback (most recent call last):
             ...
             ValueError: if the infinite place is in the list, the second
@@ -1527,7 +1527,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: gap(QQ) # indirect doctest
+            sage: gap(QQ) # indirect doctest                                                        # optional - sage.libs.gap
             Rationals
         """
         return 'Rationals'

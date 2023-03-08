@@ -235,21 +235,21 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                   # optional - sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # optional - sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
+            sage: shell.run_cell('tab')                                                             # optional - sage.combinat
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # optional - sage.combinat
+            sage: shell.run_cell('tab')                                                             # optional - sage.combinat
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')                                       # optional - sage.combinat
             sage: shell.quit()
 
         TESTS::
@@ -297,21 +297,21 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                   # optional - sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # optional - sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
+            sage: shell.run_cell('tab')                                                             # optional - sage.combinat
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # optional - sage.combinat
+            sage: shell.run_cell('tab')                                                             # optional - sage.combinat
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')
+            sage: shell.run_cell('Tableaux.options._reset()')                                       # optional - sage.combinat
             sage: shell.quit()
 
         TESTS::
@@ -825,7 +825,7 @@ cdef class SageObject:
         EXAMPLES::
 
             sage: n = -3/7
-            sage: n._magma_init_(magma)
+            sage: n._magma_init_(magma)           # optional - magma
             '-3/7'
 
         Some other examples that illustrate conversion to Magma.

@@ -222,7 +222,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     We skip ``_test_an_element`` because the coercion framework does not
     currently allow a tuple to be returned for facade parents::
 
-        sage: TestSuite(Ukeep).run(skip="_test_an_element")
+        sage: TestSuite(Ukeep).run(skip="_test_an_element")                             # optional - sage.combinat
 
     The following three lines are required for the pickling tests,
     because the classes ``MyUnion`` and ``UnionOfSpecialSets`` have
@@ -276,8 +276,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             ....:                                  2: FiniteEnumeratedSet([4,5,6])})
             sage: TestSuite(U).run()
 
-            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})
-            sage: TestSuite(X).run()
+            sage: X = DisjointUnionEnumeratedSets({i: Partitions(i) for i in range(5)})     # optional - sage.combinat
+            sage: TestSuite(X).run()                                                        # optional - sage.combinat
         """
         self._family = family
         self._facade = facade
@@ -425,7 +425,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
             sage: U4 = DisjointUnionEnumeratedSets(                                     # optional - sage.combinat
             ....:          Family([3, 5, 7], Permutations))
-            sage: U4.an_element()
+            sage: U4.an_element()                                                       # optional - sage.combinat
             [1, 2, 3]
         """
         return self._an_element_from_iterator()

@@ -379,10 +379,10 @@ class PolynomialRing_general(ring.Algebra):
 
         This shows that the issue at :trac:`4106` is fixed::
 
-            sage: x = var('x')
+            sage: x = var('x')                                                          # optional - sage.symbolic
             sage: R = IntegerModRing(4)
-            sage: S = R['x']
-            sage: S(x)
+            sage: S = R['x']                                                            # optional - sage.symbolic
+            sage: S(x)                                                                  # optional - sage.symbolic
             x
 
         Throw a TypeError if any of the coefficients cannot be coerced

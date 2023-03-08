@@ -2556,9 +2556,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             2/3
             sage: parent(a)
             Rational Field
-            sage: (-27/125)^(1/3)
+            sage: (-27/125)^(1/3)                                                       # optional - sage.symbolic
             3/5*(-1)^(1/3)
-            sage: (-27/125)^(1/2)
+            sage: (-27/125)^(1/2)                                                       # optional - sage.symbolic
             3/5*sqrt(-3/5)
 
         The result is normalized to have the rational power in the numerator::
