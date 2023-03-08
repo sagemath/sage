@@ -135,8 +135,8 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
         sage: repr_lincomb([(x, alpha)], is_latex=True)                                 # optional - sage.symbolic
         '\\alpha x'
         sage: A.<psi> = PolynomialRing(QQ)                                              # optional - sage.symbolic
-        sage: B.<t> = FreeAlgebra(A)                                                    # optional - sage.combinat, sage.modules, sage.symbolic
-        sage: (psi * t)._latex_()                                                       # optional - sage.combinat, sage.modules, sage.symbolic
+        sage: B.<t> = FreeAlgebra(A)                                                    # optional - sage.combinat sage.modules sage.symbolic
+        sage: (psi * t)._latex_()                                                       # optional - sage.combinat sage.modules sage.symbolic
         '\\psi t'
     """
     # Setting scalar_mult: symbol used for scalar multiplication

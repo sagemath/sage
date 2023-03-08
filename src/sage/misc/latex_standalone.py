@@ -1167,17 +1167,17 @@ class TikzPicture(Standalone):
 
         ::
 
-            sage: W = CoxeterGroup(["A",2])                                                                             # optional - sage.combinat, sage.groups
-            sage: G = W.cayley_graph()                        # optional sage.graphs                                    # optional - sage.combinat, sage.groups
-            sage: dotdata = G.graphviz_string()               # optional sage.graphs                                    # optional - sage.combinat, sage.groups
-            sage: tikz = TikzPicture.from_dot_string(dotdata) # optional sage.graphs dot2tex graphviz # long time (3s)  # optional - sage.combinat, sage.groups
-            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.combinat, sage.groups
+            sage: W = CoxeterGroup(["A",2])                                                                             # optional - sage.combinat sage.groups
+            sage: G = W.cayley_graph()                        # optional sage.graphs                                    # optional - sage.combinat sage.groups
+            sage: dotdata = G.graphviz_string()               # optional sage.graphs                                    # optional - sage.combinat sage.groups
+            sage: tikz = TikzPicture.from_dot_string(dotdata) # optional sage.graphs dot2tex graphviz # long time (3s)  # optional - sage.combinat sage.groups
+            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.combinat sage.groups
 
         ::
 
-            sage: dotdata = G.graphviz_string(labels='latex') # optional sage.graphs                                    # optional - sage.combinat, sage.groups
-            sage: tikz = TikzPicture.from_dot_string(dotdata) # optional sage.graphs dot2tex graphviz # long time (3s)  # optional - sage.combinat, sage.groups
-            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.combinat, sage.groups
+            sage: dotdata = G.graphviz_string(labels='latex') # optional sage.graphs                                    # optional - sage.combinat sage.groups
+            sage: tikz = TikzPicture.from_dot_string(dotdata) # optional sage.graphs dot2tex graphviz # long time (3s)  # optional - sage.combinat sage.groups
+            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.combinat sage.groups
 
         """
         from sage.features import PythonModule
@@ -1259,10 +1259,10 @@ class TikzPicture(Standalone):
         Using ``merge_multiedges``::
 
             sage: alpha = var('alpha')                                                                                  # optional - sage.symbolic
-            sage: m = matrix(2, range(4)); m.set_immutable()                                                            # optional - sage.symbolic, sage.modules
-            sage: G = DiGraph([(0,1,alpha), (0,1,0), (0,2,9), (0,2,m)], multiedges=True) # optional sage.graphs         # optional - sage.symbolic, sage.modules
-            sage: tikz = TikzPicture.from_graph(G, merge_multiedges=True) # optional sage.graphs dot2tex graphviz       # optional - sage.symbolic, sage.modules
-            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.symbolic, sage.modules
+            sage: m = matrix(2, range(4)); m.set_immutable()                                                            # optional - sage.symbolic sage.modules
+            sage: G = DiGraph([(0,1,alpha), (0,1,0), (0,2,9), (0,2,m)], multiedges=True) # optional sage.graphs         # optional - sage.symbolic sage.modules
+            sage: tikz = TikzPicture.from_graph(G, merge_multiedges=True) # optional sage.graphs dot2tex graphviz       # optional - sage.symbolic sage.modules
+            sage: _ = tikz.pdf()      # not tested                                                                      # optional - sage.symbolic sage.modules
 
         Using ``merge_multiedges`` with ``merge_label_function``::
 
