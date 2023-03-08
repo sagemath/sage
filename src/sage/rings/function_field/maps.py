@@ -62,7 +62,7 @@ lazy_import("sage.rings.function_field.derivations", (
     "RationalFunctionFieldHigherDerivation_global",
     "FunctionFieldHigherDerivation_global",
     "FunctionFieldHigherDerivation_char_zero",
-), deprecation=99999)
+), deprecation=35230)
 
 
 class FunctionFieldVectorSpaceIsomorphism(Morphism):
