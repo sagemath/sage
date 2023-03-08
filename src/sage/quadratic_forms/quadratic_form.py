@@ -39,6 +39,8 @@ from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 from sage.structure.sage_object import SageObject
 from sage.combinat.integer_lists.invlex import IntegerListsLex
+from sage.misc.superseded import deprecated_function_alias
+
 
 def QuadraticForm__constructor(R, n=None, entries=None):
     """
@@ -1554,8 +1556,7 @@ class QuadraticForm(SageObject):
         """
         return self.det() / ZZ(2**self.dim())
 
-
-    def base_change_to(self, R):
+    def change_ring(self, R):
         """
         Alters the quadratic form to have all coefficients
         defined over the new base_ring R.  Here R must be
@@ -1582,7 +1583,7 @@ class QuadraticForm(SageObject):
 
         ::
 
-            sage: Q1 = Q.base_change_to(IntegerModRing(5)); Q1
+            sage: Q1 = Q.change_ring(IntegerModRing(5)); Q1
             Quadratic form in 2 variables over Ring of integers modulo 5 with coefficients:
             [ 1 0 ]
             [ * 1 ]
@@ -1598,6 +1599,8 @@ class QuadraticForm(SageObject):
             raise TypeError(f"there is no canonical coercion from {self.base_ring()} to R")
         # Return the coerced form
         return QuadraticForm(R, self.dim(), [R(x) for x in self.coefficients()])
+
+    base_change_to = deprecated_function_alias(35555, change_ring)
 
     def level(self):
         r"""

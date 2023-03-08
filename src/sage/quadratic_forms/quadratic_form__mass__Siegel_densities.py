@@ -10,7 +10,7 @@ Local Masses and Siegel Densities
 #  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
 ########################################################################
 
-import copy
+from copy import deepcopy
 
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
@@ -192,7 +192,7 @@ def Watson_mass_at_2(self):
 
     """
     # Make a 0-dim'l quadratic form (for initialization purposes)
-    Null_Form = copy.deepcopy(self)
+    Null_Form = deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
     # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
@@ -231,7 +231,7 @@ def Watson_mass_at_2(self):
     eps_dict = {}
     for j in range(s_min, s_max+3):
         two_form = (diag_dict[j-2] + diag_dict[j] + dim2_dict[j]).scale_by_factor(2)
-        j_form = (two_form + diag_dict[j-1]).base_change_to(IntegerModRing(4))
+        j_form = (two_form + diag_dict[j-1]).change_ring(IntegerModRing(4))
 
         if j_form.dim() == 0:
             eps_dict[j] = 1
@@ -280,7 +280,7 @@ def Kitaoka_mass_at_2(self):
 
     """
     # Make a 0-dim'l quadratic form (for initialization purposes)
-    Null_Form = copy.deepcopy(self)
+    Null_Form = deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
     # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
@@ -373,7 +373,7 @@ def mass_at_two_by_counting_mod_power(self, k):
         4
     """
     R = IntegerModRing(2**k)
-    Q1 = self.base_change_to(R)
+    Q1 = self.change_ring(R)
     n = self.dim()
     MS = MatrixSpace(R, n)
 
