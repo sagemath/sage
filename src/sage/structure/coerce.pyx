@@ -401,8 +401,10 @@ def parent_is_real_numerical(P):
         sage: [parent_is_real_numerical(R) for R in [CC, QuadraticField(-1),
         ....:         complex, gmpy2.mpc, numpy.complexfloating]]
         [False, False, False, False, False]
-        sage: [parent_is_real_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
-        [False, False, False, False]
+        sage: [parent_is_real_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
+        [False, False, False]
+        sage: parent_is_real_numerical(SR)                                              # optional - sage.symbolic
+        False
         sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]
         [False, False, False, False]
     """
@@ -556,6 +558,7 @@ cdef class CoercionModel:
 
             sage: from sage.structure.coerce import CoercionModel
             sage: cm = CoercionModel()
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 - 2, 'a')                                 # optional - sage.rings.number_field
             sage: A = cm.get_action(ZZ, K, operator.mul)                        # optional - sage.rings.number_field
             sage: f, g = cm.coercion_maps(QQ, int)

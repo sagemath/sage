@@ -1,6 +1,16 @@
 r"""
 Features for testing the presence of Singular
 """
+
+# *****************************************************************************
+#       Copyright (C) 2022-2023 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from . import Executable, PythonModule
 from .join_feature import JoinFeature
 from sage.env import SINGULAR_BIN

@@ -114,14 +114,14 @@ class FormalSum(ModuleElement):
 
         Make sure we first reduce before checking coefficient types::
 
-            sage: x,y = var('x, y')
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))
+            sage: x,y = var('x, y')                                                                 # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))                                       # optional - sage.symbolic
             1/2*x + 2*y
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))
+            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))                              # optional - sage.symbolic
             x + 2*y
         """
         if x == 0:
