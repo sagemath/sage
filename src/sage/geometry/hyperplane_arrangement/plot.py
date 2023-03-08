@@ -144,7 +144,7 @@ def plot(hyperplane_arrangement, **kwds):
     EXAMPLES::
 
         sage: B = hyperplane_arrangements.semiorder(4)          # optional - sage.combinat
-        sage: B.plot()                                          # optional - sage.combinat, sage.plot
+        sage: B.plot()                                          # optional - sage.combinat sage.plot
         Displaying the essentialization.
         Graphics3d Object
     """
@@ -490,12 +490,12 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
 
         sage: a = hyperplane_arrangements.semiorder(3)                          # optional - sage.combinat
         sage: from sage.geometry.hyperplane_arrangement.plot import legend_3d
-        sage: legend_3d(a, list(colors.values())[:6],length='long')             # optional - sage.combinat, sage.plot
+        sage: legend_3d(a, list(colors.values())[:6],length='long')             # optional - sage.combinat sage.plot
         Graphics object consisting of 6 graphics primitives
 
         sage: b = hyperplane_arrangements.semiorder(4)                          # optional - sage.combinat
         sage: c = b.essentialization()                                          # optional - sage.combinat
-        sage: legend_3d(c, list(colors.values())[:12], length='long')           # optional - sage.combinat, sage.plot
+        sage: legend_3d(c, list(colors.values())[:12], length='long')           # optional - sage.combinat sage.plot
         Graphics object consisting of 12 graphics primitives
 
         sage: legend_3d(c, list(colors.values())[:12], length='short')          # optional - sage.plot

@@ -544,13 +544,13 @@ class Polyhedron_base7(Polyhedron_base6):
             0
             sage: P.volume(measure='induced')  # optional - pynormaliz          # optional - sage.rings.number_field
             2.598076211353316?
-            sage: P.volume(measure='induced',engine='normaliz')  # optional - pynormaliz
+            sage: P.volume(measure='induced',engine='normaliz')                 # optional - pynormaliz
             2.598076211353316
-            sage: P.volume(measure='induced_rational')  # optional - pynormaliz, latte_int
+            sage: P.volume(measure='induced_rational')                          # optional - pynormaliz latte_int
             3/2
-            sage: P.volume(measure='induced_rational',engine='normaliz')  # optional - pynormaliz
+            sage: P.volume(measure='induced_rational',engine='normaliz')        # optional - pynormaliz
             3/2
-            sage: P.volume(measure='induced_lattice')  # optional - pynormaliz
+            sage: P.volume(measure='induced_lattice')                           # optional - pynormaliz
             3
 
         The same polytope without normaliz backend::
