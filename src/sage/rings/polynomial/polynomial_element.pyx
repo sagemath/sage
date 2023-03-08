@@ -1771,20 +1771,20 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         TESTS::
 
-            sage: Pol.<x> = MatrixSpace(ZZ, 2)[]
-            sage: a = matrix([[1,0],[0,0]])
-            sage: b = matrix([[1,2],[3,4]])
-            sage: list((a*x)*(b*x + 1))
+            sage: Pol.<x> = MatrixSpace(ZZ, 2)[]                                                                        # optional - sage.modules
+            sage: a = matrix([[1,0], [0,0]])                                                                            # optional - sage.modules
+            sage: b = matrix([[1,2], [3,4]])                                                                            # optional - sage.modules
+            sage: list((a*x)*(b*x + 1))                                                                                 # optional - sage.modules
             [
             [0 0]  [1 0]  [1 2]
             [0 0], [0 0], [0 0]
             ]
-            sage: list((b*x + 1)*(a*x))
+            sage: list((b*x + 1)*(a*x))                                                                                 # optional - sage.modules
             [
             [0 0]  [1 0]  [1 0]
             [0 0], [0 0], [3 0]
             ]
-            sage: list((a*x + 1)*(b*x))
+            sage: list((a*x + 1)*(b*x))                                                                                 # optional - sage.modules
             [
             [0 0]  [1 2]  [1 2]
             [0 0], [3 4], [0 0]
@@ -7078,11 +7078,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)
-            sage: f.compose_power(2).factor()
+            sage: f.compose_power(2).factor()                                           # optional - sage.modules
             (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
 
             sage: x = polygen(QQ)
-            sage: f = x^2-2*x+2
+            sage: f = x^2 - 2*x + 2
             sage: f2 = f.compose_power(2); f2
             x^4 - 4*x^3 + 8*x^2 - 16*x + 16
             sage: f2 == f.composed_op(f,operator.mul)
@@ -9397,9 +9397,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
         Check that caching works::
 
             sage: R.<x> = ZZ[]
-            sage: x.is_irreducible()
+            sage: x.is_irreducible()                                                    # optional - sage.libs.pari
             True
-            sage: x.is_irreducible.cache
+            sage: x.is_irreducible.cache                                                # optional - sage.libs.pari
             True
 
 
