@@ -56,7 +56,7 @@ REFERENCES:
 
 from urllib.request import urlopen
 from sage.arith.misc import is_prime
-from sage.combinat.designs.difference_family import get_fixed_relative_difference_set, relative_difference_set_from_homomorphism, skew_supplementary_difference_set
+from sage.combinat.designs.difference_family import complementary_difference_sets, get_fixed_relative_difference_set, relative_difference_set_from_homomorphism, skew_supplementary_difference_set
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
@@ -2679,6 +2679,100 @@ def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
     return H
 
 
+def skew_hadamard_matrix_from_complementary_difference_sets(n, existence=False, check=True):
+    r"""
+    Construct a skew Hadamard matrix of order `n=4(m+1)` from complementary difference sets.
+
+    If `A, B` are complementary difference sets over a group of order `2m+1`, then
+    they can be used to construct a skew Hadamard matrix, as described in [BS1969]_.
+
+    The complementary difference sets are constructed using the function
+    :func:`sage.combinat.designs.difference_family.complementary_difference_sets`.
+
+    INPUT:
+
+    - ``n`` -- A positive integer, the order of the matrix to be constructed.
+
+    - ``existence`` -- boolean (default False). If True, only return whether the
+      skew Hadamard matrix can be constructed.
+
+    - ``check`` -- boolean: if True (default), check that the result is a skew
+      Hadamard matrix before returning it.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It
+    raises an error if `n` does not satisfy the required conditions.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix_from_complementary_difference_sets
+        sage: skew_hadamard_matrix_from_complementary_difference_sets(20)
+        20 x 20 dense matrix over Integer Ring...
+        sage: skew_hadamard_matrix_from_complementary_difference_sets(52, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_skew_hadamard_matrix
+        sage: is_skew_hadamard_matrix(skew_hadamard_matrix_from_complementary_difference_sets(24, check=False))
+        True
+        sage: is_skew_hadamard_matrix(skew_hadamard_matrix_from_complementary_difference_sets(12, check=False))
+        True
+        sage: skew_hadamard_matrix_from_complementary_difference_sets(31)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be 1, 2 or a multiple of four.
+        sage: skew_hadamard_matrix_from_complementary_difference_sets(100)
+        Traceback (most recent call last):
+        ...
+        ValueError: Hadamard matrix of order 100 from complementary difference sets is not implemented yet.
+        sage: skew_hadamard_matrix_from_complementary_difference_sets(100, existence=True)
+        False
+    """
+
+    if n <= 0 or (n > 2 and n % 4 != 0):
+        raise ValueError('n must be 1, 2 or a multiple of four.')
+
+    m = n//4 - 1
+
+    if existence:
+        return complementary_difference_sets(2*m+1, existence=True)
+
+    if not complementary_difference_sets(2*m+1, existence=True):
+        raise ValueError(f'Hadamard matrix of order {n} from complementary difference sets is not implemented yet.')
+
+    G, A, B = complementary_difference_sets(2*m+1, check=False)
+
+    m = n//4 - 1
+    Glist = list(G)
+
+    S = [[0 for i in range(n)] for j in range(n)]
+    for i in range(2*m + 1):
+        for j in range(2*m + 1):
+            S[2*m + 1 + i][2*m + 1 + j] = -1 if Glist[j] - Glist[i] in A else 1
+            S[i][j] = -S[2*m + 1 + i][2*m + 1 + j]
+            S[2*m + 1 + j][i] = -1 if Glist[j] - Glist[i] in B else 1
+            S[i][2*m + 1 + j] = -S[2*m + 1 + j][i]
+        S[4*m + 2][i] = -1
+        S[4*m + 2][2*m + 1 + i] = 1
+        S[i][4*m + 2] = 1
+        S[i + 2*m + 1][4*m + 2] = -1
+    for i in range(4*m + 3):
+        S[4*m + 3][i] = 1
+        S[i][4*m + 3] = -1
+    for i in range(4*m + 4):
+        S[i][i] = 1
+
+    H = matrix(S)
+
+    if check:
+        assert is_hadamard_matrix(H, skew=True)
+    return H
+
+
 def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
     r"""
     Construct a skew Hadamard matrix of order `n=2(q+1)` where `q=p^t` is a prime power with `p \cong 5 \mod 8` and `t \cong 2 \mod 4`.
@@ -2726,6 +2820,10 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
         ValueError: The order 100 is not covered by the Whiteman construction.
         sage: skew_hadamard_matrix_whiteman_construction(100, existence=True)
         False
+
+    .. NOTE::
+
+        A more general version of this construction is :func:`skew_hadamard_matrix_from_complementary_difference_sets`.
     """
 
     q = n // 2 - 1
@@ -3083,10 +3181,10 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         if existence:
             return true()
         M = skew_hadamard_matrix_spence_construction(n, check=False)
-    elif skew_hadamard_matrix_whiteman_construction(n, existence=True):
+    elif skew_hadamard_matrix_from_complementary_difference_sets(n, existence=True):
         if existence:
             return true()
-        M = skew_hadamard_matrix_whiteman_construction(n, check=False)
+        M = skew_hadamard_matrix_from_complementary_difference_sets(n, check=False)
     elif skew_hadamard_matrix_spence_1975(n, existence=True):
         if existence:
             return true()
