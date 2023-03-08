@@ -501,10 +501,10 @@ cdef class CategoryObject(SageObject):
         wants to print elements of the quotient of such an "unnamed"
         ring, an error resulted. That was fixed in :trac:`11068`::
 
-            sage: MS = MatrixSpace(GF(5), 2, 2)                                                     # optional - sage.libs.pari, sage.modules
-            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS                                            # optional - sage.libs.pari, sage.modules
-            sage: Q.<a,b,c,d> = MS.quo(I)                                                           # optional - sage.libs.pari, sage.modules
-            sage: a     #indirect doctest                                                           # optional - sage.libs.pari, sage.modules
+            sage: MS = MatrixSpace(GF(5), 2, 2)                                                     # optional - sage.libs.pari sage.modules
+            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS                                            # optional - sage.libs.pari sage.modules
+            sage: Q.<a,b,c,d> = MS.quo(I)                                                           # optional - sage.libs.pari sage.modules
+            sage: a     #indirect doctest                                                           # optional - sage.libs.pari sage.modules
             [1 0]
             [0 0]
 
@@ -587,10 +587,10 @@ cdef class CategoryObject(SageObject):
 
         More examples::
 
-            sage: F = FreeAlgebra(QQ, 'x')                                                          # optional - sage.combinat, sage.modules
-            sage: F.base_ring()                                                                     # optional - sage.combinat, sage.modules
+            sage: F = FreeAlgebra(QQ, 'x')                                                          # optional - sage.combinat sage.modules
+            sage: F.base_ring()                                                                     # optional - sage.combinat sage.modules
             Rational Field
-            sage: F.__class__.base_ring                                                             # optional - sage.combinat, sage.modules
+            sage: F.__class__.base_ring                                                             # optional - sage.combinat sage.modules
             <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
 
             sage: E = CombinatorialFreeModule(ZZ, [1,2,3])                                          # optional - sage.modules

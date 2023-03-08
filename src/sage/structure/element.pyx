@@ -4384,14 +4384,14 @@ cdef class FieldElement(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: K.<rt3> = QQ[sqrt(3)]                                         # optional - sage.rings.number_field, sage.symbolic
-            sage: K(0).divides(rt3)                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: K.<rt3> = QQ[sqrt(3)]                                         # optional - sage.rings.number_field sage.symbolic
+            sage: K(0).divides(rt3)                                             # optional - sage.rings.number_field sage.symbolic
             False
-            sage: rt3.divides(K(17))                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: rt3.divides(K(17))                                            # optional - sage.rings.number_field sage.symbolic
             True
-            sage: K(0).divides(K(0))                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: K(0).divides(K(0))                                            # optional - sage.rings.number_field sage.symbolic
             True
-            sage: rt3.divides(K(0))                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: rt3.divides(K(0))                                             # optional - sage.rings.number_field sage.symbolic
             True
         """
         if not (other._parent is self._parent):
@@ -4405,8 +4405,8 @@ def is_AlgebraElement(x):
     TESTS::
 
         sage: from sage.structure.element import is_AlgebraElement
-        sage: R.<x,y> = FreeAlgebra(QQ, 2)                                      # optional - sage.combinat, sage.modules
-        sage: is_AlgebraElement(x * y)                                          # optional - sage.combinat, sage.modules
+        sage: R.<x,y> = FreeAlgebra(QQ, 2)                                      # optional - sage.combinat sage.modules
+        sage: is_AlgebraElement(x * y)                                          # optional - sage.combinat sage.modules
         True
 
         sage: is_AlgebraElement(1)
