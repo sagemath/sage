@@ -63,6 +63,7 @@ include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
 
 include sage/misc/persist.*
 include sage/misc/sage_unittest.*        # dep of sage/misc/persist
+include sage/misc/fpickle.p*
 
 include sage/misc/randstate.*         # used in sage.doctest
 include sage/misc/prandom.*              # dep of sage/rings/ring
