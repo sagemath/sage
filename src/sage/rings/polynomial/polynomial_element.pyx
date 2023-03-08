@@ -6603,33 +6603,33 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<y> = ZZ[]
             sage: f = y^3 - 17*y + 5
-            sage: g = gap(f); g   # indirect doctest
+            sage: g = gap(f); g   # indirect doctest                            # optional - sage.libs.gap
             y^3-17*y+5
-            sage: f._gap_init_()
+            sage: f._gap_init_()                                                # optional - sage.libs.gap
             'y^3 - 17*y + 5'
             sage: R.<z> = ZZ[]
-            sage: gap(R)
+            sage: gap(R)                                                        # optional - sage.libs.gap
             PolynomialRing( Integers, ["z"] )
-            sage: g
+            sage: g                                                             # optional - sage.libs.gap
             y^3-17*y+5
-            sage: gap(z^2 + z)
+            sage: gap(z^2 + z)                                                  # optional - sage.libs.gap
             z^2+z
-            sage: libgap(z^2 + z)
+            sage: libgap(z^2 + z)                                               # optional - sage.libs.gap
             z^2+z
 
         Coefficients in a finite field::
 
             sage: R.<y> = GF(7)[]                                               # optional - sage.libs.pari
             sage: f = y^3 - 17*y + 5                                            # optional - sage.libs.pari
-            sage: g = gap(f); g                                                 # optional - sage.libs.pari
+            sage: g = gap(f); g                                                 # optional - sage.libs.gap, sage.libs.pari
             y^3+Z(7)^4*y+Z(7)^5
-            sage: h = libgap(f); h                                              # optional - sage.libs.pari
+            sage: h = libgap(f); h                                              # optional - sage.libs.gap, sage.libs.pari
             y^3+Z(7)^4*y+Z(7)^5
-            sage: g.Factors()                                                   # optional - sage.libs.pari
+            sage: g.Factors()                                                   # optional - sage.libs.gap, sage.libs.pari
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: h.Factors()                                                   # optional - sage.libs.pari
+            sage: h.Factors()                                                   # optional - sage.libs.gap, sage.libs.pari
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: f.factor()                                                    # optional - sage.libs.pari
+            sage: f.factor()                                                    # optional - sage.libs.gap, sage.libs.pari
             (y + 5) * (y + 1)^2
         """
         R = gap(self._parent)
@@ -6641,9 +6641,9 @@ cdef class Polynomial(CommutativePolynomial):
         TESTS::
 
             sage: R.<x> = ZZ[]
-            sage: libgap(-x^3 + 3*x)   # indirect doctest
+            sage: libgap(-x^3 + 3*x)   # indirect doctest                       # optional - sage.libs.gap
             -x^3+3*x
-            sage: libgap(R.zero())     # indirect doctest
+            sage: libgap(R.zero())     # indirect doctest                       # optional - sage.libs.gap
             0
         """
         from sage.libs.gap.libgap import libgap

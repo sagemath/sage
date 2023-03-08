@@ -973,39 +973,39 @@ cdef class MPolynomial(CommutativePolynomial):
         Multivariate polynomial over integers::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: gap(-x*y + 3*z)   # indirect doctest
+            sage: gap(-x*y + 3*z)   # indirect doctest                                              # optional - sage.libs.gap
             -x*y+3*z
-            sage: gap(R.zero())     # indirect doctest
+            sage: gap(R.zero())     # indirect doctest                                              # optional - sage.libs.gap
             0
-            sage: (x+y+z)._gap_(libgap)
+            sage: (x+y+z)._gap_(libgap)                                                             # optional - sage.libs.gap
             x+y+z
 
-            sage: g = gap(x - y + 3*x*y*z)
-            sage: R(g)
+            sage: g = gap(x - y + 3*x*y*z)                                                          # optional - sage.libs.gap
+            sage: R(g)                                                                              # optional - sage.libs.gap
             3*x*y*z + x - y
 
-            sage: g = libgap(5*x - y*z)
-            sage: R(g)
+            sage: g = libgap(5*x - y*z)                                                             # optional - sage.libs.gap
+            sage: R(g)                                                                              # optional - sage.libs.gap
             -y*z + 5*x
 
         Multivariate polynomial over a cyclotomic field::
 
-            sage: F.<zeta> = CyclotomicField(8)
-            sage: P.<x,y> = F[]
-            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
-            sage: gap(p)     # indirect doctest
+            sage: F.<zeta> = CyclotomicField(8)                                                     # optional - sage.rings.number_field
+            sage: P.<x,y> = F[]                                                                     # optional - sage.rings.number_field
+            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y                                     # optional - sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
-            sage: libgap(p)  # indirect doctest
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
 
-            sage: S.<z> = F[]
-            sage: P.<x,y> = S[]
-            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
-            sage: gap(p)     # indirect doctest
+            sage: S.<z> = F[]                                                                       # optional - sage.rings.number_field
+            sage: P.<x,y> = S[]                                                                     # optional - sage.rings.number_field
+            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z                             # optional - sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
-            sage: libgap(p)  # indirect doctest
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         R = gap(self.parent())
@@ -1017,9 +1017,9 @@ cdef class MPolynomial(CommutativePolynomial):
         TESTS::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: libgap(-x*y + 3*z)   # indirect doctest
+            sage: libgap(-x*y + 3*z)   # indirect doctest                                           # optional - sage.libs.gap
             -x*y+3*z
-            sage: libgap(R.zero())     # indirect doctest
+            sage: libgap(R.zero())     # indirect doctest                                           # optional - sage.libs.gap
             0
         """
         from sage.libs.gap.libgap import libgap

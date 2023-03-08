@@ -1299,7 +1299,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             that depends on which packages are loaded, so we must re-seed GAP
             to ensure a consistent result for this example::
 
-                sage: libgap.set_seed(0)
+                sage: libgap.set_seed(0)                                                                                # optional - sage.libs.gap
                 0
                 sage: m = SU(2, 13).algebra(QQ).random_element(1)                                                       # optional - sage.groups, sage.modules
                 sage: m.parent() is SU(2, 13).algebra(QQ)                                                               # optional - sage.groups, sage.modules
