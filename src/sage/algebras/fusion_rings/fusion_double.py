@@ -13,6 +13,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc import inject_variable
 from sage.misc.cachefunc import cached_method
+from sage.sets.set import Set
 
 class FusionDouble(CombinatorialFreeModule):
     r"""
@@ -126,6 +127,41 @@ class FusionDouble(CombinatorialFreeModule):
         Returns the fusion coefficient `N^k_{ij}`
         """
         return self.N_ijk(i, j, self.dual(k))
+
+    def char_Nk_ij(self, i, j, k):
+        """
+        Use character theoretic method to compute the fusion coefficient
+        .. MATH::
+            N_{ij}^k=\\langle i \\otimes j, k \\rangle
+        """
+        G = self._G
+        I = G.conjugacy_class(i.g())
+        J = G.conjugacy_class(j.g())
+        K = G.conjugacy_class(k.g())
+
+        ZI = G.centralizer(i.g())
+        ZJ = G.centralizer(j.g())
+        ZK = G.centralizer(k.g())
+
+        IJ = Set(I_elem * J_elem for I_elem in I for J_elem in J)
+        if k.g() not in IJ:
+            return 0
+        c = K.cardinality() / G.order()
+        summands = [(I_elem, J_elem) for I_elem in I for J_elem in J if I_elem * J_elem == k.g()]
+        res = 0
+        for p in summands:
+            I_elem, J_elem = p
+            for g in G:
+                if g.inverse() * i.g() * g == I_elem:
+                    i_twist = g
+                if g.inverse() * j.g() * g == J_elem:
+                    j_twist = g
+            A = Set(i_twist.inverse() * zi * i_twist for zi in ZI) 
+            B = Set(j_twist.inverse() * zj * j_twist for zj in ZJ) 
+            inner_summands = A.intersection(B).intersection(Set(ZK))
+            for x in inner_summands:
+                res += i.chi()(i_twist * x * i_twist.inverse()) * j.chi()(j_twist * x * j_twist.inverse()) * k.chi()(x).conjugate()
+        return c * res
 
     def is_multiplicity_free(self, verbose=False):
         """
