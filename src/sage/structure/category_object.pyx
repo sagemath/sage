@@ -947,11 +947,11 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
         sage: nn(1, u'a')
         ('a',)
-        sage: var('alpha')
+        sage: var('alpha')                                                              # optional - sage.symbolic
         alpha
-        sage: nn(2, alpha)
+        sage: nn(2, alpha)                                                              # optional - sage.symbolic
         ('alpha0', 'alpha1')
-        sage: nn(1, [alpha])
+        sage: nn(1, [alpha])                                                            # optional - sage.symbolic
         ('alpha',)
 
     With an unknown number of generators::

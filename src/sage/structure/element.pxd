@@ -39,11 +39,11 @@ cpdef inline parent(x):
 
     Some more complicated examples::
 
-        sage: x = Partition([3,2,1,1,1])
-        sage: parent(x)
+        sage: x = Partition([3,2,1,1,1])                                                # optional - sage.combinat
+        sage: parent(x)                                                                 # optional - sage.combinat
         Partitions
-        sage: v = vector(RDF, [1,2,3])
-        sage: parent(v)
+        sage: v = vector(RDF, [1,2,3])                                                  # optional - sage.modules
+        sage: parent(v)                                                                 # optional - sage.modules
         Vector space of dimension 3 over Real Double Field
 
     The following are not considered to be elements, so the type is
@@ -126,7 +126,7 @@ cpdef inline bint have_same_parent(left, right):
         True
         sage: have_same_parent(1, 1/2)
         False
-        sage: have_same_parent(gap(1), gap(1/2))
+        sage: have_same_parent(gap(1), gap(1/2))                                        # optional - sage.libs.gap
         True
 
     These have different types but the same parent::

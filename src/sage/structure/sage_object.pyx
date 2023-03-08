@@ -217,9 +217,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                     # optional - sage.symbolic
             ...
-            sage: result
+            sage: result                                                                # optional - sage.symbolic
               /
              |
              |   2
@@ -235,14 +235,14 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                   # optional - sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
             1  2
             3
             sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
             +---+
             | 3 |
             +---+---+
@@ -282,7 +282,7 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.unicode_art.unicode_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))
+            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))                            # optional - sage.symbolic
             ⌠
             ⎮   2
             ⎮  x  + x
@@ -297,14 +297,14 @@ cdef class SageObject:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                   # optional - sage.combinat
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
             1  2
             3
             sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
-            sage: shell.run_cell('tab')
+            sage: shell.run_cell('tab')                                                 # optional - sage.combinat
             +---+
             | 3 |
             +---+---+
@@ -323,10 +323,10 @@ cdef class SageObject:
 
         Check that breakpoints and baseline are preserved (:trac:`29202`)::
 
-            sage: F = FreeAbelianMonoid(index_set=ZZ)
-            sage: f = prod(F.gen(i) for i in range(5))
-            sage: s, t = ascii_art(f), unicode_art(f)
-            sage: s._breakpoints == t._breakpoints and s._baseline == t._baseline
+            sage: F = FreeAbelianMonoid(index_set=ZZ)                                   # optional - sage.groups
+            sage: f = prod(F.gen(i) for i in range(5))                                  # optional - sage.groups
+            sage: s, t = ascii_art(f), unicode_art(f)                                   # optional - sage.groups
+            sage: s._breakpoints == t._breakpoints and s._baseline == t._baseline       # optional - sage.groups
             True
         """
         from sage.typeset.unicode_art import UnicodeArt

@@ -995,7 +995,7 @@ cdef class Element(SageObject):
 
             sage: n = 5; n._is_atomic()
             True
-            sage: n = x+1; n._is_atomic()
+            sage: n = x + 1; n._is_atomic()                                             # optional - sage.symbolic
             False
         """
         if self._parent._repr_option('element_is_atomic'):
@@ -3260,19 +3260,19 @@ cdef class CommutativeRingElement(RingElement):
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)                                   # optional - sage.libs.pari
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name="y"); sqrtx
+            sage: sqrtx = x.sqrt(name="y"); sqrtx                                       # optional - sage.libs.pari
             y
-            sage: sqrtx^2
+            sage: sqrtx^2                                                               # optional - sage.libs.pari
             x
-            sage: x.sqrt(all=true, name="y")
+            sage: x.sqrt(all=true, name="y")                                            # optional - sage.libs.pari
             [y, -y]
-            sage: x.sqrt(extend=False, all=True)
+            sage: x.sqrt(extend=False, all=True)                                        # optional - sage.libs.pari
             []
-            sage: x.sqrt()
+            sage: x.sqrt()                                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Polynomial is not a square. You must specify the name of the square root when using the default extend = True
-            sage: x.sqrt(extend=False)
+            sage: x.sqrt(extend=False)                                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: trying to take square root of non-square x with extend = False
