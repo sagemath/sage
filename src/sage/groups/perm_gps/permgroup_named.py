@@ -3512,7 +3512,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         r"""
         Return the GAP small group object corresponding to ``self``.
 
-        Gap realizes some small groups as PermutationGroup, others as PcGroups
+        GAP realizes some small groups as PermutationGroup, others as PcGroups
         (polycyclic groups). The :class:`SmallPermutationGroup` class always
         returns a PermutationGroup, but in the process of creating this group
         a gap SmallGroup is generated. This method returns that group.
