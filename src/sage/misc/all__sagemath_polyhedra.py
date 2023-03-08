@@ -18,8 +18,6 @@ from .misc import (BackslashOperator,
 
 from .temporary_file import tmp_dir, tmp_filename
 
-from .fpickle import pickle_function, unpickle_function
-
 from .mathml import mathml
 
 from .func_persist import func_persist

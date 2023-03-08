@@ -63,6 +63,7 @@ include sage/misc/defaults.p*
 include sage/misc/converting_dict.p*
 include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
+include sage/misc/random_testing.p*
 
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*

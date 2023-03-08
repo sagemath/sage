@@ -73,3 +73,5 @@ from .functional import (additive_order,
                         transpose)
 
 from .latex import LatexExpr, latex, view
+
+from .fpickle import pickle_function, unpickle_function
