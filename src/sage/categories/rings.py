@@ -1255,17 +1255,17 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R.<x> = QQ[[]]
-                sage: V, from_V, to_V = R.free_module(R)
-                sage: v = to_V(1+x); v
+                sage: V, from_V, to_V = R.free_module(R)                                # optional - sage.modules
+                sage: v = to_V(1 + x); v                                                # optional - sage.modules
                 (1 + x)
-                sage: from_V(v)
+                sage: from_V(v)                                                         # optional - sage.modules
                 1 + x
-                sage: W, from_W, to_W = R.free_module(R, basis=(1-x))
-                sage: W is V
+                sage: W, from_W, to_W = R.free_module(R, basis=(1 - x))                 # optional - sage.modules
+                sage: W is V                                                            # optional - sage.modules
                 True
-                sage: w = to_W(1+x); w
+                sage: w = to_W(1 + x); w                                                # optional - sage.modules
                 (1 - x^2)
-                sage: from_W(w)
+                sage: from_W(w)                                                         # optional - sage.modules
                 1 + x + O(x^20)
             """
             if base is None:
