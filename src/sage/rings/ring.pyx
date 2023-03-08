@@ -280,7 +280,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: FreeAlgebra(QQ, 3, 'x').category() # todo: use a ring which is not an algebra!                        # optional - sage.combinat, sage.modules
+            sage: FreeAlgebra(QQ, 3, 'x').category() # todo: use a ring which is not an algebra!                        # optional - sage.combinat sage.modules
             Category of algebras with basis over Rational Field
 
         Since a quotient of the integers is its own base ring, and during
@@ -310,16 +310,16 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)                                                                        # optional - sage.combinat, sage.modules
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat, sage.modules
-            sage: Q = F.quotient(I)                                                                                     # optional - sage.combinat, sage.modules
-            sage: Q.ideal_monoid()                                                                                      # optional - sage.combinat, sage.modules
+            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)                                                                        # optional - sage.combinat sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat sage.modules
+            sage: Q = F.quotient(I)                                                                                     # optional - sage.combinat sage.modules
+            sage: Q.ideal_monoid()                                                                                      # optional - sage.combinat sage.modules
             Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
              over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')                                             # optional - sage.combinat, sage.modules
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat, sage.modules
-            sage: Q = F.quo(I)                                                                                          # optional - sage.combinat, sage.modules
-            sage: Q.ideal_monoid()                                                                                      # optional - sage.combinat, sage.modules
+            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')                                             # optional - sage.combinat sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                                                        # optional - sage.combinat sage.modules
+            sage: Q = F.quo(I)                                                                                          # optional - sage.combinat sage.modules
+            sage: Q.ideal_monoid()                                                                                      # optional - sage.combinat sage.modules
             Monoid of ideals of Quotient of Free Associative Unital Algebra on 3 generators (x, y, z)
              over Integer Ring by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
 
@@ -365,10 +365,10 @@ cdef class Ring(ParentWithGens):
 
         Here is an example over a non-commutative ring::
 
-            sage: A = SteenrodAlgebra(2)                                                                                # optional - sage.combinat, sage.modules
-            sage: A.ideal(A.1, A.2^2)                                                                                   # optional - sage.combinat, sage.modules
+            sage: A = SteenrodAlgebra(2)                                                                                # optional - sage.combinat sage.modules
+            sage: A.ideal(A.1, A.2^2)                                                                                   # optional - sage.combinat sage.modules
             Twosided Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
-            sage: A.ideal(A.1, A.2^2, side='left')                                                                      # optional - sage.combinat, sage.modules
+            sage: A.ideal(A.1, A.2^2, side='left')                                                                      # optional - sage.combinat sage.modules
             Left Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
 
         TESTS:
@@ -675,8 +675,8 @@ cdef class Ring(ParentWithGens):
             True
             sage: QQ['x,y,z'].is_commutative()
             True
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                                         # optional - sage.combinat, sage.modules
-            sage: Q.is_commutative()                                                                # optional - sage.combinat, sage.modules
+            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                                         # optional - sage.combinat sage.modules
+            sage: Q.is_commutative()                                                                # optional - sage.combinat sage.modules
             False
         """
         if self.is_zero():
@@ -1275,9 +1275,9 @@ cdef class CommutativeRing(Ring):
             True
             sage: ZpCA(7).is_commutative()                                                                              # optional - sage.rings.padics
             True
-            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A                                             # optional - sage.combinat, sage.modules
+            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A                                             # optional - sage.combinat sage.modules
             Quaternion Algebra (-1, -3) with base ring Rational Field
-            sage: A.is_commutative()                                                                                    # optional - sage.combinat, sage.modules
+            sage: A.is_commutative()                                                                                    # optional - sage.combinat sage.modules
             False
         """
         return True
@@ -2326,16 +2326,16 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: B = QuaternionAlgebra(2)                                      # optional - sage.combinat, sage.modules
-            sage: B.has_standard_involution()                                   # optional - sage.combinat, sage.modules
+            sage: B = QuaternionAlgebra(2)                                      # optional - sage.combinat sage.modules
+            sage: B.has_standard_involution()                                   # optional - sage.combinat sage.modules
             True
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<u> = NumberField(x**2 - 2)                                 # optional - sage.rings.number_field
-            sage: A = QuaternionAlgebra(K, -2, 5)                               # optional - sage.rings.number_field, sage.combinat, sage.modules
-            sage: A.has_standard_involution()                                   # optional - sage.rings.number_field, sage.combinat, sage.modules
+            sage: A = QuaternionAlgebra(K, -2, 5)                               # optional - sage.rings.number_field sage.combinat sage.modules
+            sage: A.has_standard_involution()                                   # optional - sage.rings.number_field sage.combinat sage.modules
             True
-            sage: L.<a,b> = FreeAlgebra(QQ, 2)                                  # optional - sage.combinat, sage.modules
-            sage: L.has_standard_involution()                                   # optional - sage.combinat, sage.modules
+            sage: L.<a,b> = FreeAlgebra(QQ, 2)                                  # optional - sage.combinat sage.modules
+            sage: L.has_standard_involution()                                   # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: has_standard_involution is not implemented for this algebra
@@ -2389,7 +2389,7 @@ cdef class CommutativeAlgebra(CommutativeRing):
             sage: sage.rings.ring.CommutativeAlgebra(QQ)
             <sage.rings.ring.CommutativeAlgebra object at ...>
 
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))                                     # optional - sage.combinat, sage.modules
+            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))                                     # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             TypeError: base ring must be a commutative ring

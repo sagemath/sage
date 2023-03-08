@@ -1741,9 +1741,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         EXAMPLES::
 
             sage: R = QQ['x,y,z']
-            sage: W = R.weyl_algebra(); W                                                           # optional - sage.combinat, sage.modules
+            sage: W = R.weyl_algebra(); W                                                           # optional - sage.combinat sage.modules
             Differential Weyl algebra of polynomials in x, y, z over Rational Field
-            sage: W.polynomial_ring() == R                                                          # optional - sage.combinat, sage.modules
+            sage: W.polynomial_ring() == R                                                          # optional - sage.combinat sage.modules
             True
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra

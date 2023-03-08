@@ -75,7 +75,7 @@ Check relations of the Ariki-Koike algebra::
 Obtain specializations in positive characteristic::
 
     sage: Fp = GF(17)                                                                               # optional - sage.libs.pari
-    sage: f = L.hom((3,5,7,11), codomain=Fp); f                                                     # optional - sage.libs.pari, sage.rings.padics
+    sage: f = L.hom((3,5,7,11), codomain=Fp); f                                                     # optional - sage.libs.pari sage.rings.padics
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
       (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -85,24 +85,24 @@ Obtain specializations in positive characteristic::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mFp1 = matrix({k:f(v) for k, v in m1.dict().items()}); mFp1                               # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mFp1 = matrix({k:f(v) for k, v in m1.dict().items()}); mFp1                               # optional - sage.libs.pari sage.modules sage.rings.padics
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mFp1.base_ring()                                                                          # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mFp1.base_ring()                                                                          # optional - sage.libs.pari sage.modules sage.rings.padics
     Finite Field of size 17
-    sage: mFp2 = matrix({k:f(v) for k, v in m2.dict().items()}); mFp2                               # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mFp2 = matrix({k:f(v) for k, v in m2.dict().items()}); mFp2                               # optional - sage.libs.pari sage.modules sage.rings.padics
     [ 2  3  0]
     [ 9  8  0]
     [ 0  0 16]
-    sage: mFp3 = matrix({k:f(v) for k, v in m3.dict().items()}); mFp3                               # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mFp3 = matrix({k:f(v) for k, v in m3.dict().items()}); mFp3                               # optional - sage.libs.pari sage.modules sage.rings.padics
     [16  0  0]
     [ 0  4  5]
     [ 0  7  6]
 
 Obtain specializations in characteristic 0::
 
-    sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ                                                   # optional - sage.libs.pari, sage.rings.padics
+    sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ                                                   # optional - sage.libs.pari sage.rings.padics
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
             (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -112,17 +112,17 @@ Obtain specializations in characteristic 0::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mQ1 = matrix({k:fQ(v) for k, v in m1.dict().items()}); mQ1                                # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mQ1 = matrix({k:fQ(v) for k, v in m1.dict().items()}); mQ1                                # optional - sage.libs.pari sage.modules sage.rings.padics
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mQ1.base_ring()                                                                           # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mQ1.base_ring()                                                                           # optional - sage.libs.pari sage.modules sage.rings.padics
     Rational Field
-    sage: mQ2 = matrix({k:fQ(v) for k, v in m2.dict().items()}); mQ2                                # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mQ2 = matrix({k:fQ(v) for k, v in m2.dict().items()}); mQ2                                # optional - sage.libs.pari sage.modules sage.rings.padics
     [-15 -14   0]
     [ 26  25   0]
     [  0   0  -1]
-    sage: mQ3 = matrix({k:fQ(v) for k, v in m3.dict().items()}); mQ3                                # optional - sage.libs.pari, sage.modules, sage.rings.padics
+    sage: mQ3 = matrix({k:fQ(v) for k, v in m3.dict().items()}); mQ3                                # optional - sage.libs.pari sage.modules sage.rings.padics
     [    -1      0      0]
     [     0 -15/26  11/26]
     [     0 301/26 275/26]

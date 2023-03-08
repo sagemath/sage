@@ -488,12 +488,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         We evaluate a polynomial over a quaternion algebra::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                                                             # optional - sage.combinat, sage.modules
-            sage: R.<w> = PolynomialRing(A, sparse=True)                                                                # optional - sage.combinat, sage.modules
-            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                                  # optional - sage.combinat, sage.modules
-            sage: f(i+j+1)                                                                                              # optional - sage.combinat, sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                                                             # optional - sage.combinat sage.modules
+            sage: R.<w> = PolynomialRing(A, sparse=True)                                                                # optional - sage.combinat sage.modules
+            sage: f = i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                                  # optional - sage.combinat sage.modules
+            sage: f(i+j+1)                                                                                              # optional - sage.combinat sage.modules
             24 + 26*i - 10*j - 25*k
-            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                           # optional - sage.combinat, sage.modules
+            sage: w = i+j+1; i*j*w^5 - 13*i*w^2 + (i+j)*w + i                                                           # optional - sage.combinat sage.modules
             24 + 26*i - 10*j - 25*k
 
         The parent ring of the answer always "starts" with the parent of
@@ -504,17 +504,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = R(2/3)
-            sage: a = matrix(ZZ, 2)                                                                                     # optional - sage.combinat, sage.modules
-            sage: b = f(a); b                                                                                           # optional - sage.combinat, sage.modules
+            sage: a = matrix(ZZ, 2)                                                                                     # optional - sage.combinat sage.modules
+            sage: b = f(a); b                                                                                           # optional - sage.combinat sage.modules
             [2/3   0]
             [  0 2/3]
-            sage: b.parent()                                                                                            # optional - sage.combinat, sage.modules
+            sage: b.parent()                                                                                            # optional - sage.combinat sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: f = R(1)
-            sage: b = f(a); b                                                                                           # optional - sage.combinat, sage.modules
+            sage: b = f(a); b                                                                                           # optional - sage.combinat sage.modules
             [1 0]
             [0 1]
-            sage: b.parent()                                                                                            # optional - sage.combinat, sage.modules
+            sage: b.parent()                                                                                            # optional - sage.combinat sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
         ::
@@ -2968,13 +2968,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         A non-commutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
-            sage: f = i*w + j                                                           # optional - sage.combinat, sage.modules
-            sage: g = k*w + 1                                                           # optional - sage.combinat, sage.modules
-            sage: f._mul_generic(g)                                                     # optional - sage.combinat, sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
+            sage: f = i*w + j                                                           # optional - sage.combinat sage.modules
+            sage: g = k*w + 1                                                           # optional - sage.combinat sage.modules
+            sage: f._mul_generic(g)                                                     # optional - sage.combinat sage.modules
             -j*w^2 + 2*i*w + j
-            sage: g._mul_generic(f)                                                     # optional - sage.combinat, sage.modules
+            sage: g._mul_generic(f)                                                     # optional - sage.combinat sage.modules
             j*w^2 + j
 
 
@@ -3188,13 +3188,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         A noncommutative example::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
-            sage: f = i*w + j                                                           # optional - sage.combinat, sage.modules
-            sage: g = k*w + 1                                                           # optional - sage.combinat, sage.modules
-            sage: f._mul_karatsuba(g,0)                                                 # optional - sage.combinat, sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
+            sage: f = i*w + j                                                           # optional - sage.combinat sage.modules
+            sage: g = k*w + 1                                                           # optional - sage.combinat sage.modules
+            sage: f._mul_karatsuba(g,0)                                                 # optional - sage.combinat sage.modules
             -j*w^2 + 2*i*w + j
-            sage: g._mul_karatsuba(f,0)                                                 # optional - sage.combinat, sage.modules
+            sage: g._mul_karatsuba(f,0)                                                 # optional - sage.combinat sage.modules
             j*w^2 + j
 
         TESTS::
@@ -3220,18 +3220,18 @@ cdef class Polynomial(CommutativePolynomial):
 
         Random tests for noncommutative rings::
 
-            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat, sage.modules
-            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat, sage.modules
-            sage: f = R.random_element(randint(10,100))                                 # optional - sage.combinat, sage.modules
-            sage: g = R.random_element(randint(10,100))                                 # optional - sage.combinat, sage.modules
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)                            # optional - sage.combinat, sage.modules
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                              # optional - sage.combinat sage.modules
+            sage: R.<w> = PolynomialRing(A)                                             # optional - sage.combinat sage.modules
+            sage: f = R.random_element(randint(10,100))                                 # optional - sage.combinat sage.modules
+            sage: g = R.random_element(randint(10,100))                                 # optional - sage.combinat sage.modules
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,0)                            # optional - sage.combinat sage.modules
             True
-            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)                           # optional - sage.combinat, sage.modules
+            sage: f._mul_generic(g) == f._mul_karatsuba(g,16)                           # optional - sage.combinat sage.modules
             True
-            sage: g = R.random_element(0)                                               # optional - sage.combinat, sage.modules
-            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)                            # optional - sage.combinat, sage.modules
+            sage: g = R.random_element(0)                                               # optional - sage.combinat sage.modules
+            sage: f._mul_karatsuba(g,0) == f._mul_generic(g)                            # optional - sage.combinat sage.modules
             True
-            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)                            # optional - sage.combinat, sage.modules
+            sage: g._mul_karatsuba(f,0) == g._mul_generic(f)                            # optional - sage.combinat sage.modules
             True
 
         Polynomials over matrices::
@@ -11733,12 +11733,12 @@ cdef class Polynomial_generic_dense(Polynomial):
         Polynomials over noncommutative rings are also allowed
         (after :trac:`34733`)::
 
-            sage: HH = QuaternionAlgebra(QQ, -1, -1)                            # optional - sage.combinat, sage.modules
-            sage: P.<x> = HH[]                                                  # optional - sage.combinat, sage.modules
-            sage: f = P.random_element(5)                                       # optional - sage.combinat, sage.modules
-            sage: g = P.random_element((0, 5))                                  # optional - sage.combinat, sage.modules
-            sage: q, r = f.quo_rem(g)                                           # optional - sage.combinat, sage.modules
-            sage: f == q*g + r                                                  # optional - sage.combinat, sage.modules
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)                            # optional - sage.combinat sage.modules
+            sage: P.<x> = HH[]                                                  # optional - sage.combinat sage.modules
+            sage: f = P.random_element(5)                                       # optional - sage.combinat sage.modules
+            sage: g = P.random_element((0, 5))                                  # optional - sage.combinat sage.modules
+            sage: q, r = f.quo_rem(g)                                           # optional - sage.combinat sage.modules
+            sage: f == q*g + r                                                  # optional - sage.combinat sage.modules
             True
 
         TESTS:

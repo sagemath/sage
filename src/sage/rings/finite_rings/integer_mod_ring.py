@@ -1380,7 +1380,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(55)
             sage: A.unit_gens(algorithm='sage')                                 # optional - sage.groups
             (12, 46)
-            sage: A.unit_gens(algorithm='pari')                                 # optional - sage.groups, sage.libs.pari
+            sage: A.unit_gens(algorithm='pari')                                 # optional - sage.groups sage.libs.pari
             (2, 21)
 
         TESTS::
@@ -1458,9 +1458,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C4
             sage: G.gens_values()                                               # optional - sage.groups
             (11, 7)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (7, 11)
 
         Here are two examples where the cyclic factors are isomorphic,
@@ -1471,9 +1471,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
             sage: G.gens_values()                                               # optional - sage.groups
             (31, 21, 17)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (17, 31, 21)
 
             sage: A = Zmod(192)
@@ -1481,9 +1481,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
             sage: G.gens_values()                                               # optional - sage.groups
             (127, 133, 65)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C16 x C2 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (133, 127, 65)
 
         In the following examples, the cyclic factors are not even
@@ -1492,14 +1492,14 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(319)
             sage: A.unit_group()                                                # optional - sage.groups
             Multiplicative Abelian group isomorphic to C10 x C28
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C140 x C2
 
             sage: A = Zmod(30.factorial())
             sage: A.unit_group()                                                # optional - sage.groups
             Multiplicative Abelian group isomorphic to
              C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to
              C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
 
@@ -1510,12 +1510,12 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(1)
             sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Trivial Abelian group
             sage: A = Zmod(2)
             sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Trivial Abelian group
 
             sage: Zmod(3).unit_group(algorithm='bogus')                         # optional - sage.groups
