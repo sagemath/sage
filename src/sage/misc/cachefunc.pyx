@@ -3688,12 +3688,12 @@ class disk_cached_function:
             sage: dir = tmp_dir()
             sage: @disk_cached_function(dir, memory_cache=True)
             ....: def foo(x): return next_prime(2^x)
-            sage: x = foo(200)
-            sage: x is foo(200)
+            sage: x = foo(200)                                                  # optional - sage.libs.pari
+            sage: x is foo(200)                                                 # optional - sage.libs.pari
             True
             sage: @disk_cached_function(dir, memory_cache=False)
             ....: def foo(x): return next_prime(2^x)
-            sage: x is foo(200)
+            sage: x is foo(200)                                                 # optional - sage.libs.pari
             False
         """
         self._dir = dir
