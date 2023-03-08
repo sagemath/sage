@@ -1989,7 +1989,7 @@ class LazyModuleElement(Element):
 
     def arcsin(self):
         r"""
-        Return the arcsin of ``self``.
+        Return the arcsine of ``self``.
 
         EXAMPLES::
 
@@ -2021,7 +2021,7 @@ class LazyModuleElement(Element):
 
     def arccos(self):
         r"""
-        Return the arccos of ``self``.
+        Return the arccosine of ``self``.
 
         EXAMPLES::
 
@@ -2116,7 +2116,7 @@ class LazyModuleElement(Element):
 
     def sinh(self):
         r"""
-        Return the sinh of ``self``.
+        Return the hyperbolic sine of ``self``.
 
         EXAMPLES::
 
@@ -2144,7 +2144,7 @@ class LazyModuleElement(Element):
 
     def cosh(self):
         r"""
-        Return the cosh of ``self``.
+        Return the hyperbolic cosine of ``self``.
 
         EXAMPLES::
 
@@ -2171,7 +2171,7 @@ class LazyModuleElement(Element):
 
     def tanh(self):
         r"""
-        Return the tanh of ``self``.
+        Return the hyperbolic tangent of ``self``.
 
         EXAMPLES::
 
