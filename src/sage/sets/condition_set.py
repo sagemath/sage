@@ -79,11 +79,11 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
         sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 1.2; predicate                           # optional - sage.symbolic
         (x, y, z) |--> sqrt(x^2 + y^2 + z^2) < 1.20000000000000
-        sage: P_inter_B_again = ConditionSet(P, predicate); P_inter_B_again                         # optional - sage.geometry.polyhedron, sage.symbolic
+        sage: P_inter_B_again = ConditionSet(P, predicate); P_inter_B_again                         # optional - sage.geometry.polyhedron sage.symbolic
         { (x, y, z) ∈ P : sqrt(x^2 + y^2 + z^2) < 1.20000000000000 }
-        sage: vector([1, 0, 0]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron, sage.symbolic
+        sage: vector([1, 0, 0]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron sage.symbolic
         True
-        sage: vector([1, 1, 1]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron, sage.symbolic
+        sage: vector([1, 1, 1]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron sage.symbolic
         False
 
     Iterating over subsets determined by predicates::
@@ -121,7 +121,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
     TESTS::
 
         sage: TestSuite(P_inter_B).run(skip='_test_pickling')  # cannot pickle lambdas              # optional - sage.geometry.polyhedron
-        sage: TestSuite(P_inter_B_again).run()                                                      # optional - sage.geometry.polyhedron, sage.symbolic
+        sage: TestSuite(P_inter_B_again).run()                                                      # optional - sage.geometry.polyhedron sage.symbolic
     """
     @staticmethod
     def __classcall_private__(cls, universe, *predicates, vars=None, names=None, category=None):
