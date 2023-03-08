@@ -3189,7 +3189,7 @@ def carmichael_lambda(n):
         True
         sage: carmichael_lambda(4) == euler_phi(4)                                      # optional - sage.libs.pari
         True
-        sage: p = random_prime(1000, lbound=3, proof=True)
+        sage: p = random_prime(1000, lbound=3, proof=True)                              # optional - sage.libs.pari
         sage: k = randint(1, 1000)
         sage: carmichael_lambda(p^k) == euler_phi(p^k)                                  # optional - sage.libs.pari
         True
