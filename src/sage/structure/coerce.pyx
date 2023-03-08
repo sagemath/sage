@@ -124,17 +124,17 @@ cpdef py_scalar_parent(py_type):
         sage: py_scalar_parent(fractions.Fraction)
         Rational Field
 
-        sage: import numpy
-        sage: py_scalar_parent(numpy.int16)
+        sage: import numpy                                                              # optional - numpy
+        sage: py_scalar_parent(numpy.int16)                                             # optional - numpy
         Integer Ring
-        sage: py_scalar_parent(numpy.int32)
+        sage: py_scalar_parent(numpy.int32)                                             # optional - numpy
         Integer Ring
-        sage: py_scalar_parent(numpy.uint64)
+        sage: py_scalar_parent(numpy.uint64)                                            # optional - numpy
         Integer Ring
 
         sage: py_scalar_parent(float)
         Real Double Field
-        sage: py_scalar_parent(numpy.double)
+        sage: py_scalar_parent(numpy.double)                                            # optional - numpy
         Real Double Field
 
         sage: py_scalar_parent(complex)
@@ -248,15 +248,15 @@ cpdef py_scalar_to_element(x):
         sage: for x in elt:
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
-        sage: import numpy
-        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),
+        sage: import numpy                                                              # optional - numpy
+        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),                            # optional - numpy
         ....:        numpy.int16('-33'), numpy.uint16('122'),
         ....:        numpy.int32('-19'), numpy.uint32('44'),
         ....:        numpy.int64('-3'),  numpy.uint64('552'),
         ....:        numpy.float16('-1.23'), numpy.float32('-2.22'),
         ....:        numpy.float64('-3.412'), numpy.complex64(1.2+I),
         ....:         numpy.complex128(-2+I)]
-        sage: for x in elt:
+        sage: for x in elt:                                                             # optional - numpy
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
         sage: elt = [gmpy2.mpz(42), gmpy2.mpq('3/4'),
@@ -323,10 +323,10 @@ cpdef bint parent_is_integers(P) except -1:
         sage: parent_is_integers(dict)
         False
 
-        sage: import numpy
-        sage: parent_is_integers(numpy.int16)
+        sage: import numpy                                                              # optional - numpy
+        sage: parent_is_integers(numpy.int16)                                           # optional - numpy
         True
-        sage: parent_is_integers(numpy.uint64)
+        sage: parent_is_integers(numpy.uint64)                                          # optional - numpy
         True
         sage: parent_is_integers(float)
         False
@@ -365,10 +365,13 @@ def parent_is_numerical(P):
     EXAMPLES::
 
         sage: from sage.structure.coerce import parent_is_numerical
-        sage: import gmpy2, numpy
-        sage: [parent_is_numerical(R) for R in [RR, CC, QQ, QuadraticField(-1),
-        ....:         int, complex, gmpy2.mpc, numpy.complexfloating]]
-        [True, True, True, True, True, True, True, True]
+        sage: import gmpy2
+        sage: [parent_is_numerical(R) for R in [RR, CC, QQ, int, complex, gmpy2.mpc]]
+        [True, True, True, True, True, True]
+        sage: parent_is_numerical(QuadraticField(-1))                                   # optional - sage.rings.number_field
+        True
+        sage: import numpy; parent_is_numerical(numpy.complexfloating)                  # optional - numpy
+        True
         sage: [parent_is_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
         [False, False, False, False]
         sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]
@@ -388,10 +391,13 @@ def parent_is_real_numerical(P):
     EXAMPLES::
 
         sage: from sage.structure.coerce import parent_is_real_numerical
-        sage: import gmpy2, numpy
-        sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF,
-        ....:         QuadraticField(2), int, float, gmpy2.mpq, numpy.integer]]
-        [True, True, True, True, True, True, True, True, True]
+        sage: import gmpy2
+        sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF, int, float, gmpy2.mpq]]
+        [True, True, True, True, True, True, True]
+        sage: parent_is_real_numerical(QuadraticField(2))
+        True
+        sage: import numpy; parent_is_real_numerical(numpy.integer)                     # optional - numpy
+        True
         sage: [parent_is_real_numerical(R) for R in [CC, QuadraticField(-1),
         ....:         complex, gmpy2.mpc, numpy.complexfloating]]
         [False, False, False, False, False]
@@ -417,14 +423,14 @@ cpdef bint is_numpy_type(t):
     EXAMPLES::
 
         sage: from sage.structure.coerce import is_numpy_type
-        sage: import numpy
-        sage: is_numpy_type(numpy.int16)
+        sage: import numpy                                                              # optional - numpy
+        sage: is_numpy_type(numpy.int16)                                                # optional - numpy
         True
-        sage: is_numpy_type(numpy.floating)
+        sage: is_numpy_type(numpy.floating)                                             # optional - numpy
         True
-        sage: is_numpy_type(numpy.ndarray)
+        sage: is_numpy_type(numpy.ndarray)                                              # optional - numpy
         True
-        sage: is_numpy_type(numpy.matrix)
+        sage: is_numpy_type(numpy.matrix)                                               # optional - numpy
         True
         sage: is_numpy_type(int)
         False
@@ -467,12 +473,12 @@ cpdef bint is_mpmath_type(t):
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
-        sage: import mpmath
-        sage: is_mpmath_type(mpmath.mpc(2))
+        sage: import mpmath                                                             # optional - mpmath
+        sage: is_mpmath_type(mpmath.mpc(2))                                             # optional - mpmath
         False
-        sage: is_mpmath_type(type(mpmath.mpc(2)))
+        sage: is_mpmath_type(type(mpmath.mpc(2)))                                       # optional - mpmath
         True
-        sage: is_mpmath_type(type(mpmath.mpf(2)))
+        sage: is_mpmath_type(type(mpmath.mpf(2)))                                       # optional - mpmath
         True
     """
     return isinstance(t, type) and \
@@ -492,7 +498,7 @@ cdef class CoercionModel:
          over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
         (x*y + 1)/y
-        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0
+        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0                          # optional - sage.modules
         [(2*x + 1)/x           0]
         [          0 (2*x + 1)/x]
         sage: f = ZZ['x,y,z'].0 + QQ['w,x,z,a'].0; f
@@ -506,11 +512,11 @@ cdef class CoercionModel:
 
     Check that :trac:`8426` is fixed (see also :trac:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # optional - numpy
         sage: x = polygen(RR)
-        sage: numpy.float32('1.5') * x
+        sage: numpy.float32('1.5') * x                                                  # optional - numpy
         1.50000000000000*x
-        sage: x * numpy.float32('1.5')
+        sage: x * numpy.float32('1.5')                                                  # optional - numpy
         1.50000000000000*x
         sage: p = x**3 + 2*x - 1
         sage: p(float('1.2'))
@@ -520,26 +526,26 @@ cdef class CoercionModel:
 
     This used to fail (see :trac:`18076`)::
 
-        sage: 1/3 + numpy.int8('12')
+        sage: 1/3 + numpy.int8('12')                                                    # optional - numpy
         37/3
-        sage: -2/3 + numpy.int16('-2')
+        sage: -2/3 + numpy.int16('-2')                                                  # optional - numpy
         -8/3
-        sage: 2/5 + numpy.uint8('2')
+        sage: 2/5 + numpy.uint8('2')                                                    # optional - numpy
         12/5
 
     The numpy types do not interact well with the Sage coercion framework. More
     precisely, if a numpy type is the first operand in a binary operation then
     this operation is done in numpy. The result is hence a numpy type::
 
-        sage: numpy.uint8('2') + 3
+        sage: numpy.uint8('2') + 3                                                      # optional - numpy
         5
-        sage: type(_)
+        sage: type(_)                                                                   # optional - numpy
         <class 'numpy.int32'>  # 32-bit
         <class 'numpy.int64'>  # 64-bit
 
-        sage: numpy.int8('12') + 1/3
+        sage: numpy.int8('12') + 1/3                                                    # optional - numpy
         12.333333333333334
-        sage: type(_)
+        sage: type(_)                                                                   # optional - numpy
         <class 'numpy.float64'>
 
     AUTHOR:
@@ -1139,9 +1145,9 @@ cdef class CoercionModel:
 
         Actions are detected and performed::
 
-            sage: M = matrix(ZZ, 2, 2, range(4))
-            sage: V = vector(ZZ, [5,7])
-            sage: cm.bin_op(M, V, operator.mul)
+            sage: M = matrix(ZZ, 2, 2, range(4))                                                                        # optional - sage.modules
+            sage: V = vector(ZZ, [5,7])                                                                                 # optional - sage.modules
+            sage: cm.bin_op(M, V, operator.mul)                                                                         # optional - sage.modules
             (7, 31)
 
         TESTS::
@@ -1265,14 +1271,14 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.canonical_coercion(mod(2, 10), 17)
             (2, 7)
-            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))
-            sage: x
+            sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))                                         # optional - sage.modules
+            sage: x                                                                                                     # optional - sage.modules
             [1/2   0]
             [  0 1/2]
-            sage: y
+            sage: y                                                                                                     # optional - sage.modules
             [0 1]
             [2 3]
-            sage: parent(x) is parent(y)
+            sage: parent(x) is parent(y)                                                                                # optional - sage.modules
             True
 
         There is some support for non-Sage datatypes as well::
@@ -1297,7 +1303,7 @@ cdef class CoercionModel:
 
         We also make an exception for 0, even if `\ZZ` does not map in::
 
-            sage: canonical_coercion(vector([1, 2, 3]), 0)
+            sage: canonical_coercion(vector([1, 2, 3]), 0)                                                              # optional - sage.modules
             ((1, 2, 3), (0, 0, 0))
             sage: canonical_coercion(GF(5)(0), float(0))                        # optional - sage.libs.pari
             (0, 0)
@@ -1447,28 +1453,28 @@ cdef class CoercionModel:
         Note that to break symmetry, if there is a coercion map in both
         directions, the parent on the left is used::
 
-            sage: V = QQ^3
-            sage: W = V.__class__(QQ, 3)
-            sage: V == W
+            sage: V = QQ^3                                                              # optional - sage.modules
+            sage: W = V.__class__(QQ, 3)                                                # optional - sage.modules
+            sage: V == W                                                                # optional - sage.modules
             True
-            sage: V is W
+            sage: V is W                                                                # optional - sage.modules
             False
-            sage: cm = sage.structure.element.get_coercion_model()
-            sage: cm.coercion_maps(V, W)
+            sage: cm = sage.structure.element.get_coercion_model()                      # optional - sage.modules
+            sage: cm.coercion_maps(V, W)                                                # optional - sage.modules
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: cm.coercion_maps(W, V)
+            sage: cm.coercion_maps(W, V)                                                # optional - sage.modules
             (None, (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
-            sage: v = V([1,2,3])
-            sage: w = W([1,2,3])
-            sage: parent(v+w) is V
+            sage: v = V([1,2,3])                                                        # optional - sage.modules
+            sage: w = W([1,2,3])                                                        # optional - sage.modules
+            sage: parent(v + w) is V                                                    # optional - sage.modules
             True
-            sage: parent(w+v) is W
+            sage: parent(w + v) is W                                                    # optional - sage.modules
             True
 
         TESTS:

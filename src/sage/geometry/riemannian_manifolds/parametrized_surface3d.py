@@ -244,22 +244,25 @@ class ParametrizedSurface3D(SageObject):
         sage: u2min, u2max = 0, 6.28
         sage: u1num, u2num = 10, 20
         sage: # make the arguments array
-        sage: from numpy import linspace
-        sage: u1_array = linspace(u1min, u1max, u1num)
-        sage: u2_array = linspace(u2min, u2max, u2num)
-        sage: u_array = [ (uu1,uu2) for uu1 in u1_array for uu2 in u2_array]
+        sage: from numpy import linspace                                                            # optional - numpy
+        sage: u1_array = linspace(u1min, u1max, u1num)                                              # optional - numpy
+        sage: u2_array = linspace(u2min, u2max, u2num)                                              # optional - numpy
+        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]                         # optional - numpy
         sage: # Find the gaussian curvature
-        sage: K(u1,u2) = ellipsoid.gauss_curvature()
-        sage: # Make array of K values
-        sage: K_array = [K(uu[0],uu[1]) for uu in u_array]
+        sage: K(u1,u2) = ellipsoid.gauss_curvature()                                                # optional - numpy
+        sage: # Make array of K values                                                              # optional - numpy
+        sage: K_array = [K(uu[0],uu[1]) for uu in u_array]                                          # optional - numpy
         sage: # Find minimum and max of the Gauss curvature
-        sage: K_max = max(K_array)
-        sage: K_min = min(K_array)
+        sage: K_max = max(K_array)                                                                  # optional - numpy
+        sage: K_min = min(K_array)                                                                  # optional - numpy
         sage: # Make the array of color coefficients
-        sage: cc_array = [ (ccc - K_min)/(K_max - K_min) for ccc in K_array ]
-        sage: points_array = [ellipsoid_equation(u_array[counter][0],u_array[counter][1]) for counter in range(0,len(u_array)) ]
-        sage: curvature_ellipsoid_plot = sum( point([xx for xx in points_array[counter]],color=hue(cc_array[counter]/2))  for counter in range(0,len(u_array)) )
-        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)
+        sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]                         # optional - numpy
+        sage: points_array = [ellipsoid_equation(u_array[counter][0],u_array[counter][1])
+        ....:                 for counter in range(0,len(u_array))]
+        sage: curvature_ellipsoid_plot = sum(point([xx for xx in points_array[counter]],            # optional - numpy sage.plot
+        ....:                                      color=hue(cc_array[counter]/2))
+        ....:                                for counter in range(0,len(u_array)))
+        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                                         # optional - numpy sage.plot
 
     We can find the principal curvatures and principal directions of the
     elliptic paraboloid::

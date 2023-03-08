@@ -82,7 +82,7 @@ class PositiveIntegers(IntegerRangeInfinite):
 
         EXAMPLES::
 
-            sage: PositiveIntegers()._sympy_()
+            sage: PositiveIntegers()._sympy_()                                          # optional - sympy
             Naturals
         """
         from sympy import Naturals

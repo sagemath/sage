@@ -541,7 +541,7 @@ class Magmas(Category_singleton):
 
                 TESTS::
 
-                    sage: S.is_empty.__module__
+                    sage: S.is_empty.__module__                                 # optional - sage.groups
                     'sage.categories.magmas'
                     sage: M.is_empty.__module__
                     'sage.categories.magmas'
@@ -711,11 +711,11 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat, sage.groups
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat, sage.groups
-                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat, sage.groups
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat sage.groups
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat sage.groups
+                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat sage.groups
                         True
-                        sage: PvW0.one()                                                                                # optional - sage.combinat, sage.groups
+                        sage: PvW0.one()                                                                                # optional - sage.combinat sage.groups
                         1
                     """
                     return self(self.realization_of().a_realization().one())
@@ -870,8 +870,8 @@ class Magmas(Category_singleton):
             The default is to represent elements as lowercase
             ASCII letters.  ::
 
-                sage: G = CyclicPermutationGroup(5)
-                sage: G.multiplication_table()
+                sage: G = CyclicPermutationGroup(5)                                                                     # optional - sage.groups
+                sage: G.multiplication_table()                                                                          # optional - sage.groups
                 *  a b c d e
                  +----------
                 a| a b c d e
@@ -888,10 +888,10 @@ class Magmas(Category_singleton):
 
                 sage: from sage.categories.examples.finite_semigroups import LeftRegularBand
                 sage: L = LeftRegularBand(('a', 'b'))
-                sage: T = L.multiplication_table(names='digits')
-                sage: T.column_keys()
+                sage: T = L.multiplication_table(names='digits')                                                        # optional - sage.matrix
+                sage: T.column_keys()                                                                                   # optional - sage.matrix
                 ('a', 'ab', 'b', 'ba')
-                sage: T
+                sage: T                                                                                                 # optional - sage.matrix
                 *  0 1 2 3
                  +--------
                 0| 0 1 1 1
@@ -904,7 +904,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a', 'b', 'c'))
                 sage: elts = sorted(L.list())
-                sage: L.multiplication_table(elements=elts)
+                sage: L.multiplication_table(elements=elts)                                                             # optional - sage.matrix
                 *  a b c d e f g h i j k l m n o
                  +------------------------------
                 a| a b c d e b b c c c d d e e e
@@ -933,7 +933,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
-                sage: L.multiplication_table(names='elements', elements=elts)
+                sage: L.multiplication_table(names='elements', elements=elts)                                           # optional - sage.matrix
                    *   'a'  'c' 'ac' 'ca'
                     +--------------------
                  'a'|  'a' 'ac' 'ac' 'ac'
@@ -946,16 +946,16 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: G = AlternatingGroup(3)
-                sage: T = G.multiplication_table()
-                sage: T.column_keys()
+                sage: G = AlternatingGroup(3)                                                                           # optional - sage.groups
+                sage: T = G.multiplication_table()                                                                      # optional - sage.matrix    # optional - sage.groups
+                sage: T.column_keys()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 ((), (1,2,3), (1,3,2))
-                sage: T.translation()
+                sage: T.translation()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 {'a': (), 'b': (1,2,3), 'c': (1,3,2)}
-                sage: T.change_names(['x', 'y', 'z'])
-                sage: T.translation()
+                sage: T.change_names(['x', 'y', 'z'])                                                                   # optional - sage.matrix    # optional - sage.groups
+                sage: T.translation()                                                                                   # optional - sage.matrix    # optional - sage.groups
                 {'x': (), 'y': (1,2,3), 'z': (1,3,2)}
-                sage: T
+                sage: T                                                                                                 # optional - sage.matrix    # optional - sage.groups
                 *  x y z
                  +------
                 x| x y z
@@ -1147,15 +1147,16 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: Out = Sets().WithRealizations().example().Out(); Out
+                    sage: Out = Sets().WithRealizations().example().Out(); Out                                          # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-                    sage: Out.product
-                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
-                    sage: Out.product.__module__
+                    sage: Out.product                                                                                   # optional - sage.combinat sage.modules
+                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion
+                     of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
+                    sage: Out.product.__module__                                                                        # optional - sage.combinat sage.modules
                     'sage.categories.magmas'
-                    sage: x = Out.an_element()
-                    sage: y = Out.an_element()
-                    sage: Out.product(x, y)
+                    sage: x = Out.an_element()                                                                          # optional - sage.combinat sage.modules
+                    sage: y = Out.an_element()                                                                          # optional - sage.combinat sage.modules
+                    sage: Out.product(x, y)                                                                             # optional - sage.combinat sage.modules
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
 
                 """

@@ -362,7 +362,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^2 + 5*y
-            sage: f.change_ring(GF(5))
+            sage: f.change_ring(GF(5))                                          # optional - sage.libs.pari
             x^2
 
         ::
@@ -423,10 +423,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         EXAMPLES::
 
-            sage: R.<x,y>=QQbar[]
-            sage: -x
+            sage: R.<x,y>=QQbar[]                                               # optional - sage.rings.number_field
+            sage: -x                                                            # optional - sage.rings.number_field
             -x
-            sage: -(y-1)
+            sage: -(y-1)                                                        # optional - sage.rings.number_field
             -y + 1
         """
         return self*(-1)
@@ -494,7 +494,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         EXAMPLES::
 
             sage: R = GF(13)['a,b']['c,d']                                      # optional - sage.libs.pari
-            sage: macaulay2(R('a^2 + c'))                                       # optional - macaulay2, sage.libs.pari
+            sage: macaulay2(R('a^2 + c'))                                       # optional - macaulay2 sage.libs.pari
                  2
             c + a
 
@@ -503,7 +503,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Elements of the base ring are coerced to the polynomial ring
         correctly::
 
-            sage: macaulay2(R('a^2')).ring()._operator('===', R)                # optional - macaulay2, sage.libs.pari
+            sage: macaulay2(R('a^2')).ring()._operator('===', R)                # optional - macaulay2 sage.libs.pari
             true
         """
         if macaulay2 is None:
@@ -996,11 +996,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Scaling should not change the result::
 
             sage: R.<x, y> = PolynomialRing(QQbar, 2)                           # optional - sage.rings.number_field
-            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2                # optional - sage.rings.number_field, sage.symbolic
-            sage: f.global_height()                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2                # optional - sage.rings.number_field sage.symbolic
+            sage: f.global_height()                                             # optional - sage.rings.number_field sage.symbolic
             6.43775164973640
-            sage: g = 100 * f                                                   # optional - sage.rings.number_field, sage.symbolic
-            sage: g.global_height()                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: g = 100 * f                                                   # optional - sage.rings.number_field sage.symbolic
+            sage: g.global_height()                                             # optional - sage.rings.number_field sage.symbolic
             6.43775164973640
 
         ::
@@ -1077,7 +1077,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: T.<t,w> = PolynomialRing(K, implementation='generic')                 # optional - sage.rings.number_field
             sage: I = K.ideal(3)                                                        # optional - sage.rings.number_field
             sage: f = 1/3*t*w + 3                                                       # optional - sage.rings.number_field
-            sage: f.local_height(I)                                                     # optional - sage.rings.number_field, sage.symbolic
+            sage: f.local_height(I)                                                     # optional - sage.rings.number_field sage.symbolic
             1.09861228866811
 
         ::
@@ -1717,9 +1717,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         TESTS::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
-            sage: R.<x,y>=MPolynomialRing_polydict(GF(2),2,order='lex')
-            sage: f=x+y
-            sage: f.lt()
+            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')                                             # optional - sage.libs.pari
+            sage: f = x + y                                                                                             # optional - sage.libs.pari
+            sage: f.lt()                                                                                                # optional - sage.libs.pari
             x
         """
         try:
@@ -2278,7 +2278,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: p.subresultants(q, y)                                                 # optional - sage.rings.number_field
             [2*x^6 + (-22)*x^5 + 102*x^4 + (-274)*x^3 + 488*x^2 + (-552)*x + 288,
              -x^3 - x^2*y + 6*x^2 + 5*x*y + (-11)*x + (-6)*y + 6]
-            sage: p.subresultants(q, x)
+            sage: p.subresultants(q, x)                                                 # optional - sage.rings.number_field
             [2*y^6 + (-22)*y^5 + 102*y^4 + (-274)*y^3 + 488*y^2 + (-552)*y + 288,
              x*y^2 + y^3 + (-5)*x*y + (-6)*y^2 + 6*x + 11*y - 6]
 
@@ -2333,9 +2333,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         Make sure the remainder returns the correct type, fixing :trac:`13903`::
 
-            sage: R.<y1,y2>=PolynomialRing(Qp(5),2, order='lex')
-            sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]
-            sage: type((y2^3).reduce(G))
+            sage: R.<y1,y2> = PolynomialRing(Qp(5), 2, order='lex')                                                     # optional - sage.rings.padics
+            sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]                                                                   # optional - sage.rings.padics
+            sage: type((y2^3).reduce(G))                                                                                # optional - sage.rings.padics
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
 
         TESTS:

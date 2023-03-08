@@ -106,9 +106,10 @@ class MagmaticAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: F = AlgebrasWithBasis(QQ).example(); F
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: F.algebra_generators()
+                sage: F = AlgebrasWithBasis(QQ).example(); F                                                            # optional - sage.combinat sage.modules
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                sage: F.algebra_generators()                                                                            # optional - sage.combinat sage.modules
                 Family (B[word: a], B[word: b], B[word: c])
             """
 
@@ -131,13 +132,13 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: D4 = DescentAlgebra(QQ, 4).B()
-                    sage: D4.algebra_generators()
+                    sage: D4 = DescentAlgebra(QQ, 4).B()                                                                # optional - sage.combinat sage.modules
+                    sage: D4.algebra_generators()                                                                       # optional - sage.combinat sage.modules
                     Lazy family (...)_{i in Compositions of 4}
 
                     sage: R.<x> = ZZ[]
-                    sage: P = PartitionAlgebra(1, x, R)
-                    sage: P.algebra_generators()
+                    sage: P = PartitionAlgebra(1, x, R)                                                                 # optional - sage.combinat sage.modules
+                    sage: P.algebra_generators()                                                                        # optional - sage.combinat sage.modules
                     Lazy family (Term map from Partition diagrams of order 1 to
                      Partition Algebra of rank 1 with parameter x over Univariate Polynomial Ring in x
                      over Integer Ring(i))_{i in Partition diagrams of order 1}
@@ -162,9 +163,9 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example()
-                    sage: Word = A.basis().keys()
-                    sage: A.product_on_basis(Word("abc"),Word("cba"))
+                    sage: A = AlgebrasWithBasis(QQ).example()                                                           # optional - sage.combinat sage.modules
+                    sage: Word = A.basis().keys()                                                                       # optional - sage.combinat sage.modules
+                    sage: A.product_on_basis(Word("abc"),Word("cba"))                                                   # optional - sage.combinat sage.modules
                     B[word: abccba]
                 """
 
@@ -183,9 +184,9 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example()
-                    sage: a, b, c = A.algebra_generators()
-                    sage: A.product(a + 2*b, 3*c)
+                    sage: A = AlgebrasWithBasis(QQ).example()                                                           # optional - sage.combinat sage.modules
+                    sage: a, b, c = A.algebra_generators()                                                              # optional - sage.combinat sage.modules
+                    sage: A.product(a + 2*b, 3*c)                                                                       # optional - sage.combinat sage.modules
                     3*B[word: ac] + 6*B[word: bc]
                 """
                 if self.product_on_basis is not NotImplemented:
@@ -205,10 +206,11 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A
-                    An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                    sage: (a,b,c) = A.algebra_generators()
-                    sage: A._product_from_product_on_basis_multiply(a*b + 2*c, a - b)
+                    sage: A = AlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.combinat sage.modules
+                    An example of an algebra with basis:
+                     the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                    sage: a, b, c = A.algebra_generators()                                                              # optional - sage.combinat sage.modules
+                    sage: A._product_from_product_on_basis_multiply(a*b + 2*c, a - b)                                   # optional - sage.combinat sage.modules
                     B[word: aba] - B[word: abb] + 2*B[word: ca] - 2*B[word: cb]
 
                 """
@@ -239,17 +241,17 @@ class MagmaticAlgebras(Category_over_base_ring):
                     We construct the Heisenberg Lie algebra as a
                     multiplicative algebra::
 
-                        sage: p_mult = matrix([[0,0,0],[0,0,-1],[0,0,0]])
-                        sage: q_mult = matrix([[0,0,1],[0,0,0],[0,0,0]])
-                        sage: A = algebras.FiniteDimensional(QQ,
-                        ....:          [p_mult,q_mult,matrix(QQ,3,3)], 'p,q,z')
-                        sage: A.inject_variables()
+                        sage: p_mult = matrix([[0,0,0], [0,0,-1], [0,0,0]])                                             # optional - sage.combinat sage.modules
+                        sage: q_mult = matrix([[0,0,1], [0,0,0], [0,0,0]])                                              # optional - sage.combinat sage.modules
+                        sage: A = algebras.FiniteDimensional(QQ,                                                        # optional - sage.combinat sage.modules
+                        ....:          [p_mult, q_mult, matrix(QQ, 3, 3)], 'p,q,z')
+                        sage: A.inject_variables()                                                                      # optional - sage.combinat sage.modules
                         Defining p, q, z
-                        sage: p*q
+                        sage: p * q                                                                                     # optional - sage.combinat sage.modules
                         z
-                        sage: q*p
+                        sage: q * p                                                                                     # optional - sage.combinat sage.modules
                         -z
-                        sage: A.derivations_basis()
+                        sage: A.derivations_basis()                                                                     # optional - sage.combinat sage.modules
                         (
                         [1 0 0]  [0 1 0]  [0 0 0]  [0 0 0]  [0 0 0]  [0 0 0]
                         [0 0 0]  [0 0 0]  [1 0 0]  [0 1 0]  [0 0 0]  [0 0 0]
@@ -259,15 +261,15 @@ class MagmaticAlgebras(Category_over_base_ring):
                     We construct another example using the exterior algebra
                     and verify we obtain a derivation::
 
-                        sage: A = algebras.Exterior(QQ, 1)
-                        sage: A.derivations_basis()
+                        sage: A = algebras.Exterior(QQ, 1)                                                              # optional - sage.combinat sage.modules
+                        sage: A.derivations_basis()                                                                     # optional - sage.combinat sage.modules
                         (
                         [0 0]
                         [0 1]
                         )
-                        sage: D = A.module_morphism(matrix=A.derivations_basis()[0], codomain=A)
-                        sage: one, e = A.basis()
-                        sage: all(D(a*b) == D(a) * b + a * D(b)
+                        sage: D = A.module_morphism(matrix=A.derivations_basis()[0], codomain=A)                        # optional - sage.combinat sage.modules
+                        sage: one, e = A.basis()                                                                        # optional - sage.combinat sage.modules
+                        sage: all(D(a*b) == D(a) * b + a * D(b)                                                         # optional - sage.combinat sage.modules
                         ....:     for a in A.basis() for b in A.basis())
                         True
 

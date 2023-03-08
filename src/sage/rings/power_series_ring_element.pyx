@@ -163,7 +163,7 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: PowerSeriesRing(CC, 'q')
             Power Series Ring in q over Complex Field with 53 bits of precision
-            sage: T = PowerSeriesRing(GF(3),5,'t'); T
+            sage: T = PowerSeriesRing(GF(3), 5, 't'); T                                 # optional - sage.libs.pari
             Multivariate Power Series Ring in t0, t1, t2, t3, t4 over Finite
             Field of size 3
         """
@@ -285,13 +285,13 @@ cdef class PowerSeries(AlgebraElement):
             sage: R.<T> = QQ[[]]; R
             Power Series Ring in T over Rational Field
             sage: f = 1 - 1/2*T + 1/3*T^2 + O(T^3)
-            sage: f.base_extend(GF(5))
+            sage: f.base_extend(GF(5))                                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined
-            sage: f.change_ring(GF(5))
+            sage: f.change_ring(GF(5))                                                  # optional - sage.libs.pari
             1 + 2*T + 2*T^2 + O(T^3)
-            sage: f.change_ring(GF(3))
+            sage: f.change_ring(GF(3))                                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ZeroDivisionError: inverse of Mod(0, 3) does not exist
@@ -301,18 +301,18 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')
-            sage: R.<t> = K[['t']]
-            sage: (4*t).change_ring(ZZ)
+            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')                    # optional - sage.rings.number_field
+            sage: R.<t> = K[['t']]                                                      # optional - sage.rings.number_field
+            sage: (4*t).change_ring(ZZ)                                                 # optional - sage.rings.number_field
             4*t
 
         This does not succeed because ``ZZ(K(a+1))`` is not defined.
 
         ::
 
-            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')
-            sage: R.<t> = K[['t']]
-            sage: ((a+1)*t).change_ring(ZZ)
+            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')                    # optional - sage.rings.number_field
+            sage: R.<t> = K[['t']]                                                      # optional - sage.rings.number_field
+            sage: ((a+1)*t).change_ring(ZZ)                                             # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce a + 1 to an integer
@@ -492,11 +492,11 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A.<t> = PowerSeriesRing(GF(5))
-            sage: x = t + t^2 + O(t^5)
-            sage: x.lift_to_precision(10)
+            sage: A.<t> = PowerSeriesRing(GF(5))                                        # optional - sage.libs.pari
+            sage: x = t + t^2 + O(t^5)                                                  # optional - sage.libs.pari
+            sage: x.lift_to_precision(10)                                               # optional - sage.libs.pari
             t + t^2 + O(t^10)
-            sage: x.lift_to_precision()
+            sage: x.lift_to_precision()                                                 # optional - sage.libs.pari
             t + t^2
 
         """
@@ -530,8 +530,8 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(49,'alpha')[[]]
-            sage: (t^2 + O(t^3)).base_ring()
+            sage: R.<t> = GF(49,'alpha')[[]]                                            # optional - sage.libs.pari
+            sage: (t^2 + O(t^3)).base_ring()                                            # optional - sage.libs.pari
             Finite Field in alpha of size 7^2
         """
         return self._parent.base_ring()
@@ -808,10 +808,10 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<I> = GF(2)[[]]
-            sage: f = 1/(1+I+O(I^8)); f
+            sage: R.<I> = GF(2)[[]]                                                     # optional - sage.libs.pari
+            sage: f = 1/(1+I+O(I^8)); f                                                 # optional - sage.libs.pari
             1 + I + I^2 + I^3 + I^4 + I^5 + I^6 + I^7 + O(I^8)
-            sage: f.truncate(5)
+            sage: f.truncate(5)                                                         # optional - sage.libs.pari
             I^4 + I^3 + I^2 + I + 1
         """
         if prec is infinity:
@@ -1113,9 +1113,9 @@ cdef class PowerSeries(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: R.<T> = Qp(7)[[]]
-            sage: f = (48*67 + 46*67^2)*T + (1 + 42*67 + 5*67^3)*T^2 + O(T^3)
-            sage: f % 67
+            sage: R.<T> = Qp(7)[[]]                                                     # optional - sage.rings.padics
+            sage: f = (48*67 + 46*67^2)*T + (1 + 42*67 + 5*67^3)*T^2 + O(T^3)           # optional - sage.rings.padics
+            sage: f % 67                                                                # optional - sage.rings.padics
             T^2 + O(T^3)
         """
         from sage.rings.power_series_ring import PowerSeriesRing
@@ -1203,12 +1203,12 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = exp(x) + O(x^7); f
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')                                # optional - sage.libs.pari
+            sage: f = exp(x) + O(x^7); f                                                            # optional - sage.libs.pari
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
-            sage: f << 2
+            sage: f << 2                                                                            # optional - sage.libs.pari
             x^2 + x^3 + 1/2*x^4 + 1/6*x^5 + 1/24*x^6 + 1/120*x^7 + 1/720*x^8 + O(x^9)
-            sage: (f << 99) >> 99
+            sage: (f << 99) >> 99                                                                   # optional - sage.libs.pari
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
         """
         return self.shift(n)
@@ -1221,15 +1221,15 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = exp(x) + O(x^7)
-            sage: f >> 3
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')                                # optional - sage.libs.pari
+            sage: f = exp(x) + O(x^7)                                                               # optional - sage.libs.pari
+            sage: f >> 3                                                                            # optional - sage.libs.pari
             1/6 + 1/24*x + 1/120*x^2 + 1/720*x^3 + O(x^4)
-            sage: f >> 7
+            sage: f >> 7                                                                            # optional - sage.libs.pari
             O(x^0)
-            sage: f >> 99
+            sage: f >> 99                                                                           # optional - sage.libs.pari
             O(x^0)
-            sage: (f >> 99) << 99
+            sage: (f >> 99) << 99                                                                   # optional - sage.libs.pari
             O(x^99)
         """
         return self.shift(-n)
@@ -1287,28 +1287,28 @@ cdef class PowerSeries(AlgebraElement):
         Examples with different base ring::
 
             sage: R.<x> = ZZ[[]]
-            sage: k = GF(2)
-            sage: residue = lambda x: k(x)
-            sage: f = 4*x^2+x+3
-            sage: g = f.map_coefficients(residue); g
+            sage: k = GF(2)                                                                         # optional - sage.libs.pari
+            sage: residue = lambda x: k(x)                                                          # optional - sage.libs.pari
+            sage: f = 4*x^2+x+3                                                                     # optional - sage.libs.pari
+            sage: g = f.map_coefficients(residue); g                                                # optional - sage.libs.pari
             1 + x
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Power Series Ring in x over Integer Ring
-            sage: g = f.map_coefficients(residue, new_base_ring = k); g
+            sage: g = f.map_coefficients(residue, new_base_ring=k); g                               # optional - sage.libs.pari
             1 + x
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Power Series Ring in x over Finite Field of size 2
-            sage: residue = k.coerce_map_from(ZZ)
-            sage: g = f.map_coefficients(residue); g
+            sage: residue = k.coerce_map_from(ZZ)                                                   # optional - sage.libs.pari
+            sage: g = f.map_coefficients(residue); g                                                # optional - sage.libs.pari
             1 + x
-            sage: g.parent()
+            sage: g.parent()                                                                        # optional - sage.libs.pari
             Power Series Ring in x over Finite Field of size 2
 
         Tests other implementations::
 
-            sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')
-            sage: f = q - q^3 + O(q^10)
-            sage: f.map_coefficients(lambda c: c - 2)
+            sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')                            # optional - sage.libs.pari
+            sage: f = q - q^3 + O(q^10)                                                             # optional - sage.libs.pari
+            sage: f.map_coefficients(lambda c: c - 2)                                               # optional - sage.libs.pari
             10*q + 8*q^3 + O(q^10)
         """
         pol = self.polynomial()
@@ -1773,11 +1773,11 @@ cdef class PowerSeries(AlgebraElement):
 
         Positive characteristic::
 
-            sage: R.<u> = GF(3)[[]]
-            sage: p = 1 + 2 * u^2
-            sage: p.nth_root(4)
+            sage: R.<u> = GF(3)[[]]                                                                 # optional - sage.libs.pari
+            sage: p = 1 + 2 * u^2                                                                   # optional - sage.libs.pari
+            sage: p.nth_root(4)                                                                     # optional - sage.libs.pari
             1 + 2*u^2 + u^6 + 2*u^8 + u^12 + 2*u^14 + O(u^20)
-            sage: p.nth_root(4)**4
+            sage: p.nth_root(4)**4                                                                  # optional - sage.libs.pari
             1 + 2*u^2 + O(u^20)
 
         TESTS:
@@ -2527,8 +2527,8 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: R.<x> = PowerSeriesRing(GF(5))
-            sage: (1 + x + O(x^2)).exp()
+            sage: R.<x> = PowerSeriesRing(GF(5))                                                    # optional - sage.libs.pari
+            sage: (1 + x + O(x^2)).exp()                                                            # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: constant term of power series does not support exponentiation
@@ -2796,21 +2796,21 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: k.<w> = QQ[[]]
             sage: f = 1+17*w+15*w^3+O(w^5)
-            sage: pari(f) # indirect doctest
+            sage: pari(f) # indirect doctest                                                        # optional - sage.libs.pari
             1 + 17*w + 15*w^3 + O(w^5)
-            sage: pari(1 - 19*w + w^5) # indirect doctest
+            sage: pari(1 - 19*w + w^5) # indirect doctest                                           # optional - sage.libs.pari
             w^5 - 19*w + 1
             sage: R.<x> = Zmod(6)[[]]
-            sage: pari(1 + x + 8*x^3 + O(x^8)) # indirect doctest
+            sage: pari(1 + x + 8*x^3 + O(x^8)) # indirect doctest                                   # optional - sage.libs.pari
             Mod(1, 6) + Mod(1, 6)*x + Mod(2, 6)*x^3 + O(x^8)
 
         TESTS::
 
-            sage: pari(1 + O(x^1))
+            sage: pari(1 + O(x^1))                                                                  # optional - sage.libs.pari
             Mod(1, 6) + O(x)
-            sage: pari(O(x^1))
+            sage: pari(O(x^1))                                                                      # optional - sage.libs.pari
             O(x)
-            sage: pari(O(x^0))
+            sage: pari(O(x^0))                                                                      # optional - sage.libs.pari
             O(x^0)
         """
         n = self.prec()

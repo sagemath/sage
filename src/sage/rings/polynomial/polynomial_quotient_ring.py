@@ -5,14 +5,14 @@ Quotients of Univariate Polynomial Rings
 EXAMPLES::
 
     sage: R.<x> = QQ[]
-    sage: S = R.quotient(x**3-3*x+1, 'alpha')
-    sage: S.gen()**2 in S
+    sage: S = R.quotient(x**3 - 3*x + 1, 'alpha')                                       # optional - sage.libs.pari
+    sage: S.gen()**2 in S                                                               # optional - sage.libs.pari
     True
-    sage: x in S
+    sage: x in S                                                                        # optional - sage.libs.pari
     True
-    sage: S.gen() in R
+    sage: S.gen() in R                                                                  # optional - sage.libs.pari
     False
-    sage: 1 in S
+    sage: 1 in S                                                                        # optional - sage.libs.pari
     True
 
 TESTS::
@@ -129,12 +129,12 @@ class PolynomialQuotientRingFactory(UniqueFactory):
     polynomial ring over `\QQ`::
 
         sage: R = PolynomialRing(RationalField(), 'x'); x = R.gen()
-        sage: S = R.quotient(x^3 + 2*x - 5, 'a')
-        sage: S
+        sage: S = R.quotient(x^3 + 2*x - 5, 'a')                                                            # optional - sage.libs.pari
+        sage: S                                                                                             # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^3 + 2*x - 5
-        sage: S.is_field()
+        sage: S.is_field()                                                                                  # optional - sage.libs.pari
         True
-        sage: S.degree()
+        sage: S.degree()                                                                                    # optional - sage.libs.pari
         3
 
     There are conversion functions for easily going back and forth
@@ -194,13 +194,13 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
         Consequently, you get two distinct objects::
 
-            sage: S = PolynomialQuotientRing(R, x + 1); S
+            sage: S = PolynomialQuotientRing(R, x + 1); S                                           # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x + 1
-            sage: T = PolynomialQuotientRing(R, 2*x + 2); T
+            sage: T = PolynomialQuotientRing(R, 2*x + 2); T                                         # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus 2*x + 2
-            sage: S is T
+            sage: S is T                                                                            # optional - sage.libs.pari
             False
-            sage: S == T
+            sage: S == T                                                                            # optional - sage.libs.pari
             False
 
         In most applications this will not be a concern since the calling code
@@ -235,7 +235,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: PolynomialQuotientRing.create_object((8, 0, 0), (R, x^2 - 1, ('xbar')))
+            sage: PolynomialQuotientRing.create_object((8, 0, 0), (R, x^2 - 1, ('xbar')))           # optional - sage.libs.pari
             Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
 
         """
@@ -448,18 +448,18 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<alpha> = R.quotient(x^3-3*x+1)
-            sage: S(x)
+            sage: S.<alpha> = R.quotient(x^3 - 3*x + 1)                                                     # optional - sage.libs.pari
+            sage: S(x)                                                                                      # optional - sage.libs.pari
             alpha
-            sage: S(x^3)
+            sage: S(x^3)                                                                                    # optional - sage.libs.pari
             3*alpha - 1
-            sage: S([1,2])
+            sage: S([1,2])                                                                                  # optional - sage.libs.pari
             2*alpha + 1
-            sage: S([1,2,3,4,5])
+            sage: S([1,2,3,4,5])                                                                            # optional - sage.libs.pari
             18*alpha^2 + 9*alpha - 3
-            sage: S(S.gen()+1)
+            sage: S(S.gen()+1)                                                                              # optional - sage.libs.pari
             alpha + 1
-            sage: S(S.gen()^10+1)
+            sage: S(S.gen()^10+1)                                                                           # optional - sage.libs.pari
             90*alpha^2 - 109*alpha + 28
 
         TESTS:
@@ -901,7 +901,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: P.<v> = GF(2)[]
+            sage: P.<v> = GF(2)[]                                               # optional - sage.libs.pari
             sage: P.quotient(v^2 - v).is_finite()                               # optional - sage.libs.pari
             True
         """
@@ -1563,6 +1563,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         The same algebra constructed in a different way::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 5)
             sage: K.class_group(())                                             # optional - sage.rings.number_field
             [((2, a + 1), 2)]
@@ -1650,6 +1651,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: K.unit_group()                                                # optional - sage.rings.number_field
             Unit group with structure C6 of Number Field in a
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u, o = K.S_units([])[0]; o
             6
@@ -1736,9 +1738,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: K.<a> = QuadraticField(-3)                                                                            # optional - sage.rings.number_field
+            sage: K.unit_group()                                                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 of
+             Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u = K.units()[0][0]
             sage: 2*u - 1 in {a, -a}
@@ -1755,19 +1758,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: y = polygen(K)
-            sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
-            sage: [u for u, o in L.units() if o is Infinity]
+            sage: K.<a> = QuadraticField(-3)                                                                            # optional - sage.rings.number_field
+            sage: y = polygen(K)                                                                                        # optional - sage.rings.number_field
+            sage: L.<b> = K['y'].quotient(y^3 + 5); L                                                                   # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in b over
+             Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
+            sage: [u for u, o in L.units() if o is Infinity]                                                            # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
-            sage: L.<b> = K.extension(y^3 + 5)
-            sage: L.unit_group()
-            Unit group with structure C6 x Z x Z of Number Field in b with defining polynomial x^3 + 5 over its base field
-            sage: L.unit_group().gens()    # abstract generators
+            sage: L.<b> = K.extension(y^3 + 5)                                                                          # optional - sage.rings.number_field
+            sage: L.unit_group()                                                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 x Z x Z of
+             Number Field in b with defining polynomial x^3 + 5 over its base field
+            sage: L.unit_group().gens()    # abstract generators                                                        # optional - sage.rings.number_field
             (u0, u1, u2)
-            sage: L.unit_group().gens_values()[1:]
+            sage: L.unit_group().gens_values()[1:]                                                                      # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2, 2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
 
         Note that all the returned values live where we expect them to::
@@ -1807,22 +1812,22 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-5)
-            sage: R.<x> = K[]
-            sage: D.<T> = R.quotient(x)
-            sage: D.selmer_generators((), 2)
+            sage: K.<a> = QuadraticField(-5)                                                        # optional - sage.rings.number_field
+            sage: R.<x> = K[]                                                                       # optional - sage.rings.number_field
+            sage: D.<T> = R.quotient(x)                                                             # optional - sage.rings.number_field
+            sage: D.selmer_generators((), 2)                                                        # optional - sage.rings.number_field
             [-1, 2]
-            sage: D.selmer_generators([K.ideal(2, -a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 2)                                        # optional - sage.rings.number_field
             [2, -1]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)                       # optional - sage.rings.number_field
             [2, a + 1, -1]
-            sage: D.selmer_generators((K.ideal(2, -a+1),K.ideal(3, a+1)), 4)
+            sage: D.selmer_generators((K.ideal(2, -a+1), K.ideal(3, a+1)), 4)                       # optional - sage.rings.number_field
             [2, a + 1, -1]
-            sage: D.selmer_generators([K.ideal(2, -a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 3)                                        # optional - sage.rings.number_field
             [2]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)                       # optional - sage.rings.number_field
             [2, a + 1]
-            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)           # optional - sage.rings.number_field
             [2, a + 1, -a]
 
         """
@@ -2190,9 +2195,9 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         If the modulus of the domain and the codomain is the same, then the map
         is surjective iff the underlying map on the constants is::
 
-            sage: A.<a> = ZqCA(9)
-            sage: R.<x> = A[]
-            sage: S.<x> = A.fraction_field()[]
+            sage: A.<a> = ZqCA(9)                                               # optional - sage.libs.pari
+            sage: R.<x> = A[]                                                   # optional - sage.libs.pari
+            sage: S.<x> = A.fraction_field()[]                                  # optional - sage.libs.pari
             sage: f = S.quo(x^2 + 2).coerce_map_from(R.quo(x^2 + 2))            # optional - sage.libs.pari
             sage: f.is_surjective()                                             # optional - sage.libs.pari
             False

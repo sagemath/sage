@@ -3,7 +3,7 @@
 TESTS::
 
     sage: from sage.symbolic.integration.external import sympy_integrator
-    sage: sympy_integrator(sin(x), x)
+    sage: sympy_integrator(sin(x), x)                                                   # optional - sympy
     -cos(x)
 """
 from sage.symbolic.expression import Expression
@@ -54,9 +54,9 @@ def sympy_integrator(expression, v, a=None, b=None):
     EXAMPLES::
 
         sage: from sage.symbolic.integration.external import sympy_integrator
-        sage: sympy_integrator(sin(x), x)
+        sage: sympy_integrator(sin(x), x)                                               # optional - sympy
         -cos(x)
-        sage: sympy_integrator(cos(x), x)
+        sage: sympy_integrator(cos(x), x)                                               # optional - sympy
         sin(x)
     """
     import sympy

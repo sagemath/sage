@@ -81,15 +81,15 @@ class Fields(CategoryWithAxiom):
 
         Caveat: this should eventually be fixed::
 
-            sage: gap.Rationals in Fields()
+            sage: gap.Rationals in Fields()                                     # optional - sage.libs.gap
             False
 
         typically by implementing the method :meth:`category`
         appropriately for Gap objects::
 
-            sage: GR = gap.Rationals
-            sage: GR.category = lambda : Fields()
-            sage: GR in Fields()
+            sage: GR = gap.Rationals                                            # optional - sage.libs.gap
+            sage: GR.category = lambda: Fields()                                # optional - sage.libs.gap
+            sage: GR in Fields()                                                # optional - sage.libs.gap
             True
 
         The following tests against a memory leak fixed in :trac:`13370`. In order
@@ -101,7 +101,7 @@ class Fields(CategoryWithAxiom):
             sage: _ = gc.collect()
             sage: permstore = [X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]
             sage: n = len(permstore)
-            sage: for i in prime_range(100):
+            sage: for i in prime_range(100):                                    # optional - sage.libs.pari
             ....:     R = ZZ.quotient(i)
             ....:     t = R in Fields()
 
@@ -140,16 +140,16 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2+2)
-            sage: Q.category()
+            sage: Q = P.quotient(x^2 + 2)                                       # optional - sage.libs.pari
+            sage: Q.category()                                                  # optional - sage.libs.pari
             Category of commutative no zero divisors quotients of algebras
              over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
-            sage: F._contains_helper(Q)
+            sage: F._contains_helper(Q)                                         # optional - sage.libs.pari
             False
-            sage: Q in F  # This changes the category!
+            sage: Q in F  # This changes the category!                          # optional - sage.libs.pari
             True
-            sage: F._contains_helper(Q)
+            sage: F._contains_helper(Q)                                         # optional - sage.libs.pari
             True
 
         """
@@ -231,8 +231,8 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R.<x> = QQbar[]
-                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)
+                sage: R.<x> = QQbar[]                                           # optional - sage.rings.number_field
+                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)              # optional - sage.rings.number_field
                 x
 
             TESTS::

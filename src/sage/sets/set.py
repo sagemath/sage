@@ -329,7 +329,7 @@ class Set_base():
 
         Instances of other subclasses of :class:`Set_base` run this method::
 
-            sage: Polyhedron()._test_as_set_object(verbose=True)
+            sage: Polyhedron()._test_as_set_object(verbose=True)                # optional - sage.geometry.polyhedron
             Running the test suite of Set(self)
             running ._test_an_element() . . . pass
             ...
@@ -411,7 +411,7 @@ class Set_add_sub_operators:
 
         EXAMPLES::
 
-            sage: Set(RealField()) + Set(QQ^5)
+            sage: Set(RealField()) + Set(QQ^5)                                                                          # optional - sage.modules
              Set-theoretic union of
               Set of elements of Real Field with 53 bits of precision and
               Set of elements of Vector space of dimension 5 over Rational Field
@@ -715,7 +715,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(SymmetricGroup(2).list()).is_empty()
+            sage: Set(SymmetricGroup(2).list()).is_empty()                      # optional - sage.groups
             False
             sage: Set(ZZ).is_empty()
             False
@@ -728,7 +728,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: Set([1..100]).is_empty()
             False
-            sage: Set(DihedralGroup(4).list()).is_empty()
+            sage: Set(DihedralGroup(4).list()).is_empty()                       # optional - sage.groups
             False
             sage: Set(QQ).is_empty()
             False
@@ -785,9 +785,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1, 2, 3])
-            sage: list(X.subsets())
+            sage: list(X.subsets())                                             # optional - sage.combinat
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-            sage: list(X.subsets(2))
+            sage: list(X.subsets(2))                                            # optional - sage.combinat
             [{1, 2}, {1, 3}, {2, 3}]
         """
         from sage.combinat.subset import Subsets
@@ -800,10 +800,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1,2,3])
-            sage: X.subsets_lattice()
+            sage: X.subsets_lattice()                                           # optional - sage.combinat
             Finite lattice containing 8 elements
             sage: Y = Set()
-            sage: Y.subsets_lattice()
+            sage: Y.subsets_lattice()                                           # optional - sage.combinat
             Finite lattice containing 1 elements
 
         """
@@ -839,7 +839,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
             sage: X = Set(ZZ); X
             Set of elements of Integer Ring
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Integers
         """
         from sage.interfaces.sympy import sympy_init
@@ -1095,7 +1095,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])
+            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])                # optional - sage.combinat
             8
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1123,7 +1123,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])
+            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])              # optional - sage.combinat
             4
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1221,16 +1221,16 @@ class Set_object_enumerated(Set_object):
 
             sage: X = Set({1, 2, 3}); X
             {1, 2, 3}
-            sage: sX = X._sympy_(); sX
+            sage: sX = X._sympy_(); sX                                                  # optional - sympy
             Set(1, 2, 3)
-            sage: sX.is_empty is None
+            sage: sX.is_empty is None                                                   # optional - sympy
             True
 
             sage: Empty = Set([]); Empty
             {}
-            sage: sEmpty = Empty._sympy_(); sEmpty
+            sage: sEmpty = Empty._sympy_(); sEmpty                                      # optional - sympy
             EmptySet
-            sage: sEmpty.is_empty
+            sage: sEmpty.is_empty                                                       # optional - sympy
             True
         """
         from sympy import Set, EmptySet
@@ -1258,10 +1258,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
     EXAMPLES::
 
-        sage: X = Set(QQ^2)
+        sage: X = Set(QQ^2)                                                                                             # optional - sage.modules
         sage: Y = Set(ZZ)
         sage: from sage.sets.set import Set_object_binary
-        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S
+        sage: S = Set_object_binary(X, Y, "union", "\\cup"); S                                                          # optional - sage.modules
         Set-theoretic union of
          Set of elements of Vector space of dimension 2 over Rational Field and
          Set of elements of Integer Ring
@@ -1275,9 +1275,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = QQ^2
+            sage: X = QQ^2                                                                                              # optional - sage.modules
             sage: Y = ZZ
-            sage: Set_object_binary(X, Y, "union", "\\cup")
+            sage: Set_object_binary(X, Y, "union", "\\cup")                                                             # optional - sage.modules
             Set-theoretic union of
              Set of elements of Vector space of dimension 2 over Rational Field and
              Set of elements of Integer Ring
@@ -1295,10 +1295,10 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         TESTS::
 
             sage: from sage.sets.set import Set_object_binary
-            sage: X = Set(QQ^2)
+            sage: X = Set(QQ^2)                                                                                         # optional - sage.modules
             sage: Y = Set(ZZ)
-            sage: S = Set_object_binary(X, Y, "union", "\\cup")
-            sage: type(S)
+            sage: S = Set_object_binary(X, Y, "union", "\\cup")                                                         # optional - sage.modules
+            sage: type(S)                                                                                               # optional - sage.modules
             <class 'sage.sets.set.Set_object_binary_with_category'>
         """
         self._X = X
@@ -1365,17 +1365,17 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)
+            sage: S = Set(QQ^2)                                                                                         # optional - sage.modules
             sage: T = Set(ZZ)
-            sage: X = S.union(T); X
+            sage: X = S.union(T); X                                                                                     # optional - sage.modules
             Set-theoretic union of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
-            sage: X.category()
+            sage: X.category()                                                                                          # optional - sage.modules
             Category of infinite sets
 
-            sage: latex(X)
+            sage: latex(X)                                                                                              # optional - sage.modules
             \Bold{Q}^{2} \cup \Bold{Z}
 
-            sage: TestSuite(X).run()
+            sage: TestSuite(X).run()                                                                                    # optional - sage.modules
         """
         if category is None:
             category = Sets()
@@ -1416,11 +1416,11 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: Y = Set(ZZ^2).union(Set(ZZ^3))
-            sage: X = Set(ZZ^3).union(Set(ZZ^2))
-            sage: X == Y
+            sage: Y = Set(ZZ^2).union(Set(ZZ^3))                                                                        # optional - sage.modules
+            sage: X = Set(ZZ^3).union(Set(ZZ^2))                                                                        # optional - sage.modules
+            sage: X == Y                                                                                                # optional - sage.modules
             True
-            sage: Y == X
+            sage: Y == X                                                                                                # optional - sage.modules
             True
 
         This illustrates that equality testing for formal unions
@@ -1499,7 +1499,7 @@ class Set_object_union(Set_object_binary):
 
             sage: X = Set(ZZ).union(Set([1/2])); X
             Set-theoretic union of Set of elements of Integer Ring and {1/2}
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Union(Integers, Set(1/2))
         """
         from sympy import Union
@@ -1518,13 +1518,15 @@ class Set_object_intersection(Set_object_binary):
 
         EXAMPLES::
 
-            sage: S = Set(QQ^2)
-            sage: T = Set(ZZ)
-            sage: X = S.intersection(T); X
-            Set-theoretic intersection of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
-            sage: X.category()
+            sage: S = Set(QQ^2)                                                                                         # optional - sage.modules
+            sage: T = Set(ZZ)                                                                                           # optional - sage.modules
+            sage: X = S.intersection(T); X                                                                              # optional - sage.modules
+            Set-theoretic intersection of
+             Set of elements of Vector space of dimension 2 over Rational Field and
+             Set of elements of Integer Ring
+            sage: X.category()                                                                                          # optional - sage.modules
             Category of enumerated sets
-            sage: latex(X)
+            sage: latex(X)                                                                                              # optional - sage.modules
             \Bold{Q}^{2} \cap \Bold{Z}
 
             sage: X = Set(IntegerRange(100)).intersection(Primes())
@@ -1678,7 +1680,7 @@ class Set_object_intersection(Set_object_binary):
             Set-theoretic intersection of
              Set of elements of Integer Ring and
              Set of elements of [3/2, 11/2]
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Range(2, 6, 1)
         """
         from sympy import Intersection
@@ -1847,7 +1849,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Integer Ring
             sage: X.category()
             Category of sets
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Complement(Rationals, Integers)
 
             sage: X = Set(ZZ).difference(Set(QQ)); X
@@ -1856,7 +1858,7 @@ class Set_object_difference(Set_object_binary):
              Set of elements of Rational Field
             sage: X.category()
             Category of enumerated sets
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             EmptySet
         """
         from sympy import Complement
@@ -2023,7 +2025,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             Set-theoretic symmetric difference of
              Set of elements of Integer Ring and
              {0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3}
-            sage: X._sympy_()
+            sage: X._sympy_()                                                           # optional - sympy
             Union(Complement(Integers, Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3)),
                   Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
         """

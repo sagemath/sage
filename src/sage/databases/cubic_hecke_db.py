@@ -1494,10 +1494,10 @@ def read_markov(bas_ele, variables, num_strands=4):
     EXAMPLES::
 
         sage: from sage.databases.cubic_hecke_db import read_markov
-        sage: from sympy import var
-        sage: u, v, w, s = var('u, v, w, s')
-        sage: variables = (u, v, w, s)
-        sage: read_markov('U2', variables, num_strands=3)
+        sage: from sympy import var                                                     # optional - sympy
+        sage: u, v, w, s = var('u, v, w, s')                                            # optional - sympy
+        sage: variables = (u, v, w, s)                                                  # optional - sympy
+        sage: read_markov('U2', variables, num_strands=3)                               # optional - sympy
         [0, s, 1/s, s, 1/s, 0, 0, 0, 0, -s*v, s, s, -s*u/w, -v/s, 1/s,
          0, 0, 0, 0, 1/s, -u/(s*w), -v/s, 0, 0]
     """

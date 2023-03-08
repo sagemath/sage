@@ -290,9 +290,9 @@ def _unit_gens_primepowercase(p, r):
         sage: from sage.rings.finite_rings.integer_mod_ring import _unit_gens_primepowercase
         sage: _unit_gens_primepowercase(2, 3)
         [(7, 2), (5, 2)]
-        sage: _unit_gens_primepowercase(17, 1)
+        sage: _unit_gens_primepowercase(17, 1)                                  # optional - sage.libs.pari
         [(3, 16)]
-        sage: _unit_gens_primepowercase(3, 3)
+        sage: _unit_gens_primepowercase(3, 3)                                   # optional - sage.libs.pari
         [(2, 18)]
     """
     pr = p**r
@@ -344,14 +344,14 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         29
         sage: FF.order()
         29
-        sage: gens = FF.unit_gens()
-        sage: a = gens[0]
-        sage: a
+        sage: gens = FF.unit_gens()                                                                 # optional - sage.groups
+        sage: a = gens[0]                                                                           # optional - sage.groups
+        sage: a                                                                                     # optional - sage.groups
         2
-        sage: a.is_square()
+        sage: a.is_square()                                                                         # optional - sage.groups
         False
-        sage: def pow(i): return a**i
-        sage: [pow(i) for i in range(16)]
+        sage: def pow(i): return a**i                                                               # optional - sage.groups
+        sage: [pow(i) for i in range(16)]                                                           # optional - sage.groups
         [1, 2, 4, 8, 16, 3, 6, 12, 24, 19, 9, 18, 7, 14, 28, 27]
         sage: TestSuite(FF).run()
 
@@ -404,23 +404,23 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         16
         sage: Z16.characteristic()
         16
-        sage: gens = Z16.unit_gens()
-        sage: gens
+        sage: gens = Z16.unit_gens()                                                                # optional - sage.groups
+        sage: gens                                                                                  # optional - sage.groups
         (15, 5)
-        sage: a = gens[0]
-        sage: b = gens[1]
-        sage: def powa(i): return a**i
-        sage: def powb(i): return b**i
-        sage: gp_exp = FF.unit_group_exponent()
-        sage: gp_exp
+        sage: a = gens[0]                                                                           # optional - sage.groups
+        sage: b = gens[1]                                                                           # optional - sage.groups
+        sage: def powa(i): return a**i                                                              # optional - sage.groups
+        sage: def powb(i): return b**i                                                              # optional - sage.groups
+        sage: gp_exp = FF.unit_group_exponent()                                                     # optional - sage.groups
+        sage: gp_exp                                                                                # optional - sage.groups
         28
-        sage: [powa(i) for i in range(15)]
+        sage: [powa(i) for i in range(15)]                                                          # optional - sage.groups
         [1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1]
-        sage: [powb(i) for i in range(15)]
+        sage: [powb(i) for i in range(15)]                                                          # optional - sage.groups
         [1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9]
-        sage: a.multiplicative_order()
+        sage: a.multiplicative_order()                                                              # optional - sage.groups
         2
-        sage: b.multiplicative_order()
+        sage: b.multiplicative_order()                                                              # optional - sage.groups
         4
         sage: TestSuite(Z16).run()
 
@@ -638,22 +638,22 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: Integers(5).multiplicative_subgroups()
+            sage: Integers(5).multiplicative_subgroups()                                            # optional - sage.groups
             ((2,), (4,), ())
-            sage: Integers(15).multiplicative_subgroups()
+            sage: Integers(15).multiplicative_subgroups()                                           # optional - sage.groups
             ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
-            sage: Integers(2).multiplicative_subgroups()
+            sage: Integers(2).multiplicative_subgroups()                                            # optional - sage.groups
             ((),)
-            sage: len(Integers(341).multiplicative_subgroups())
+            sage: len(Integers(341).multiplicative_subgroups())                                     # optional - sage.groups
             80
 
         TESTS::
 
-            sage: IntegerModRing(1).multiplicative_subgroups()
+            sage: IntegerModRing(1).multiplicative_subgroups()                                      # optional - sage.groups
             ((),)
-            sage: IntegerModRing(2).multiplicative_subgroups()
+            sage: IntegerModRing(2).multiplicative_subgroups()                                      # optional - sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()
+            sage: IntegerModRing(3).multiplicative_subgroups()                                      # optional - sage.groups
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -667,7 +667,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_integral_domain()
             True
-            sage: Integers(389^2).is_integral_domain()
+            sage: Integers(389^2).is_integral_domain()                                              # optional - sage.libs.pari
             False
 
         TESTS:
@@ -688,7 +688,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_unique_factorization_domain()
             True
-            sage: Integers(389^2).is_unique_factorization_domain()
+            sage: Integers(389^2).is_unique_factorization_domain()                                  # optional - sage.libs.pari
             False
         """
         return self.is_field(proof)
@@ -790,10 +790,10 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R = Integers(7); R
             Ring of integers modulo 7
-            sage: R.field()
+            sage: R.field()                                                                         # optional - sage.libs.pari
             Finite Field of size 7
             sage: R = Integers(9)
-            sage: R.field()
+            sage: R.field()                                                                         # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: self must be a field
@@ -827,8 +827,8 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         This should be very fast::
 
-            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]
-            sage: x / R.base_ring()(2)
+            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]                         # optional - sage.libs.pari
+            sage: x / R.base_ring()(2)                                                              # optional - sage.libs.pari
             500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000013365000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000401*x
         """
         return self
@@ -847,18 +847,18 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R.multiplicative_group_is_cyclic()
             True
             sage: R = Integers(9)
-            sage: R.multiplicative_group_is_cyclic()
+            sage: R.multiplicative_group_is_cyclic()                                                # optional - sage.libs.pari
             True
-            sage: Integers(8).multiplicative_group_is_cyclic()
+            sage: Integers(8).multiplicative_group_is_cyclic()                                      # optional - sage.libs.pari
             False
-            sage: Integers(4).multiplicative_group_is_cyclic()
+            sage: Integers(4).multiplicative_group_is_cyclic()                                      # optional - sage.libs.pari
             True
-            sage: Integers(25*3).multiplicative_group_is_cyclic()
+            sage: Integers(25*3).multiplicative_group_is_cyclic()                                   # optional - sage.libs.pari
             False
 
         We test that :trac:`5250` is fixed::
 
-            sage: Integers(162).multiplicative_group_is_cyclic()
+            sage: Integers(162).multiplicative_group_is_cyclic()                                    # optional - sage.libs.pari
             True
         """
         n = self.order()
@@ -885,24 +885,24 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R = Integers(7); R
             Ring of integers modulo 7
-            sage: R.multiplicative_generator()
+            sage: R.multiplicative_generator()                                                      # optional - sage.libs.pari
             3
             sage: R = Integers(9)
-            sage: R.multiplicative_generator()
+            sage: R.multiplicative_generator()                                                      # optional - sage.libs.pari
             2
-            sage: Integers(8).multiplicative_generator()
+            sage: Integers(8).multiplicative_generator()                                            # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: multiplicative group of this ring is not cyclic
-            sage: Integers(4).multiplicative_generator()
+            sage: Integers(4).multiplicative_generator()                                            # optional - sage.libs.pari
             3
-            sage: Integers(25*3).multiplicative_generator()
+            sage: Integers(25*3).multiplicative_generator()                                         # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: multiplicative group of this ring is not cyclic
-            sage: Integers(25*3).unit_gens()
+            sage: Integers(25*3).unit_gens()                                                        # optional - sage.libs.pari
             (26, 52)
-            sage: Integers(162).unit_gens()
+            sage: Integers(162).unit_gens()                                                         # optional - sage.libs.pari
             (83,)
         """
         try:
@@ -927,9 +927,9 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = Integers(17)
-            sage: R.quadratic_nonresidue()
+            sage: R.quadratic_nonresidue()                                                          # optional - sage.libs.pari
             3
-            sage: R(3).is_square()
+            sage: R(3).is_square()                                                                  # optional - sage.libs.pari
             False
         """
         try:
@@ -954,18 +954,18 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(2^10)
             sage: [x for x in R if x^2 == 1]
             [1, 511, 513, 1023]
-            sage: R.square_roots_of_one()
+            sage: R.square_roots_of_one()                                                           # optional - sage.libs.pari
             (1, 511, 513, 1023)
 
         ::
 
-            sage: v = Integers(9*5).square_roots_of_one(); v
+            sage: v = Integers(9*5).square_roots_of_one(); v                                        # optional - sage.libs.pari
             (1, 19, 26, 44)
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                                  # optional - sage.libs.pari
             [1, 1, 1, 1]
-            sage: v = Integers(9*5*8).square_roots_of_one(); v
+            sage: v = Integers(9*5*8).square_roots_of_one(); v                                      # optional - sage.libs.pari
             (1, 19, 71, 89, 91, 109, 161, 179, 181, 199, 251, 269, 271, 289, 341, 359)
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                                  # optional - sage.libs.pari
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
         try:
@@ -1295,7 +1295,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
-            sage: Zmod(81).convert_map_from(Qp(3))
+            sage: Zmod(81).convert_map_from(Qp(3))                                                  # optional - sage.rings.padics
             Reduction morphism:
               From: 3-adic Field with capped relative precision 20
               To:   Ring of integers modulo 81
@@ -1380,7 +1380,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(55)
             sage: A.unit_gens(algorithm='sage')                                 # optional - sage.groups
             (12, 46)
-            sage: A.unit_gens(algorithm='pari')                                 # optional - sage.groups, sage.libs.pari
+            sage: A.unit_gens(algorithm='pari')                                 # optional - sage.groups sage.libs.pari
             (2, 21)
 
         TESTS::
@@ -1458,9 +1458,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C4
             sage: G.gens_values()                                               # optional - sage.groups
             (11, 7)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (7, 11)
 
         Here are two examples where the cyclic factors are isomorphic,
@@ -1471,9 +1471,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
             sage: G.gens_values()                                               # optional - sage.groups
             (31, 21, 17)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (17, 31, 21)
 
             sage: A = Zmod(192)
@@ -1481,9 +1481,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
             sage: G.gens_values()                                               # optional - sage.groups
             (127, 133, 65)
-            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups, sage.libs.pari
+            sage: H = A.unit_group(algorithm='pari'); H                         # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C16 x C2 x C2
-            sage: H.gens_values()                                               # optional - sage.groups, sage.libs.pari
+            sage: H.gens_values()                                               # optional - sage.groups sage.libs.pari
             (133, 127, 65)
 
         In the following examples, the cyclic factors are not even
@@ -1492,14 +1492,14 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(319)
             sage: A.unit_group()                                                # optional - sage.groups
             Multiplicative Abelian group isomorphic to C10 x C28
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C140 x C2
 
             sage: A = Zmod(30.factorial())
             sage: A.unit_group()                                                # optional - sage.groups
             Multiplicative Abelian group isomorphic to
              C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to
              C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
 
@@ -1510,12 +1510,12 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: A = Zmod(1)
             sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Trivial Abelian group
             sage: A = Zmod(2)
             sage: A.unit_group()                                                # optional - sage.groups
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups, sage.libs.pari
+            sage: A.unit_group(algorithm='pari')                                # optional - sage.groups sage.libs.pari
             Trivial Abelian group
 
             sage: Zmod(3).unit_group(algorithm='bogus')                         # optional - sage.groups

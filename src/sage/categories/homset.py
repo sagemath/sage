@@ -11,26 +11,26 @@ EXAMPLES:
 
 In the following, the :class:`Hom` object is indeed cached::
 
-    sage: K = GF(17)
-    sage: H = Hom(ZZ, K)
-    sage: H
+    sage: K = GF(17)                                                                                                    # optional - sage.libs.pari
+    sage: H = Hom(ZZ, K)                                                                                                # optional - sage.libs.pari
+    sage: H                                                                                                             # optional - sage.libs.pari
     Set of Homomorphisms from Integer Ring to Finite Field of size 17
-    sage: H is Hom(ZZ, K)
+    sage: H is Hom(ZZ, K)                                                                                               # optional - sage.libs.pari
     True
 
 Nonetheless, garbage collection occurs when the original references are
 overwritten::
 
-    sage: for p in prime_range(200):
+    sage: for p in prime_range(200):                                                                                    # optional - sage.libs.pari
     ....:     K = GF(p)
     ....:     H = Hom(ZZ, K)
     sage: import gc
     sage: _ = gc.collect()
-    sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
-    sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
-    sage: len(L)
+    sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF                      # optional - sage.libs.pari
+    sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]                                                        # optional - sage.libs.pari
+    sage: len(L)                                                                                                        # optional - sage.libs.pari
     1
-    sage: L
+    sage: L                                                                                                             # optional - sage.libs.pari
     [Finite Field of size 199]
 
 AUTHORS:
@@ -104,8 +104,8 @@ def Hom(X, Y, category=None, check=True):
 
     EXAMPLES::
 
-        sage: V = VectorSpace(QQ,3)
-        sage: Hom(V, V)
+        sage: V = VectorSpace(QQ, 3)                                                                                    # optional - sage.modules
+        sage: Hom(V, V)                                                                                                 # optional - sage.modules
         Set of Morphisms (Linear Transformations) from
         Vector space of dimension 3 over Rational Field to
         Vector space of dimension 3 over Rational Field
@@ -118,12 +118,12 @@ def Hom(X, Y, category=None, check=True):
         sage: Hom(ZZ, QQ, Sets())                                                                       # optional - sage.groups
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
-        sage: Hom(FreeModule(ZZ,1), FreeModule(QQ,1))
+        sage: Hom(FreeModule(ZZ, 1), FreeModule(QQ, 1))                                                                 # optional - sage.modules
         Set of Morphisms
          from Ambient free module of rank 1 over the principal ideal domain Integer Ring
          to Vector space of dimension 1 over Rational Field
          in Category of commutative additive groups
-        sage: Hom(FreeModule(QQ,1), FreeModule(ZZ,1))
+        sage: Hom(FreeModule(QQ, 1), FreeModule(ZZ, 1))                                                                 # optional - sage.modules
         Set of Morphisms
          from Vector space of dimension 1 over Rational Field
          to Ambient free module of rank 1 over the principal ideal domain Integer Ring
@@ -132,15 +132,15 @@ def Hom(X, Y, category=None, check=True):
     Here, we test against a memory leak that has been fixed at :trac:`11521` by
     using a weak cache::
 
-        sage: for p in prime_range(10^3):
+        sage: for p in prime_range(10^3):                                                                               # optional - sage.libs.pari
         ....:  K = GF(p)
         ....:  a = K(0)
         sage: import gc
         sage: gc.collect()       # random
         624
-        sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
-        sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
-        sage: len(L), L[0]
+        sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF                  # optional - sage.libs.pari
+        sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]                                                    # optional - sage.libs.pari
+        sage: len(L), L[0]                                                                                              # optional - sage.libs.pari
         (1, Finite Field of size 997)
 
     To illustrate the choice of the category, we consider the
@@ -195,10 +195,10 @@ def Hom(X, Y, category=None, check=True):
 
     Homset are unique parents::
 
-        sage: k = GF(5)
-        sage: H1 = Hom(k,k)
-        sage: H2 = Hom(k,k)
-        sage: H1 is H2
+        sage: k = GF(5)                                                                                                 # optional - sage.libs.pari
+        sage: H1 = Hom(k, k)                                                                                            # optional - sage.libs.pari
+        sage: H2 = Hom(k, k)                                                                                            # optional - sage.libs.pari
+        sage: H1 is H2                                                                                                  # optional - sage.libs.pari
         True
 
     Moreover, if no category is provided, then the result is identical
@@ -243,16 +243,16 @@ def Hom(X, Y, category=None, check=True):
 
     Variation on the theme::
 
-        sage: U1 = FreeModule(ZZ,2)
-        sage: U2 = FreeModule(ZZ,2,inner_product_matrix=matrix([[1,0],[0,-1]]))
-        sage: U1 == U2, U1 is U2
+        sage: U1 = FreeModule(ZZ, 2)                                                                                    # optional - sage.modules
+        sage: U2 = FreeModule(ZZ, 2, inner_product_matrix=matrix([[1,0], [0,-1]]))                                      # optional - sage.modules
+        sage: U1 == U2, U1 is U2                                                                                        # optional - sage.modules
         (False, False)
-        sage: V = ZZ^3
-        sage: H1 = Hom(U1, V); H2 = Hom(U2, V)
-        sage: H1 == H2, H1 is H2
+        sage: V = ZZ^3                                                                                                  # optional - sage.modules
+        sage: H1 = Hom(U1, V); H2 = Hom(U2, V)                                                                          # optional - sage.modules
+        sage: H1 == H2, H1 is H2                                                                                        # optional - sage.modules
         (False, False)
-        sage: H1 = Hom(V, U1); H2 = Hom(V, U2)
-        sage: H1 == H2, H1 is H2
+        sage: H1 = Hom(V, U1); H2 = Hom(V, U2)                                                                          # optional - sage.modules
+        sage: H1 == H2, H1 is H2                                                                                        # optional - sage.modules
         (False, False)
 
     Since :trac:`11900`, the meet of the categories of the given arguments is
@@ -498,8 +498,8 @@ def End(X, category=None):
 
     EXAMPLES::
 
-        sage: V = VectorSpace(QQ, 3)
-        sage: End(V)
+        sage: V = VectorSpace(QQ, 3)                                                                    # optional - sage.modules
+        sage: End(V)                                                                                    # optional - sage.modules
         Set of Morphisms (Linear Transformations)
          from Vector space of dimension 3 over Rational Field
          to Vector space of dimension 3 over Rational Field
@@ -527,13 +527,13 @@ def End(X, category=None):
     groups currently implement nothing more than unital magmas about
     their homsets, we have::
 
-        sage: G = GL(3,3)
-        sage: G.category()
+        sage: G = GL(3, 3)                                                                              # optional - sage.groups
+        sage: G.category()                                                                              # optional - sage.groups
         Category of finite groups
-        sage: H = Hom(G,G)
-        sage: H.homset_category()
+        sage: H = Hom(G, G)                                                                             # optional - sage.groups
+        sage: H.homset_category()                                                                       # optional - sage.groups
         Category of finite groups
-        sage: H.category()
+        sage: H.category()                                                                              # optional - sage.groups
         Category of endsets of unital magmas
 
     Similarly, a ring morphism just needs to preserve addition,
@@ -572,8 +572,8 @@ class Homset(Set_generic):
 
     EXAMPLES::
 
-        sage: H = Hom(QQ^2, QQ^3)
-        sage: loads(H.dumps()) is H
+        sage: H = Hom(QQ^2, QQ^3)                                                                   # optional - sage.modules
+        sage: loads(H.dumps()) is H                                                                 # optional - sage.modules
         True
 
     Homsets of unique parents are unique as well::
@@ -636,12 +636,12 @@ class Homset(Set_generic):
             sage: Hom(R, R, category=Sets()).base_ring()
             sage: Hom(R, R, category=Modules(QQ)).base_ring()
             Rational Field
-            sage: Hom(QQ^3, QQ^3, category=Modules(QQ)).base_ring()
+            sage: Hom(QQ^3, QQ^3, category=Modules(QQ)).base_ring()                                                     # optional - sage.modules
             Rational Field
 
         For whatever it's worth, the ``base`` arguments takes precedence::
 
-            sage: MyHomset(ZZ^3, ZZ^3, base = QQ).base_ring()
+            sage: MyHomset(ZZ^3, ZZ^3, base=QQ).base_ring()                                                             # optional - sage.modules
             Rational Field
         """
         self._domain = X
@@ -694,8 +694,8 @@ class Homset(Set_generic):
 
         EXAMPLES::
 
-            sage: H = Hom(QQ^2, QQ^3)
-            sage: H.__reduce__()
+            sage: H = Hom(QQ^2, QQ^3)                                                                                   # optional - sage.modules
+            sage: H.__reduce__()                                                                                        # optional - sage.modules
             (<function Hom at ...>,
              (Vector space of dimension 2 over Rational Field,
               Vector space of dimension 3 over Rational Field,
@@ -705,7 +705,7 @@ class Homset(Set_generic):
 
         TESTS::
 
-            sage: loads(H.dumps()) is H
+            sage: loads(H.dumps()) is H                                                                                 # optional - sage.modules
             True
 
         Homsets of non-unique parents are non-unique as well::
@@ -725,7 +725,7 @@ class Homset(Set_generic):
         """
         TESTS::
 
-            sage: Hom(ZZ^2, QQ, category=Sets())._repr_()
+            sage: Hom(ZZ^2, QQ, category=Sets())._repr_()                                                               # optional - sage.modules
             'Set of Morphisms from Ambient free module of rank 2 over the principal ideal domain Integer Ring to Rational Field in Category of sets'
         """
         return "Set of Morphisms from {} to {} in {}".format(self._domain,
@@ -1015,23 +1015,23 @@ class Homset(Set_generic):
         of semigroups, of magmas, ...; it thus inherits code from all
         those categories::
 
-            sage: issubclass(cls, Semigroups().Finite().morphism_class)
+            sage: issubclass(cls, Semigroups().Finite().morphism_class)                                 # optional - sage.groups
             True
-            sage: issubclass(cls, Semigroups().morphism_class)
+            sage: issubclass(cls, Semigroups().morphism_class)                                          # optional - sage.groups
             True
-            sage: issubclass(cls, Magmas().Commutative().morphism_class)
+            sage: issubclass(cls, Magmas().Commutative().morphism_class)                                # optional - sage.groups
             True
-            sage: issubclass(cls, Magmas().morphism_class)
+            sage: issubclass(cls, Magmas().morphism_class)                                              # optional - sage.groups
             True
-            sage: issubclass(cls, Sets().morphism_class)
+            sage: issubclass(cls, Sets().morphism_class)                                                # optional - sage.groups
             True
 
         Recall that FiniteMonoids() is a full subcategory of
         ``Monoids()``, but not of ``FiniteSemigroups()``. Thus::
 
-            sage: issubclass(cls, Monoids().Finite().Homsets().element_class)
+            sage: issubclass(cls, Monoids().Finite().Homsets().element_class)                           # optional - sage.groups
             True
-            sage: issubclass(cls, Semigroups().Finite().Homsets().element_class)
+            sage: issubclass(cls, Semigroups().Finite().Homsets().element_class)                        # optional - sage.groups
             False
         """
         class_name = "%s._abstract_element_class"%self.__class__.__name__
@@ -1132,11 +1132,12 @@ class Homset(Set_generic):
             Coercion morphism:
               From: Univariate Polynomial Ring in t over Integer Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: H = Hom(QQ['t'],GF(3)['t'])
-            sage: H.natural_map()
+            sage: H = Hom(QQ['t'], GF(3)['t'])                                                                          # optional - sage.libs.pari
+            sage: H.natural_map()                                                                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
-            TypeError: natural coercion morphism from Univariate Polynomial Ring in t over Rational Field to Univariate Polynomial Ring in t over Finite Field of size 3 not defined
+            TypeError: natural coercion morphism from Univariate Polynomial Ring in t over Rational Field
+             to Univariate Polynomial Ring in t over Finite Field of size 3 not defined
         """
         return morphism.FormalCoercionMorphism(self)   # good default in many cases
 
@@ -1221,21 +1222,21 @@ class Homset(Set_generic):
 
         EXAMPLES::
 
-            sage: H = Hom(ZZ^2, ZZ^3); H
+            sage: H = Hom(ZZ^2, ZZ^3); H                                                                                # optional - sage.modules
             Set of Morphisms from Ambient free module of rank 2 over
              the principal ideal domain Integer Ring to Ambient free module
              of rank 3 over the principal ideal domain Integer Ring in
              Category of finite dimensional modules with basis over (euclidean
              domains and infinite enumerated sets and metric spaces)
-            sage: type(H)
+            sage: type(H)                                                                                               # optional - sage.modules
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-            sage: H.reversed()
+            sage: H.reversed()                                                                                          # optional - sage.modules
             Set of Morphisms from Ambient free module of rank 3 over
              the principal ideal domain Integer Ring to Ambient free module
              of rank 2 over the principal ideal domain Integer Ring in
              Category of finite dimensional modules with basis over (euclidean
              domains and infinite enumerated sets and metric spaces)
-            sage: type(H.reversed())
+            sage: type(H.reversed())                                                                                    # optional - sage.modules
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         """
         return Hom(self.codomain(), self.domain(),

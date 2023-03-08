@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Formal sums
 
@@ -311,7 +312,7 @@ class FormalSums(UniqueRepresentation, Module):
         Abelian Group of all Formal Finite Sums over Integer Ring
         sage: FormalSums(GF(7))                                                         # optional - sage.libs.pari
         Abelian Group of all Formal Finite Sums over Finite Field of size 7
-        sage: FormalSums(ZZ[sqrt(2)])                                                   # optional - sage.symbolic, sage.rings.number_field
+        sage: FormalSums(ZZ[sqrt(2)])                                                   # optional - sage.symbolic sage.rings.number_field
         Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2
          with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         sage: FormalSums(GF(9,'a'))

@@ -623,10 +623,10 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[191:263]
+        sage: identity_matrix(2).rook_vector.__doc__[191:263]                                                           # optional - sage.modules
         'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
 
-        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])
+        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])                                                   # optional - sage.modules
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
@@ -1076,7 +1076,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     Note that you can do tab completion on the ``module`` string.
     Another way to accomplish a similar search::
 
-        sage: len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
+        sage: len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15           # optional - sage.modules
         True
 
     The following produces an error because the string 'fetch(' is a
@@ -1361,8 +1361,8 @@ def my_getsource(obj, oname=''):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix)
-        sage: s[15:34]
+        sage: s = my_getsource(identity_matrix)                                                                         # optional - sage.modules
+        sage: s[15:34]                                                                                                  # optional - sage.modules
         'def identity_matrix'
     """
     try:
@@ -1400,7 +1400,7 @@ class _sage_doc:
 
         sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html, indirect doctest
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]
+        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]                         # optional - sage.modules
         'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
     """
     def __init__(self):
@@ -1428,19 +1428,19 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc(identity_matrix, 'rst')
+            sage: browse_sage_doc(identity_matrix, 'rst')                               # optional - sage.modules
             "...**File:**...**Type:**...**Definition:** identity_matrix..."
-            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')
+            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')    # optional - sage.modules
             True
-            sage: browse_sage_doc(identity_matrix, 'html', False)             # optional - sphinx sagemath_doc_html
+            sage: browse_sage_doc(identity_matrix, 'html', False)                       # optional - sphinx sagemath_doc_html
             '...div...File:...Type:...Definition:...identity_matrix...'
 
         In the 'text' version, double colons have been replaced with
         single ones (among other things)::
 
-            sage: '::' in browse_sage_doc(identity_matrix, 'rst')
+            sage: '::' in browse_sage_doc(identity_matrix, 'rst')                       # optional - sage.modules
             True
-            sage: '::' in browse_sage_doc(identity_matrix, 'text')            # optional - sphinx
+            sage: '::' in browse_sage_doc(identity_matrix, 'text')                      # optional - sphinx
             False
         """
         if output != 'html' and view:
