@@ -963,8 +963,8 @@ class OperationTable(SageObject):
         EXAMPLES::
 
             sage: from sage.matrix.operation_table import OperationTable
-            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot, sage.groups
-            sage: OTa.color_table()                                                     # optional - sage.plot, sage.groups
+            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot sage.groups
+            sage: OTa.color_table()                                                     # optional - sage.plot sage.groups
             Graphics object consisting of 37 graphics primitives
 
         .. PLOT::
@@ -1023,8 +1023,8 @@ class OperationTable(SageObject):
         EXAMPLES::
 
             sage: from sage.matrix.operation_table import OperationTable
-            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot, sage.groups
-            sage: OTa.gray_table()                                                      # optional - sage.plot, sage.groups
+            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot sage.groups
+            sage: OTa.gray_table()                                                      # optional - sage.plot sage.groups
             Graphics object consisting of 37 graphics primitives
 
         .. PLOT::
