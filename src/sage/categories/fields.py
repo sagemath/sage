@@ -140,16 +140,16 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2+2)
-            sage: Q.category()
+            sage: Q = P.quotient(x^2 + 2)                                       # optional - sage.libs.pari
+            sage: Q.category()                                                  # optional - sage.libs.pari
             Category of commutative no zero divisors quotients of algebras
              over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
-            sage: F._contains_helper(Q)
+            sage: F._contains_helper(Q)                                         # optional - sage.libs.pari
             False
-            sage: Q in F  # This changes the category!
+            sage: Q in F  # This changes the category!                          # optional - sage.libs.pari
             True
-            sage: F._contains_helper(Q)
+            sage: F._contains_helper(Q)                                         # optional - sage.libs.pari
             True
 
         """

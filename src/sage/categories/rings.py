@@ -1329,8 +1329,8 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R.<x> = ZZ[]
-                sage: S = R.quo(x^2 + x + 1)
-                sage: S(1).inverse_of_unit()
+                sage: S = R.quo(x^2 + x + 1)                                                                            # optional - sage.libs.pari
+                sage: S(1).inverse_of_unit()                                                                            # optional - sage.libs.pari
                 1
 
             This method fails when the element is not a unit::
