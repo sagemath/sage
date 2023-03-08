@@ -2294,7 +2294,7 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: A = Algebra(ZZ); A
+            sage: A = Algebra(ZZ); A                                                    # optional - sage.modules
             <sage.rings.ring.Algebra object at ...>
         """
         # This is a low-level class. For performance, we trust that the category
@@ -2314,12 +2314,12 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: A = Algebra(ZZ); A
+            sage: A = Algebra(ZZ); A                                                    # optional - sage.modules
             <sage.rings.ring.Algebra object at ...>
-            sage: A.characteristic()
+            sage: A.characteristic()                                                    # optional - sage.modules
             0
-            sage: A = Algebra(GF(7^3, 'a'))                                     # optional - sage.libs.pari
-            sage: A.characteristic()                                            # optional - sage.libs.pari
+            sage: A = Algebra(GF(7^3, 'a'))                                             # optional - sage.libs.pari, sage.modules
+            sage: A.characteristic()                                                    # optional - sage.libs.pari, sage.modules
             7
         """
         return self.base_ring().characteristic()

@@ -359,9 +359,9 @@ class PolynomialRing_general(ring.Algebra):
 
         Coercing in pari elements::
 
-            sage: QQ['x'](pari('[1,2,3/5]'))
+            sage: QQ['x'](pari('[1,2,3/5]'))                                            # optional - sage.libs.pari
             3/5*x^2 + 2*x + 1
-            sage: QQ['x'](pari('(-1/3)*x^10 + (2/3)*x - 1/5'))
+            sage: QQ['x'](pari('(-1/3)*x^10 + (2/3)*x - 1/5'))                          # optional - sage.libs.pari
             -1/3*x^10 + 2/3*x - 1/5
 
         Coercing strings::
@@ -403,8 +403,8 @@ class PolynomialRing_general(ring.Algebra):
 
         A test from :trac:`14485` ::
 
-            sage: x = SR.var('x')
-            sage: QQbar[x](x^6+x^5+x^4-x^3+x^2-x+2/5)
+            sage: x = SR.var('x')                                                       # optional - sage.symbolic
+            sage: QQbar[x](x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5)                       # optional - sage.rings.number_field, sage.symbolic
             x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5
 
         Check support for unicode characters (:trac:`29280`)::
@@ -875,11 +875,11 @@ class PolynomialRing_general(ring.Algebra):
         EXAMPLES::
 
             sage: R.<z> = ZZ[]
-            sage: gap(R)
+            sage: gap(R)                                                                # optional - sage.libs.gap
             PolynomialRing( Integers, ["z"] )
-            sage: gap(R) is gap(R)
+            sage: gap(R) is gap(R)                                                      # optional - sage.libs.gap
             True
-            sage: gap(z^2 + z)
+            sage: gap(z^2 + z)                                                          # optional - sage.libs.gap
             z^2+z
 
         A univariate polynomial ring over a multivariate polynomial

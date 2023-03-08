@@ -1271,9 +1271,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[[]]
-            sage: f = (1+I)*x^2 + 3*x - I
-            sage: f.map_coefficients(lambda z: z.conjugate())
+            sage: R.<x> = SR[[]]                                                                    # optional - sage.symbolic
+            sage: f = (1+I)*x^2 + 3*x - I                                                           # optional - sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                                       # optional - sage.symbolic
             I + 3*x + (-I + 1)*x^2
             sage: R.<x> = ZZ[[]]
             sage: f = x^2 + 2
@@ -1347,7 +1347,7 @@ cdef class PowerSeries(AlgebraElement):
 
         Another example::
 
-            sage: (log(1+t)/t).jacobi_continued_fraction()
+            sage: (log(1+t)/t).jacobi_continued_fraction()                                          # optional - sage.symbolic
             ((1/2, -1/12),
              (1/2, -1/15),
              (1/2, -9/140),
@@ -1406,8 +1406,8 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
-            sage: s = sum(catalan_number(k) * t**k for k in range(12)).O(12)
-            sage: s.stieltjes_continued_fraction()
+            sage: s = sum(catalan_number(k) * t**k for k in range(12)).O(12)                        # optional - sage.combinat
+            sage: s.stieltjes_continued_fraction()                                                  # optional - sage.combinat
             (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
         Another example::
@@ -1844,14 +1844,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: cos(f)
+            sage: cos(f)                                                                            # optional - sage.symbolic
             1 - 1/2*t^2 - t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: cos(f)
+            sage: cos(f)                                                                            # optional - sage.symbolic
             1 - 1/2*a^2 - a*b - 1/2*b^2 + O(a, b)^3
             sage: f.cos()
             1 - 1/2*a^2 - a*b - 1/2*b^2 + O(a, b)^3
@@ -1871,16 +1871,16 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: cos(a)
+            sage: cos(a)                                                                            # optional - sage.symbolic
             1 - 1/2*a^2 + 1/24*a^4 - 1/720*a^6 + 1/40320*a^8 - 1/3628800*a^10 + O(a, b)^12
             sage: a.cos(prec=5)
             1 - 1/2*a^2 + 1/24*a^4 + O(a, b)^5
-            sage: cos(a + T.O(5))
+            sage: cos(a + T.O(5))                                                                   # optional - sage.symbolic
             1 - 1/2*a^2 + 1/24*a^4 + O(a, b)^5
 
         TESTS::
 
-            sage: cos(a^2 + T.O(5))
+            sage: cos(a^2 + T.O(5))                                                                 # optional - sage.symbolic
             1 - 1/2*a^4 + O(a, b)^5
         """
         R = self.parent()
@@ -1929,14 +1929,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: sin(f)
+            sage: sin(f)                                                                            # optional - sage.symbolic
             t + t^2 - 1/6*t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: sin(f)
+            sage: sin(f)                                                                            # optional - sage.symbolic
             a + b + a*b + O(a, b)^3
             sage: f.sin()
             a + b + a*b + O(a, b)^3
@@ -1956,16 +1956,16 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: sin(a)
+            sage: sin(a)                                                                            # optional - sage.symbolic
             a - 1/6*a^3 + 1/120*a^5 - 1/5040*a^7 + 1/362880*a^9 - 1/39916800*a^11 + O(a, b)^12
             sage: a.sin(prec=5)
             a - 1/6*a^3 + O(a, b)^5
-            sage: sin(a + T.O(5))
+            sage: sin(a + T.O(5))                                                                   # optional - sage.symbolic
             a - 1/6*a^3 + O(a, b)^5
 
         TESTS::
 
-            sage: sin(a^2 + T.O(5))
+            sage: sin(a^2 + T.O(5))                                                                 # optional - sage.symbolic
             a^2 + O(a, b)^5
         """
         R = self.parent()
@@ -2015,14 +2015,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: tan(f)
+            sage: tan(f)                                                                            # optional - sage.symbolic
             t + t^2 + 1/3*t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: tan(f)
+            sage: tan(f)                                                                            # optional - sage.symbolic
             a + b + a*b + O(a, b)^3
             sage: f.tan()
             a + b + a*b + O(a, b)^3
@@ -2032,8 +2032,8 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
-            sage: tan(g)
+            sage: g = 2 + f
+            sage: tan(g)                                                                            # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply tan to formal power series with zero constant term
@@ -2042,16 +2042,16 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: tan(a)
+            sage: tan(a)                                                                            # optional - sage.symbolic
             a + 1/3*a^3 + 2/15*a^5 + 17/315*a^7 + 62/2835*a^9 + 1382/155925*a^11 + O(a, b)^12
             sage: a.tan(prec=5)
             a + 1/3*a^3 + O(a, b)^5
-            sage: tan(a + T.O(5))
+            sage: tan(a + T.O(5))                                                                   # optional - sage.symbolic
             a + 1/3*a^3 + O(a, b)^5
 
         TESTS::
 
-            sage: tan(a^2 + T.O(5))
+            sage: tan(a^2 + T.O(5))                                                                 # optional - sage.symbolic
             a^2 + O(a, b)^5
         """
         if not self[0].is_zero():
@@ -2079,14 +2079,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: sinh(f)
+            sage: sinh(f)                                                                           # optional - sage.symbolic
             t + t^2 + 1/6*t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: sin(f)
+            sage: sinh(f)                                                                           # optional - sage.symbolic
             a + b + a*b + O(a, b)^3
             sage: f.sinh()
             a + b + a*b + O(a, b)^3
@@ -2096,8 +2096,8 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
-            sage: sinh(g)
+            sage: g = 2 + f
+            sage: sinh(g)                                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply sinh to formal power series with zero
@@ -2107,17 +2107,17 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: sinh(a)
+            sage: sinh(a)                                                                           # optional - sage.symbolic
             a + 1/6*a^3 + 1/120*a^5 + 1/5040*a^7 + 1/362880*a^9 +
              1/39916800*a^11 + O(a, b)^12
             sage: a.sinh(prec=5)
             a + 1/6*a^3 + O(a, b)^5
-            sage: sinh(a + T.O(5))
+            sage: sinh(a + T.O(5))                                                                  # optional - sage.symbolic
             a + 1/6*a^3 + O(a, b)^5
 
         TESTS::
 
-            sage: sinh(a^2 + T.O(5))
+            sage: sinh(a^2 + T.O(5))                                                                # optional - sage.symbolic
             a^2 + O(a, b)^5
 
         """
@@ -2168,14 +2168,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: cosh(f)
+            sage: cosh(f)                                                                           # optional - sage.symbolic
             1 + 1/2*t^2 + t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: cosh(f)
+            sage: cosh(f)                                                                           # optional - sage.symbolic
             1 + 1/2*a^2 + a*b + 1/2*b^2 + O(a, b)^3
             sage: f.cosh()
             1 + 1/2*a^2 + a*b + 1/2*b^2 + O(a, b)^3
@@ -2185,8 +2185,8 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
-            sage: cosh(g)
+            sage: g = 2 + f
+            sage: cosh(g)                                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply cosh to formal power series with zero
@@ -2196,17 +2196,17 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: cosh(a)
+            sage: cosh(a)                                                                           # optional - sage.symbolic
             1 + 1/2*a^2 + 1/24*a^4 + 1/720*a^6 + 1/40320*a^8 + 1/3628800*a^10 +
              O(a, b)^12
             sage: a.cosh(prec=5)
             1 + 1/2*a^2 + 1/24*a^4 + O(a, b)^5
-            sage: cosh(a + T.O(5))
+            sage: cosh(a + T.O(5))                                                                  # optional - sage.symbolic
             1 + 1/2*a^2 + 1/24*a^4 + O(a, b)^5
 
         TESTS::
 
-            sage: cosh(a^2 + T.O(5))
+            sage: cosh(a^2 + T.O(5))                                                                # optional - sage.symbolic
             1 + 1/2*a^4 + O(a, b)^5
 
         """
@@ -2256,14 +2256,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: f = (t + t**2).O(4)
-            sage: tanh(f)
+            sage: tanh(f)                                                                           # optional - sage.symbolic
             t + t^2 - 1/3*t^3 + O(t^4)
 
         For several variables::
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: tanh(f)
+            sage: tanh(f)                                                                           # optional - sage.symbolic
             a + b + a*b + O(a, b)^3
             sage: f.tanh()
             a + b + a*b + O(a, b)^3
@@ -2273,8 +2273,8 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
-            sage: tanh(g)
+            sage: g = 2 + f
+            sage: tanh(g)                                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply tanh to formal power series with zero
@@ -2284,17 +2284,17 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.default_prec()
             12
-            sage: tanh(a)
+            sage: tanh(a)                                                                           # optional - sage.symbolic
             a - 1/3*a^3 + 2/15*a^5 - 17/315*a^7 + 62/2835*a^9 -
             1382/155925*a^11 + O(a, b)^12
             sage: a.tanh(prec=5)
             a - 1/3*a^3 + O(a, b)^5
-            sage: tanh(a + T.O(5))
+            sage: tanh(a + T.O(5))                                                                  # optional - sage.symbolic
             a - 1/3*a^3 + O(a, b)^5
 
         TESTS::
 
-            sage: tanh(a^2 + T.O(5))
+            sage: tanh(a^2 + T.O(5))                                                                # optional - sage.symbolic
             a^2 + O(a, b)^5
 
         """

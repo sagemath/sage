@@ -170,11 +170,11 @@ cpdef is_Polynomial(f):
         y^3 + x*y - 3*x
         sage: is_Polynomial(f)
         False
-        sage: var('x,y')
+        sage: var('x,y')                                                                # optional - sage.symbolic
         (x, y)
-        sage: f = y^3 + x*y -3*x; f
+        sage: f = y^3 + x*y -3*x; f                                                     # optional - sage.symbolic
         y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
+        sage: is_Polynomial(f)                                                          # optional - sage.symbolic
         False
     """
     from sage.misc.superseded import deprecation
@@ -572,7 +572,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following results in an element of the symbolic ring. ::
 
-            sage: f(x=sqrt(2))
+            sage: f(x=sqrt(2))                                                          # optional - sage.symbolic
             y^2 + sqrt(2)*y + sqrt(2)
 
         ::
@@ -1462,13 +1462,13 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + x
-            sage: g = f._symbolic_(SR); g
+            sage: g = f._symbolic_(SR); g                                               # optional - sage.symbolic
             x^3 + x
-            sage: g(x=2)
+            sage: g(x=2)                                                                # optional - sage.symbolic
             10
 
-            sage: g = SR(f)
-            sage: g(x=2)
+            sage: g = SR(f)                                                             # optional - sage.symbolic
+            sage: g(x=2)                                                                # optional - sage.symbolic
             10
 
         The polynomial has to be over a field of characteristic 0 (see
@@ -2972,10 +2972,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         Show the product in the symbolic ring::
 
-            sage: L = SR['x']
-            sage: var('a0,a1,b0,b1')
+            sage: L = SR['x']                                                           # optional - sage.symbolic
+            sage: var('a0,a1,b0,b1')                                                    # optional - sage.symbolic
             (a0, a1, b0, b1)
-            sage: L([a0,a1])._mul_generic(L([b0,b1]))
+            sage: L([a0, a1])._mul_generic(L([b0, b1]))                                 # optional - sage.symbolic
             a1*b1*x^2 + (a1*b0 + a0*b1)*x + a0*b0
 
         A non-commutative example::
@@ -3190,12 +3190,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         Show the product in the symbolic ring::
 
-            sage: L = SR['x']
-            sage: var('a0,a1,b0,b1')
+            sage: L = SR['x']                                                           # optional - sage.symbolic
+            sage: var('a0,a1,b0,b1')                                                    # optional - sage.symbolic
             (a0, a1, b0, b1)
-            sage: L([a0,a1])._mul_karatsuba(L([b0,b1]),0)
+            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 0)                            # optional - sage.symbolic
             a1*b1*x^2 + ((a0 + a1)*(b0 + b1) - a0*b0 - a1*b1)*x + a0*b0
-            sage: L([a0,a1])._mul_karatsuba(L([b0,b1]),2)
+            sage: L([a0, a1])._mul_karatsuba(L([b0, b1]), 2)                            # optional - sage.symbolic
             a1*b1*x^2 + (a1*b0 + a0*b1)*x + a0*b0
 
         A noncommutative example::
@@ -3823,8 +3823,8 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: cannot differentiate with respect to 2*x
 
-            sage: y = var("y")
-            sage: f._derivative(y)
+            sage: y = var("y")                                                  # optional - sage.symbolic
+            sage: f._derivative(y)                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -3845,8 +3845,8 @@ cdef class Polynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to 2*x
-            sage: y = var('y')
-            sage: R.gen()._derivative(y)
+            sage: y = var('y')                                                  # optional - sage.symbolic
+            sage: R.gen()._derivative(y)                                        # optional - sage.libs.pari, sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -4896,20 +4896,22 @@ cdef class Polynomial(CommutativePolynomial):
         One can easily add gcd functionality to new rings by providing a method
         ``_gcd_univariate_polynomial``::
 
-            sage: O = ZZ[-sqrt(5)]
-            sage: R.<x> = O[]
-            sage: a = O.1
-            sage: p = x + a
-            sage: q = x^2 - 5
-            sage: p.gcd(q)
+            sage: O = ZZ[-sqrt(5)]                                                      # optional - sage.rings.number_field, sage.symbolic
+            sage: R.<x> = O[]                                                           # optional - sage.rings.number_field, sage.symbolic
+            sage: a = O.1                                                               # optional - sage.rings.number_field, sage.symbolic
+            sage: p = x + a                                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: q = x^2 - 5                                                           # optional - sage.rings.number_field, sage.symbolic
+            sage: p.gcd(q)                                                              # optional - sage.rings.number_field, sage.symbolic
             Traceback (most recent call last):
             ...
-            NotImplementedError: Order in Number Field in a with defining polynomial x^2 - 5 with a = -2.236067977499790? does not provide a gcd implementation for univariate polynomials
-            sage: S.<x> = O.number_field()[]
-            sage: O._gcd_univariate_polynomial = lambda f,g : R(S(f).gcd(S(g)))
-            sage: p.gcd(q)
+            NotImplementedError: Order in Number Field in a
+             with defining polynomial x^2 - 5 with a = -2.236067977499790? does not
+             provide a gcd implementation for univariate polynomials
+            sage: S.<x> = O.number_field()[]                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: O._gcd_univariate_polynomial = lambda f,g : R(S(f).gcd(S(g)))         # optional - sage.rings.number_field, sage.symbolic
+            sage: p.gcd(q)                                                              # optional - sage.rings.number_field, sage.symbolic
             x + a
-            sage: del O._gcd_univariate_polynomial
+            sage: del O._gcd_univariate_polynomial                                      # optional - sage.rings.number_field, sage.symbolic
 
         Use multivariate implementation for polynomials over polynomials rings::
 
@@ -9159,37 +9161,37 @@ cdef class Polynomial(CommutativePolynomial):
             sage: z = PowerSeriesRing(QQ, 'z').gen()
             sage: P = PolynomialRing(QQ,'x')
             sage: x = P.gen()
-            sage: p = P(exp(z).list())
+            sage: p = P(z.exp().list())
             sage: m = x^5
             sage: n, d = p.rational_reconstruction(m, 4, 0)
-            sage: print((n ,d))
+            sage: print((n, d))
             (1/24*x^4 + 1/6*x^3 + 1/2*x^2 + x + 1, 1)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: m = x^3
             sage: n, d = p.rational_reconstruction(m, 1, 1)
-            sage: print((n ,d))
+            sage: print((n, d))
             (-x - 2, x - 2)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: p = P(log(1-z).list())
             sage: m = x^9
             sage: n, d = p.rational_reconstruction(m, 4, 4)
-            sage: print((n ,d))
+            sage: print((n, d))
             (25/6*x^4 - 130/3*x^3 + 105*x^2 - 70*x, x^4 - 20*x^3 + 90*x^2 - 140*x + 70)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: p = P(sqrt(1+z).list())
             sage: m = x^6
             sage: n, d = p.rational_reconstruction(m, 3, 2)
-            sage: print((n ,d))
+            sage: print((n, d))
             (1/6*x^3 + 3*x^2 + 8*x + 16/3, x^2 + 16/3*x + 16/3)
             sage: print(((p*d - n) % m ).is_zero())
             True
-            sage: p = P(exp(2*z).list())
+            sage: p = P((2*z).exp().list())
             sage: m = x^7
             sage: n, d = p.rational_reconstruction(m, 3, 3)
-            sage: print((n ,d))
+            sage: print((n, d))
             (-x^3 - 6*x^2 - 15*x - 15, x^3 - 6*x^2 + 15*x - 15)
             sage: print(((p*d - n) % m ).is_zero())
             True
@@ -9199,10 +9201,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: z = PowerSeriesRing(RR, 'z').gen()
             sage: P = PolynomialRing(RR, 'x')
             sage: x = P.gen()
-            sage: p = P(exp(2*z).list())
+            sage: p = P((2*z).exp().list())
             sage: m = x^7
             sage: n, d = p.rational_reconstruction(m, 3, 3)
-            sage: print((n ,d)) # absolute tolerance 1e-10
+            sage: print((n, d)) # absolute tolerance 1e-10
             (-x^3 - 6.0*x^2 - 15.0*x - 15.0, x^3 - 6.0*x^2 + 15.0*x - 15.0)
 
         .. SEEALSO::
@@ -9938,17 +9940,17 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[]
-            sage: f = (1+I)*x^2 + 3*x - I
-            sage: f.map_coefficients(lambda z: z.conjugate())
+            sage: R.<x> = SR[]                                                          # optional - sage.symbolic
+            sage: f = (1+I)*x^2 + 3*x - I                                               # optional - sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                           # optional - sage.symbolic
             (-I + 1)*x^2 + 3*x + I
             sage: R.<x> = ZZ[]
             sage: f = x^2 + 2
             sage: f.map_coefficients(lambda a: a + 42)
             43*x^2 + 44
-            sage: R.<x> = PolynomialRing(SR, sparse=True)
-            sage: f = (1+I)*x^(2^32) - I
-            sage: f.map_coefficients(lambda z: z.conjugate())
+            sage: R.<x> = PolynomialRing(SR, sparse=True)                               # optional - sage.symbolic
+            sage: f = (1+I)*x^(2^32) - I                                                # optional - sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                           # optional - sage.symbolic
             (-I + 1)*x^4294967296 + I
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: f = x^(2^32) + 2
@@ -11411,14 +11413,14 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[]
-            sage: R(0).is_term()
+            sage: R.<x> = SR[]                                                          # optional - sage.symbolic
+            sage: R(0).is_term()                                                        # optional - sage.symbolic
             False
-            sage: R(1).is_term()
+            sage: R(1).is_term()                                                        # optional - sage.symbolic
             True
-            sage: (3*x^5).is_term()
+            sage: (3*x^5).is_term()                                                     # optional - sage.symbolic
             True
-            sage: (1+3*x^5).is_term()
+            sage: (1+3*x^5).is_term()                                                   # optional - sage.symbolic
             False
         """
         if not self.__coeffs:
