@@ -129,6 +129,7 @@ include sage/rings/multi_power_series_ring_element.py
 graft sage/rings/semirings
 
 include sage/rings/tests.p*
+include sage/rings/big_oh.p*
 
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py

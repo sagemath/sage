@@ -113,9 +113,6 @@ lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecati
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari
 
-# Big-oh notation
-from .big_oh import O
-
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 

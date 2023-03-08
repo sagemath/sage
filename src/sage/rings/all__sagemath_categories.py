@@ -63,6 +63,9 @@ lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=3
 
 del lazy_import
 
+# Big-oh notation
+from .big_oh import O
+
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.
 
