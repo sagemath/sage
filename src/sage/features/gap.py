@@ -3,7 +3,8 @@ r"""
 Features for testing the presence of GAP packages
 """
 
-from . import Feature, FeatureTestResult
+from . import Feature, FeatureTestResult, PythonModule
+from .join_feature import JoinFeature
 
 
 class GapPackage(Feature):
@@ -48,3 +49,34 @@ class GapPackage(Feature):
         else:
             return FeatureTestResult(self, False,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+
+
+class sage__libs__gap(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.gap`
+    (the library interface to GAP) and :mod:`sage.interfaces.gap` (the pexpect
+    interface to GAP). By design, we do not distinguish between these two, in order
+    to facilitate the conversion of code from the pexpect interface to the library
+    interface.
+
+    EXAMPLES::
+
+        sage: from sage.features.gap import sage__libs__gap
+        sage: sage__libs__gap().is_present()                       # optional - sage.libs.gap
+        FeatureTestResult('sage.libs.gap', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.gap import sage__libs__gap
+            sage: isinstance(sage__libs__gap(), sage__libs__gap)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.gap',
+                             [PythonModule('sage.libs.gap.libgap'),
+                              PythonModule('sage.interfaces.gap')])
+
+
+def all_features():
+    return [sage__libs__gap()]
