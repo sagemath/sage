@@ -1581,8 +1581,6 @@ class QuadraticForm(SageObject):
             [ 1 0 ]
             [ * 1 ]
 
-        ::
-
             sage: Q1 = Q.change_ring(IntegerModRing(5)); Q1
             Quadratic form in 2 variables over Ring of integers modulo 5 with coefficients:
             [ 1 0 ]
@@ -1590,7 +1588,6 @@ class QuadraticForm(SageObject):
 
             sage: Q1([35,11])
             1
-
         """
         # Check that a canonical coercion is possible
         if not is_Ring(R):
@@ -1600,7 +1597,7 @@ class QuadraticForm(SageObject):
         # Return the coerced form
         return QuadraticForm(R, self.dim(), [R(x) for x in self.coefficients()])
 
-    base_change_to = deprecated_function_alias(35555, change_ring)
+    base_change_to = deprecated_function_alias(35248, change_ring)
 
     def level(self):
         r"""
