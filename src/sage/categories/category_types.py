@@ -438,7 +438,7 @@ class Category_over_base_ring(Category_over_base):
 
             sage: issubclass(Algebras(QQ).parent_class, VectorSpaces(CC).parent_class)                                  # optional - sage.modules
             False
-            sage: issubclass(Algebras(GF(2)).parent_class, VectorSpaces(GF(3)).parent_class)                            # optional - sage.modules, sage.libs.pari
+            sage: issubclass(Algebras(GF(2)).parent_class, VectorSpaces(GF(3)).parent_class)                            # optional - sage.modules sage.libs.pari
             True
 
         Check that :trac:`16618` is fixed: this `_subcategory_hook_`

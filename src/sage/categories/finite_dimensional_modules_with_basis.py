@@ -358,8 +358,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             We convert the input elements to ``self``::
 
-                sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                                   # optional - sage.modules, sage.combinat
-                sage: E.echelon_form([1, x + 2])                                                                        # optional - sage.modules, sage.combinat
+                sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                                   # optional - sage.modules sage.combinat
+                sage: E.echelon_form([1, x + 2])                                                                        # optional - sage.modules sage.combinat
                 [1, x]
             """
             # Make sure elements consists of elements of ``self``

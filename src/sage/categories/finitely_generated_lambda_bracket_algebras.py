@@ -38,12 +38,12 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                                                         # optional - sage.combinat, sage.modules
-                sage: Vir.ngens()                                                                                       # optional - sage.combinat, sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                                                         # optional - sage.combinat sage.modules
+                sage: Vir.ngens()                                                                                       # optional - sage.combinat sage.modules
                 2
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A2')                                                       # optional - sage.combinat, sage.modules
-                sage: V.ngens()                                                                                         # optional - sage.combinat, sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A2')                                                       # optional - sage.combinat sage.modules
+                sage: V.ngens()                                                                                         # optional - sage.combinat sage.modules
                 9
             """
             return len(self.gens())
@@ -54,12 +54,12 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                                                       # optional - sage.combinat, sage.modules
-                sage: V.gens()                                                                                          # optional - sage.combinat, sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                                                       # optional - sage.combinat sage.modules
+                sage: V.gens()                                                                                          # optional - sage.combinat sage.modules
                 (B[alpha[1]], B[alphacheck[1]], B[-alpha[1]], B['K'])
-                sage: V.gen(0)                                                                                          # optional - sage.combinat, sage.modules
+                sage: V.gen(0)                                                                                          # optional - sage.combinat sage.modules
                 B[alpha[1]]
-                sage: V.1                                                                                               # optional - sage.combinat, sage.modules
+                sage: V.1                                                                                               # optional - sage.combinat sage.modules
                 B[alphacheck[1]]
             """
             return self.gens()[i]
@@ -73,10 +73,10 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))                                # optional - sage.combinat, sage.modules
-                sage: V.some_elements()                                                                                 # optional - sage.combinat, sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))                                # optional - sage.combinat sage.modules
+                sage: V.some_elements()                                                                                 # optional - sage.combinat sage.modules
                 [e, h, f, K, ...]
-                sage: all(v.parent() is V for v in V.some_elements())                                                   # optional - sage.combinat, sage.modules
+                sage: all(v.parent() is V for v in V.some_elements())                                                   # optional - sage.combinat sage.modules
                 True
             """
             S = list(self.gens())

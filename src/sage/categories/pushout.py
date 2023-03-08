@@ -1600,9 +1600,9 @@ class MatrixFunctor(ConstructionFunctor):
             Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
             sage: F(ZZ) in F.codomain()                                                                             # optional - sage.modules
             True
-            sage: R(GF(2))                                                                                          # optional - sage.libs.pari, sage.modules
+            sage: R(GF(2))                                                                                          # optional - sage.libs.pari sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2
-            sage: R(GF(2)) in R.codomain()                                                                          # optional - sage.libs.pari, sage.modules
+            sage: R(GF(2)) in R.codomain()                                                                          # optional - sage.libs.pari sage.modules
             True
         """
         if nrows == ncols:
@@ -2160,7 +2160,7 @@ class SubspaceFunctor(ConstructionFunctor):
         [1 2 3]
         [0 3 6]
         sage: F = S.construction()[0]                                                                                   # optional - sage.modules
-        sage: F(GF(2)^3)                                                                                                # optional - sage.libs.pari, sage.modules
+        sage: F(GF(2)^3)                                                                                                # optional - sage.libs.pari sage.modules
         Vector space of degree 3 and dimension 2 over Finite Field of size 2
         User basis matrix:
         [1 0 1]
@@ -2184,7 +2184,7 @@ class SubspaceFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import SubspaceFunctor
             sage: M = ZZ^3                                                                                              # optional - sage.modules
             sage: F = SubspaceFunctor([M([1,2,3]), M([4,5,6])])                                                         # optional - sage.modules
-            sage: F(GF(5)^3)                                                                                            # optional - sage.libs.pari, sage.modules
+            sage: F(GF(5)^3)                                                                                            # optional - sage.libs.pari sage.modules
             Vector space of degree 3 and dimension 2 over Finite Field of size 5
             User basis matrix:
             [1 2 3]
@@ -2211,7 +2211,7 @@ class SubspaceFunctor(ConstructionFunctor):
             [1 2 3]
             [0 3 6]
             sage: F = S.construction()[0]                                                                               # optional - sage.modules
-            sage: F(GF(2)^3)    # indirect doctest                                                                      # optional - sage.libs.pari, sage.modules
+            sage: F(GF(2)^3)    # indirect doctest                                                                      # optional - sage.libs.pari sage.modules
             Vector space of degree 3 and dimension 2 over Finite Field of size 2
             User basis matrix:
             [1 0 1]
@@ -3188,9 +3188,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
               Defn: a -> -0.7548776662466928?
             sage: F1(QQ) == F2(QQ)                                                                                      # optional - sage.rings.number_field
             False
-            sage: F1(GF(5))                                                                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: F1(GF(5))                                                                                             # optional - sage.libs.pari sage.rings.number_field
             Univariate Quotient Polynomial Ring in a over Finite Field of size 5 with modulus a^3 + 4*a^2 + 1
-            sage: F2(GF(5))                                                                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: F2(GF(5))                                                                                             # optional - sage.libs.pari sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: ring extension with prescribed embedding is not implemented
@@ -3775,36 +3775,36 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         sage: M = matrix([[1, 2], [3, 4]]); M                                                                           # optional - sage.modules
         [1 2]
         [3 4]
-        sage: GSym01_action = TensorIndexAction(GSym01, M.parent())                                                     # optional - sage.groups, sage.modules
-        sage: GASym01_action = TensorIndexAction(GASym01, M.parent())                                                   # optional - sage.groups, sage.modules
-        sage: GSym01_action.act(GSym01.0, M)                                                                            # optional - sage.groups, sage.modules
+        sage: GSym01_action = TensorIndexAction(GSym01, M.parent())                                                     # optional - sage.groups sage.modules
+        sage: GASym01_action = TensorIndexAction(GASym01, M.parent())                                                   # optional - sage.groups sage.modules
+        sage: GSym01_action.act(GSym01.0, M)                                                                            # optional - sage.groups sage.modules
         [1 3]
         [2 4]
-        sage: GASym01_action.act(GASym01.0, M)                                                                          # optional - sage.groups, sage.modules
+        sage: GASym01_action.act(GASym01.0, M)                                                                          # optional - sage.groups sage.modules
         [-1 -3]
         [-2 -4]
-        sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01                                  # optional - sage.groups, sage.modules
+        sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01                                  # optional - sage.groups sage.modules
         (Permutation Group with generators [(0,1)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: list(Sym01.basis())                                                                                       # optional - sage.groups, sage.modules
+        sage: list(Sym01.basis())                                                                                       # optional - sage.groups sage.modules
         [B[0], B[1], B[2]]
-        sage: list(Sym01.basis().map(Sym01.lift))                                                                       # optional - sage.groups, sage.modules
+        sage: list(Sym01.basis().map(Sym01.lift))                                                                       # optional - sage.groups sage.modules
         [
         [1 0]  [0 1]  [0 0]
         [0 0], [1 0], [0 1]
         ]
-        sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action); ASym01                              # optional - sage.groups, sage.modules
+        sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action); ASym01                              # optional - sage.groups sage.modules
         (Permutation Group with generators [(0,1)(2,3)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: list(ASym01.basis())                                                                                      # optional - sage.groups, sage.modules
+        sage: list(ASym01.basis())                                                                                      # optional - sage.groups sage.modules
         [B[0]]
-        sage: list(ASym01.basis().map(ASym01.lift))                                                                     # optional - sage.groups, sage.modules
+        sage: list(ASym01.basis().map(ASym01.lift))                                                                     # optional - sage.groups sage.modules
         [
         [ 0  1]
         [-1  0]
         ]
         sage: from sage.categories.pushout import pushout
-        sage: pushout(Sym01, QQ)                                                                                        # optional - sage.groups, sage.modules
+        sage: pushout(Sym01, QQ)                                                                                        # optional - sage.groups sage.modules
         (Permutation Group with generators [(0,1)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
     """
@@ -3813,12 +3813,12 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: G = SymmetricGroup(3); G.rename('S3')                                                                 # optional - sage.groups, sage.modules
-            sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')                                                # optional - sage.groups, sage.modules
-            sage: action = lambda g, x: M.term(g(x))                                                                    # optional - sage.groups, sage.modules
-            sage: I = M.invariant_module(G, action_on_basis=action); I                                                  # optional - sage.groups, sage.modules
+            sage: G = SymmetricGroup(3); G.rename('S3')                                                                 # optional - sage.groups sage.modules
+            sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')                                                # optional - sage.groups sage.modules
+            sage: action = lambda g, x: M.term(g(x))                                                                    # optional - sage.groups sage.modules
+            sage: I = M.invariant_module(G, action_on_basis=action); I                                                  # optional - sage.groups sage.modules
             (S3)-invariant submodule of M
-            sage: I.construction()                                                                                      # optional - sage.groups, sage.modules
+            sage: I.construction()                                                                                      # optional - sage.groups sage.modules
             (EquivariantSubobjectConstructionFunctor,
             Representation of S3 indexed by {1, 2, 3} over Integer Ring)
         """
@@ -3837,13 +3837,13 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
-            sage: M2 = MatrixSpace(QQ, 2); M2                                                                           # optional - sage.groups, sage.modules
+            sage: M2 = MatrixSpace(QQ, 2); M2                                                                           # optional - sage.groups sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: F = EquivariantSubobjectConstructionFunctor(M2,                                                       # optional - sage.groups, sage.modules
+            sage: F = EquivariantSubobjectConstructionFunctor(M2,                                                       # optional - sage.groups sage.modules
             ....:                                             operator.mul, 'left',
             ....:                                             operator.mul, 'right'); F
             EquivariantSubobjectConstructionFunctor
-            sage: F(M2)                                                                                                 # optional - sage.groups, sage.modules
+            sage: F(M2)                                                                                                 # optional - sage.groups sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: non-trivial other_action=<built-in function mul> is not implemented
@@ -3877,7 +3877,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C
-        sage: FG == FS                                                              # optional - sage.libs.gap, sage.libs.singular
+        sage: FG == FS                                                              # optional - sage.libs.gap sage.libs.singular
         False
         sage: FG == loads(dumps(FG))                                                # optional - sage.libs.gap
         True

@@ -52,9 +52,9 @@ class LieConformalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                                   # optional - sage.combinat, sage.modules
-                    sage: B = V._indices                                                                                # optional - sage.combinat, sage.modules
-                    sage: V._even_odd_on_basis(B(('G', 1)))                                                             # optional - sage.combinat, sage.modules
+                    sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                                   # optional - sage.combinat sage.modules
+                    sage: B = V._indices                                                                                # optional - sage.combinat sage.modules
+                    sage: V._even_odd_on_basis(B(('G', 1)))                                                             # optional - sage.combinat sage.modules
                     1
                 """
                 return self._parity[self.monomial((m[0],0))]
