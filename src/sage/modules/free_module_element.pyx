@@ -5064,7 +5064,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             (4, 5, 6)
             sage: parent(w[39893])                                              # optional - sage.libs.pari
             Finite Field of size 17
-            sage: w[39893] = sqrt(2)                                            # optional - sage.libs.pari, sage.symbolic
+            sage: w[39893] = sqrt(2)                                            # optional - sage.libs.pari sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: self must be a numeric expression

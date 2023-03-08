@@ -3709,12 +3709,12 @@ cdef class Matrix(Matrix1):
             sage: a = Q.gen(0)                                                  # optional - sage.rings.number_field
             sage: A = matrix(Q, [[  2, 5-a, 15-a],                              # optional - sage.rings.number_field
             ....:                [2+a,   a, -7 + 5*a]])
-            sage: result = A._right_kernel_matrix_over_number_field()           # optional - sage.rings.number_field, sage.libs.pari
-            sage: result[0]                                                     # optional - sage.rings.number_field, sage.libs.pari
+            sage: result = A._right_kernel_matrix_over_number_field()           # optional - sage.rings.number_field sage.libs.pari
+            sage: result[0]                                                     # optional - sage.rings.number_field sage.libs.pari
             'pivot-pari-numberfield'
-            sage: P = result[1]; P                                              # optional - sage.rings.number_field, sage.libs.pari
+            sage: P = result[1]; P                                              # optional - sage.rings.number_field sage.libs.pari
             [-a -3  1]
-            sage: A*P.transpose() == zero_matrix(Q, 2, 1)                       # optional - sage.rings.number_field, sage.libs.pari
+            sage: A*P.transpose() == zero_matrix(Q, 2, 1)                       # optional - sage.rings.number_field sage.libs.pari
             True
 
         TESTS:
@@ -3723,16 +3723,16 @@ cdef class Matrix(Matrix1):
 
             sage: Q = QuadraticField(-7)                                        # optional - sage.rings.number_field
             sage: A = matrix(Q, 0, 2)                                           # optional - sage.rings.number_field
-            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field, sage.libs.pari
+            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field sage.libs.pari
             [1 0]
             [0 1]
-            sage: A = matrix(Q, 2, 0)                                           # optional - sage.rings.number_field, sage.libs.pari
-            sage: A._right_kernel_matrix_over_number_field()[1].parent()        # optional - sage.rings.number_field, sage.libs.pari
+            sage: A = matrix(Q, 2, 0)                                           # optional - sage.rings.number_field sage.libs.pari
+            sage: A._right_kernel_matrix_over_number_field()[1].parent()        # optional - sage.rings.number_field sage.libs.pari
             Full MatrixSpace of 0 by 0 dense matrices
              over Number Field in a with defining polynomial x^2 + 7
               with a = 2.645751311064591?*I
-            sage: A = zero_matrix(Q, 4, 3)                                      # optional - sage.rings.number_field, sage.libs.pari
-            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field, sage.libs.pari
+            sage: A = zero_matrix(Q, 4, 3)                                      # optional - sage.rings.number_field sage.libs.pari
+            sage: A._right_kernel_matrix_over_number_field()[1]                 # optional - sage.rings.number_field sage.libs.pari
             [1 0 0]
             [0 1 0]
             [0 0 1]
@@ -4078,10 +4078,10 @@ cdef class Matrix(Matrix1):
             [    -2 -a - 1      0      1]
             sage: A*C.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field
             True
-            sage: P = A.right_kernel_matrix(algorithm='pari', basis='pivot'); P         # optional - sage.rings.number_field, sage.libs.pari
+            sage: P = A.right_kernel_matrix(algorithm='pari', basis='pivot'); P         # optional - sage.rings.number_field sage.libs.pari
             [    -a     -3      1      0]
             [    -2 -a - 1      0      1]
-            sage: A*P.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field, sage.libs.pari
+            sage: A*P.transpose() == zero_matrix(Q, 2, 2)                               # optional - sage.rings.number_field sage.libs.pari
             True
             sage: E = A.right_kernel_matrix(algorithm='default', basis='echelon'); E    # optional - sage.rings.number_field
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
@@ -9552,10 +9552,10 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: A = matrix(QQbar, [[(1/sqrt(5))*(1+i), (1/sqrt(55))*(3+2*I), (1/sqrt(22))*(2+2*I)],       # optional - sage.symbolic, sage.rings.number_field
+            sage: A = matrix(QQbar, [[(1/sqrt(5))*(1+i), (1/sqrt(55))*(3+2*I), (1/sqrt(22))*(2+2*I)],       # optional - sage.symbolic sage.rings.number_field
             ....:                    [(1/sqrt(5))*(1-i), (1/sqrt(55))*(2+2*I),  (1/sqrt(22))*(-3+I)],
             ....:                    [    (1/sqrt(5))*I, (1/sqrt(55))*(3-5*I),    (1/sqrt(22))*(-2)]])
-            sage: A.is_unitary()                                                                            # optional - sage.symbolic, sage.rings.number_field
+            sage: A.is_unitary()                                                                            # optional - sage.symbolic sage.rings.number_field
             True
 
         A permutation matrix is always orthogonal. ::
@@ -9569,9 +9569,9 @@ cdef class Matrix(Matrix1):
             [0 0 0 1 0]
             sage: P.is_unitary()                                                                            # optional - sage.combinat
             True
-            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat, sage.libs.pari
+            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat sage.libs.pari
             True
-            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat, sage.libs.pari
+            sage: P.change_ring(GF(3)).is_unitary()                                                         # optional - sage.combinat sage.libs.pari
             True
 
         A square matrix far from unitary. ::
@@ -11954,9 +11954,9 @@ cdef class Matrix(Matrix1):
         algebraic closure of this field to find the change-of-basis
         matrix::
 
-            sage: cox = posets.TamariLattice(3).coxeter_transformation()        # optional - sage.graphs, sage.combinat, sage.libs.pari
-            sage: M = cox.change_ring(GF(3))                                    # optional - sage.graphs, sage.combinat, sage.libs.pari
-            sage: M.is_similar(M**3, True)  # long time                         # optional - sage.graphs, sage.combinat, sage.libs.pari
+            sage: cox = posets.TamariLattice(3).coxeter_transformation()        # optional - sage.graphs sage.combinat sage.libs.pari
+            sage: M = cox.change_ring(GF(3))                                    # optional - sage.graphs sage.combinat sage.libs.pari
+            sage: M.is_similar(M**3, True)  # long time                         # optional - sage.graphs sage.combinat sage.libs.pari
             (
                   [1 0 0 0 0]
                   [0 1 1 0 2]
@@ -12912,32 +12912,32 @@ cdef class Matrix(Matrix1):
 
         A matrix containing real roots::
 
-            sage: A = matrix(AA, [ [1,       0,       sqrt(2)],
+            sage: A = matrix(AA, [ [1,       0,       sqrt(2)],                 # optional - sage.rings.number_field sage.symbolic
             ....:                  [0,       sqrt(3), 0      ],
             ....:                  [sqrt(2), 0,       sqrt(5)] ])
-            sage: A.is_positive_definite()
+            sage: A.is_positive_definite()                                      # optional - sage.rings.number_field sage.symbolic
             True
-            sage: B = matrix(AA, [ [2*sqrt(5) + 5, 0, -sqrt(8*sqrt(5) + 18)],
+            sage: B = matrix(AA, [ [2*sqrt(5) + 5, 0, -sqrt(8*sqrt(5) + 18)],   # optional - sage.rings.number_field sage.symbolic
             ....:                  [0,             sqrt(1/3),             0],
             ....:                  [-sqrt(8*sqrt(5) + 18), 0, sqrt(5) + 2] ])
-            sage: A.inverse_positive_definite() == B
+            sage: A.inverse_positive_definite() == B                            # optional - sage.rings.number_field sage.symbolic
             True
-            sage: A*B == A.matrix_space().identity_matrix()
+            sage: A*B == A.matrix_space().identity_matrix()                     # optional - sage.rings.number_field sage.symbolic
             True
 
         A Hermitian (but not symmetric) matrix with complex entries::
 
-            sage: A = matrix(QQbar, [ [ 1,  0,        I  ],
+            sage: A = matrix(QQbar, [ [ 1,  0,        I  ],                     # optional - sage.rings.number_field sage.symbolic
             ....:                     [ 0,  sqrt(5),  0  ],
             ....:                     [-I,  0,        3  ] ])
-            sage: A.is_positive_definite()
+            sage: A.is_positive_definite()                                      # optional - sage.rings.number_field sage.symbolic
             True
-            sage: B = matrix(QQbar, [ [ 3/2, 0,        -I/2 ],
+            sage: B = matrix(QQbar, [ [ 3/2, 0,        -I/2 ],                  # optional - sage.rings.number_field sage.symbolic
             ....:                     [ 0,   sqrt(1/5), 0   ],
             ....:                     [ I/2, 0,         1/2 ] ])
-            sage: A.inverse_positive_definite() == B
+            sage: A.inverse_positive_definite() == B                            # optional - sage.rings.number_field sage.symbolic
             True
-            sage: A*B == A.matrix_space().identity_matrix()
+            sage: A*B == A.matrix_space().identity_matrix()                     # optional - sage.rings.number_field sage.symbolic
             True
 
         TESTS:
@@ -13356,11 +13356,11 @@ cdef class Matrix(Matrix1):
         absolute value must be handled carefully.  This tests that
         situation in the case of cyclotomic fields.  ::
 
-            sage: C = SymmetricGroup(5).character_table()                       # optional - sage.groups, sage.rings.number_field
-            sage: C.base_ring()                                                 # optional - sage.groups, sage.rings.number_field
+            sage: C = SymmetricGroup(5).character_table()                       # optional - sage.groups sage.rings.number_field
+            sage: C.base_ring()                                                 # optional - sage.groups sage.rings.number_field
             Cyclotomic Field of order 1 and degree 1
-            sage: P, L, U = C.LU(pivot='partial')                               # optional - sage.groups, sage.rings.number_field
-            sage: C == P*L*U                                                    # optional - sage.groups, sage.rings.number_field
+            sage: P, L, U = C.LU(pivot='partial')                               # optional - sage.groups sage.rings.number_field
+            sage: C == P*L*U                                                    # optional - sage.groups sage.rings.number_field
             True
 
         Check that :trac:`32736` is solved::
