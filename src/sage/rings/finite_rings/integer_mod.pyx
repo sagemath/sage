@@ -354,7 +354,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: TestSuite(Zmod(2^10 * 3^5)).run()
             sage: TestSuite(Zmod(2^30 * 3^50 * 5^20)).run()
 
-            sage: GF(29)(SR(1/3))                                               # optional - sage.libs.pari, sage.symbolic
+            sage: GF(29)(SR(1/3))                                               # optional - sage.libs.pari sage.symbolic
             10
             sage: Integers(30)(QQ['x'](1/7))
             13

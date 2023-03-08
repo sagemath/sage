@@ -457,25 +457,25 @@ class Groups(CategoryWithAxiom):
                 sage: g.conjugacy_class()                                                                               # optional - sage.groups
                 Conjugacy class of (1,3,5,2,4) in Dihedral group of order 10 as a permutation group
 
-                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                                                   # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                                                   # optional - sage.groups sage.libs.pari sage.modules
                 ....:                  matrix(GF(5), 2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                                                              # optional - sage.groups, sage.libs.pari, sage.modules
-                sage: h.conjugacy_class()                                                                               # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                                                              # optional - sage.groups sage.libs.pari sage.modules
+                sage: h.conjugacy_class()                                                                               # optional - sage.groups sage.libs.pari sage.modules
                 Conjugacy class of [1 2]
                 [4 1] in Matrix group over Finite Field of size 5 with 2 generators (
                 [1 2]  [1 1]
                 [4 1], [0 1]
                 )
 
-                sage: G = SL(2, GF(2))                                                                                  # optional - sage.groups, sage.libs.pari, sage.modules
-                sage: g = G.gens()[0]                                                                                   # optional - sage.groups, sage.libs.pari, sage.modules
-                sage: g.conjugacy_class()                                                                               # optional - sage.groups, sage.libs.pari, sage.modules
+                sage: G = SL(2, GF(2))                                                                                  # optional - sage.groups sage.libs.pari sage.modules
+                sage: g = G.gens()[0]                                                                                   # optional - sage.groups sage.libs.pari sage.modules
+                sage: g.conjugacy_class()                                                                               # optional - sage.groups sage.libs.pari sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
-                sage: G = SL(2, QQ)                                                                                     # optional - sage.groups, sage.modules
-                sage: g = G([[1,1], [0,1]])                                                                             # optional - sage.groups, sage.modules
-                sage: g.conjugacy_class()                                                                               # optional - sage.groups, sage.modules
+                sage: G = SL(2, QQ)                                                                                     # optional - sage.groups sage.modules
+                sage: g = G([[1,1], [0,1]])                                                                             # optional - sage.groups sage.modules
+                sage: g.conjugacy_class()                                                                               # optional - sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Rational Field
             """
@@ -623,13 +623,13 @@ class Groups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([SymmetricGroup(10), SL(2,GF(3))])                                      # optional - sage.groups, sage.libs.pari
-                    sage: C.order()                                                                                     # optional - sage.groups, sage.libs.pari
+                    sage: C = cartesian_product([SymmetricGroup(10), SL(2,GF(3))])                                      # optional - sage.groups sage.libs.pari
+                    sage: C.order()                                                                                     # optional - sage.groups sage.libs.pari
                     87091200
 
                 TESTS::
 
-                    sage: C.order.__module__                                                                            # optional - sage.groups, sage.libs.pari
+                    sage: C.order.__module__                                                                            # optional - sage.groups sage.libs.pari
                     'sage.categories.groups'
 
                 .. TODO::

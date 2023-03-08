@@ -711,11 +711,11 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat, sage.groups
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat, sage.groups
-                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat, sage.groups
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat sage.groups
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat sage.groups
+                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat sage.groups
                         True
-                        sage: PvW0.one()                                                                                # optional - sage.combinat, sage.groups
+                        sage: PvW0.one()                                                                                # optional - sage.combinat sage.groups
                         1
                     """
                     return self(self.realization_of().a_realization().one())
@@ -1147,16 +1147,16 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: Out = Sets().WithRealizations().example().Out(); Out                                          # optional - sage.combinat, sage.modules
+                    sage: Out = Sets().WithRealizations().example().Out(); Out                                          # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-                    sage: Out.product                                                                                   # optional - sage.combinat, sage.modules
+                    sage: Out.product                                                                                   # optional - sage.combinat sage.modules
                     <bound method Magmas.Realizations.ParentMethods.product_by_coercion
                      of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
-                    sage: Out.product.__module__                                                                        # optional - sage.combinat, sage.modules
+                    sage: Out.product.__module__                                                                        # optional - sage.combinat sage.modules
                     'sage.categories.magmas'
-                    sage: x = Out.an_element()                                                                          # optional - sage.combinat, sage.modules
-                    sage: y = Out.an_element()                                                                          # optional - sage.combinat, sage.modules
-                    sage: Out.product(x, y)                                                                             # optional - sage.combinat, sage.modules
+                    sage: x = Out.an_element()                                                                          # optional - sage.combinat sage.modules
+                    sage: y = Out.an_element()                                                                          # optional - sage.combinat sage.modules
+                    sage: Out.product(x, y)                                                                             # optional - sage.combinat sage.modules
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
 
                 """

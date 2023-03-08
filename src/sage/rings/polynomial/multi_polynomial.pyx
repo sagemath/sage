@@ -993,9 +993,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: F.<zeta> = CyclotomicField(8)                                                     # optional - sage.rings.number_field
             sage: P.<x,y> = F[]                                                                     # optional - sage.rings.number_field
             sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y                                     # optional - sage.rings.number_field
-            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
-            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
@@ -1003,9 +1003,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: S.<z> = F[]                                                                       # optional - sage.rings.number_field
             sage: P.<x,y> = S[]                                                                     # optional - sage.rings.number_field
             sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z                             # optional - sage.rings.number_field
-            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
-            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap, sage.rings.number_field
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         R = gap(self.parent())
@@ -1753,10 +1753,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']                      # optional - sage.rings.number_field, sage.symbolic
-            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                                      # optional - sage.rings.number_field, sage.symbolic
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']                      # optional - sage.rings.number_field sage.symbolic
+            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                                      # optional - sage.rings.number_field sage.symbolic
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
-            sage: f.denominator()                                                                   # optional - sage.rings.number_field, sage.symbolic
+            sage: f.denominator()                                                                   # optional - sage.rings.number_field sage.symbolic
             102
 
         Finally, we try to compute the denominator of a polynomial with
@@ -1830,12 +1830,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']                     # optional - sage.rings.number_field, sage.symbolic
-            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                                                # optional - sage.rings.number_field, sage.symbolic
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']                     # optional - sage.rings.number_field sage.symbolic
+            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                                                # optional - sage.rings.number_field sage.symbolic
             1/17*y^19 - 2/3*x + 1/3
-            sage: f.numerator()                                                                     # optional - sage.rings.number_field, sage.symbolic
+            sage: f.numerator()                                                                     # optional - sage.rings.number_field sage.symbolic
             3*y^19 - 34*x + 17
-            sage: f == f.numerator()                                                                # optional - sage.rings.number_field, sage.symbolic
+            sage: f == f.numerator()                                                                # optional - sage.rings.number_field sage.symbolic
             False
 
         We try to compute the numerator of a polynomial with coefficients in
@@ -1854,9 +1854,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']                    # optional - sage.rings.number_field, sage.symbolic
-            sage: f = K.random_element()                                                            # optional - sage.rings.number_field, sage.symbolic
-            sage: f.numerator() / f.denominator() == f                                              # optional - sage.rings.number_field, sage.symbolic
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']                    # optional - sage.rings.number_field sage.symbolic
+            sage: f = K.random_element()                                                            # optional - sage.rings.number_field sage.symbolic
+            sage: f.numerator() / f.denominator() == f                                              # optional - sage.rings.number_field sage.symbolic
             True
             sage: R = RR['x,y,z']
             sage: f = R.random_element()

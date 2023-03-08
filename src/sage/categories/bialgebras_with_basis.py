@@ -127,13 +127,13 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Compute the convolution product of the antipode with itself and the
             identity map on group algebra of the symmetric group::
 
-                sage: G = SymmetricGroup(3)                                                                             # optional - sage.groups, sage.combinat
-                sage: QG = GroupAlgebra(G, QQ)                                                                          # optional - sage.groups, sage.combinat
-                sage: x = QG.sum_of_terms([(p, p.number_of_peaks() + p.number_of_inversions())                          # optional - sage.groups, sage.combinat
+                sage: G = SymmetricGroup(3)                                                                             # optional - sage.groups sage.combinat
+                sage: QG = GroupAlgebra(G, QQ)                                                                          # optional - sage.groups sage.combinat
+                sage: x = QG.sum_of_terms([(p, p.number_of_peaks() + p.number_of_inversions())                          # optional - sage.groups sage.combinat
                 ....:                      for p in Permutations(3)]); x
                 2*[1, 3, 2] + [2, 1, 3] + 3*[2, 3, 1] + 2*[3, 1, 2] + 3*[3, 2, 1]
-                sage: T = QG.convolution_product(Antipode, Antipode, Id)                                                # optional - sage.groups, sage.combinat
-                sage: T(x)                                                                                              # optional - sage.groups, sage.combinat
+                sage: T = QG.convolution_product(Antipode, Antipode, Id)                                                # optional - sage.groups sage.combinat
+                sage: T(x)                                                                                              # optional - sage.groups sage.combinat
                 2*[1, 3, 2] + [2, 1, 3] + 2*[2, 3, 1] + 3*[3, 1, 2] + 3*[3, 2, 1]
             """
             onbasis = lambda x: self.term(x).convolution_product(*maps)

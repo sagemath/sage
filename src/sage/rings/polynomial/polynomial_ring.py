@@ -47,17 +47,17 @@ structures in Sage)::
 
 We create a polynomial ring over a quaternion algebra::
 
-    sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                                                  # optional - sage.combinat, sage.modules
-    sage: R.<w> = PolynomialRing(A, sparse=True)                                                    # optional - sage.combinat, sage.modules
-    sage: f = w^3 + (i+j)*w + 1                                                                     # optional - sage.combinat, sage.modules
-    sage: f                                                                                         # optional - sage.combinat, sage.modules
+    sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                                                  # optional - sage.combinat sage.modules
+    sage: R.<w> = PolynomialRing(A, sparse=True)                                                    # optional - sage.combinat sage.modules
+    sage: f = w^3 + (i+j)*w + 1                                                                     # optional - sage.combinat sage.modules
+    sage: f                                                                                         # optional - sage.combinat sage.modules
     w^3 + (i + j)*w + 1
-    sage: f^2                                                                                       # optional - sage.combinat, sage.modules
+    sage: f^2                                                                                       # optional - sage.combinat sage.modules
     w^6 + (2*i + 2*j)*w^4 + 2*w^3 - 2*w^2 + (2*i + 2*j)*w + 1
-    sage: f = w + i ; g = w + j                                                                     # optional - sage.combinat, sage.modules
-    sage: f * g                                                                                     # optional - sage.combinat, sage.modules
+    sage: f = w + i ; g = w + j                                                                     # optional - sage.combinat sage.modules
+    sage: f * g                                                                                     # optional - sage.combinat sage.modules
     w^2 + (i + j)*w + k
-    sage: g * f                                                                                     # optional - sage.combinat, sage.modules
+    sage: g * f                                                                                     # optional - sage.combinat sage.modules
     w^2 + (i + j)*w - k
 
 :trac:`9944` introduced some changes related with
@@ -404,7 +404,7 @@ class PolynomialRing_general(ring.Algebra):
         A test from :trac:`14485` ::
 
             sage: x = SR.var('x')                                                       # optional - sage.symbolic
-            sage: QQbar[x](x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5)                       # optional - sage.rings.number_field, sage.symbolic
+            sage: QQbar[x](x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5)                       # optional - sage.rings.number_field sage.symbolic
             x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5
 
         Check support for unicode characters (:trac:`29280`)::
@@ -1741,9 +1741,9 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         EXAMPLES::
 
             sage: R = QQ['x']
-            sage: W = R.weyl_algebra(); W                                                                               # optional - sage.combinat, sage.modules
+            sage: W = R.weyl_algebra(); W                                                                               # optional - sage.combinat sage.modules
             Differential Weyl algebra of polynomials in x over Rational Field
-            sage: W.polynomial_ring() == R                                                                              # optional - sage.combinat, sage.modules
+            sage: W.polynomial_ring() == R                                                                              # optional - sage.combinat sage.modules
             True
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra

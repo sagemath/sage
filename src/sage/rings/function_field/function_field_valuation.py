@@ -353,9 +353,9 @@ class FunctionFieldValuationFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
             sage: R.<y> = K[]                                                           # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 + y + x^3)                                    # optional - sage.libs.pari, sage.libs.singular
-            sage: v = K.valuation(1/x)                                                  # optional - sage.libs.pari, sage.libs.singular
-            sage: w = v.extension(L) # indirect doctest                                 # optional - sage.libs.pari, sage.libs.singular
+            sage: L.<y> = K.extension(y^2 + y + x^3)                                    # optional - sage.libs.pari sage.libs.singular
+            sage: v = K.valuation(1/x)                                                  # optional - sage.libs.pari sage.libs.singular
+            sage: w = v.extension(L) # indirect doctest                                 # optional - sage.libs.pari sage.libs.singular
 
         """
         from sage.categories.function_fields import FunctionFields

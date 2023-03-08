@@ -147,7 +147,7 @@ And finally build the line arrangement::
     sage: p = PseudolineArrangement(permutations)                                                           # optional - sage.combinat
     sage: print(p)                                                                                          # optional - sage.combinat
     Arrangement of pseudolines of size 20
-    sage: p.show(figsize=[20,8])                                                                            # optional - sage.combinat, sage.plot
+    sage: p.show(figsize=[20,8])                                                                            # optional - sage.combinat sage.plot
 
 Author
 ^^^^^^

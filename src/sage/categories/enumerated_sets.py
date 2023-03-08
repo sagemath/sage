@@ -469,7 +469,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
                 sage: len(GF(5))                                                                                        # optional - sage.libs.pari
                 5
-                sage: len(MatrixSpace(GF(2), 3, 3))                                                                     # optional - sage.libs.pari, sage.modules
+                sage: len(MatrixSpace(GF(2), 3, 3))                                                                     # optional - sage.libs.pari sage.modules
                 512
             """
             from sage.rings.infinity import Infinity

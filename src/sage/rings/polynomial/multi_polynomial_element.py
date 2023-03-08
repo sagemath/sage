@@ -488,7 +488,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         EXAMPLES::
 
             sage: R = GF(13)['a,b']['c,d']                                      # optional - sage.libs.pari
-            sage: macaulay2(R('a^2 + c'))                                       # optional - macaulay2, sage.libs.pari
+            sage: macaulay2(R('a^2 + c'))                                       # optional - macaulay2 sage.libs.pari
                  2
             c + a
 
@@ -497,7 +497,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Elements of the base ring are coerced to the polynomial ring
         correctly::
 
-            sage: macaulay2(R('a^2')).ring()._operator('===', R)                # optional - macaulay2, sage.libs.pari
+            sage: macaulay2(R('a^2')).ring()._operator('===', R)                # optional - macaulay2 sage.libs.pari
             true
         """
         if macaulay2 is None:
@@ -990,11 +990,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Scaling should not change the result::
 
             sage: R.<x, y> = PolynomialRing(QQbar, 2)                           # optional - sage.rings.number_field
-            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2                # optional - sage.rings.number_field, sage.symbolic
-            sage: f.global_height()                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: f = 1/25*x^2 + 25/3*x + 1 + QQbar(sqrt(2))*y^2                # optional - sage.rings.number_field sage.symbolic
+            sage: f.global_height()                                             # optional - sage.rings.number_field sage.symbolic
             6.43775164973640
-            sage: g = 100 * f                                                   # optional - sage.rings.number_field, sage.symbolic
-            sage: g.global_height()                                             # optional - sage.rings.number_field, sage.symbolic
+            sage: g = 100 * f                                                   # optional - sage.rings.number_field sage.symbolic
+            sage: g.global_height()                                             # optional - sage.rings.number_field sage.symbolic
             6.43775164973640
 
         ::
@@ -1074,7 +1074,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: T.<t,w> = PolynomialRing(K, implementation='generic')                 # optional - sage.rings.number_field
             sage: I = K.ideal(3)                                                        # optional - sage.rings.number_field
             sage: f = 1/3*t*w + 3                                                       # optional - sage.rings.number_field
-            sage: f.local_height(I)                                                     # optional - sage.rings.number_field, sage.symbolic
+            sage: f.local_height(I)                                                     # optional - sage.rings.number_field sage.symbolic
             1.09861228866811
 
         ::

@@ -350,19 +350,19 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: F = AlgebrasWithBasis(QQ).example()                                                               # optional - sage.combinat, sage.modules
-                sage: F                                                                                                 # optional - sage.combinat, sage.modules
+                sage: F = AlgebrasWithBasis(QQ).example()                                                               # optional - sage.combinat sage.modules
+                sage: F                                                                                                 # optional - sage.combinat sage.modules
                 An example of an algebra with basis:
                  the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: a, b, c = F.algebra_generators()                                                                  # optional - sage.combinat, sage.modules
-                sage: F.bracket(a, b)                                                                                   # optional - sage.combinat, sage.modules
+                sage: a, b, c = F.algebra_generators()                                                                  # optional - sage.combinat sage.modules
+                sage: F.bracket(a, b)                                                                                   # optional - sage.combinat sage.modules
                 B[word: ab] - B[word: ba]
 
             This measures the default of commutation between `x` and `y`.
             `F` endowed with the bracket operation is a Lie algebra;
             in particular, it satisfies Jacobi's identity::
 
-                sage: F.bracket(F.bracket(a,b), c) + F.bracket(F.bracket(b,c), a) + F.bracket(F.bracket(c,a), b)        # optional - sage.combinat, sage.modules
+                sage: F.bracket(F.bracket(a,b), c) + F.bracket(F.bracket(b,c), a) + F.bracket(F.bracket(c,a), b)        # optional - sage.combinat sage.modules
                 0
             """
             return x * y - y * x
@@ -783,31 +783,31 @@ class Rings(CategoryWithAxiom):
             So, we need a bit of effort to make the following example work with the
             category framework::
 
-                sage: F.<x,y,z> = FreeAlgebra(QQ)                                                                       # optional - sage.combinat, sage.modules
-                sage: from sage.rings.noncommutative_ideals import Ideal_nc                                             # optional - sage.combinat, sage.modules
+                sage: F.<x,y,z> = FreeAlgebra(QQ)                                                                       # optional - sage.combinat sage.modules
+                sage: from sage.rings.noncommutative_ideals import Ideal_nc                                             # optional - sage.combinat sage.modules
                 sage: from itertools import product
-                sage: class PowerIdeal(Ideal_nc):                                                                       # optional - sage.combinat, sage.modules
+                sage: class PowerIdeal(Ideal_nc):                                                                       # optional - sage.combinat sage.modules
                 ....:  def __init__(self, R, n):
                 ....:      self._power = n
                 ....:      Ideal_nc.__init__(self, R, [R.prod(m) for m in product(R.gens(), repeat=n)])
                 ....:  def reduce(self, x):
                 ....:      R = self.ring()
                 ....:      return add([c*R(m) for m,c in x if len(m) < self._power], R(0))
-                sage: I = PowerIdeal(F, 3)                                                                              # optional - sage.combinat, sage.modules
-                sage: Q = Rings().parent_class.quotient(F, I); Q                                                        # optional - sage.combinat, sage.modules
+                sage: I = PowerIdeal(F, 3)                                                                              # optional - sage.combinat sage.modules
+                sage: Q = Rings().parent_class.quotient(F, I); Q                                                        # optional - sage.combinat sage.modules
                 Quotient of Free Algebra on 3 generators (x, y, z) over Rational Field
                  by the ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y, x*z^2,
                                y*x^2, y*x*y, y*x*z, y^2*x, y^3, y^2*z, y*z*x, y*z*y, y*z^2,
                                z*x^2, z*x*y, z*x*z, z*y*x, z*y^2, z*y*z, z^2*x, z^2*y, z^3)
-                sage: Q.0                                                                                               # optional - sage.combinat, sage.modules
+                sage: Q.0                                                                                               # optional - sage.combinat sage.modules
                 xbar
-                sage: Q.1                                                                                               # optional - sage.combinat, sage.modules
+                sage: Q.1                                                                                               # optional - sage.combinat sage.modules
                 ybar
-                sage: Q.2                                                                                               # optional - sage.combinat, sage.modules
+                sage: Q.2                                                                                               # optional - sage.combinat sage.modules
                 zbar
-                sage: Q.0*Q.1                                                                                           # optional - sage.combinat, sage.modules
+                sage: Q.0*Q.1                                                                                           # optional - sage.combinat sage.modules
                 xbar*ybar
-                sage: Q.0*Q.1*Q.0                                                                                       # optional - sage.combinat, sage.modules
+                sage: Q.0*Q.1*Q.0                                                                                       # optional - sage.combinat sage.modules
                 0
 
             An example with polynomial rings::
@@ -1054,9 +1054,9 @@ class Rings(CategoryWithAxiom):
 
             ::
 
-                sage: QQ[sqrt(2)]                               # optional - sage.symbolic, sage.rings.number_field
+                sage: QQ[sqrt(2)]                               # optional - sage.symbolic sage.rings.number_field
                 Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-                sage: QQ[sqrt(2)].coerce_embedding()            # optional - sage.symbolic, sage.rings.number_field
+                sage: QQ[sqrt(2)].coerce_embedding()            # optional - sage.symbolic sage.rings.number_field
                 Generic morphism:
                   From: Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
                   To:   Real Lazy Field
@@ -1064,22 +1064,22 @@ class Rings(CategoryWithAxiom):
 
             ::
 
-                sage: QQ[sqrt(2), sqrt(3)]                      # optional - sage.symbolic, sage.rings.number_field
+                sage: QQ[sqrt(2), sqrt(3)]                      # optional - sage.symbolic sage.rings.number_field
                 Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
             and orders in number fields::
 
-                sage: ZZ[I]                                     # optional - sage.symbolic, sage.rings.number_field
+                sage: ZZ[I]                                     # optional - sage.symbolic sage.rings.number_field
                 Order in Number Field in I0 with defining polynomial x^2 + 1 with I0 = 1*I
-                sage: ZZ[sqrt(5)]                               # optional - sage.symbolic, sage.rings.number_field
+                sage: ZZ[sqrt(5)]                               # optional - sage.symbolic sage.rings.number_field
                 Order in Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-                sage: ZZ[sqrt(2) + sqrt(3)]                     # optional - sage.symbolic, sage.rings.number_field
+                sage: ZZ[sqrt(2) + sqrt(3)]                     # optional - sage.symbolic sage.rings.number_field
                 Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1 with a = 3.146264369941973?
 
             Embeddings are found for simple extensions (when that makes sense)::
 
-                sage: QQi.<i> = QuadraticField(-1, 'i')         # optional - sage.symbolic, sage.rings.number_field
-                sage: QQ[i].coerce_embedding()                  # optional - sage.symbolic, sage.rings.number_field
+                sage: QQi.<i> = QuadraticField(-1, 'i')         # optional - sage.symbolic sage.rings.number_field
+                sage: QQ[i].coerce_embedding()                  # optional - sage.symbolic sage.rings.number_field
                 Generic morphism:
                   From: Number Field in i with defining polynomial x^2 + 1 with i = 1*I
                   To:   Complex Lazy Field
@@ -1115,23 +1115,23 @@ class Rings(CategoryWithAxiom):
 
             Extension towers are built as follows and use distinct generator names::
 
-                sage: K = QQ[2^(1/3), 2^(1/2), 3^(1/3)]                                                             # optional - sage.symbolic, sage.rings.number_field
-                sage: K                                                                                             # optional - sage.symbolic, sage.rings.number_field
+                sage: K = QQ[2^(1/3), 2^(1/2), 3^(1/3)]                                                             # optional - sage.symbolic sage.rings.number_field
+                sage: K                                                                                             # optional - sage.symbolic sage.rings.number_field
                 Number Field in a with defining polynomial x^3 - 2 over its base field
-                sage: K.base_field()                                                                                # optional - sage.symbolic, sage.rings.number_field
+                sage: K.base_field()                                                                                # optional - sage.symbolic sage.rings.number_field
                 Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
-                sage: K.base_field().base_field()                                                                   # optional - sage.symbolic, sage.rings.number_field
+                sage: K.base_field().base_field()                                                                   # optional - sage.symbolic sage.rings.number_field
                 Number Field in b with defining polynomial x^3 - 3
 
             Embeddings::
 
-                sage: a = 10^100; expr = (2*a + sqrt(2))/(2*a^2-1)              # optional - sage.symbolic, sage.rings.number_field
-                sage: QQ[expr].coerce_embedding() is None                       # optional - sage.symbolic, sage.rings.number_field
+                sage: a = 10^100; expr = (2*a + sqrt(2))/(2*a^2-1)              # optional - sage.symbolic sage.rings.number_field
+                sage: QQ[expr].coerce_embedding() is None                       # optional - sage.symbolic sage.rings.number_field
                 False
-                sage: QQ[sqrt(5)].gen() > 0                                     # optional - sage.symbolic, sage.rings.number_field
+                sage: QQ[sqrt(5)].gen() > 0                                     # optional - sage.symbolic sage.rings.number_field
                 True
-                sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)     # optional - sage.symbolic, sage.rings.number_field
-                sage: QQ[expr].coerce_embedding()                               # optional - sage.symbolic, sage.rings.number_field
+                sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)     # optional - sage.symbolic sage.rings.number_field
+                sage: QQ[expr].coerce_embedding()                               # optional - sage.symbolic sage.rings.number_field
                 Generic morphism:
                   From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
                   To:   Real Lazy Field

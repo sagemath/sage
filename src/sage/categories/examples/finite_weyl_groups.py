@@ -59,7 +59,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         24
         sage: S.long_element()
         (3, 2, 1, 0)
-        sage: S.cayley_graph(side="left").plot()                                                                        # optional - sage.graphs, sage.plot
+        sage: S.cayley_graph(side="left").plot()                                                                        # optional - sage.graphs sage.plot
         Graphics object consisting of 120 graphics primitives
 
     Alternatively, one could have implemented

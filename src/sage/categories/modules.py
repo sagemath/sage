@@ -217,16 +217,16 @@ class Modules(Category_module):
                 sage: C.base_ring.__module__
                 'sage.categories.modules'
 
-                sage: C = DescentAlgebra(QQ,3).B().category()                                                           # optional - sage.combinat, sage.modules
-                sage: C.base_ring.__module__                                                                            # optional - sage.combinat, sage.modules
+                sage: C = DescentAlgebra(QQ,3).B().category()                                                           # optional - sage.combinat sage.modules
+                sage: C.base_ring.__module__                                                                            # optional - sage.combinat sage.modules
                 'sage.categories.modules'
-                sage: C.base_ring()                                                                                     # optional - sage.combinat, sage.modules
+                sage: C.base_ring()                                                                                     # optional - sage.combinat sage.modules
                 Rational Field
 
-                sage: C = QuasiSymmetricFunctions(QQ).F().category()                                                    # optional - sage.combinat, sage.modules
-                sage: C.base_ring.__module__                                                                            # optional - sage.combinat, sage.modules
+                sage: C = QuasiSymmetricFunctions(QQ).F().category()                                                    # optional - sage.combinat sage.modules
+                sage: C.base_ring.__module__                                                                            # optional - sage.combinat sage.modules
                 'sage.categories.modules'
-                sage: C.base_ring()                                                                                     # optional - sage.combinat, sage.modules
+                sage: C.base_ring()                                                                                     # optional - sage.combinat sage.modules
                 Rational Field
             """
             for C in self.super_categories():
@@ -361,9 +361,9 @@ class Modules(Category_module):
 
                 sage: Modules(ZZ).FinitelyPresented()
                 Category of finitely presented modules over Integer Ring
-                sage: A = SteenrodAlgebra(2)                                                                            # optional - sage.combinat, sage.modules
-                sage: from sage.modules.fp_graded.module import FPModule                                                # optional - sage.combinat, sage.modules
-                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()                                                  # optional - sage.combinat, sage.modules
+                sage: A = SteenrodAlgebra(2)                                                                            # optional - sage.combinat sage.modules
+                sage: from sage.modules.fp_graded.module import FPModule                                                # optional - sage.combinat sage.modules
+                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()                                                  # optional - sage.combinat sage.modules
                 Category of finitely presented graded modules over mod 2 Steenrod algebra, milnor basis
 
             TESTS::
@@ -631,8 +631,8 @@ class Modules(Category_module):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example()                                                           # optional - sage.groups, sage.modules
-                sage: A.tensor_square()                                                                                 # optional - sage.groups, sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example()                                                           # optional - sage.groups sage.modules
+                sage: A.tensor_square()                                                                                 # optional - sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                  as a permutation group over Rational Field # An example
@@ -944,9 +944,9 @@ class Modules(Category_module):
 
                 EXAMPLES::
 
-                    sage: A = algebras.Free(QQ, 2)                                                                      # optional - sage.combinat, sage.modules
-                    sage: T = A.tensor(A)                                                                               # optional - sage.combinat, sage.modules
-                    sage: T.construction()                                                                              # optional - sage.combinat, sage.modules
+                    sage: A = algebras.Free(QQ, 2)                                                                      # optional - sage.combinat sage.modules
+                    sage: T = A.tensor(A)                                                                               # optional - sage.combinat sage.modules
+                    sage: T.construction()                                                                              # optional - sage.combinat sage.modules
                     (The tensor functorial construction,
                      (Free Algebra on 2 generators (None0, None1) over Rational Field,
                       Free Algebra on 2 generators (None0, None1) over Rational Field))

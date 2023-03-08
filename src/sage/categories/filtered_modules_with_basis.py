@@ -707,10 +707,10 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = GradedModulesWithBasis(QQ).example()                                                          # optional - sage.combinat, sage.modules
-                sage: A.degree_on_basis(Partition((2,1)))                                                               # optional - sage.combinat, sage.modules
+                sage: A = GradedModulesWithBasis(QQ).example()                                                          # optional - sage.combinat sage.modules
+                sage: A.degree_on_basis(Partition((2,1)))                                                               # optional - sage.combinat sage.modules
                 3
-                sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))                                                       # optional - sage.combinat, sage.modules
+                sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))                                                       # optional - sage.combinat sage.modules
                 10
             """
 
@@ -728,28 +728,28 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = ModulesWithBasis(ZZ).Filtered().example()                                                     # optional - sage.combinat, sage.modules
-                sage: x = A(Partition((3,2,1)))                                                                         # optional - sage.combinat, sage.modules
-                sage: y = A(Partition((4,4,1)))                                                                         # optional - sage.combinat, sage.modules
-                sage: z = A(Partition((2,2,2)))                                                                         # optional - sage.combinat, sage.modules
-                sage: x.degree()                                                                                        # optional - sage.combinat, sage.modules
+                sage: A = ModulesWithBasis(ZZ).Filtered().example()                                                     # optional - sage.combinat sage.modules
+                sage: x = A(Partition((3,2,1)))                                                                         # optional - sage.combinat sage.modules
+                sage: y = A(Partition((4,4,1)))                                                                         # optional - sage.combinat sage.modules
+                sage: z = A(Partition((2,2,2)))                                                                         # optional - sage.combinat sage.modules
+                sage: x.degree()                                                                                        # optional - sage.combinat sage.modules
                 6
-                sage: (x + 2*z).degree()                                                                                # optional - sage.combinat, sage.modules
+                sage: (x + 2*z).degree()                                                                                # optional - sage.combinat sage.modules
                 6
-                sage: (y - x).degree()                                                                                  # optional - sage.combinat, sage.modules
+                sage: (y - x).degree()                                                                                  # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not homogeneous
 
             An example in a graded algebra::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                                                      # optional - sage.combinat, sage.modules
-                sage: (x, y) = (S[2], S[3])                                                                             # optional - sage.combinat, sage.modules
-                sage: x.homogeneous_degree()                                                                            # optional - sage.combinat, sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                                                      # optional - sage.combinat sage.modules
+                sage: (x, y) = (S[2], S[3])                                                                             # optional - sage.combinat sage.modules
+                sage: x.homogeneous_degree()                                                                            # optional - sage.combinat sage.modules
                 2
-                sage: (x^3 + 4*y^2).homogeneous_degree()                                                                # optional - sage.combinat, sage.modules
+                sage: (x^3 + 4*y^2).homogeneous_degree()                                                                # optional - sage.combinat sage.modules
                 6
-                sage: ((1 + x)^3).homogeneous_degree()                                                                  # optional - sage.combinat, sage.modules
+                sage: ((1 + x)^3).homogeneous_degree()                                                                  # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not homogeneous
@@ -771,8 +771,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             TESTS::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                                                      # optional - sage.combinat, sage.modules
-                sage: S.zero().degree()                                                                                 # optional - sage.combinat, sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                                                      # optional - sage.combinat sage.modules
+                sage: S.zero().degree()                                                                                 # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
@@ -1004,16 +1004,16 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat, sage.modules
-                    sage: S = E.submodule([x + y, x*y - y*z, y])                                                        # optional - sage.combinat, sage.modules
-                    sage: B = S.basis()                                                                                 # optional - sage.combinat, sage.modules
-                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                                                       # optional - sage.combinat, sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat sage.modules
+                    sage: S = E.submodule([x + y, x*y - y*z, y])                                                        # optional - sage.combinat sage.modules
+                    sage: B = S.basis()                                                                                 # optional - sage.combinat sage.modules
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                                                       # optional - sage.combinat sage.modules
                     [x, y, x*y - y*z]
-                    sage: S.degree_on_basis(0)                                                                          # optional - sage.combinat, sage.modules
+                    sage: S.degree_on_basis(0)                                                                          # optional - sage.combinat sage.modules
                     1
-                    sage: S.degree_on_basis(1)                                                                          # optional - sage.combinat, sage.modules
+                    sage: S.degree_on_basis(1)                                                                          # optional - sage.combinat sage.modules
                     1
-                    sage: S.degree_on_basis(2)                                                                          # optional - sage.combinat, sage.modules
+                    sage: S.degree_on_basis(2)                                                                          # optional - sage.combinat sage.modules
                     2
                 """
                 return self.basis()[m].lift().degree()
@@ -1025,29 +1025,29 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat, sage.modules
-                    sage: S = E.submodule([x + y, x*y - y*z, y])                                                        # optional - sage.combinat, sage.modules
-                    sage: B = S.basis()                                                                                 # optional - sage.combinat, sage.modules
-                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                                                       # optional - sage.combinat, sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat sage.modules
+                    sage: S = E.submodule([x + y, x*y - y*z, y])                                                        # optional - sage.combinat sage.modules
+                    sage: B = S.basis()                                                                                 # optional - sage.combinat sage.modules
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                                                       # optional - sage.combinat sage.modules
                     [x, y, x*y - y*z]
-                    sage: B[0].degree()                                                                                 # optional - sage.combinat, sage.modules
+                    sage: B[0].degree()                                                                                 # optional - sage.combinat sage.modules
                     1
-                    sage: B[1].degree()                                                                                 # optional - sage.combinat, sage.modules
+                    sage: B[1].degree()                                                                                 # optional - sage.combinat sage.modules
                     1
-                    sage: (B[0] + 3*B[1]).degree()                                                                      # optional - sage.combinat, sage.modules
+                    sage: (B[0] + 3*B[1]).degree()                                                                      # optional - sage.combinat sage.modules
                     1
 
                 The degree of inhomogeneous elements is not defined
                 (following the behavior of the exterior algebra)::
 
-                    sage: (B[0] + B[2]).degree()                                                                        # optional - sage.combinat, sage.modules
+                    sage: (B[0] + B[2]).degree()                                                                        # optional - sage.combinat sage.modules
                     Traceback (most recent call last):
                     ...
                     ValueError: element is not homogeneous
 
                 We can still get the maximal degree::
 
-                    sage: (B[0] + B[2]).maximal_degree()                                                                # optional - sage.combinat, sage.modules
+                    sage: (B[0] + B[2]).maximal_degree()                                                                # optional - sage.combinat sage.modules
                     2
                 """
                 return self.lift().degree()
@@ -1065,14 +1065,14 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat, sage.modules
-                    sage: F = E.submodule([x + 1, x*y - 1])                                                             # optional - sage.combinat, sage.modules
-                    sage: B = F.basis()                                                                                 # optional - sage.combinat, sage.modules
-                    sage: [B[0].lift(), B[1].lift()]                                                                    # optional - sage.combinat, sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                                                               # optional - sage.combinat sage.modules
+                    sage: F = E.submodule([x + 1, x*y - 1])                                                             # optional - sage.combinat sage.modules
+                    sage: B = F.basis()                                                                                 # optional - sage.combinat sage.modules
+                    sage: [B[0].lift(), B[1].lift()]                                                                    # optional - sage.combinat sage.modules
                     [-x*y + 1, x*y + x]
-                    sage: B[0].maximal_degree()                                                                         # optional - sage.combinat, sage.modules
+                    sage: B[0].maximal_degree()                                                                         # optional - sage.combinat sage.modules
                     2
-                    sage: B[1].maximal_degree()                                                                         # optional - sage.combinat, sage.modules
+                    sage: B[1].maximal_degree()                                                                         # optional - sage.combinat sage.modules
                     2
                 """
                 return self.lift().maximal_degree()

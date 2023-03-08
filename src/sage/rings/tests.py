@@ -459,7 +459,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: rings = [QQ]
         sage: rings += [ZZ[I], ZZ[I, sqrt(2)]]                                          # optional - sage.rings.number_field
         sage: rings += [GF(49, 'a')]                                                    # optional - sage.libs.pari
-        sage: rings += [MatrixSpace(GF(17), 3)]                                         # optional - sage.libs.pari, sage.modules
+        sage: rings += [MatrixSpace(GF(17), 3)]                                         # optional - sage.libs.pari sage.modules
         sage: for C in rings:
         ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10)
 

@@ -36,14 +36,14 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                                       # optional - sage.combinat, sage.modules
-                sage: V.inject_variables()                                                                              # optional - sage.combinat, sage.modules
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                                       # optional - sage.combinat sage.modules
+                sage: V.inject_variables()                                                                              # optional - sage.combinat sage.modules
                 Defining L, G, C
-                sage: G.T(3).index()                                                                                    # optional - sage.combinat, sage.modules
+                sage: G.T(3).index()                                                                                    # optional - sage.combinat sage.modules
                 ('G', 3)
-                sage: v = V.an_element(); v                                                                             # optional - sage.combinat, sage.modules
+                sage: v = V.an_element(); v                                                                             # optional - sage.combinat sage.modules
                 L + G + C
-                sage: v.index()                                                                                         # optional - sage.combinat, sage.modules
+                sage: v.index()                                                                                         # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: index can only be computed for monomials, got L + G + C
@@ -88,8 +88,8 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
-                        sage: V = lie_conformal_algebras.Virasoro(QQ)                                                   # optional - sage.combinat, sage.modules
-                        sage: V.degree_on_basis(('L', 2))                                                               # optional - sage.combinat, sage.modules
+                        sage: V = lie_conformal_algebras.Virasoro(QQ)                                                   # optional - sage.combinat sage.modules
+                        sage: V.degree_on_basis(('L', 2))                                                               # optional - sage.combinat sage.modules
                         4
                     """
                     if m[0] in self._central_elements:

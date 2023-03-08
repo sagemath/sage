@@ -984,7 +984,7 @@ cdef class RealDoubleElement(FieldElement):
             0.8414709848078965
             sage: s1._interface_init_()                                                 # optional - sage.symbolic
             '0.8414709848078965'
-            sage: s1 == RDF(gp(s1))                                                     # optional - sage.libs.pari, sage.symbolic
+            sage: s1 == RDF(gp(s1))                                                     # optional - sage.libs.pari sage.symbolic
             True
         """
         return repr(self._value)

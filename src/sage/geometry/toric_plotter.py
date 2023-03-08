@@ -169,11 +169,11 @@ class ToricPlotter(SageObject):
         sage: tp.include_points(fan.rays())                                     # optional - palp
         sage: tp.adjust_options()                                               # optional - palp
         sage: tp.set_rays(fan.rays())                                           # optional - palp
-        sage: result = tp.plot_lattice()                                        # optional - palp, sage.plot
-        sage: result += tp.plot_rays()                                          # optional - palp, sage.plot
-        sage: result += tp.plot_generators()                                    # optional - palp, sage.plot
-        sage: result += tp.plot_walls(fan(2))                                   # optional - palp, sage.plot
-        sage: result                                                            # optional - palp, sage.plot
+        sage: result = tp.plot_lattice()                                        # optional - palp sage.plot
+        sage: result += tp.plot_rays()                                          # optional - palp sage.plot
+        sage: result += tp.plot_generators()                                    # optional - palp sage.plot
+        sage: result += tp.plot_walls(fan(2))                                   # optional - palp sage.plot
+        sage: result                                                            # optional - palp sage.plot
         Graphics object consisting of 31 graphics primitives
 
     In most situations it is only necessary to include generators of rays, in

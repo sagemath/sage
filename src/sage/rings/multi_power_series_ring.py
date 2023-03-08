@@ -164,14 +164,14 @@ Coercion from symbolic ring::
     Multivariate Power Series Ring in x, y over Finite Field of size 11
     sage: type(x)                                                                       # optional - sage.symbolic
     <class 'sage.symbolic.expression.Expression'>
-    sage: type(S(x))                                                                    # optional - sage.libs.pari, sage.symbolic
+    sage: type(S(x))                                                                    # optional - sage.libs.pari sage.symbolic
     <class 'sage.rings.multi_power_series_ring.MPowerSeriesRing_generic_with_category.element_class'>
 
-    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f                                   # optional - sage.libs.pari, sage.symbolic
+    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f                                   # optional - sage.libs.pari sage.symbolic
     5 - x^2 + 4*x*y + y^2 + O(x, y)^3
-    sage: f.parent()                                                                    # optional - sage.libs.pari, sage.symbolic
+    sage: f.parent()                                                                    # optional - sage.libs.pari sage.symbolic
     Multivariate Power Series Ring in x, y over Finite Field of size 11
-    sage: f.parent() == S                                                               # optional - sage.libs.pari, sage.symbolic
+    sage: f.parent() == S                                                               # optional - sage.libs.pari sage.symbolic
     True
 
 The implementation of the multivariate power series ring uses a combination

@@ -114,13 +114,13 @@ New arrangements from old::
     sage: a == c                                                                        # optional - sage.graphs
     True
 
-    sage: a = hyperplane_arrangements.braid(3)                                          # optional - sage.graphs, sage.combinat
-    sage: b = a.union(hyperplane_arrangements.semiorder(3))                             # optional - sage.graphs, sage.combinat
-    sage: b == a | hyperplane_arrangements.semiorder(3)    # alternate syntax           # optional - sage.graphs, sage.combinat
+    sage: a = hyperplane_arrangements.braid(3)                                          # optional - sage.graphs sage.combinat
+    sage: b = a.union(hyperplane_arrangements.semiorder(3))                             # optional - sage.graphs sage.combinat
+    sage: b == a | hyperplane_arrangements.semiorder(3)    # alternate syntax           # optional - sage.graphs sage.combinat
     True
-    sage: b == hyperplane_arrangements.Catalan(3)                                       # optional - sage.graphs, sage.combinat
+    sage: b == hyperplane_arrangements.Catalan(3)                                       # optional - sage.graphs sage.combinat
     True
-    sage: a                                                                             # optional - sage.graphs, sage.combinat
+    sage: a                                                                             # optional - sage.graphs sage.combinat
     Arrangement <t1 - t2 | t0 - t1 | t0 - t2>
 
     sage: a = hyperplane_arrangements.coordinate(4)
@@ -1247,14 +1247,14 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: a = hyperplane_arrangements.semiorder(3)                      # optional - sage.combinat
-            sage: a.has_good_reduction(5)                                       # optional - sage.combinat, sage.libs.pari
+            sage: a.has_good_reduction(5)                                       # optional - sage.combinat sage.libs.pari
             True
-            sage: a.has_good_reduction(3)                                       # optional - sage.combinat, sage.libs.pari
+            sage: a.has_good_reduction(3)                                       # optional - sage.combinat sage.libs.pari
             False
-            sage: b = a.change_ring(GF(3))                                      # optional - sage.combinat, sage.libs.pari
+            sage: b = a.change_ring(GF(3))                                      # optional - sage.combinat sage.libs.pari
             sage: a.characteristic_polynomial()                                 # optional - sage.combinat
             x^3 - 6*x^2 + 12*x
-            sage: b.characteristic_polynomial()  # not equal to that for a      # optional - sage.combinat, sage.libs.pari
+            sage: b.characteristic_polynomial()  # not equal to that for a      # optional - sage.combinat sage.libs.pari
             x^3 - 6*x^2 + 10*x
         """
         if self.base_ring() != QQ:
@@ -1980,13 +1980,13 @@ class HyperplaneArrangementElement(Element):
             sage: A.poset_of_regions()                                                  # optional - sage.combinat
             Finite poset containing 4 elements
 
-            sage: A = hyperplane_arrangements.braid(3)                                  # optional - sage.combinat, sage.graphs
-            sage: A.poset_of_regions()                                                  # optional - sage.combinat, sage.graphs
+            sage: A = hyperplane_arrangements.braid(3)                                  # optional - sage.combinat sage.graphs
+            sage: A.poset_of_regions()                                                  # optional - sage.combinat sage.graphs
             Finite poset containing 6 elements
-            sage: A.poset_of_regions(numbered_labels=False)                             # optional - sage.combinat, sage.graphs
+            sage: A.poset_of_regions(numbered_labels=False)                             # optional - sage.combinat sage.graphs
             Finite poset containing 6 elements
-            sage: A = hyperplane_arrangements.braid(4)                                  # optional - sage.combinat, sage.graphs
-            sage: A.poset_of_regions()                                                  # optional - sage.combinat, sage.graphs
+            sage: A = hyperplane_arrangements.braid(4)                                  # optional - sage.combinat sage.graphs
+            sage: A.poset_of_regions()                                                  # optional - sage.combinat sage.graphs
             Finite poset containing 24 elements
 
             sage: H.<x,y,z> = HyperplaneArrangements(QQ)
@@ -2486,7 +2486,7 @@ class HyperplaneArrangementElement(Element):
             sage: (e3 + 2*e4) * (e1 - e7)                                               # optional - sage.graphs
             e4 - e6
 
-            sage: U3 = a.face_semigroup_algebra(field=GF(3)); U3                        # optional - sage.graphs, sage.libs.pari
+            sage: U3 = a.face_semigroup_algebra(field=GF(3)); U3                        # optional - sage.graphs sage.libs.pari
             Finite-dimensional algebra of degree 13 over Finite Field of size 3
 
         TESTS:
@@ -3088,13 +3088,13 @@ class HyperplaneArrangementElement(Element):
 
         Check that :trac:`26705` is fixed::
 
-            sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])               # optional - sage.combinat, sage.groups
-            sage: I = w.inversion_arrangement()                                         # optional - sage.combinat, sage.groups
-            sage: I                                                                     # optional - sage.combinat, sage.groups
+            sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])               # optional - sage.combinat sage.groups
+            sage: I = w.inversion_arrangement()                                         # optional - sage.combinat sage.groups
+            sage: I                                                                     # optional - sage.combinat sage.groups
             Arrangement <a4 | a1 | a1 + a2 | a1 + a2 + a3 + a4>
-            sage: I.minimal_generated_number()                                          # optional - sage.combinat, sage.groups
+            sage: I.minimal_generated_number()                                          # optional - sage.combinat sage.groups
             0
-            sage: I.is_formal()                                                         # optional - sage.combinat, sage.groups
+            sage: I.is_formal()                                                         # optional - sage.combinat sage.groups
             True
         """
         V = VectorSpace(self.base_ring(), self.dimension())
@@ -3176,9 +3176,9 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',3], prefix='s')                                    # optional - sage.combinat, sage.groups
-            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat, sage.groups
-            sage: for M in A.derivation_module_free_chain(): print("%s\n"%M)            # optional - sage.combinat, sage.groups
+            sage: W = WeylGroup(['A',3], prefix='s')                                    # optional - sage.combinat sage.groups
+            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat sage.groups
+            sage: for M in A.derivation_module_free_chain(): print("%s\n"%M)            # optional - sage.combinat sage.groups
             [ 1  0  0]
             [ 0  1  0]
             [ 0  0 a3]
@@ -3252,8 +3252,8 @@ class HyperplaneArrangementElement(Element):
         For type `A` arrangements, chordality is equivalent to freeness.
         We verify that in type `A_3`::
 
-            sage: W = WeylGroup(['A', 3], prefix='s')                                   # optional - sage.combinat, sage.groups
-            sage: for x in W:                                                           # optional - sage.combinat, sage.groups
+            sage: W = WeylGroup(['A', 3], prefix='s')                                   # optional - sage.combinat sage.groups
+            sage: for x in W:                                                           # optional - sage.combinat sage.groups
             ....:    A = x.inversion_arrangement()
             ....:    assert A.matroid().is_chordal() == A.is_free()
 
@@ -3261,8 +3261,8 @@ class HyperplaneArrangementElement(Element):
 
         We check that the algorithms agree::
 
-            sage: W = WeylGroup(['B', 3], prefix='s')                                   # optional - sage.combinat, sage.groups
-            sage: for x in W:   # long time                                             # optional - sage.combinat, sage.groups
+            sage: W = WeylGroup(['B', 3], prefix='s')                                   # optional - sage.combinat sage.groups
+            sage: for x in W:   # long time                                             # optional - sage.combinat sage.groups
             ....:    A = x.inversion_arrangement()
             ....:    assert (A.is_free(algorithm="BC")
             ....:            == A.is_free(algorithm="singular"))
@@ -3321,19 +3321,19 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat, sage.groups
-            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat, sage.groups
-            sage: A.derivation_module_basis()                                           # optional - sage.combinat, sage.groups
+            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat sage.groups
+            sage: A = W.long_element().inversion_arrangement()                          # optional - sage.combinat sage.groups
+            sage: A.derivation_module_basis()                                           # optional - sage.combinat sage.groups
             [(a1, a2), (0, a1*a2 + a2^2)]
 
         TESTS:
 
         We check the algorithms produce a basis with the same exponents::
 
-            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat, sage.groups
-            sage: def exponents(B):                                                     # optional - sage.combinat, sage.groups
+            sage: W = WeylGroup(['A', 2], prefix='s')                                   # optional - sage.combinat sage.groups
+            sage: def exponents(B):                                                     # optional - sage.combinat sage.groups
             ....:     return sorted([max(x.degree() for x in b) for b in B])
-            sage: for x in W:  # long time                                              # optional - sage.combinat, sage.groups
+            sage: for x in W:  # long time                                              # optional - sage.combinat sage.groups
             ....:     A = x.inversion_arrangement()
             ....:     B = A.derivation_module_basis(algorithm="singular")
             ....:     Bp = A.derivation_module_basis(algorithm="BC")

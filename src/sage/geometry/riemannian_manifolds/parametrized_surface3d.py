@@ -259,10 +259,10 @@ class ParametrizedSurface3D(SageObject):
         sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]                         # optional - numpy
         sage: points_array = [ellipsoid_equation(u_array[counter][0],u_array[counter][1])
         ....:                 for counter in range(0,len(u_array))]
-        sage: curvature_ellipsoid_plot = sum(point([xx for xx in points_array[counter]],            # optional - numpy, sage.plot
+        sage: curvature_ellipsoid_plot = sum(point([xx for xx in points_array[counter]],            # optional - numpy sage.plot
         ....:                                      color=hue(cc_array[counter]/2))
         ....:                                for counter in range(0,len(u_array)))
-        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                                         # optional - numpy, sage.plot
+        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                                         # optional - numpy sage.plot
 
     We can find the principal curvatures and principal directions of the
     elliptic paraboloid::

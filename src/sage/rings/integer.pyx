@@ -463,7 +463,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             -901824309821093821093812093810928309183091832091
             sage: ZZ(RR(2.0)^80)
             1208925819614629174706176
-            sage: ZZ(QQbar(sqrt(28-10*sqrt(3)) + sqrt(3)))                      # optional - sage.rings.number_field, sage.symbolic
+            sage: ZZ(QQbar(sqrt(28-10*sqrt(3)) + sqrt(3)))                      # optional - sage.rings.number_field sage.symbolic
             5
             sage: ZZ(AA(32).nth_root(5))                                        # optional - sage.rings.number_field
             2
@@ -559,7 +559,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: K.<a> = NumberField(x^2+3)                # optional - sage.rings.number_field
             sage: ZZ(a^2)                                   # optional - sage.rings.number_field
             -3
-            sage: ZZ(pari(a)^2)                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: ZZ(pari(a)^2)                             # optional - sage.libs.pari sage.rings.number_field
             -3
             sage: ZZ(pari("Mod(x, x^3+x+1)"))   # Note error message refers to lifted element  # optional - sage.libs.pari
             Traceback (most recent call last):

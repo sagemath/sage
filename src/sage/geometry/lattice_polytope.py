@@ -3970,9 +3970,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: d = lattice_polytope.cross_polytope(2)
-            sage: g = d.skeleton(); g                                           # optional - palp, sage.graphs
+            sage: g = d.skeleton(); g                                           # optional - palp sage.graphs
             Graph on 4 vertices
-            sage: g.edges(sort=True)                                            # optional - palp, sage.graphs
+            sage: g.edges(sort=True)                                            # optional - palp sage.graphs
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
         """
         skeleton = Graph()
@@ -3992,33 +3992,33 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: c = o.polar()
-            sage: c.skeleton_points()                                           # optional - palp, sage.graphs
+            sage: c.skeleton_points()                                           # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 19, 21, 22, 23, 25, 26]
 
         The default was 1-skeleton::
 
-            sage: c.skeleton_points(k=1)                                        # optional - palp, sage.graphs
+            sage: c.skeleton_points(k=1)                                        # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 19, 21, 22, 23, 25, 26]
 
         0-skeleton just lists all vertices::
 
-            sage: c.skeleton_points(k=0)                                        # optional - palp, sage.graphs
+            sage: c.skeleton_points(k=0)                                        # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7]
 
         2-skeleton lists all points except for the origin (point #17)::
 
-            sage: c.skeleton_points(k=2)                                        # optional - palp, sage.graphs
+            sage: c.skeleton_points(k=2)                                        # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26]
 
         3-skeleton includes all points::
 
-            sage: c.skeleton_points(k=3)                                        # optional - palp, sage.graphs
+            sage: c.skeleton_points(k=3)                                        # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
 
         It is OK to compute higher dimensional skeletons - you will get the
         list of all points::
 
-            sage: c.skeleton_points(k=100)                                      # optional - palp, sage.graphs
+            sage: c.skeleton_points(k=100)                                      # optional - palp sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
         """
         if k >= self.dim():

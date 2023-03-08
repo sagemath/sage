@@ -1210,11 +1210,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<alpha> = R.quotient(x^29 - 17*x - 1)                       # optional - sage.libs.pari
-            sage: K = S.number_field()                                          # optional - sage.libs.pari, sage.rings.number_field
-            sage: K                                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: K = S.number_field()                                          # optional - sage.libs.pari sage.rings.number_field
+            sage: K                                                             # optional - sage.libs.pari sage.rings.number_field
             Number Field in alpha with defining polynomial x^29 - 17*x - 1
-            sage: alpha = K.gen()                                               # optional - sage.libs.pari, sage.rings.number_field
-            sage: alpha^29                                                      # optional - sage.libs.pari, sage.rings.number_field
+            sage: alpha = K.gen()                                               # optional - sage.libs.pari sage.rings.number_field
+            sage: alpha^29                                                      # optional - sage.libs.pari sage.rings.number_field
             17*alpha + 1
         """
         if self.characteristic() != 0:
@@ -1566,7 +1566,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 5)                             # optional - sage.libs.pari
-            sage: K.class_group(())                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: K.class_group(())                                             # optional - sage.libs.pari sage.rings.number_field
             [((2, a + 1), 2)]
 
         Here is an example where the base and the extension both contribute to
@@ -1961,8 +1961,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: R.<x> = QQ[]
             sage: K = R.quo(x^2 + 1)                                            # optional - sage.libs.pari
-            sage: from_L, to_L, L = K._isomorphic_ring()                        # optional - sage.libs.pari, sage.rings.number_field
-            sage: L                                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: from_L, to_L, L = K._isomorphic_ring()                        # optional - sage.libs.pari sage.rings.number_field
+            sage: L                                                             # optional - sage.libs.pari sage.rings.number_field
             Number Field in xbar with defining polynomial x^2 + 1
 
         TESTS:
@@ -2294,13 +2294,13 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
 
             sage: R.<x> = PolynomialRing(Rationals())
             sage: S.<alpha> = R.quotient(x^3 - 2)                               # optional - sage.libs.pari
-            sage: F.<b>, f, g = S.field_extension()                             # optional - sage.libs.pari, sage.rings.number_field
-            sage: F                                                             # optional - sage.libs.pari, sage.rings.number_field
+            sage: F.<b>, f, g = S.field_extension()                             # optional - sage.libs.pari sage.rings.number_field
+            sage: F                                                             # optional - sage.libs.pari sage.rings.number_field
             Number Field in b with defining polynomial x^3 - 2
-            sage: a = F.gen()                                                   # optional - sage.libs.pari, sage.rings.number_field
-            sage: f(alpha)                                                      # optional - sage.libs.pari, sage.rings.number_field
+            sage: a = F.gen()                                                   # optional - sage.libs.pari sage.rings.number_field
+            sage: f(alpha)                                                      # optional - sage.libs.pari sage.rings.number_field
             b
-            sage: g(a)                                                          # optional - sage.libs.pari, sage.rings.number_field
+            sage: g(a)                                                          # optional - sage.libs.pari sage.rings.number_field
             alpha
 
         Note that the parent ring must be an integral domain::

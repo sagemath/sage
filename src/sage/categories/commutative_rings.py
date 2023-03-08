@@ -35,14 +35,14 @@ class CommutativeRings(CategoryWithAxiom):
 
         sage: QQ['x,y,z'] in CommutativeRings()
         True
-        sage: GroupAlgebra(DihedralGroup(3), QQ) in CommutativeRings()                                                  # optional - sage.groups, sage.modules
+        sage: GroupAlgebra(DihedralGroup(3), QQ) in CommutativeRings()                                                  # optional - sage.groups sage.modules
         False
         sage: MatrixSpace(QQ, 2, 2) in CommutativeRings()                                                               # optional - sage.modules
         False
 
     GroupAlgebra should be fixed::
 
-        sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings() # todo: not implemented                 # optional - sage.groups, sage.modules
+        sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings() # todo: not implemented                 # optional - sage.groups sage.modules
         True
 
     """
