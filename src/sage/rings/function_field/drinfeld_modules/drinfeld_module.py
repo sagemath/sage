@@ -28,8 +28,10 @@ from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.ring_extension import RingExtension_generic
@@ -37,6 +39,8 @@ from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
 class DrinfeldModule(Parent, UniqueRepresentation):
@@ -1102,6 +1106,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         delta = self.coefficient(2)
         q = self._Fq.order()
         return (g**(q+1)) / delta
+
+    def _compute_coefficient(self, k):
+        if k not in ZZ:
+            raise TypeError("input must be an integer")
+        if k == 0:
+            return self._base.one()
+        r = self._gen.degree()
+        T = self._gen[0]
+        q = self._Fq.cardinality()
+        c = self._base.zero()
+        for i in range(k):
+            j = k - i
+            if j < r + 1:
+                c += self._compute_coefficient(i)*self._gen[j]**(q**i)
+        return c/(T - T**(q**k))
+
+    def logarithm(self, name='u'):
+        L = LazyPowerSeriesRing(self._base, name)
+        return L(self._compute_coefficient)
+
 
     def morphism(self):
         r"""
