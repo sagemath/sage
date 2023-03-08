@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage.doctest: optional - pillow
 """
 Sage Wrapper for Bitmap Images
 

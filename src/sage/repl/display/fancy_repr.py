@@ -312,7 +312,7 @@ class TallListRepr(ObjectReprABC):
 
             sage: from sage.repl.display.fancy_repr import TallListRepr
             sage: format_list = TallListRepr().format_string
-            sage: format_list([1, 2, identity_matrix(2)])
+            sage: format_list([1, 2, identity_matrix(2)])                               # optional - sage.modules
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
         Check that :trac:`18743` is fixed::

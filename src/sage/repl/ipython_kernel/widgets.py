@@ -173,7 +173,7 @@ class EvalWidget(TransformWidget):
         sage: w = EvalToggleButtons(options=["pi", "e"], transform=lambda x: x+x)
         sage: w
         EvalToggleButtons(options=('pi', 'e'), value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # optional - sage.symbolic
         2*pi
     """
     def get_value(self):
@@ -310,7 +310,7 @@ class EvalText(EvalWidget, Text):
         sage: w = EvalText(value="pi", transform=lambda x: x^2)
         sage: w
         EvalText(value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # optional - sage.symbolic
         pi^2
     """
     pass
@@ -327,7 +327,7 @@ class EvalTextarea(EvalWidget, Textarea):
         sage: w = EvalTextarea(value="pi", transform=lambda x: x^2)
         sage: w
         EvalTextarea(value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # optional - sage.symbolic
         pi^2
     """
     pass
@@ -395,11 +395,14 @@ class Grid(TransformWidget, HBox, ValueWidget):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import Grid, EvalText
-            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),
+            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),                                  # optional - sage.modules
             ....:         description="2x2 matrix", transform=matrix)
-            sage: w
-            Grid(value=[[0, 1], [4, 5]], children=(Label(value='2x2 matrix'), VBox(children=(EvalText(value='0'), EvalText(value='4'))), VBox(children=(EvalText(value='1'), EvalText(value='5')))))
-            sage: w.get_interact_value()
+            sage: w                                                                                 # optional - sage.modules
+            Grid(value=[[0, 1], [4, 5]],
+                 children=(Label(value='2x2 matrix'),
+                           VBox(children=(EvalText(value='0'), EvalText(value='4'))),
+                           VBox(children=(EvalText(value='1'), EvalText(value='5')))))
+            sage: w.get_interact_value()                                                            # optional - sage.modules
             [0 1]
             [4 5]
 
