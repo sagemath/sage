@@ -3256,17 +3256,17 @@ cdef class CommutativeRingElement(RingElement):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: (x^2).sqrt()
+            sage: (x^2).sqrt()                                                          # optional - sage.libs.pari
             x
-            sage: f=x^2-4*x+4; f.sqrt(all=True)
+            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)                                   # optional - sage.libs.pari
             [x - 2, -x + 2]
-            sage: sqrtx=x.sqrt(name="y"); sqrtx
+            sage: sqrtx = x.sqrt(name="y"); sqrtx
             y
             sage: sqrtx^2
             x
-            sage: x.sqrt(all=true,name="y")
+            sage: x.sqrt(all=true, name="y")
             [y, -y]
-            sage: x.sqrt(extend=False,all=True)
+            sage: x.sqrt(extend=False, all=True)
             []
             sage: x.sqrt()
             Traceback (most recent call last):
@@ -3279,24 +3279,24 @@ cdef class CommutativeRingElement(RingElement):
 
         TESTS::
 
-            sage: f = (x+3)^2; f.sqrt()
+            sage: f = (x + 3)^2; f.sqrt()                                               # optional - sage.libs.pari
             x + 3
-            sage: f = (x+3)^2; f.sqrt(all=True)
+            sage: f = (x + 3)^2; f.sqrt(all=True)                                       # optional - sage.libs.pari
             [x + 3, -x - 3]
-            sage: f = (x^2 - x + 3)^2; f.sqrt()
+            sage: f = (x^2 - x + 3)^2; f.sqrt()                                         # optional - sage.libs.pari
             x^2 - x + 3
-            sage: f = (x^2 - x + 3)^6; f.sqrt()
+            sage: f = (x^2 - x + 3)^6; f.sqrt()                                         # optional - sage.libs.pari
             x^6 - 3*x^5 + 12*x^4 - 19*x^3 + 36*x^2 - 27*x + 27
             sage: g = (R.random_element(15))^2
-            sage: g.sqrt()^2 == g
+            sage: g.sqrt()^2 == g                                                       # optional - sage.libs.pari
             True
 
-            sage: R.<x> = GF(250037)[]
-            sage: f = x^2/(x+1)^2; f.sqrt()
+            sage: R.<x> = GF(250037)[]                                                  # optional - sage.libs.pari
+            sage: f = x^2/(x+1)^2; f.sqrt()                                             # optional - sage.libs.pari
             x/(x + 1)
-            sage: f = 9 * x^4 / (x+1)^2; f.sqrt()
+            sage: f = 9 * x^4 / (x+1)^2; f.sqrt()                                       # optional - sage.libs.pari
             3*x^2/(x + 1)
-            sage: f = 9 * x^4 / (x+1)^2; f.sqrt(all=True)
+            sage: f = 9 * x^4 / (x+1)^2; f.sqrt(all=True)                               # optional - sage.libs.pari
             [3*x^2/(x + 1), 250034*x^2/(x + 1)]
 
             sage: R.<x> = QQ[]
