@@ -1612,19 +1612,19 @@ class Sigma:
         106811523
         sage: sigma(factorial(100),3).mod(144169)                                                                       # optional - sage.libs.pari
         3672
-        sage: sigma(factorial(150),12).mod(691)
+        sage: sigma(factorial(150),12).mod(691)                                                                         # optional - sage.libs.pari
         176
-        sage: RR(sigma(factorial(133),20))
+        sage: RR(sigma(factorial(133),20))                                                                              # optional - sage.libs.pari
         2.80414775675747e4523
-        sage: sigma(factorial(100),0)
+        sage: sigma(factorial(100),0)                                                                                   # optional - sage.libs.pari
         39001250856960000
-        sage: sigma(factorial(41),1)
+        sage: sigma(factorial(41),1)                                                                                    # optional - sage.libs.pari
         229199532273029988767733858700732906511758707916800
         sage: from numpy import int8                                                                                    # optional - numpy
-        sage: sigma(int8(100), int8(4))                                                                                 # optional - numpy
+        sage: sigma(int8(100), int8(4))                                                                                 # optional - numpy, sage.libs.pari
         106811523
         sage: from gmpy2 import mpz
-        sage: sigma(mpz(100),mpz(4))
+        sage: sigma(mpz(100), mpz(4))                                                                                   # optional - sage.libs.pari
         106811523
     """
     def __repr__(self):
@@ -1648,9 +1648,9 @@ class Sigma:
 
             sage: from sage.arith.misc import Sigma
             sage: q = Sigma()
-            sage: q(10)
+            sage: q(10)                                                                                                 # optional - sage.libs.pari
             18
-            sage: q(10,2)
+            sage: q(10,2)                                                                                               # optional - sage.libs.pari
             130
         """
         n = ZZ(n)
@@ -1692,8 +1692,8 @@ class Sigma:
         EXAMPLES::
 
             sage: from sage.arith.misc import Sigma
-            sage: p = Sigma().plot()                                            # optional - sage.plot
-            sage: p.ymax()                                                      # optional - sage.plot
+            sage: p = Sigma().plot()                                            # optional - sage.plot                  # optional - sage.libs.pari
+            sage: p.ymax()                                                      # optional - sage.plot                  # optional - sage.libs.pari
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
@@ -2966,14 +2966,14 @@ def is_squarefree(n):
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8                                                    # optional - numpy
-        sage: is_squarefree(int8(100))                                                  # optional - numpy
+        sage: is_squarefree(int8(100))                                                  # optional - numpy              # optional - sage.libs.pari
         False
-        sage: is_squarefree(int8(101))                                                  # optional - numpy
+        sage: is_squarefree(int8(101))                                                  # optional - numpy              # optional - sage.libs.pari
         True
         sage: from gmpy2 import mpz
-        sage: is_squarefree(mpz(100))
+        sage: is_squarefree(mpz(100))                                                                                   # optional - sage.libs.pari
         False
-        sage: is_squarefree(mpz(101))
+        sage: is_squarefree(mpz(101))                                                                                   # optional - sage.libs.pari
         True
     """
     e = py_scalar_to_element(n)
@@ -3187,19 +3187,19 @@ def carmichael_lambda(n):
 
         sage: carmichael_lambda(2) == euler_phi(2)
         True
-        sage: carmichael_lambda(4) == euler_phi(4)
+        sage: carmichael_lambda(4) == euler_phi(4)                                      # optional - sage.libs.pari
         True
         sage: p = random_prime(1000, lbound=3, proof=True)
         sage: k = randint(1, 1000)
-        sage: carmichael_lambda(p^k) == euler_phi(p^k)
+        sage: carmichael_lambda(p^k) == euler_phi(p^k)                                  # optional - sage.libs.pari
         True
 
     A case where `\lambda(n) \neq \varphi(n)`::
 
         sage: k = randint(3, 1000)
-        sage: carmichael_lambda(2^k) == 2^(k - 2)
+        sage: carmichael_lambda(2^k) == 2^(k - 2)                                       # optional - sage.libs.pari
         True
-        sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)
+        sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)                     # optional - sage.libs.pari
         False
 
     Verifying the current implementation of the Carmichael function using
@@ -3209,7 +3209,7 @@ def carmichael_lambda(n):
 
         sage: from sage.arith.misc import carmichael_lambda
         sage: n = randint(1, 500)
-        sage: c = carmichael_lambda(n)
+        sage: c = carmichael_lambda(n)                                                  # optional - sage.libs.pari
         sage: def coprime(n):
         ....:     return [i for i in range(n) if gcd(i, n) == 1]
         sage: def znpower(n, k):
@@ -3224,7 +3224,7 @@ def carmichael_lambda(n):
         ....:         T = [L[i] == ones[i] for i in range(len(L))]
         ....:         if all(T):
         ....:             return k
-        sage: c == my_carmichael(n)
+        sage: c == my_carmichael(n)                                                     # optional - sage.libs.pari
         True
 
     Carmichael's theorem states that `a^{\lambda(n)} \equiv 1 \pmod{n}`
@@ -3233,12 +3233,12 @@ def carmichael_lambda(n):
 
         sage: from sage.arith.misc import carmichael_lambda
         sage: n = randint(2, 1000)
-        sage: c = carmichael_lambda(n)
+        sage: c = carmichael_lambda(n)                                                  # optional - sage.libs.pari
         sage: ZnZ = IntegerModRing(n)
         sage: M = ZnZ.list_of_elements_of_multiplicative_group()
         sage: ones = [1] * len(M)
-        sage: P = [power_mod(a, c, n) for a in M]
-        sage: P == ones
+        sage: P = [power_mod(a, c, n) for a in M]                                       # optional - sage.libs.pari
+        sage: P == ones                                                                 # optional - sage.libs.pari
         True
 
     TESTS:
@@ -3258,7 +3258,7 @@ def carmichael_lambda(n):
     Bug reported in :trac:`8283`::
 
         sage: from sage.arith.misc import carmichael_lambda
-        sage: type(carmichael_lambda(16))
+        sage: type(carmichael_lambda(16))                                               # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
 
     REFERENCES:
