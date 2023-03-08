@@ -396,19 +396,19 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: ZZ[sqrt(2), sqrt(3)]                                                                      # optional - sage.rings.number_field, sage.symbolic
+            sage: ZZ[sqrt(2), sqrt(3)]                                                                      # optional - sage.rings.number_field sage.symbolic
             Relative Order in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
             sage: ZZ['x']
             Univariate Polynomial Ring in x over Integer Ring
             sage: ZZ['x,y']
             Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: R = ZZ[sqrt(5) + 1]; R                                                                    # optional - sage.rings.number_field, sage.symbolic
+            sage: R = ZZ[sqrt(5) + 1]; R                                                                    # optional - sage.rings.number_field sage.symbolic
             Order in Number Field in a with defining polynomial x^2 - 2*x - 4 with a = 3.236067977499790?
-            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field sage.symbolic
             False
-            sage: R = ZZ[(1 + sqrt(5))/2]; R                                                                # optional - sage.rings.number_field, sage.symbolic
+            sage: R = ZZ[(1 + sqrt(5))/2]; R                                                                # optional - sage.rings.number_field sage.symbolic
             Order in Number Field in a with defining polynomial x^2 - x - 1 with a = 1.618033988749895?
-            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field, sage.symbolic
+            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field sage.symbolic
             True
         """
         if x in self:

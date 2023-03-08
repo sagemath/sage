@@ -1754,10 +1754,10 @@ cdef class MPolynomial(CommutativeRingElement):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']                      # optional - sage.rings.number_field, sage.symbolic
-            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                                      # optional - sage.rings.number_field, sage.symbolic
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']                      # optional - sage.rings.number_field sage.symbolic
+            sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f                                      # optional - sage.rings.number_field sage.symbolic
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
-            sage: f.denominator()                                                                   # optional - sage.rings.number_field, sage.symbolic
+            sage: f.denominator()                                                                   # optional - sage.rings.number_field sage.symbolic
             102
 
         Finally, we try to compute the denominator of a polynomial with
@@ -1831,12 +1831,12 @@ cdef class MPolynomial(CommutativeRingElement):
 
         ::
 
-            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']                     # optional - sage.rings.number_field, sage.symbolic
-            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                                                # optional - sage.rings.number_field, sage.symbolic
+            sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']                     # optional - sage.rings.number_field sage.symbolic
+            sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f                                                # optional - sage.rings.number_field sage.symbolic
             1/17*y^19 - 2/3*x + 1/3
-            sage: f.numerator()                                                                     # optional - sage.rings.number_field, sage.symbolic
+            sage: f.numerator()                                                                     # optional - sage.rings.number_field sage.symbolic
             3*y^19 - 34*x + 17
-            sage: f == f.numerator()                                                                # optional - sage.rings.number_field, sage.symbolic
+            sage: f == f.numerator()                                                                # optional - sage.rings.number_field sage.symbolic
             False
 
         We try to compute the numerator of a polynomial with coefficients in
@@ -1855,9 +1855,9 @@ cdef class MPolynomial(CommutativeRingElement):
 
         ::
 
-            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']                    # optional - sage.rings.number_field, sage.symbolic
-            sage: f = K.random_element()                                                            # optional - sage.rings.number_field, sage.symbolic
-            sage: f.numerator() / f.denominator() == f                                              # optional - sage.rings.number_field, sage.symbolic
+            sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']                    # optional - sage.rings.number_field sage.symbolic
+            sage: f = K.random_element()                                                            # optional - sage.rings.number_field sage.symbolic
+            sage: f.numerator() / f.denominator() == f                                              # optional - sage.rings.number_field sage.symbolic
             True
             sage: R = RR['x,y,z']
             sage: f = R.random_element()
