@@ -1666,7 +1666,7 @@ class Ideal_pid(Ideal_principal):
 
         TESTS::
 
-            sage: ZZ.ideal(96).residue_field()
+            sage: ZZ.ideal(96).residue_field()                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: The ideal (Principal ideal (96) of Integer Ring) is not prime

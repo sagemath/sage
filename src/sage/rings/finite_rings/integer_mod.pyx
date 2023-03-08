@@ -1036,25 +1036,25 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             sage: Mod(3,17).is_square()
             False
-            sage: Mod(9,17).is_square()                                         # optional - sage.libs.pari
+            sage: Mod(9,17).is_square()                                                             # optional - sage.libs.pari
             True
-            sage: Mod(9,17*19^2).is_square()                                    # optional - sage.libs.pari
+            sage: Mod(9,17*19^2).is_square()                                                        # optional - sage.libs.pari
             True
-            sage: Mod(-1,17^30).is_square()                                     # optional - sage.libs.pari
+            sage: Mod(-1,17^30).is_square()                                                         # optional - sage.libs.pari
             True
-            sage: Mod(1/9, next_prime(2^40)).is_square()                        # optional - sage.libs.pari
+            sage: Mod(1/9, next_prime(2^40)).is_square()                                            # optional - sage.libs.pari
             True
-            sage: Mod(1/25, next_prime(2^90)).is_square()                       # optional - sage.libs.pari
+            sage: Mod(1/25, next_prime(2^90)).is_square()                                           # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: Mod(1/25, 2^8).is_square()
+            sage: Mod(1/25, 2^8).is_square()                                                        # optional - sage.libs.pari
             True
-            sage: Mod(1/25, 2^40).is_square()
+            sage: Mod(1/25, 2^40).is_square()                                                       # optional - sage.libs.pari
             True
 
-            sage: for p,q,r in cartesian_product_iterator([[3,5],[11,13],[17,19]]): # long time
+            sage: for p,q,r in cartesian_product_iterator([[3,5],[11,13],[17,19]]): # long time     # optional - sage.libs.pari
             ....:     for ep,eq,er in cartesian_product_iterator([[0,1,2,3],[0,1,2,3],[0,1,2,3]]):
             ....:         for e2 in [0, 1, 2, 3, 4]:
             ....:             n = p^ep * q^eq * r^er * 2^e2

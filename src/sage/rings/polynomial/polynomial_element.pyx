@@ -7585,14 +7585,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: K.<z> = CyclotomicField(3)                                                                    # optional - sage.rings.number_field
-            sage: f = K.defining_polynomial()                                                                   # optional - sage.rings.number_field
-            sage: f.roots(ring=GF(7))                                           # optional - sage.libs.pari     # optional - sage.rings.number_field
+            sage: K.<z> = CyclotomicField(3)                                                                            # optional - sage.rings.number_field
+            sage: f = K.defining_polynomial()                                                                           # optional - sage.rings.number_field
+            sage: f.roots(ring=GF(7))                                                   # optional - sage.libs.pari     # optional - sage.rings.number_field
             [(4, 1), (2, 1)]
-            sage: g = f.change_ring(GF(7))                                      # optional - sage.libs.pari     # optional - sage.rings.number_field
-            sage: g.roots()                                                     # optional - sage.libs.pari     # optional - sage.rings.number_field
+            sage: g = f.change_ring(GF(7))                                              # optional - sage.libs.pari     # optional - sage.rings.number_field
+            sage: g.roots()                                                             # optional - sage.libs.pari     # optional - sage.rings.number_field
             [(4, 1), (2, 1)]
-            sage: g.roots(multiplicities=False)                                 # optional - sage.libs.pari     # optional - sage.rings.number_field
+            sage: g.roots(multiplicities=False)                                         # optional - sage.libs.pari     # optional - sage.rings.number_field
             [4, 2]
 
         A new ring.  In the example below, we add the special method
@@ -7603,7 +7603,7 @@ cdef class Polynomial(CommutativePolynomial):
         introduce::
 
              sage: R.<x> = QQ[]
-             sage: (x^2 + 1).roots()
+             sage: (x^2 + 1).roots()                                                    # optional - sage.libs.pari
              []
              sage: g = lambda f, *args, **kwds: f.change_ring(CDF).roots()
              sage: QQ._roots_univariate_polynomial = g
@@ -9450,9 +9450,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ZZ[]
             sage: R(1).is_irreducible()
             False
-            sage: R(4).is_irreducible()
+            sage: R(4).is_irreducible()                                                 # optional - sage.libs.pari
             False
-            sage: R(5).is_irreducible()
+            sage: R(5).is_irreducible()                                                 # optional - sage.libs.pari
             True
 
         Check that caching works::

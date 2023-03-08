@@ -773,9 +773,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: P.<t> = ZZ[]
-            sage: Q = P.quo(5 + t^2)
-            sage: F, R = Q.construction()
-            sage: F(R) == Q
+            sage: Q = P.quo(5 + t^2)                                            # optional - sage.libs.pari
+            sage: F, R = Q.construction()                                       # optional - sage.libs.pari
+            sage: F(R) == Q                                                     # optional - sage.libs.pari
             True
             sage: P.<t> = GF(3)[]                                               # optional - sage.libs.pari
             sage: Q = P.quo([2 + t^2])                                          # optional - sage.libs.pari
@@ -1051,7 +1051,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             NotImplementedError: cannot rewrite Univariate Quotient Polynomial Ring in
              xbar over 2-adic Field with capped relative precision 20 with modulus
              (1 + O(2^20))*x^2 + (1 + O(2^20))*x + 1 + O(2^20) as an isomorphic ring
-            sage: F2.is_field(proof = False)
+            sage: F2.is_field(proof = False)                                    # optional - sage.rings.padics
             False
 
         """
@@ -1654,15 +1654,15 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)                             # optional - sage.libs.pari
-            sage: u, o = K.S_units([])[0]; o
+            sage: u, o = K.S_units([])[0]; o                                    # optional - sage.libs.pari
             6
-            sage: 2*u - 1 in {a, -a}
+            sage: 2*u - 1 in {a, -a}                                            # optional - sage.libs.pari
             True
-            sage: u^6
+            sage: u^6                                                           # optional - sage.libs.pari
             1
-            sage: u^3
+            sage: u^3                                                           # optional - sage.libs.pari
             -1
-            sage: 2*u^2 + 1 in {a, -a}
+            sage: 2*u^2 + 1 in {a, -a}                                          # optional - sage.libs.pari
             True
 
         ::
@@ -1779,13 +1779,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Note that all the returned values live where we expect them to::
 
-            sage: L.<b> = K['y'].quotient(y^3 + 5)
-            sage: U = L.units()
-            sage: type(U[0][0])
+            sage: L.<b> = K['y'].quotient(y^3 + 5)                                                                      # optional - sage.libs.pari
+            sage: U = L.units()                                                                                         # optional - sage.libs.pari
+            sage: type(U[0][0])                                                                                         # optional - sage.libs.pari
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
-            sage: type(U[0][1])
+            sage: type(U[0][1])                                                                                         # optional - sage.libs.pari
             <class 'sage.rings.integer.Integer'>
-            sage: type(U[1][1])
+            sage: type(U[1][1])                                                                                         # optional - sage.libs.pari
             <class 'sage.rings.infinity.PlusInfinity'>
 
         """
@@ -2167,7 +2167,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             sage: R.<x> = ZZ[]
             sage: S.<x> = QQ[]
             sage: f = S.quo(x^2 + 1).coerce_map_from(R.quo(x^2 + 1))            # optional - sage.libs.pari
-            sage: f.is_injective()
+            sage: f.is_injective()                                              # optional - sage.libs.pari
             True
 
         """
