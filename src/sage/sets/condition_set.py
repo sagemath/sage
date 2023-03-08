@@ -67,23 +67,23 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         sage: SmallOdds = ConditionSet(ZZ, is_odd, abs(y) <= 11, vars=[y]); SmallOdds               # optional - sage.symbolic
         { y ∈ Integer Ring : abs(y) <= 11, <function is_odd at 0x...>(y) }
 
-        sage: P = polytopes.cube(); P
+        sage: P = polytopes.cube(); P                                                               # optional - sage.geometry.polyhedron
         A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-        sage: P.rename("P")
-        sage: P_inter_B = ConditionSet(P, lambda x: x.norm() < 1.2); P_inter_B
+        sage: P.rename("P")                                                                         # optional - sage.geometry.polyhedron
+        sage: P_inter_B = ConditionSet(P, lambda x: x.norm() < 1.2); P_inter_B                      # optional - sage.geometry.polyhedron
         { x ∈ P : <function <lambda> at 0x...>(x) }
-        sage: vector([1, 0, 0]) in P_inter_B
+        sage: vector([1, 0, 0]) in P_inter_B                                                        # optional - sage.geometry.polyhedron
         True
-        sage: vector([1, 1, 1]) in P_inter_B
+        sage: vector([1, 1, 1]) in P_inter_B                                                        # optional - sage.geometry.polyhedron
         False
 
         sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 1.2; predicate                           # optional - sage.symbolic
         (x, y, z) |--> sqrt(x^2 + y^2 + z^2) < 1.20000000000000
-        sage: P_inter_B_again = ConditionSet(P, predicate); P_inter_B_again                         # optional - sage.symbolic
+        sage: P_inter_B_again = ConditionSet(P, predicate); P_inter_B_again                         # optional - sage.geometry.polyhedron, sage.symbolic
         { (x, y, z) ∈ P : sqrt(x^2 + y^2 + z^2) < 1.20000000000000 }
-        sage: vector([1, 0, 0]) in P_inter_B_again                                                  # optional - sage.symbolic
+        sage: vector([1, 0, 0]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron, sage.symbolic
         True
-        sage: vector([1, 1, 1]) in P_inter_B_again                                                  # optional - sage.symbolic
+        sage: vector([1, 1, 1]) in P_inter_B_again                                                  # optional - sage.geometry.polyhedron, sage.symbolic
         False
 
     Iterating over subsets determined by predicates::
@@ -339,7 +339,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
         TESTS::
 
-            sage: TripleDigits = ZZ^3
+            sage: TripleDigits = ZZ^3                                                               # optional - sage.modules
             sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 12; predicate                        # optional - sage.symbolic
             (x, y, z) |--> sqrt(x^2 + y^2 + z^2) < 12
             sage: SmallTriples = ConditionSet(ZZ^3, predicate); SmallTriples                        # optional - sage.symbolic
@@ -352,7 +352,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
             sage: var('t')                                                                          # optional - sage.symbolic
             t
-            sage: TinyUniverse = ZZ^0                                                               # optional - sage.symbolic
+            sage: TinyUniverse = ZZ^0                                                               # optional - sage.modules
             sage: Nullary = ConditionSet(TinyUniverse, t > 0, vars=())                              # optional - sage.symbolic
             sage: predicate = Nullary._predicates[0]                                                # optional - sage.symbolic
             sage: element = TinyUniverse(0)                                                         # optional - sage.symbolic
@@ -372,7 +372,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
         TESTS::
 
-            sage: TripleDigits = ZZ^3
+            sage: TripleDigits = ZZ^3                                                               # optional - sage.modules
             sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 12; predicate                        # optional - sage.symbolic
             (x, y, z) |--> sqrt(x^2 + y^2 + z^2) < 12
             sage: SmallTriples = ConditionSet(ZZ^3, predicate); SmallTriples                        # optional - sage.symbolic
