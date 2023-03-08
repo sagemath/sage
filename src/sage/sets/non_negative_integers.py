@@ -104,7 +104,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             False
             sage: None in NN
             False
-            sage: QQbar(sqrt(2)) in NN                                          # optional - sage.symbolic, sage.rings.number_field
+            sage: QQbar(sqrt(2)) in NN                                          # optional - sage.symbolic sage.rings.number_field
             False
             sage: RIF(1,2) in NN
             False
