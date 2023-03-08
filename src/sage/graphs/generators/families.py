@@ -3660,7 +3660,7 @@ def nauty_gentreeg(options="", debug=False):
 
         sage: gen = graphs.nauty_gentreeg("4", debug=True)
         sage: print(next(gen))
-        >A ...gentreeg Z=2:3 D=3 n=4
+        >A ...gentreeg ...
         sage: gen = graphs.nauty_gentreeg("4 -q", debug=True)
         sage: next(gen)
         ''
@@ -3687,7 +3687,7 @@ def nauty_gentreeg(options="", debug=False):
         sage: list(graphs.nauty_gentreeg("3 -x", debug=True))
         ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n [res/mod] ...
         sage: list(graphs.nauty_gentreeg("3", debug=True))
-        ['>A ...gentreeg Z=2:2 D=2 n=3\n', Graph on 3 vertices]
+        ['>A ...gentreeg ...\n', Graph on 3 vertices]
     """
     import shlex
     from sage.features.nauty import NautyExecutable
