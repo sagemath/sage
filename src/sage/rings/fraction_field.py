@@ -559,17 +559,17 @@ class FractionField_generic(ring.Field):
 
         The next example failed before :trac:`4376`::
 
-            sage: K(pari((x + 1)/(x^2 + x + 1)))
+            sage: K(pari((x + 1)/(x^2 + x + 1)))                                        # optional - sage.libs.pari
             (x + 1)/(x^2 + x + 1)
 
         These examples failed before :trac:`11368`::
 
             sage: R.<x, y, z> = PolynomialRing(QQ)
             sage: S = R.fraction_field()
-            sage: S(pari((x + y)/y))
+            sage: S(pari((x + y)/y))                                                    # optional - sage.libs.pari
             (x + y)/y
 
-            sage: S(pari(x + y + 1/z))
+            sage: S(pari(x + y + 1/z))                                                  # optional - sage.libs.pari
             (x*z + y*z + 1)/z
 
         This example failed before :trac:`23664`::

@@ -3027,12 +3027,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             [1, 2, 3, 4, 6, 8, 9, 12, 17, 18, 24, 34, 36, 51, 68, 72,
             102, 136, 153, 204, 306, 408, 612, 1224]
             sage: a = odd_part(factorial(31))
-            sage: v = a.divisors()
-            sage: len(v)
+            sage: v = a.divisors()                                                      # optional - sage.libs.pari
+            sage: len(v)                                                                # optional - sage.libs.pari
             172800
-            sage: prod(e + 1 for p, e in factor(a))
+            sage: prod(e + 1 for p, e in factor(a))                                     # optional - sage.libs.pari
             172800
-            sage: all(t.divides(a) for t in v)
+            sage: all(t.divides(a) for t in v)                                          # optional - sage.libs.pari
             True
 
         ::

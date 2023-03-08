@@ -5280,14 +5280,14 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^2
-            sage: K.<alpha> = f.root_field()
+            sage: K.<alpha> = f.root_field()                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: polynomial must be irreducible
 
         TESTS::
 
-            sage: (PolynomialRing(Integers(31),name='x').0+5).root_field('a')
+            sage: (PolynomialRing(Integers(31), name='x').0 + 5).root_field('a')        # optional - sage.libs.pari
             Ring of integers modulo 31
         """
         R = self.base_ring()
@@ -7337,18 +7337,18 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + x + 1
-            sage: d = f.discriminant(); d
+            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
             -31
-            sage: d.parent() is QQ
+            sage: d.parent() is QQ                                                      # optional - sage.libs.pari
             True
-            sage: EllipticCurve([1, 1]).discriminant()/16
+            sage: EllipticCurve([1, 1]).discriminant()/16                               # optional - sage.libs.pari
             -31
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = 2*x^3 + x + 1
-            sage: d = f.discriminant(); d
+            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
             -116
 
         We can compute discriminants over univariate and multivariate
@@ -7357,9 +7357,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a> = QQ[]
             sage: S.<x> = R[]
             sage: f = a*x + x + a + 1
-            sage: d = f.discriminant(); d
+            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
             1
-            sage: d.parent() is R
+            sage: d.parent() is R                                                       # optional - sage.libs.pari
             True
 
         ::
@@ -7367,9 +7367,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a, b> = QQ[]
             sage: S.<x> = R[]
             sage: f = x^2 + a + b
-            sage: d = f.discriminant(); d
+            sage: d = f.discriminant(); d                                               # optional - sage.libs.pari
             -4*a - 4*b
-            sage: d.parent() is R
+            sage: d.parent() is R                                                       # optional - sage.libs.pari
             True
 
         TESTS::
@@ -7377,41 +7377,41 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a
-            sage: f.discriminant()
+            sage: f.discriminant()                                                      # optional - sage.libs.pari
             1
 
         Check that :trac:`13672` is fixed::
 
-            sage: R.<t> = GF(5)[]                                               # optional - sage.libs.pari
-            sage: S.<x> = R[]                                                   # optional - sage.libs.pari
-            sage: f = x^10 + 2*x^6 + 2*x^5 + x + 2                              # optional - sage.libs.pari
-            sage: (f - t).discriminant()                                        # optional - sage.libs.pari
+            sage: R.<t> = GF(5)[]                                                       # optional - sage.libs.pari
+            sage: S.<x> = R[]                                                           # optional - sage.libs.pari
+            sage: f = x^10 + 2*x^6 + 2*x^5 + x + 2                                      # optional - sage.libs.pari
+            sage: (f - t).discriminant()                                                # optional - sage.libs.pari
             4*t^5
 
         The following examples show that :trac:`11782` has been fixed::
 
-            sage: var('x')
+            sage: var('x')                                                              # optional - sage.symbolic
             x
-            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()
+            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()                       # optional - sage.libs.pari, sage.symbolic
             54
-            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()
+            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()                        # optional - sage.libs.pari, sage.symbolic
             2
 
         This was fixed by :trac:`15422`::
 
-            sage: R.<s> = PolynomialRing(Qp(2))                                                                         # optional - sage.rings.padics
-            sage: (s^2).discriminant()                                                                                  # optional - sage.rings.padics
+            sage: R.<s> = PolynomialRing(Qp(2))                                         # optional - sage.rings.padics
+            sage: (s^2).discriminant()                                                  # optional - sage.rings.padics
             0
 
         This was fixed by :trac:`16014`::
 
             sage: PR.<b,t1,t2,x1,y1,x2,y2> = QQ[]
             sage: PRmu.<mu> = PR[]
-            sage: E1 = diagonal_matrix(PR, [1, b^2, -b^2])
-            sage: M = matrix(PR, [[1,-t1,x1-t1*y1],[t1,1,y1+t1*x1],[0,0,1]])
-            sage: E1 = M.transpose()*E1*M
-            sage: E2 = E1.subs(t1=t2, x1=x2, y1=y2)
-            sage: det(mu*E1 + E2).discriminant().degrees()
+            sage: E1 = diagonal_matrix(PR, [1, b^2, -b^2])                              # optional - sage.modules
+            sage: M = matrix(PR, [[1,-t1,x1-t1*y1], [t1,1,y1+t1*x1], [0,0,1]])          # optional - sage.modules
+            sage: E1 = M.transpose()*E1*M                                               # optional - sage.modules
+            sage: E2 = E1.subs(t1=t2, x1=x2, y1=y2)                                     # optional - sage.modules
+            sage: det(mu*E1 + E2).discriminant().degrees()                              # optional - sage.modules, sage.libs.pari
             (24, 12, 12, 8, 8, 8, 8)
 
         This addresses an issue raised by :trac:`15061`::
@@ -7420,7 +7420,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = R([1,1],2)
             sage: RP.<x> = PolynomialRing(R)
             sage: P = x^2 - F
-            sage: P.discriminant()
+            sage: P.discriminant()                                                      # optional - sage.libs.pari
             4 + 4*T + O(T^2)
         """
         # Late import to avoid cyclic dependencies:
@@ -9421,7 +9421,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R(2*x).is_irreducible()                                               # optional - sage.libs.pari
             False
             sage: R.<x> = QQ[]
-            sage: R(2*x).is_irreducible()
+            sage: R(2*x).is_irreducible()                                               # optional - sage.libs.pari
             True
 
         TESTS::
@@ -9647,16 +9647,16 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = ZZ[]
             sage: f = 4 * x
-            sage: f.is_squarefree()
+            sage: f.is_squarefree()                                             # optional - sage.libs.pari
             False
-            sage: f.squarefree_decomposition()
+            sage: f.squarefree_decomposition()                                  # optional - sage.libs.pari
             (4) * x
 
         If you want this method equally not to consider the content, you can
         remove it as in the following example::
 
             sage: c = f.content()
-            sage: (f/c).is_squarefree()
+            sage: (f/c).is_squarefree()                                         # optional - sage.libs.pari
             True
 
         If the base ring is not an integral domain, the question is not
@@ -10045,7 +10045,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="pari")        # optional - sage.libs.pari
             True
-            sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")
+            sage: (x^16 + x^14 - x^10 - x^8 - x^6 + x^2 + 1).is_cyclotomic(algorithm="sage")        # optional - sage.libs.pari
             True
 
             sage: y = polygen(QQ)
@@ -10528,14 +10528,14 @@ cdef class Polynomial(CommutativePolynomial):
         example with a non-trivial coefficient of lowest degree raises an error::
 
             sage: R.<x> = QQ[]
-            sage: R2 = R.quotient(x**2 + 1)
-            sage: x = R2.gen()
-            sage: R3.<y> = R2[]
-            sage: (y**2 - 2*y + 1).nth_root(2)
+            sage: R2 = R.quotient(x**2 + 1)                                     # optional - sage.libs.pari
+            sage: x = R2.gen()                                                  # optional - sage.libs.pari
+            sage: R3.<y> = R2[]                                                 # optional - sage.libs.pari
+            sage: (y**2 - 2*y + 1).nth_root(2)                                  # optional - sage.libs.pari
             -y + 1
-            sage: (y**3).nth_root(3)
+            sage: (y**3).nth_root(3)                                            # optional - sage.libs.pari
             y
-            sage: (y**2 + x).nth_root(2)
+            sage: (y**2 + x).nth_root(2)                                        # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             AttributeError: ... has no attribute 'nth_root'
@@ -11923,13 +11923,13 @@ def universal_discriminant(n):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_element import universal_discriminant
-        sage: universal_discriminant(1)
+        sage: universal_discriminant(1)                                                 # optional - sage.libs.pari
         1
-        sage: universal_discriminant(2)
+        sage: universal_discriminant(2)                                                 # optional - sage.libs.pari
         a1^2 - 4*a0*a2
-        sage: universal_discriminant(3)
+        sage: universal_discriminant(3)                                                 # optional - sage.libs.pari
         a1^2*a2^2 - 4*a0*a2^3 - 4*a1^3*a3 + 18*a0*a1*a2*a3 - 27*a0^2*a3^2
-        sage: universal_discriminant(4).degrees()
+        sage: universal_discriminant(4).degrees()                                       # optional - sage.libs.pari
         (3, 4, 4, 4, 3)
 
     .. SEEALSO::

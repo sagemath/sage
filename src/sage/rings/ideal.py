@@ -1643,23 +1643,23 @@ class Ideal_pid(Ideal_principal):
 
             sage: P = ZZ.ideal(61); P
             Principal ideal (61) of Integer Ring
-            sage: F = P.residue_field(); F
+            sage: F = P.residue_field(); F                                      # optional - sage.libs.pari
             Residue field of Integers modulo 61
-            sage: pi = F.reduction_map(); pi
+            sage: pi = F.reduction_map(); pi                                    # optional - sage.libs.pari
             Partially defined reduction map:
               From: Rational Field
               To:   Residue field of Integers modulo 61
-            sage: pi(123/234)
+            sage: pi(123/234)                                                   # optional - sage.libs.pari
             6
-            sage: pi(1/61)
+            sage: pi(1/61)                                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Cannot reduce rational 1/61 modulo 61: it has negative valuation
-            sage: lift = F.lift_map(); lift
+            sage: lift = F.lift_map(); lift                                     # optional - sage.libs.pari
             Lifting map:
               From: Residue field of Integers modulo 61
               To:   Integer Ring
-            sage: lift(F(12345/67890))
+            sage: lift(F(12345/67890))                                          # optional - sage.libs.pari
             33
             sage: (12345/67890) % 61
             33

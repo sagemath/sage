@@ -1276,8 +1276,8 @@ cdef class RingHomomorphism(RingMap):
 
         Non-commutative rings are not supported (:trac:`32824`)::
 
-            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')
-            sage: A.hom(A.gens(), A).kernel()
+            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')                             # optional - sage.modules
+            sage: A.hom(A.gens(), A).kernel()                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: rings are not commutative
@@ -1953,27 +1953,27 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         A single variate quotient over `\QQ`::
 
             sage: R.<x> = QQ[]
-            sage: Q.<a> = R.quotient(x^2 + x + 1)
-            sage: f1 = R.hom([a])
-            sage: f2 = R.hom([a + a^2 + a + 1])
-            sage: f1 == f2
+            sage: Q.<a> = R.quotient(x^2 + x + 1)                               # optional - sage.libs.pari
+            sage: f1 = R.hom([a])                                               # optional - sage.libs.pari
+            sage: f2 = R.hom([a + a^2 + a + 1])                                 # optional - sage.libs.pari
+            sage: f1 == f2                                                      # optional - sage.libs.pari
             True
-            sage: f1 == R.hom([a^2])
+            sage: f1 == R.hom([a^2])                                            # optional - sage.libs.pari
             False
-            sage: f1(x^3 + x)
+            sage: f1(x^3 + x)                                                   # optional - sage.libs.pari
             a + 1
-            sage: f2(x^3 + x)
+            sage: f2(x^3 + x)                                                   # optional - sage.libs.pari
             a + 1
 
         TESTS::
 
-            sage: loads(dumps(f2)) == f2
+            sage: loads(dumps(f2)) == f2                                        # optional - sage.libs.pari
             True
 
         ::
 
-            sage: R.<x,y> = QQ[]; f = R.hom([x,x+y]); g = R.hom([y,x])
-            sage: f == g             # indirect doctest
+            sage: R.<x,y> = QQ[]; f = R.hom([x,x+y]); g = R.hom([y,x])          # optional - sage.libs.pari
+            sage: f == g             # indirect doctest                         # optional - sage.libs.pari
             False
 
         EXAMPLES:
@@ -2126,7 +2126,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         sage: MPR = MatrixSpace(PR, 2)                                                                                  # optional - sage.modules
         sage: MPS = MatrixSpace(PS, 2)                                                                                  # optional - sage.modules
-        sage: M = MPR([(- x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,
+        sage: M = MPR([(- x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,            # optional - sage.modules
         ....:          (- 1/3*y + 1)*t^2 + 1/3*x*y + y^2 + 5/2*y + 1/4, (x + 6*y + 1)*t^2])
         sage: MPf = MPR.hom(f, MPS); MPf                                                                                # optional - sage.modules
         Ring morphism:
@@ -2272,19 +2272,19 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         `\QQ`::
 
             sage: R.<x> = QQ[]
-            sage: Q.<a> = R.quotient(x^2 + x + 1)
-            sage: f1 = R.hom([a])
-            sage: f2 = R.hom([a + a^2 + a + 1])
-            sage: PR.<s,t> = R[]
-            sage: PQ = Q['s','t']
-            sage: f1P = PR.hom(f1,PQ)
-            sage: f2P = PR.hom(f2,PQ)
-            sage: f1P == f2P
+            sage: Q.<a> = R.quotient(x^2 + x + 1)                                                                       # optional - sage.modules
+            sage: f1 = R.hom([a])                                                                                       # optional - sage.modules
+            sage: f2 = R.hom([a + a^2 + a + 1])                                                                         # optional - sage.modules
+            sage: PR.<s,t> = R[]                                                                                        # optional - sage.modules
+            sage: PQ = Q['s','t']                                                                                       # optional - sage.modules
+            sage: f1P = PR.hom(f1,PQ)                                                                                   # optional - sage.modules
+            sage: f2P = PR.hom(f2,PQ)                                                                                   # optional - sage.modules
+            sage: f1P == f2P                                                                                            # optional - sage.modules
             True
 
         TESTS::
 
-            sage: f1P == loads(dumps(f1P))
+            sage: f1P == loads(dumps(f1P))                                                                              # optional - sage.modules
             True
 
             sage: R.<x,y> = QQ[]; f = R.hom([x,x+y]); g = R.hom([y,x])

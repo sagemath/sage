@@ -110,9 +110,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]
-            sage: f = 3 - t^3 + O(t^5)
-            sage: f.polynomial()
+            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.libs.pari
+            sage: f = 3 - t^3 + O(t^5)                                                  # optional - sage.libs.pari
+            sage: f.polynomial()                                                        # optional - sage.libs.pari
             6*t^3 + 3
         """
         return self.__f
@@ -164,12 +164,12 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(11)[[]]
-            sage: bool(1 + t + O(t^18))
+            sage: R.<t> = GF(11)[[]]                                                    # optional - sage.libs.pari
+            sage: bool(1 + t + O(t^18))                                                 # optional - sage.libs.pari
             True
-            sage: bool(R(0))
+            sage: bool(R(0))                                                            # optional - sage.libs.pari
             False
-            sage: bool(O(t^18))
+            sage: bool(O(t^18))                                                         # optional - sage.libs.pari
             False
         """
         return not not self.__f
@@ -230,8 +230,8 @@ cdef class PowerSeries_poly(PowerSeries):
 
         A series defined over another ring can be substituted::
 
-            sage: S.<u> = GF(7)[[]]
-            sage: f(2*u + u^3 + O(u^5))
+            sage: S.<u> = GF(7)[[]]                                                     # optional - sage.libs.pari
+            sage: f(2*u + u^3 + O(u^5))                                                 # optional - sage.libs.pari
             4*u^2 + u^3 + 4*u^4 + 5*u^5 + O(u^6)
 
         As can a p-adic integer as long as the coefficient ring is compatible::
@@ -273,18 +273,18 @@ cdef class PowerSeries_poly(PowerSeries):
 
         Arguments beyond the first can refer to the base ring::
 
-            sage: P.<x> = GF(5)[]
-            sage: Q.<y> = P[[]]
-            sage: h = (1 - x*y)^-1 + O(y^7); h
+            sage: P.<x> = GF(5)[]                                                       # optional - sage.libs.pari
+            sage: Q.<y> = P[[]]                                                         # optional - sage.libs.pari
+            sage: h = (1 - x*y)^-1 + O(y^7); h                                          # optional - sage.libs.pari
             1 + x*y + x^2*y^2 + x^3*y^3 + x^4*y^4 + x^5*y^5 + x^6*y^6 + O(y^7)
-            sage: h(y^2, 3)
+            sage: h(y^2, 3)                                                             # optional - sage.libs.pari
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
 
         These secondary values can also be specified using keywords::
 
-            sage: h(y=y^2, x=3)
+            sage: h(y=y^2, x=3)                                                         # optional - sage.libs.pari
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
-            sage: h(y^2, x=3)
+            sage: h(y^2, x=3)                                                           # optional - sage.libs.pari
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
         """
         P = self.parent()
@@ -380,27 +380,27 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]
-            sage: f = 3 + 6*t^3 + O(t^5)
-            sage: f._unsafe_mutate(0, 5)
-            sage: f
+            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.libs.pari
+            sage: f = 3 + 6*t^3 + O(t^5)                                                # optional - sage.libs.pari
+            sage: f._unsafe_mutate(0, 5)                                                # optional - sage.libs.pari
+            sage: f                                                                     # optional - sage.libs.pari
             5 + 6*t^3 + O(t^5)
-            sage: f._unsafe_mutate(2, 1) ; f
+            sage: f._unsafe_mutate(2, 1) ; f                                            # optional - sage.libs.pari
             5 + t^2 + 6*t^3 + O(t^5)
 
         - Mutating can even bump up the precision::
 
-            sage: f._unsafe_mutate(6, 1) ; f
+            sage: f._unsafe_mutate(6, 1) ; f                                            # optional - sage.libs.pari
             5 + t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(0, 0) ; f
+            sage: f._unsafe_mutate(0, 0) ; f                                            # optional - sage.libs.pari
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(1, 0) ; f
+            sage: f._unsafe_mutate(1, 0) ; f                                            # optional - sage.libs.pari
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(11,0) ; f
+            sage: f._unsafe_mutate(11,0) ; f                                            # optional - sage.libs.pari
             t^2 + 6*t^3 + t^6 + O(t^12)
 
-            sage: g = t + O(t^7)
-            sage: g._unsafe_mutate(1,0) ; g
+            sage: g = t + O(t^7)                                                        # optional - sage.libs.pari
+            sage: g._unsafe_mutate(1,0) ; g                                             # optional - sage.libs.pari
             O(t^7)
         """
         self.__f._unsafe_mutate(i, value)
@@ -553,9 +553,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(7)[[]]
-            sage: f = t + 3*t^4 + O(t^11)
-            sage: f * GF(7)(3)
+            sage: R.<t> = GF(7)[[]]                                                     # optional - sage.libs.pari
+            sage: f = t + 3*t^4 + O(t^11)                                               # optional - sage.libs.pari
+            sage: f * GF(7)(3)                                                          # optional - sage.libs.pari
             3*t + 2*t^4 + O(t^11)
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
@@ -566,9 +566,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(11)[[]]
-            sage: f = 1 + 3*t^4 + O(t^120)
-            sage: 2 * f
+            sage: R.<t> = GF(11)[[]]                                                    # optional - sage.libs.pari
+            sage: f = 1 + 3*t^4 + O(t^120)                                              # optional - sage.libs.pari
+            sage: 2 * f                                                                 # optional - sage.libs.pari
             2 + 6*t^4 + O(t^120)
         """
         return PowerSeries_poly(self._parent, c * self.__f, self._prec, check=False)
@@ -596,11 +596,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(2)[[]]
-            sage: f = t + t^4 + O(t^7)
-            sage: f >> 1
+            sage: R.<t> = GF(2)[[]]                                                     # optional - sage.libs.pari
+            sage: f = t + t^4 + O(t^7)                                                  # optional - sage.libs.pari
+            sage: f >> 1                                                                # optional - sage.libs.pari
             1 + t^3 + O(t^6)
-            sage: f >> 10
+            sage: f >> 10                                                               # optional - sage.libs.pari
             O(t^0)
         """
         if n:
@@ -732,10 +732,10 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<I> = GF(2)[[]]
-            sage: f = 1/(1+I+O(I^8)); f
+            sage: R.<I> = GF(2)[[]]                                                     # optional - sage.libs.pari
+            sage: f = 1/(1+I+O(I^8)); f                                                 # optional - sage.libs.pari
             1 + I + I^2 + I^3 + I^4 + I^5 + I^6 + I^7 + O(I^8)
-            sage: f.truncate(5)
+            sage: f.truncate(5)                                                         # optional - sage.libs.pari
             I^4 + I^3 + I^2 + I + 1
         """
         if prec is infinity:
@@ -763,10 +763,10 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: R.<I> = GF(2)[[]]
-            sage: f = 1/(1+I+O(I^8)); f
+            sage: R.<I> = GF(2)[[]]                                                     # optional - sage.libs.pari
+            sage: f = 1/(1+I+O(I^8)); f                                                 # optional - sage.libs.pari
             1 + I + I^2 + I^3 + I^4 + I^5 + I^6 + I^7 + O(I^8)
-            sage: f.truncate_powerseries(5)
+            sage: f.truncate_powerseries(5)                                             # optional - sage.libs.pari
             1 + I + I^2 + I^3 + I^4 + O(I^5)
         """
         return PowerSeries_poly(self._parent, self.__f.truncate(prec),

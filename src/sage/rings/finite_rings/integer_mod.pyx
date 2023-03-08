@@ -1038,13 +1038,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             False
             sage: Mod(9,17).is_square()                                         # optional - sage.libs.pari
             True
-            sage: Mod(9,17*19^2).is_square()
+            sage: Mod(9,17*19^2).is_square()                                    # optional - sage.libs.pari
             True
-            sage: Mod(-1,17^30).is_square()
+            sage: Mod(-1,17^30).is_square()                                     # optional - sage.libs.pari
             True
-            sage: Mod(1/9, next_prime(2^40)).is_square()
+            sage: Mod(1/9, next_prime(2^40)).is_square()                        # optional - sage.libs.pari
             True
-            sage: Mod(1/25, next_prime(2^90)).is_square()
+            sage: Mod(1/25, next_prime(2^90)).is_square()                       # optional - sage.libs.pari
             True
 
         TESTS::
@@ -1133,15 +1133,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: mod(7, 18).sqrt()
             5
             sage: a = mod(14, 5^60).sqrt()                                      # optional - sage.libs.pari
-            sage: a*a
+            sage: a*a                                                           # optional - sage.libs.pari
             14
-            sage: mod(15, 389).sqrt(extend=False)
+            sage: mod(15, 389).sqrt(extend=False)                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: self must be a square
-            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
+            sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)                        # optional - sage.libs.pari
             9
-            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
+            sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)                       # optional - sage.libs.pari
             25
 
         ::
@@ -1403,7 +1403,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             [2, 6]
             sage: mod(1,16).nth_root(4, all=True)                                                   # optional - sage.rings.padics
             [1, 15, 13, 3, 9, 7, 5, 11]
-            sage: (mod(22,31)^200).nth_root(200)
+            sage: (mod(22,31)^200).nth_root(200)                                                    # optional - sage.groups
             5
             sage: mod(3,6).nth_root(0, all=True)                                                    # optional - sage.rings.padics
             []
@@ -1769,9 +1769,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         `0` is not a primitive root mod `n` (:trac:`23624`) except for `n=0`::
 
-            sage: mod(0, 17).is_primitive_root()
+            sage: mod(0, 17).is_primitive_root()                                        # optional - sage.libs.pari
             False
-            sage: all(not mod(0, n).is_primitive_root() for n in srange(2, 20))
+            sage: all(not mod(0, n).is_primitive_root() for n in srange(2, 20))         # optional - sage.libs.pari
             True
             sage: mod(0, 1).is_primitive_root()
             True
