@@ -3442,16 +3442,18 @@ class SmallPermutationGroup(PermutationGroup_generic):
     r"""
     A GAP SmallGroup, returned as a permutation group.
 
-    GAP contains a database of groups, each identified by its GAP id.
-    This is a pair ``[n,k]`` consisting of ``n``, the order of the
-    group, and ``k``, an index determining the group specifically.
-    This class can construct the group as a permutation group from this data.
+    GAP contains a library SGL of small groups, each identified by
+    its GAP SmallGroup id. (MAGMA uses the same identifiers).
+    The GAP SmallGroup id is a pair ``[n,k]`` consisting of
+    ``n``, the order of the group, and ``k``, an index determining
+    the group specifically. This class can construct the group as a
+    permutation group from this data.
 
     INPUT:
 
     - ``order`` -- the order of the group
 
-    - ``gap_id`` -- the numerical index in the GAP Id of the group
+    - ``gap_id`` -- the numerical index in the GAP id of the group
 
     Generators may be obtained through the :meth:`gens` method.
     These could change for a particular group in later releases
