@@ -161,12 +161,12 @@ def characteristic_polynomial(x, var='x'):
     variables used within the matrix, and that non-integral powers of
     variables do not confuse the computation (:trac:`14403`)::
 
-        sage: y = var('y')                                                                                              # optional - sage.libs.pari, sage.symbolic
-        sage: a = matrix([[x,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]])                                                  # optional - sage.libs.pari, sage.symbolic
-        sage: characteristic_polynomial(a).list()                                                                       # optional - sage.libs.pari, sage.symbolic
+        sage: y = var('y')                                                                                              # optional - sage.libs.pari sage.symbolic
+        sage: a = matrix([[x,0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]])                                                  # optional - sage.libs.pari sage.symbolic
+        sage: characteristic_polynomial(a).list()                                                                       # optional - sage.libs.pari sage.symbolic
         [x, -3*x - 1, 3*x + 3, -x - 3, 1]
-        sage: b = matrix([[y^(1/2),0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]])                                            # optional - sage.libs.pari, sage.symbolic
-        sage: charpoly(b).list()                                                                                        # optional - sage.libs.pari, sage.symbolic
+        sage: b = matrix([[y^(1/2),0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]])                                            # optional - sage.libs.pari sage.symbolic
+        sage: charpoly(b).list()                                                                                        # optional - sage.libs.pari sage.symbolic
         [sqrt(y), -3*sqrt(y) - 1, 3*sqrt(y) + 3, -sqrt(y) - 3, 1]
     """
     try:
@@ -296,8 +296,8 @@ def discriminant(x):
 
         sage: R.<x> = PolynomialRing(QQ)
         sage: S = R.quotient(x^29 - 17*x - 1, 'alpha')                                                                  # optional - sage.libs.pari
-        sage: K = S.number_field()                                                                                      # optional - sage.libs.pari, sage.rings.number_field
-        sage: discriminant(K)                                                                                           # optional - sage.libs.pari, sage.rings.number_field
+        sage: K = S.number_field()                                                                                      # optional - sage.libs.pari sage.rings.number_field
+        sage: discriminant(K)                                                                                           # optional - sage.libs.pari sage.rings.number_field
         -15975100446626038280218213241591829458737190477345113376757479850566957249523
     """
     return x.discriminant()
@@ -761,10 +761,10 @@ def integral(x, *args, **kwds):
         sage: _ = var('a,b,x')                                                                                          # optional - sage.symbolic
         sage: integrate(sin(x)*tan(x)/(1-cos(x)), x, a, b, algorithm='sympy')                                           # optional - sage.symbolic
         -integrate(sin(x)*tan(x)/(cos(x) - 1), x, a, b)
-        sage: import sympy                                                                                              # optional - sage.symbolic
-        sage: x, y, z = sympy.symbols('x y z')                                                                          # optional - sage.symbolic
-        sage: f = sympy.Function('f')                                                                                   # optional - sage.symbolic
-        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                                                     # optional - sage.symbolic
+        sage: import sympy                                                                                              # optional - sympy
+        sage: x, y, z = sympy.symbols('x y z')                                                                          # optional - sympy
+        sage: f = sympy.Function('f')                                                                                   # optional - sympy
+        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                                                     # optional - sympy sage.symbolic
         integrate(integrate(integrate(f(x, y, z), x), y), z)
 
     Ensure that the following integral containing a signum term from
@@ -1326,15 +1326,15 @@ def norm(x):
 
     The norm of vectors::
 
-        sage: z = 1 + 2*I                                                                                               # optional - sage.modules, sage.symbolic
-        sage: norm(vector([z]))                                                                                         # optional - sage.modules, sage.symbolic
+        sage: z = 1 + 2*I                                                                                               # optional - sage.modules sage.symbolic
+        sage: norm(vector([z]))                                                                                         # optional - sage.modules sage.symbolic
         sqrt(5)
-        sage: v = vector([-1,2,3])                                                                                      # optional - sage.modules, sage.symbolic
-        sage: norm(v)                                                                                                   # optional - sage.modules, sage.symbolic
+        sage: v = vector([-1,2,3])                                                                                      # optional - sage.modules sage.symbolic
+        sage: norm(v)                                                                                                   # optional - sage.modules sage.symbolic
         sqrt(14)
-        sage: _ = var("a b c d", domain='real')                                                                         # optional - sage.modules, sage.symbolic
-        sage: v = vector([a, b, c, d])                                                                                  # optional - sage.modules, sage.symbolic
-        sage: norm(v)                                                                                                   # optional - sage.modules, sage.symbolic
+        sage: _ = var("a b c d", domain='real')                                                                         # optional - sage.modules sage.symbolic
+        sage: v = vector([a, b, c, d])                                                                                  # optional - sage.modules sage.symbolic
+        sage: norm(v)                                                                                                   # optional - sage.modules sage.symbolic
         sqrt(a^2 + b^2 + c^2 + d^2)
 
     The norm of matrices::
@@ -1547,8 +1547,8 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: numerical_approx(I)
         1.00000000000000*I
         sage: x = QQ['x'].gen()
-        sage: F.<k> = NumberField(x^2 + 2, embedding=sqrt(CC(2))*CC.0)                                                  # optional - sage.rings.number_field, sage.symbolic
-        sage: numerical_approx(k)                                                                                       # optional - sage.rings.number_field, sage.symbolic
+        sage: F.<k> = NumberField(x^2 + 2, embedding=sqrt(CC(2))*CC.0)                                                  # optional - sage.rings.number_field sage.symbolic
+        sage: numerical_approx(k)                                                                                       # optional - sage.rings.number_field sage.symbolic
         1.41421356237309*I
 
         sage: type(numerical_approx(CC(1/2)))
@@ -1557,11 +1557,11 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
     The following tests :trac:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::
 
-        sage: E = matrix(3, [3,1,6,5,2,9,7,3,13]).eigenvalues(); E                                                      # optional - sage.modules, sage.rings.number_field
+        sage: E = matrix(3, [3,1,6,5,2,9,7,3,13]).eigenvalues(); E                                                      # optional - sage.modules sage.rings.number_field
         [18.16815365088822?, -0.08407682544410650? - 0.2190261484802906?*I, -0.08407682544410650? + 0.2190261484802906?*I]
-        sage: E[1].parent()                                                                                             # optional - sage.modules, sage.rings.number_field
+        sage: E[1].parent()                                                                                             # optional - sage.modules sage.rings.number_field
         Algebraic Field
-        sage: [a.n() for a in E]                                                                                        # optional - sage.modules, sage.rings.number_field
+        sage: [a.n() for a in E]                                                                                        # optional - sage.modules sage.rings.number_field
         [18.1681536508882, -0.0840768254441065 - 0.219026148480291*I, -0.0840768254441065 + 0.219026148480291*I]
 
     Make sure we've rounded up log(10,2) enough to guarantee

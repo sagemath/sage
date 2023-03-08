@@ -1719,7 +1719,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         "ZZ = ZZ['u,v']; (x, y,) = ZZ._first_ngens(2)"
         sage: preparse("ZZ.<x> = QQ[2^(1/3)]")
         'ZZ = QQ[Integer(2)**(Integer(1)/Integer(3))]; (x,) = ZZ._first_ngens(1)'
-        sage: QQ[2^(1/3)]
+        sage: QQ[2^(1/3)]                                                               # optional - sage.symbolic sage.rings.number_field
         Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
 
         sage: preparse("a^b")

@@ -164,14 +164,14 @@ class BackendDoctest(BackendBase):
 
         This ends up calling the displayhook::
 
-            sage: plt = plot(sin)                                               # optional - sage.plot
-            sage: plt                                                           # optional - sage.plot
+            sage: plt = plot(sin)                                               # optional - sage.plot sage.symbolic
+            sage: plt                                                           # optional - sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: plt.show()                                                    # optional - sage.plot
+            sage: plt.show()                                                    # optional - sage.plot sage.symbolic
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: dm.displayhook(plt)       # indirect doctest                  # optional - sage.plot
+            sage: dm.displayhook(plt)       # indirect doctest                  # optional - sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         self.validate(rich_output)

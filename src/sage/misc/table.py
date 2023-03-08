@@ -286,15 +286,15 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]                                # optional - sage.matrix, sage.plot
-            sage: T = table(rows, header_row=True)                                                                      # optional - sage.matrix, sage.plot
-            sage: T2 = table(rows, header_row=True)                                                                     # optional - sage.matrix, sage.plot
-            sage: T is T2                                                                                               # optional - sage.matrix, sage.plot
+            sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]                                # optional - sage.matrix sage.plot
+            sage: T = table(rows, header_row=True)                                                                      # optional - sage.matrix sage.plot
+            sage: T2 = table(rows, header_row=True)                                                                     # optional - sage.matrix sage.plot
+            sage: T is T2                                                                                               # optional - sage.matrix sage.plot
             False
-            sage: T == T2                                                                                               # optional - sage.matrix, sage.plot
+            sage: T == T2                                                                                               # optional - sage.matrix sage.plot
             True
-            sage: T2.options(frame=True)                                                                                # optional - sage.matrix, sage.plot
-            sage: T == T2                                                                                               # optional - sage.matrix, sage.plot
+            sage: T2.options(frame=True)                                                                                # optional - sage.matrix sage.plot
+            sage: T == T2                                                                                               # optional - sage.matrix sage.plot
             False
         """
         return (self._rows == other._rows and self.options() == other.options())

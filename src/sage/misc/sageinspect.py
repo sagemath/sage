@@ -1118,7 +1118,7 @@ def _sage_getargspec_from_ast(source):
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from_ast(s) == inspect.getfullargspec(context['f'])
         True
-        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])  # optional - sage.modules, sage.graphs
+        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])  # optional - sage.modules sage.graphs
         {True}
     """
     ast_args = ast.parse(source.lstrip()).body[0].args
@@ -1356,7 +1356,7 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
-        sage: sage_getfile(Sq)
+        sage: sage_getfile(Sq)                                                          # optional - sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # optional - sage.symbolic
         '...sage/symbolic/expression.pyx'
@@ -1437,7 +1437,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
-        sage: sage_getfile_relative(Sq)
+        sage: sage_getfile_relative(Sq)                                                 # optional - sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # optional - sage.symbolic
         'sage/symbolic/expression.pyx'
