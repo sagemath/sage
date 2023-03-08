@@ -1732,6 +1732,12 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         sage: supplementary_difference_set_from_rel_diff_set(1, existence=True)
         False
 
+    Check that the function works even when s > 1::
+
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(353, check=False) #long time
+        sage: is_supplementary_difference_set(G, sets, 352) #long time
+        True
+
     .. SEEALSO::
 
         :func:`is_supplementary_difference_set`
@@ -1764,25 +1770,26 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     for d in set1:
         hall += P.monomial(d[0])
 
-    T_2m = 0
-    for i in range(2 * m):
-        T_2m += P.monomial(i)
+    def get_T(k):
+        T = P.monomial(0) -1
+        for i in range(k):
+            T += P.monomial(i)
+        return T
 
     modulo = P.monomial(2*m) - 1
 
-    diff = T_2m - (1+P.monomial(m))*hall
+    diff = get_T(2*m) - (1+P.monomial(m))*hall
     diff = diff.mod(modulo)
     exp1, exp2 = diff.exponents()
     a = (exp1+exp2-m) // 2
 
-    alfa3 = (P.monomial(a) + hall).mod(modulo)
-    alfa4 = (P.monomial(a+m) + hall).mod(modulo)
+    psi3 = (P.monomial(a) + hall).mod(modulo)
+    psi4 = (P.monomial(a+m) + hall).mod(modulo)
 
-    psi3 = alfa3
-    psi4 = alfa4
     for i in range(s):
-        psi3 = (alfa3(P.monomial(2)) + P.monomial(1)*alfa4(P.monomial(2))).mod(P.monomial(4*m)-1)
-        psi4 = (alfa3(P.monomial(2)) + P.monomial(1)*(T_2m(P.monomial(2)) - alfa4(P.monomial(2)))).mod(P.monomial(4*m)-1)
+        m_start = 2**i * m
+        psi3, psi4 = (psi3(P.monomial(2)) + P.monomial(1)*psi4(P.monomial(2))).mod(P.monomial(4*m_start)-1), \
+                 (psi3(P.monomial(2)) + P.monomial(1)*(get_T(2*m_start)(P.monomial(2)) - psi4(P.monomial(2)))).mod(P.monomial(4*m_start)-1)
 
     # Construction of psi1, psi2
     G2, set2 = relative_difference_set_from_m_sequence(q, 2, check=False)
@@ -1808,14 +1815,6 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         theta2 += P.monomial(exp)
     theta2 = theta2.mod(P.monomial(q-1) - 1)
 
-    phi1 = 0
-    phi2 = 0
-    for exp in phi_exps:
-        if exp % 2 == 0:
-            phi2 += P.monomial(exp)
-        else:
-            phi1 += P.monomial(exp)
-
     psi1 = ((1 + P.monomial((q-1)//2)) * theta1).mod(P.monomial(q-1) - 1)
     psi2 = (1 + (1 + P.monomial((q-1)//2)) * theta2).mod(P.monomial(q-1) - 1)
 
@@ -1825,7 +1824,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     K2 = list(map(lambda x: G[x], psi2.exponents()))
     K3 = list(map(lambda x: G[x], psi3.exponents()))
     K4 = list(map(lambda x: G[x], psi4.exponents()))
-    
+
     if check:
         assert is_supplementary_difference_set(G, [K1, K2, K3, K4], q-1)
 
