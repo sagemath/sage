@@ -61,7 +61,7 @@ from sage.graphs.digraph import DiGraph
 
 
 class TamariIntervalPoset(Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+                          metaclass=InheritComparisonClasscallMetaclass):
     r"""
     The class of Tamari interval-posets.
 
@@ -3231,7 +3231,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         final_forest = TamariIntervalPosets.final_forest(tree1)
         try:
             return initial_forest.intersection(final_forest)
-        except Exception:
+        except ValueError:
             raise ValueError("the two binary trees are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3280,7 +3280,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         tree2 = dw2.to_binary_tree_tamari()
         try:
             return TamariIntervalPosets.from_binary_trees(tree1, tree2)
-        except Exception:
+        except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
 
     @staticmethod
