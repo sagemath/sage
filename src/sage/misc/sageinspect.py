@@ -1358,7 +1358,7 @@ def sage_getfile(obj):
         '...sage/rings/rational.pyx'
         sage: sage_getfile(Sq)
         '...sage/algebras/steenrod/steenrod_algebra.py'
-        sage: sage_getfile(x)
+        sage: sage_getfile(x)                                                           # optional - sage.symbolic
         '...sage/symbolic/expression.pyx'
 
     The following tests against some bugs fixed in :trac:`9976`::
@@ -1439,7 +1439,7 @@ def sage_getfile_relative(obj):
         'sage/rings/rational.pyx'
         sage: sage_getfile_relative(Sq)
         'sage/algebras/steenrod/steenrod_algebra.py'
-        sage: sage_getfile_relative(x)
+        sage: sage_getfile_relative(x)                                                  # optional - sage.symbolic
         'sage/symbolic/expression.pyx'
         sage: sage_getfile_relative(range)
         ''

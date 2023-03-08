@@ -434,22 +434,22 @@ cdef class WeakValueDictionary(dict):
 
         The value for an existing key is returned and not overridden::
 
-            sage: D.setdefault(5, ZZ)
+            sage: D.setdefault(5, ZZ)                                                                                   # optional - sage.libs.pari
             Finite Field of size 5
-            sage: D[5]
+            sage: D[5]                                                                                                  # optional - sage.libs.pari
             Finite Field of size 5
 
         For a non-existing key, the default value is stored and returned::
 
-            sage: 4 in D
+            sage: 4 in D                                                                                                # optional - sage.libs.pari
             False
-            sage: D.setdefault(4, ZZ)
+            sage: D.setdefault(4, ZZ)                                                                                   # optional - sage.libs.pari
             Integer Ring
-            sage: 4 in D
+            sage: 4 in D                                                                                                # optional - sage.libs.pari
             True
-            sage: D[4]
+            sage: D[4]                                                                                                  # optional - sage.libs.pari
             Integer Ring
-            sage: len(D)
+            sage: len(D)                                                                                                # optional - sage.libs.pari
             5
 
         TESTS:
