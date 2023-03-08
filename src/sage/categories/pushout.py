@@ -3862,24 +3862,24 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-        sage: FG = BlackBoxConstructionFunctor(gap)
-        sage: FS = BlackBoxConstructionFunctor(singular)
+        sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
+        sage: FS = BlackBoxConstructionFunctor(singular)                            # optional - sage.libs.singular
         sage: FG
         BlackBoxConstructionFunctor
-        sage: FG(ZZ)
+        sage: FG(ZZ)                                                                # optional - sage.libs.gap
         Integers
-        sage: FG(ZZ).parent()
+        sage: FG(ZZ).parent()                                                       # optional - sage.libs.gap
         Gap
-        sage: FS(QQ['t'])
+        sage: FS(QQ['t'])                                                           # optional - sage.libs.singular
         polynomial ring, over a field, global ordering
         //   coefficients: QQ
         //   number of vars : 1
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C
-        sage: FG == FS
+        sage: FG == FS                                                              # optional - sage.libs.gap, sage.libs.singular
         False
-        sage: FG == loads(dumps(FG))
+        sage: FG == loads(dumps(FG))                                                # optional - sage.libs.gap
         True
     """
     rank = 100
@@ -3889,7 +3889,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FG = BlackBoxConstructionFunctor(gap)                             # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
             sage: FM == FG                                                          # optional - sage.symbolic
             False
@@ -3921,7 +3921,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FG = BlackBoxConstructionFunctor(gap)                             # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
             sage: FM == FG       # indirect doctest                                 # optional - sage.symbolic
             False
@@ -3940,7 +3940,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
-            sage: FG = BlackBoxConstructionFunctor(gap)
+            sage: FG = BlackBoxConstructionFunctor(gap)                             # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
             sage: FM != FG       # indirect doctest                                 # optional - sage.symbolic
             True

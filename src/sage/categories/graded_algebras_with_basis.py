@@ -111,13 +111,13 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
-                sage: Cl = CliffordAlgebra(Q)
-                sage: M = Cl.free_graded_module((0, 2, 3))
-                sage: M.gens()
+                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])                                                           # optional - sage.modules
+                sage: Cl = CliffordAlgebra(Q)                                                                           # optional - sage.combinat, sage.modules
+                sage: M = Cl.free_graded_module((0, 2, 3))                                                              # optional - sage.combinat, sage.modules
+                sage: M.gens()                                                                                          # optional - sage.combinat, sage.modules
                 (g[0], g[2], g[3])
-                sage: N.<xy, z> = Cl.free_graded_module((1, 2))
-                sage: N.generators()
+                sage: N.<xy, z> = Cl.free_graded_module((1, 2))                                                         # optional - sage.combinat, sage.modules
+                sage: N.generators()                                                                                    # optional - sage.combinat, sage.modules
                 (xy, z)
             """
             try:

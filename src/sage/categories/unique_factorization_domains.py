@@ -160,10 +160,10 @@ class UniqueFactorizationDomains(Category_singleton):
 
             Check that :trac:`23620` has been resolved::
 
-                sage: R.<x> = ZpFM(2)[]
-                sage: f = 2*x + 2
-                sage: g = 4*x + 2
-                sage: f.gcd(g).parent() is R
+                sage: R.<x> = ZpFM(2)[]                                                                                 # optional - sage.rings.padics
+                sage: f = 2*x + 2                                                                                       # optional - sage.rings.padics
+                sage: g = 4*x + 2                                                                                       # optional - sage.rings.padics
+                sage: f.gcd(g).parent() is R                                                                            # optional - sage.rings.padics
                 True
 
             """
