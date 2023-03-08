@@ -517,7 +517,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``BR`` -- (default: `\QQ`) the base ring
+        - ``base_ring`` -- (default: `\QQ`) the base ring
 
         EXAMPLES::
 
