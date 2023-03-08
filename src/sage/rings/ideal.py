@@ -917,13 +917,13 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R = ZZ['x']
-            sage: I = R.ideal(2,x)
+            sage: R.<x> = ZZ[]
+            sage: I = R.ideal(2, x)
             sage: I.is_principal()
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: J = R.base_extend(QQ).ideal(2,x)
+            sage: J = R.base_extend(QQ).ideal(2, x)
             sage: J.is_principal()
             True
         """
@@ -1673,11 +1673,11 @@ class Ideal_pid(Ideal_principal):
 
         ::
 
-            sage: R.<x>=QQ[]
-            sage: I=R.ideal(x^2+1)
-            sage: I.is_prime()
+            sage: R.<x> = QQ[]
+            sage: I = R.ideal(x^2 + 1)
+            sage: I.is_prime()                                                  # optional - sage.libs.pari
             True
-            sage: I.residue_field()
+            sage: I.residue_field()                                             # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: residue fields only supported for polynomial rings over finite fields.

@@ -224,7 +224,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: P.<x,y> = PolynomialRing(ZZ)
             sage: P.completion([]) is P
             True
-            sage: P.completion(SR.var('x'))
+            sage: P.completion(SR.var('x'))                                             # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: x is not an element of Multivariate Polynomial Ring

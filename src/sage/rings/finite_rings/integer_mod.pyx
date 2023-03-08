@@ -551,13 +551,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: a = Mod(2,19)
-            sage: gap(a)
+            sage: gap(a)                                                        # optional - sage.libs.gap
             Z(19)
-            sage: gap(Mod(3, next_prime(10000)))
+            sage: gap(Mod(3, next_prime(10000)))                                # optional - sage.libs.gap
             Z(10007)^6190
-            sage: gap(Mod(3, next_prime(100000)))
+            sage: gap(Mod(3, next_prime(100000)))                               # optional - sage.libs.gap
             ZmodpZObj( 3, 100003 )
-            sage: gap(Mod(4, 48))
+            sage: gap(Mod(4, 48))                                               # optional - sage.libs.gap
             ZmodnZObj( 4, 48 )
         """
         return '%s*One(ZmodnZ(%s))' % (self, self.__modulus.sageInteger)

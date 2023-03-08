@@ -102,8 +102,8 @@ cdef class FractionFieldElement(FieldElement):
             sage: f.numerator()
             'hi'
 
-            sage: x = var('x')
-            sage: K((x + 1)/(x^2 + x + 1))
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: K((x + 1)/(x^2 + x + 1))                                              # optional - sage.symbolic
             (x + 1)/(x^2 + x + 1)
             sage: K(355/113)
             355/113
@@ -1042,9 +1042,9 @@ cdef class FractionFieldElement(FieldElement):
             sage: x,y = F.gens()
             sage: elt = (2*x + 2*y) / (3*x - 3*y); elt
             (2*x + 2*y)/(3*x - 3*y)
-            sage: elt._symbolic_(SR)
+            sage: elt._symbolic_(SR)                                            # optional - sage.symbolic
             2/3*(x + y)/(x - y)
-            sage: symbolic_expression(elt)
+            sage: symbolic_expression(elt)                                      # optional - sage.symbolic
             2/3*(x + y)/(x - y)
         """
         return ring(self.__numerator)/ring(self.__denominator)

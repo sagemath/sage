@@ -246,7 +246,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         17
         sage: Z(Mod(19,23))
         19
-        sage: Z(2 + 3*5 + O(5^3))
+        sage: Z(2 + 3*5 + O(5^3))                                                       # optional - sage.rings.padics
         17
 
     Arbitrary numeric bases are supported; strings or list of integers
@@ -1460,7 +1460,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: gap(ZZ) # indirect doctest
+            sage: gap(ZZ) # indirect doctest                                            # optional - sage.libs.gap
             Integers
         """
         return 'Integers'
@@ -1516,7 +1516,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: ZZ._sympy_()
+            sage: ZZ._sympy_()                                                          # optional - sympy
             Integers
         """
         from sympy import Integers

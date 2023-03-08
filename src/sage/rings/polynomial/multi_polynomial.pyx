@@ -181,13 +181,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + y
-            sage: g = f._symbolic_(SR); g
+            sage: g = f._symbolic_(SR); g                                               # optional - sage.symbolic
             x^3 + y
-            sage: g(x=2,y=2)
+            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
             10
 
-            sage: g = SR(f)
-            sage: g(x=2,y=2)
+            sage: g = SR(f)                                                             # optional - sage.symbolic
+            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
             10
         """
         d = dict([(repr(g), R.var(g)) for g in self.parent().gens()])
@@ -344,12 +344,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials over the symbolic ring (just for fun....)::
 
-            sage: x = var("x")
-            sage: S.<u, v> = PolynomialRing(SR)
-            sage: f = u*v*x
-            sage: f.derivative(x) == u*v
+            sage: x = var("x")                                                                      # optional - sage.symbolic
+            sage: S.<u, v> = PolynomialRing(SR)                                                     # optional - sage.symbolic
+            sage: f = u*v*x                                                                         # optional - sage.symbolic
+            sage: f.derivative(x) == u*v                                                            # optional - sage.symbolic
             True
-            sage: f.derivative(u) == v*x
+            sage: f.derivative(u) == v*x                                                            # optional - sage.symbolic
             True
         """
         return multi_derivative(self, args)
@@ -866,7 +866,7 @@ cdef class MPolynomial(CommutativePolynomial):
         Check that :trac:`25022` is fixed::
 
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()
+            sage: (x*y).change_ring(SR).monomials()                                                 # optional - sage.rings.number_field
             [x*y]
         """
         if isinstance(R, Map):

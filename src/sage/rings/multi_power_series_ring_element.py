@@ -313,10 +313,11 @@ class MPowerSeries(PowerSeries):
             sage: g.parent()
             Multivariate Power Series Ring in s, t over Rational Field
 
-            sage: K = NumberField(x-3,'a')
-            sage: g = K.random_element()*f
-            sage: g.parent()
-            Multivariate Power Series Ring in s, t over Number Field in a with defining polynomial x - 3
+            sage: K = NumberField(x - 3,'a')                                            # optional - sage.rings.number_field
+            sage: g = K.random_element()*f                                              # optional - sage.rings.number_field
+            sage: g.parent()                                                            # optional - sage.rings.number_field
+            Multivariate Power Series Ring in s, t over
+             Number Field in a with defining polynomial x - 3
 
         TESTS::
 
@@ -1900,13 +1901,13 @@ class MPowerSeries(PowerSeries):
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: exp(f)
+            sage: exp(f)                                                                # optional - sage.symbolic
             1 + a + b + 1/2*a^2 + 2*a*b + 1/2*b^2 + O(a, b)^3
             sage: f.exp()
             1 + a + b + 1/2*a^2 + 2*a*b + 1/2*b^2 + O(a, b)^3
             sage: f.exp(prec=2)
             1 + a + b + O(a, b)^2
-            sage: log(exp(f)) - f
+            sage: log(exp(f)) - f                                                       # optional - sage.symbolic
             0 + O(a, b)^3
 
         If the power series has a constant coefficient `c` and
@@ -1914,8 +1915,8 @@ class MPowerSeries(PowerSeries):
         power series over the :class:`~sage.symbolic.ring.SymbolicRing`. These
         are not yet implemented and therefore such cases raise an error::
 
-            sage: g = 2+f
-            sage: exp(g)
+            sage: g = 2 + f
+            sage: exp(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Symbolic Ring' and
@@ -1925,7 +1926,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: exp(g.change_ring(RDF))
+            sage: exp(g.change_ring(RDF))                                               # optional - sage.symbolic
             7.38905609... + 7.38905609...*a + 7.38905609...*b + 3.69452804...*a^2 +
             14.7781121...*a*b + 3.69452804...*b^2 + O(a, b)^3
 
@@ -1933,17 +1934,17 @@ class MPowerSeries(PowerSeries):
 
             sage: T.default_prec()
             12
-            sage: exp(a)
+            sage: exp(a)                                                                # optional - sage.symbolic
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + 1/120*a^5 + 1/720*a^6 + 1/5040*a^7 +
             1/40320*a^8 + 1/362880*a^9 + 1/3628800*a^10 + 1/39916800*a^11 + O(a, b)^12
             sage: a.exp(prec=5)
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + O(a, b)^5
-            sage: exp(a + T.O(5))
+            sage: exp(a + T.O(5))                                                       # optional - sage.symbolic
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + O(a, b)^5
 
         TESTS::
 
-            sage: exp(a^2 + T.O(5))
+            sage: exp(a^2 + T.O(5))                                                     # optional - sage.symbolic
             1 + a^2 + 1/2*a^4 + O(a, b)^5
         """
         R = self.parent()

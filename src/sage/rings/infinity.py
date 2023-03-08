@@ -471,7 +471,7 @@ class AnInfinity():
             Traceback (most recent call last):
             ...
             ValueError: unsigned oo times smaller number not defined
-            sage: SR(infinity) / unsigned_infinity
+            sage: SR(infinity) / unsigned_infinity                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: indeterminate expression: 0 * infinity encountered.
@@ -1480,9 +1480,9 @@ class FiniteNumber(RingElement):
 
         TESTS::
 
-            sage: a = InfinityRing(pi); a
+            sage: a = InfinityRing(pi); a                                       # optional - sage.symbolic
             A positive finite number
-            sage: a._latex_()
+            sage: a._latex_()                                                   # optional - sage.symbolic
             'A positive finite number'
             sage: [latex(InfinityRing(a)) for a in [-2..2]]
             [A negative finite number, A negative finite number, Zero, A positive finite number, A positive finite number]
@@ -1641,9 +1641,9 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(-Infinity)
+            sage: gap(-Infinity)                                                        # optional - sage.libs.gap
             -infinity
-            sage: libgap(-Infinity)
+            sage: libgap(-Infinity)                                                     # optional - sage.libs.gap
             -infinity
         """
         return '-infinity'
@@ -1739,9 +1739,9 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(+Infinity)
+            sage: gap(+Infinity)                                                        # optional - sage.libs.gap
             infinity
-            sage: libgap(+Infinity)
+            sage: libgap(+Infinity)                                                     # optional - sage.libs.gap
             infinity
         """
         return 'infinity'

@@ -1380,9 +1380,10 @@ cdef class CommutativeRing(Ring):
 
             sage: P.<x> = PolynomialRing(GF(5))                                 # optional - sage.libs.pari
             sage: F.<a> = GF(5).extension(x^2 - 2)                              # optional - sage.libs.pari
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over Finite Field in a of size 5^2 with modulus b^2 + 4*a
+            sage: P.<t> = F[]                                                   # optional - sage.libs.pari
+            sage: R.<b> = F.extension(t^2 - a); R                               # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in b over
+             Finite Field in a of size 5^2 with modulus b^2 + 4*a
         """
         from sage.rings.polynomial.polynomial_element import Polynomial
         if not isinstance(poly, Polynomial):

@@ -236,11 +236,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
         As can a p-adic integer as long as the coefficient ring is compatible::
 
-            sage: f(100 + O(5^7))
+            sage: f(100 + O(5^7))                                                       # optional - sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-            sage: f.change_ring(Zp(5))(100 + O(5^7))
+            sage: f.change_ring(Zp(5))(100 + O(5^7))                                    # optional - sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
-            sage: f.change_ring(Zp(5))(100 + O(2^7))
+            sage: f.change_ring(Zp(5))(100 + O(2^7))                                    # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: Cannot substitute this value
@@ -253,7 +253,7 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Can only substitute elements of positive valuation
-            sage: f(2 + O(5^3))
+            sage: f(2 + O(5^3))                                                         # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: Can only substitute elements of positive valuation
@@ -844,8 +844,8 @@ cdef class PowerSeries_poly(PowerSeries):
         TESTS::
 
             sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
-            sage: x = var('x')
-            sage: t.derivative(x)
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: t.derivative(x)                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to x
@@ -1136,18 +1136,18 @@ cdef class PowerSeries_poly(PowerSeries):
         EXAMPLES::
 
             sage: z = PowerSeriesRing(QQ, 'z').gen()
-            sage: exp(z).pade(4, 0)
+            sage: z.exp().pade(4, 0)
             1/24*z^4 + 1/6*z^3 + 1/2*z^2 + z + 1
-            sage: exp(z).pade(1, 1)
+            sage: z.exp().pade(1, 1)
             (-z - 2)/(z - 2)
-            sage: exp(z).pade(3, 3)
+            sage: z.exp().pade(3, 3)
             (-z^3 - 12*z^2 - 60*z - 120)/(z^3 - 12*z^2 + 60*z - 120)
-            sage: log(1-z).pade(4, 4)
+            sage: (1-z).log().pade(4, 4)
             (25/6*z^4 - 130/3*z^3 + 105*z^2 - 70*z)/(z^4 - 20*z^3 + 90*z^2
             - 140*z + 70)
-            sage: sqrt(1+z).pade(3, 2)
+            sage: (1 + z).sqrt().pade(3, 2)
             (1/6*z^3 + 3*z^2 + 8*z + 16/3)/(z^2 + 16/3*z + 16/3)
-            sage: exp(2*z).pade(3, 3)
+            sage: (2*z).exp().pade(3, 3)
             (-z^3 - 6*z^2 - 15*z - 15)/(z^3 - 6*z^2 + 15*z - 15)
 
         TESTS:
@@ -1155,7 +1155,7 @@ cdef class PowerSeries_poly(PowerSeries):
         With real coefficients::
 
             sage: R.<z> = RR[[]]
-            sage: f = exp(2*z)
+            sage: f = (2*z).exp()
             sage: f.pade(3, 3) # abs tol 1e-10
             (-z^3 - 6.0*z^2 - 15.0*z - 15.0)/(z^3 - 6.0*z^2 + 15.0*z - 15.0)
 
@@ -1194,19 +1194,19 @@ cdef class PowerSeries_poly(PowerSeries):
         EXAMPLES::
 
             sage: R.<x> = PowerSeriesRing(QQ)
-            sage: s = R([1,2,3,4,5],prec=10); s
+            sage: s = R([1,2,3,4,5], prec=10); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + O(x^10)
-            sage: SR(s)
+            sage: SR(s)                                                                 # optional - sage.symbolic
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + Order(x^10)
-            sage: SR(s).is_terminating_series()
+            sage: SR(s).is_terminating_series()                                         # optional - sage.symbolic
             False
-            sage: SR(s).variables()
+            sage: SR(s).variables()                                                     # optional - sage.symbolic
             (x,)
             sage: s = R([1,2,3,4,5]); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: SR(s)
+            sage: SR(s)                                                                 # optional - sage.symbolic
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: _.is_terminating_series()
+            sage: _.is_terminating_series()                                             # optional - sage.symbolic
             True
 
         TESTS:
@@ -1214,7 +1214,7 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`18094` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
-            sage: SR(R(0).add_bigoh(20))
+            sage: SR(R(0).add_bigoh(20))                                                # optional - sage.symbolic
             Order(x^20)
         """
         from sage.symbolic.ring import SR

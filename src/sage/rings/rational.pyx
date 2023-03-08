@@ -3255,7 +3255,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             15/8*sqrt(pi)
             sage: gamma(-3/2)                                                           # optional - sage.symbolic
             4/3*sqrt(pi)
-            sage: gamma(6/1)
+            sage: gamma(6/1)                                                            # optional - sage.symbolic
             120
             sage: gamma(1/3)                                                            # optional - sage.symbolic
             gamma(1/3)

@@ -787,9 +787,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M = PowerSeriesRing(ZZ,3,'x,y,z')
             sage: M._coerce_map_from_(M)
             True
-            sage: M._coerce_map_from_(M.remove_var(x))
+            sage: M._coerce_map_from_(M.remove_var(x))                                  # optional - sage.symbolic
             True
-            sage: M._coerce_map_from_(PowerSeriesRing(ZZ,x))
+            sage: M._coerce_map_from_(PowerSeriesRing(ZZ,x))                            # optional - sage.symbolic
             True
             sage: M._coerce_map_from_(PolynomialRing(ZZ,'x,z'))
             True
@@ -807,7 +807,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
             sage: P = PolynomialRing(ZZ,3,'z')
             sage: H = PowerSeriesRing(P,4,'f'); H
-            Multivariate Power Series Ring in f0, f1, f2, f3 over Multivariate Polynomial Ring in z0, z1, z2 over Integer Ring
+            Multivariate Power Series Ring in f0, f1, f2, f3 over
+             Multivariate Polynomial Ring in z0, z1, z2 over Integer Ring
             sage: H._coerce_map_from_(P)
             True
             sage: H._coerce_map_from_(P.remove_var(P.gen(1)))
