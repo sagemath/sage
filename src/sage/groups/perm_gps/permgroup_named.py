@@ -3515,7 +3515,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         GAP realizes some small groups as PermutationGroup, others as PcGroups
         (polycyclic groups). The :class:`SmallPermutationGroup` class always
         returns a PermutationGroup, but in the process of creating this group
-        a gap SmallGroup is generated. This method returns that group.
+        a GAP SmallGroup is generated. This method returns that group.
 
         EXAMPLES::
 
