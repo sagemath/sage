@@ -572,7 +572,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             try:
                 return (V.variable_names() == self.variable_names() and
                         V._quadratic_form.change_ring(self.base_ring()) == Q)
-            except AttributeError:
+            except (TypeError, AttributeError):
                 return False
 
         if self.free_module().has_coerce_map_from(V):
