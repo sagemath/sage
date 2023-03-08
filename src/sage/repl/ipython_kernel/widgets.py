@@ -225,7 +225,7 @@ class TransformFloatSlider(TransformWidget, FloatSlider):
         sage: w = TransformFloatSlider(min=0, max=100, value=7, transform=lambda x: sqrt(x))
         sage: w
         TransformFloatSlider(value=7.0)
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # optional - sage.symbolic
         2.6457513110645907
     """
     pass

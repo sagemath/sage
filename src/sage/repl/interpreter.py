@@ -589,7 +589,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: shell = interface_shell_embed(maxima)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)   # note: output contains triple quotation marks
             'sage.repl.interpreter.logstr(r"""4""")'
             sage: ift.shell.ex('a = 4')
@@ -597,8 +598,9 @@ class InterfaceShellTransformer(PrefilterTransformer):
             'sage.repl.interpreter.logstr(r"""8""")'
             sage: ift.temporary_objects
             set()
-            sage: shell = interface_shell_embed(gap)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: shell = interface_shell_embed(gap)                                    # optional - sage.libs.gap
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
             'sage.repl.interpreter.logstr(r"""4""")'
 
@@ -607,14 +609,18 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Check that whitespace is not stripped and that special characters are
         escaped (:trac:`28439`)::
 
+            sage: # needs sage.libs.gap
             sage: shell = interface_shell_embed(gap)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform(r'Print("  -\n\\\\-  ");', False)
             'sage.repl.interpreter.logstr(r"""  -\n\\\\-""")'
 
-            sage: shell = interface_shell_embed(macaulay2)  # optional - macaulay2
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager) # optional - macaulay2
-            sage: ift.transform('net(ZZ^2)', False)  # optional - macaulay2
+            sage: # optional - macaulay2
+            sage: shell = interface_shell_embed(macaulay2)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
+            sage: ift.transform('net(ZZ^2)', False)
             'sage.repl.interpreter.logstr(r"""  2\nZZ""")'
         '''
         line = self.preparse_imports_from_sage(line)
@@ -644,8 +650,8 @@ def interface_shell_embed(interface):
     EXAMPLES::
 
         sage: from sage.repl.interpreter import interface_shell_embed
-        sage: shell = interface_shell_embed(gap)
-        sage: shell.run_cell('List( [1..10], IsPrime )')
+        sage: shell = interface_shell_embed(gap)                                        # optional - sage.libs.gap
+        sage: shell.run_cell('List( [1..10], IsPrime )')                                # optional - sage.libs.gap
         [ false, true, true, false, true, false, true, false, false, false ]
         <ExecutionResult object at ..., execution_count=None error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
     """

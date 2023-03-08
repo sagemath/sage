@@ -229,11 +229,11 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell = get_test_shell()
             sage: shell.run_cell('%precision 4')
             '%.4f'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # optional - sage.modules
             4
             sage: shell.run_cell('%precision')
             '%r'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # optional - sage.modules
             None
         """
         from sage.matrix.constructor import options
@@ -305,8 +305,8 @@ class SagePlainTextFormatter(PlainTextFormatter):
             sage: fmt(2)
             ---- calling ipython formatter ----
             '2'
-            sage: a = identity_matrix(ZZ, 2)
-            sage: fmt([a, a])
+            sage: a = identity_matrix(ZZ, 2)                                            # optional - sage.modules
+            sage: fmt([a, a])                                                           # optional - sage.modules
             ---- calling ipython formatter ----
             '[\n[1 0]  [1 0]\n[0 1], [0 1]\n]'
         """
