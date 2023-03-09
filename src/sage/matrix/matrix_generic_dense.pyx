@@ -70,12 +70,12 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :trac:`9049` is not an issue any
         more::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
-            sage: M = MatrixSpace(R, 1, 2)
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)                                         # optional - sage.rings.number_field
+            sage: R.<x,y> = PolynomialRing(F)                                           # optional - sage.rings.number_field
+            sage: M = MatrixSpace(R, 1, 2)                                              # optional - sage.rings.number_field
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-            sage: Matrix_generic_dense(M, (x, y), True, True)
+            sage: Matrix_generic_dense(M, (x, y), True, True)                           # optional - sage.rings.number_field
             [x y]
         """
         ma = MatrixArgs_init(parent, entries)
@@ -215,10 +215,10 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
-            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
-            sage: a._add_(b)
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])                                    # optional - sage.combinat
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])                                    # optional - sage.combinat
+            sage: a._add_(b)                                                            # optional - sage.combinat
             [        2         4]
             [x*y + y*x     2*y*x]
         """
@@ -238,10 +238,10 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
-            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
-            sage: a._sub_(b)
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
+            sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])                                    # optional - sage.combinat
+            sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])                                    # optional - sage.combinat
+            sage: a._sub_(b)                                                            # optional - sage.combinat
             [        0         0]
             [x*y - y*x         0]
         """
