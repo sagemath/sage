@@ -1,5 +1,22 @@
 r"""
 Managing the main global namespace
+
+TESTS:
+
+The following test, verifying that :trac:`16181` has been resolved, needs
+to stay at the beginning of this file so that its context is not
+poisoned by other tests::
+
+    sage: sage.misc.globals.inject_variable('a', 0)
+    sage: a
+    0
+
+Check the fix from :trac:`8323`::
+
+    sage: 'name' in globals()
+    False
+    sage: 'func' in globals()
+    False
 """
 
 # ****************************************************************************
