@@ -49,8 +49,8 @@ class AlgebraIdeals(Category_ideal):
             sage: TestSuite(AlgebraIdeals(QQ['a'])).run()
         """
         from sage.algebras.algebra import is_Algebra
-        if not is_Algebra(A): # A not in Algebras() ?
-            raise TypeError("A (=%s) must be an algebra"%A)
+        if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
+            raise TypeError("A (=%s) must be a commutative algebra" % A)
         Category_ideal.__init__(self, A)
 
     def algebra(self):
@@ -82,6 +82,6 @@ class AlgebraIdeals(Category_ideal):
         try:
             if R.is_commutative():
                 return [AlgebraModules(R)]
-        except (AttributeError,NotImplementedError):
+        except (AttributeError, NotImplementedError):
             pass
         return []
