@@ -337,7 +337,7 @@ list below does not change radically, it's fine to just update this
 doctest::
 
     sage: from sage.categories.category import category_sample
-    sage: sorted([C for C in category_sample()
+    sage: sorted([C for C in category_sample()                                                                          # optional - sage.combinat sage.graphs sage.modules sage.rings.number_field
     ....:         if len(C._super_categories_for_classes) != len(C.super_categories())],
     ....:        key=str)
     [Category of affine weyl groups,
