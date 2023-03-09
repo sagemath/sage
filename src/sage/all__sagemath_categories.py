@@ -9,6 +9,7 @@ except ImportError:
 from sage.categories.all import *
 from sage.rings.all__sagemath_categories import *
 from sage.sets.all__sagemath_categories import *
+from sage.combinat.all__sagemath_categories import *
 from sage.arith.all import *
 from sage.interfaces.all__sagemath_categories import *
 from sage.misc.all__sagemath_categories import *
