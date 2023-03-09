@@ -748,7 +748,7 @@ def lookup_global(name):
         sage: from sage.structure.factory import lookup_global
         sage: lookup_global('ZZ')
         Integer Ring
-        sage: lookup_global('sage.rings.all.ZZ')
+        sage: lookup_global('sage.rings.integer_ring.ZZ')
         Integer Ring
     """
     name = bytes_to_str(name, encoding='ASCII')
