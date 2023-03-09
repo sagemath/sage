@@ -1178,10 +1178,10 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :trac:`13854` has been fixed::
 
-            sage: A.<x,y> = FreeAlgebra(QQ, 2)
-            sage: P.<x,y> = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
-            sage: M = Matrix([[x]], sparse=True)
-            sage: w = vector([y])
+            sage: A.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
+            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')             # optional - sage.combinat
+            sage: M = Matrix([[x]], sparse=True)                                        # optional - sage.combinat
+            sage: w = vector([y])                                                       # optional - sage.combinat
             doctest:...: UserWarning: You are constructing a free module
             over a noncommutative ring. Sage does not have a concept
             of left/right and both sided modules, so be careful.
@@ -1192,7 +1192,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             of left/right and both sided modules, so be careful.
             It's also not guaranteed that all multiplications are
             done from the right side.
-            sage: M*w
+            sage: M*w                                                                   # optional - sage.combinat
             (x*y)
         """
         cdef int i, j

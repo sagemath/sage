@@ -1999,56 +1999,56 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:    [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:    [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
 
-            sage: P, U = M.weak_popov_form(transformation=True)                 # optional - sage.libs.pari
-            sage: P                                                             # optional - sage.libs.pari
+            sage: P, U = M.weak_popov_form(transformation=True)                 # optional - sage.combinat sage.libs.pari
+            sage: P                                                             # optional - sage.combinat sage.libs.pari
             [              4             x^2   6*x^2 + x + 2]
             [              2 4*x^2 + 2*x + 4               5]
-            sage: U                                                             # optional - sage.libs.pari
+            sage: U                                                             # optional - sage.combinat sage.libs.pari
             [2*x^2 + 1       4*x]
             [      4*x         1]
-            sage: P.is_weak_popov() and U.is_invertible() and U*M==P            # optional - sage.libs.pari
+            sage: P.is_weak_popov() and U.is_invertible() and U*M == P          # optional - sage.combinat sage.libs.pari
             True
 
         Demonstrating the ``ordered`` option::
 
-            sage: P.leading_positions()                                         # optional - sage.libs.pari
+            sage: P.leading_positions()                                         # optional - sage.combinat sage.libs.pari
             [2, 1]
-            sage: PP = M.weak_popov_form(ordered=True); PP                      # optional - sage.libs.pari
+            sage: PP = M.weak_popov_form(ordered=True); PP                      # optional - sage.combinat sage.libs.pari
             [              2 4*x^2 + 2*x + 4               5]
             [              4             x^2   6*x^2 + x + 2]
-            sage: PP.leading_positions()                                        # optional - sage.libs.pari
+            sage: PP.leading_positions()                                        # optional - sage.combinat sage.libs.pari
             [1, 2]
 
         Demonstrating shifts::
 
-            sage: P = M.weak_popov_form(shifts=[0,2,4]); P                      # optional - sage.libs.pari
+            sage: P = M.weak_popov_form(shifts=[0,2,4]); P                      # optional - sage.combinat sage.libs.pari
             [            6*x^2 + 6*x + 4 5*x^4 + 4*x^3 + 5*x^2 + 5*x                     2*x + 2]
             [                          2             4*x^2 + 2*x + 4                           5]
-            sage: P == M.weak_popov_form(shifts=[-10,-8,-6])                    # optional - sage.libs.pari
+            sage: P == M.weak_popov_form(shifts=[-10,-8,-6])                    # optional - sage.combinat sage.libs.pari
             True
 
         Column-wise form is the row-wise form of the transpose::
 
-            sage: M.weak_popov_form() == M.T.weak_popov_form(row_wise=False).T  # optional - sage.libs.pari
+            sage: M.weak_popov_form() == M.T.weak_popov_form(row_wise=False).T  # optional - sage.combinat sage.libs.pari
             True
 
         Zero vectors can be discarded::
 
-            sage: M.weak_popov_form(row_wise=False)                             # optional - sage.libs.pari
+            sage: M.weak_popov_form(row_wise=False)                             # optional - sage.combinat sage.libs.pari
             [x + 4     6     0]
             [    5     1     0]
 
-            sage: P, U = M.weak_popov_form(transformation=True,                 # optional - sage.libs.pari
+            sage: P, U = M.weak_popov_form(transformation=True,                 # optional - sage.combinat sage.libs.pari
             ....:                          row_wise=False,
             ....:                          include_zero_vectors=False)
-            sage: P                                                             # optional - sage.libs.pari
+            sage: P                                                             # optional - sage.combinat sage.libs.pari
             [x + 4     6]
             [    5     1]
-            sage: U                                                             # optional - sage.libs.pari
+            sage: U                                                             # optional - sage.combinat sage.libs.pari
             [                5*x + 2         5*x^2 + 4*x + 4 3*x^3 + 3*x^2 + 2*x + 4]
             [                      1                       1                 2*x + 1]
             [                5*x + 5                       2                       6]
-            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                       # optional - sage.libs.pari
+            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                       # optional - sage.combinat sage.libs.pari
             True
 
         .. SEEALSO::
@@ -2128,29 +2128,29 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],                             # optional - sage.libs.pari
             ....:                [0,  a*x^11 + a^2*x^7 + 1 ]])
             sage: M = A.__copy__()                                              # optional - sage.libs.pari
-            sage: U = M._weak_popov_form(transformation=True)                   # optional - sage.libs.pari
-            sage: U * A == M                                                    # optional - sage.libs.pari
+            sage: U = M._weak_popov_form(transformation=True)                   # optional - sage.combinat sage.libs.pari
+            sage: U * A == M                                                    # optional - sage.combinat sage.libs.pari
             True
-            sage: M.is_weak_popov()                                             # optional - sage.libs.pari
+            sage: M.is_weak_popov()                                             # optional - sage.combinat sage.libs.pari
             True
-            sage: U.is_invertible()                                             # optional - sage.libs.pari
+            sage: U.is_invertible()                                             # optional - sage.combinat sage.libs.pari
             True
 
             sage: PF.<x> = QQ[]
             sage: A = matrix(PF,3,[x,   x^2, x^3,
             ....:                  x^2, x^1, 0,
             ....:                  x^3, x^3, x^3])
-            sage: A.weak_popov_form()
+            sage: A.weak_popov_form()                                           # optional - sage.combinat
             [        x       x^2       x^3]
             [      x^2         x         0]
             [  x^3 - x x^3 - x^2         0]
-            sage: M = A.__copy__()
-            sage: U = M._weak_popov_form(transformation=True, shifts=[16,8,0])
-            sage: M
+            sage: M = A.__copy__()                                              # optional - sage.combinat
+            sage: U = M._weak_popov_form(transformation=True, shifts=[16,8,0])  # optional - sage.combinat
+            sage: M                                                             # optional - sage.combinat
             [               x              x^2              x^3]
             [               0         -x^2 + x       -x^4 + x^3]
             [               0                0 -x^5 + x^4 + x^3]
-            sage: U * A == M
+            sage: U * A == M                                                    # optional - sage.combinat
             True
         """
         cdef Py_ssize_t i, j
@@ -2283,51 +2283,51 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:     [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:     [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
 
-            sage: P, U = M.popov_form(transformation=True)                      # optional - sage.libs.pari
-            sage: P                                                             # optional - sage.libs.pari
+            sage: P, U = M.popov_form(transformation=True)                      # optional - sage.combinat sage.libs.pari
+            sage: P                                                             # optional - sage.combinat sage.libs.pari
             [            4 x^2 + 4*x + 1             3]
             [            0       4*x + 1 x^2 + 6*x + 1]
-            sage: U                                                             # optional - sage.libs.pari
+            sage: U                                                             # optional - sage.combinat sage.libs.pari
             [            x             2]
             [5*x^2 + x + 6       3*x + 2]
-            sage: P.is_popov() and U.is_invertible() and U*M == P               # optional - sage.libs.pari
+            sage: P.is_popov() and U.is_invertible() and U*M == P               # optional - sage.combinat sage.libs.pari
             True
 
         Demonstrating shifts and specific case of Hermite form::
 
-            sage: P = M.popov_form(shifts=[0,2,4]); P                           # optional - sage.libs.pari
+            sage: P = M.popov_form(shifts=[0,2,4]); P                           # optional - sage.combinat sage.libs.pari
             [              4*x^2 + 3*x + 4 x^4 + 3*x^3 + 5*x^2 + 5*x + 5                             0]
             [                            6               5*x^2 + 6*x + 5                             1]
-            sage: P.is_popov(shifts=[0,2,4])                                    # optional - sage.libs.pari
+            sage: P.is_popov(shifts=[0,2,4])                                    # optional - sage.combinat sage.libs.pari
             True
-            sage: P == M.popov_form(shifts=[-6,-4,-2])                          # optional - sage.libs.pari
+            sage: P == M.popov_form(shifts=[-6,-4,-2])                          # optional - sage.combinat sage.libs.pari
             True
-            sage: dd = sum(M.row_degrees()) + 1                                 # optional - sage.libs.pari
-            sage: M.popov_form(shifts=[2*dd,dd,0]) == M.hermite_form()          # optional - sage.libs.pari
+            sage: dd = sum(M.row_degrees()) + 1                                 # optional - sage.combinat sage.libs.pari
+            sage: M.popov_form(shifts=[2*dd,dd,0]) == M.hermite_form()          # optional - sage.combinat sage.libs.pari
             True
 
         Column-wise form is the row-wise form of the transpose::
 
-            sage: M.popov_form() == M.T.popov_form(row_wise=False).T            # optional - sage.libs.pari
+            sage: M.popov_form() == M.T.popov_form(row_wise=False).T            # optional - sage.combinat sage.libs.pari
             True
 
         Zero vectors can be discarded::
 
-            sage: M.popov_form(row_wise=False)                                  # optional - sage.libs.pari
+            sage: M.popov_form(row_wise=False)                                  # optional - sage.combinat sage.libs.pari
             [x + 2     6     0]
             [    0     1     0]
 
-            sage: P, U = M.popov_form(transformation=True,                      # optional - sage.libs.pari
+            sage: P, U = M.popov_form(transformation=True,                      # optional - sage.combinat sage.libs.pari
             ....:                     row_wise=False,
             ....:                     include_zero_vectors=False)
-            sage: P                                                             # optional - sage.libs.pari
+            sage: P                                                             # optional - sage.combinat sage.libs.pari
             [x + 2     6]
             [    0     1]
-            sage: U                                                             # optional - sage.libs.pari
+            sage: U                                                             # optional - sage.combinat sage.libs.pari
             [        3*x^2 + 6*x + 3         5*x^2 + 4*x + 4 3*x^3 + 3*x^2 + 2*x + 4]
             [                      3                       1                 2*x + 1]
             [                5*x + 2                       2                       6]
-            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                       # optional - sage.libs.pari
+            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                       # optional - sage.combinat sage.libs.pari
             True
 
         .. SEEALSO::
