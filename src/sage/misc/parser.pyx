@@ -1072,8 +1072,8 @@ cdef class LookupNameMaker:
 
             sage: from sage.misc.parser import LookupNameMaker
             sage: maker = LookupNameMaker({}, str)
-            sage: maker.set_names({'a': x})
-            sage: maker('a') is x
+            sage: maker.set_names({'a': x})                                                 # optional - sage.symbolic
+            sage: maker('a') is x                                                           # optional - sage.symbolic
             True
         """
         self.names = new_names
@@ -1083,12 +1083,12 @@ cdef class LookupNameMaker:
         TESTS::
 
             sage: from sage.misc.parser import LookupNameMaker
-            sage: maker = LookupNameMaker({'a': x}, str)
-            sage: maker('a')
+            sage: maker = LookupNameMaker({'a': x}, str)                                    # optional - sage.symbolic
+            sage: maker('a')                                                                # optional - sage.symbolic
             x
-            sage: maker('a') is x
+            sage: maker('a') is x                                                           # optional - sage.symbolic
             True
-            sage: maker('b')
+            sage: maker('b')                                                                # optional - sage.symbolic
             'b'
         """
         try:
