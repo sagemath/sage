@@ -95,8 +95,10 @@ Miscellaneous Useful Functions
 .. toctree::
    :maxdepth: 1
 
+   sage/misc/globals
    sage/misc/misc
    sage/misc/misc_c
+   sage/misc/timing
    sage/misc/verbose
 
 Laziness
