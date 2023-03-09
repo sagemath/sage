@@ -101,8 +101,8 @@ Ideals*. Symmetric Ideals are finitely generated modulo addition,
 multiplication by ring elements and permutation of variables. If the
 base ring is a field, one can compute Symmetric Groebner Bases::
 
-    sage: J = A*(alpha[1]*beta[2])
-    sage: J.groebner_basis()
+    sage: J = A * (alpha[1]*beta[2])
+    sage: J.groebner_basis()                                                            # optional - sage.combinat
     [alpha_1*beta_2, alpha_2*beta_1]
 
 For more details, see :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal`.

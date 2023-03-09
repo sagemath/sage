@@ -532,12 +532,12 @@ class PolynomialSequence_generic(Sequence_generic):
         Check that this method also works for boolean polynomials
         (:trac:`10680`)::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()
-            sage: F0 = Sequence(map(lambda f: f.lm(),[a,b,c,d]))
-            sage: F0.groebner_basis()
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                             # optional - sage.rings.polynomial.pbori
+            sage: F0 = Sequence(map(lambda f: f.lm(), [a,b,c,d]))                                   # optional - sage.rings.polynomial.pbori
+            sage: F0.groebner_basis()                                                               # optional - sage.rings.polynomial.pbori
             [a, b, c, d]
-            sage: F1 = Sequence([a,b,c*d,d^2])
-            sage: F1.groebner_basis()
+            sage: F1 = Sequence([a,b,c*d,d^2])                                                      # optional - sage.rings.polynomial.pbori
+            sage: F1.groebner_basis()                                                               # optional - sage.rings.polynomial.pbori
             [a, b, d]
         """
         return self.ideal().groebner_basis(*args, **kwargs)
