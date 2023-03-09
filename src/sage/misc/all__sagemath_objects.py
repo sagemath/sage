@@ -32,3 +32,7 @@ from .unknown import Unknown, UnknownError
 from .cachefunc import CachedFunction, cached_function, cached_method, cached_in_parent_method, disk_cached_function
 
 from .abstract_method import abstract_method
+
+from .randstate import seed, set_random_seed, initial_seed, current_randstate
+
+from .prandom import *

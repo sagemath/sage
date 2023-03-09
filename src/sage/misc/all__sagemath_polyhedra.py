@@ -6,7 +6,7 @@ from .lazy_import import lazy_import
 
 from .all__sagemath_categories import *
 
-from .misc import (BackslashOperator,
+from .misc import (BackslashOperator,               # Depends on sage.env -- can lower to sagemath-objects after splitting this module
                   cputime,
                   union, uniq, powerset, subsets,
                   exists, forall, is_iterator,
@@ -16,12 +16,8 @@ from .misc import (BackslashOperator,
                    newton_method_sizes, compose,
                   nest)
 
-from .temporary_file import tmp_dir, tmp_filename
+from .temporary_file import tmp_dir, tmp_filename  # Depends on sage.env
 
 from .mathml import mathml
 
 from .func_persist import func_persist
-
-from .randstate import seed, set_random_seed, initial_seed, current_randstate
-
-from .prandom import *
