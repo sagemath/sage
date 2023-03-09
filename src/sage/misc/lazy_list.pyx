@@ -415,8 +415,9 @@ cdef class lazy_list_generic():
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: P = lazy_list(Primes())
-            sage: P[2:143:5].list()
-            [5, 19, 41, 61, 83, 107, 137, 163, 191, 223, 241, 271, 307, 337, 367, 397, 431, 457, 487, 521, 563, 593, 617, 647, 677, 719, 751, 787, 823]
+            sage: P[2:143:5].list()                                                     # optional - sage.libs.pari
+            [5, 19, 41, 61, 83, 107, 137, 163, 191, 223, 241, 271, 307, 337, 367,
+             397, 431, 457, 487, 521, 563, 593, 617, 647, 677, 719, 751, 787, 823]
             sage: P = lazy_list(iter([1,2,3]))
             sage: P.list()
             [1, 2, 3]
@@ -453,9 +454,9 @@ cdef class lazy_list_generic():
             start        10
             stop         21474838
             step         4
-            sage: P[0]
+            sage: P[0]                                                                  # optional - sage.libs.pari
             31
-            sage: P._info()
+            sage: P._info()                                                             # optional - sage.libs.pari
             cache length 11
             start        10
             stop         21474838
@@ -858,9 +859,9 @@ cdef class lazy_list_generic():
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: L = lazy_list(Primes())[2:]
-            sage: L._update_cache_up_to(4)
+            sage: L._update_cache_up_to(4)                                              # optional - sage.libs.pari
             0
-            sage: L._info()
+            sage: L._info()                                                             # optional - sage.libs.pari
             cache length 5
             start        2
             stop         9223372036854775807    # 64-bit
@@ -885,9 +886,9 @@ cdef class lazy_list_generic():
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list
-            sage: L = lazy_list(Primes()); L
+            sage: L = lazy_list(Primes()); L                                            # optional - sage.libs.pari
             lazy list [2, 3, 5, ...]
-            sage: L._get_cache_()
+            sage: L._get_cache_()                                                       # optional - sage.libs.pari
             [2, 3, 5, 7]
         """
         return self.cache
@@ -964,9 +965,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: L = lazy_list(iter(Primes()))[2:]
-            sage: L._update_cache_up_to(4)
+            sage: L._update_cache_up_to(4)                                              # optional - sage.libs.pari
             0
-            sage: L._info()
+            sage: L._info()                                                             # optional - sage.libs.pari
             cache length 5
             start        2
             stop         9223372036854775807    # 64-bit
@@ -1015,9 +1016,9 @@ cdef class lazy_list_from_function(lazy_list_generic):
         EXAMPLES::
 
             sage: from sage.misc.lazy_list import lazy_list_from_function
-            sage: lazy_list_from_function(euler_phi)
+            sage: lazy_list_from_function(euler_phi)                                    # optional - sage.libs.pari
             lazy list [0, 1, 1, ...]
-            sage: lazy_list_from_function(divisors, [None])
+            sage: lazy_list_from_function(divisors, [None])                             # optional - sage.libs.pari
             lazy list [None, [1], [1, 2], ...]
 
         TESTS::
@@ -1064,9 +1065,9 @@ cdef class lazy_list_from_function(lazy_list_generic):
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list_from_function
-            sage: loads(dumps(lazy_list_from_function(euler_phi)))
+            sage: loads(dumps(lazy_list_from_function(euler_phi)))                      # optional - sage.libs.pari
             lazy list [0, 1, 1, ...]
-            sage: loads(dumps(lazy_list_from_function(divisors, [None])))
+            sage: loads(dumps(lazy_list_from_function(divisors, [None])))               # optional - sage.libs.pari
             lazy list [None, [1], [1, 2], ...]
         """
         if self.start != 0 or self.step != 1:
