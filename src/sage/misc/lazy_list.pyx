@@ -11,11 +11,11 @@ EXAMPLES::
 
     sage: from sage.misc.lazy_list import lazy_list
     sage: P = lazy_list(Primes())
-    sage: P[100]
+    sage: P[100]                                                                        # optional - sage.libs.pari
     547
-    sage: P[10:34]
+    sage: P[10:34]                                                                      # optional - sage.libs.pari
     lazy list [31, 37, 41, ...]
-    sage: P[12:23].list()
+    sage: P[12:23].list()                                                               # optional - sage.libs.pari
     [41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83]
 
     sage: f = lazy_list((i**2 - 3*i for i in range(10)))
@@ -306,23 +306,23 @@ def lazy_list_formatter(L, name='lazy list',
     ::
 
         sage: from sage.misc.lazy_list import lazy_list
-        sage: L = lazy_list(Primes()); L
+        sage: L = lazy_list(Primes()); L                                                # optional - sage.libs.pari
         lazy list [2, 3, 5, ...]
-        sage: repr(L) == lazy_list_formatter(L)
+        sage: repr(L) == lazy_list_formatter(L)                                         # optional - sage.libs.pari
         True
-        sage: lazy_list_formatter(L, name='primes')
+        sage: lazy_list_formatter(L, name='primes')                                     # optional - sage.libs.pari
         'primes [2, 3, 5, ...]'
-        sage: lazy_list_formatter(L, opening_delimiter='(', closing_delimiter=')')
+        sage: lazy_list_formatter(L, opening_delimiter='(', closing_delimiter=')')      # optional - sage.libs.pari
         'lazy list (2, 3, 5, ...)'
-        sage: lazy_list_formatter(L, opening_delimiter='', closing_delimiter='')
+        sage: lazy_list_formatter(L, opening_delimiter='', closing_delimiter='')        # optional - sage.libs.pari
         'lazy list 2, 3, 5, ...'
-        sage: lazy_list_formatter(L, separator='--')
+        sage: lazy_list_formatter(L, separator='--')                                    # optional - sage.libs.pari
         'lazy list [2--3--5--...]'
-        sage: lazy_list_formatter(L, more='and more')
+        sage: lazy_list_formatter(L, more='and more')                                   # optional - sage.libs.pari
         'lazy list [2, 3, 5, and more]'
-        sage: lazy_list_formatter(L, preview=10)
+        sage: lazy_list_formatter(L, preview=10)                                        # optional - sage.libs.pari
         'lazy list [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, ...]'
-        sage: lazy_list_formatter(L, name='primes',
+        sage: lazy_list_formatter(L, name='primes',                                     # optional - sage.libs.pari
         ....:                     opening_delimiter='', closing_delimiter='',
         ....:                     separator=' ', more='->', preview=7)
         'primes 2 3 5 7 11 13 17 ->'
@@ -356,9 +356,9 @@ cdef class lazy_list_generic():
 
         sage: from sage.misc.lazy_list import lazy_list
         sage: l = lazy_list(Primes())
-        sage: l
+        sage: l                                                                         # optional - sage.libs.pari
         lazy list [2, 3, 5, ...]
-        sage: l[200]
+        sage: l[200]                                                                    # optional - sage.libs.pari
         1229
     """
 
@@ -431,11 +431,11 @@ cdef class lazy_list_generic():
         Check that the cache is immutable::
 
             sage: lazy = lazy_list(iter(Primes()))[:5]
-            sage: l = lazy.list(); l
+            sage: l = lazy.list(); l                                                    # optional - sage.libs.pari
             [2, 3, 5, 7, 11]
-            sage: l[0] = -1; l
+            sage: l[0] = -1; l                                                          # optional - sage.libs.pari
             [-1, 3, 5, 7, 11]
-            sage: lazy.list()
+            sage: lazy.list()                                                           # optional - sage.libs.pari
             [2, 3, 5, 7, 11]
         """
         self._fit(self.stop - self.step)
