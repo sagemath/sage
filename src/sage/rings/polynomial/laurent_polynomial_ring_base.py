@@ -4,11 +4,6 @@ Ring of Laurent Polynomials (base class)
 
 If `R` is a commutative ring, then the ring of Laurent polynomials in `n`
 variables over `R` is `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]`.
-We implement it as a quotient ring
-
-.. MATH::
-
-    R[x_1, y_1, x_2, y_2, \ldots, x_n, y_n] / (x_1 y_1 - 1, x_2 y_2 - 1, \ldots, x_n y_n - 1).
 
 AUTHORS:
 
