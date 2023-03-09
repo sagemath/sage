@@ -509,11 +509,11 @@ class InterfaceShellTransformer(PrefilterTransformer):
         TESTS::
 
             sage: from sage.repl.interpreter import interface_shell_embed
-            sage: shell = interface_shell_embed(maxima)
-            sage: ift = shell.prefilter_manager.transformers[0]
-            sage: ift.temporary_objects
+            sage: shell = interface_shell_embed(maxima)                                 # optional - sage.symbolic
+            sage: ift = shell.prefilter_manager.transformers[0]                         # optional - sage.symbolic
+            sage: ift.temporary_objects                                                 # optional - sage.symbolic
             set()
-            sage: ift._sage_import_re.findall('sage(a) + maxima(b)')
+            sage: ift._sage_import_re.findall('sage(a) + maxima(b)')                    # optional - sage.symbolic
             ['sage(', 'maxima(']
         """
         super().__init__(*args, **kwds)
@@ -536,27 +536,29 @@ class InterfaceShellTransformer(PrefilterTransformer):
         EXAMPLES::
 
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
-            sage: shell = interface_shell_embed(maxima)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
-            sage: ift.shell.ex('a = 3')
-            sage: ift.preparse_imports_from_sage('2 + sage(a)')
+            sage: shell = interface_shell_embed(maxima)                                 # optional - sage.symbolic
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # optional - sage.symbolic
+            ....:     prefilter_manager=shell.prefilter_manager)
+            sage: ift.shell.ex('a = 3')                                                 # optional - sage.symbolic
+            sage: ift.preparse_imports_from_sage('2 + sage(a)')                         # optional - sage.symbolic
             '2 + sage0 '
-            sage: maxima.eval('sage0')
+            sage: maxima.eval('sage0')                                                  # optional - sage.symbolic
             '3'
-            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'
+            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'     # optional - sage.symbolic
             '2 +  sage4 '
-            sage: ift.preparse_imports_from_sage('2 + gap(a)')
+            sage: ift.preparse_imports_from_sage('2 + gap(a)')                          # optional - sage.symbolic
             '2 + gap(a)'
 
         Since :trac:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
-            sage: shell = interface_shell_embed(gap)
-            sage: shell.user_ns = locals()
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
-            sage: line = '2 + sage((1+2)*gap(-(5-3)^2).sage()) - gap(1+(2-1))'
-            sage: line = ift.preparse_imports_from_sage(line)
-            sage: gap.eval(line)
+            sage: shell = interface_shell_embed(gap)                                    # optional - sage.libs.gap
+            sage: shell.user_ns = locals()                                              # optional - sage.libs.gap
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # optional - sage.libs.gap
+            ....:     prefilter_manager=shell.prefilter_manager)
+            sage: line = '2 + sage((1+2)*gap(-(5-3)^2).sage()) - gap(1+(2-1))'          # optional - sage.libs.gap
+            sage: line = ift.preparse_imports_from_sage(line)                           # optional - sage.libs.gap
+            sage: gap.eval(line)                                                        # optional - sage.libs.gap
             '-12'
         """
         new_line = []
@@ -587,9 +589,10 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
-            sage: shell = interface_shell_embed(maxima)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            sage: shell = interface_shell_embed(maxima)                                 # optional - sage.symbolic
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # optional - sage.symbolic
             ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)   # note: output contains triple quotation marks
             'sage.repl.interpreter.logstr(r"""4""")'
@@ -599,7 +602,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: ift.temporary_objects
             set()
             sage: shell = interface_shell_embed(gap)                                    # optional - sage.libs.gap
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # optional - sage.libs.gap
             ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
             'sage.repl.interpreter.logstr(r"""4""")'
