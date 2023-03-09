@@ -177,12 +177,12 @@ class sage_interactive(interactive):
             sage: from sage.repl.ipython_kernel.interact import sage_interactive
             sage: sage_interactive.widget_from_single_value("sin(x)")
             ...Text(value='sin(x)')
-            sage: sage_interactive.widget_from_single_value(sin(x))
+            sage: sage_interactive.widget_from_single_value(sin(x))                     # optional - sage.symbolic
             ...EvalText(value='sin(x)')
-            sage: from sage.plot.colors import Color
-            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))
+            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))   # optional - sage.modules
             ...Grid(value=[[1, 2], [3, 4]], children=(Label(value=''), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='3', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='2', layout=Layout(max_width='5em')), EvalText(value='4', layout=Layout(max_width='5em'))))))
-            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))
+            sage: from sage.plot.colors import Color                                    # optional - sage.plot
+            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))    # optional - sage.plot
             ...SageColorPicker(value='#6495ed')
         """
         # Support Sage matrices and colors

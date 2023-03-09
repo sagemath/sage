@@ -367,11 +367,11 @@ def dict_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import dict_function
-        sage: x,y,z = var('x,y,z')
-        sage: print(dict_function({x/2: y^2}))
+        sage: x,y,z = var('x,y,z')                                                                  # optional - sage.symbolic
+        sage: print(dict_function({x/2: y^2}))                                                      # optional - sage.symbolic
         \left\{\frac{1}{2} \, x : y^{2}\right\}
-        sage: d = {(1,2,x^2): [sin(z^2), y/2]}
-        sage: latex(d)
+        sage: d = {(1,2,x^2): [sin(z^2), y/2]}                                                      # optional - sage.symbolic
+        sage: latex(d)                                                                              # optional - sage.symbolic
         \left\{\left(1, 2, x^{2}\right) :
                \left[\sin\left(z^{2}\right), \frac{1}{2} \, y\right]\right\}
     """
@@ -450,9 +450,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                                       # optional - sage.symbolic
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                                   # optional - sage.symbolic
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -465,15 +465,15 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)
-        sage: L
+        sage: L = latex(x^20 + 1)                                                                   # optional - sage.symbolic
+        sage: L                                                                                     # optional - sage.symbolic
         x^{20} + 1
-        sage: type(L)
+        sage: type(L)                                                                               # optional - sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))
+        sage: str(latex(x^20 + 1))                                                                  # optional - sage.symbolic
         'x^{20} + 1'
     """
     def __add__(self, other):
@@ -917,12 +917,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x,2]))
+            sage: print(latex([x,2]))                                                               # optional - sage.symbolic
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)
+            sage: latex((x,2), combine_all=True)                                                    # optional - sage.symbolic
             x 2
         """
         if has_latex_attr(x):
@@ -961,9 +961,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                                       # optional - sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))
+        sage: latex(FiniteField(25,'a'))                                                            # optional - sage.libs.pari
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -973,7 +973,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                                # optional - sage.symbolic
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):
@@ -2019,7 +2019,7 @@ def coeff_repr(c):
         sage: from sage.misc.latex import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2)
+        sage: coeff_repr(-x^2)                                                          # optional - sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     try:
@@ -2198,8 +2198,8 @@ def latex_varify(a, is_fname=False):
 
     TESTS:
 
-        sage: abc = var('abc')
-        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870
+        sage: abc = var('abc')                                                          # optional - sage.symbolic
+        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # optional - sage.symbolic
         \frac{\frac{\mathit{abc}}{\mathit{abc} + 1} + 42}{\mathit{abc} - 1}
     """
     if a in common_varnames:
@@ -2270,12 +2270,12 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # trac #16007
+        sage: latex_variable_name('_C')  # trac #16007                                  # optional - sage.symbolic
         'C'
-        sage: latex_variable_name('_K1')
+        sage: latex_variable_name('_K1')                                                # optional - sage.symbolic
         'K_{1}'
 
-        sage: latex_variable_name('5')
+        sage: latex_variable_name('5')                                                  # optional - sage.symbolic
         '5'
     """
     # if x is an integer (it might be the case for padics), we return x

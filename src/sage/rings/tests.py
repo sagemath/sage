@@ -144,7 +144,7 @@ def absolute_number_field(maxdeg=10):
         sage: import sage.rings.tests
         sage: K = sage.rings.tests.absolute_number_field(); K                           # optional - sage.rings.number_field
         Number Field in a with defining polynomial ...
-        sage: K.degree() <= 10
+        sage: K.degree() <= 10                                                          # optional - sage.rings.number_field
         True
     """
     from sage.rings.integer_ring import ZZ

@@ -944,43 +944,43 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     EXAMPLES::
 
-        sage: R.<x, y, z> = BooleanPolynomialRing() # indirect doctest
-        sage: R
+        sage: R.<x, y, z> = BooleanPolynomialRing() # indirect doctest                              # optional - sage.rings.polynomial.pbori
+        sage: R                                                                                     # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y, z
 
-        sage: p = x*y + x*z + y*z
-        sage: x*p
+        sage: p = x*y + x*z + y*z                                                                   # optional - sage.rings.polynomial.pbori
+        sage: x*p                                                                                   # optional - sage.rings.polynomial.pbori
         x*y*z + x*y + x*z
 
-        sage: R.term_order()
+        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
         Lexicographic term order
 
-        sage: R = BooleanPolynomialRing(5,'x',order='deglex(3),deglex(2)')
-        sage: R.term_order()
+        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')                        # optional - sage.rings.polynomial.pbori
+        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
         Block term order with blocks:
         (Degree lexicographic term order of length 3,
          Degree lexicographic term order of length 2)
 
-        sage: R = BooleanPolynomialRing(3,'x',order='degneglex')
-        sage: R.term_order()
+        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                                  # optional - sage.rings.polynomial.pbori
+        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
         Degree negative lexicographic term order
 
-        sage: BooleanPolynomialRing(names=('x','y'))
+        sage: BooleanPolynomialRing(names=('x','y'))                                                # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y
 
-        sage: BooleanPolynomialRing(names='x,y')
+        sage: BooleanPolynomialRing(names='x,y')                                                    # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y
 
     TESTS::
 
-        sage: P.<x,y> = BooleanPolynomialRing(2,order='deglex')
-        sage: x > y
+        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                                    # optional - sage.rings.polynomial.pbori
+        sage: x > y                                                                                 # optional - sage.rings.polynomial.pbori
         True
 
-        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4,order='deglex(2),deglex(2)')
-        sage: x0 > x1
+        sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')            # optional - sage.rings.polynomial.pbori
+        sage: x0 > x1                                                                               # optional - sage.rings.polynomial.pbori
         True
-        sage: x2 > x3
+        sage: x2 > x3                                                                               # optional - sage.rings.polynomial.pbori
         True
     """
     if isinstance(n, str):

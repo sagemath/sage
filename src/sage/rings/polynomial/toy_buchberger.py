@@ -127,7 +127,7 @@ zero::
     sage: gb = buchberger_improved(I)                                                               # optional - sage.libs.pari
     ...
     1 reductions to zero.
-    sage: sorted(gb)
+    sage: sorted(gb)                                                                                # optional - sage.libs.pari
     [a + 2*b + 2*c - 1, b*c + 52*c^2 + 38*b + 25*c, b^2 - 26*c^2 - 51*b + 51*c, c^3 + 22*c^2 - 55*b + 49*c]
 
 AUTHORS:

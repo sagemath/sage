@@ -170,10 +170,10 @@ class CommutativeRings(CategoryWithAxiom):
             When ``base`` is omitted, the canonical base of the ring is used::
 
                 sage: S.<x> = QQ[]
-                sage: E = S.over()
-                sage: E
+                sage: E = S.over()                                                                                      # optional - sage.modules
+                sage: E                                                                                                 # optional - sage.modules
                 Univariate Polynomial Ring in x over Rational Field over its base
-                sage: E.base_ring()
+                sage: E.base_ring()                                                                                     # optional - sage.modules
                 Rational Field
 
             Here is an example where ``base`` is a defining morphism::
@@ -332,7 +332,7 @@ class CommutativeRings(CategoryWithAxiom):
                 ring::
 
                     sage: R = cartesian_product([GF(7), Zmod(14)])                                                      # optional - sage.libs.pari
-                    sage: a = R((3,5))
+                    sage: a = R((3,5))                                                                                  # optional - sage.libs.pari
                     sage: R.cyclotomic_cosets((3,5), [(1,1)])                                                           # optional - sage.libs.pari
                     [[(1, 1), (2, 11), (3, 5), (4, 9), (5, 3), (6, 13)]]
                 """

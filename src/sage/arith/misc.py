@@ -303,47 +303,54 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     EXAMPLES::
 
-        sage: bernoulli(12)
+        sage: bernoulli(12)                                                             # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(50)
+        sage: bernoulli(50)                                                             # optional - sage.libs.flint
         495057205241079648212477525/66
 
     We demonstrate each of the alternative algorithms::
 
-        sage: bernoulli(12, algorithm='arb')
+        sage: bernoulli(12, algorithm='arb')                                            # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(12, algorithm='flint')
+        sage: bernoulli(12, algorithm='flint')                                          # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(12, algorithm='gap')
+        sage: bernoulli(12, algorithm='gap')                                            # optional - sage.libs.gap
         -691/2730
-        sage: bernoulli(12, algorithm='gp')
+        sage: bernoulli(12, algorithm='gp')                                             # optional - sage.libs.pari
         -691/2730
         sage: bernoulli(12, algorithm='magma')           # optional - magma
         -691/2730
-        sage: bernoulli(12, algorithm='pari')
+        sage: bernoulli(12, algorithm='pari')                                           # optional - sage.libs.pari
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm')
+        sage: bernoulli(12, algorithm='bernmm')                                         # optional - sage.libs.ntl
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm', num_threads=4)
+        sage: bernoulli(12, algorithm='bernmm', num_threads=4)                          # optional - sage.libs.ntl
         -691/2730
 
     TESTS::
 
-        sage: algs = ['arb', 'gap', 'gp', 'pari', 'bernmm', 'flint']
+        sage: algs = []
+        sage: algs += ['arb']                                                           # optional - sage.libs.flint
+        sage: algs += ['gap']                                                           # optional - sage.libs.gap
+        sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
+        sage: algs += ['flint']                                                         # optional - sage.libs.flint
         sage: test_list = [ZZ.random_element(2, 2255) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 21s on sage.math, 2011)
-        sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
+        sage: all(len(set(x)) == 1 for x in vals)  # long time (depends on previous line)
         True
-        sage: algs = ['gp', 'pari', 'bernmm']
+        sage: algs = []
+        sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
         sage: test_list = [ZZ.random_element(2256, 5000) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 30s on sage.math, 2011)
         sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
         True
         sage: from numpy import int8                                                    # optional - numpy
-        sage: bernoulli(int8(12))                                                       # optional - numpy
+        sage: bernoulli(int8(12))                                                       # optional - numpy sage.libs.flint
         -691/2730
         sage: from gmpy2 import mpz
-        sage: bernoulli(mpz(12))
+        sage: bernoulli(mpz(12))                                                        # optional - sage.libs.flint
         -691/2730
 
     AUTHOR:
@@ -6078,7 +6085,7 @@ def dedekind_sum(p, q, algorithm='default'):
 
     Several small values::
 
-        sage: for q in range(10): print([dedekind_sum(p,q) for p in range(q+1)])
+        sage: for q in range(10): print([dedekind_sum(p,q) for p in range(q+1)])        # optional - sage.libs.flint
         [0]
         [0, 0]
         [0, 0, 0]
@@ -6092,44 +6099,44 @@ def dedekind_sum(p, q, algorithm='default'):
 
     Check relations for restricted arguments::
 
-        sage: q = 23; dedekind_sum(1, q); (q-1)*(q-2)/(12*q)
+        sage: q = 23; dedekind_sum(1, q); (q-1)*(q-2)/(12*q)                            # optional - sage.libs.flint
         77/46
         77/46
         sage: p, q = 100, 723    # must be coprime
-        sage: dedekind_sum(p, q) + dedekind_sum(q, p)
+        sage: dedekind_sum(p, q) + dedekind_sum(q, p)                                   # optional - sage.libs.flint
         31583/86760
-        sage: -1/4 + (p/q + q/p + 1/(p*q))/12
+        sage: -1/4 + (p/q + q/p + 1/(p*q))/12                                           # optional - sage.libs.flint
         31583/86760
 
     We check that evaluation works with large input::
 
-        sage: dedekind_sum(3^54 - 1, 2^93 + 1)
+        sage: dedekind_sum(3^54 - 1, 2^93 + 1)                                          # optional - sage.libs.flint
         459340694971839990630374299870/29710560942849126597578981379
-        sage: dedekind_sum(3^54 - 1, 2^93 + 1, algorithm='pari')
+        sage: dedekind_sum(3^54 - 1, 2^93 + 1, algorithm='pari')                        # optional - sage.libs.pari
         459340694971839990630374299870/29710560942849126597578981379
 
     We check consistency of the results::
 
-        sage: dedekind_sum(5, 7, algorithm='default')
+        sage: dedekind_sum(5, 7, algorithm='default')                                   # optional - sage.libs.flint
         -1/14
-        sage: dedekind_sum(5, 7, algorithm='flint')
+        sage: dedekind_sum(5, 7, algorithm='flint')                                     # optional - sage.libs.flint
         -1/14
-        sage: dedekind_sum(5, 7, algorithm='pari')
+        sage: dedekind_sum(5, 7, algorithm='pari')                                      # optional - sage.libs.pari
         -1/14
-        sage: dedekind_sum(6, 8, algorithm='default')
+        sage: dedekind_sum(6, 8, algorithm='default')                                   # optional - sage.libs.flint
         -1/8
-        sage: dedekind_sum(6, 8, algorithm='flint')
+        sage: dedekind_sum(6, 8, algorithm='flint')                                     # optional - sage.libs.flint
         -1/8
-        sage: dedekind_sum(6, 8, algorithm='pari')
+        sage: dedekind_sum(6, 8, algorithm='pari')                                      # optional - sage.libs.pari
         -1/8
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8                                                    # optional - numpy
-        sage: dedekind_sum(int8(5), int8(7), algorithm='default')                       # optional - numpy
+        sage: dedekind_sum(int8(5), int8(7), algorithm='default')                       # optional - numpy sage.libs.flint
         -1/14
         sage: from gmpy2 import mpz
-        sage: dedekind_sum(mpz(5), mpz(7), algorithm='default')
+        sage: dedekind_sum(mpz(5), mpz(7), algorithm='default')                         # optional - sage.libs.flint
         -1/14
 
     REFERENCES:

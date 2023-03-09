@@ -353,9 +353,9 @@ class DeprecatedFunctionAlias():
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g = deprecated_function_alias(13109, number_of_partitions)
+            sage: g = deprecated_function_alias(13109, number_of_partitions)                    # optional - sage.combinat
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g.__doc__
+            sage: g.__doc__                                                                     # optional - sage.combinat
             'Deprecated: Use :func:`number_of_partitions` instead.\nSee :trac:`13109` for details.\n\n'
         """
         _check_issue_number(issue_number)
@@ -383,8 +383,8 @@ class DeprecatedFunctionAlias():
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g = deprecated_function_alias(13109, number_of_partitions)
-            sage: g.__name__
+            sage: g = deprecated_function_alias(13109, number_of_partitions)                    # optional - sage.combinat
+            sage: g.__name__                                                                    # optional - sage.combinat
             'g'
 
             sage: from sage.misc.superseded import deprecated_function_alias
@@ -515,8 +515,8 @@ def deprecated_function_alias(issue_number, func):
     EXAMPLES::
 
         sage: from sage.misc.superseded import deprecated_function_alias
-        sage: g = deprecated_function_alias(13109, number_of_partitions)
-        sage: g(5)
+        sage: g = deprecated_function_alias(13109, number_of_partitions)                        # optional - sage.combinat
+        sage: g(5)                                                                              # optional - sage.combinat
         doctest:...: DeprecationWarning: g is deprecated. Please use sage.combinat.partition.number_of_partitions instead.
         See https://github.com/sagemath/sage/issues/13109 for details.
         7

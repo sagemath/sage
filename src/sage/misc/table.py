@@ -175,11 +175,11 @@ class table(SageObject):
 
     To generate HTML you should use ``html(table(...))``::
 
-        sage: data = [["$x$", r"$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]]
-        sage: output = html(table(data, header_row=True, frame=True))
-        sage: type(output)
+        sage: data = [["$x$", r"$\sin(x)$"]] + [(x, n(sin(x), digits=2)) for x in [0..3]]           # optional - sage.symbolic
+        sage: output = html(table(data, header_row=True, frame=True))                               # optional - sage.symbolic
+        sage: type(output)                                                                          # optional - sage.symbolic
         <class 'sage.misc.html.HtmlFragment'>
-        sage: print(output)
+        sage: print(output)                                                                         # optional - sage.symbolic
         <div class="notruncate">
         <table border="1" class="table_form">
         <tbody>
