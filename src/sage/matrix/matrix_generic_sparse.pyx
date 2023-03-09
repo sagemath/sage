@@ -4,8 +4,9 @@ Sparse Matrices over a general ring
 EXAMPLES::
 
     sage: R.<x> = PolynomialRing(QQ)
-    sage: M = MatrixSpace(QQ['x'],2,3,sparse=True); M
-    Full MatrixSpace of 2 by 3 sparse matrices over Univariate Polynomial Ring in x over Rational Field
+    sage: M = MatrixSpace(QQ['x'], 2, 3, sparse=True); M
+    Full MatrixSpace of 2 by 3 sparse matrices over
+     Univariate Polynomial Ring in x over Rational Field
     sage: a = M(range(6)); a
     [0 1 2]
     [3 4 5]
@@ -15,7 +16,7 @@ EXAMPLES::
     sage: a * b.transpose()
     [            2*x^2 + x           2*x^5 + x^4]
     [      5*x^2 + 4*x + 3 5*x^5 + 4*x^4 + 3*x^3]
-    sage: pari(a)*pari(b.transpose())
+    sage: pari(a)*pari(b.transpose())                                                   # optional - sage.libs.pari
     [2*x^2 + x, 2*x^5 + x^4; 5*x^2 + 4*x + 3, 5*x^5 + 4*x^4 + 3*x^3]
     sage: c = copy(b); c
     [  1   x x^2]

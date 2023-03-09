@@ -543,11 +543,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS::
 
-            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # optional - sage.rings.number_fields
             ....:     def __bool__(self):
             ....:         raise ValueError
-            sage: mat = matrix(1,1,MyAlgebraicNumber(1))
-            sage: bool(mat)
+            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # optional - sage.rings.number_fields
+            sage: bool(mat)                                                             # optional - sage.rings.number_fields
             Traceback (most recent call last):
             ...
             ValueError
@@ -2562,12 +2562,12 @@ cdef class Matrix(sage.structure.element.Matrix):
         Next of all, create a permutation group element and act
         on ``M`` with it::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.permute_columns(sigma)
-            sage: M
+            sage: M.permute_columns(sigma)                                      # optional - sage.groups
+            sage: M                                                             # optional - sage.groups
             [0 0 1 0 0]
             [2 0 0 0 0]
             [0 3 0 0 0]
@@ -2613,11 +2613,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         Next of all, create a permutation group element and
         act on ``M``::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.with_permuted_columns(sigma)
+            sage: M.with_permuted_columns(sigma)                                # optional - sage.groups
             [0 0 1 0 0]
             [2 0 0 0 0]
             [0 3 0 0 0]
@@ -2744,12 +2744,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Next of all, create a permutation group element and act on ``M``::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.permute_rows(sigma)
-            sage: M
+            sage: M.permute_rows(sigma)                                         # optional - sage.groups
+            sage: M                                                             # optional - sage.groups
             [0 2 0 0 0]
             [0 0 3 0 0]
             [1 0 0 0 0]
@@ -2793,11 +2793,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Next of all, create a permutation group element and act on ``M``::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.with_permuted_rows(sigma)
+            sage: M.with_permuted_rows(sigma)                                   # optional - sage.groups
             [0 2 0 0 0]
             [0 0 3 0 0]
             [1 0 0 0 0]
@@ -2851,12 +2851,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Next of all, create a permutation group element and act on ``M``::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.permute_rows_and_columns(sigma,tau)
-            sage: M
+            sage: M.permute_rows_and_columns(sigma,tau)                         # optional - sage.groups
+            sage: M                                                             # optional - sage.groups
             [2 0 0 0 0]
             [0 3 0 0 0]
             [0 0 0 0 1]
@@ -2896,11 +2896,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Next of all, create a permutation group element and act on ``M``::
 
-            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])
-            sage: sigma, tau = G.gens()
-            sage: sigma
+            sage: G = PermutationGroup(['(1,2,3)(4,5)', '(1,2,3,4,5)'])         # optional - sage.groups
+            sage: sigma, tau = G.gens()                                         # optional - sage.groups
+            sage: sigma                                                         # optional - sage.groups
             (1,2,3)(4,5)
-            sage: M.with_permuted_rows_and_columns(sigma,tau)
+            sage: M.with_permuted_rows_and_columns(sigma,tau)                   # optional - sage.groups
             [2 0 0 0 0]
             [0 3 0 0 0]
             [0 0 0 0 1]
@@ -4170,7 +4170,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Rectangular matrices are never Hermitian.  ::
 
             sage: A = matrix(QQbar, 3, 4)                                       # optional - sage.rings.number_field
-            sage: A.is_hermitian()
+            sage: A.is_hermitian()                                              # optional - sage.rings.number_field
             False
 
         A square, empty matrix is trivially Hermitian.  ::
@@ -4903,22 +4903,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over `\ZZ`::
 
             sage: m = matrix(ZZ,2,2,[-1,1,-1,0])
-            sage: m.multiplicative_order()
+            sage: m.multiplicative_order()                                      # optional - sage.groups
             3
 
             sage: m = posets.ChainPoset(6).coxeter_transformation()
-            sage: m.multiplicative_order()
+            sage: m.multiplicative_order()                                      # optional - sage.groups
             7
 
             sage: P = posets.TamariLattice(4).coxeter_transformation()
-            sage: P.multiplicative_order()
+            sage: P.multiplicative_order()                                      # optional - sage.groups
             10
 
             sage: M = matrix(ZZ, 2, 2, [1, 1, 0, 1])
-            sage: M.multiplicative_order()
+            sage: M.multiplicative_order()                                      # optional - sage.groups
             +Infinity
 
-            sage: for k in range(600):
+            sage: for k in range(600):                                          # optional - sage.groups
             ....:     m = SL2Z.random_element()
             ....:     o = m.multiplicative_order()
             ....:     if o != Infinity and m**o != SL2Z.one():
@@ -4933,7 +4933,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:     else:
             ....:         return ZZ.random_element(-100,100)
             sage: rnd = matrix(ZZ, 8, 8, val)
-            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()
+            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()    # optional - sage.groups
             24
 
         TESTS::
@@ -4945,7 +4945,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ArithmeticError: self must be invertible ...
 
             sage: D = matrix(IntegerModRing(6),3,[5,5,3,0,2,5,5,4,0])
-            sage: D.multiplicative_order()
+            sage: D.multiplicative_order()                                      # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: ... only ... over finite fields or ZZ
@@ -5064,11 +5064,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Check that :trac:`8198` is fixed::
 
-            sage: R = Qp(5, 5)
-            sage: x = R(5).add_bigoh(1)
-            sage: I = matrix(R, [[1, 0], [0, 1]])
-            sage: v = vector(R, [1, x])
-            sage: v*I
+            sage: R = Qp(5, 5)                                                  # optional - sage.rings.padics
+            sage: x = R(5).add_bigoh(1)                                         # optional - sage.rings.padics
+            sage: I = matrix(R, [[1, 0], [0, 1]])                               # optional - sage.rings.padics
+            sage: v = vector(R, [1, x])                                         # optional - sage.rings.padics
+            sage: v*I                                                           # optional - sage.rings.padics
             (1 + O(5^5), O(5))
 
         """
@@ -5098,11 +5098,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Check that :trac:`8198` is fixed::
 
-            sage: R = Qp(5, 5)
-            sage: x = R(5).add_bigoh(1)
-            sage: I = matrix(R, [[1, 0], [0, 1]])
-            sage: v = vector(R, [1, x])
-            sage: I*v
+            sage: R = Qp(5, 5)                                                  # optional - sage.rings.padics
+            sage: x = R(5).add_bigoh(1)                                         # optional - sage.rings.padics
+            sage: I = matrix(R, [[1, 0], [0, 1]])                               # optional - sage.rings.padics
+            sage: v = vector(R, [1, x])                                         # optional - sage.rings.padics
+            sage: I*v                                                           # optional - sage.rings.padics
             (1 + O(5^5), O(5))
 
         """
@@ -5195,10 +5195,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: a = matrix(2,2, [1,2,x*y,y*x])
-            sage: b = matrix(2,2, [1,2,y*x,y*x])
-            sage: a+b # indirect doctest
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                  # optional - sage.combinat
+            sage: a = matrix(2, 2, [1,2,x*y,y*x])                               # optional - sage.combinat
+            sage: b = matrix(2, 2, [1,2,y*x,y*x])                               # optional - sage.combinat
+            sage: a + b  # indirect doctest                                     # optional - sage.combinat
             [        2         4]
             [x*y + y*x     2*y*x]
 
@@ -5218,10 +5218,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: a = matrix(2,2, [1,2,x*y,y*x])
-            sage: b = matrix(2,2, [1,2,y*x,y*x])
-            sage: a-b # indirect doctest
+            sage: R.<x,y> = FreeAlgebra(QQ,2)                                   # optional - sage.combinat
+            sage: a = matrix(2, 2, [1,2,x*y,y*x])                               # optional - sage.combinat
+            sage: b = matrix(2, 2, [1,2,y*x,y*x])                               # optional - sage.combinat
+            sage: a-b # indirect doctest                                        # optional - sage.combinat
             [        0         0]
             [x*y - y*x         0]
 
@@ -5384,9 +5384,9 @@ cdef class Matrix(sage.structure.element.Matrix):
         We verify that the matrix multiplies are correct by comparing them
         with what PARI gets::
 
-            sage: gp(a)*gp(b) - gp(a*b)
+            sage: gp(a)*gp(b) - gp(a*b)                                                 # optional - sage.libs.pari
             [0, 0; 0, 0]
-            sage: gp(b)*gp(a) - gp(b*a)
+            sage: gp(b)*gp(a) - gp(b*a)                                                 # optional - sage.libs.pari
             [0, 0, 0; 0, 0, 0; 0, 0, 0]
 
         EXAMPLE of matrix times matrix over different base rings::
