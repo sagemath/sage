@@ -56,7 +56,7 @@ include sage/misc/repr.*
 include sage/misc/superseded.*
 include sage/misc/misc_c.*              # prod
 include sage/misc/flatten.*             # dep of sage/categories/coxeter_groups.py
-
+include sage/misc/lazy_list.p*
 include sage/misc/lazy_import*.*
 include sage/misc/sageinspect.*          # dep of sage/misc/lazy_import
 include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
