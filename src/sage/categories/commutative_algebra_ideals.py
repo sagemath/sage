@@ -53,8 +53,8 @@ class CommutativeAlgebraIdeals(Category_ideal):
         # suitable mantra has been implemented for this.
         from sage.algebras.algebra import is_Algebra
         from sage.rings.ring import CommutativeRing
-        if not (is_Algebra(A) and isinstance(A, CommutativeRing)):
-            raise TypeError("A (=%s) must be a commutative algebra"%A)
+        if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
+            raise TypeError("A (=%s) must be a commutative algebra" % A)
         Category_in_ambient.__init__(self, A)
 
     def algebra(self):
