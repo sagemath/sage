@@ -322,9 +322,9 @@ def bernoulli(n, algorithm='default', num_threads=1):
         -691/2730
         sage: bernoulli(12, algorithm='pari')                                           # optional - sage.libs.pari
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm')
+        sage: bernoulli(12, algorithm='bernmm')                                         # optional - sage.libs.ntl
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm', num_threads=4)
+        sage: bernoulli(12, algorithm='bernmm', num_threads=4)                          # optional - sage.libs.ntl
         -691/2730
 
     TESTS::
@@ -333,7 +333,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         sage: algs += ['arb']                                                           # optional - sage.libs.flint
         sage: algs += ['gap']                                                           # optional - sage.libs.gap
         sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
-        sage: algs += ['bernmm']
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
         sage: algs += ['flint']                                                         # optional - sage.libs.flint
         sage: test_list = [ZZ.random_element(2, 2255) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 21s on sage.math, 2011)
@@ -341,7 +341,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         True
         sage: algs = []
         sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
-        sage: algs += ['bernmm']
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
         sage: test_list = [ZZ.random_element(2256, 5000) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 30s on sage.math, 2011)
         sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
