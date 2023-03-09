@@ -635,7 +635,7 @@ class TableauTuple(CombinatorialElement):
             sage: t(3,3,3)
             Traceback (most recent call last):
             ...
-            IndexError: The cell (3, 3, 3) is not contained in the tableau
+            IndexError: the cell (3, 3, 3) is not contained in the tableau
         """
         if isinstance(cell[0], (int, Integer)):
             k, r, c = cell[0], cell[1], cell[2]
@@ -644,7 +644,7 @@ class TableauTuple(CombinatorialElement):
         try:
             return self[k][r][c]
         except IndexError:
-            raise IndexError("The cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
+            raise IndexError("the cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
 
     def level(self):
         """

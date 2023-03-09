@@ -66,10 +66,10 @@ class Derangement(CombinatorialElement):
             sage: D[0].to_permutation()
             Traceback (most recent call last):
             ...
-            ValueError: Can only convert to a permutation for derangements of [1, 2, ..., n]
+            ValueError: can only convert to a permutation for derangements of [1, 2, ..., n]
         """
         if self.parent()._set != tuple(range(1, len(self) + 1)):
-            raise ValueError("Can only convert to a permutation for derangements of [1, 2, ..., n]")
+            raise ValueError("can only convert to a permutation for derangements of [1, 2, ..., n]")
         return Permutation(list(self))
 
 

@@ -180,13 +180,13 @@ class PrefixClosedSet():
             sage: P.add(W([1, 1]))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot add as not all prefixes of 11 are included yet.
+            ValueError: cannot add as not all prefixes of 11 are included yet
         """
         if check and any(p not in self.elements
                          for p in w.prefixes_iterator()
                          if p != w):
-            raise ValueError('Cannot add as not all prefixes of '
-                             '{} are included yet.'.format(w))
+            raise ValueError('cannot add as not all prefixes of '
+                             '{} are included yet'.format(w))
         self.elements.append(w)
 
     def iterate_possible_additions(self):
@@ -460,7 +460,7 @@ class RecognizableSeries(ModuleElement):
         mu = Family(mu)
 
         if not mu.is_finite():
-            raise NotImplementedError('mu is not a finite family of matrices.')
+            raise NotImplementedError('mu is not a finite family of matrices')
 
         self._left_ = immutable(vector(left))
         self._mu_ = mu
@@ -753,11 +753,11 @@ class RecognizableSeries(ModuleElement):
             sage: S._mu_of_word_(-1)
             Traceback (most recent call last):
             ...
-            ValueError: Index -1 is not in Finite words over {0, 1}.
+            ValueError: index -1 is not in Finite words over {0, 1}
         """
         W = self.parent().indices()
         if w not in W:
-            raise ValueError('Index {} is not in {}.'.format(w, W))
+            raise ValueError('index {} is not in {}'.format(w, W))
         from sage.misc.misc_c import prod
         return prod((self.mu[a] for a in w), z=self._mu_of_empty_word_())
 
@@ -1644,7 +1644,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: RecognizableSeriesSpace([0, 1], [0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Coefficient ring [0, 1] is not a semiring.
+            ValueError: coefficient ring [0, 1] is not a semiring
 
         ::
 
@@ -1652,35 +1652,35 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: RecognizableSeriesSpace(ZZ)
             Traceback (most recent call last):
             ...
-            ValueError: Specify either 'alphabet' or 'indices'.
+            ValueError: specify either 'alphabet' or 'indices'
             sage: RecognizableSeriesSpace(ZZ, alphabet=[0, 1], indices=W)
             Traceback (most recent call last):
             ...
-            ValueError: Specify either 'alphabet' or 'indices'.
+            ValueError: specify either 'alphabet' or 'indices'
             sage: RecognizableSeriesSpace(alphabet=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: No coefficient ring specified.
+            ValueError: no coefficient ring specified
             sage: RecognizableSeriesSpace(ZZ, indices=Words(ZZ))
             Traceback (most recent call last):
             ...
-            NotImplementedError: Alphabet is not finite.
+            NotImplementedError: alphabet is not finite
         """
         if (alphabet is None) == (indices is None):
-            raise ValueError("Specify either 'alphabet' or 'indices'.")
+            raise ValueError("specify either 'alphabet' or 'indices'")
 
         if indices is None:
             from sage.combinat.words.words import Words
             indices = Words(alphabet, infinite=False)
         if not indices.alphabet().is_finite():
-            raise NotImplementedError('Alphabet is not finite.')
+            raise NotImplementedError('alphabet is not finite')
 
         if coefficient_ring is None:
-            raise ValueError('No coefficient ring specified.')
+            raise ValueError('no coefficient ring specified')
         from sage.categories.semirings import Semirings
         if coefficient_ring not in Semirings():
             raise ValueError(
-                'Coefficient ring {} is not a semiring.'.format(coefficient_ring))
+                'coefficient ring {} is not a semiring'.format(coefficient_ring))
 
         from sage.categories.modules import Modules
         category = category or Modules(coefficient_ring)
@@ -1970,19 +1970,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec((M0, M1))
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), [0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), left=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
             sage: Rec((M0, M1), right=[0, 1])
             Traceback (most recent call last):
             ...
-            ValueError: Left or right vector is None.
+            ValueError: left or right vector is None
         """
         if isinstance(data, int) and data == 0:
             from sage.matrix.constructor import Matrix
@@ -2002,7 +2002,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         else:
             mu = data
             if left is None or right is None:
-                raise ValueError('Left or right vector is None.')
+                raise ValueError('left or right vector is None')
 
             element = self.element_class(self, mu, left, right)
 

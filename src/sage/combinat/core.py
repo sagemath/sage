@@ -444,11 +444,11 @@ class Core(CombinatorialElement):
             sage: c.weak_le(x)
             Traceback (most recent call last):
             ...
-            ValueError: The two cores do not have the same k
+            ValueError: the two cores do not have the same k
         """
         if type(self) is type(other):
             if self.k() != other.k():
-                raise ValueError("The two cores do not have the same k")
+                raise ValueError("the two cores do not have the same k")
         else:
             other = Core(other, self.k())
         w = self.to_grassmannian()
@@ -499,11 +499,11 @@ class Core(CombinatorialElement):
             sage: c.strong_le(x)
             Traceback (most recent call last):
             ...
-            ValueError: The two cores do not have the same k
+            ValueError: the two cores do not have the same k
         """
         if type(self) is type(other):
             if self.k() != other.k():
-                raise ValueError("The two cores do not have the same k")
+                raise ValueError("the two cores do not have the same k")
         else:
             other = Core(other, self.k())
         return other.contains(self)
@@ -612,10 +612,9 @@ def Cores(k, length=None, **kwargs):
     """
     if length is None and 'size' in kwargs:
         return Cores_size(k, kwargs['size'])
-    elif length is not None:
+    if length is not None:
         return Cores_length(k, length)
-    else:
-        raise ValueError("You need to either specify the length or size of the cores considered!")
+    raise ValueError("you need to either specify the length or size of the cores considered")
 
 
 class Cores_length(UniqueRepresentation, Parent):

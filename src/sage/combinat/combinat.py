@@ -3151,7 +3151,7 @@ def bernoulli_polynomial(x, n: Integer):
         if n < 0:
             raise TypeError
     except TypeError:
-        raise ValueError("The second argument must be a non-negative integer")
+        raise ValueError("the second argument must be a non-negative integer")
 
     if n == 0:
         return x**0   # result should be in the parent of x

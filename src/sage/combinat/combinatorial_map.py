@@ -227,7 +227,7 @@ class CombinatorialMap():
         """
         import types
         if not isinstance(f, types.FunctionType):
-            raise ValueError("Only plain functions are supported")
+            raise ValueError("only plain functions are supported")
         self._f = f
         self._order = order
         self._name = name

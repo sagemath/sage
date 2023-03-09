@@ -274,11 +274,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: CartesianProduct_iters(4,4).is_finite()
             Traceback (most recent call last):
             ...
-            ValueError: Unable to determine whether this product is finite
+            ValueError: unable to determine whether this product is finite
         """
         finites = [_is_finite(L, fallback=None) for L in self.iters]
         if any(f is None for f in finites):
-            raise ValueError("Unable to determine whether this product is finite")
+            raise ValueError("unable to determine whether this product is finite")
         if all(f is True for f in finites):
             return True
         lens = [_len(L) for L in self.iters]

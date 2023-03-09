@@ -1430,7 +1430,7 @@ def input_parsing(data):
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
                 except(TypeError, ValueError):
-                    raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
+                    raise ValueError("expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
 
 

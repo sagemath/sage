@@ -1518,7 +1518,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             children = [child.as_ordered_tree(with_leaves) for child in self]
         else:
             if not self:
-                raise ValueError("The empty binary tree cannot be made into an ordered tree with with_leaves = False")
+                raise ValueError("the empty binary tree cannot be made into an ordered tree with with_leaves = False")
             children = [child.as_ordered_tree(with_leaves) for child in self if not child.is_empty()]
         if self in LabelledBinaryTrees():
             from sage.combinat.ordered_tree import LabelledOrderedTree
