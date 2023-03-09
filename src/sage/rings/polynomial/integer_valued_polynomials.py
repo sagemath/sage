@@ -20,7 +20,6 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -77,6 +76,12 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         TypeError: argument R must be a commutative ring
     """
     def __init__(self, R):
+        """
+        TESTS::
+
+            sage: IV = IntegerValuedPolynomialRing(ZZ)
+            sage: TestSuite(IV).run()
+        """
         if R not in Rings().Commutative():
             raise TypeError("argument R must be a commutative ring")
         self._base = R
@@ -96,6 +101,20 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         """
         br = self.base_ring()
         return f"Integer-Valued Polynomial Ring over {br}"
+
+    def a_realization(self):
+        """
+        Return a default realization.
+
+        The Binomial realization is chosen.
+
+        EXAMPLES::
+
+            sage: IntegerValuedPolynomialRing(QQ).a_realization()
+            Integer-Valued Polynomial Ring over Rational Field
+            in the binomial basis
+        """
+        return self.Binomial()
 
     class Bases(Category_realization_of_parent):
         def super_categories(self) -> list:
@@ -223,9 +242,11 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     result += top_coeff * B[N]
                 return result
 
-            def gen(self):
+            def gen(self, i=0):
                 r"""
                 Return the generator of this algebra.
+
+                The optional argument is ignored.
 
                 EXAMPLES::
 
@@ -334,8 +355,14 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: B = F.basis()
                     sage: (B[2]*B[4]).sum_of_coefficients()
                     1
+
+                TESTS::
+
+                    sage: (0*B[2]).sum_of_coefficients().parent()
+                    Integer Ring
                 """
-                return sum(c for _, c in self)
+                R = self.parent().base_ring()
+                return R.sum(self._monomial_coefficients.values())
 
             def content(self):
                 """
@@ -349,9 +376,14 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: B = F.basis()
                     sage: (3*B[4]+6*B[7]).content()
                     3
+
+                TESTS::
+
+                    sage: (0*B[2]).content()
+                    0
                 """
                 from sage.arith.misc import gcd
-                return gcd(c for _, c in self)
+                return gcd(self._monomial_coefficients.values())
 
     class Shifted(CombinatorialFreeModule, BindableClass):
         r"""
@@ -516,7 +548,8 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             m = matrix(QQ, d + 1, d + 1,
                        lambda j, i: (-1)**(d - j) * binomial(d - i, d - j))
             v = vector(QQ, [h[i] for i in range(d + 1)])
-            return self._from_dict({i: Integer(c)
+            R = self.base_ring()
+            return self._from_dict({i: R(c)
                                     for i, c in enumerate(m * v)})
 
         def _element_constructor_(self, x):
@@ -525,7 +558,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``x`` -- an integer or something convertible
+            - ``x`` -- an element of the base ring or something convertible
 
             EXAMPLES::
 
@@ -536,10 +569,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: R(x)
                 S[1]
             """
-            if x in NonNegativeIntegers():
-                W = self.basis().keys()
-                return self.monomial(W(x))
-
             P = x.parent()
             if isinstance(P, IntegerValuedPolynomialRing.Shifted):
                 if P is self:
@@ -585,7 +614,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 6*S[1] + 2*S[2]
 
             Elements of the integers coerce in, since there is a coerce map
-            from `\ZZ` to GF(7)::
+            from `\ZZ` to `\GF(7)`::
 
                 sage: F.coerce(1)       # indirect doctest
                 S[0]
@@ -614,8 +643,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: z.parent() is F
                 True
 
-            However, `\GF{7}` does not coerce to `\ZZ`, so the shuffle
-            algebra over `\GF{7}` does not coerce to the one over `\ZZ`::
+            However, `\GF{7}` does not coerce to `\ZZ`, so the
+            integer-valued polynomial algebra over `\GF{7}` does not
+            coerce to the one over `\ZZ`::
 
                 sage: G.coerce(x^3+x)
                 Traceback (most recent call last):
@@ -975,10 +1005,6 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: R(x)
                 B[1]
             """
-            if x in NonNegativeIntegers():
-                W = self.basis().keys()
-                return self.monomial(W(x))
-
             P = x.parent()
             if isinstance(P, IntegerValuedPolynomialRing.Binomial):
                 if P is self:
@@ -1020,7 +1046,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 B[1] + 2*B[2]
 
             Elements of the integers coerce in, since there is a coerce map
-            from `\ZZ` to GF(7)::
+            from `\ZZ` to `\GF(7)`::
 
                 sage: F.coerce(1)       # indirect doctest
                 B[0]
@@ -1049,8 +1075,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: z.parent() is F
                 True
 
-            However, `\GF{7}` does not coerce to `\ZZ`, so the shuffle
-            algebra over `\GF{7}` does not coerce to the one over `\ZZ`::
+            However, `\GF{7}` does not coerce to `\ZZ`, so the
+            integer-valued polynomial algebra over `\GF{7}` does not
+            coerce to the one over `\ZZ`::
 
                 sage: G.coerce(x^3+x)
                 Traceback (most recent call last):
