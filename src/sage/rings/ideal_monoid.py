@@ -21,7 +21,8 @@ def IdealMonoid(R):
     EXAMPLES::
 
         sage: R = QQ['x']
-        sage: sage.rings.ideal_monoid.IdealMonoid(R)
+        sage: from sage.rings.ideal_monoid import IdealMonoid
+        sage: IdealMonoid(R)
         Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
     """
     return IdealMonoid_c(R)
@@ -34,7 +35,8 @@ class IdealMonoid_c(Parent):
     TESTS::
 
         sage: R = QQ['x']
-        sage: M = sage.rings.ideal_monoid.IdealMonoid(R)
+        sage: from sage.rings.ideal_monoid import IdealMonoid
+        sage: M = IdealMonoid(R)
         sage: TestSuite(M).run()
           Failure in _test_category:
         ...
@@ -52,7 +54,8 @@ class IdealMonoid_c(Parent):
         TESTS::
 
             sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M # indirect doctest      # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M # indirect doctest                              # optional - sage.rings.number_field
             Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
              with a = 4.795831523312720?*I
 
@@ -79,7 +82,8 @@ class IdealMonoid_c(Parent):
         TESTS::
 
             sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M._repr_()                # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M._repr_()                                        # optional - sage.rings.number_field
             'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
              with a = 4.795831523312720?*I'
         """
@@ -92,7 +96,8 @@ class IdealMonoid_c(Parent):
         EXAMPLES::
 
             sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M.ring() is R             # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M.ring() is R                                     # optional - sage.rings.number_field
             True
         """
         return self.__R
@@ -104,7 +109,8 @@ class IdealMonoid_c(Parent):
         EXAMPLES::
 
             sage: R.<a> = QuadraticField(-23)                                           # optional - sage.rings.number_field
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R)                            # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R)                                                    # optional - sage.rings.number_field
             sage: M(a)   # indirect doctest                                             # optional - sage.rings.number_field
             Fractional ideal (a)
             sage: M([a-4, 13])                                                          # optional - sage.rings.number_field

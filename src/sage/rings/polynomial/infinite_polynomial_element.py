@@ -542,7 +542,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: R.<x> = InfinitePolynomialRing(QQbar)                                             # optional - sage.rings.number_field
             sage: (x[0]+x[1]).is_nilpotent()                                                        # optional - sage.rings.number_field
             False
-            sage: R(0).is_nilpotent()
+            sage: R(0).is_nilpotent()                                                               # optional - sage.rings.number_field
             True
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (2*x[0]).is_nilpotent()

@@ -1151,23 +1151,23 @@ class PolynomialRing_general(ring.Algebra):
         EXAMPLES::
 
             sage: R = ZZ['x']
-            sage: R.cyclotomic_polynomial(8)
+            sage: R.cyclotomic_polynomial(8)                                            # optional - sage.libs.pari
             x^4 + 1
-            sage: R.cyclotomic_polynomial(12)
+            sage: R.cyclotomic_polynomial(12)                                           # optional - sage.libs.pari
             x^4 - x^2 + 1
-            sage: S = PolynomialRing(FiniteField(7), 'x')
-            sage: S.cyclotomic_polynomial(12)
+            sage: S = PolynomialRing(FiniteField(7), 'x')                               # optional - sage.libs.pari
+            sage: S.cyclotomic_polynomial(12)                                           # optional - sage.libs.pari
             x^4 + 6*x^2 + 1
-            sage: S.cyclotomic_polynomial(1)
+            sage: S.cyclotomic_polynomial(1)                                            # optional - sage.libs.pari
             x + 6
 
         TESTS:
 
         Make sure it agrees with other systems for the trivial case::
 
-            sage: ZZ['x'].cyclotomic_polynomial(1)
+            sage: ZZ['x'].cyclotomic_polynomial(1)                                      # optional - sage.libs.pari
             x - 1
-            sage: gp('polcyclo(1)')
+            sage: gp('polcyclo(1)')                                                     # optional - sage.libs.pari
             x - 1
         """
         if n <= 0:
@@ -1874,19 +1874,19 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         EXAMPLES::
 
             sage: R.<T> = ZZ[]
-            sage: L = R.weil_polynomials(4, 2)
-            sage: len(L)
+            sage: L = R.weil_polynomials(4, 2)                                                                          # optional - sage.libs.flint
+            sage: len(L)                                                                                                # optional - sage.libs.flint
             35
-            sage: L[9]
+            sage: L[9]                                                                                                  # optional - sage.libs.flint
             T^4 + T^3 + 2*T^2 + 2*T + 4
-            sage: all(p.is_weil_polynomial() for p in L)
+            sage: all(p.is_weil_polynomial() for p in L)                                                                # optional - sage.libs.flint
             True
 
         Setting multiple leading coefficients:
 
             sage: R.<T> = QQ[]
-            sage: l = R.weil_polynomials(4,2,lead=((1,0),(2,4),(1,2)))
-            sage: l
+            sage: l = R.weil_polynomials(4, 2, lead=((1,0), (2,4), (1,2)))                                              # optional - sage.libs.flint
+            sage: l                                                                                                     # optional - sage.libs.flint
             [T^4 + 2*T^3 + 5*T^2 + 4*T + 4,
             T^4 + 2*T^3 + 3*T^2 + 4*T + 4,
             T^4 - 2*T^3 + 5*T^2 - 4*T + 4,
@@ -1896,40 +1896,43 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         polynomials associated to K3 surfaces over `GF(2)` of Picard number at least 12::
 
             sage: R.<T> = QQ[]
-            sage: l = R.weil_polynomials(10,1,lead=2)
-            sage: len(l)
+            sage: l = R.weil_polynomials(10, 1, lead=2)                                                                 # optional - sage.libs.flint
+            sage: len(l)                                                                                                # optional - sage.libs.flint
             4865
-            sage: l[len(l)//2]
+            sage: l[len(l)//2]                                                                                          # optional - sage.libs.flint
             2*T^10 + T^8 + T^6 + T^4 + T^2 + 2
 
         TESTS:
 
         We check that products of Weil polynomials are also listed as Weil polynomials::
 
-            sage: all((f * g) in R.weil_polynomials(6, q) for q in [3,4] for f in R.weil_polynomials(2, q) for g in R.weil_polynomials(4, q))
+            sage: all((f * g) in R.weil_polynomials(6, q) for q in [3, 4]                                               # optional - sage.libs.flint
+            ....:     for f in R.weil_polynomials(2, q) for g in R.weil_polynomials(4, q))
             True
 
         We check that irreducible Weil polynomials of degree 6 are CM::
 
-            sage: simples = [f for f in R.weil_polynomials(6, 3) if f.is_irreducible()]
-            sage: len(simples)
+            sage: simples = [f for f in R.weil_polynomials(6, 3) if f.is_irreducible()]                                 # optional - sage.libs.flint
+            sage: len(simples)                                                                                          # optional - sage.libs.flint
             348
-            sage: reals = [R([f[3+i] + sum((-3)^j * (i+2*j)/(i+j) * binomial(i+j,j) * f[3+i+2*j] for j in range(1,(3+i)//2+1)) for i in range(4)]) for f in simples]
+            sage: reals = [R([f[3+i] + sum((-3)^j * (i+2*j)/(i+j) * binomial(i+j,j) * f[3+i+2*j]                        # optional - sage.libs.flint
+            ....:                          for j in range(1, (3+i)//2 + 1))
+            ....:          for i in range(4)]) for f in simples]
 
         Check that every polynomial in this list has 3 real roots between `-2 \sqrt{3}` and `2 \sqrt{3}`::
 
-            sage: roots = [f.roots(RR, multiplicities=False) for f in reals]
-            sage: all(len(L) == 3 and all(x^2 <= 12 for x in L) for L in roots)
+            sage: roots = [f.roots(RR, multiplicities=False) for f in reals]                                            # optional - sage.libs.flint
+            sage: all(len(L) == 3 and all(x^2 <= 12 for x in L) for L in roots)                                         # optional - sage.libs.flint
             True
 
         Finally, check that the original polynomials are reconstructed as CM polynomials::
 
-            sage: all(f == T^3*r(T + 3/T) for (f, r) in zip(simples, reals))
+            sage: all(f == T^3*r(T + 3/T) for (f, r) in zip(simples, reals))                                            # optional - sage.libs.flint
             True
 
         A simple check (not sufficient)::
 
-            sage: all(f.number_of_real_roots() == 0 for f in simples)
+            sage: all(f.number_of_real_roots() == 0 for f in simples)                                                   # optional - sage.libs.flint
             True
         """
         R = self.base_ring()

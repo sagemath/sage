@@ -518,8 +518,8 @@ class LocalizationElement(IntegralDomainElement):
         TESTS::
 
             sage: L = ZZ.localization(5)
-            sage: cp3 = cyclotomic_polynomial(3).change_ring(L)
-            sage: cp3.splitting_field('t')      #   indirect doctest
+            sage: cp3 = cyclotomic_polynomial(3).change_ring(L)                                     # optional - sage.libs.pari
+            sage: cp3.splitting_field('t')      #   indirect doctest                                # optional - sage.libs.pari sage.rings.number_field
             Number Field in t with defining polynomial x^2 + x + 1
         """
         from sage.rings.rational_field import QQ
@@ -903,7 +903,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS::
 
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                                                    # optional - sage.libs.pari
         """
         potential_non_unit_denom = self._cut_off_extra_units_from_base_ring_element(x.denominator())
         if potential_non_unit_denom.is_unit():

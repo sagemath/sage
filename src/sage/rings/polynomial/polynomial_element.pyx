@@ -7183,16 +7183,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: f = cyclotomic_polynomial(30)
-            sage: f.adams_operator(7)==f
+            sage: f = cyclotomic_polynomial(30)                                         # optional - sage.libs.pari
+            sage: f.adams_operator(7)==f                                                # optional - sage.libs.pari
             True
-            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2
+            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2                    # optional - sage.libs.pari
             True
-            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4
+            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4                   # optional - sage.libs.pari
             True
-            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8
+            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8                   # optional - sage.libs.pari
             True
-            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8
+            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8                   # optional - sage.libs.pari
             True
 
             sage: x = polygen(QQ)
@@ -9904,7 +9904,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S = GF(5)['y']                                                # optional - sage.libs.pari
             sage: S(f).number_of_terms()                                        # optional - sage.libs.pari
             5
-            sage: cyclotomic_polynomial(105).number_of_terms()
+            sage: cyclotomic_polynomial(105).number_of_terms()                  # optional - sage.libs.pari
             33
 
         The method :meth:`hamming_weight` is an alias::
@@ -10302,12 +10302,12 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: pol.<x> = PolynomialRing(Rationals())
-            sage: u = x^5-1; u.has_cyclotomic_factor()
+            sage: u = x^5 - 1; u.has_cyclotomic_factor()
             True
-            sage: u = x^5-2; u.has_cyclotomic_factor()
+            sage: u = x^5 - 2; u.has_cyclotomic_factor()
             False
-            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element() #random
-            sage: u.has_cyclotomic_factor() # random
+            sage: u = pol(cyclotomic_polynomial(7)) * pol.random_element()  # random                # optional - sage.libs.pari
+            sage: u.has_cyclotomic_factor()                                 # random                # optional - sage.libs.pari
             True
         """
         if not QQ.has_coerce_map_from(self.base_ring()):

@@ -104,7 +104,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)       # known bug
         '.../sage/rings/polynomial/multi_polynomial_ideal.py'
-        sage: sage_getsourcelines(I.interreduced_basis)
+        sage: sage_getsourcelines(I.interreduced_basis)                                                                 # optional - sage.libs.singular
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',

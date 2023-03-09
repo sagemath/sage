@@ -201,15 +201,15 @@ def cyclotomic_polynomial(n, var='x'):
 
     EXAMPLES::
 
-        sage: cyclotomic_polynomial(3)
+        sage: cyclotomic_polynomial(3)                                                                                  # optional - sage.libs.pari
         x^2 + x + 1
-        sage: cyclotomic_polynomial(4)
+        sage: cyclotomic_polynomial(4)                                                                                  # optional - sage.libs.pari
         x^2 + 1
-        sage: cyclotomic_polynomial(9)
+        sage: cyclotomic_polynomial(9)                                                                                  # optional - sage.libs.pari
         x^6 + x^3 + 1
-        sage: cyclotomic_polynomial(10)
+        sage: cyclotomic_polynomial(10)                                                                                 # optional - sage.libs.pari
         x^4 - x^3 + x^2 - x + 1
-        sage: cyclotomic_polynomial(11)
+        sage: cyclotomic_polynomial(11)                                                                                 # optional - sage.libs.pari
         x^10 + x^9 + x^8 + x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
     """
     return ZZ[var].cyclotomic_polynomial(n)
@@ -663,8 +663,8 @@ def integral(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: f = cyclotomic_polynomial(10)
-        sage: integral(f)
+        sage: f = cyclotomic_polynomial(10)                                                                             # optional - sage.libs.pari
+        sage: integral(f)                                                                                               # optional - sage.libs.pari
         1/5*x^5 - 1/4*x^4 + 1/3*x^3 - 1/2*x^2 + x
 
     ::

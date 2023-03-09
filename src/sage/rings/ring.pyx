@@ -988,7 +988,7 @@ cdef class Ring(ParentWithGens):
             1
             sage: Ring.zeta(QQ, 2)
             -1
-            sage: Ring.zeta(QQ, 3)
+            sage: Ring.zeta(QQ, 3)                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: no 3rd root of unity in Rational Field

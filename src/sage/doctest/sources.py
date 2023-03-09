@@ -727,11 +727,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: import sys
             sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: gp.get_precision() == 38                                              # optional - sage.libs.pari
+            sage: gp.get_precision() == 38                                                                              # optional - sage.libs.pari
             False # 32-bit
             True  # 64-bit
             sage: ex = doctests[18].examples[13]
-            sage: (bitness == '64' and ex.want == 'True  \n') or (bitness == '32' and ex.want == 'False \n')
+            sage: (bitness == '64' and ex.want == 'True  \n') or (bitness == '32' and ex.want == 'False \n')            # optional - sage.libs.pari
             True
 
         We check that lines starting with a # aren't doctested::

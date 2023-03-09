@@ -881,10 +881,10 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         We compute all the permutations of 3::
 
-            sage: seeds = [Permutation([1,2,3])]
-            sage: succ = attrcall("permutohedron_succ")
-            sage: R = RecursivelyEnumeratedSet(seeds, succ)
-            sage: sorted(R.naive_search_iterator())
+            sage: seeds = [Permutation([1,2,3])]                                        # optional - sage.combinat
+            sage: succ = attrcall("permutohedron_succ")                                 # optional - sage.combinat
+            sage: R = RecursivelyEnumeratedSet(seeds, succ)                             # optional - sage.combinat
+            sage: sorted(R.naive_search_iterator())                                     # optional - sage.combinat
             [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
         """
         cdef set known, todo
