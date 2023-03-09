@@ -780,10 +780,14 @@ class table(SageObject):
             <td style="text-align:left">\(2\)</td>
             <td style="text-align:left">\(x\)</td>
         """
-        from sage.plot.all import Graphics
         from .latex import latex
         from .html import math_parse
         import types
+
+        try:
+            from sage.plot.all import Graphics
+        except ImportError:
+            Graphics = ()
 
         if isinstance(row, types.GeneratorType):
             row = list(row)
