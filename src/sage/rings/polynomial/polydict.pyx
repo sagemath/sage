@@ -97,7 +97,7 @@ cpdef ETuple monomial_exponent(PolyDict p):
             ValueError: not a monomial
             sage: monomial_exponent(PolyDict({(1, 0): 1, (0, 1): 1}))
             Traceback (most recent call last):
-            :::
+            ...
             ValueError: not a monomial
     """
     if len(p.__repn) != 1 or not next(iter(p.__repn.values())).is_one():
