@@ -182,18 +182,18 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         EXAMPLES::
 
             sage: from sage.repl.display.fancy_repr import LargeMatrixHelpRepr
-            sage: M = identity_matrix(40)
-            sage: pp = LargeMatrixHelpRepr()
-            sage: pp.format_string(M)
-            "40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)"
-            sage: pp.format_string([M, M])
+            sage: M = identity_matrix(40)                                               # optional - sage.modules
+            sage: pp = LargeMatrixHelpRepr()                                            # optional - sage.modules
+            sage: pp.format_string(M)                                                   # optional - sage.modules
+            "40 x 40 dense matrix over Integer Ring (use the '.str()' method...)"
+            sage: pp.format_string([M, M])                                              # optional - sage.modules
             '--- object not handled by representer ---'
 
         Leads to::
 
-            sage: M
-            40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-            sage: [M, M]
+            sage: M                                                                     # optional - sage.modules
+            40 x 40 dense matrix over Integer Ring (use the '.str()' method...)
+            sage: [M, M]                                                                # optional - sage.modules
             [40 x 40 dense matrix over Integer Ring,
              40 x 40 dense matrix over Integer Ring]
         """

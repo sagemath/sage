@@ -117,7 +117,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     ::
 
-        sage: sage_eval(('f(x) = x^2', 'f(3)'))
+        sage: sage_eval(('f(x) = x^2', 'f(3)'))                                         # optional - sage.symbolic
         9
         sage: vars = {'rt2': sqrt(2.0)}
         sage: sage_eval(('rt2 += 1', 'rt2', vars))
@@ -231,10 +231,10 @@ def sageobj(x, vars=None):
         2/3
         sage: type(f._sage_())                                                                      # optional - sage.libs.pari
         <class 'sage.rings.rational.Rational'>
-        sage: a = gap(939393/2433)
-        sage: a._sage_()
+        sage: a = gap(939393/2433)                                                                  # optional - sage.libs.gap
+        sage: a._sage_()                                                                            # optional - sage.libs.gap
         313131/811
-        sage: type(a._sage_())
+        sage: type(a._sage_())                                                                      # optional - sage.libs.gap
         <class 'sage.rings.rational.Rational'>
     """
     try:

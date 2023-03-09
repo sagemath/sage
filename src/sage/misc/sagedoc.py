@@ -671,7 +671,7 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')
+        sage: format('<<<identity_matrix>>>')                                                                           # optional - sage.modules
         '...Definition: identity_matrix(...'
         sage: format('<<<identity_matrix>>>')[:28]                            # optional - sphinx
         'Definition: identity_matrix('
@@ -821,7 +821,7 @@ def format_src(s):
         sage: from sage.misc.sagedoc import format_src
         sage: format_src('unladen swallow')
         'unladen swallow'
-        sage: format_src('<<<Sq>>>')[5:15]
+        sage: format_src('<<<Sq>>>')[5:15]                                    # optional - sage.combinat sage.modules
         'Sq(*nums):'
     """
     if not isinstance(s, str):

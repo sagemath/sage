@@ -233,7 +233,7 @@ class table(SageObject):
 
     TESTS::
 
-        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +
+        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +                                             # optional - sage.symbolic
         ....:                  [(x,n(sin(x), digits=2)) for x in [0..3]],
         ....:                 header_row=True, frame=True)).run()
 
