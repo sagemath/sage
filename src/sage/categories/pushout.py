@@ -3864,7 +3864,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         sage: from sage.categories.pushout import BlackBoxConstructionFunctor
         sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
         sage: FS = BlackBoxConstructionFunctor(singular)                            # optional - sage.libs.singular
-        sage: FG
+        sage: FG                                                                    # optional - sage.libs.gap
         BlackBoxConstructionFunctor
         sage: FG(ZZ)                                                                # optional - sage.libs.gap
         Integers
