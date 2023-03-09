@@ -169,7 +169,7 @@ cdef class WithEqualityById:
         Check that :trac:`19628` is fixed::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: lazyQQ = LazyImport('sage.all', 'QQ')
+            sage: lazyQQ = LazyImport('sage.rings.rational_field', 'QQ')
             sage: PolynomialRing(lazyQQ, 'ijk') is PolynomialRing(QQ, 'ijk')
             True
             sage: PolynomialRing(QQ, 'ijkl') is PolynomialRing(lazyQQ, 'ijkl')
