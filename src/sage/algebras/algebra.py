@@ -35,7 +35,7 @@ def is_Algebra(x):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(99999, "the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead")
+    deprecation(35253, "the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead")
     try:
         return isinstance(x, Algebra) or x in Algebras(x.base_ring())
     except Exception:
