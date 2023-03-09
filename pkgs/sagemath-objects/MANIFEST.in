@@ -88,7 +88,7 @@ graft sage/libs/gmp
 include sage/misc/misc.*              # walltime, cputime used in sage.doctest
 include sage/misc/timing.p*
 include sage/misc/globals.p*
-
+include sage/misc/sage_timeit*.p*
 
 global-exclude *.c
 global-exclude *.cpp
