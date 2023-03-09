@@ -1071,16 +1071,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             from sage.rings.real_mpfr import RealField
             return RealField(prec).zero()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
         from sage.categories.number_fields import NumberFields
-        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         K = self.base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K):
             from sage.schemes.projective.projective_space import ProjectiveSpace
             Pr = ProjectiveSpace(K, self.number_of_terms()-1)
             return Pr.point(self.coefficients()).global_height(prec=prec)
-        if K is QQbar:
+        if isinstance(K, sage.rings.abc.AlgebraicField):
+            from sage.rings.qqbar import number_field_elements_from_algebraics
+
             K_pre, P, phi = number_field_elements_from_algebraics(list(self.coefficients()))
             from sage.schemes.projective.projective_space import ProjectiveSpace
             Pr = ProjectiveSpace(K_pre, len(P)-1)
@@ -1126,14 +1126,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.local_height(2, prec=2)
             0.75
         """
-        from sage.rings.number_field.order import is_NumberFieldOrder
         from sage.categories.number_fields import NumberFields
 
         if prec is None:
             prec = 53
 
         K = FractionField(self.base_ring())
-        if K not in NumberFields() or is_NumberFieldOrder(K):
+        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -1175,14 +1174,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.local_height_arch(0, prec=2)
             1.0
         """
-        from sage.rings.number_field.order import is_NumberFieldOrder
         from sage.categories.number_fields import NumberFields
 
         if prec is None:
             prec = 53
 
         K = FractionField(self.base_ring())
-        if K not in NumberFields() or is_NumberFieldOrder(K):
+        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
