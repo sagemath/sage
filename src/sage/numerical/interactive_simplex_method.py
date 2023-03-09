@@ -191,7 +191,7 @@ from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.prandom import randint, random
 from sage.misc.html import HtmlFragment
-from sage.misc.misc import get_main_globals
+from sage.misc.globals import get_main_globals
 from sage.modules.all import random_vector, vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])

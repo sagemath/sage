@@ -35,7 +35,7 @@ lazy_import("sage.misc.cython", "cython_compile", "cython")
 
 from .trace import trace
 
-from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
+from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
 
 lazy_import('sage.misc.inline_fortran', 'fortran')
 

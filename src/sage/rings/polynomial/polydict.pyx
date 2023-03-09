@@ -49,7 +49,7 @@ from functools import reduce
 from sage.arith.power import generic_power
 from pprint import pformat
 
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation_cython as deprecation
 

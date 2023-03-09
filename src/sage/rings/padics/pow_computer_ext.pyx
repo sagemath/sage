@@ -62,7 +62,7 @@ from cysignals.signals cimport sig_on, sig_off
 include "sage/libs/ntl/decl.pxi"
 
 import weakref
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.rings.infinity import infinity
 from sage.libs.gmp.mpz cimport *
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_factory

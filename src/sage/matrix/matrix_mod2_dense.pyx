@@ -116,7 +116,7 @@ from sage.structure.element cimport (Matrix, Vector,
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.gmp.random cimport *
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose, get_verbose
 VectorSpace = None
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense

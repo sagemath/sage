@@ -63,7 +63,7 @@ def runsnake(command):
     """
     import cProfile
     from sage.misc.temporary_file import tmp_filename
-    from sage.misc.misc import get_main_globals
+    from sage.misc.globals import get_main_globals
     from sage.repl.preparse import preparse
     tmpfile = tmp_filename()
     cProfile.runctx(preparse(command.lstrip().rstrip()), get_main_globals(),

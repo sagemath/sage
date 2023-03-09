@@ -19,7 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.misc import walltime, cputime
+from sage.misc.timing import walltime, cputime
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):

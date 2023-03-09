@@ -36,7 +36,7 @@ from sage.algebras.fusion_rings.poly_tup_engine import (
 from sage.algebras.fusion_rings.shm_managers import KSHandler, FvarsHandler
 from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
-from sage.misc.misc import get_main_globals
+from sage.misc.globals import get_main_globals
 from sage.rings.ideal import Ideal
 from sage.structure.sage_object import SageObject
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

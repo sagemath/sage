@@ -253,7 +253,7 @@ from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 from sage.misc.misc_c import prod
 from sage.modules.free_module import span
 from sage.modules.free_module_element import vector

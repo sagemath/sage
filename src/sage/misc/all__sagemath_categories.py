@@ -75,3 +75,5 @@ from .functional import (additive_order,
 from .latex import LatexExpr, latex, view
 
 from .fpickle import pickle_function, unpickle_function
+
+from .persist import unpickle_global

@@ -332,7 +332,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         All passed: ... random tests on ... matrices.
 
     """
-    from sage.misc.misc import walltime
+    from sage.misc.timing import walltime
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix

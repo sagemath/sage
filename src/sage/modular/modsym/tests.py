@@ -30,7 +30,7 @@ import random
 from . import modsym
 import sage.modular.dirichlet as dirichlet
 import sage.modular.arithgroup.all as arithgroup
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 
 class Test:

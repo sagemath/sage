@@ -16,7 +16,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
 from sage.functions.all import floor, ceil
 from sage.misc.functional import sqrt
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 
 def theta_series(self, Max=10, var_str='q', safe_flag=True):

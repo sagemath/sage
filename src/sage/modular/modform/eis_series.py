@@ -14,7 +14,7 @@ Eisenstein series
 
 from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, divisors, is_squarefree
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer import Integer

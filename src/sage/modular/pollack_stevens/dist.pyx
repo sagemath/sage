@@ -47,7 +47,7 @@ from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelative
 from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
 

@@ -107,7 +107,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_square_divisor
 from sage.rings.number_field.totallyreal_data cimport tr_data
