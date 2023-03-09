@@ -31,7 +31,7 @@ exclude sage/categories/subquotients.*
 exclude sage/categories/with_realizations.*
 
 include sage/interfaces/abc.p*
-
+include sage/interfaces/tab_completion.p*
 
 graft sage/typeset                     # dep of sage.categories.tensor
 
@@ -48,6 +48,7 @@ include sage/rings/integer*.*
 include sage/rings/rational*.*
 include sage/rings/infinity.*
 include sage/rings/factorint.p*
+include sage/rings/sum_of_squares.p*
 
 include sage/arith/*.*
 include sage/misc/allocator.*
@@ -132,6 +133,8 @@ graft sage/rings/semirings
 
 include sage/rings/tests.p*
 include sage/rings/big_oh.p*
+
+include sage/combinat/integer_vector.p*
 
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py
