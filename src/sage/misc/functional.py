@@ -1931,9 +1931,9 @@ def sqrt(x, *args, **kwds):
     For a non-symbolic square root, there are a few options.
     The best is to numerically approximate afterward::
 
-        sage: sqrt(2).n()
+        sage: sqrt(2).n()                                                                                               # optional - sage.symbolic
         1.41421356237310
-        sage: sqrt(2).n(prec=100)
+        sage: sqrt(2).n(prec=100)                                                                                       # optional - sage.symbolic
         1.4142135623730950488016887242
 
     Or one can input a numerical type::
