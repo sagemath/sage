@@ -96,7 +96,7 @@ question mark:
 
 Sage also provides 'Tab completion': type the first few letters of a
 function and then hit the :kbd:`Tab` key. For example, if you type
-``ta`` followed by :kbd:`Tab`, Sage will print ``tachyon, tan, tanh,
+``ta`` followed by :kbd:`Tab`, Sage will print ``table, tachyon, tan, tanh,
 taylor``. This provides a good way to find the names of functions and
 other structures in Sage.
 
