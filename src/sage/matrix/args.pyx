@@ -82,7 +82,7 @@ cdef class SparseEntry:
         sage: from sage.matrix.args import SparseEntry
         sage: SparseEntry(123, 456, "abc")
         SparseEntry(123, 456, 'abc')
-        sage: SparseEntry(1/3, 2/3, x)
+        sage: SparseEntry(1/3, 2/3, x)                                                  # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: unable to convert rational 1/3 to an integer
@@ -175,7 +175,7 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Double Field; typ=SCALAR; entries=3.141592653589793>
         [3.141592653589793               0.0]
         [              0.0 3.141592653589793]
-        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized(); ma.matrix()                                                            # optional - sage.symbolic
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring; typ=SCALAR; entries=pi>
         [pi  0]
         [ 0 pi]
@@ -191,15 +191,15 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=SEQ_FLAT; entries=(1, 2, 3, 4)>
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized(); ma.matrix()                                               # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized(); ma.matrix()                                         # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized(); ma.matrix()
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized(); ma.matrix()                                               # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SCALAR; entries=3/5>
         [3/5   0]
         [  0 3/5]
@@ -457,8 +457,8 @@ cdef class MatrixArgs:
 
         Sparse examples::
 
-            sage: ma = MatrixArgs(3, 3, pi)
-            sage: list(ma.iter(sparse=True))
+            sage: ma = MatrixArgs(3, 3, pi)                                             # optional - sage.symbolic
+            sage: list(ma.iter(sparse=True))                                            # optional - sage.symbolic
             [SparseEntry(0, 0, pi), SparseEntry(1, 1, pi), SparseEntry(2, 2, pi)]
             sage: ma = MatrixArgs(2, 3)
             sage: list(ma.iter(sparse=True))
@@ -818,11 +818,11 @@ cdef class MatrixArgs:
         EXAMPLES::
 
             sage: from sage.matrix.args import MatrixArgs
-            sage: MatrixArgs(pi).finalized()
+            sage: MatrixArgs(pi).finalized()                                            # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: the dimensions of the matrix must be specified
-            sage: MatrixArgs(RR, pi).finalized()
+            sage: MatrixArgs(RR, pi).finalized()                                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: the dimensions of the matrix must be specified

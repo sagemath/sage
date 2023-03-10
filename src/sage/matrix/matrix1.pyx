@@ -102,7 +102,7 @@ cdef class Matrix(Matrix0):
             [ [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ] ]
             sage: g.CharacteristicPolynomial()                                  # optional - sage.libs.gap
             x_1^3-12*x_1^2-18*x_1
-            sage: A.characteristic_polynomial()
+            sage: A.characteristic_polynomial()                                 # optional - sage.libs.gap
             x^3 - 12*x^2 - 18*x
             sage: matrix(QQ, g) == A                                            # optional - sage.libs.gap
             True
@@ -153,9 +153,9 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: libgap(identity_matrix(ZZ, 2))
+            sage: libgap(identity_matrix(ZZ, 2))                                        # optional - sage.libs.gap
             [ [ 1, 0 ], [ 0, 1 ] ]
-            sage: libgap(matrix(GF(3), 2, 2, [4,5,6,7]))                        # optional - sage.libs.pari
+            sage: libgap(matrix(GF(3), 2, 2, [4,5,6,7]))                                # optional - sage.libs.gap sage.libs.pari
             [ [ Z(3)^0, Z(3) ], [ 0*Z(3), Z(3)^0 ] ]
         """
         from sage.libs.gap.libgap import libgap
@@ -192,9 +192,9 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: y = var('y')
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
-            sage: M == fricas(M).sage()    # optional - fricas
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
+            sage: M == fricas(M).sage()    # optional - fricas                          # optional - sage.symbolic
             True
         """
         s = ','.join('[' + ','.join(cf._fricas_init_() for cf in row) + ']'
@@ -389,9 +389,9 @@ cdef class Matrix(Matrix0):
             sage: maple(M)  # optional - maple
             Matrix(2, 2, [[-9*x^2-2*x+2,x-1],[x^2+8*x,-3*x^2+5]])
 
-            sage: y = var('y')
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
-            sage: M == maple(M).sage()    # optional - maple
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
+            sage: M == maple(M).sage()    # optional - maple                            # optional - sage.symbolic
             True
         """
         s = ','.join('[' + ','.join(cf._maple_init_() for cf in row) + ']'
@@ -575,14 +575,14 @@ cdef class Matrix(Matrix0):
 
         Symbolic matrices are supported::
 
-            sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M
+            sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M                  # optional - sage.symbolic
             [ sin(x)  cos(x)]
             [-cos(x)  sin(x)]
-            sage: sM = M._sympy_(); sM                                                  # optional - sympy
+            sage: sM = M._sympy_(); sM                                                  # optional - sage.symbolic sympy
             Matrix([
             [ sin(x), cos(x)],
             [-cos(x), sin(x)]])
-            sage: sM.subs(x, pi/4)                                                      # optional - sympy
+            sage: sM.subs(x, pi/4)                                                      # optional - sage.symbolic sympy
             Matrix([
             [ sqrt(2)/2, sqrt(2)/2],
             [-sqrt(2)/2, sqrt(2)/2]])

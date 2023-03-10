@@ -25,10 +25,10 @@ EXAMPLES::
     Basis matrix:
     [ 1  0 -7]
     [ 0  1  7]
-    sage: C = VectorSpaces(FiniteField(7))
-    sage: C
+    sage: C = VectorSpaces(FiniteField(7))                                              # optional - sage.libs.pari
+    sage: C                                                                             # optional - sage.libs.pari
     Category of vector spaces over Finite Field of size 7
-    sage: C(W)
+    sage: C(W)                                                                          # optional - sage.libs.pari
     Vector space of degree 3 and dimension 2 over Finite Field of size 7
     Basis matrix:
     [1 0 0]
@@ -37,11 +37,11 @@ EXAMPLES::
 ::
 
     sage: M = ZZ^3
-    sage: C = VectorSpaces(FiniteField(7))
-    sage: C(M)
+    sage: C = VectorSpaces(FiniteField(7))                                              # optional - sage.libs.pari
+    sage: C(M)                                                                          # optional - sage.libs.pari
     Vector space of dimension 3 over Finite Field of size 7
-    sage: W = M.submodule([[1,2,7], [8,8,0]])
-    sage: C(W)
+    sage: W = M.submodule([[1,2,7], [8,8,0]])                                           # optional - sage.libs.pari
+    sage: C(W)                                                                          # optional - sage.libs.pari
     Vector space of degree 3 and dimension 2 over Finite Field of size 7
     Basis matrix:
     [1 0 0]
@@ -613,8 +613,9 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         [ 1  0 -3]
         [ 0  1  4]
 
-        sage: span([V.gen(0)], QuadraticField(-7,'a'))
-        Vector space of degree 3 and dimension 1 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+        sage: span([V.gen(0)], QuadraticField(-7,'a'))                                  # optional - sage.rings.number_field
+        Vector space of degree 3 and dimension 1 over Number Field in a
+         with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
         Basis matrix:
         [ 1  0 -3]
 
@@ -1013,8 +1014,8 @@ class Module_free_ambient(Module):
              ...
              (46/103823, -46/103823, 103823/46))
 
-            sage: F = FreeModule(SR, 2)
-            sage: tuple(F.some_elements())
+            sage: F = FreeModule(SR, 2)                                                 # optional - sage.symbolic
+            sage: tuple(F.some_elements())                                              # optional - sage.symbolic
             ((1, 0), (some_variable, some_variable))
         """
         yield self.an_element()
@@ -2465,15 +2466,15 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9)
-            sage: V = VectorSpace(k,3)
-            sage: V.cardinality()
+            sage: k.<a> = FiniteField(9)                                                # optional - sage.libs.pari
+            sage: V = VectorSpace(k, 3)                                                 # optional - sage.libs.pari
+            sage: V.cardinality()                                                       # optional - sage.libs.pari
             729
-            sage: W = V.span([[1,2,1],[0,1,1]])
-            sage: W.cardinality()
+            sage: W = V.span([[1,2,1], [0,1,1]])                                        # optional - sage.libs.pari
+            sage: W.cardinality()                                                       # optional - sage.libs.pari
             81
             sage: R = IntegerModRing(12)
-            sage: M = FreeModule(R,2)
+            sage: M = FreeModule(R, 2)
             sage: M.cardinality()
             144
             sage: (QQ^3).cardinality()
@@ -2809,9 +2810,9 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: M = FreeModule(FiniteField(19), 100)
-            sage: W = M.submodule([M.gen(50)])
-            sage: W.dimension()
+            sage: M = FreeModule(FiniteField(19), 100)                                  # optional - sage.libs.pari
+            sage: W = M.submodule([M.gen(50)])                                          # optional - sage.libs.pari
+            sage: W.dimension()                                                         # optional - sage.libs.pari
             1
         """
         return self.rank()
@@ -4303,7 +4304,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
             sage: FreeModule(QQ, 2)
             Vector space of dimension 2 over Rational Field
-            sage: FreeModule(FiniteField(2), 7)
+            sage: FreeModule(FiniteField(2), 7)                                         # optional - sage.libs.pari
             Vector space of dimension 7 over Finite Field of size 2
 
         We test that objects of this type are initialised correctly;
@@ -4985,23 +4986,23 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         linearly independent vectors and add in two linear combinations
         to make a linearly dependent set of five vectors. ::
 
-            sage: F = FiniteField(17)
-            sage: v1 = vector(F, [1, 2, 3, 4, 5])
-            sage: v2 = vector(F, [2, 4, 8, 16, 15])
-            sage: v3 = vector(F, [1, 0, 0, 0, 1])
-            sage: (F^5).linear_dependence([v1, v2, v3]) == []
+            sage: F = FiniteField(17)                                                   # optional - sage.libs.pari
+            sage: v1 = vector(F, [1, 2, 3, 4, 5])                                       # optional - sage.libs.pari
+            sage: v2 = vector(F, [2, 4, 8, 16, 15])                                     # optional - sage.libs.pari
+            sage: v3 = vector(F, [1, 0, 0, 0, 1])                                       # optional - sage.libs.pari
+            sage: (F^5).linear_dependence([v1, v2, v3]) == []                           # optional - sage.libs.pari
             True
-            sage: L = [v1, v2, v3, 2*v1+v2, 3*v2+6*v3]
-            sage: (F^5).linear_dependence(L)
+            sage: L = [v1, v2, v3, 2*v1+v2, 3*v2+6*v3]                                  # optional - sage.libs.pari
+            sage: (F^5).linear_dependence(L)                                            # optional - sage.libs.pari
             [
             (1, 0, 16, 8, 3),
             (0, 1, 2, 0, 11)
             ]
-            sage: v1 + 16*v3 + 8*(2*v1+v2) + 3*(3*v2+6*v3)
+            sage: v1 + 16*v3 + 8*(2*v1+v2) + 3*(3*v2+6*v3)                              # optional - sage.libs.pari
             (0, 0, 0, 0, 0)
-            sage: v2 + 2*v3 + 11*(3*v2+6*v3)
+            sage: v2 + 2*v3 + 11*(3*v2+6*v3)                                            # optional - sage.libs.pari
             (0, 0, 0, 0, 0)
-            sage: (F^5).linear_dependence(L, zeros='right')
+            sage: (F^5).linear_dependence(L, zeros='right')                             # optional - sage.libs.pari
             [
             (15, 16, 0, 1, 0),
             (0, 14, 11, 0, 1)
@@ -5970,9 +5971,9 @@ class FreeModule_ambient(FreeModule_generic):
 
         EXAMPLES::
 
-            sage: sZZ3 = (ZZ^3)._sympy_(); sZZ3
+            sage: sZZ3 = (ZZ^3)._sympy_(); sZZ3                                         # optional - sympy
             ProductSet(Integers, Integers, Integers)
-            sage: (1, 2, 3) in sZZ3
+            sage: (1, 2, 3) in sZZ3                                                     # optional - sympy
             True
         """
         from sympy import ProductSet
@@ -6465,8 +6466,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         :trac:`10250` is solved as well::
 
             sage: V = (QQ^2).span_of_basis([[1,1]])
-            sage: w = sqrt(2) * V([1,1])
-            sage: 3 * w
+            sage: w = sqrt(2) * V([1,1])                                                # optional - sage.symbolic
+            sage: 3 * w                                                                 # optional - sage.symbolic
             (3*sqrt(2), 3*sqrt(2))
 
         TESTS:
@@ -6686,9 +6687,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: W = V.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: W._echelonized_basis(V,W.basis())
             [(1, 0, -1/2), (0, 1, 1/2)]
-            sage: V = SR^3
-            sage: W = V.submodule_with_basis([[1,0,1]])
-            sage: W._echelonized_basis(V,W.basis())
+            sage: V = SR^3                                                              # optional - sage.symbolic
+            sage: W = V.submodule_with_basis([[1,0,1]])                                 # optional - sage.symbolic
+            sage: W._echelonized_basis(V, W.basis())                                    # optional - sage.symbolic
             [(1, 0, 1)]
         """
         # Return the first rank rows (i.e., the nonzero rows).
@@ -8141,8 +8142,8 @@ def element_class(R, is_sparse):
 
     EXAMPLES::
 
-        sage: FF = FiniteField(2)
-        sage: P = PolynomialRing(FF,'x')
+        sage: FF = FiniteField(2)                                                       # optional - sage.libs.pari
+        sage: P = PolynomialRing(FF,'x')                                                # optional - sage.libs.pari
         sage: sage.modules.free_module.element_class(QQ, is_sparse=True)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(QQ, is_sparse=False)
@@ -8151,15 +8152,15 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(ZZ, is_sparse=False)
         <class 'sage.modules.vector_integer_dense.Vector_integer_dense'>
-        sage: sage.modules.free_module.element_class(FF, is_sparse=True)
+        sage: sage.modules.free_module.element_class(FF, is_sparse=True)                # optional - sage.libs.pari
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
-        sage: sage.modules.free_module.element_class(FF, is_sparse=False)
+        sage: sage.modules.free_module.element_class(FF, is_sparse=False)               # optional - sage.libs.pari
         <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         sage: sage.modules.free_module.element_class(GF(7), is_sparse=False)            # optional - sage.libs.pari
         <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
-        sage: sage.modules.free_module.element_class(P, is_sparse=True)
+        sage: sage.modules.free_module.element_class(P, is_sparse=True)                 # optional - sage.libs.pari
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
-        sage: sage.modules.free_module.element_class(P, is_sparse=False)
+        sage: sage.modules.free_module.element_class(P, is_sparse=False)                # optional - sage.libs.pari
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
     import sage.rings.integer_ring
@@ -8170,14 +8171,21 @@ def element_class(R, is_sparse):
         from .vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:
-        from .vector_mod2_dense import Vector_mod2_dense
         if R.order() == 2:
-            return Vector_mod2_dense
-        from .vector_modn_dense import Vector_modn_dense, MAX_MODULUS
-        if R.order() < MAX_MODULUS:
-            return Vector_modn_dense
+            try:
+                from .vector_mod2_dense import Vector_mod2_dense
+            except ImportError:
+                pass
+            else:
+                return Vector_mod2_dense
+        try:
+            from .vector_modn_dense import Vector_modn_dense, MAX_MODULUS
+        except ImportError:
+            pass
         else:
-            return free_module_element.FreeModuleElement_generic_dense
+            if R.order() < MAX_MODULUS:
+                return Vector_modn_dense
+        return free_module_element.FreeModuleElement_generic_dense
     elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
         try:
             from sage.modules.vector_real_double_dense import Vector_real_double_dense
