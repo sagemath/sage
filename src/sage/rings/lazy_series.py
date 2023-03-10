@@ -584,7 +584,8 @@ class LazyModuleElement(Element):
 
     def truncate(self, d):
         r"""
-        Return this series with its terms of degree `\geq` ``d`` truncated.
+        Return the series obtained by removing all terms of degree at least
+        ``d``.
 
         INPUT:
 
