@@ -12,17 +12,17 @@ once
 
 REFERENCES:
 
-.. [Colb2004] C.J. Colbourn. “Combinatorial aspects of covering arrays”.
-              Matematiche (Catania) 59 (2004), pp. 125–172.
+.. [Colb2004]__ C.J. Colbourn. “Combinatorial aspects of covering arrays”.
+                Matematiche (Catania) 59 (2004), pp. 125–172.
 
 
-.. [Sher2006] G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn,
-              "Covering arrays of higher strength from permutation
-              vectors". J. Combin. Designs, 14 (2006) pp. 202-213.
+.. [Sher2006]__ G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn,
+                "Covering arrays of higher strength from permutation
+                vectors". J. Combin. Designs, 14 (2006) pp. 202-213.
 
-.. [Wal2007] R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
-             Constructions and Existence". J. Math. Crypt. 1 (2007),
-             pp.125-150
+.. [Wal2007]__ R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
+               Constructions and Existence". J. Math. Crypt. 1 (2007),
+               pp.125-150
 
 AUTHORS:
 
@@ -47,9 +47,9 @@ import copy
 
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 
-
+@richcmp_method
 class CoveringArray(SageObject):
     r"""
     Covering Array (CA)
@@ -556,9 +556,7 @@ class CoveringArray(SageObject):
         """
         return hash((self.array_representation(), tuple(self.symbolset())))
 
-
-    '''
-    def _richcmp_(self, other, op):
+    def __richcmp__(self, other, op):
         r"""
         Do the comparison.
 
@@ -596,4 +594,3 @@ class CoveringArray(SageObject):
             False
         """
         return richcmp(self.array_representation(), other.array_representation(), op)
-    '''
