@@ -1107,24 +1107,29 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
-    def _compute_coefficient(self, k):
+    def _compute_coefficient_log(self, k):
         if k not in ZZ:
             raise TypeError("input must be an integer")
+        k = ZZ(k)
         if k == 0:
+            return self._base.zero()
+        if k == 1:
             return self._base.one()
         r = self._gen.degree()
         T = self._gen[0]
         q = self._Fq.cardinality()
+        if not k.is_power_of(q):
+            return self._base.zero()
         c = self._base.zero()
-        for i in range(k):
-            j = k - i
+        for i in range(k.log(q)):
+            j = k.log(q) - i
             if j < r + 1:
-                c += self._compute_coefficient(i)*self._gen[j]**(q**i)
-        return c/(T - T**(q**k))
+                c += self._compute_coefficient_log(q**i)*self._gen[j]**(q**i)
+        return c/(T - T**k)
 
-    def logarithm(self, name='u'):
-        L = LazyPowerSeriesRing(self._base, name)
-        return L(self._compute_coefficient)
+    def logarithm(self, name='z'):
+        L = LazyPowerSeriesRing(self._base, name, sparse=False)
+        return L(self._compute_coefficient_log)
 
 
     def morphism(self):
