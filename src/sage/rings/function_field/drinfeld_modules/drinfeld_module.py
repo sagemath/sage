@@ -1108,6 +1108,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return (g**(q+1)) / delta
 
     def _compute_coefficient_log(self, k):
+        r"""
+        Return the `k`-th coefficient of the logarithm of ``self``.
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: phi._compute_coefficient_log(0)
+            0
+            sage: phi._compute_coefficient_log(1)
+            1
+            sage: phi._compute_coefficient_log(2)
+            1/(T^2 + T)
+            sage: phi._compute_coefficient_log(3)
+            0
+            sage: phi._compute_coefficient_log(2^4)
+            1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
+            sage: phi._compute_coefficient_log(T)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be an integer
+        """
         if k not in ZZ:
             raise TypeError("input must be an integer")
         k = ZZ(k)
@@ -1128,6 +1152,32 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return c/(T - T**k)
 
     def logarithm(self, name='z'):
+        r"""
+        Return the logarithm of the given Drinfeld module.
+
+        EXAMPLES::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: log = phi.logarithm(); log
+            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^7)
+            sage: log[q] == -1/((T**q - T))
+            True
+            sage: log[q**2] == 1/((T**q - T)*(T**(q**2) - T))
+            True
+            sage: log[q**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))
+            True
+
+        ::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
+            sage: phi.logarithm()
+            z + ((4*T/(T^4+4))*z^5) + O(z^7)
+        """
         L = LazyPowerSeriesRing(self._base, name, sparse=False)
         return L(self._compute_coefficient_log)
 
