@@ -12,17 +12,11 @@ once
 
 REFERENCES:
 
-.. [Colb2004] C.J. Colbourn. “Combinatorial aspects of covering arrays”.
-              Matematiche (Catania) 59 (2004), pp. 125–172.
+- [Colb2004]_
 
+- [Sher2006]_
 
-.. [Sher2006] G.B. Sherwood, S.S Martirosyan, and C.J. Colbourn,
-              "Covering arrays of higher strength from permutation
-              vectors". J. Combin. Designs, 14 (2006) pp. 202-213.
-
-.. [Wal2007] R.A. Walker II, and C.J. Colbourn, "Perfect Hash Families:
-             Constructions and Existence". J. Math. Crypt. 1 (2007),
-             pp.125-150
+- [Wal2007]_
 
 AUTHORS:
 
@@ -47,23 +41,24 @@ import copy
 
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 
-
+@richcmp_method
 class CoveringArray(SageObject):
     r"""
     Covering Array (CA)
 
     INPUT:
 
-    - ``Array`` -- The N by k array itself stored as a tuple of tuples.
-      The N and k parameters are derived from this inputted array
+    - ``array`` -- The `N` by `k` array itself stored as a tuple of
+      tuples. The `N` and `k` parameters are derived from this inputted
+      array.
 
-    - ``SymbolSet`` -- The collection of symbols that is used in
-      ``Array``. If left blank, then a symbol set will be assumed by
-      checking for each unique entry in the given ``Array``. In such a
-      case it will be stored as a list of symbols but any appropriate
-      object may be used as long as it has `len()` as a method
+    - ``symbol_set`` -- The collection of symbols that is used in
+      ``array``. If left blank, then a symbol set will be assumed by
+      checking for each unique entry in the given ``array``. In such a
+      case it will be stored as a tuple of symbols but any appropriate
+      object may be used as long as it has ``len()`` as a method.
 
     EXAMPLES::
 
@@ -74,7 +69,7 @@ class CoveringArray(SageObject):
         ....:      ('b', 'a', 'a', 'a'),
         ....:      ('b', 'b', 'b', 'b'))
         sage: CoveringArray(C)
-        A 5 by 4 Covering Array with entries from ['a', 'b']
+        A 5 by 4 Covering Array with entries from ('a', 'b')
 
         sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         ....:      (1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -89,8 +84,8 @@ class CoveringArray(SageObject):
         ....:      (0, 1, 0, 1, 1, 0, 0, 1, 0, 0),
         ....:      (1, 0, 0, 0, 0, 0, 0, 1, 1, 1),
         ....:      (0, 1, 0, 0, 0, 1, 1, 1, 0, 1))
-        sage: CoveringArray(C,[0, 1])
-        A 13 by 10 Covering Array with entries from [0, 1]
+        sage: CoveringArray(C,(0, 1))
+        A 13 by 10 Covering Array with entries from (0, 1)
 
         sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
@@ -109,12 +104,12 @@ class CoveringArray(SageObject):
         ....:      (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
         ....:      (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
         sage: CoveringArray(C)
-        A 7 by 15 Covering Array with entries from [0, 1]
+        A 7 by 15 Covering Array with entries from (0, 1)
     """
 
-    def __init__(self, Array, SymbolSet=None):
+    def __init__(self, array, symbol_set=None):
         r"""
-        Constructor function
+        Constructor function.
 
         EXAMPLES::
 
@@ -125,7 +120,7 @@ class CoveringArray(SageObject):
             ....:      ('b', 'a', 'a', 'a'),
             ....:      ('b', 'b', 'b', 'b'))
             sage: CoveringArray(C)
-            A 5 by 4 Covering Array with entries from ['a', 'b']
+            A 5 by 4 Covering Array with entries from ('a', 'b')
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             ....:      (1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -140,8 +135,8 @@ class CoveringArray(SageObject):
             ....:      (0, 1, 0, 1, 1, 0, 0, 1, 0, 0),
             ....:      (1, 0, 0, 0, 0, 0, 0, 1, 1, 1),
             ....:      (0, 1, 0, 0, 0, 1, 1, 1, 0, 1))
-            sage: CoveringArray(C,[0, 1])
-            A 13 by 10 Covering Array with entries from [0, 1]
+            sage: CoveringArray(C,(0, 1))
+            A 13 by 10 Covering Array with entries from (0, 1)
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
@@ -160,35 +155,35 @@ class CoveringArray(SageObject):
             ....:      (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
             ....:      (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
             sage: CoveringArray(C)
-            A 7 by 15 Covering Array with entries from [0, 1]
+            A 7 by 15 Covering Array with entries from (0, 1)
         """
         #From the array input, grab the dimensions of the array
-        N = len(Array)
-        self.__n = N
-        k = len(Array[0])
-        self.__k = k
+        N = len(array)
+        self._n = N
+        k = len(array[0])
+        self._k = k
 
-        #Array input is a tuple of tuples, the first thing to do is to
+        #array input is a tuple of tuples, the first thing to do is to
         #sort the tuples lexicographically increasing
-        L = list(Array)
+        L = list(array)
         L.sort()
-        SortedArray = tuple(L)
-        self.__array = SortedArray
+        self._array = tuple(L)
 
-        for row in Array:
-            assert len(row) == len(Array[0]), "Not all rows have same length"
+        for row in array:
+            assert len(row) == len(array[0]), "Not all rows have same length"
 
         #If no symbol set is given, then it may be assumed from what
         #symbols are in the array by flattening the array and counting
         #the number of unique entries.
-        if SymbolSet is None:
-            SymbolSet = list({x for l in Array for x in l})
-            SymbolSet.sort()
-        self.__sset=SymbolSet
+        if symbol_set is None:
+            symbol_set = list({x for l in array for x in l})
+            symbol_set.sort()
+            symbol_set = tuple(symbol_set)
+        self._sset = symbol_set
 
-    def numrows(self):
+    def number_rows(self):
         r"""
-        Return the number of rows, `N`, of the covering array
+        Return the number of rows, `N`, of the covering array.
 
         EXAMPLES::
 
@@ -199,14 +194,14 @@ class CoveringArray(SageObject):
             ....:      (0, 1, 1, 1),
             ....:      (0, 0, 0, 0))
             sage: CA = CoveringArray(C,GF(2))
-            sage: CA.numrows()
+            sage: CA.number_rows()
             5
         """
-        return self.__n
+        return self._n
 
-    def numcols(self):
+    def number_columns(self):
         r"""
-        Returns the number of columns, `k`, of the covering array
+        Return the number of columns, `k`, of the covering array.
 
         EXAMPLES::
 
@@ -217,12 +212,12 @@ class CoveringArray(SageObject):
             ....:      (0, 1, 1, 1),
             ....:      (0, 0, 0, 0))
             sage: CA = CoveringArray(C,GF(2))
-            sage: CA.numcols()
+            sage: CA.number_columns()
             4
         """
-        return self.__k
+        return self._k
 
-    def symbolset(self):
+    def symbol_set(self):
         r"""
         Return the symbol set of the array.
 
@@ -235,13 +230,13 @@ class CoveringArray(SageObject):
             ....:      (0, 1, 1, 1),
             ....:      (0, 0, 0, 0))
             sage: CA = CoveringArray(C,GF(2))
-            sage: CA.symbolset()
+            sage: CA.symbol_set()
             Finite Field of size 2
             sage: CA = CoveringArray(C)
-            sage: CA.symbolset()
-            [0, 1]
+            sage: CA.symbol_set()
+            (0, 1)
         """
-        return self.__sset
+        return self._sset
 
     def is_covering_array(self,strength):
         r"""
@@ -319,14 +314,13 @@ class CoveringArray(SageObject):
             True
         """
         tupledict = {}
-        a = [ttuple for ttuple in itertools.product(self.symbolset(),
+        a = [ttuple for ttuple in itertools.product(self._sset,
                                                   repeat=strength)]
         for item in a:
             tupledict.update({item:0})
-        for comb in itertools.combinations(range(self.numcols()),
-                                                 strength):
+        for comb in itertools.combinations(range(self._k), strength):
             wdict=copy.deepcopy(tupledict)
-            for row in self.__array:
+            for row in self._array:
                 wdict[tuple([row[ti] for ti in comb])] += 1
             if 0 in wdict.values():
                 return False
@@ -434,12 +428,12 @@ class CoveringArray(SageObject):
             sage: CA.levels()
             2
         """
-        return len(self.__sset)
+        return len(self._sset)
 
     def array_representation(self):
         r"""
         Return the covering array as a tuple of tuples, the output is
-        such that each row of the array is sorted in lexicographic order
+        such that each row of the array is sorted in lexicographic order.
 
         EXAMPLES::
 
@@ -454,11 +448,11 @@ class CoveringArray(SageObject):
             ((0, 0, 0, 0), (0, 1, 1, 1), (1, 0, 1, 1), (1, 1, 0, 1),
             (1, 1, 1, 0))
         """
-        return self.__array
+        return self._array
 
     def _repr_(self):
         r"""
-        Returns a string that describes self
+        Return a string that describes self.
 
         EXAMPLES::
 
@@ -469,7 +463,7 @@ class CoveringArray(SageObject):
             ....:      ('b', 'a', 'a', 'a'),
             ....:      ('b', 'b', 'b', 'b'))
             sage: CoveringArray(C)
-            A 5 by 4 Covering Array with entries from ['a', 'b']
+            A 5 by 4 Covering Array with entries from ('a', 'b')
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             ....:      (1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -484,8 +478,8 @@ class CoveringArray(SageObject):
             ....:      (0, 1, 0, 1, 1, 0, 0, 1, 0, 0),
             ....:      (1, 0, 0, 0, 0, 0, 0, 1, 1, 1),
             ....:      (0, 1, 0, 0, 0, 1, 1, 1, 0, 1))
-            sage: CoveringArray(C,[0, 1])
-            A 13 by 10 Covering Array with entries from [0, 1]
+            sage: CoveringArray(C,(0, 1))
+            A 13 by 10 Covering Array with entries from (0, 1)
 
             sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
@@ -504,14 +498,14 @@ class CoveringArray(SageObject):
             ....:      (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
             ....:      (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0))
             sage: CoveringArray(C)
-            A 7 by 15 Covering Array with entries from [0, 1]
+            A 7 by 15 Covering Array with entries from (0, 1)
         """
         return 'A {} by {} Covering Array with entries from {}'.format(
-            self.numrows(), self.numcols(), self.symbolset())
+            self._n, self._k, self._sset)
 
     def pp(self):
         r"""
-        Prints the covering array in a format easy for users to read
+        Prints the covering array in a format easy for users to read.
 
         EXAMPLES::
 
@@ -533,12 +527,12 @@ class CoveringArray(SageObject):
             (1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0)
             (1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0)
         """
-        for i in self.__array:
+        for i in self._array:
             print(str(i))
 
     def __hash__(self):
         r"""
-        Hashs the tuple of tuples and all tuples inside
+        Hashs the tuple of tuples and all tuples inside.
 
         EXAMPLES::
 
@@ -554,11 +548,10 @@ class CoveringArray(SageObject):
             sage: hash(CA)
             4367534393624660384
         """
-        return hash((self.array_representation(), tuple(self.symbolset())))
+        return hash((self.array_representation(),
+                     tuple(self.symbol_set())))
 
-
-    '''
-    def _richcmp_(self, other, op):
+    def __richcmp__(self, other, op):
         r"""
         Do the comparison.
 
@@ -595,5 +588,5 @@ class CoveringArray(SageObject):
             sage: CA1 < CA2
             False
         """
-        return richcmp(self.array_representation(), other.array_representation(), op)
-    '''
+        return richcmp(self.array_representation(),
+                       other.array_representation(), op)
