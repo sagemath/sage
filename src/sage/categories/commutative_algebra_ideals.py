@@ -10,9 +10,10 @@ Commutative algebra ideals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_ideal, Category_in_ambient
 from .algebra_ideals import AlgebraIdeals
+from .category_types import Category_ideal, Category_in_ambient
 from .commutative_algebras import CommutativeAlgebras
+from .commutative_rings import CommutativeRings
 
 
 class CommutativeAlgebraIdeals(Category_ideal):
@@ -53,8 +54,14 @@ class CommutativeAlgebraIdeals(Category_ideal):
         """
         # TODO: replace by ``A in CommutativeAlgebras(*)`` once a
         # suitable mantra has been implemented for this.
-        if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
-            raise TypeError("A (=%s) must be a commutative algebra" % A)
+        try:
+            base_ring = A.base_ring()
+        except AttributeError:
+            raise TypeError(f"A (={A}) must be a commutative algebra")
+        else:
+            if base_ring not in CommutativeRings() or A not in CommutativeAlgebras(base_ring):
+                raise TypeError(f"A (={A}) must be a commutative algebra")
+
         Category_in_ambient.__init__(self, A)
 
     def algebra(self):
