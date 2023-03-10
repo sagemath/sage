@@ -388,9 +388,9 @@ class OperationTable(SageObject):
         TESTS::
 
             sage: from sage.matrix.operation_table import OperationTable
-            sage: G=SymmetricGroup(3)
-            sage: T=OperationTable(G, operator.mul)
-            sage: TestSuite(T).run()
+            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
+            sage: T = OperationTable(G, operator.mul)                                   # optional - sage.groups
+            sage: TestSuite(T).run()                                                    # optional - sage.groups
         """
         # Determine the elements of S, specified or not
         # If elements are given, we check if they are all in S

@@ -495,7 +495,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that different implementations play together as expected::
 
-        sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
+        sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')                           # optional - sage.libs.flint
         sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
 
         sage: type(M1(range(4)))
@@ -539,13 +539,13 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
             sage: M1 = MatrixSpace(QQ, 2)
             sage: M2 = MatrixSpace(QQ, 2)
-            sage: M3 = MatrixSpace(QQ, 2, implementation='flint')
+            sage: M3 = MatrixSpace(QQ, 2, implementation='flint')                       # optional - sage.libs.flint
             sage: M1 is M2 and M1 is M3
             True
 
         ::
 
-            sage: M = MatrixSpace(ZZ, 10, implementation="flint")
+            sage: M = MatrixSpace(ZZ, 10, implementation="flint")                       # optional - sage.libs.flint
             sage: M
             Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
             sage: loads(M.dumps()) is M
@@ -842,7 +842,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: k = GF(7)
+            sage: k = GF(7)                                                             # optional - sage.libs.pari
             sage: G = MatrixGroup([matrix(k, 2, [1,1,0,1]), matrix(k, 2, [1,0,0,2])])   # optional - sage.libs.pari
             sage: g = G.0                                                               # optional - sage.libs.pari
             sage: MatrixSpace(k, 2)(g)                                                  # optional - sage.libs.pari
@@ -1288,7 +1288,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS
             Full MatrixSpace of 2 by 4 sparse matrices over Integer Ring
 
-            sage: MatrixSpace(ZZ, 2, implementation='flint')
+            sage: MatrixSpace(ZZ, 2, implementation='flint')                                    # optional - sage.libs.flint
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
             sage: MatrixSpace(ZZ, 2, implementation='generic')
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring (using Matrix_generic_dense)
@@ -1804,10 +1804,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Check different implementations::
 
-            sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
+            sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')                       # optional - sage.libs.flint
             sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
 
-            sage: type(M1.identity_matrix())
+            sage: type(M1.identity_matrix())                                            # optional - sage.libs.flint
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: type(M2.identity_matrix())
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
@@ -2340,8 +2340,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [ 1/2 -1/2    2]  [1 0 0]  [0 1 0]  [0 0 1]  [0 0 0]  [0 0 0]  [0 0 0]
             [  -2    0    1], [0 0 0], [0 0 0], [0 0 0], [1 0 0], [0 1 0], [0 0 1]
             )
-            sage: M = MatrixSpace(SR, 2, 2)
-            sage: tuple(M.some_elements())
+            sage: M = MatrixSpace(SR, 2, 2)                                             # optional - sage.symbolic
+            sage: tuple(M.some_elements())                                              # optional - sage.symbolic
             (
             [some_variable some_variable]  [1 0]  [0 1]  [0 0]  [0 0]
             [some_variable some_variable], [0 0], [0 0], [1 0], [0 1]
@@ -2483,23 +2483,23 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
 
         sage: from sage.matrix.matrix_space import _test_trivial_matrices_inverse as tinv
         sage: tinv(ZZ, sparse=True)
-        sage: tinv(ZZ, sparse=False, implementation='flint')
+        sage: tinv(ZZ, sparse=False, implementation='flint')                            # optional - sage.libs.flint
         sage: tinv(ZZ, sparse=False, implementation='generic')
         sage: tinv(QQ, sparse=True)
-        sage: tinv(QQ, sparse=False, implementation='flint')
+        sage: tinv(QQ, sparse=False, implementation='flint')                            # optional - sage.libs.flint
         sage: tinv(QQ, sparse=False, implementation='generic')
-        sage: tinv(GF(11), sparse=True)                                         # optional - sage.libs.pari
-        sage: tinv(GF(11), sparse=False)                                        # optional - sage.libs.pari
-        sage: tinv(GF(2), sparse=True)                                          # optional - sage.libs.pari
-        sage: tinv(GF(2), sparse=False)                                         # optional - sage.libs.pari
-        sage: tinv(SR, sparse=True)
-        sage: tinv(SR, sparse=False)
+        sage: tinv(GF(11), sparse=True)                                                 # optional - sage.libs.pari
+        sage: tinv(GF(11), sparse=False)                                                # optional - sage.libs.pari
+        sage: tinv(GF(2), sparse=True)                                                  # optional - sage.libs.pari
+        sage: tinv(GF(2), sparse=False)                                                 # optional - sage.libs.pari
+        sage: tinv(SR, sparse=True)                                                     # optional - sage.symbolic
+        sage: tinv(SR, sparse=False)                                                    # optional - sage.symbolic
         sage: tinv(RDF, sparse=True)
         sage: tinv(RDF, sparse=False)
         sage: tinv(CDF, sparse=True)
         sage: tinv(CDF, sparse=False)
-        sage: tinv(CyclotomicField(7), sparse=True)                             # optional - sage.rings.number_field
-        sage: tinv(CyclotomicField(7), sparse=False)                            # optional - sage.rings.number_field
+        sage: tinv(CyclotomicField(7), sparse=True)                                     # optional - sage.rings.number_field
+        sage: tinv(CyclotomicField(7), sparse=False)                                    # optional - sage.rings.number_field
         sage: tinv(QQ['x,y'], sparse=True)
         sage: tinv(QQ['x,y'], sparse=False)
 

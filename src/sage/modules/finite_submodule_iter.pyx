@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 r"""
 Iterators over finite submodules of a `\ZZ`-module
 

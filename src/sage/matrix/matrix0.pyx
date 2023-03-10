@@ -2934,10 +2934,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_row(1,0,SR.I())
+            sage: a.add_multiple_of_row(1, 0, SR.I())                                   # optional - sage.symbolic
             Traceback (most recent call last):
             ...
-            TypeError: Multiplying row by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_row instead.
+            TypeError: Multiplying row by Symbolic Ring element cannot be done over
+             Rational Field, use change_ring or with_added_multiple_of_row instead.
         """
         self.check_row_bounds_and_mutability(i,j)
         try:
@@ -3018,10 +3019,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_column(1,0,SR.I())
+            sage: a.add_multiple_of_column(1, 0, SR.I())                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
-            TypeError: Multiplying column by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_column instead.
+            TypeError: Multiplying column by Symbolic Ring element cannot be done over
+             Rational Field, use change_ring or with_added_multiple_of_column instead.
         """
         self.check_column_bounds_and_mutability(i,j)
         try:
@@ -4906,12 +4908,12 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: m.multiplicative_order()                                      # optional - sage.groups
             3
 
-            sage: m = posets.ChainPoset(6).coxeter_transformation()
-            sage: m.multiplicative_order()                                      # optional - sage.groups
+            sage: m = posets.ChainPoset(6).coxeter_transformation()             # optional - sage.combinat sage.graphs
+            sage: m.multiplicative_order()                                      # optional - sage.combinat sage.graphs sage.groups
             7
 
-            sage: P = posets.TamariLattice(4).coxeter_transformation()
-            sage: P.multiplicative_order()                                      # optional - sage.groups
+            sage: P = posets.TamariLattice(4).coxeter_transformation()          # optional - sage.combinat sage.graphs
+            sage: P.multiplicative_order()                                      # optional - sage.combinat sage.graphs sage.groups
             10
 
             sage: M = matrix(ZZ, 2, 2, [1, 1, 0, 1])
@@ -5294,11 +5296,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             [          x*y         x^2*y         x*y^2]
             [     -x^2*y^2 x^2*y + x*y^2 x^2*y - x*y^2]
 
-            sage: R.<x,y> = FreeAlgebra(ZZ,2)
-            sage: a = matrix(R,2,3,[1,x,y,-x*y,x+y,x-y]); a
+            sage: R.<x,y> = FreeAlgebra(ZZ,2)                                           # optional - sage.combinat
+            sage: a = matrix(R, 2, 3,[1,x,y, -x*y,x+y,x-y]); a                          # optional - sage.combinat
             [    1     x     y]
             [ -x*y x + y x - y]
-            sage: (x*y) * a # indirect doctest
+            sage: (x*y) * a # indirect doctest                                          # optional - sage.combinat
             [          x*y         x*y*x         x*y^2]
             [     -x*y*x*y x*y*x + x*y^2 x*y*x - x*y^2]
         """
@@ -5327,22 +5329,22 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         An example in which the base ring is not commutative::
 
-            sage: F.<x,y> = FreeAlgebra(QQ,2)
-            sage: a = matrix(2,[x,y,x^2,y^2]); a
+            sage: F.<x,y> = FreeAlgebra(QQ,2)                                           # optional - sage.combinat
+            sage: a = matrix(2, [x,y, x^2,y^2]); a                                      # optional - sage.combinat
             [  x   y]
             [x^2 y^2]
-            sage: x * a # indirect doctest
+            sage: x * a # indirect doctest                                              # optional - sage.combinat
             [  x^2   x*y]
             [  x^3 x*y^2]
-            sage: a * y
+            sage: a * y                                                                 # optional - sage.combinat
             [  x*y   y^2]
             [x^2*y   y^3]
 
-            sage: R.<x,y> = FreeAlgebra(ZZ,2)
-            sage: a = matrix(R,2,3,[1,x,y,-x*y,x+y,x-y]); a
+            sage: R.<x,y> = FreeAlgebra(ZZ,2)                                           # optional - sage.combinat
+            sage: a = matrix(R, 2, 3,[1,x,y, -x*y,x+y,x-y]); a                          # optional - sage.combinat
             [    1     x     y]
             [ -x*y x + y x - y]
-            sage: a * (x*y)
+            sage: a * (x*y)                                                             # optional - sage.combinat
             [          x*y         x^2*y         y*x*y]
             [     -x*y*x*y x^2*y + y*x*y x^2*y - y*x*y]
         """
@@ -5434,15 +5436,15 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLE of matrix multiplication over a noncommutative base ring::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: x*y - y*x
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat
+            sage: x*y - y*x                                                             # optional - sage.combinat
             x*y - y*x
-            sage: a = matrix(2,2, [1,2,x,y])
-            sage: b = matrix(2,2, [x,y,x^2,y^2])
-            sage: a*b
+            sage: a = matrix(2, 2, [1,2, x,y])                                          # optional - sage.combinat
+            sage: b = matrix(2, 2, [x,y, x^2,y^2])                                      # optional - sage.combinat
+            sage: a*b                                                                   # optional - sage.combinat
             [  x + 2*x^2   y + 2*y^2]
             [x^2 + y*x^2   x*y + y^3]
-            sage: b*a
+            sage: b*a                                                                   # optional - sage.combinat
             [    x + y*x   2*x + y^2]
             [x^2 + y^2*x 2*x^2 + y^3]
 
@@ -5510,15 +5512,15 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLE of scalar multiplication in the noncommutative case::
 
-            sage: R.<x,y> = FreeAlgebra(ZZ,2)
-            sage: a = matrix(2,[x,y,x^2,y^2])
-            sage: a * x
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # optional - sage.combinat
+            sage: a = matrix(2, [x,y, x^2,y^2])                                         # optional - sage.combinat
+            sage: a * x                                                                 # optional - sage.combinat
             [  x^2   y*x]
             [  x^3 y^2*x]
-            sage: x * a
+            sage: x * a                                                                 # optional - sage.combinat
             [  x^2   x*y]
             [  x^3 x*y^2]
-            sage: a*x - x*a
+            sage: a*x - x*a                                                             # optional - sage.combinat
             [             0     -x*y + y*x]
             [             0 -x*y^2 + y^2*x]
         """
@@ -5894,9 +5896,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Non-integer (symbolic) exponents are also supported::
 
-            sage: k = var('k')
-            sage: A = matrix([[2, -1], [1,  0]])
-            sage: A^(2*k+1)
+            sage: k = var('k')                                                          # optional - sage.symbolic
+            sage: A = matrix([[2, -1], [1,  0]])                                        # optional - sage.symbolic
+            sage: A^(2*k+1)                                                             # optional - sage.symbolic
             [ 2*k + 2 -2*k - 1]
             [ 2*k + 1     -2*k]
         """
