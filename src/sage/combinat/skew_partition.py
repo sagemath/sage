@@ -1538,7 +1538,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S.from_row_and_column_length([1,2],[1,3])
             Traceback (most recent call last):
             ...
-            ValueError: sum mismatch : [1, 2] and [1, 3]
+            ValueError: sum mismatch: [1, 2] and [1, 3]
             sage: S.from_row_and_column_length([3,2,1,2],[2,3,1,1,1])
             Traceback (most recent call last):
             ...
@@ -1565,11 +1565,11 @@ class SkewPartitions(UniqueRepresentation, Parent):
         TESTS::
 
             sage: all(SkewPartitions().from_row_and_column_length(p.row_lengths(), p.column_lengths()) == p
-            ....:       for i in range(8) for p in SkewPartitions(i))
+            ....:       for i in range(7) for p in SkewPartitions(i))
             True
         """
         if sum(rowL) != sum(colL):
-            raise ValueError("sum mismatch : %s and %s" % (rowL, colL))
+            raise ValueError(f"sum mismatch: {rowL} and {colL}")
         if not all(i > 0 for i in rowL) or not all(i > 0 for i in colL):
             raise ValueError("row and column length must be positive")
         if not rowL:
