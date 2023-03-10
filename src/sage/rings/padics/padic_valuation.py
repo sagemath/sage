@@ -439,7 +439,7 @@ class pAdicValuation_base(DiscreteValuation):
         sage: QQ.valuation(5)
         5-adic valuation
 
-     For `p`-adic rings, ``p`` has to match the `p` of the ring.
+     For `p`-adic rings, ``p`` has to match the `p` of the ring. ::
 
         sage: v = valuations.pAdicValuation(Zp(3), 2); v
         Traceback (most recent call last):

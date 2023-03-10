@@ -501,7 +501,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym.macdonald(q=1,t=3).P()
                 Sym in the Macdonald P with q=1 and t=3 basis
 
-            Hall-Littlewood polynomials:
+            Hall-Littlewood polynomials::
 
                 sage: Sym.hall_littlewood().P()
                 Sym in the Hall-Littlewood P basis
