@@ -73,8 +73,8 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # optional - sage.libs.singular
-        sage: V, f, t = L.vector_space()                                                            # optional - sage.libs.singular, sage.modules
-        sage: isinstance(f, sage.rings.function_field.maps.FunctionFieldVectorSpaceIsomorphism)     # optional - sage.libs.singular, sage.modules
+        sage: V, f, t = L.vector_space()                                                            # optional - sage.libs.singular sage.modules
+        sage: isinstance(f, sage.rings.function_field.maps.FunctionFieldVectorSpaceIsomorphism)     # optional - sage.libs.singular sage.modules
         True
     """
     def _repr_(self) -> str:
@@ -85,12 +85,12 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular, sage.modules
-            sage: f                                                                     # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular sage.modules
+            sage: f                                                                     # optional - sage.libs.singular sage.modules
             Isomorphism:
               From: Vector space of dimension 2 over Rational function field in x over Rational Field
               To:   Function field in y defined by y^2 - x*y + 4*x^3
-            sage: t                                                                     # optional - sage.libs.singular, sage.modules
+            sage: t                                                                     # optional - sage.libs.singular sage.modules
             Isomorphism:
               From: Function field in y defined by y^2 - x*y + 4*x^3
               To:   Vector space of dimension 2 over Rational function field in x over Rational Field
@@ -108,8 +108,8 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular, sage.modules
-            sage: f.is_injective()                                                      # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular sage.modules
+            sage: f.is_injective()                                                      # optional - sage.libs.singular sage.modules
             True
         """
         return True
@@ -122,8 +122,8 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular, sage.modules
-            sage: f.is_surjective()                                                     # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                            # optional - sage.libs.singular sage.modules
+            sage: f.is_surjective()                                                     # optional - sage.libs.singular sage.modules
             True
         """
         return True
@@ -188,7 +188,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # optional - sage.libs.singular
-        sage: V, f, t = L.vector_space(); f                                                         # optional - sage.libs.singular, sage.modules
+        sage: V, f, t = L.vector_space(); f                                                         # optional - sage.libs.singular sage.modules
         Isomorphism:
           From: Vector space of dimension 2 over Rational function field in x over Rational Field
           To:   Function field in y defined by y^2 - x*y + 4*x^3
@@ -199,7 +199,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space(); type(f)                                               # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space(); type(f)                                               # optional - sage.libs.singular sage.modules
             <class 'sage.rings.function_field.maps.MapVectorSpaceToFunctionField'>
         """
         self._V = V
@@ -220,8 +220,8 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular, sage.modules
-            sage: f(x*V.0 + (1/x^3)*V.1) # indirect doctest                                         # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular sage.modules
+            sage: f(x*V.0 + (1/x^3)*V.1) # indirect doctest                                         # optional - sage.libs.singular sage.modules
             1/x^3*y + x
 
         TESTS:
@@ -230,7 +230,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
             sage: R.<z> = L[]                                                                       # optional - sage.libs.singular
             sage: M.<z> = L.extension(z^3 - y - x)                                                  # optional - sage.libs.singular
-            sage: for F in [K, L, M]:                                                               # optional - sage.libs.singular, sage.modules
+            sage: for F in [K, L, M]:                                                               # optional - sage.libs.singular sage.modules
             ....:     for base in F._intermediate_fields(K):
             ....:         V, f, t = F.vector_space(base)
             ....:         for i in range(100):
@@ -263,8 +263,8 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular, sage.modules
-            sage: f.domain()                                                                        # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular sage.modules
+            sage: f.domain()                                                                        # optional - sage.libs.singular sage.modules
             Vector space of dimension 2 over Rational function field in x over Rational Field
         """
         return self._V
@@ -277,8 +277,8 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular, sage.modules
-            sage: f.codomain()                                                                      # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular sage.modules
+            sage: f.codomain()                                                                      # optional - sage.libs.singular sage.modules
             Function field in y defined by y^2 - x*y + 4*x^3
         """
         return self._K
@@ -292,7 +292,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # optional - sage.libs.singular
-        sage: V, f, t = L.vector_space(); t                                                         # optional - sage.libs.singular, sage.modules
+        sage: V, f, t = L.vector_space(); t                                                         # optional - sage.libs.singular sage.modules
         Isomorphism:
           From: Function field in y defined by y^2 - x*y + 4*x^3
           To:   Vector space of dimension 2 over Rational function field in x over Rational Field
@@ -311,8 +311,8 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular, sage.modules
-            sage: TestSuite(t).run(skip="_test_category")                                           # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular sage.modules
+            sage: TestSuite(t).run(skip="_test_category")                                           # optional - sage.libs.singular sage.modules
         """
         self._V = V
         self._K = K
@@ -328,8 +328,8 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.libs.singular
-            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular, sage.modules
-            sage: t(x + (1/x^3)*y)  # indirect doctest                                              # optional - sage.libs.singular, sage.modules
+            sage: V, f, t = L.vector_space()                                                        # optional - sage.libs.singular sage.modules
+            sage: t(x + (1/x^3)*y)  # indirect doctest                                              # optional - sage.libs.singular sage.modules
             (x, 1/x^3)
 
         TESTS:
@@ -338,7 +338,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
             sage: R.<z> = L[]                                                                       # optional - sage.libs.singular
             sage: M.<z> = L.extension(z^3 - y - x)                                                  # optional - sage.libs.singular
-            sage: for F in [K, L, M]:                                                               # optional - sage.libs.singular, sage.modules
+            sage: for F in [K, L, M]:                                                               # optional - sage.libs.singular sage.modules
             ....:     for base in F._intermediate_fields(K):
             ....:         V, f, t = F.vector_space(base)
             ....:         for i in range(100):
@@ -392,9 +392,9 @@ class FunctionFieldMorphism(RingHomomorphism):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari, sage.libs.singular
-            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari, sage.libs.singular
-            sage: f._repr_type()                                                                    # optional - sage.libs.pari, sage.libs.singular
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari sage.libs.singular
+            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari sage.libs.singular
+            sage: f._repr_type()                                                                    # optional - sage.libs.pari sage.libs.singular
             'Function Field'
         """
         return "Function Field"
@@ -406,9 +406,9 @@ class FunctionFieldMorphism(RingHomomorphism):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari, sage.libs.singular
-            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari, sage.libs.singular
-            sage: f._repr_defn()                                                                    # optional - sage.libs.pari, sage.libs.singular
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari sage.libs.singular
+            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari sage.libs.singular
+            sage: f._repr_defn()                                                                    # optional - sage.libs.pari sage.libs.singular
             'y |--> 2*y'
         """
         a = '%s |--> %s' % (self.domain().variable_name(), self._im_gen)
@@ -424,13 +424,13 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                             # optional - sage.libs.pari
-        sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                                  # optional - sage.libs.pari, sage.libs.singular
-        sage: f = L.hom(y*2); f                                                                     # optional - sage.libs.pari, sage.libs.singular
+        sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                                  # optional - sage.libs.pari sage.libs.singular
+        sage: f = L.hom(y*2); f                                                                     # optional - sage.libs.pari sage.libs.singular
         Function Field endomorphism of Function field in y defined by y^3 + 6*x^3 + x
           Defn: y |--> 2*y
-        sage: factor(L.polynomial())                                                                # optional - sage.libs.pari, sage.libs.singular
+        sage: factor(L.polynomial())                                                                # optional - sage.libs.pari sage.libs.singular
         y^3 + 6*x^3 + x
-        sage: f(y).charpoly('y')                                                                    # optional - sage.libs.pari, sage.libs.singular
+        sage: f(y).charpoly('y')                                                                    # optional - sage.libs.pari sage.libs.singular
         y^3 + 6*x^3 + x
     """
     def __init__(self, parent, im_gen, base_morphism):
@@ -440,9 +440,9 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari, sage.libs.singular
-            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari, sage.libs.singular
-            sage: TestSuite(f).run(skip="_test_category")                                           # optional - sage.libs.pari, sage.libs.singular
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # optional - sage.libs.pari sage.libs.singular
+            sage: f = L.hom(y*2)                                                                    # optional - sage.libs.pari sage.libs.singular
+            sage: TestSuite(f).run(skip="_test_category")                                           # optional - sage.libs.pari sage.libs.singular
         """
         FunctionFieldMorphism.__init__(self, parent, im_gen, base_morphism)
         # Verify that the morphism is valid:
@@ -459,10 +459,10 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x); f = L.hom(y*2)                              # optional - sage.libs.pari, sage.libs.singular
-            sage: f(y/x + x^2/(x+1))            # indirect doctest                                  # optional - sage.libs.pari, sage.libs.singular
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x); f = L.hom(y*2)                              # optional - sage.libs.pari sage.libs.singular
+            sage: f(y/x + x^2/(x+1))            # indirect doctest                                  # optional - sage.libs.pari sage.libs.singular
             2/x*y + x^2/(x + 1)
-            sage: f(y)                                                                              # optional - sage.libs.pari, sage.libs.singular
+            sage: f(y)                                                                              # optional - sage.libs.pari sage.libs.singular
             2*y
         """
         v = x.list()
