@@ -2608,6 +2608,9 @@ REFERENCES:
             TR-737-05, (2005).
             ftp://ftp.cs.princeton.edu/reports/2005/737.pdf
 
+.. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
+             algebra, 1(141):187–203, 1991.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -2770,6 +2773,9 @@ REFERENCES:
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
+             1998.
 
 .. [Gor1980] Daniel Gorenstein, Finite Groups (New York: Chelsea
              Publishing, 1980)
@@ -4642,6 +4648,11 @@ REFERENCES:
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
 
+.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
+            of a finite rank two Drinfeld module. In Proceedings of the 2019
+            ACM on International Symposium on Symbolic and Algebraic
+            Computation, pages 307–314. ACM, 2019.
+
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
@@ -5221,6 +5232,8 @@ REFERENCES:
 
 .. [Ros2002] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
              Sequences. *Communications in Math. and in Computer Chem.*
+
+.. [Rosen2002] \M. Rosen. Number theory in function fields. Springer, 2022.
 
 .. [Rot2001] Gunter Rote, *Division-Free Algorithms for the
              Determinant and the Pfaffian: Algebraic and Combinatorial
@@ -6092,6 +6105,9 @@ REFERENCES:
 
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
+
+.. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
+            Fields. Birkh\"auser, 2006.
 
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.
