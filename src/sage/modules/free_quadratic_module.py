@@ -124,9 +124,9 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     Check for :trac:`10577`::
 
-        sage: m = matrix.diagonal(GF(2), [1,1])
-        sage: V2 = VectorSpace(GF(2), 2, inner_product_matrix=m)
-        sage: deepcopy(V2)
+        sage: m = matrix.diagonal(GF(2), [1,1])                                         # optional - sage.libs.pari
+        sage: V2 = VectorSpace(GF(2), 2, inner_product_matrix=m)                        # optional - sage.libs.pari
+        sage: deepcopy(V2)                                                              # optional - sage.libs.pari
         Ambient quadratic space of dimension 2 over Finite Field of size 2
         Inner product matrix:
         [1 0]
@@ -702,7 +702,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             Inner product matrix:
             [2 1]
             [1 2]
-            sage: FreeModule(FiniteField(2), 7, inner_product_matrix=1)
+            sage: FreeModule(FiniteField(2), 7, inner_product_matrix=1)                 # optional - sage.libs.pari
             Ambient quadratic space of dimension 7 over Finite Field of size 2
             Inner product matrix:
             [1 0 0 0 0 0 0]
@@ -739,12 +739,12 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(7), 3)
-            sage: W = V.subspace([[2,3,4]]); W
+            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
+            sage: W = V.subspace([[2,3,4]]); W                                          # optional - sage.libs.pari
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 5 2]
-            sage: W.span([[1,1,1]])
+            sage: W.span([[1,1,1]])                                                     # optional - sage.libs.pari
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 1 1]
@@ -779,12 +779,12 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(7), 3)
-            sage: W = V.subspace([[2,3,4]]); W
+            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
+            sage: W = V.subspace([[2,3,4]]); W                                          # optional - sage.libs.pari
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 5 2]
-            sage: W.span_of_basis([[2,2,2], [3,3,0]])
+            sage: W.span_of_basis([[2,2,2], [3,3,0]])                                   # optional - sage.libs.pari
             Vector space of degree 3 and dimension 2 over Finite Field of size 7
             User basis matrix:
             [2 2 2]
@@ -793,7 +793,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
         The basis vectors must be linearly independent or a
         ``ValueError`` exception is raised::
 
-            sage: W.span_of_basis([[2,2,2], [3,3,3]])
+            sage: W.span_of_basis([[2,2,2], [3,3,3]])                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: The given basis vectors must be linearly independent.
@@ -876,7 +876,7 @@ class FreeQuadraticModule_ambient(free_module.FreeModule_ambient,
             sage: latex(QQ^3) # indirect doctest
             \Bold{Q}^{3}
 
-            sage: A = GF(5)^20; latex(A)
+            sage: A = GF(5)^20; latex(A)                                                # optional - sage.libs.pari
             \Bold{F}_{5}^{20}
 
             sage: A = PolynomialRing(QQ,3,'x')^20; latex(A)
@@ -943,7 +943,7 @@ class FreeQuadraticModule_ambient_domain(free_module.FreeModule_ambient_domain,
         """
         EXAMPLES::
 
-            sage: FreeModule(PolynomialRing(GF(5),'x'), 3)
+            sage: FreeModule(PolynomialRing(GF(5),'x'), 3)                              # optional - sage.libs.pari
             Ambient free module of rank 3 over the principal ideal domain
             Univariate Polynomial Ring in x over Finite Field of size 5
         """
@@ -1141,8 +1141,8 @@ class FreeQuadraticModule_ambient_field(free_module.FreeModule_ambient_field,
         Check for :trac:`10606`::
 
             sage: D = matrix.diagonal(ZZ, [1,1])
-            sage: V = VectorSpace(GF(46349), 2, inner_product_matrix=D)
-            sage: deepcopy(V)
+            sage: V = VectorSpace(GF(46349), 2, inner_product_matrix=D)                 # optional - sage.libs.pari
+            sage: deepcopy(V)                                                           # optional - sage.libs.pari
             Ambient quadratic space of dimension 2 over Finite Field
             of size 46349
             Inner product matrix:
@@ -1356,7 +1356,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
             [  1 1/4 1/2]
-            sage: W.change_ring(GF(7))
+            sage: W.change_ring(GF(7))                                                  # optional - sage.libs.pari
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 2 4]
@@ -1365,8 +1365,8 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
             sage: N.inner_product_matrix()
             [ 1 -1]
             [ 2  5]
-            sage: Np = N.change_ring(RDF)
-            sage: Np.inner_product_matrix()
+            sage: Np = N.change_ring(RDF)                                               # optional - sage.libs.pari
+            sage: Np.inner_product_matrix()                                             # optional - sage.libs.pari
             [ 1.0 -1.0]
             [ 2.0  5.0]
         """
