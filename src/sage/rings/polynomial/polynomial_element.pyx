@@ -143,6 +143,8 @@ cpdef is_Polynomial(f):
     """
     Return True if f is of type univariate polynomial.
 
+    This function is deprecated.
+
     INPUT:
 
     -  ``f`` -- an object
@@ -152,6 +154,8 @@ cpdef is_Polynomial(f):
         sage: from sage.rings.polynomial.polynomial_element import is_Polynomial
         sage: R.<x> = ZZ[]
         sage: is_Polynomial(x^3 + x + 1)
+        doctest:...: DeprecationWarning: the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead
+        See https://github.com/sagemath/sage/issues/32709 for details.
         True
         sage: S.<y> = R[]
         sage: f = y^3 + x*y -3*x; f
@@ -175,6 +179,9 @@ cpdef is_Polynomial(f):
         sage: is_Polynomial(f)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+
     return isinstance(f, Polynomial)
 
 from .polynomial_compiled cimport CompiledPolynomialFunction
@@ -182,7 +189,7 @@ from .polynomial_compiled cimport CompiledPolynomialFunction
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class Polynomial(CommutativePolynomial):
     """
     A polynomial.
 

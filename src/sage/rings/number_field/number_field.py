@@ -114,7 +114,7 @@ import sage.libs.ntl.all as ntl
 import sage.interfaces.gap
 
 import sage.rings.complex_mpfr
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
 import sage.rings.real_mpfi
 import sage.rings.complex_double
@@ -647,7 +647,7 @@ class NumberFieldFactory(UniqueFactory):
             raise TypeError("You must specify the name of the generator.")
         name = normalize_names(1, name)
 
-        if not is_Polynomial(polynomial):
+        if not isinstance(polynomial, Polynomial):
             try:
                 polynomial = polynomial.polynomial(QQ)
             except (AttributeError, TypeError):
@@ -868,7 +868,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
     f = polynomials[0]
     name = names[0]
     w = NumberFieldTower(polynomials[1:], names=names[1:], check=check, embeddings=embeddings[1:], latex_names=latex_names[1:], assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structures=structures[1:])
-    var = f.variable_name() if is_Polynomial(f) else 'x'
+    var = f.variable_name() if isinstance(f, Polynomial) else 'x'
 
     R = w[var]  # polynomial ring
     return w.extension(R(f), name, check=check, embedding=embeddings[0], structure=structures[0], latex_name=latex_names[0])  # currently, extension does not accept assume_disc_small, or maximize_at_primes
