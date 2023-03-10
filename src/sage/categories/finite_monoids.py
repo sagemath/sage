@@ -144,20 +144,18 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: len(BSigma3.n_cells(3))
                 125
 
-                sage: BC3.homology(range(5), base_ring=GF(3))
+                sage: BC3.homology(range(4), base_ring=GF(3))
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 1 over Finite Field of size 3,
                  2: Vector space of dimension 1 over Finite Field of size 3,
-                 3: Vector space of dimension 1 over Finite Field of size 3,
-                 4: Vector space of dimension 1 over Finite Field of size 3}
+                 3: Vector space of dimension 1 over Finite Field of size 3}
 
                 sage: BC5 = groups.permutation.Cyclic(5).nerve()
-                sage: BC5.homology(range(5), base_ring=GF(5))
+                sage: BC5.homology(range(4), base_ring=GF(5))
                 {0: Vector space of dimension 0 over Finite Field of size 5,
                 1: Vector space of dimension 1 over Finite Field of size 5,
                 2: Vector space of dimension 1 over Finite Field of size 5,
-                3: Vector space of dimension 1 over Finite Field of size 5,
-                4: Vector space of dimension 1 over Finite Field of size 5}
+                3: Vector space of dimension 1 over Finite Field of size 5}
             """
             from sage.topology.simplicial_set_examples import Nerve
             return Nerve(self)
@@ -209,7 +207,7 @@ class FiniteMonoids(CategoryWithAxiom):
             res = []
             for m in self:
                 for n in self:
-                    if (m == n) or ((n, m) in res):
+                    if m == n or (n, m) in res:
                         continue
                     try:
                         kSrad.retract(kS(m) - kS(n))
@@ -222,7 +220,7 @@ class FiniteMonoids(CategoryWithAxiom):
     class ElementMethods:
         def pseudo_order(self):
             r"""
-            Returns the pair `[k, j]` with `k` minimal and `0\leq j <k` such
+            Return the pair `[k, j]` with `k` minimal and `0\leq j <k` such
             that ``self^k == self^j``.
 
             Note that `j` is uniquely determined.
@@ -256,8 +254,10 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: x.pseudo_order()
                 [2, 0]
 
-            TODO: more appropriate name? see, for example, Jean-Eric Pin's
-            lecture notes on semigroups.
+            .. TODO::
+
+                more appropriate name? see, for example, Jean-Eric Pin's
+                lecture notes on semigroups.
             """
             self_powers = {self.parent().one(): 0}
             k = 1
