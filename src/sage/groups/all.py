@@ -1,3 +1,5 @@
+from .all__sagemath_polyhedra import *
+
 from sage.misc.lazy_import import lazy_import
 
 from .pari_group import PariGroup
@@ -11,8 +13,6 @@ from .generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
                       linear_relation, multiple, multiples)
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
-
-from .additive_abelian.all import *
 
 lazy_import('sage.groups.conjugacy_classes', ['ConjugacyClass', 'ConjugacyClassGAP'])
 

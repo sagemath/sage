@@ -58,6 +58,10 @@ exclude sage/modules/vector_numpy*.*    # depends on numpy
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
+# Also just modules
+graft sage/groups/additive_abelian
+include sage/groups/old.*       # dependency of above
+
 # Need sage.combinat.free_module for polyhedral modules
 include sage/combinat/free_module.py
 include sage/combinat/ranker.py

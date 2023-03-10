@@ -8,6 +8,7 @@ from sage.modules.all import *
 from sage.matrix.all import *
 from sage.geometry.all__sagemath_polyhedra import *
 from sage.geometry.triangulation.all import *
+from sage.groups.all__sagemath_polyhedra import *
 from sage.numerical.all__sagemath_polyhedra import *
 
 true = True
