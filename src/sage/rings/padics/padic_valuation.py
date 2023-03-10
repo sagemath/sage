@@ -283,7 +283,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: GaussianIntegers().valuation(GaussianIntegers().ideal(2)) # indirect doctest
+            sage: GaussianIntegers().valuation(GaussianIntegers().number_field().fractional_ideal(2)) # indirect doctest
             2-adic valuation
 
         TESTS:

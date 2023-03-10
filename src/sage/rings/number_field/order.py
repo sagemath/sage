@@ -491,6 +491,14 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         if not self.is_maximal():
             raise NotImplementedError("ideals of non-maximal orders not yet supported.")
+        from sage.misc.superseded import deprecation
+        deprecation(34806, 'In the future, constructing an ideal of the ring of '
+                           'integers of a number field will use an implementation '
+                           'compatible with ideals of other (non-maximal) orders, '
+                           'rather than returning an integral fractional ideal of '
+                           'its containing number field. Use .fractional_ideal(), '
+                           'together with an .is_integral() check if desired, to '
+                           'avoid your code breaking with future changes to Sage.')
         I = self.number_field().ideal(*args, **kwds)
         if not I.is_integral():
             raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")

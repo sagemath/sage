@@ -12534,7 +12534,7 @@ def _splitting_classes_gens_(K, m, d):
             p = u.lift()
             while not p.is_prime():
                 p += m
-            f = R.ideal(p).prime_factors()[0].residue_class_degree()
+            f = K.fractional_ideal(p).prime_factors()[0].residue_class_degree()
             h = g**f
             if h not in H:
                 Hgens += [h]
