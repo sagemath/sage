@@ -31,7 +31,7 @@ def is_Algebra(x):
         sage: is_Algebra(R)
         doctest:warning...
         DeprecationWarning: the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead
-        See https://github.com/sagemath/sage/issues/99999 for details.
+        See https://github.com/sagemath/sage/issues/35253 for details.
         True
     """
     from sage.misc.superseded import deprecation
