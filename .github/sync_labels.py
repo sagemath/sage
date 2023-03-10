@@ -125,6 +125,19 @@ class GhLabelSynchronizer:
         """
         return self._pr
 
+    def reset_view(self):
+        """
+        Reset cache of ``gh view`` results. 
+        """
+        self._labels = None
+        self._author = None
+        self._draft = None
+        self._open = None
+        self._review_decision = None
+        self._reviews = None
+        self._commits = None
+        self._commit_date = None
+
     def view(self, key):
         """
         Return data obtained from `gh` command `view`.
@@ -460,8 +473,8 @@ class GhLabelSynchronizer:
         if self.is_pull_request():
             self.add_comment('Label *%s* can not be added. Please use the corresponding functionality of GitHub' % item.value)
         else:
-            self.add_comment('Label *%s* can not be added to an issue. Please use it on the corresponding PR' % label)
-        self.remove_label(label)
+            self.add_comment('Label *%s* can not be added to an issue. Please use it on the corresponding PR' % item.value)
+        self.remove_label(item.value)
         return
 
     def reject_label_removal(self, item):
@@ -473,7 +486,7 @@ class GhLabelSynchronizer:
             sel_list = 'state'
         else:
             sel_list = 'priority'
-        self.add_comment('Label *%s* can not be removed. Please add the %s-label which should replace it' % (label, sel_list))
+        self.add_comment('Label *%s* can not be removed. Please add the %s-label which should replace it' % (item.value, sel_list))
         self.add_label(item.value)
         return
 
@@ -563,6 +576,8 @@ class GhLabelSynchronizer:
         """
         Run the given action.
         """
+        self.reset_view() # this is just needed for run_tests
+
         if action is Action.opened and self.is_pull_request():
             if not self.is_draft():
                 self.add_default_label(State.needs_review)
@@ -611,20 +626,20 @@ class GhLabelSynchronizer:
                         self.add_label(stat.value)
                     else:
                         self.remove_label(stat.value)
-                    self.run(action, label=stat)
+                    self.run(action, label=stat.value)
                 for prio in Priority:
                     if action is Action.labeled:
                         self.add_label(prio.value)
                     else:
                         self.remove_label(prio.value)
-                    self.run(action, label=prio)
+                    self.run(action, label=prio.value)
             elif action == Action.submitted and self.is_pull_request():
                 for stat in RevState:
                     if stat is RevState.approved:
                         self.approve()
                     elif stat is RevState.changes_requested:
                         self.request_changes()
-                    self.run(action, rev_state=stat)
+                    self.run(action, rev_state=stat.value)
             elif self.is_pull_request():
                 self.run(action)
 
