@@ -65,7 +65,7 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 #                          2020 John H. Palmieri <jhpalmieri64@gmail.com>
 #                          2020 Thierry Monteil <sage@lma.metelu.net>
 #                          2021 Antonio Rojas <arojas@archlinux.org>
-#                          2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                          2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
