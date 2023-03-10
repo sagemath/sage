@@ -12,6 +12,8 @@ Commutative algebra ideals
 
 from .category_types import Category_ideal, Category_in_ambient
 from .algebra_ideals import AlgebraIdeals
+from .commutative_algebras import CommutativeAlgebras
+
 
 class CommutativeAlgebraIdeals(Category_ideal):
     """
@@ -51,8 +53,6 @@ class CommutativeAlgebraIdeals(Category_ideal):
         """
         # TODO: replace by ``A in CommutativeAlgebras(*)`` once a
         # suitable mantra has been implemented for this.
-        from sage.algebras.algebra import is_Algebra
-        from sage.rings.ring import CommutativeRing
         if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
             raise TypeError("A (=%s) must be a commutative algebra" % A)
         Category_in_ambient.__init__(self, A)
