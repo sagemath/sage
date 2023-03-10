@@ -45,9 +45,9 @@ We make a large zero vector::
 
 We multiply a vector by a matrix::
 
-    sage: a = (GF(97)^5)(range(5))
-    sage: m = matrix(GF(97),5,range(25))
-    sage: a*m
+    sage: a = (GF(97)^5)(range(5))                                                      # optional - sage.libs.pari
+    sage: m = matrix(GF(97), 5, range(25))                                              # optional - sage.libs.pari
+    sage: a*m                                                                           # optional - sage.libs.pari
     (53, 63, 73, 83, 93)
 
 TESTS::
@@ -58,41 +58,41 @@ TESTS::
     sage: v = vector(Integers(389), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
-    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])
-    sage: loads(dumps(v)) == v
+    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # optional - sage.libs.pari
+    sage: loads(dumps(v)) == v                                                          # optional - sage.libs.pari
     True
 
-    sage: K = GF(previous_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(previous_prime(2^31))                                                  # optional - sage.libs.pari
+    sage: v = vector(K, [42]);  type(v[0])                                              # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # optional - sage.libs.pari
     2096353084
 
-    sage: K = GF(next_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(next_prime(2^31))                                                      # optional - sage.libs.pari
+    sage: v = vector(K, [42]);  type(v[0])                                              # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # optional - sage.libs.pari
     1482786336
 
-    sage: w = vector(GF(11), [-1,0,0,0])
-    sage: w.set_immutable()
-    sage: isinstance(hash(w), int)
+    sage: w = vector(GF(11), [-1,0,0,0])                                                # optional - sage.libs.pari
+    sage: w.set_immutable()                                                             # optional - sage.libs.pari
+    sage: isinstance(hash(w), int)                                                      # optional - sage.libs.pari
     True
 
 Test that :trac:`28042` is fixed::
 
     sage: p = 193379
-    sage: K = GF(p)
-    sage: a = K(1)
-    sage: b = K(191495)
-    sage: c = K(109320)
-    sage: d = K(167667)
-    sage: e = 103937
-    sage: a*c+b*d-e
+    sage: K = GF(p)                                                                     # optional - sage.libs.pari
+    sage: a = K(1)                                                                      # optional - sage.libs.pari
+    sage: b = K(191495)                                                                 # optional - sage.libs.pari
+    sage: c = K(109320)                                                                 # optional - sage.libs.pari
+    sage: d = K(167667)                                                                 # optional - sage.libs.pari
+    sage: e = 103937                                                                    # optional - sage.libs.pari
+    sage: a*c + b*d - e
     102041
-    sage: vector([a,b]) * vector([c,d]) - e
+    sage: vector([a,b]) * vector([c,d]) - e                                             # optional - sage.libs.pari
     102041
-    sage: type(vector([a,b]) * vector([c,d]))
+    sage: type(vector([a,b]) * vector([c,d]))                                           # optional - sage.libs.pari
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
 
 AUTHOR:
@@ -197,15 +197,15 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(GF(5), [0,0,0,0])
-            sage: v == 0
+            sage: v = vector(GF(5), [0,0,0,0])                                          # optional - sage.libs.pari
+            sage: v == 0                                                                # optional - sage.libs.pari
             True
-            sage: v == 1
+            sage: v == 1                                                                # optional - sage.libs.pari
             False
-            sage: v == v
+            sage: v == v                                                                # optional - sage.libs.pari
             True
-            sage: w = vector(GF(11), [-1,0,0,0])
-            sage: w == w
+            sage: w = vector(GF(11), [-1,0,0,0])                                        # optional - sage.libs.pari
+            sage: w == w                                                                # optional - sage.libs.pari
             True
         """
         cdef Py_ssize_t i

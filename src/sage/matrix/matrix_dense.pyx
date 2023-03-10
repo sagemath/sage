@@ -75,11 +75,11 @@ cdef class Matrix_dense(matrix.Matrix):
 
         Check :trac:`27629`::
 
-            sage: var('x')
+            sage: var('x')                                                              # optional - sage.symbolic
             x
-            sage: assume(x, 'real')
-            sage: M = matrix([[0, -x], [x, 0]])
-            sage: M.transpose() == M
+            sage: assume(x, 'real')                                                     # optional - sage.symbolic
+            sage: M = matrix([[0, -x], [x, 0]])                                         # optional - sage.symbolic
+            sage: M.transpose() == M                                                    # optional - sage.symbolic
             False
         """
         other = <Matrix_dense>right
@@ -271,8 +271,8 @@ cdef class Matrix_dense(matrix.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [x^i for i in range(4)])
-            sage: m._derivative(x)
+            sage: m = matrix(2, [x^i for i in range(4)])                                # optional - sage.symbolic
+            sage: m._derivative(x)                                                      # optional - sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """
