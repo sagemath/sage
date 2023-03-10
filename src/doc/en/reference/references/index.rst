@@ -2069,9 +2069,14 @@ REFERENCES:
              *Ten New Orders for Hadamard Matrices of Skew Type*,
              Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
 
-.. [Djo1994] \D. Đoković.
+.. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
+
+.. [Djo1994b] \D. Đoković.
+             *Two Hadamard matrices of order 956 of Goethals-Seidel type*,
+             Combinatorica  14(3) (1994): 375-377.
+             :doi:`10.1007/BF01212983`
 
 .. [Djo2008a] \D. Đoković.
             *Skew-Hadamard matrices of orders 188 and 388 exist*,
@@ -2082,6 +2087,11 @@ REFERENCES:
             *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
             Journal of Combinatorial Designs 16 (2008): 493-498.
             :arxiv:`0706.1973`
+
+.. [Djo2008c] \D. Đoković.
+            *Hadamard matrices of order 764 exist*,
+            Combinatorica 28(4) (2008): 487-489.
+            :doi:`10.1007/s00493-008-2384-z`
 
 .. [Djo2023a]  \D. Đoković.
             *Skew-Hadamard matrices of order 276*.
@@ -4148,6 +4158,11 @@ REFERENCES:
              of a genus 2 Jacobian*, Mathematics of Computation 88 (2019),
              889-929. :doi:`10.1090/mcom/3358`.
 
+.. [Lon2013] \S. London,
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*. 
+            PhD Thesis, University of Illinois at Chicago, 2013.
+            https://hdl.handle.net/10027/9916
+
 .. [LOS2012] \C. Lecouvey, M. Okado, M. Shimozono.
              "Affine crystals, one-dimensional sums and parabolic Lusztig
              `q`-analogues". Mathematische Zeitschrift. **271** (2012). Issue 3-4.
@@ -4522,6 +4537,11 @@ REFERENCES:
 
 .. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
              International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
+
+.. [Miy1991] \M. Miyamoto.
+            *A construction of Hadamard matrices*,
+            Journal of Combinatorial Theory, Series A 57(1) (1991): 86-108.
+            :doi:`10.1016/0097-3165(91)90008-5`
 
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
