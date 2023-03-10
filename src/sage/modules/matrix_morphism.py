@@ -21,13 +21,13 @@ EXAMPLES::
     [0 0 1]
     sage: is_MatrixMorphism(m)
     True
-    sage: m.charpoly('x')
+    sage: m.charpoly('x')                                                               # optional - sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
     Rational Field
     sage: m.det()
     1
-    sage: m.fcp('x')
+    sage: m.fcp('x')                                                                    # optional - sage.libs.pari
     (x - 1)^3
     sage: m.matrix()
     [1 0 0]
@@ -835,7 +835,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES::
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.decomposition()
+            sage: phi.decomposition()                                                   # optional - sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -845,7 +845,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [ 1 -1]
             ]
             sage: phi2 = V.hom(phi.matrix(), side="right")
-            sage: phi2.decomposition()
+            sage: phi2.decomposition()                                                  # optional - sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -905,9 +905,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES::
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.fcp()
+            sage: phi.fcp()                                                             # optional - sage.libs.pari
             (x - 2) * (x - 1)
-            sage: phi.fcp('T')
+            sage: phi.fcp('T')                                                          # optional - sage.libs.pari
             (T - 2) * (T - 1)
         """
         return self.charpoly(var).factor()
@@ -1740,7 +1740,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         An example over a PID that is not `\ZZ`.  ::
 
-            sage: R = PolynomialRing(QQ, 'x')
+            sage: R.<x> = PolynomialRing(QQ)
             sage: A = R^2
             sage: B = R^2
             sage: H = A.hom([B([x^2-1, 1]), B([x^2, 1])])
