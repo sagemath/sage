@@ -4206,9 +4206,9 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         ::
 
             sage: R.<x> = QQ[]
-            sage: K = NumberField(x^2 + 1, 'a'); a = K.gen()
-            sage: V = VectorSpace(K, 3)
-            sage: V.vector_space_span([2*V.gen(0) + 3*V.gen(2)])
+            sage: K = NumberField(x^2 + 1, 'a'); a = K.gen()                            # optional - sage.rings.number_field
+            sage: V = VectorSpace(K, 3)                                                 # optional - sage.rings.number_field
+            sage: V.vector_space_span([2*V.gen(0) + 3*V.gen(2)])                        # optional - sage.rings.number_field
             Vector space of degree 3 and dimension 1 over Number Field in a with defining polynomial x^2 + 1
             Basis matrix:
             [  1   0 3/2]

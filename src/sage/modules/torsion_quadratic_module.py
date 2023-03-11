@@ -375,8 +375,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         EXAMPLES::
 
-            sage: D = IntegralLattice("D4").discriminant_group()
-            sage: D.all_submodules()
+            sage: D = IntegralLattice("D4").discriminant_group()                        # optional - sage.combinat
+            sage: D.all_submodules()                                                    # optional - sage.combinat
             [Finite quadratic module over Integer Ring with invariants ()
               Gram matrix of the quadratic form with values in Q/2Z:
               [],
@@ -429,9 +429,9 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         EXAMPLES::
 
-            sage: L = IntegralLattice("D4")
-            sage: D = L.discriminant_group()
-            sage: D.brown_invariant()
+            sage: L = IntegralLattice("D4")                                             # optional - sage.combinat
+            sage: D = L.discriminant_group()                                            # optional - sage.combinat
+            sage: D.brown_invariant()                                                   # optional - sage.combinat
             4
 
         We require the quadratic form to be defined modulo `2 \ZZ`::
@@ -588,7 +588,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         We can also compute the genus of an odd lattice
         from its discriminant form::
 
-            sage: L = IntegralLattice(matrix.diagonal(range(1,5)))
+            sage: L = IntegralLattice(matrix.diagonal(range(1, 5)))
             sage: D = L.discriminant_group()
             sage: D.genus((4,0))                                                        # optional - sage.libs.pari
             Genus of
@@ -755,18 +755,18 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         EXAMPLES::
 
-            sage: L3 = IntegralLattice(3 * Matrix(ZZ, 2, [2,1,1,2]))
-            sage: L = IntegralLattice("D4").direct_sum(L3)
-            sage: D = L.discriminant_group()
-            sage: D.is_genus((6,0))
+            sage: L3 = IntegralLattice(3 * Matrix(ZZ, 2, [2,1,1,2]))                    # optional - sage.combinat
+            sage: L = IntegralLattice("D4").direct_sum(L3)                              # optional - sage.combinat
+            sage: D = L.discriminant_group()                                            # optional - sage.combinat
+            sage: D.is_genus((6,0))                                                     # optional - sage.combinat
             True
 
         Let us see if there is a lattice in the genus defined by the same discriminant form
         but with a different signature::
 
-            sage: D.is_genus((4,2))
+            sage: D.is_genus((4,2))                                                                     # optional - sage.combinat
             False
-            sage: D.is_genus((16,2))
+            sage: D.is_genus((16,2))                                                                    # optional - sage.combinat
             True
         """
         s_plus = ZZ(signature_pair[0])
@@ -990,13 +990,13 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         EXAMPLES::
 
             sage: L1 = IntegralLattice(matrix([[-2,0,0], [0,1,0], [0,0,4]]))
-            sage: L1.discriminant_group().normal_form()
+            sage: L1.discriminant_group().normal_form()                                 # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (2, 4)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/2   0]
             [  0 1/4]
             sage: L2 = IntegralLattice(matrix([[-2,0,0], [0,1,0], [0,0,-4]]))
-            sage: L2.discriminant_group().normal_form()
+            sage: L2.discriminant_group().normal_form()                                 # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (2, 4)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/2   0]
@@ -1008,13 +1008,13 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: AL1 = L1.discriminant_group()
             sage: L2 = IntegralLattice(matrix([[-4,0,0], [0,-4,0], [0,0,2]]))
             sage: AL2 = L2.discriminant_group()
-            sage: AL1.normal_form()
+            sage: AL1.normal_form()                                                     # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (2, 4, 4)
             Gram matrix of the quadratic form with values in Q/2Z:
             [1/2   0   0]
             [  0 1/4   0]
             [  0   0 5/4]
-            sage: AL2.normal_form()
+            sage: AL2.normal_form()                                                     # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (2, 4, 4)
             Gram matrix of the quadratic form with values in Q/2Z:
             [1/2   0   0]
@@ -1034,7 +1034,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [ 1/12   1/6  1/36   1/9]
             [ 5/36  1/36  1/36 11/72]
             [ 1/36   1/9 11/72  1/36]
-            sage: T.normal_form()
+            sage: T.normal_form()                                                       # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:
             [ 1/6 1/12    0    0    0    0    0    0]
@@ -1051,7 +1051,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         A degenerate case::
 
             sage: T = TorsionQuadraticModule((1/6)*D4dual, D4, modulus=1/36)
-            sage: T.normal_form()
+            sage: T.normal_form()                                                       # optional - sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/18)Z:
             [1/36 1/72    0    0    0    0    0    0]
