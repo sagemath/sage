@@ -88,7 +88,7 @@ Test that :trac:`28042` is fixed::
     sage: c = K(109320)                                                                 # optional - sage.libs.pari
     sage: d = K(167667)                                                                 # optional - sage.libs.pari
     sage: e = 103937                                                                    # optional - sage.libs.pari
-    sage: a*c + b*d - e
+    sage: a*c + b*d - e                                                                 # optional - sage.libs.pari
     102041
     sage: vector([a,b]) * vector([c,d]) - e                                             # optional - sage.libs.pari
     102041
