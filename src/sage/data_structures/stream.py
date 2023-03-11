@@ -381,21 +381,40 @@ class Stream_inexact(Stream):
 
         if self._is_sparse:
             try:
-                c = self._cache[n]
+                return self._cache[n]
             except KeyError:
                 c = self.get_coefficient(n)
                 self._cache[n] = c
-        else:
-            i = n - self._offset
-            if i >= len(self._cache):
-                a = len(self._cache) + self._offset
-                # It is important to extend by generator:
-                # self._iter might recurse, and thereby extend the
-                # cache itself, too.
-                self._cache.extend(next(self._iter) for _ in range(a, n+1))
-            c = self._cache[i]
+                if self._true_order:
+                    return c
+                # we assume that self._approximate_order is not in
+                # self._cache. (there should be a possibility to
+                # check this assumption in a testsuite)
+                if n == self._approximate_order:
+                    if c:
+                        self._true_order = True
+                        self._approximate_order = n
+                    else:
+                        ao = self._approximate_order + 1
+                        while ao in self._cache:
+                            if self._cache[ao]:
+                                self._true_order = True
+                                self._approximate_order = ao
+                                return c
+                            ao += 1
+                        self._approximate_order = ao
 
-        return c
+                return c
+
+        i = n - self._offset
+        if i >= len(self._cache):
+            a = len(self._cache) + self._offset
+            # It is important to extend by generator:
+            # self._iter might recurse, and thereby extend the
+            # cache itself, too.
+            self._cache.extend(next(self._iter) for _ in range(a, n+1))
+
+        return self._cache[i]
 
     def iterate_coefficients(self):
         """
