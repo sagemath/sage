@@ -962,6 +962,27 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.coefficients(sparse=sparse)
 
+    def _compute_coefficient_exp(self, k):
+        if k not in ZZ:
+            raise ValueError
+        k = ZZ(k)
+        if k.is_zero():
+            return self._base.zero()
+        if k.is_one():
+            return self._base.one()
+        q = self._Fq.cardinality()
+        if not k.is_power_of(q):
+            return self._base.zero()
+        c = self._base.zero()
+        for i in range(k.log(q)):
+            j = k.log(q) - i
+            c += self._compute_coefficient_exp(q**i)*self._compute_coefficient_log(q**j)**(q**i)
+        return -c
+
+    def exponential(self, name='z'):
+        L = LazyPowerSeriesRing(self._base, name)
+        return L(self._compute_coefficient_exp, valuation=1)
+
     def gen(self):
         r"""
         Return the generator of the Drinfeld module.
@@ -1135,9 +1156,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if k not in ZZ:
             raise TypeError("input must be an integer")
         k = ZZ(k)
-        if k == 0:
+        if k.is_zero():
             return self._base.zero()
-        if k == 1:
+        if k.is_one():
             return self._base.one()
         r = self._gen.degree()
         T = self._gen[0]
@@ -1178,8 +1199,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.logarithm()
             z + ((4*T/(T^4+4))*z^5) + O(z^7)
         """
-        L = LazyPowerSeriesRing(self._base, name, sparse=False)
-        return L(self._compute_coefficient_log)
+        L = LazyPowerSeriesRing(self._base, name)
+        return L(self._compute_coefficient_log, valuation=1)
 
 
     def morphism(self):
