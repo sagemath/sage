@@ -237,3 +237,6 @@ src/.coverage/
 # git worktree
 worktree*
 **/worktree*
+
+# Visual Studio
+/.vs
