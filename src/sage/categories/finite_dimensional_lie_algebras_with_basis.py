@@ -293,7 +293,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()                                     # optional - sage.combinat sage.modules
                 sage: a, b, c = L.lie_algebra_generators()                                                              # optional - sage.combinat sage.modules
-                sage: L.killing_form(a, b)                                                                              # optional - sage.modules
+                sage: L.killing_form(a, b)                                                                              # optional - sage.combinat sage.modules
                 0
             """
             return self.killing_matrix(x, y).trace()

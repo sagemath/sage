@@ -613,8 +613,8 @@ class Modules(Category_module):
             EXAMPLES::
 
                 sage: m = matrix([[0,1], [1,1]])                                                                        # optional - sage.modules
-                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.modules
-                sage: J.linear_combination(((a+b, 1), (-2*b + c, -1)))                                                  # optional - sage.modules
+                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.combinat sage.modules
+                sage: J.linear_combination(((a+b, 1), (-2*b + c, -1)))                                                  # optional - sage.combinat sage.modules
                 1 + (3, -1)
             """
             if factor_on_left:

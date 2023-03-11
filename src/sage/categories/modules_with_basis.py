@@ -945,10 +945,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example(); A.rename("A")                                                                    # optional - sage.modules
-                sage: A.tensor(A, A)                                                                                    # optional - sage.modules
+                sage: A = C.example(); A.rename("A")                                                                    # optional - sage.combinat sage.modules
+                sage: A.tensor(A, A)                                                                                    # optional - sage.combinat sage.modules
                 A # A # A
-                sage: A.rename(None)                                                                                    # optional - sage.modules
+                sage: A.rename(None)                                                                                    # optional - sage.combinat sage.modules
             """
             constructor = kwargs.pop('constructor', tensor)
             cat = constructor.category_from_parents(parents)
@@ -1096,8 +1096,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: m = matrix([[0,1], [1,1]])                                                                        # optional - sage.modules
-                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.modules
-                sage: J.term(1, -2)                                                                                     # optional - sage.modules
+                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.combinat sage.modules
+                sage: J.term(1, -2)                                                                                     # optional - sage.combinat sage.modules
                 0 + (-2, 0)
 
             Design: should this do coercion on the coefficient ring?
@@ -1122,8 +1122,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: m = matrix([[0,1], [1,1]])                                                                        # optional - sage.modules
-                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.modules
-                sage: J.sum_of_terms([(0, 2), (2, -3)])                                                                 # optional - sage.modules
+                sage: J.<a,b,c> = JordanAlgebra(m)                                                                      # optional - sage.combinat sage.modules
+                sage: J.sum_of_terms([(0, 2), (2, -3)])                                                                 # optional - sage.combinat sage.modules
                 2 + (0, -3)
             """
             return self.sum(self.term(index, coeff) for (index, coeff) in terms)
@@ -2118,9 +2118,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example()                                                                                   # optional - sage.modules
-                sage: a, b, c = A.algebra_generators()                                                                  # optional - sage.modules
-                sage: a.tensor(b, c)                                                                                    # optional - sage.modules
+                sage: A = C.example()                                                                                   # optional - sage.combinat sage.modules
+                sage: a, b, c = A.algebra_generators()                                                                  # optional - sage.combinat sage.modules
+                sage: a.tensor(b, c)                                                                                    # optional - sage.combinat sage.modules
                 B[word: a] # B[word: b] # B[word: c]
 
             FIXME: is this a policy that we want to enforce on all parents?
@@ -2269,17 +2269,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 """
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.modules
+                    sage: A = AlgebrasWithBasis(QQ).example(); A                                                        # optional - sage.combinat sage.modules
                     An example of an algebra with basis:
                      the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                    sage: B = HopfAlgebrasWithBasis(QQ).example(); B                                                    # optional - sage.modules
+                    sage: B = HopfAlgebrasWithBasis(QQ).example(); B                                                    # optional - sage.combinat sage.modules
                     An example of Hopf algebra with basis:
                      the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-                    sage: A.an_element()                                                                                # optional - sage.modules
+                    sage: A.an_element()                                                                                # optional - sage.combinat sage.modules
                     B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
-                    sage: B.an_element()                                                                                # optional - sage.modules
+                    sage: B.an_element()                                                                                # optional - sage.combinat sage.modules
                     B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
-                    sage: cartesian_product((A, B, A)).an_element()           # indirect doctest                        # optional - sage.modules
+                    sage: cartesian_product((A, B, A)).an_element()           # indirect doctest                        # optional - sage.combinat sage.modules
                     2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
                 """
                 from .cartesian_product import cartesian_product
