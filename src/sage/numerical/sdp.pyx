@@ -116,18 +116,18 @@ matrices `C-\sum_k x_k A_k`, cf. (Primal problem) above, available via
 
 More interesting example, the :func:`Lovasz theta <sage.graphs.lovasz_theta.lovasz_theta>` of the 7-gon::
 
-    sage: c=graphs.CycleGraph(7)
-    sage: c2=c.distance_graph(2).adjacency_matrix()
-    sage: c3=c.distance_graph(3).adjacency_matrix()
-    sage: p.<y>=SemidefiniteProgram()
-    sage: p.add_constraint((1/7)*matrix.identity(7)>=-y[0]*c2-y[1]*c3)
-    sage: p.set_objective(y[0]*(c2**2).trace()+y[1]*(c3**2).trace())
-    sage: x=p.solve(); x+1                                                             # optional - cvxopt
+    sage: c = graphs.CycleGraph(7)                                                     # optional - sage.graphs
+    sage: c2 = c.distance_graph(2).adjacency_matrix()                                  # optional - sage.graphs
+    sage: c3 = c.distance_graph(3).adjacency_matrix()                                  # optional - sage.graphs
+    sage: p.<y> = SemidefiniteProgram()                                                # optional - sage.graphs
+    sage: p.add_constraint((1/7)*matrix.identity(7)>=-y[0]*c2-y[1]*c3)                 # optional - sage.graphs
+    sage: p.set_objective(y[0]*(c2**2).trace()+y[1]*(c3**2).trace())                   # optional - sage.graphs
+    sage: x = p.solve(); x + 1                                                         # optional - cvxopt sage.graphs
     3.31766...
 
 Unlike in the previous example, the slack variable is very far from 0::
 
-    sage: p.slack(0).trace()        # tol 1e-14                                        # optional - cvxopt
+    sage: p.slack(0).trace()        # tol 1e-14                                        # optional - cvxopt sage.graphs
     1.0
 
 The default CVXOPT backend computes with the Real Double Field, for example::
