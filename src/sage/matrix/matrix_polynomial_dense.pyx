@@ -2021,34 +2021,34 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Demonstrating shifts::
 
-            sage: P = M.weak_popov_form(shifts=[0,2,4]); P                      # optional - sage.combinat sage.libs.pari
+            sage: P = M.weak_popov_form(shifts=[0,2,4]); P                                          # optional - sage.combinat sage.libs.pari
             [            6*x^2 + 6*x + 4 5*x^4 + 4*x^3 + 5*x^2 + 5*x                     2*x + 2]
             [                          2             4*x^2 + 2*x + 4                           5]
-            sage: P == M.weak_popov_form(shifts=[-10,-8,-6])                    # optional - sage.combinat sage.libs.pari
+            sage: P == M.weak_popov_form(shifts=[-10,-8,-6])                                        # optional - sage.combinat sage.libs.pari
             True
 
         Column-wise form is the row-wise form of the transpose::
 
-            sage: M.weak_popov_form() == M.T.weak_popov_form(row_wise=False).T  # optional - sage.combinat sage.libs.pari
+            sage: M.weak_popov_form() == M.T.weak_popov_form(row_wise=False).T                      # optional - sage.combinat sage.libs.pari
             True
 
         Zero vectors can be discarded::
 
-            sage: M.weak_popov_form(row_wise=False)                             # optional - sage.combinat sage.libs.pari
+            sage: M.weak_popov_form(row_wise=False)                                                 # optional - sage.combinat sage.libs.pari
             [x + 4     6     0]
             [    5     1     0]
 
-            sage: P, U = M.weak_popov_form(transformation=True,                 # optional - sage.combinat sage.libs.pari
+            sage: P, U = M.weak_popov_form(transformation=True,                                     # optional - sage.combinat sage.libs.pari
             ....:                          row_wise=False,
             ....:                          include_zero_vectors=False)
-            sage: P                                                             # optional - sage.combinat sage.libs.pari
+            sage: P                                                                                 # optional - sage.combinat sage.libs.pari
             [x + 4     6]
             [    5     1]
-            sage: U                                                             # optional - sage.combinat sage.libs.pari
+            sage: U                                                                                 # optional - sage.combinat sage.libs.pari
             [                5*x + 2         5*x^2 + 4*x + 4 3*x^3 + 3*x^2 + 2*x + 4]
             [                      1                       1                 2*x + 1]
             [                5*x + 5                       2                       6]
-            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                       # optional - sage.combinat sage.libs.pari
+            sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()                                           # optional - sage.combinat sage.libs.pari
             True
 
         .. SEEALSO::
@@ -2516,10 +2516,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [0 0 x]
             sage: A.is_reduced()
             True
-            sage: W = A.reduced_form(); W
+            sage: W = A.reduced_form(); W                                               # optional - sage.combinat
             [ x  x  x]
             [-x -x  0]
-            sage: W.is_weak_popov()
+            sage: W.is_weak_popov()                                                     # optional - sage.combinat
             True
 
         The last example shows the usage of the transformation parameter::

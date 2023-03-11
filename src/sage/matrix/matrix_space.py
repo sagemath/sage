@@ -498,15 +498,15 @@ class MatrixSpace(UniqueRepresentation, Parent):
         sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')                           # optional - sage.libs.flint
         sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
 
-        sage: type(M1(range(4)))
+        sage: type(M1(range(4)))                                                        # optional - sage.libs.flint
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         sage: type(M2(range(4)))
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
-        sage: M1(M2.an_element())
+        sage: M1(M2.an_element())                                                       # optional - sage.libs.flint
         [ 0  1]
         [-1  2]
-        sage: M2(M1.an_element())
+        sage: M2(M1.an_element())                                                       # optional - sage.libs.flint
         [ 0  1]
         [-1  2]
 
@@ -515,16 +515,16 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that libgap matrices over finite fields are working properly::
 
-        sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')                  # optional - sage.libs.pari
-        sage: M2.one()                                                          # optional - sage.libs.pari
+        sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')                          # optional - sage.libs.gap sage.libs.pari
+        sage: M2.one()                                                                  # optional - sage.libs.gap sage.libs.pari
         [1 0 0 0 0]
         [0 1 0 0 0]
         [0 0 1 0 0]
         [0 0 0 1 0]
         [0 0 0 0 1]
-        sage: m = M2.random_element()                                           # optional - sage.libs.pari
-        sage: M1 = MatrixSpace(GF(2), 5)                                        # optional - sage.libs.pari
-        sage: M1(m * m) == M1(m) * M1(m)                                        # optional - sage.libs.pari
+        sage: m = M2.random_element()                                                   # optional - sage.libs.gap sage.libs.pari
+        sage: M1 = MatrixSpace(GF(2), 5)                                                # optional - sage.libs.pari
+        sage: M1(m * m) == M1(m) * M1(m)                                                # optional - sage.libs.pari
         True
     """
 
@@ -539,8 +539,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
             sage: M1 = MatrixSpace(QQ, 2)
             sage: M2 = MatrixSpace(QQ, 2)
+            sage: M1 is M2
+            True
             sage: M3 = MatrixSpace(QQ, 2, implementation='flint')                       # optional - sage.libs.flint
-            sage: M1 is M2 and M1 is M3
+            sage: M1 is M3                                                              # optional - sage.libs.flint
             True
 
         ::
@@ -1862,10 +1864,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Check different implementations::
 
-            sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
+            sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')                       # optional - sage.libs.flint
             sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
 
-            sage: type(M1.diagonal_matrix([1, 2]))
+            sage: type(M1.diagonal_matrix([1, 2]))                                      # optional - sage.libs.flint
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: type(M2.diagonal_matrix([1, 2]))
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
