@@ -1051,6 +1051,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: log.compose(exp)
             z + O(z^8)
 
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: exp = phi.exponential()
+            sage: exp[2] == 1/(T**q - T)  # expected value
+            True
+            sage: exp[2^2] == 1/((T**(q**2) - T)*(T**q - T)**q)  # expected value
+            True
+            sage: exp[2^3] == 1/((T**(q**3) - T)*(T**(q**2) - T)**q*(T**q - T)**(q**2))  # expected value
+            True
+
         REFERENCE:
 
         See section 4.6 of [Gos1998]_ for the definition of the exponential.
@@ -1251,28 +1264,45 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the logarithm of the given Drinfeld module.
 
+        By definition, the logarithm is the compositional inverse of the
+        exponential (see :meth:`exponential`).
+
         EXAMPLES::
 
             sage: A = GF(2)['T']
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1])
-            sage: q = A.base_ring().cardinality()
             sage: log = phi.logarithm(); log
-            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^7)
-            sage: log[q] == -1/((T**q - T))
-            True
-            sage: log[q**2] == 1/((T**q - T)*(T**(q**2) - T))
-            True
-            sage: log[q**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))
-            True
+            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
 
-        ::
+        The logarithm is returned as a lazy power series, meaning that any of
+        its coefficients can be computed on demands::
+
+            sage: log[2^4]
+            1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
+            sage: log[2^5]
+            1/(T^62 + T^61 + T^59 + T^58 + T^55 + T^54 + T^52 + T^51 + T^47 + T^46 + T^44 + T^43 + T^40 + T^39 + T^37 + T^36 + T^31 + T^30 + T^28 + T^27 + T^24 + T^23 + T^21 + T^20 + T^16 + T^15 + T^13 + T^12 + T^9 + T^8 + T^6 + T^5)
+
+        Example in higher rank::
 
             sage: A = GF(5)['T']
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: phi.logarithm()
-            z + ((4*T/(T^4+4))*z^5) + O(z^7)
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = 2
+            sage: log[2] == -1/((T**q - T))  # expected value
+            True
+            sage: log[2**2] == 1/((T**q - T)*(T**(q**2) - T))  # expected value
+            True
+            sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
+            True
         """
         L = LazyPowerSeriesRing(self._base, name)
         return L(self._compute_coefficient_log, valuation=1)
