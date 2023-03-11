@@ -37,7 +37,7 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
     Base class for algebra of `q`-commuting (Laurent, etc.) polynomials.
 
     Let `R` be a commutative ring, and fix an element `q \in R`. Let
-    B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
+    `B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
     index set `I`. Let `R[I]_{q,B}` denote the polynomial ring in the variables
     `I` such that we have the `q`-*commuting* relation for `x, y \in I`:
 
@@ -222,7 +222,7 @@ class qCommutingPolynomials(qCommutingPolynomials_generic):
     The algebra of `q`-commuting polynomials.
 
     Let `R` be a commutative ring, and fix an element `q \in R`. Let
-    B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
+    `B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
     index set `I`. Let `R[I]_{q,B}` denote the polynomial ring in the variables
     `I` such that we have the `q`-*commuting* relation for `x, y \in I`:
 
@@ -404,7 +404,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
     The algebra of `q`-commuting Laurent polynomials.
 
     Let `R` be a commutative ring, and fix an element `q \in R`. Let
-    B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
+    `B = (B_{xy})_{x,y \in I}`  be a skew-symmetric bilinear form with
     index set `I`. Let `R[I]_{q,B}` denote the Laurent polynomial ring in
     the variables `I` such that we have the `q`-*commuting* relation
     for `x, y \in I`:
