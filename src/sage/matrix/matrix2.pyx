@@ -18118,11 +18118,13 @@ def _jordan_form_vector_in_difference(V, W):
         sage: sage.matrix.matrix2._jordan_form_vector_in_difference([v,w], [u])
         (1, 0, 0, 0)
     """
+    from sage.modules.free_module import span
+
     if not V:
         return None
     if not W:
         return V[0]
-    W_space = sage.all.span(W)
+    W_space = span(W)
     for v in V:
         if v not in W_space:
             return v

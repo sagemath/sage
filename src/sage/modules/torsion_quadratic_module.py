@@ -21,7 +21,6 @@ from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_quadratic_module import FreeQuadraticModule
 from sage.arith.misc import gcd
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Zp
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.groups.additive_abelian.qmodnz import QmodnZ
@@ -1063,8 +1062,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [   0    0    0    0    0    0    0    0]
             [   0    0    0    0    0    0    0    0]
         """
-        gens = []
         from sage.quadratic_forms.genera.normal_form import p_adic_normal_form, _normalize
+        from sage.rings.padics.factory import Zp
+
+        gens = []
         for p in self.annihilator().gen().prime_divisors():
             D_p = self.primary_part(p)
             q_p = D_p.gram_matrix_quadratic()
