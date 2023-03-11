@@ -90,29 +90,29 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We construct the group algebra of the Klein Four-Group
             over the rationals::
 
-                sage: A = KleinFourGroup().algebra(QQ)
+                sage: A = KleinFourGroup().algebra(QQ)                                  # optional - sage.groups sage.modules
 
             This algebra belongs to the category of finite dimensional
             algebras over the rationals::
 
-                sage: A in Algebras(QQ).FiniteDimensional().WithBasis()
+                sage: A in Algebras(QQ).FiniteDimensional().WithBasis()                 # optional - sage.groups sage.modules
                 True
 
             Since the field has characteristic `0`, Maschke's Theorem
             tells us that the group algebra is semisimple. So its
             radical is the zero ideal::
 
-                sage: A in Algebras(QQ).Semisimple()
+                sage: A in Algebras(QQ).Semisimple()                                    # optional - sage.groups sage.modules
                 True
-                sage: A.radical_basis()
+                sage: A.radical_basis()                                                 # optional - sage.groups sage.modules
                 ()
 
             Let's work instead over a field of characteristic `2`::
 
-                sage: A = KleinFourGroup().algebra(GF(2))
-                sage: A in Algebras(GF(2)).Semisimple()
+                sage: A = KleinFourGroup().algebra(GF(2))                               # optional - sage.groups sage.libs.pari sage.modules
+                sage: A in Algebras(GF(2)).Semisimple()                                 # optional - sage.groups sage.libs.pari sage.modules
                 False
-                sage: A.radical_basis()
+                sage: A.radical_basis()                                                 # optional - sage.groups sage.libs.pari sage.modules
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
 
             We now implement the algebra `A = K[x] / (x^p-1)`, where `K`
@@ -120,7 +120,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             radical; alas, we currently need to wrap `A` to make it a
             proper :class:`ModulesWithBasis`::
 
-                sage: class AnAlgebra(CombinatorialFreeModule):
+                sage: class AnAlgebra(CombinatorialFreeModule):                         # optional - sage.modules
                 ....:     def __init__(self, F):
                 ....:         R.<x> = PolynomialRing(F)
                 ....:         I = R.ideal(x**F.characteristic()-F.one())
@@ -132,24 +132,24 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ....:         return self.basis()[self.base_ring().one()]
                 ....:     def product_on_basis(self, w1, w2):
                 ....:         return self.from_vector(vector(w1*w2))
-                sage: AnAlgebra(GF(3)).radical_basis()
+                sage: AnAlgebra(GF(3)).radical_basis()                                  # optional - sage.libs.pari sage.modules
                 (B[1] + 2*B[xbar^2], B[xbar] + 2*B[xbar^2])
-                sage: AnAlgebra(GF(16,'a')).radical_basis()
+                sage: AnAlgebra(GF(16,'a')).radical_basis()                             # optional - sage.libs.pari sage.modules
                 (B[1] + B[xbar],)
-                sage: AnAlgebra(GF(49,'a')).radical_basis()
+                sage: AnAlgebra(GF(49,'a')).radical_basis()                             # optional - sage.libs.pari sage.modules
                 (B[1] + 6*B[xbar^6], B[xbar] + 6*B[xbar^6], B[xbar^2] + 6*B[xbar^6],
                  B[xbar^3] + 6*B[xbar^6], B[xbar^4] + 6*B[xbar^6], B[xbar^5] + 6*B[xbar^6])
 
             TESTS::
 
-                sage: A = KleinFourGroup().algebra(GF(2))
-                sage: A.radical_basis()
+                sage: A = KleinFourGroup().algebra(GF(2))                               # optional - sage.groups sage.libs.pari sage.modules
+                sage: A.radical_basis()                                                 # optional - sage.groups sage.libs.pari sage.modules
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
 
-                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())
-                sage: A.radical_basis.__module__
+                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())              # optional - sage.groups sage.modules
+                sage: A.radical_basis.__module__                                        # optional - sage.groups sage.modules
                 'sage.categories.finite_dimensional_algebras_with_basis'
-                sage: A.radical_basis()
+                sage: A.radical_basis()                                                 # optional - sage.groups sage.modules
                 ()
             """
             F = self.base_ring()
@@ -292,10 +292,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             descent algebra of the symmetric group is of dimension the
             number of partitions of `n`::
 
-                sage: [ DescentAlgebra(QQ,n).B().semisimple_quotient().dimension()
+                sage: [ DescentAlgebra(QQ,n).B().semisimple_quotient().dimension()      # optional - sage.combinat
                 ....:   for n in range(6) ]
                 [1, 1, 2, 3, 5, 7]
-                sage: [Partitions(n).cardinality() for n in range(10)]
+                sage: [Partitions(n).cardinality() for n in range(10)]                  # optional - sage.combinat
                 [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
 
             .. TODO::
@@ -366,7 +366,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             The center of a semisimple algebra is semisimple::
 
-                sage: DihedralGroup(6).algebra(QQ).center() in Algebras(QQ).Semisimple()
+                sage: DihedralGroup(6).algebra(QQ).center() in Algebras(QQ).Semisimple()    # optional - sage.groups sage.modules
                 True
 
             .. TODO::
@@ -474,7 +474,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
                 (containing the arrows a:x->y and b:x->y) over Rational Field
-                sage: A.orthogonal_idempotents_central_mod_radical()
+                sage: A.orthogonal_idempotents_central_mod_radical()                        # optional - sage.rings.number_field
                 (x, y)
 
             ::
@@ -656,7 +656,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             matrix counts the number of paths between two vertices::
 
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: A.cartan_invariants_matrix()                                                                      # optional - sage.modules
+                sage: A.cartan_invariants_matrix()                                                                      # optional - sage.modules sage.rings.number_field
                 [1 2]
                 [0 1]
 
@@ -740,7 +740,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
                 (containing the arrows a:x->y and b:x->y) over Rational Field
-                sage: Q = A.isotypic_projective_modules(side="left"); Q
+                sage: Q = A.isotypic_projective_modules(side="left"); Q                                                 # optional - sage.rings.number_field
                 [Free module generated by {0} over Rational Field,
                  Free module generated by {0, 1, 2} over Rational Field]
                 sage: [[x.lift() for x in Qi.basis()]
@@ -751,7 +751,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We check that the sum of the dimensions of the isotypic
             projective modules is the dimension of ``self``::
 
-                sage: sum([Qi.dimension() for Qi in Q]) == A.dimension()
+                sage: sum([Qi.dimension() for Qi in Q]) == A.dimension()                                                # optional - sage.rings.number_field
                 True
 
             .. SEEALSO::
@@ -783,19 +783,19 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: idemp = A.orthogonal_idempotents_central_mod_radical()
-                sage: A.peirce_summand(idemp[0], idemp[1])
+                sage: idemp = A.orthogonal_idempotents_central_mod_radical()                                            # optional - sage.rings.number_field
+                sage: A.peirce_summand(idemp[0], idemp[1])                                                              # optional - sage.rings.number_field
                 Free module generated by {0, 1} over Rational Field
-                sage: A.peirce_summand(idemp[1], idemp[0])
+                sage: A.peirce_summand(idemp[1], idemp[0])                                                              # optional - sage.rings.number_field
                 Free module generated by {} over Rational Field
 
             We recover the `2\times2` block of `\QQ[S_4]`
             corresponding to the unique simple module of dimension `2`
             of the symmetric group `S_4`::
 
-                sage: A4 = SymmetricGroup(4).algebra(QQ)
-                sage: e = A4.central_orthogonal_idempotents()[2]
-                sage: A4.peirce_summand(e, e)
+                sage: A4 = SymmetricGroup(4).algebra(QQ)                                                                # optional - sage.groups
+                sage: e = A4.central_orthogonal_idempotents()[2]                                                        # optional - sage.groups sage.rings.number_field
+                sage: A4.peirce_summand(e, e)                                                                           # optional - sage.groups sage.rings.number_field
                 Free module generated by {0, 1, 2, 3} over Rational Field
 
             TESTS:
@@ -803,11 +803,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We check each idempotent belong to its own Peirce summand
             (see :trac:`24687`)::
 
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: M = HeckeMonoid(SymmetricGroup(4))
-                sage: A = M.algebra(QQ)
-                sage: Idms = A.orthogonal_idempotents_central_mod_radical()
-                sage: all(A.peirce_summand(e, e).retract(e)
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                                                 # optional - sage.groups
+                sage: M = HeckeMonoid(SymmetricGroup(4))                                                                # optional - sage.groups
+                sage: A = M.algebra(QQ)                                                                                 # optional - sage.groups
+                sage: Idms = A.orthogonal_idempotents_central_mod_radical()                                             # optional - sage.groups sage.rings.number_field
+                sage: all(A.peirce_summand(e, e).retract(e)                                                             # optional - sage.groups sage.rings.number_field
                 ....:     in A.peirce_summand(e, e) for e in Idms)
                 True
             """
@@ -881,9 +881,9 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We recover that the group algebra of the symmetric group
             `S_4` is a block matrix algebra::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)
-                sage: decomposition = A.peirce_decomposition()   # long time
-                sage: [[decomposition[i][j].dimension()          # long time (4s)
+                sage: A = SymmetricGroup(4).algebra(QQ)                                                                 # optional - sage.groups sage.modules
+                sage: decomposition = A.peirce_decomposition()   # long time                                            # optional - sage.groups sage.modules sage.rings.number_field
+                sage: [[decomposition[i][j].dimension()          # long time (4s)                                       # optional - sage.groups sage.modules sage.rings.number_field
                 ....:   for j in range(len(decomposition))]
                 ....:  for i in range(len(decomposition))]
                 [[9, 0, 0, 0, 0],
@@ -896,7 +896,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             dimension of the corresponding simple module of `S_4`. The
             latter are given by::
 
-                sage: [p.standard_tableaux().cardinality() for p in Partitions(4)]
+                sage: [p.standard_tableaux().cardinality() for p in Partitions(4)]                                      # optional - sage.combinat
                 [1, 3, 2, 3, 1]
             """
             if idempotents is None:
@@ -945,9 +945,9 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             With the algebra of the `0`-Hecke monoid::
 
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                                                 # optional - sage.groups
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                                                    # optional - sage.groups sage.modules
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()                                      # optional - sage.groups sage.modules sage.rings.number_field
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
                 True
 
@@ -994,19 +994,19 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             2. Some idempotents summing to 1 but not orthogonal::
 
-                sage: R.<x> = PolynomialRing(GF(2))
-                sage: A = PQAlgebra(GF(2), x)
-                sage: a = A.one()
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,))
+                sage: R.<x> = PolynomialRing(GF(2))                                                                     # optional - sage.libs.pari
+                sage: A = PQAlgebra(GF(2), x)                                                                           # optional - sage.libs.pari
+                sage: a = A.one()                                                                                       # optional - sage.libs.pari
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,))                                     # optional - sage.libs.pari
                 True
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, a, a))
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, a, a))                                # optional - sage.libs.pari
                 False
 
             3. Some orthogonal idempotents not summing to the identity::
 
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,a))
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,a))                                    # optional - sage.libs.pari
                 False
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(())
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(())                                       # optional - sage.libs.pari
                 False
             """
             return (self.sum(l) == self.one()

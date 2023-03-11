@@ -1855,7 +1855,7 @@ class VectorFunctor(ConstructionFunctor):
         sage: F = (ZZ^3).construction()[0]                                                                              # optional - sage.modules
         sage: F                                                                                                         # optional - sage.modules
         VectorFunctor
-        sage: F(GF(2)['t'])                                                                                             # optional - sage.modules
+        sage: F(GF(2)['t'])                                                                                             # optional - sage.libs.pari sage.modules
         Ambient free module of rank 3
          over the principal ideal domain Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
     """

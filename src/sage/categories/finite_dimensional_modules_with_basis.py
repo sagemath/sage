@@ -118,8 +118,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Ax  = F.annihilator([x]);   Ax .rename("Ax")                                                      # optional - sage.modules
                 sage: Ay  = F.annihilator([y]);   Ay .rename("Ay")                                                      # optional - sage.modules
                 sage: Axy = F.annihilator([x,y]); Axy.rename("Axy")                                                     # optional - sage.modules
-                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))                                           # optional - sage.modules
-                sage: sorted(P.cover_relations(), key=str)                                                              # optional - sage.modules
+                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))                                           # optional - sage.combinat sage.graphs sage.modules
+                sage: sorted(P.cover_relations(), key=str)                                                              # optional - sage.combinat sage.graphs sage.modules
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
             """
             return self.submodule(self.annihilator_basis(S, action, side),
@@ -274,9 +274,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: p_mult = matrix([[0,0,0], [0,0,-1], [0,0,0]])                                                     # optional - sage.modules
                 sage: q_mult = matrix([[0,0,1], [0,0,0], [0,0,0]])                                                      # optional - sage.modules
-                sage: A = algebras.FiniteDimensional(QQ, [p_mult, q_mult, matrix(QQ, 3, 3)],                            # optional - sage.modules
+                sage: A = algebras.FiniteDimensional(QQ, [p_mult, q_mult, matrix(QQ, 3, 3)],                            # optional - sage.combinat sage.modules
                 ....:                                'p,q,z')
-                sage: A.from_vector(vector([1,0,2]))                                                                    # optional - sage.modules
+                sage: A.from_vector(vector([1,0,2]))                                                                    # optional - sage.combinat sage.modules
                 p + 2*z
             """
             if order is None:
