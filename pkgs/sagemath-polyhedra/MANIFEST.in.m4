@@ -10,6 +10,7 @@ include requirements.txt
 global-include all__sagemath_polyhedra.py
 
 graft sage/misc
+exclude sage/misc/all.py
 # see sage.misc.all__sagemath_polyhedra -- exclude dev tools, session management
 exclude sage/misc/dev_tools.p*
 exclude sage/misc/sage_timeit_class.p*
@@ -94,6 +95,7 @@ exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 exclude sage/data_structures/stream.*
 
 graft sage/geometry
+exclude sage/geometry/all.py
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/ribbon_graph.p*                    # depends on sage.groups.perm_gps
