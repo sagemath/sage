@@ -495,9 +495,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^2
             sage: H = V.endomorphism_ring()([[0,-1], [1,0]])
-            sage: H.eigenvalues()
+            sage: H.eigenvalues()                                                                   # optional - sage.rings.number_field
             [-1*I, 1*I]
-            sage: H.eigenvalues(extend=False)
+            sage: H.eigenvalues(extend=False)                                                       # optional - sage.libs.pari
             []
         """
         if self.base_ring().is_field():
@@ -535,18 +535,18 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             ], 1), (1*I, [
             (1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I)
             ], 1)]
-            sage: H.eigenvectors(extend=False)
+            sage: H.eigenvectors(extend=False)                                                      # optional - sage.rings.number_field
             [(3, [
             (0, 0, 1, -6/7)
             ], 1)]
             sage: H1=(V.Hom(V))(matrix(QQ, [[2,1,0],[0,2,0],[0,0,3]]))
-            sage: H1.eigenvectors()
+            sage: H1.eigenvectors()                                                                 # optional - sage.rings.number_field
             [(3, [
             (0, 0, 1, -6/7)
             ], 1), (2, [
             (0, 1, 0, 17/7)
             ], 2)]
-            sage: H1.eigenvectors(extend=False)
+            sage: H1.eigenvectors(extend=False)                                                     # optional - sage.rings.number_field
             [(3, [
             (0, 0, 1, -6/7)
             ], 1), (2, [
@@ -557,13 +557,13 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenvectors()
+            sage: V.hom(m, side="right").eigenvectors()                                             # optional - sage.rings.number_field
             [(1,
               [
               (1, 0)
               ],
               2)]
-            sage: V.hom(m).eigenvectors()
+            sage: V.hom(m).eigenvectors()                                                           # optional - sage.rings.number_field
             [(1,
               [
               (0, 1)
@@ -618,14 +618,14 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
               Basis matrix:
               [   0    1 -1*I])]
 
-            sage: h.eigenspaces(extend=False)
+            sage: h.eigenspaces(extend=False)                                                       # optional - sage.rings.number_field
             [(1,
               Vector space of degree 3 and dimension 1 over Rational Field
               Basis matrix:
               [1 0 0])]
 
             sage: h = V.hom([[2,1,0], [0,2,0], [0,0,-1]], V)
-            sage: h.eigenspaces()
+            sage: h.eigenspaces()                                                                   # optional - sage.rings.number_field
             [(-1, Vector space of degree 3 and dimension 1 over Rational Field
               Basis matrix:
               [0 0 1]),
@@ -634,7 +634,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
               [0 1 0])]
 
             sage: h = V.hom([[2,1,0], [0,2,0], [0,0,2]], V)
-            sage: h.eigenspaces()
+            sage: h.eigenspaces()                                                                   # optional - sage.rings.number_field
             [(2, Vector space of degree 3 and dimension 2 over Rational Field
               Basis matrix:
               [0 1 0]
@@ -643,12 +643,12 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenspaces()
+            sage: V.hom(m, side="right").eigenspaces()                                              # optional - sage.rings.number_field
             [(1,
               Vector space of degree 2 and dimension 1 over Rational Field
               Basis matrix:
               [1 0])]
-            sage: V.hom(m).eigenspaces()
+            sage: V.hom(m).eigenspaces()                                                            # optional - sage.rings.number_field
             [(1,
               Vector space of degree 2 and dimension 1 over Rational Field
               Basis matrix:

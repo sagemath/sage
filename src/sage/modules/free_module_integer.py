@@ -369,10 +369,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ...
             sage: L.reduced_basis == A
             True
-            sage: old = L.reduced_basis[0].norm().n()
+            sage: old = L.reduced_basis[0].norm().n()                                   # optional - sage.symbolic
             sage: _ = L.LLL()
-            sage: new = L.reduced_basis[0].norm().n()
-            sage: new <= old
+            sage: new = L.reduced_basis[0].norm().n()                                   # optional - sage.symbolic
+            sage: new <= old                                                            # optional - sage.symbolic
             True
         """
         basis = self.reduced_basis

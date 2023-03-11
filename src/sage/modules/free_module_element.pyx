@@ -944,20 +944,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(ZZ, 4, range(4))
-            sage: giac(v)+v
+            sage: giac(v) + v                                                           # optional - sage.libs.giac
             [0,2,4,6]
 
         ::
 
             sage: v = vector(QQ, 3, [2/3, 0, 5/4])
-            sage: giac(v)
+            sage: giac(v)                                                               # optional - sage.libs.giac
             [2/3,0,5/4]
 
         ::
 
             sage: P.<x> = ZZ[]
             sage: v = vector(P, 3, [x^2 + 2, 2*x + 1, -2*x^2 + 4*x])
-            sage: giac(v)
+            sage: giac(v)                                                               # optional - sage.libs.giac
             [sageVARx^2+2,2*sageVARx+1,-2*sageVARx^2+4*sageVARx]
         """
         return self.list()
