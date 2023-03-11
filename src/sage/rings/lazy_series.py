@@ -94,7 +94,7 @@ We can change the base ring::
     sage: h.parent()
     Lazy Laurent Series Ring in z over Rational Field
     sage: h
-    4*z + 6*z^2 + 8*z^3 + 19*z^4 + 38*z^5 + 71*z^6 + O(z^7)
+    4*z + 6*z^2 + 8*z^3 + 19*z^4 + 38*z^5 + 71*z^6 + 130*z^7 + O(z^8)
     sage: hinv = h^-1; hinv
     1/4*z^-1 - 3/8 + 1/16*z - 17/32*z^2 + 5/64*z^3 - 29/128*z^4 + 165/256*z^5 + O(z^6)
     sage: hinv.valuation()
@@ -489,7 +489,7 @@ class LazyModuleElement(Element):
             sage: m = L(lambda n: n, valuation=0); m
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: m.map_coefficients(lambda c: c + 1)
-            2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+            2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + 8*z^7 + O(z^8)
 
         Similarly for Dirichlet series::
 
@@ -497,7 +497,7 @@ class LazyModuleElement(Element):
             sage: s = L(lambda n: n-1); s
             1/(2^z) + 2/3^z + 3/4^z + 4/5^z + 5/6^z + 6/7^z + O(1/(8^z))
             sage: s.map_coefficients(lambda c: c + 1)
-            2/2^z + 3/3^z + 4/4^z + 5/5^z + 6/6^z + 7/7^z + O(1/(8^z))
+            2/2^z + 3/3^z + 4/4^z + 5/5^z + 6/6^z + 7/7^z + 8/8^z + O(1/(9^z))
 
         Similarly for multivariate power series::
 
@@ -2620,7 +2620,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: N = M * (1 - M)
             sage: N
-            z + z^2 - z^3 - 6*z^4 - 15*z^5 - 29*z^6 + O(z^7)
+            z + z^2 - z^3 - 6*z^4 - 15*z^5 - 29*z^6 - 49*z^7 + O(z^8)
 
             sage: p = (1 - z)*(1 + z^2)^3 * z^-2
             sage: p
@@ -2780,7 +2780,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: M = L(lambda n: n, valuation=0); M
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: M^2
-            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + O(z^7)
+            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + 56*z^7 + 84*z^8 + O(z^9)
 
         Lazy Laurent series that are known to be exact can be raised
         to the power ``n``::
@@ -2957,7 +2957,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: N = L(lambda n: 1, 0); N
             1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
             sage: P = M / N; P
-            z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
+            z + z^2 + z^3 + z^4 + z^5 + z^6 + z^7 + O(z^8)
 
         If the division of exact Lazy Laurent series yields a Laurent
         polynomial, it is represented as an exact series::
@@ -3455,7 +3455,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: f = L(lambda n: n, valuation=0); f
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: f(z^2)
-            z^2 + 2*z^4 + 3*z^6 + O(z^7)
+            z^2 + 2*z^4 + 3*z^6 + 4*z^8 + O(z^9)
 
             sage: f = L(lambda n: n, valuation=-2); f
             -2*z^-2 - z^-1 + z + 2*z^2 + 3*z^3 + 4*z^4 + O(z^5)
@@ -3499,7 +3499,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: f(0)
             0
             sage: f(y)
-            y + 2*y^2 + 3*y^3 + 4*y^4 + 5*y^5 + 6*y^6 + O(y^7)
+            y + 2*y^2 + 3*y^3 + 4*y^4 + 5*y^5 + 6*y^6 + 7*y^7 + O(y^8)
             sage: fp = f(y - y)
             sage: fp == 0
             True
@@ -4405,7 +4405,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: fg = 1 / (1 - g - g*g); fg
             1 + 1/(2^s) + 1/(3^s) + 3/4^s + 1/(5^s) + 5/6^s + 1/(7^s) + O(1/(8^s))
             sage: fog - fg
-            O(1/(7^s))
+            O(1/(8^s))
 
             sage: f = 1 / (1 - 2*a)
             sage: f(g)
@@ -4712,6 +4712,15 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = L([-1], valuation=1, degree=3, constant=-1)
             sage: f.revert()
             (-z) + z^3 + (-z^4) + (-2*z^5) + 6*z^6 + z^7 + O(z^8)
+
+        Check that issue :trac:`35261` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
+            sage: f
+            z + z^2 + z^4 + O(z^7)
+            sage: f.revert()
+            z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
         """
         P = self.parent()
         if P._arity != 1:
@@ -5499,7 +5508,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(h)
             sage: f = L(lambda n: h[n]) - 1
             sage: f(f.revert())
-            h[1] + O^7
+            h[1] + O^8
 
         TESTS::
 
