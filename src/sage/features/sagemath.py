@@ -157,6 +157,29 @@ class sage__libs__flint(JoinFeature):
                               PythonModule('sage.libs.arb.arith')])
 
 
+class sage__libs__giac(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__giac
+        sage: sage__libs__giac().is_present()                       # optional - sage.libs.giac
+        FeatureTestResult('sage.libs.giac', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__giac
+            sage: isinstance(sage__libs__giac(), sage__libs__giac)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.giac',
+                             [PythonModule('sage.libs.giac.giac'),
+                              PythonModule('sage.interfaces.giac')])
+
+
 class sage__libs__ntl(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
@@ -405,6 +428,7 @@ def all_features():
             sage__graphs(),
             sage__groups(),
             sage__libs__flint(),
+            sage__libs__giac(),
             sage__libs__ntl(),
             sage__libs__pari(),
             sage__modules(),
