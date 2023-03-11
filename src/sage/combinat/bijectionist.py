@@ -1575,41 +1575,32 @@ class Bijectionist(SageObject):
             sage: bij.set_statistics((alpha1, beta1), (alpha2, beta2))
             sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
             sage: bij.set_constant_blocks(orbit_decomposition(A, rotate_permutation))
-            sage: for p in bij.constant_blocks(): print(list(p))
-            [[2, 1, 3, 4], [1, 2, 4, 3], [1, 3, 2, 4], [4, 2, 3, 1]]
-            [[3, 2, 1], [1, 3, 2], [2, 1, 3]]
-            [[2, 4, 3, 1], [3, 2, 4, 1], [2, 3, 1, 4], [1, 3, 4, 2]]
-            [[1, 4, 2, 3], [3, 1, 2, 4], [4, 2, 1, 3], [4, 1, 3, 2]]
+            sage: P = bij.constant_blocks()
+            sage: P = [sorted(p, key=lambda p: (len(p), p)) for p in P]
+            sage: P = sorted(P, key=lambda p: (len(next(iter(p))), len(p)))
+            sage: for p in P:
+            ....:     print(p)
+            [[1, 3, 2], [2, 1, 3], [3, 2, 1]]
             [[1, 4, 3, 2], [3, 2, 1, 4]]
             [[2, 1, 4, 3], [4, 3, 2, 1]]
-            [[2, 4, 1, 3], [3, 4, 2, 1], [4, 3, 1, 2], [3, 1, 4, 2]]
+            [[1, 2, 4, 3], [1, 3, 2, 4], [2, 1, 3, 4], [4, 2, 3, 1]]
+            [[1, 3, 4, 2], [2, 3, 1, 4], [2, 4, 3, 1], [3, 2, 4, 1]]
+            [[1, 4, 2, 3], [3, 1, 2, 4], [4, 1, 3, 2], [4, 2, 1, 3]]
+            [[2, 4, 1, 3], [3, 1, 4, 2], [3, 4, 2, 1], [4, 3, 1, 2]]
 
-            sage: for p in bij.constant_blocks(optimal=True): sorted(p, key=len)
+            sage: P = bij.constant_blocks(optimal=True)
+            sage: P = [sorted(p, key=lambda p: (len(p), p)) for p in P]
+            sage: P = sorted(P, key=lambda p: (len(next(iter(p))), len(p)))
+            sage: for p in P:
+            ....:     print(p)
             [[1], [1, 2], [1, 2, 3], [1, 2, 3, 4]]
-            [[1, 3, 2],
-             [2, 1, 3],
-             [3, 2, 1],
-             [2, 3, 4, 1],
-             [1, 3, 4, 2],
-             [2, 1, 3, 4],
-             [1, 3, 2, 4],
-             [2, 3, 1, 4],
-             [1, 2, 4, 3],
-             [3, 2, 4, 1],
-             [2, 1, 4, 3],
-             [2, 4, 3, 1],
-             [4, 2, 3, 1],
-             [4, 3, 2, 1],
-             [1, 4, 3, 2],
-             [3, 2, 1, 4]]
-            [[1, 4, 2, 3],
-             [4, 2, 1, 3],
-             [2, 4, 1, 3],
-             [4, 3, 1, 2],
-             [4, 1, 3, 2],
-             [3, 4, 2, 1],
-             [3, 1, 2, 4],
-             [3, 1, 4, 2]]
+            [[1, 3, 2], [2, 1, 3], [3, 2, 1],
+             [1, 2, 4, 3], [1, 3, 2, 4], [1, 3, 4, 2], [1, 4, 3, 2],
+             [2, 1, 3, 4], [2, 1, 4, 3], [2, 3, 1, 4], [2, 3, 4, 1],
+             [2, 4, 3, 1], [3, 2, 1, 4], [3, 2, 4, 1], [4, 2, 3, 1],
+             [4, 3, 2, 1]]
+            [[1, 4, 2, 3], [2, 4, 1, 3], [3, 1, 2, 4], [3, 1, 4, 2],
+             [3, 4, 2, 1], [4, 1, 3, 2], [4, 2, 1, 3], [4, 3, 1, 2]]
 
         The permutation `[2, 1]` is in none of these blocks::
 
