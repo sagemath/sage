@@ -19,7 +19,6 @@ from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi, I
 
 
 # ---------------- The Gamma Function  ------------------
@@ -218,8 +217,10 @@ def quadratic_L_function__exact(n, d):
     - [IR1990]_
     - [Was1997]_
     """
-    from sage.symbolic.ring import SR
     from sage.misc.functional import sqrt
+    from sage.symbolic.constants import I
+    from sage.symbolic.ring import SR
+
     if n <= 0:
         return QuadraticBernoulliNumber(1-n,d)/(n-1)
     elif n >= 1:
