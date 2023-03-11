@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                     # optional - sage.symbolic
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
