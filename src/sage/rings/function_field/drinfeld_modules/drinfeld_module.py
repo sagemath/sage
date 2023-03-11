@@ -963,8 +963,36 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return self._gen.coefficients(sparse=sparse)
 
     def _compute_coefficient_exp(self, k):
+        r"""
+        Return the `k`-th coefficient of the logarithm of ``self``.
+
+        INPUT:
+
+        - ``k`` (integer) -- the index of the coefficient
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: phi._compute_coefficient_exp(0)
+            0
+            sage: phi._compute_coefficient_exp(1)
+            1
+            sage: phi._compute_coefficient_exp(2)
+            1/(T^2 + T)
+            sage: phi._compute_coefficient_exp(3)
+            0
+            sage: phi._compute_coefficient_exp(2^4)
+            1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
+            sage: phi._compute_coefficient_exp(T)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be an integer
+        """
         if k not in ZZ:
-            raise ValueError
+            raise TypeError("input must be an integer")
         k = ZZ(k)
         if k.is_zero():
             return self._base.zero()
@@ -980,6 +1008,53 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return -c
 
     def exponential(self, name='z'):
+        r"""
+        Return the exponential of the given Drinfeld module.
+
+        INPUT:
+
+        - ``name`` (string, default: ``'z'``) -- the name of the generator of
+          the lazy power series ring.
+
+        EXAMPLES::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: exp = phi.exponential(); exp
+            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
+
+        The exponential is returned as a lazy power series, meaning that any of
+        its coefficients can be computed on demands::
+
+            sage: exp[2^4]
+            1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
+            sage: exp[2^5]
+            1/(T^160 + T^144 + T^136 + T^132 + T^130 + T^129 + T^120 + T^116 + T^114 + T^113 + T^108 + T^106 + T^105 + T^102 + T^101 + T^99 + T^92 + T^90 + T^89 + T^86 + T^85 + T^83 + T^78 + T^77 + T^75 + T^71 + T^62 + T^61 + T^59 + T^55 + T^47 + T^31)
+
+        Example in higher rank::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
+            sage: exp = phi.exponential(); exp
+            z + ((T/(T^4+4))*z^5) + O(z^8)
+
+        The exponential is the compositional inverse of the logarithm
+        (see :meth:`logarithm`)::
+
+            sage: log = phi.logarithm(); log
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+            sage: exp.compose(log)
+            z + O(z^8)
+            sage: log.compose(exp)
+            z + O(z^8)
+
+        REFERENCE:
+
+        See section 4.6 of [Gos1998]_ for the definition of the exponential.
+        """
         L = LazyPowerSeriesRing(self._base, name)
         return L(self._compute_coefficient_exp, valuation=1)
 
