@@ -23,9 +23,9 @@ from math import floor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.rings.rational_field import QQ
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.matrix.constructor import matrix, column_matrix
 from sage.libs.pari.all import pari
 from sage.modules.free_module_element import vector
