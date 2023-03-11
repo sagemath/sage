@@ -111,13 +111,17 @@ Or the algebraic field::
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+
+try:
+    from sage.rings.real_mpfr import RR
+except ImportError:
+    RR = None
 
 
 def is_FilteredVectorSpace(X):
