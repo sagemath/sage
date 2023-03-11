@@ -2364,17 +2364,17 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: f(x,y) = x^2+y
-            sage: m = matrix([[f,f*f],[f^3,f^4]]); m
+            sage: f(x,y) = x^2 + y                                                      # optional - sage.symbolic
+            sage: m = matrix([[f, f*f], [f^3, f^4]]); m                                 # optional - sage.symbolic
             [    (x, y) |--> x^2 + y (x, y) |--> (x^2 + y)^2]
             [(x, y) |--> (x^2 + y)^3 (x, y) |--> (x^2 + y)^4]
-            sage: m(1,2)
+            sage: m(1, 2)                                                               # optional - sage.symbolic
             [ 3  9]
             [27 81]
-            sage: m(y=2,x=1)
+            sage: m(y=2, x=1)                                                           # optional - sage.symbolic
             [ 3  9]
             [27 81]
-            sage: m(2,1)
+            sage: m(2, 1)                                                               # optional - sage.symbolic
             [  5  25]
             [125 625]
         """

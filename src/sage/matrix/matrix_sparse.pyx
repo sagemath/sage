@@ -810,7 +810,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(2, [x^i for i in range(4)], sparse=True)                   # optional - sage.symbolic
-            sage: m._derivative(x)
+            sage: m._derivative(x)                                                      # optional - sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """

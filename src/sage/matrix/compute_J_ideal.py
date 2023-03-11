@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari       (for charpoly, minimal_polynomial in __init__)
 r"""
 `J`-ideals of matrices
 

@@ -212,22 +212,22 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: M = matrix(ZZ,2,range(4))
-            sage: giac(M)
+            sage: M = matrix(ZZ, 2, range(4))
+            sage: giac(M)                                                               # optional - sage.libs.giac
             [[0,1],[2,3]]
 
-            sage: M = matrix(QQ,3,[1,2,3,4/3,5/3,6/4,7,8,9])
-            sage: giac(M)
+            sage: M = matrix(QQ, 3, [1,2,3, 4/3,5/3,6/4, 7,8,9])
+            sage: giac(M)                                                               # optional - sage.libs.giac
             [[1,2,3],[4/3,5/3,3/2],[7,8,9]]
 
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
-            sage: giac(M)
+            sage: giac(M)                                                               # optional - sage.libs.giac
             [[-9*sageVARx^2-2*sageVARx+2,sageVARx-1],[sageVARx^2+8*sageVARx,-3*sageVARx^2+5]]
 
-            sage: y = var('y')
-            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
-            sage: giac(M).det().sage()
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # optional - sage.symbolic
+            sage: giac(M).det().sage()                                                  # optional - sage.libs.giac sage.symbolic
             (y^2*dilog(y) + y*dilog(y)*sin(y) - y + 4)/y
         """
         s = ','.join('[' + ','.join(cf._giac_init_() for cf in row) + ']'
@@ -976,13 +976,13 @@ cdef class Matrix(Matrix0):
 
             sage: matrix(3, [1..9]).columns()
             [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
-            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).columns()
+            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).columns()                                 # optional - sage.symbolic
             [(1.41421356237310, 2.71828182845905), (3.14159265358979, 0.000000000000000)]
             sage: matrix(RR, 0, 2, []).columns()
             [(), ()]
             sage: matrix(RR, 2, 0, []).columns()
             []
-            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})
+            sage: m = matrix(RR, 3, 3, {(1,2): pi, (2, 2): -1, (0,1): sqrt(2)})                     # optional - sage.symbolic
             sage: parent(m.columns()[0])
             Sparse vector space of dimension 3 over Real Field with 53 bits of precision
 
