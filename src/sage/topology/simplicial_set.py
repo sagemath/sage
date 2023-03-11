@@ -254,7 +254,6 @@ copy of the integers::
 
 import copy
 
-from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
@@ -263,9 +262,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
-from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
-from sage.homology.chain_complex import ChainComplex
-from sage.homology.chains import Chains, Cochains
 
 from .cell_complex import GenericCellComplex
 from .delta_complex import DeltaComplex
@@ -1686,6 +1682,8 @@ class SimplicialSet_arbitrary(Parent):
             sage: Sigma3.nerve().is_connected()
             True
         """
+        from sage.graphs.graph import Graph
+
         skel = self.n_skeleton(1)
         edges = skel.n_cells(1)
         vertices = skel.n_cells(0)
@@ -2167,6 +2165,9 @@ class SimplicialSet_arbitrary(Parent):
             return GenericCellComplex.n_chains(self, n=n,
                                                base_ring=base_ring,
                                                cochains=cochains)
+
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(self.n_cells(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
@@ -3648,6 +3649,8 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: RP2.cohomology(base_ring=GF(2)) == SimplicialSet(RP2).cohomology(base_ring=GF(2))
             True
         """
+        from sage.homology.chain_complex import ChainComplex
+
         if dimensions is None:
             if not self.cells(): # Empty
                 if cochain:
@@ -3796,6 +3799,8 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
         """
+        from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
+
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model_delta_complex(self, base_ring)
