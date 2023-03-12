@@ -32,7 +32,7 @@ class InterfaceFeature(Feature):
 
         sage: also_broken = InterfaceFeature("also_broken_interface", "sage.interfaces.interface")
         sage: also_broken.is_present()
-        FeatureTestResult('also_broken_interface', False)
+        FeatureTestResult('sage.interfaces.interface', False)
         sage: _.reason
         "Interface also_broken_interface cannot be imported: module 'sage.interfaces.interface' has no attribute 'also_broken_interface'"
     """

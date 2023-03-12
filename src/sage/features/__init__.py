@@ -211,7 +211,7 @@ class Feature(TrivialUniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("ve1EeThu").require()
+            sage: GapPackage("ve1EeThu").require()                                      # optional - sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_ve1EeThu is not available.
@@ -300,7 +300,7 @@ class FeatureNotPresentError(RuntimeError):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest
+            sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest               # optional - sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
@@ -333,7 +333,7 @@ class FeatureTestResult():
     Explanatory messages might be available as ``reason`` and
     ``resolution``::
 
-        sage: presence.reason
+        sage: presence.reason                                                           # optional - sage.libs.gap
         '`TestPackageAvailability("NOT_A_PACKAGE")` evaluated to `fail` in GAP.'
         sage: bool(presence.resolution)
         False
@@ -717,8 +717,9 @@ class CythonFeature(Feature):
         ....:
         ....: assert fabs(-1) == 1
         ....: '''
-        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code, spkg="gcc", url="https://gnu.org")
-        sage: fabs.is_present()
+        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code,                    # optional - sage.misc.cython
+        ....:                      spkg="gcc", url="https://gnu.org")
+        sage: fabs.is_present()                                                         # optional - sage.misc.cython
         FeatureTestResult('fabs', True)
 
     Test various failures::
@@ -769,7 +770,7 @@ class CythonFeature(Feature):
 
             sage: from sage.features import CythonFeature
             sage: empty = CythonFeature("empty", test_code="")
-            sage: empty.is_present()
+            sage: empty.is_present()                                                    # optional - sage.misc.cython
             FeatureTestResult('empty', True)
         """
         from sage.misc.temporary_file import tmp_filename
@@ -782,6 +783,9 @@ class CythonFeature(Feature):
             pyx.write(self.test_code)
         try:
             from sage.misc.cython import cython_import
+        except ImportError:
+            return FeatureTestResult(self, False, reason="sage.misc.cython is not available")
+        try:
             cython_import(pyx.name, verbose=-1)
         except CCompilerError:
             return FeatureTestResult(self, False, reason="Failed to compile test code.")

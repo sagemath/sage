@@ -133,6 +133,28 @@ class sage__groups(JoinFeature):
                              [PythonModule('sage.groups.perm_gps.permgroup')])
 
 
+class sage__libs__ecl(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.ecl`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__ecl
+        sage: sage__libs__ecl().is_present()                        # optional - sage.libs.ecl
+        FeatureTestResult('sage.libs.ecl', True)
+    """
+
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__ecl
+            sage: isinstance(sage__libs__ecl(), sage__libs__ecl)
+            True
+        """
+        PythonModule.__init__(self, 'sage.libs.ecl')
+
+
 class sage__libs__flint(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.flint`
@@ -427,6 +449,7 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__giac(),
             sage__libs__ntl(),
