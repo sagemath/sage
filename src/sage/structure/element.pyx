@@ -1497,13 +1497,13 @@ cdef class Element(SageObject):
 
         ::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A                                                                # optional - sage.modules
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                                                # optional - sage.combinat sage.modules
             An example of an algebra with basis: the free algebra
             on the generators ('a', 'b', 'c') over Rational Field
-            sage: x = A.an_element()                                                                                    # optional - sage.modules
-            sage: x                                                                                                     # optional - sage.modules
+            sage: x = A.an_element()                                                                                    # optional - sage.combinat sage.modules
+            sage: x                                                                                                     # optional - sage.combinat sage.modules
             B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
-            sage: x.__mul__(x)                                                                                          # optional - sage.modules
+            sage: x.__mul__(x)                                                                                          # optional - sage.combinat sage.modules
             B[word: ] + 4*B[word: a] + 4*B[word: aa] + 6*B[word: ab]
             + 2*B[word: abab] + 6*B[word: b] + 6*B[word: ba]
             + 2*B[word: bab] + 2*B[word: baba] + 3*B[word: babb]
