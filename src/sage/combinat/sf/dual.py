@@ -110,7 +110,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         TESTS:
 
-        Regression test for :trac:`12489`. This ticket improving
+        Regression test for :trac:`12489`. This issue improving
         equality test revealed that the conversion back from the dual
         basis did not strip cancelled terms from the dictionary::
 
@@ -214,7 +214,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h._self_to_dual(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
 
-        This is for internal use only. Please use instead:
+        This is for internal use only. Please use instead::
 
             sage: m(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]

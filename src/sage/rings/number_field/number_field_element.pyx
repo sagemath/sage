@@ -95,8 +95,8 @@ from sage.rings.cc import CC
 # for degrees <= this threshold, pari is used
 # for degrees > this threshold, sage matrices are used
 # the value was decided by running a tuning script on a number of
-# architectures; you can find this script attached to trac
-# ticket 5213
+# architectures; you can find this script attached to github
+# issue 5213
 TUNE_CHARPOLY_NF = 25
 
 def is_NumberFieldElement(x):
@@ -126,7 +126,7 @@ def __create__NumberFieldElement_version0(parent, poly):
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version0(k, z^2 + z + 1)
         doctest:...: DeprecationWarning: __create__NumberFieldElement_version0() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         a^2 + a + 1
     """
     from sage.misc.superseded import deprecation_cython as deprecation
@@ -144,7 +144,7 @@ def __create__NumberFieldElement_version1(parent, cls, poly):
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version1(k, type(a), z^2 + z + 1)
         doctest:...: DeprecationWarning: __create__NumberFieldElement_version1() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         a^2 + a + 1
     """
     from sage.misc.superseded import deprecation_cython as deprecation
@@ -169,9 +169,8 @@ def _inverse_mod_generic(elt, I):
     """
     from sage.matrix.constructor import matrix
     R = elt.parent()
-    try:
-        I = R.ideal(I)
-    except ValueError:
+    I = R.number_field().fractional_ideal(I)
+    if not I.is_integral():
         raise ValueError("inverse is only defined modulo integral ideals")
     if I == 0:
         raise ValueError("inverse is not defined modulo the zero ideal")
@@ -1987,6 +1986,9 @@ cdef class NumberFieldElement(FieldElement):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
+        from .order import is_NumberFieldOrder
+        if is_NumberFieldOrder(K):
+            K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
         for P,e in fac:
@@ -1998,6 +2000,29 @@ cdef class NumberFieldElement(FieldElement):
         element_product = prod([p**e for p,e in element_fac], K(1))
         from sage.structure.all import Factorization
         return Factorization(element_fac, unit=self/element_product)
+
+    def is_prime(self):
+        r"""
+        Test whether this number-field element is prime as
+        an algebraic integer.
+
+        Note that the behavior of this method differs from the behavior
+        of :meth:`~sage.structure.element.RingElement.is_prime` in a
+        general ring, according to which (number) fields would have no
+        nonzero prime elements.
+
+        EXAMPLES::
+
+            sage: K.<i> = NumberField(x^2+1)
+            sage: (1+i).is_prime()
+            True
+            sage: ((1+i)/2).is_prime()
+            False
+        """
+        if not self or not self.is_integral():
+            return False
+        I = self.number_field().fractional_ideal(self)
+        return I.is_prime()
 
     @coerce_binop
     def gcd(self, other):
@@ -2068,7 +2093,8 @@ cdef class NumberFieldElement(FieldElement):
         if not is_NumberFieldOrder(R) or not R.is_maximal():
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
-        g = R.ideal(self, other).gens_reduced()
+        K = R.number_field()
+        g = K.fractional_ideal(self, other).gens_reduced()
         if len(g) > 1:
             raise ArithmeticError("ideal (%r, %r) is not principal, gcd is not defined" % (self, other) )
 

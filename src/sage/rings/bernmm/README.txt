@@ -39,7 +39,7 @@ In the makefile there is also a THREAD_STACK_SIZE option; the default is
 4096 KB. If this option is not set, the system default thread stack size will
 be used. This proved to be a problem on OS X, where GMP's mpz_invert routine
 smashed the default 512 KB stack. For more info see
-http://sagetrac.org/sage_trac/ticket/6304
+https://github.com/sagemath/sage/issues/6304
 http://gmplib.org/list-archives/gmp-devel/2009-August/000929.html
 
 ===============================================================================

@@ -199,7 +199,7 @@ class Derangements(UniqueRepresentation, Parent):
         if isinstance(der, Derangement):
             if der.parent() is self:
                 return der
-            raise ValueError("Cannot convert %s to an element of %s" % (der, self))
+            raise ValueError("cannot convert %s to an element of %s" % (der, self))
         return self.element_class(self, der)
 
     Element = Derangement

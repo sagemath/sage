@@ -378,7 +378,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a[1:3]
             doctest:warning...:
             DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             0*t^2 + (13^2 + O(13^4))*t
             sage: a[1:3:2]
             Traceback (most recent call last):
@@ -661,7 +661,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             return Polynomial_padic_capped_relative_dense(self.parent(), (self._poly // fdiv, 0, [0 if a <= shift else a - shift for a in self._relprecs], False, None, None), construct=True)
 
     # def __floordiv__(self, right):
-    #     if is_Polynomial(right) and right.is_constant() and right[0] in self.base_ring():
+    #     if isinstance(right, Polynomial) and right.is_constant() and right[0] in self.base_ring():
     #         d = self.base_ring()(right[0])
     #     elif (right in self.base_ring()):
     #         d = self.base_ring()(right)

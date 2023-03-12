@@ -123,7 +123,7 @@ class Frobby:
             True
 
         We see how it is much faster to compute this with frobby than the built-in
-        procedure for simplicial complexes.
+        procedure for simplicial complexes::
 
             sage: t=simplicial_complexes.PoincareHomologyThreeSphere() # optional - frobby
             sage: R=PolynomialRing(QQ,16,'x') # optional - frobby

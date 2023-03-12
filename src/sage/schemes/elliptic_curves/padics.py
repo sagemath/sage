@@ -21,25 +21,28 @@ Miscellaneous `p`-adic methods
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-
-import sage.rings.all as rings
-from . import padic_lseries as plseries
-import sage.arith.all as arith
-from sage.rings.all import (
-    Qp, Zp,
-    Integers,
-    Integer,
-    O,
-    PowerSeriesRing,
-    LaurentSeriesRing,
-    RationalField)
 import math
-import sage.misc.misc as misc
+
+import sage.arith.all as arith
 import sage.matrix.all as matrix
-sqrt = math.sqrt
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+import sage.misc.misc as misc
+import sage.rings.all as rings
 import sage.schemes.hyperelliptic_curves.hypellfrob
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
 from sage.misc.cachefunc import cached_method
+from sage.rings.big_oh import O
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp, Zp
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField
+
+from . import padic_lseries as plseries
+
+sqrt = math.sqrt
+
 
 def __check_padic_hypotheses(self, p):
     r"""
@@ -700,7 +703,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     TESTS:
 
-    Check that ticket :trac:`20798` is solved::
+    Check that issue :trac:`20798` is solved::
 
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)

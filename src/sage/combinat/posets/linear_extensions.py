@@ -252,6 +252,65 @@ class LinearExtensionOfPoset(ClonableArray,
                         return False
         return True
 
+    def is_supergreedy(self):
+        r"""
+        Return ``True`` if the linear extension is supergreedy.
+
+        A linear extension of a poset `P` with elements `\{x_1,x_2,...,x_t\}`
+        is *super greedy*, if it can be obtained using the following
+        algorithm: choose `x_1` to be a minimal element of `P`;
+        suppose `X = \{x_1,...,x_i\}` have been chosen; let `M` be
+        the set of minimal elements of `P\setminus X`. If there is an element
+        of `M` which covers an element `x_j` in `X`, then let `x_{i+1}`
+        be one of these such that `j` is maximal; otherwise, choose `x_{i+1}`
+        to be any element of `M`.
+
+        Informally, a linear extension is supergreedy if it "always
+        goes up and receedes the least"; in other words, supergreedy
+        linear extensions are depth-first linear extensions.
+        For more details see [KTZ1987]_.
+
+        EXAMPLES::
+
+            sage: X = [0,1,2,3,4,5,6]
+            sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
+            sage: P = Poset((X,Y), cover_relations = True, facade=False)
+            sage: for l in P.linear_extensions():
+            ....:     if l.is_supergreedy():
+            ....:         print(l)
+            [1, 4, 3, 0, 5, 6, 2]
+            [0, 1, 4, 3, 5, 6, 2]
+            [0, 1, 5, 4, 3, 6, 2]
+
+            sage: Q = posets.PentagonPoset()
+            sage: for l in Q.linear_extensions():
+            ....:     if not l.is_supergreedy():
+            ....:         print(l)
+            [0, 2, 1, 3, 4]
+
+        TESTS::
+
+            sage: T = Poset()
+            sage: T.linear_extensions()[0].is_supergreedy()
+            True
+        """
+        H = self.poset().hasse_diagram()
+        L = sources = H.sources()
+        linext = []
+        for e in self:
+            if e not in L:
+                return False
+            linext.append(e)
+            for y in reversed(linext):
+                L = [x for x in H.neighbor_out_iterator(y)
+                     if x not in linext
+                     and all(low in linext for low in H.neighbor_in_iterator(x))]
+                if L:
+                    break
+            else:
+                L = sources = [x for x in sources if x not in linext]
+        return True
+
     def tau(self, i):
         r"""
         Return the operator `\tau_i` on linear extensions ``self`` of a poset.
@@ -855,6 +914,7 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
     Linear extensions such that the poset has well-defined
     hook lengths (i.e., d-complete).
     """
+
     def cardinality(self):
         r"""
         Count the number of linear extensions using a hook-length formula.
@@ -879,6 +939,7 @@ class LinearExtensionsOfForest(LinearExtensionsOfPoset):
     r"""
     Linear extensions such that the poset is a forest.
     """
+
     def cardinality(self):
         r"""
         Use Atkinson's algorithm to compute the number of linear extensions.
@@ -902,6 +963,7 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
     r"""
     Linear extensions for a mobile poset.
     """
+
     def cardinality(self):
         r"""
         Return the number of linear extensions by using the determinant
