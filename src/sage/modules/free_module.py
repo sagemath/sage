@@ -385,7 +385,7 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         Vector space of dimension 10 over Rational Field
         sage: FreeModule(ZZ,10)
         Ambient free module of rank 10 over the principal ideal domain Integer Ring
-        sage: FreeModule(FiniteField(5),10)
+        sage: FreeModule(FiniteField(5),10)                                             # optional - sage.libs.pari
         Vector space of dimension 10 over Finite Field of size 5
         sage: FreeModule(Integers(7),10)
         Vector space of dimension 10 over Ring of integers modulo 7
