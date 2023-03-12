@@ -770,7 +770,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
     if specialized is not None:
         implementation_names = specialized._implementation_names_impl(implementation, base_ring, sparse)
         if implementation_names is not NotImplemented:
-            implementation = implementation_names[0]
             constructor = specialized
 
     # Generic implementations
@@ -788,7 +787,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
         else:
             constructor = polynomial_ring.PolynomialRing_commutative
         implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
-        implementation = implementation_names[0]
 
         # Only use names which are not supported by the specialized class.
         if specialized is not None:
