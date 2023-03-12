@@ -510,7 +510,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         [ 0  1]
         [-1  2]
 
-        sage: all(((A.get_action(B) is not None) == (A is B)) for A in [M1,M2] for B in [M1,M2])
+        sage: all((A.get_action(B) is not None) == (A is B)                             # optional - sage.libs.flint
+        ....:     for A in [M1, M2] for B in [M1, M2])
         True
 
     Check that libgap matrices over finite fields are working properly::
@@ -548,9 +549,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         ::
 
             sage: M = MatrixSpace(ZZ, 10, implementation="flint")                       # optional - sage.libs.flint
-            sage: M
+            sage: M                                                                     # optional - sage.libs.flint
             Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
-            sage: loads(M.dumps()) is M
+            sage: loads(M.dumps()) is M                                                 # optional - sage.libs.flint
             True
 
             sage: MatrixSpace(ZZ, 10, implementation="foobar")
