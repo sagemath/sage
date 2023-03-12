@@ -47,10 +47,10 @@ cdef class Group(sage.structure.parent.Parent):
 
          Check for :trac:`8119`::
 
-            sage: G = SymmetricGroup(2)
-            sage: h = hash(G)
-            sage: G.rename('S2')
-            sage: h == hash(G)
+            sage: G = SymmetricGroup(2)                                                 # optional - sage.groups
+            sage: h = hash(G)                                                           # optional - sage.groups
+            sage: G.rename('S2')                                                        # optional - sage.groups
+            sage: h == hash(G)                                                          # optional - sage.groups
             True
         """
         from sage.categories.basic import Groups
@@ -120,7 +120,7 @@ cdef class Group(sage.structure.parent.Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()
+            sage: SL(2, 7).is_commutative()                                             # optional - sage.modules
             False
         """
         return self.is_abelian()
