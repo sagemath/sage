@@ -76,6 +76,11 @@ include sage/arith/numerical_approx.*
 # integers...
 include sage/arith/long.*
 include sage/rings/integer_fake.*
+# coerce actions needs is_Group
+include sage/groups/group.*
+include sage/groups/old.*
+
+
 graft sage/libs/gmp
 
 
