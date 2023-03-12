@@ -107,8 +107,8 @@ class Parallel():
 
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel()
-            sage: f = x^2-1
-            sage: p(f)
+            sage: f = x^2 - 1                                                           # optional - sage.symbolic
+            sage: p(f)                                                                  # optional - sage.symbolic
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
