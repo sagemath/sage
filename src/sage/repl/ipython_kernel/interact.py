@@ -227,15 +227,15 @@ class sage_interactive(interactive):
             ...IntSlider(value=3, max=10)
             sage: sage_interactive.widget_from_tuple((2, [('one', 1), ('two', 2), ('three', 3)]))
             ...Dropdown(index=1, options=(('one', 1), ('two', 2), ('three', 3)), value=2)
-            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )
+            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )                               # optional - sage.symbolic
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
 
         TESTS:
 
         Symbolic subrings::
 
-            sage: SCR = SR.subring(no_variables=True)
-            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )
+            sage: SCR = SR.subring(no_variables=True)                                               # optional - sage.symbolic
+            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )                     # optional - sage.symbolic
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
         """
         # Support (description, abbrev)
