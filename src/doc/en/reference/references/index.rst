@@ -4379,6 +4379,11 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
+.. [Mas1995] Mason, Geoffrey The quantum double of a finite group and its role 
+            in conformal field theory. Groups '93 Galway/St. Andrews, Vol. 2, 
+            405–417, London Math. Soc. Lecture Note Ser., 212, 
+            Cambridge, 1995.
+
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,
             (2009), No. 3, p.295-313. :arxiv:`0707.4267`

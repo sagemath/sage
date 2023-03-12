@@ -25,16 +25,18 @@ class FusionDouble(CombinatorialFreeModule):
     INPUT:
 
     - ``G`` -- a finite group
-    - ``prefix`` (optional: defaults to 's') a prefix
-      for the names of simple objects.
+    - ``prefix`` (optional: defaults to 's') a prefix for the names of simple objects.
+    - ``inject_varables`` (optional): set TRUE to create variables for the simple objects.
 
     REFERENCES:
 
     - [BaKi2001]_ Chapter 3
+    - [Mas1995]_
 
     EXAMPLES ::
+
         sage: G = DihedralGroup(5)
-        sage: H = FusionDouble(G)
+        sage: H = FusionDouble(G, inject_variables=True)
         sage: H.basis()
         Finite family {0: s0, 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 6: s6, 7: s7, 8: s8, 9: s9, 10: s10, 11: s11, 12: s12, 13: s13, 14: s14, 15: s15}
         sage: for x in H.basis():
@@ -65,7 +67,7 @@ class FusionDouble(CombinatorialFreeModule):
         sage: s8.ribbon()
         zeta5^3
     """
-    def __init__(self, G, prefix="s"):
+    def __init__(self, G, prefix="s",inject_variables=False):
         self._G = G
         self._prefix = prefix
         self._names = {}
@@ -81,8 +83,8 @@ class FusionDouble(CombinatorialFreeModule):
         self._rank = count
         cat = AlgebrasWithBasis(ZZ).Subobjects()
         CombinatorialFreeModule.__init__(self, ZZ, [k for k in self._names], category=cat)
-        for i in range(self._rank):
-            inject_variable(self._names[i],self.monomial(i))
+        if inject_variables:
+            self.inject_variables()
 
     def _repr_(self):
         return "The Fusion Ring of the Drinfeld Double of %s"%self._G
@@ -95,6 +97,9 @@ class FusionDouble(CombinatorialFreeModule):
     def _element_constructor(self, k):
         return self.monomial(k)
 
+    def inject_variables(self):
+        for i in range(self._rank):
+            inject_variable(self._names[i],self.monomial(i))
     @cached_method
     def s_ij(self, i, j):
         sum = 0
@@ -115,37 +120,59 @@ class FusionDouble(CombinatorialFreeModule):
         this returns the dimension of
 
         .. MATH::
-           Hom(i \\otimes j\\otimes k, s0)
+           Hom(i \\otimes j\\otimes k, s_0)
 
         where `s_0` is the unit element (assuming prefix='s').
+        Method of computation is through the Verlinde formula
         """
         sz = self.one()
         return ZZ(sum(self.s_ij(i, r) * self.s_ij(j, r) * self.s_ij(k, r)/self.s_ij(sz, r) for r in self.basis()))
 
     def Nk_ij(self, i, j, k):
         r"""
-        Returns the fusion coefficient `N^k_{ij}`
+        Returns the fusion coefficient `N^k_{ij}`, computed using the Verlinde formula:
+        
+        .. MATH::
+            N^k_{ij} = \sum_l \frac{s(i, \ell)\, s(j, \ell)\, \overline{s(k, \ell)}}{s(I, \ell)},
+
         """
         return self.N_ijk(i, j, self.dual(k))
 
     def char_Nk_ij(self, i, j, k):
-        """
-        Use character theoretic method to compute the fusion coefficient
+        r"""
+        Use character theoretic method to compute the fusion coefficient `N_{ij}^k`.
+        Each simple object, for example `i` corresponds to a conjugacy class `\mathcal{C}_i`
+        of the underlying group `G`, and an irreducible character `\chi_i` of the
+        centralizer `C(g_i)` of a representative `g_i` of `\mathcal{C}_i`. In addition
+        to a fixed representative `g_i` and `g_j` of the classes `\mathcal{C}_i`
+        and `\mathcal{C}_j`, the formula will make use of variable elements `h_i` and
+        `h_j` that are subject to the condition `h_ih_j=g_k`.
+
         .. MATH::
-            N_{ij}^k=\\langle i \\otimes j, k \\rangle
+
+            \frac{|\mathcal{C}_i|}{|G|}\sum_{\substack{h_i\in\mathcal{C}_i\\ h_j\in\mathcal{C}_j\\ h_ih_j=g_k}}|C(h_i)\cap C(h_j)|\,
+            \langle\chi_i^{(h_i)}\chi_j^{(h_j)},\chi_k\rangle_{C(h_i)\cap C(h_j)},
+
+        where `\chi_i^{(h_i)}` is the character `\chi_i` of `C(g_i)` conjugated to a
+        character of `C(h_i)`, when `h_i` is a conjugate of the fixed representative `g_i`.
+        More exactly, there exists `r_i` such that `r_i g_i r_i^{-1}=h_i`, and then
+        `\chi_i^{(h_i)}(x)=\chi_i(r_i^{-1}xr_i)`, and this definition does not
+        depend on the choice of `r_i`.
+        This formula is due to Christopher Goff when the centralizers are normal, and
+        to Wenqi Li in the general case.
         """
         G = self._G
         I = G.conjugacy_class(i.g())
         J = G.conjugacy_class(j.g())
-        K = G.conjugacy_class(k.g())
-
-        ZI = G.centralizer(i.g())
-        ZJ = G.centralizer(j.g())
-        ZK = G.centralizer(k.g())
-
         IJ = Set(I_elem * J_elem for I_elem in I for J_elem in J)
         if k.g() not in IJ:
             return 0
+
+        K = G.conjugacy_class(k.g())
+        CI = G.centralizer(i.g())
+        CJ = G.centralizer(j.g())
+        CK = G.centralizer(k.g())
+
         c = K.cardinality() / G.order()
         summands = [(I_elem, J_elem) for I_elem in I for J_elem in J if I_elem * J_elem == k.g()]
         res = 0
@@ -156,9 +183,9 @@ class FusionDouble(CombinatorialFreeModule):
                     i_twist = g
                 if g.inverse() * j.g() * g == J_elem:
                     j_twist = g
-            A = Set(i_twist.inverse() * zi * i_twist for zi in ZI) 
-            B = Set(j_twist.inverse() * zj * j_twist for zj in ZJ) 
-            inner_summands = A.intersection(B).intersection(Set(ZK))
+            A = Set(i_twist.inverse() * zi * i_twist for zi in CI)
+            B = Set(j_twist.inverse() * zj * j_twist for zj in CJ)
+            inner_summands = A.intersection(B).intersection(Set(CK))
             for x in inner_summands:
                 res += i.chi()(i_twist * x * i_twist.inverse()) * j.chi()(j_twist * x * j_twist.inverse()) * k.chi()(x).conjugate()
         return c * res
@@ -177,6 +204,9 @@ class FusionDouble(CombinatorialFreeModule):
         return True
 
     def one(self):
+        """
+        The unit element of the ring.
+        """
         return self.basis()[0]
 
     def dual(self,i):
@@ -216,13 +246,39 @@ class FusionDouble(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element):
         def g(self):
+           """
+           Returns the conjugacy class representative of the underlying
+           group corresponding to a simple object.
+           """
            return self.parent()._elt[self.support_of_term()]
 
         def chi(self):
+           """
+           Returns the character of the centralizer of a conjugacy class 
+           representative of the underlying group corresponding to a simple object.
+           """
            return self.parent()._chi[self.support_of_term()]
 
         def ribbon(self):
             """
             The twist or ribbon of the simple object.
+
+            EXAMPLE::
+                sage: H = FusionDouble(CyclicPermutationGroup(3))
+                sage: [i.ribbon() for i in H.basis()]
+                [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
             """
             return self.chi()(self.g()) / self.chi()(self.parent()._G.one())
+
+        def dual(self):
+            """
+            Returns the dual of self.
+
+            EXAMPLE::
+                sage: G = CyclicPermutationGroup(4)
+                sage: H = FusionDouble(G, prefix="b")
+                sage: [x for x in H.basis() if x==x.dual()]
+                [b0, b1, b8, b9]
+            """
+            return self.parent().dual(self)
+            return

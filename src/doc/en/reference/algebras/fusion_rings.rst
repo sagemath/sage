@@ -6,6 +6,7 @@ Fusion Rings
 
    sage/algebras/fusion_rings/fusion_ring
    sage/algebras/fusion_rings/f_matrix
+   sage/algebras/fusion_rings/fusion_double
 
 F-Matrix Backend
 ----------------
