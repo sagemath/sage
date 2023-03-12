@@ -243,7 +243,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested
+        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested         # optional - sage.combinat
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
@@ -287,15 +287,13 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print("Algorithm %s failed with this input:" % algorithm)
         ....:        print(s1, s2)
 
-        sage: algorithms = ["gale"]
-        sage: algorithms += "ryser"                                                     # optional - sage.combinat
-        sage: for algorithm in algorithms:                    # long time
+        sage: for algorithm in ["gale", "ryser"]:             # long time               # optional - sage.combinat
         ....:    for i in range(50):                          # long time
         ....:       test_algorithm(algorithm, 3, 10)          # long time
 
     Null matrix::
 
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # optional - sage.combinat
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]

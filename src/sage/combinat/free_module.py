@@ -361,7 +361,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         TESTS::
 
-            sage: A.__class__.element_class.__module__
+            sage: A.__class__.element_class.__module__                                  # optional - sage.combinat
             'sage.combinat.free_module'
         """
         return self.__make_element_class__(self.Element,
@@ -1354,9 +1354,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-                sage: Partitions.options(diagram_str="#", convention="french")
-                sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # optional - sage.combinat
+                sage: Partitions.options(diagram_str="#", convention="french")          # optional - sage.combinat
+                sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s                      # optional - sage.combinat
                 R   # R
                  #     ###
                  ##      #
@@ -1364,7 +1364,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             Check that the breakpoints are correct (:trac:`29202`)::
 
-                sage: s._breakpoints
+                sage: s._breakpoints                                                    # optional - sage.combinat
                 [6]
             """
             if hasattr(self, "_print_options"):
@@ -1383,9 +1383,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-                sage: Partitions.options(diagram_str="#", convention="french")
-                sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # optional - sage.combinat
+                sage: Partitions.options(diagram_str="#", convention="french")          # optional - sage.combinat
+                sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s                    # optional - sage.combinat
                 R    ⊗ R
                  ┌┐     ┌┬┬┐
                  ├┼┐    └┴┼┤
@@ -1394,7 +1394,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             Check that the breakpoints are correct (:trac:`29202`)::
 
-                sage: s._breakpoints
+                sage: s._breakpoints                                                    # optional - sage.combinat
                 [7]
             """
             if hasattr(self, "_print_options"):
