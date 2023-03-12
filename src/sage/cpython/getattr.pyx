@@ -55,7 +55,7 @@ cdef class AttributeErrorMessage:
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
         sage: x = polygen(ZZ, 'x')
-        sage: QQ[x].gen().bla
+        sage: QQ[x].gen().bla                                                           # optional - sage.libs.flint
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
