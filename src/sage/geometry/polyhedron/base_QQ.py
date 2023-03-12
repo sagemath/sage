@@ -119,7 +119,7 @@ class Polyhedron_QQ(Polyhedron_base):
             27
 
         We enlarge the polyhedron to force the use of the generating function methods
-        implemented in LattE integrale, rather than explicit enumeration.
+        implemented in LattE integrale, rather than explicit enumeration::
 
             sage: (1000000000*P).integral_points_count(verbose=True) # optional - latte_int
             This is LattE integrale...
