@@ -218,7 +218,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])  # optional - sage.rings.number_field
-            sage: G.universe()
+            sage: G.universe()                                                                      # optional - sage.rings.number_field
             Algebraic Field
         """
         return self._universe
@@ -315,9 +315,10 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))
-            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)
-            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))                 # optional - sage.libs.pari
+            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)                  # optional - sage.libs.pari
+            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])                         # optional - sage.libs.pari
             (123, 777)
 
         ::
