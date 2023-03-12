@@ -4106,15 +4106,16 @@ cdef class Polynomial(CommutativePolynomial):
         used to easily extend polynomial factorization to work over
         new rings you introduce::
 
-             sage: R.<x> = PolynomialRing(IntegerModRing(4),implementation="NTL")
-             sage: (x^2).factor()
+             sage: R.<x> = PolynomialRing(IntegerModRing(4), implementation="NTL")                      # optional - sage.libs.ntl
+             sage: (x^2).factor()                                                                       # optional - sage.libs.ntl
              Traceback (most recent call last):
              ...
-             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
-             sage: R.base_ring()._factor_univariate_polynomial = lambda f: f.change_ring(ZZ).factor()
-             sage: (x^2).factor()                                                       # optional - sage.libs.pari
+             NotImplementedError: factorization of polynomials over rings
+              with composite characteristic is not implemented
+             sage: R.base_ring()._factor_univariate_polynomial = lambda f: f.change_ring(ZZ).factor()   # optional - sage.libs.ntl
+             sage: (x^2).factor()                                                                       # optional - sage.libs.ntl sage.libs.pari
              x^2
-             sage: del R.base_ring()._factor_univariate_polynomial # clean up
+             sage: del R.base_ring()._factor_univariate_polynomial # clean up                           # optional - sage.libs.ntl
 
         Arbitrary precision real and complex factorization::
 
@@ -5352,7 +5353,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: h1 = R._random_nonzero_element()
             sage: h2 = R._random_nonzero_element()
             sage: M1 = h1.sylvester_matrix(h2)                                          # optional - sage.modules
-            sage: M1.determinant() == h1.resultant(h2)                                  # optional - sage.modules
+            sage: M1.determinant() == h1.resultant(h2)                                  # optional - sage.libs.pari sage.modules
             True
 
         The rank of the Sylvester matrix is related to the degree of the
@@ -8601,35 +8602,35 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
-            sage: pol.number_of_roots_in_interval(1, 2)
+            sage: pol.number_of_roots_in_interval(1, 2)                                             # optional - sage.libs.pari
             2
-            sage: pol.number_of_roots_in_interval(1.01, 2)
+            sage: pol.number_of_roots_in_interval(1.01, 2)                                          # optional - sage.libs.pari
             1
-            sage: pol.number_of_roots_in_interval(None, 2)
+            sage: pol.number_of_roots_in_interval(None, 2)                                          # optional - sage.libs.pari
             2
-            sage: pol.number_of_roots_in_interval(1, Infinity)
+            sage: pol.number_of_roots_in_interval(1, Infinity)                                      # optional - sage.libs.pari
             3
-            sage: pol.number_of_roots_in_interval()
+            sage: pol.number_of_roots_in_interval()                                                 # optional - sage.libs.pari
             3
-            sage: pol = (x-1)*(x-2)*(x-3)
+            sage: pol = (x-1) * (x-2) * (x-3)
             sage: pol2 = pol.change_ring(CC)
-            sage: pol2.number_of_roots_in_interval()
+            sage: pol2.number_of_roots_in_interval()                                                # optional - sage.libs.pari
             3
             sage: R.<x> = PolynomialRing(CC)
-            sage: pol = (x-1)*(x-CC(I))
-            sage: pol.number_of_roots_in_interval(0,2)
+            sage: pol = (x-1) * (x-CC(I))
+            sage: pol.number_of_roots_in_interval(0, 2)                                             # optional - sage.libs.pari
             1
 
         TESTS::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
-            sage: pol.number_of_roots_in_interval(1, 2)
+            sage: pol.number_of_roots_in_interval(1, 2)                                             # optional - sage.libs.pari
             2
             sage: pol = chebyshev_T(5,x)
-            sage: pol.number_of_roots_in_interval(-1,2)
+            sage: pol.number_of_roots_in_interval(-1, 2)                                            # optional - sage.libs.pari
             5
-            sage: pol.number_of_roots_in_interval(0,2)
+            sage: pol.number_of_roots_in_interval(0, 2)                                             # optional - sage.libs.pari
             3
 
         """
@@ -8659,15 +8660,15 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
-            sage: pol.number_of_real_roots()
+            sage: pol.number_of_real_roots()                                                        # optional - sage.libs.pari
             3
-            sage: pol = (x-1)*(x-2)*(x-3)
+            sage: pol = (x-1) * (x-2) * (x-3)
             sage: pol2 = pol.change_ring(CC)
-            sage: pol2.number_of_real_roots()
+            sage: pol2.number_of_real_roots()                                                       # optional - sage.libs.pari
             3
             sage: R.<x> = PolynomialRing(CC)
-            sage: pol = (x-1)*(x-CC(I))
-            sage: pol.number_of_real_roots()
+            sage: pol = (x-1) * (x-CC(I))
+            sage: pol.number_of_real_roots()                                                        # optional - sage.libs.pari
             1
         """
         return self.number_of_roots_in_interval()
@@ -8681,17 +8682,17 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = (x-1)^2 * (x-2)^2 * (x-3)
-            sage: pol.all_roots_in_interval(1, 3)
+            sage: pol.all_roots_in_interval(1, 3)                                                   # optional - sage.libs.pari
             True
-            sage: pol.all_roots_in_interval(1.01, 3)
+            sage: pol.all_roots_in_interval(1.01, 3)                                                # optional - sage.libs.pari
             False
-            sage: pol = chebyshev_T(5,x)
-            sage: pol.all_roots_in_interval(-1,1)
+            sage: pol = chebyshev_T(5, x)
+            sage: pol.all_roots_in_interval(-1, 1)                                                  # optional - sage.libs.pari
             True
-            sage: pol = chebyshev_T(5,x/2)
-            sage: pol.all_roots_in_interval(-1,1)
+            sage: pol = chebyshev_T(5, x/2)
+            sage: pol.all_roots_in_interval(-1, 1)                                                  # optional - sage.libs.pari
             False
-            sage: pol.all_roots_in_interval()
+            sage: pol.all_roots_in_interval()                                                       # optional - sage.libs.pari
             True
         """
         pol = self // self.gcd(self.derivative())
@@ -8705,10 +8706,10 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: pol = chebyshev_T(5, x)
-            sage: pol.is_real_rooted()
+            sage: pol.is_real_rooted()                                                              # optional - sage.libs.pari
             True
             sage: pol = x^2 + 1
-            sage: pol.is_real_rooted()
+            sage: pol.is_real_rooted()                                                              # optional - sage.libs.pari
             False
         """
         return self.all_roots_in_interval()
@@ -8869,15 +8870,15 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P0 = x^4 + 5*x^3 + 15*x^2 + 25*x + 25
             sage: P1 = x^4 + 25*x^3 + 15*x^2 + 5*x + 25
             sage: P2 = x^4 + 5*x^3 + 25*x^2 + 25*x + 25
-            sage: P0.is_weil_polynomial(return_q=True)
+            sage: P0.is_weil_polynomial(return_q=True)                                              # optional - sage.libs.pari
             (True, 5)
-            sage: P0.is_weil_polynomial(return_q=False)
+            sage: P0.is_weil_polynomial(return_q=False)                                             # optional - sage.libs.pari
             True
-            sage: P1.is_weil_polynomial(return_q=True)
+            sage: P1.is_weil_polynomial(return_q=True)                                              # optional - sage.libs.pari
             (False, 0)
-            sage: P1.is_weil_polynomial(return_q=False)
+            sage: P1.is_weil_polynomial(return_q=False)                                             # optional - sage.libs.pari
             False
-            sage: P2.is_weil_polynomial()
+            sage: P2.is_weil_polynomial()                                                           # optional - sage.libs.pari
             False
 
         .. SEEALSO::
@@ -8892,7 +8893,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: P.<t> = QQ[]
             sage: u = t^10 + 4*t^9 + 8*t^8 + 18*t^7 + 81*t^6 + 272*t^5 + 567*t^4 + 882*t^3 + 2744*t^2 + 9604*t + 16807
-            sage: u.is_weil_polynomial()
+            sage: u.is_weil_polynomial()                                                            # optional - sage.libs.pari
             True
 
         AUTHORS:
@@ -10797,8 +10798,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x> = PolynomialRing(ZZ, implementation="NTL")
-            sage: (2*x + 1).divides(4*x**2 + 1)
+            sage: R.<x> = PolynomialRing(ZZ, implementation="NTL")              # optional - sage.libs.ntl
+            sage: (2*x + 1).divides(4*x**2 + 1)                                 # optional - sage.libs.ntl
             False
             sage: K.<z> = GF(4)                                                 # optional - sage.libs.pari
             sage: R.<x> = K[]                                                   # optional - sage.libs.pari

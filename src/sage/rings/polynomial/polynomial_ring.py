@@ -105,11 +105,11 @@ Similarly, there is a coercion from the (non-default) NTL
 implementation for univariate polynomials over the integers
 to the default FLINT implementation, but not vice versa::
 
-    sage: R.<x> = PolynomialRing(ZZ, implementation = 'NTL')
-    sage: S.<x> = PolynomialRing(ZZ, implementation = 'FLINT')
-    sage: (S.0+R.0).parent() is S
+    sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')                      # optional - sage.libs.ntl
+    sage: S.<x> = PolynomialRing(ZZ, implementation='FLINT')                    # optional - sage.libs.flint
+    sage: (S.0+R.0).parent() is S                                               # optional - sage.libs.flint sage.libs.ntl
     True
-    sage: (R.0+S.0).parent() is S
+    sage: (R.0+S.0).parent() is S                                               # optional - sage.libs.flint sage.libs.ntl
     True
 
 TESTS::
@@ -122,9 +122,9 @@ TESTS::
 Check that :trac:`5562` has been fixed::
 
     sage: R.<u> = PolynomialRing(RDF, 1)
-    sage: v1 = vector([u])
-    sage: v2 = vector([CDF(2)])
-    sage: v1 * v2
+    sage: v1 = vector([u])                                                      # optional - sage.modules
+    sage: v2 = vector([CDF(2)])                                                 # optional - sage.modules
+    sage: v1 * v2                                                               # optional - sage.modules
     2.0*u
 
 """
@@ -744,20 +744,20 @@ class PolynomialRing_general(ring.Algebra):
         Over the integers, there is a coercion from the NTL and generic
         implementation to the default FLINT implementation::
 
-            sage: R = PolynomialRing(ZZ, 't', implementation="NTL")
-            sage: S = PolynomialRing(ZZ, 't', implementation="FLINT")
+            sage: R = PolynomialRing(ZZ, 't', implementation="NTL")                     # optional - sage.libs.ntl
+            sage: S = PolynomialRing(ZZ, 't', implementation="FLINT")                   # optional - sage.libs.flint
             sage: T = PolynomialRing(ZZ, 't', implementation="generic")
-            sage: R.has_coerce_map_from(S)
+            sage: R.has_coerce_map_from(S)                                              # optional - sage.libs.flint sage.libs.ntl
             False
-            sage: R.has_coerce_map_from(T)
+            sage: R.has_coerce_map_from(T)                                              # optional - sage.libs.ntl
             False
-            sage: S.has_coerce_map_from(T)
+            sage: S.has_coerce_map_from(T)                                              # optional - sage.libs.flint
             True
-            sage: S.has_coerce_map_from(R)
+            sage: S.has_coerce_map_from(R)                                              # optional - sage.libs.flint sage.libs.ntl
             True
-            sage: T.has_coerce_map_from(R)
+            sage: T.has_coerce_map_from(R)                                              # optional - sage.libs.ntl
             False
-            sage: T.has_coerce_map_from(S)
+            sage: T.has_coerce_map_from(S)                                              # optional - sage.libs.flint
             False
         """
         base_ring = self.base_ring()
@@ -1806,12 +1806,12 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_integral_domain as PRing
             sage: R = PRing(ZZ, 'x'); R
             Univariate Polynomial Ring in x over Integer Ring
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.flint
             <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
 
-            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R                                                           # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
         """
         self._implementation_repr = ''
@@ -1971,7 +1971,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_integral_domain as PRing
-            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R                                                           # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
         """
         s = PolynomialRing_commutative._repr_(self)
@@ -1991,11 +1991,11 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: functor.implementation is None
             True
 
-            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R                                                           # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
-            sage: functor, arg = R.construction(); functor, arg
+            sage: functor, arg = R.construction(); functor, arg                                                         # optional - sage.libs.ntl
             (Poly[x], Integer Ring)
-            sage: functor.implementation
+            sage: functor.implementation                                                                                # optional - sage.libs.ntl
             'NTL'
         """
         implementation = None
@@ -2019,7 +2019,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_field as PRing
             sage: R = PRing(QQ, 'x'); R
             Univariate Polynomial Ring in x over Rational Field
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.flint
             <class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
             sage: R = PRing(QQ, 'x', sparse=True); R
             Sparse Univariate Polynomial Ring in x over Rational Field
@@ -3057,27 +3057,27 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_mod_n as PRing
             sage: R = PRing(Zmod(15), 'x'); R
             Univariate Polynomial Ring in x over Ring of integers modulo 15
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.flint
             <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
-            sage: R = PRing(Zmod(15), 'x', implementation='NTL'); R
+            sage: R = PRing(Zmod(15), 'x', implementation='NTL'); R                                                     # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Ring of integers modulo 15 (using NTL)
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_zz'>
 
-            sage: R = PRing(Zmod(2**63*3), 'x', implementation='NTL'); R
+            sage: R = PRing(Zmod(2**63*3), 'x', implementation='NTL'); R                                                # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Ring of integers modulo 27670116110564327424 (using NTL)
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
 
-            sage: R = PRing(Zmod(2**63*3), 'x', implementation='FLINT')
+            sage: R = PRing(Zmod(2**63*3), 'x', implementation='FLINT')                                                 # optional - sage.libs.flint
             Traceback (most recent call last):
             ...
             ValueError: FLINT does not support modulus 27670116110564327424
 
-            sage: R = PRing(Zmod(2**63*3), 'x'); R
+            sage: R = PRing(Zmod(2**63*3), 'x'); R                                                                      # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Ring of integers modulo 27670116110564327424 (using NTL)
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.libs.ntl
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
         """
         if element_class is None:
@@ -3162,7 +3162,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_integral_domain as PRing
-            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R                           # optional - sage.libs.ntl
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
         """
         s = PolynomialRing_commutative._repr_(self)

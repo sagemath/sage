@@ -187,32 +187,32 @@ def PolynomialRing(base_ring, *args, **kwds):
     like 2^1000000 * x^1000000 in FLINT may be unwise.
     ::
 
-        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL                                              # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT
+        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT                                        # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
-        sage: ZxFLINT is ZZ['x']
+        sage: ZxFLINT is ZZ['x']                                                                                        # optional - sage.libs.flint
         True
-        sage: ZxFLINT is PolynomialRing(ZZ, 'x')
+        sage: ZxFLINT is PolynomialRing(ZZ, 'x')                                                                        # optional - sage.libs.flint
         True
-        sage: xNTL = ZxNTL.gen()
-        sage: xFLINT = ZxFLINT.gen()
-        sage: xNTL.parent()
+        sage: xNTL = ZxNTL.gen()                                                                                        # optional - sage.libs.ntl
+        sage: xFLINT = ZxFLINT.gen()                                                                                    # optional - sage.libs.flint
+        sage: xNTL.parent()                                                                                             # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: xFLINT.parent()
+        sage: xFLINT.parent()                                                                                           # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
 
     There is a coercion from the non-default to the default
     implementation, so the values can be mixed in a single
     expression::
 
-        sage: (xNTL + xFLINT^2)
+        sage: (xNTL + xFLINT^2)                                                                                         # optional - sage.libs.flint sage.libs.ntl
         x^2 + x
 
     The result of such an expression will use the default, i.e.,
     the FLINT implementation::
 
-        sage: (xNTL + xFLINT^2).parent()
+        sage: (xNTL + xFLINT^2).parent()                                                                                # optional - sage.libs.flint sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring
 
     The generic implementation uses neither NTL nor FLINT::

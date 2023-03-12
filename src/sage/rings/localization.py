@@ -41,35 +41,35 @@ three elements::
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
-    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                                      # optional - sage.modules
-    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],                        # optional - sage.modules
+    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                                      # optional - sage.libs.pari sage.modules
+    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],                        # optional - sage.libs.pari sage.modules
     ....:                 [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],
     ....:                 [0, 0, -1]])
-    sage: m3 = matrix(L, [[-1, 0, 0],                                                               # optional - sage.modules
+    sage: m3 = matrix(L, [[-1, 0, 0],                                                               # optional - sage.libs.pari sage.modules
     ....:                 [0, u0*(1 - q)/(u1*q - u0), q*(u1 - u0)/(u1*q - u0)],
     ....:                 [0, (u1*q^2 - u0)/(u1*q - u0), (u1*q^ 2 - u1*q)/(u1*q - u0)]])
-    sage: m1.base_ring() == L                                                                       # optional - sage.modules
+    sage: m1.base_ring() == L                                                                       # optional - sage.libs.pari sage.modules
     True
 
 Check relations of the Ariki-Koike algebra::
 
-    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                                # optional - sage.modules
+    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                                # optional - sage.libs.pari sage.modules
     True
-    sage: m2*m3*m2 == m3*m2*m3                                                                      # optional - sage.modules
+    sage: m2*m3*m2 == m3*m2*m3                                                                      # optional - sage.libs.pari sage.modules
     True
-    sage: m1*m3 == m3*m1                                                                            # optional - sage.modules
+    sage: m1*m3 == m3*m1                                                                            # optional - sage.libs.pari sage.modules
     True
-    sage: m1**3 -(u0+u1+u2)*m1**2 +(u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0                           # optional - sage.modules
+    sage: m1**3 -(u0+u1+u2)*m1**2 +(u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0                           # optional - sage.libs.pari sage.modules
     True
-    sage: m2**2 -(q-1)*m2 - q == 0                                                                  # optional - sage.modules
+    sage: m2**2 -(q-1)*m2 - q == 0                                                                  # optional - sage.libs.pari sage.modules
     True
-    sage: m3**2 -(q-1)*m3 - q == 0                                                                  # optional - sage.modules
+    sage: m3**2 -(q-1)*m3 - q == 0                                                                  # optional - sage.libs.pari sage.modules
     True
-    sage: ~m1 in m1.parent()                                                                        # optional - sage.modules
+    sage: ~m1 in m1.parent()                                                                        # optional - sage.libs.pari sage.modules
     True
-    sage: ~m2 in m2.parent()                                                                        # optional - sage.modules
+    sage: ~m2 in m2.parent()                                                                        # optional - sage.libs.pari sage.modules
     True
-    sage: ~m3 in m3.parent()                                                                        # optional - sage.modules
+    sage: ~m3 in m3.parent()                                                                        # optional - sage.libs.pari sage.modules
     True
 
 Obtain specializations in positive characteristic::
