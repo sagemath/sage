@@ -6,10 +6,17 @@ from sage.combinat.all__sagemath_polyhedra import *
 from sage.arith.all import *
 from sage.modules.all import *
 from sage.matrix.all import *
+from sage.data_structures.all import *
 from sage.geometry.all__sagemath_polyhedra import *
 from sage.geometry.triangulation.all import *
 from sage.groups.all__sagemath_polyhedra import *
 from sage.numerical.all__sagemath_polyhedra import *
+from sage.parallel.all import *
+
+# commented out in MANIFEST.in.m4
+#from sage.topology.all import *
+#from sage.tensor.all import *
+#from sage.matroids.all import *
 
 true = True
 false = False

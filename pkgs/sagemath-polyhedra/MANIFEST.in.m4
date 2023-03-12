@@ -101,7 +101,10 @@ exclude sage/geometry/ribbon_graph.p*                    # depends on sage.group
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
 # simplicial complexes
-graft sage/topology
+#graft sage/topology            # depends on sage.combinat.subset
+
+#graft sage/tensor              # depends on permutations
+#graft sage/matroids            # many doctests use graphs, finite fields
 
 include sage/numerical/mip.p*
 include sage/numerical/interactive_simplex_method.p*
