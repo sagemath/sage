@@ -286,17 +286,17 @@ class RingHomset_quo_ring(RingHomset_generic):
         EXAMPLES::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<a,b> = R.quotient(x^2 + y^2)
-            sage: H = S.Hom(R)
-            sage: phi = H([b, a]); phi
+            sage: S.<a,b> = R.quotient(x^2 + y^2)                                                                       # optional - sage.libs.singular
+            sage: H = S.Hom(R)                                                                                          # optional - sage.libs.singular
+            sage: phi = H([b, a]); phi                                                                                  # optional - sage.libs.singular
             Ring morphism:
               From: Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
               To:   Multivariate Polynomial Ring in x, y over Rational Field
               Defn: a |--> b
                     b |--> a
             sage: R2.<x,y> = PolynomialRing(ZZ, 2)
-            sage: H2 = Hom(R2, S)
-            sage: H2(phi)
+            sage: H2 = Hom(R2, S)                                                                                       # optional - sage.libs.singular
+            sage: H2(phi)                                                                                               # optional - sage.libs.singular
             Composite map:
               From: Multivariate Polynomial Ring in x, y over Integer Ring
               To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)

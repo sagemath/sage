@@ -1749,8 +1749,8 @@ cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
-        sage: R.<x, y, z> = BooleanPolynomialRing()
-        sage: isinstance(R, BooleanPolynomialRing_base)
+        sage: R.<x, y, z> = BooleanPolynomialRing()                                                 # optional - sage.rings.polynomial.pbori
+        sage: isinstance(R, BooleanPolynomialRing_base)                                             # optional - sage.rings.polynomial.pbori
         True
 
     By design, there is only one direct implementation subclass::

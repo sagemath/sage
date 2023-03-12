@@ -280,14 +280,14 @@ class MPowerSeries(PowerSeries):
 
     Convert elements from polynomial rings::
 
-        sage: R = PolynomialRing(ZZ,5,T.variable_names())
-        sage: t = R.gens()
-        sage: r = -t[2]*t[3] + t[3]^2 + t[4]^2
-        sage: T(r)
+        sage: R = PolynomialRing(ZZ, 5, T.variable_names())                             # optional - sage.libs.pari
+        sage: t = R.gens()                                                              # optional - sage.libs.pari
+        sage: r = -t[2]*t[3] + t[3]^2 + t[4]^2                                          # optional - sage.libs.pari
+        sage: T(r)                                                                      # optional - sage.libs.pari
         -t2*t3 + t3^2 + t4^2
-        sage: r.parent()
+        sage: r.parent()                                                                # optional - sage.libs.pari
         Multivariate Polynomial Ring in t0, t1, t2, t3, t4 over Integer Ring
-        sage: r in T
+        sage: r in T                                                                    # optional - sage.libs.pari
         True
     """
 
