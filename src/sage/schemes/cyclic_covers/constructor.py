@@ -8,7 +8,7 @@ Cyclic cover curve constructor
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.schemes.affine.affine_space import AffineSpace
 from .cycliccover_generic import CyclicCover_generic
@@ -100,7 +100,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
 
     """
-    if not is_Polynomial(f):
+    if not isinstance(f, Polynomial):
         raise TypeError("Arguments f (= %s) must be a polynomial" % (f,))
     P = f.parent()
     f = P(f)
