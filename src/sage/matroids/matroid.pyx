@@ -337,8 +337,6 @@ from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
 from itertools import combinations, permutations, product
 from .set_system cimport SetSystem
-from sage.graphs.spanning_tree import kruskal
-from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 
 from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
@@ -5864,6 +5862,8 @@ cdef class Matroid(SageObject):
             return True
 
         # Step 3: Check the avoidance graph of Y
+        from sage.graphs.graph import Graph
+
         Y_components = {}
         B_segments = []
         for B in bridges:
@@ -6090,6 +6090,8 @@ cdef class Matroid(SageObject):
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             True
         """
+        from sage.graphs.graph import Graph
+
         if basis is None:
             basis = self.basis()
         basis = sorted(basis)

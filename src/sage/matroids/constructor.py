@@ -103,7 +103,6 @@ Functions
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
-from sage.graphs.graph import Graph
 from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -712,7 +711,11 @@ def Matroid(groundset=None, data=None, **kwds):
             groundset = None
 
     if key is None:
-        if isinstance(data, sage.graphs.graph.Graph):
+        try:
+            from sage.graphs.graph import Graph
+        except ImportError:
+            Graph = ()
+        if isinstance(data, Graph):
             key = 'graph'
         elif is_Matrix(data):
             key = 'matrix'
@@ -773,6 +776,8 @@ def Matroid(groundset=None, data=None, **kwds):
     # Graphs:
 
     elif key == 'graph':
+        from sage.graphs.graph import Graph
+
         if isinstance(data, sage.graphs.generic_graph.GenericGraph):
             G = data
         else:

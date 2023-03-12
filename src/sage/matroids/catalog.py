@@ -36,11 +36,10 @@ Functions
 # ****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.graphs.graph_generators import graphs
-
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.schemes.all import ProjectiveSpace
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
+lazy_import('sage.schemes.all', 'ProjectiveSpace')
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -698,6 +697,8 @@ def K33dual():
         sage: M.is_valid() # long time
         True
     """
+    from sage.graphs.graph_generators import graphs
+
     E = 'abcdefghi'
     G = graphs.CompleteBipartiteGraph(3, 3)
     M = Matroid(groundset=E, graph=G, regular=True)
@@ -768,6 +769,8 @@ def CompleteGraphic(n):
         sage: M.is_valid()
         True
     """
+    from sage.graphs.graph_generators import graphs
+
     M = Matroid(groundset=list(range((n * (n - 1)) // 2)),
                 graph=graphs.CompleteGraph(n))
     M.rename('M(K' + str(n) + '): ' + repr(M))

@@ -117,8 +117,6 @@ from itertools import combinations, product
 from cpython.object cimport Py_EQ, Py_NE
 
 from sage.data_structures.bitset_base cimport *
-from sage.graphs.graph import Graph
-from sage.graphs.spanning_tree import kruskal
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix2 cimport Matrix
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
