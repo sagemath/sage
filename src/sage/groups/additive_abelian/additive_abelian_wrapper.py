@@ -220,7 +220,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         EXAMPLES::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])  # optional - sage.rings.number_field
-            sage: G.universe()
+            sage: G.universe()                                                                      # optional - sage.rings.number_field
             Algebraic Field
         """
         return self._universe
