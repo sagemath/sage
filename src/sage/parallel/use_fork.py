@@ -301,7 +301,12 @@ class p_iter_fork():
         # The pexpect interfaces (and objects defined in them) are
         # not valid.
         if self.reset_interfaces:
-            sage.interfaces.quit.invalidate_all()
+            try:
+                from sage.interfaces.quit import invalidate_all
+            except ImportError:
+                pass
+            else:
+                invalidate_all()
 
         # Now evaluate the function f.
         value = f(*args, **kwds)
