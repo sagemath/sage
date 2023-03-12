@@ -145,9 +145,9 @@ def characteristic_polynomial(x, var='x'):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3,4,5,6,7,8,9])                                                                                # optional - sage.modules
-        sage: charpoly(A)                                                                                               # optional - sage.modules
+        sage: charpoly(A)                                                                                               # optional - sage.libs.pari sage.modules
         x^3 - 15*x^2 - 18*x
-        sage: charpoly(A, 't')                                                                                          # optional - sage.modules
+        sage: charpoly(A, 't')                                                                                          # optional - sage.libs.pari sage.modules
         t^3 - 15*t^2 - 18*t
 
         sage: k.<alpha> = GF(7^10); k                                                                                   # optional - sage.libs.pari
@@ -1206,13 +1206,13 @@ def minimal_polynomial(x, var='x'):
     EXAMPLES::
 
         sage: a = matrix(ZZ, 2, [1..4])                                                                                 # optional - sage.modules
-        sage: minpoly(a)                                                                                                # optional - sage.modules
+        sage: minpoly(a)                                                                                                # optional - sage.libs.pari sage.modules
         x^2 - 5*x - 2
-        sage: minpoly(a, 't')                                                                                           # optional - sage.modules
+        sage: minpoly(a, 't')                                                                                           # optional - sage.libs.pari sage.modules
         t^2 - 5*t - 2
-        sage: minimal_polynomial(a)                                                                                     # optional - sage.modules
+        sage: minimal_polynomial(a)                                                                                     # optional - sage.libs.pari sage.modules
         x^2 - 5*x - 2
-        sage: minimal_polynomial(a, 'theta')                                                                            # optional - sage.modules
+        sage: minimal_polynomial(a, 'theta')                                                                            # optional - sage.libs.pari sage.modules
         theta^2 - 5*theta - 2
     """
     try:
