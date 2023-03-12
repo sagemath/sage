@@ -531,25 +531,25 @@ def fork(f=None, timeout=0, verbose=False):
     We illustrate that the state of the pexpect interface is not altered by
     forked functions (they get their own new pexpect interfaces!)::
 
-        sage: gp.eval('a = 5')
+        sage: gp.eval('a = 5')                                                          # optional - sage.libs.pari
         '5'
-        sage: @fork()
+        sage: @fork()                                                                   # optional - sage.libs.pari
         ....: def g():
         ....:     gp.eval('a = 10')
         ....:     return gp.eval('a')
-        sage: g()
+        sage: g()                                                                       # optional - sage.libs.pari
         '10'
-        sage: gp.eval('a')
+        sage: gp.eval('a')                                                              # optional - sage.libs.pari
         '5'
 
     We illustrate that the forked function has its own pexpect
     interface::
 
-        sage: gp.eval('a = 15')
+        sage: gp.eval('a = 15')                                                         # optional - sage.libs.pari
         '15'
-        sage: @fork()
+        sage: @fork()                                                                   # optional - sage.libs.pari
         ....: def g(): return gp.eval('a')
-        sage: g()
+        sage: g()                                                                       # optional - sage.libs.pari
         'a'
 
     We illustrate that segfaulting subprocesses are no trouble at all::
