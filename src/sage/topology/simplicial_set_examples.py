@@ -29,7 +29,6 @@ AUTHORS:
 
 import re
 import os
-from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
 from sage.misc.cachefunc import cached_method, cached_function
@@ -533,23 +532,23 @@ def ComplexProjectiveSpace(n):
 
         sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)
         {0: Z, 1: 0, 2: Z, 3: 0, 4: Z}
-        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)
-        sage: CP3
+        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)                           # optional - pyparsing
+        sage: CP3                                                                       # optional - pyparsing
         CP^3
-        sage: latex(CP3)
+        sage: latex(CP3)                                                                # optional - pyparsing
         CP^{3}
-        sage: CP3.f_vector()
+        sage: CP3.f_vector()                                                            # optional - pyparsing
         [1, 0, 3, 10, 25, 30, 15]
 
-        sage: K = CP3.suspension() # long time (1 second)
-        sage: R = K.cohomology_ring(GF(2)) # long time
-        sage: R.gens()        # long time
+        sage: K = CP3.suspension()              # long time (1 second)                  # optional - pyparsing
+        sage: R = K.cohomology_ring(GF(2))      # long time                             # optional - pyparsing
+        sage: R.gens()                          # long time                             # optional - pyparsing
         (h^{0,0}, h^{3,0}, h^{5,0}, h^{7,0})
-        sage: x = R.gens()[1] # long time
-        sage: x.Sq(2)         # long time
+        sage: x = R.gens()[1]                   # long time                             # optional - pyparsing
+        sage: x.Sq(2)                           # long time                             # optional - pyparsing
         h^{5,0}
 
-        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()
+        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()                      # optional - pyparsing
         [1, 0, 4, 22, 97, 255, 390, 315, 105]
 
         sage: simplicial_sets.ComplexProjectiveSpace(5)
@@ -643,10 +642,12 @@ def simplicial_data_from_kenzo_output(filename):
         sage: from sage.topology.simplicial_set_examples import simplicial_data_from_kenzo_output
         sage: from sage.topology.simplicial_set import SimplicialSet
         sage: sphere = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'S4.txt')
-        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))
-        sage: S4.homology(reduced=False)
+        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))             # optional - pyparsing
+        sage: S4.homology(reduced=False)                                                # optional - pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
+    from pyparsing import OneOrMore, nestedExpr
+
     with open(filename, 'r') as f:
         data = f.read()
     dim = 0
