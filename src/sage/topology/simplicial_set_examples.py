@@ -344,18 +344,18 @@ def RealProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: simplicial_sets.RealProjectiveSpace(7)
+        sage: simplicial_sets.RealProjectiveSpace(7)                                    # optional - sage.groups
         RP^7
-        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-        sage: RP5.homology()
+        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                              # optional - sage.groups
+        sage: RP5.homology()                                                            # optional - sage.groups
         {0: 0, 1: C2, 2: 0, 3: C2, 4: 0, 5: Z}
-        sage: RP5
+        sage: RP5                                                                       # optional - sage.groups
         RP^5
-        sage: latex(RP5)
+        sage: latex(RP5)                                                                # optional - sage.groups
         RP^{5}
 
-        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)
-        sage: latex(BC2)
+        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)                       # optional - sage.groups
+        sage: latex(BC2)                                                                # optional - sage.groups
         RP^{\infty}
     """
     if n == Infinity:
