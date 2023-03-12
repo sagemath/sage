@@ -204,38 +204,38 @@ cdef class FrozenBitset:
     the number of elements currently in the bitset, while the capacity
     is the number of elements that the bitset can hold. ::
 
-        sage: p = primes_first_n(10); p
+        sage: p = primes_first_n(10); p                                                 # optional - sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-        sage: tuple(p)
+        sage: tuple(p)                                                                  # optional - sage.libs.pari
         (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
-        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))
+        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))                            # optional - sage.libs.pari
         001101010001010001010001000001
         001101010001010001010001000001
 
     Recover the primes from the bitset::
 
-        sage: for b in F:
+        sage: for b in F:                                                               # optional - sage.libs.pari
         ....:     print(b)
         2
         3
         ...
         29
-        sage: list(F)
+        sage: list(F)                                                                   # optional - sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
     Query the bitset::
 
-        sage: len(F)
+        sage: len(F)                                                                    # optional - sage.libs.pari
         10
-        sage: len(list(F))
+        sage: len(list(F))                                                              # optional - sage.libs.pari
         10
-        sage: F.capacity()
+        sage: F.capacity()                                                              # optional - sage.libs.pari
         30
-        sage: s = str(F); len(s)
+        sage: s = str(F); len(s)                                                        # optional - sage.libs.pari
         30
-        sage: 2 in F
+        sage: 2 in F                                                                    # optional - sage.libs.pari
         True
-        sage: 1 in F
+        sage: 1 in F                                                                    # optional - sage.libs.pari
         False
 
     A random iterable, with all duplicate elements removed::
