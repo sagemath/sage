@@ -8,8 +8,6 @@ lazy_import('sage.misc.misc', 'union',
 
 from .dev_tools import runsnake, import_statements
 
-from .sage_timeit_class import timeit
-
 from .edit_module import edit, set_edit_template
 
 from .session import load_session, save_session, show_identifiers

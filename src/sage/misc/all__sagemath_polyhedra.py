@@ -20,3 +20,5 @@ from .temporary_file import tmp_dir, tmp_filename  # Depends on sage.env
 from .mathml import mathml
 
 from .func_persist import func_persist
+
+from .sage_timeit_class import timeit
