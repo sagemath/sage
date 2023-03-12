@@ -52,7 +52,11 @@ class GapPackage(Feature):
             sage: GapPackage("grape", spkg="gap_packages")._is_present()  # optional - gap_packages
             FeatureTestResult('gap_package_grape', True)
         """
-        from sage.libs.gap.libgap import libgap
+        try:
+            from sage.libs.gap.libgap import libgap
+        except ImportError:
+            return FeatureTestResult(self, False,
+                                     reason="sage.libs.gap is not available")
         command = 'TestPackageAvailability("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
         if presence:
