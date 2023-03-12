@@ -5323,7 +5323,7 @@ def two_squares(n):
 
     TESTS::
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                  # optional - sage.libs.pari
         ....:     a = ZZ.random_element(2**16, 2**20)
         ....:     b = ZZ.random_element(2**16, 2**20)
         ....:     n = a**2 + b**2
@@ -5447,7 +5447,7 @@ def three_squares(n):
 
     TESTS::
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                  # optional - sage.libs.pari
         ....:     a = ZZ.random_element(2**16, 2**20)
         ....:     b = ZZ.random_element(2**16, 2**20)
         ....:     c = ZZ.random_element(2**16, 2**20)
