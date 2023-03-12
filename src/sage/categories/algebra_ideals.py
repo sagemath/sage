@@ -55,7 +55,7 @@ class AlgebraIdeals(Category_ideal):
         except AttributeError:
             raise TypeError(f"A (={A}) must be an algebra")
         else:
-            if base_ring not in Rings() or A not in Algebras(base_ring):
+            if base_ring not in Rings() or A not in Algebras(base_ring.category()):
                 raise TypeError(f"A (={A}) must be an algebra")
 
         Category_ideal.__init__(self, A)

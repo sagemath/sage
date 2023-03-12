@@ -59,7 +59,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
         except AttributeError:
             raise TypeError(f"A (={A}) must be a commutative algebra")
         else:
-            if base_ring not in CommutativeRings() or A not in CommutativeAlgebras(base_ring):
+            if base_ring not in CommutativeRings() or A not in CommutativeAlgebras(base_ring.category()):
                 raise TypeError(f"A (={A}) must be a commutative algebra")
 
         Category_in_ambient.__init__(self, A)
