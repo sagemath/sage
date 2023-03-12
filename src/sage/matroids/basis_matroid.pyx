@@ -110,11 +110,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     Create a BasisMatroid instance out of any other matroid::
 
         sage: from sage.matroids.advanced import *
-        sage: F = matroids.named_matroids.Fano()
-        sage: M = BasisMatroid(F)
-        sage: F.groundset() == M.groundset()
+        sage: F = matroids.named_matroids.Fano()                                        # optional - sage.libs.pari
+        sage: M = BasisMatroid(F)                                                       # optional - sage.libs.pari
+        sage: F.groundset() == M.groundset()                                            # optional - sage.libs.pari
         True
-        sage: len(set(F.bases()).difference(M.bases()))
+        sage: len(set(F.bases()).difference(M.bases()))                                 # optional - sage.libs.pari
         0
 
     It is possible to provide either bases or nonbases::
@@ -150,11 +150,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: F = matroids.named_matroids.Fano()
-            sage: M = BasisMatroid(F)
-            sage: F.groundset() == M.groundset()
+            sage: F = matroids.named_matroids.Fano()                                    # optional - sage.libs.pari
+            sage: M = BasisMatroid(F)                                                   # optional - sage.libs.pari
+            sage: F.groundset() == M.groundset()                                        # optional - sage.libs.pari
             True
-            sage: len(set(F.bases()).difference(M.bases()))
+            sage: len(set(F.bases()).difference(M.bases()))                             # optional - sage.libs.pari
             0
         """
         cdef SetSystem NB
@@ -254,8 +254,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: repr(M)  # indirect doctest
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: repr(M)  # indirect doctest                                           # optional - sage.libs.pari
             'Matroid of rank 3 on 7 elements with 28 bases'
 
         """
@@ -429,12 +429,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.N2().bases())
-            sage: M.truncation()
+            sage: M = Matroid(bases=matroids.named_matroids.N2().bases())               # optional - sage.libs.pari
+            sage: M.truncation()                                                        # optional - sage.libs.pari
             Matroid of rank 5 on 12 elements with 702 bases
-            sage: M.f_vector()
+            sage: M.f_vector()                                                          # optional - sage.libs.pari
             [1, 12, 66, 190, 258, 99, 1]
-            sage: M.truncation().f_vector()
+            sage: M.truncation().f_vector()                                             # optional - sage.libs.pari
             [1, 12, 66, 190, 258, 1]
 
         """
@@ -511,10 +511,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: M
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: M                                                                     # optional - sage.libs.pari
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: M._with_coloop('x')
+            sage: M._with_coloop('x')                                                   # optional - sage.libs.pari
             Matroid of rank 4 on 8 elements with 28 bases
 
         """
@@ -548,11 +548,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: sorted(M.groundset())
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: sorted(M.groundset())                                                 # optional - sage.libs.pari
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'g':'x'})
-            sage: sorted(N.groundset())
+            sage: N = M.relabel({'g':'x'})                                              # optional - sage.libs.pari
+            sage: sorted(N.groundset())                                                 # optional - sage.libs.pari
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
 
         """
@@ -572,10 +572,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
-            sage: M
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.libs.pari
+            sage: M                                                                     # optional - sage.libs.pari
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: M.bases_count()
+            sage: M.bases_count()                                                       # optional - sage.libs.pari
             28
         """
         if self._bcount is None:
@@ -594,10 +594,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
-            sage: M
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.libs.pari
+            sage: M                                                                     # optional - sage.libs.pari
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: len(M.bases())
+            sage: len(M.bases())                                                        # optional - sage.libs.pari
             28
         """
         cdef long r, n
@@ -630,10 +630,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
-            sage: M
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.libs.pari
+            sage: M                                                                     # optional - sage.libs.pari
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: len(M.nonbases())
+            sage: len(M.nonbases())                                                     # optional - sage.libs.pari
             7
         """
         if self._nonbases is not None:
@@ -674,9 +674,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())
-            sage: M._bases_invariant() == N._bases_invariant()
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: M._bases_invariant() == N._bases_invariant()                          # optional - sage.libs.pari
             True
         """
         if self._bases_invariant_var is not None:
@@ -733,9 +733,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: N = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: M._bases_invariant2() == N._bases_invariant2()
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: M._bases_invariant2() == N._bases_invariant2()                        # optional - sage.libs.pari
             False
         """
         if self._bases_invariant2_var is None:
@@ -844,8 +844,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.N1())
-            sage: sorted([e for e in M.groundset() if M.is_distinguished(e)])
+            sage: M = BasisMatroid(matroids.named_matroids.N1())                        # optional - sage.libs.pari
+            sage: sorted([e for e in M.groundset() if M.is_distinguished(e)])           # optional - sage.libs.pari
             ['c', 'g', 'h', 'j']
 
         """
@@ -886,12 +886,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())
-            sage: m = {e:e for e in M.groundset()}
-            sage: M._is_relaxation(N, m)
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: m = {e:e for e in M.groundset()}                                      # optional - sage.libs.pari
+            sage: M._is_relaxation(N, m)                                                # optional - sage.libs.pari
             True
-            sage: N._is_relaxation(M, m)
+            sage: N._is_relaxation(M, m)                                                # optional - sage.libs.pari
             False
         """
         cdef long i, j
@@ -941,12 +941,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())
-            sage: m = {e:e for e in M.groundset()}
-            sage: M._is_relaxation(N, m)
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: m = {e:e for e in M.groundset()}                                      # optional - sage.libs.pari
+            sage: M._is_relaxation(N, m)                                                # optional - sage.libs.pari
             True
-            sage: M._is_isomorphism(N, m)
+            sage: M._is_isomorphism(N, m)                                               # optional - sage.libs.pari
             False
         """
         if not isinstance(other, BasisMatroid):
@@ -979,9 +979,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: morphism = M._isomorphism(N)
             sage: M._is_isomorphism(N, morphism)
             True
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())
-            sage: M._isomorphism(N) is not None
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: M._isomorphism(N) is not None                                         # optional - sage.libs.pari
             False
         """
         if not isinstance(other, BasisMatroid):
@@ -1055,11 +1055,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())
-            sage: M._is_isomorphic(N)
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: M._is_isomorphic(N)                                                   # optional - sage.libs.pari
             False
-            sage: M._is_isomorphic(N, certificate=True)
+            sage: M._is_isomorphic(N, certificate=True)                                 # optional - sage.libs.pari
             (False, None)
         """
         if certificate:
@@ -1127,12 +1127,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
-            sage: N = BasisMatroid(matroids.named_matroids.Fano().dual()).dual()
-            sage: O = BasisMatroid(matroids.named_matroids.NonFano())
-            sage: hash(M) == hash(N)
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.libs.pari
+            sage: N = BasisMatroid(matroids.named_matroids.Fano().dual()).dual()        # optional - sage.libs.pari
+            sage: O = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.libs.pari
+            sage: hash(M) == hash(N)                                                    # optional - sage.libs.pari
             True
-            sage: hash(M) == hash(O)
+            sage: hash(M) == hash(O)                                                    # optional - sage.libs.pari
             False
         """
         return hash((self.groundset(), self.bases_count(), self._weak_invariant()))
