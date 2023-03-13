@@ -233,7 +233,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         A tableau is shallowly immutable. See :trac:`15862`. The entries
         themselves may be mutable objects, though in that case the
-        resulting Tableau should be unhashable.
+        resulting Tableau should be unhashable. ::
 
             sage: T = Tableau([[1,2],[2]])
             sage: t0 = T[0]

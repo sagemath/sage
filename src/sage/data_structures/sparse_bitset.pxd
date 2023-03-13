@@ -6,7 +6,7 @@ This is a regular bitset to which we will add additional structure.
 In particular some representation of which limbs even contain data.
 """
 # ****************************************************************************
-#       Copyright (C) 2020 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2020 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

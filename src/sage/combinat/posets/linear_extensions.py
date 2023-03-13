@@ -255,15 +255,15 @@ class LinearExtensionOfPoset(ClonableArray,
     def is_supergreedy(self):
         r"""
         Return ``True`` if the linear extension is supergreedy.
-        
-        A linear extension `[x_1<x_2<...<x_t]` of a finite ordered
-        set `P=(P, <)` is *super greedy* if it can be obtained using
-        the following procedure: Choose `x_1` to be a minimal
-        element of `P`; suppose `x_1,...,x_i` have been chosen;
-        define `p(x)` to be the largest `j\leq i` such that `x_j<x`
-        if such a `j` exists and 0 otherwise; choose `x_{i+1}`
-        to be a minimal element of `P-\{x_1,...,x_i\}` which
-        maximizes `p`.
+
+        A linear extension of a poset `P` with elements `\{x_1,x_2,...,x_t\}`
+        is *super greedy*, if it can be obtained using the following
+        algorithm: choose `x_1` to be a minimal element of `P`;
+        suppose `X = \{x_1,...,x_i\}` have been chosen; let `M` be
+        the set of minimal elements of `P\setminus X`. If there is an element
+        of `M` which covers an element `x_j` in `X`, then let `x_{i+1}`
+        be one of these such that `j` is maximal; otherwise, choose `x_{i+1}`
+        to be any element of `M`.
 
         Informally, a linear extension is supergreedy if it "always
         goes up and receedes the least"; in other words, supergreedy
@@ -271,7 +271,7 @@ class LinearExtensionOfPoset(ClonableArray,
         For more details see [KTZ1987]_.
 
         EXAMPLES::
-        
+
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
             sage: P = Poset((X,Y), cover_relations = True, facade=False)
@@ -294,31 +294,23 @@ class LinearExtensionOfPoset(ClonableArray,
             sage: T.linear_extensions()[0].is_supergreedy()
             True
         """
-        P = self.poset()
-        H = P.hasse_diagram()
-
-        def next_elements(H, linext):
-            k = len(linext)
-            S = []
-            while not S:
-                if not k:
-                    S = [x for x in H.sources() if x not in linext]
-                else:
-                    S = [x for x in H.neighbor_out_iterator(linext[k-1]) if x not in linext and all(low in linext for low in H.neighbor_in_iterator(x))]
-                    k -= 1
-            return S
-        if not self:
-            return True
-        if self[0] not in H.sources():
-            return False
-        for i in range(len(self)-2):
-            X = next_elements(H,self[:i+1])
-            if self[i+1] in X:
-                continue
-            else:
+        H = self.poset().hasse_diagram()
+        L = sources = H.sources()
+        linext = []
+        for e in self:
+            if e not in L:
                 return False
+            linext.append(e)
+            for y in reversed(linext):
+                L = [x for x in H.neighbor_out_iterator(y)
+                     if x not in linext
+                     and all(low in linext for low in H.neighbor_in_iterator(x))]
+                if L:
+                    break
+            else:
+                L = sources = [x for x in sources if x not in linext]
         return True
-    
+
     def tau(self, i):
         r"""
         Return the operator `\tau_i` on linear extensions ``self`` of a poset.

@@ -1521,7 +1521,7 @@ cdef class FiniteField(Field):
             True
         """
         from .finite_field_constructor import GF
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         if name is None and names is not None:
             name = names
@@ -1532,7 +1532,7 @@ cdef class FiniteField(Field):
                 E = GF((self.characteristic(), modulus), name=name, **kwds)
             elif isinstance(modulus, (list, tuple)):
                 E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
-            elif is_Polynomial(modulus):
+            elif isinstance(modulus, Polynomial):
                 if modulus.change_ring(self).is_irreducible():
                     E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:

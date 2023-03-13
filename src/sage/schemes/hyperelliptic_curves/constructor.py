@@ -23,10 +23,10 @@ from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
 from .hyperelliptic_g2 import HyperellipticCurve_g2
 
 import sage.rings.abc
-from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
 
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import is_RationalField
 from sage.structure.dynamic_class import dynamic_class
 
 
@@ -197,7 +197,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     # F is the discriminant; use this for the type check
     # rather than f and h, one of which might be constant.
     F = h**2 + 4*f
-    if not is_Polynomial(F):
+    if not isinstance(F, Polynomial):
         raise TypeError("Arguments f (= %s) and h (= %s) must be polynomials" % (f, h))
     P = F.parent()
     f = P(f)

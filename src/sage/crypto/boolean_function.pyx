@@ -39,7 +39,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.misc.superseded import deprecated_function_alias
 
@@ -326,7 +326,7 @@ cdef class BooleanFunction(SageObject):
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
 
-        elif is_Polynomial(x):
+        elif isinstance(x, Polynomial):
             K = x.base_ring()
             if isinstance(K, FiniteField) and K.characteristic() == 2:
                 self._nvariables = K.degree()
