@@ -171,7 +171,6 @@ import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.power_series_ring_element import PowerSeries
-from .polynomial_element import PolynomialBaseringInjection
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -680,6 +679,8 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))                                      # optional - sage.libs.pari
         """
+        from .polynomial_element import PolynomialBaseringInjection
+
         return PolynomialBaseringInjection(self.base_ring(), self)
 
     def _coerce_map_from_(self, P):

@@ -26,10 +26,10 @@ from sage.misc.functional import log
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
+lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
 
 
 class DrinfeldModules(Category_over_base_ring):
