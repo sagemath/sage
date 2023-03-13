@@ -2190,7 +2190,8 @@ def _sage_getsourcelines_name_with_dot(obj):
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                                                                   # optional - sage.misc.cython
+        ....: '''
         ....: class A:
         ....:     def __init__(self):
         ....:         "some init doc"
@@ -2200,11 +2201,11 @@ def _sage_getsourcelines_name_with_dot(obj):
         ....:     class A(A):
         ....:         pass
         ....: ''')
-        sage: B.A.__name__
+        sage: B.A.__name__                                                              # optional - sage.misc.cython
         'A'
-        sage: B.A.__qualname__
+        sage: B.A.__qualname__                                                          # optional - sage.misc.cython
         'B.A'
-        sage: sage_getsource(B.A)
+        sage: sage_getsource(B.A)                                                       # optional - sage.misc.cython
         '    class A(A):\n        pass\n\n'
 
     Note that for this example to work, it is essential that the class ``B``
@@ -2331,10 +2332,10 @@ def sage_getsourcelines(obj):
     which gives the source lines of a class instance, but not the class
     itself. We demonstrate this for :class:`CachedFunction`::
 
-        sage: cachedfib = cached_function(fibonacci)
-        sage: sage_getsourcelines(cachedfib)[0][0]
+        sage: cachedfib = cached_function(fibonacci)                                    # optional - sage.combinat
+        sage: sage_getsourcelines(cachedfib)[0][0]                                      # optional - sage.combinat
         'def fibonacci(n, algorithm="pari") -> Integer:\n'
-        sage: sage_getsourcelines(type(cachedfib))[0][0]
+        sage: sage_getsourcelines(type(cachedfib))[0][0]                                # optional - sage.combinat
         'cdef class CachedFunction():\n'
 
     TESTS::

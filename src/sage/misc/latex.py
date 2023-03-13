@@ -1968,7 +1968,7 @@ def png(x, filename, density=150, debug=False,
 
         sage: from sage.misc.latex import png
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random, optional - latex imagemagick
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random, optional - latex imagemagick             # optional - sage.plot
         ....:     png(ZZ[x], f.name)
     """
     if not pdflatex:
