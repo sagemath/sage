@@ -106,7 +106,7 @@ class CharacterArtFactory(SageObject):
             -------------------------
                        _________
                  2*x*\/ 1 - 4*x
-            sage: ascii_art(list(DyckWords(3)))
+            sage: ascii_art(list(DyckWords(3)))                                         # optional - sage.combinat
             [                                   /\   ]
             [            /\    /\      /\/\    /  \  ]
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
@@ -441,7 +441,7 @@ class CharacterArtFactory(SageObject):
         EXAMPLES::
 
             sage: i2 = identity_matrix(2)                                               # optional - sage.modules
-            sage: ascii_art(i2, i2, i2, sep=ascii_art(1/x))                             # optional - sage.modules
+            sage: ascii_art(i2, i2, i2, sep=ascii_art(1/x))                             # optional - sage.modules sage.symbolic
                  1     1
             [1 0]-[1 0]-[1 0]
             [0 1]x[0 1]x[0 1]
