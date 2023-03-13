@@ -3083,8 +3083,8 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
         """
-        self._implementation_repr = ''
         if element_class is None:
+            self._implementation_repr = ''
             given_implementation = implementation
             for implementation in self._implementation_names(implementation, base_ring):
                 if implementation == "FLINT":
