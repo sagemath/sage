@@ -32,13 +32,13 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
     EXAMPLES::
 
         sage: from sage.homology.homology_group import HomologyGroup
-        sage: G = AbelianGroup(5, [5,5,7,8,9]); G
+        sage: G = AbelianGroup(5, [5,5,7,8,9]); G                                       # optional - sage.groups
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
         C5 x C5 x C7 x C8 x C9
-        sage: G == loads(dumps(G))
+        sage: G == loads(dumps(G))                                                      # optional - sage.groups
         True
-        sage: AbelianGroup(4)
+        sage: AbelianGroup(4)                                                           # optional - sage.groups
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z
         sage: HomologyGroup(4, ZZ)
         Z x Z x Z x Z
@@ -156,11 +156,11 @@ def HomologyGroup(n, base_ring, invfac=None):
     EXAMPLES::
 
         sage: from sage.homology.homology_group import HomologyGroup
-        sage: G = AbelianGroup(5, [5,5,7,8,9]); G
+        sage: G = AbelianGroup(5, [5,5,7,8,9]); G                                       # optional - sage.groups
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
         C5 x C5 x C7 x C8 x C9
-        sage: AbelianGroup(4)
+        sage: AbelianGroup(4)                                                           # optional - sage.groups
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z
         sage: HomologyGroup(4, ZZ)
         Z x Z x Z x Z

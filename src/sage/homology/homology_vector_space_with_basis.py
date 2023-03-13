@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
+
 """
 Homology and cohomology with a basis
 
