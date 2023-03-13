@@ -130,14 +130,14 @@ class BinaryQF(SageObject):
             sage: BinaryQF(0)
             0
         """
-        from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if b is None and c is None:
             if (isinstance(a, (list, tuple))
                 and len(a) == 3):
                 a, b, c = a
             elif a == 0:
                 a = b = c = 0
-            elif (is_MPolynomial(a) and a.is_homogeneous() and a.base_ring() == ZZ
+            elif (isinstance(a, MPolynomial) and a.is_homogeneous() and a.base_ring() == ZZ
                   and a.degree() == 2 and a.parent().ngens() == 2):
                 x, y = a.parent().gens()
                 a, b, c = [a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2]]

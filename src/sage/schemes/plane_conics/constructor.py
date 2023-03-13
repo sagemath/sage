@@ -32,7 +32,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.fraction_field import is_FractionField
@@ -204,7 +204,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
         F = vector(temp_ring.gens()) * F * vector(temp_ring.gens())
 
-    if not is_MPolynomial(F):
+    if not isinstance(F, MPolynomial):
         raise TypeError("F (=%s) must be a three-variable polynomial or "
                         "a sequence of points or coefficients" % F)
 
