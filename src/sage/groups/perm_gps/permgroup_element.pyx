@@ -111,8 +111,6 @@ Check that :trac:`13569` is fixed::
 import copy
 import random
 
-import sage.groups.old as group
-
 from libc.stdlib cimport qsort
 
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
@@ -120,20 +118,21 @@ from cpython.list cimport *
 
 from cypari2.gen cimport Gen
 
-from sage.ext.stdsage cimport HAS_DICTIONARY
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.structure.element import is_Matrix
-from sage.matrix.matrix_space import MatrixSpace
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-import sage.structure.coerce as coerce
-from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
-from sage.structure.coerce cimport coercion_model
-from sage.interfaces.abc import GpElement
-
 import sage.interfaces.abc
+import sage.groups.old as group
+import sage.structure.coerce as coerce
+
+from sage.ext.stdsage cimport HAS_DICTIONARY
+from sage.interfaces.abc import GpElement
+from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element import is_Matrix
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,

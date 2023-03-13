@@ -21,9 +21,10 @@ from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
 from .hyperelliptic_g2 import HyperellipticCurve_g2
 
 import sage.rings.abc
-from sage.rings.rational_field import is_RationalField
+
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import is_RationalField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
 
