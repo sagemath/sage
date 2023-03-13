@@ -7,7 +7,8 @@ The following test, verifying that :trac:`16181` has been resolved, needs
 to stay at the beginning of this file so that its context is not
 poisoned by other tests::
 
-    sage: sage.misc.globals.inject_variable('a', 0)
+    sage: from sage.misc.globals import inject_variable
+    sage: inject_variable('a', 0)
     sage: a
     0
 
