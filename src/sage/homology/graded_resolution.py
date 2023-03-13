@@ -74,8 +74,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.singular.singular import si2sa_resolution_graded
-from sage.libs.singular.function import singular_function
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import Matrix
 from sage.modules.free_module_element import vector
@@ -522,6 +520,9 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
             sage: r._res_shifts                                                         # optional - sage.libs.singular
             [[2, 2, 2], [3, 3]]
         """
+        from sage.libs.singular.singular import si2sa_resolution_graded
+        from sage.libs.singular.function import singular_function
+
         #cdef int i, j, k, ncols, nrows
         #cdef list res_shifts, prev_shifts, new_shifts
 

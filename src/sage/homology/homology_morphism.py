@@ -33,7 +33,12 @@ from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
-from sage.topology.simplicial_complex import SimplicialComplex
+
+try:
+    from sage.topology.simplicial_complex import SimplicialComplex
+except ImportError:
+    SimplicialComplex = ()
+
 
 class InducedHomologyMorphism(Morphism):
     r"""
