@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
 r"""
 Set of morphisms between two Drinfeld modules
 
