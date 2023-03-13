@@ -1075,7 +1075,9 @@ class ChainComplex_class(Parent):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.libs.pari
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]), 1: matrix(ZZ, 0, 2), 3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
+            ....:                   1: matrix(ZZ, 0, 2),
+            ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
             sage: C == D
             True
         """
@@ -1101,7 +1103,9 @@ class ChainComplex_class(Parent):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.libs.pari
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]), 1: matrix(ZZ, 0, 2), 3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
+            ....:                   1: matrix(ZZ, 0, 2),
+            ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
             sage: C != D
             False
             sage: E = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=ZZ)
@@ -1640,7 +1644,7 @@ class ChainComplex_class(Parent):
         ``-n * deg``, if ``deg`` is the degree of the differential::
 
             sage: C = ChainComplex({-2: matrix(ZZ, 0, 1)})
-            sage: C.tensor(co_T).homology()
+            sage: C.tensor(co_T).homology()                                             # optional - sage.graphs
             {-4: Z, -3: Z x Z, -2: Z}
         """
         deg = self.degree_of_differential()
