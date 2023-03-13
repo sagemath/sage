@@ -267,9 +267,9 @@ def PolynomialRing(base_ring, *args, **kwds):
     The Singular implementation always returns a multivariate ring,
     even for 1 variable::
 
-        sage: PolynomialRing(QQ, "x", implementation="singular")
+        sage: PolynomialRing(QQ, "x", implementation="singular")                                                        # optional - sage.libs.singular
         Multivariate Polynomial Ring in x over Rational Field
-        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); P
+        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); P                                                  # optional - sage.libs.singular
         Multivariate Polynomial Ring in x over Rational Field
 
     **3. PolynomialRing(base_ring, n, names, ...)** (where the arguments

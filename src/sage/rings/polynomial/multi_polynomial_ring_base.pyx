@@ -68,10 +68,10 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         Check that :trac:`26958` is fixed::
 
-            sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-            sage: class Foo(MPolynomialRing_libsingular):
+            sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular            # optional - sage.libs.singular
+            sage: class Foo(MPolynomialRing_libsingular):                                                               # optional - sage.libs.singular
             ....:     pass
-            sage: Foo(QQ, 2, ['x','y'], 'degrevlex')
+            sage: Foo(QQ, 2, ['x','y'], 'degrevlex')                                                                    # optional - sage.libs.singular
             Multivariate Polynomial Ring in x, y over Rational Field
         """
         if base_ring not in _CommutativeRings:

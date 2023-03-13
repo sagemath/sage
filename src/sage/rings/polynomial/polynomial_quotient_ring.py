@@ -160,14 +160,14 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 
         sage: R.<x> = PolynomialRing(IntegerRing())
         sage: f = x^2 + 1
-        sage: R.quotient(f)
+        sage: R.quotient(f)                                                                                 # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 + 1
 
     This shows that the issue at :trac:`5482` is solved::
 
         sage: R.<x> = PolynomialRing(QQ)
-        sage: f = x^2-1
-        sage: R.quotient_by_principal_ideal(f)
+        sage: f = x^2 - 1
+        sage: R.quotient_by_principal_ideal(f)                                                              # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
 
     """
@@ -287,18 +287,18 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     ::
 
         sage: R.<x> = PolynomialRing(ZZ)
-        sage: S = R.quo(x^2-4)
-        sage: f = S.hom([2])
-        sage: f
+        sage: S = R.quo(x^2 - 4)                                                                    # optional - sage.libs.pari
+        sage: f = S.hom([2])                                                                        # optional - sage.libs.pari
+        sage: f                                                                                     # optional - sage.libs.pari
         Ring morphism:
           From: Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 - 4
           To:   Integer Ring
           Defn: xbar |--> 2
-        sage: f(x)
+        sage: f(x)                                                                                  # optional - sage.libs.pari
         2
-        sage: f(x^2 - 4)
+        sage: f(x^2 - 4)                                                                            # optional - sage.libs.pari
         0
-        sage: f(x^2)
+        sage: f(x^2)                                                                                # optional - sage.libs.pari
         4
 
     TESTS:
@@ -314,8 +314,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     Thus, in order to document that this works fine, we go into some detail::
 
         sage: P.<x> = QQ[]
-        sage: Q = P.quotient(x^2+2)
-        sage: Q.category()
+        sage: Q = P.quotient(x^2 + 2)                                                               # optional - sage.libs.pari
+        sage: Q.category()                                                                          # optional - sage.libs.pari
         Category of commutative no zero divisors quotients of algebras over
          (number fields and quotient fields and metric spaces)
 
@@ -324,23 +324,24 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     class of the category, and store the current class of the quotient
     ring::
 
-        sage: isinstance(Q.an_element(),Q.element_class)
+        sage: isinstance(Q.an_element(), Q.element_class)                                           # optional - sage.libs.pari
         True
-        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent', 'is_one', 'is_unit', 'lift', 'powers']
-        sage: first_class = Q.__class__
+        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]                 # optional - sage.libs.pari
+        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent',
+         'is_one', 'is_unit', 'lift', 'powers']
+        sage: first_class = Q.__class__                                                             # optional - sage.libs.pari
 
     We try to find out whether `Q` is a field. Indeed it is, and thus its category,
     including its class and element class, is changed accordingly::
 
-        sage: Q in Fields()
+        sage: Q in Fields()                                                                         # optional - sage.libs.pari
         True
-        sage: Q.category()
+        sage: Q.category()                                                                          # optional - sage.libs.pari
         Category of commutative division no zero divisors quotients of algebras
          over (number fields and quotient fields and metric spaces)
-        sage: first_class == Q.__class__
+        sage: first_class == Q.__class__                                                            # optional - sage.libs.pari
         False
-        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
+        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]                 # optional - sage.libs.pari
         ['cartesian_product',
          'euclidean_degree',
          'factor',
@@ -364,22 +365,22 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     new methods from the category of fields, thanks to
     :meth:`Element.__getattr__`::
 
-        sage: e = Q.an_element()
-        sage: isinstance(e, Q.element_class)
+        sage: e = Q.an_element()                                                                    # optional - sage.libs.pari
+        sage: isinstance(e, Q.element_class)                                                        # optional - sage.libs.pari
         False
-        sage: e.gcd(e+1)
+        sage: e.gcd(e + 1)                                                                          # optional - sage.libs.pari
         1
 
     The test suite passes. However, we have to skip the test for its elements,
     since `an_element` has been cached in the call above and its class does not
     match the new category's element class anymore::
 
-        sage: TestSuite(Q).run(skip=['_test_elements'])
+        sage: TestSuite(Q).run(skip=['_test_elements'])                                             # optional - sage.libs.pari
 
     Newly created elements are fine, though, and their test suite passes::
 
-        sage: TestSuite(Q(x)).run()
-        sage: isinstance(Q(x), Q.element_class)
+        sage: TestSuite(Q(x)).run()                                                                 # optional - sage.libs.pari
+        sage: isinstance(Q(x), Q.element_class)                                                     # optional - sage.libs.pari
         True
     """
     Element = PolynomialQuotientRingElement
@@ -389,7 +390,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         TESTS::
 
             sage: R.<x> = PolynomialRing(ZZ)
-            sage: S = R.quo(x^2-4)                                                                          # optional - sage.libs.pari
+            sage: S = R.quo(x^2 - 4)                                                                        # optional - sage.libs.pari
             sage: from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
             sage: S == PolynomialQuotientRing_generic(R,x^2-4,'xbar')                                       # optional - sage.libs.pari
             True
@@ -1104,6 +1105,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         domain, even though the base ring is integral and the modulus is
         irreducible::
 
+            sage: x = polygen(ZZ, 'x')
             sage: B = ZZ.extension(x^2 - 5, 'a')
             sage: R.<y> = PolynomialRing(B)
             sage: S = R.quotient(y^2 - y - 1)                                   # optional - sage.libs.pari
