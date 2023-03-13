@@ -255,7 +255,7 @@ def ascii_art(*obj, **kwds):
     an ascii art separator::
 
         sage: sep_line = ascii_art('\n'.join(' | ' for _ in range(6)), baseline=6)
-        sage: ascii_art(*Partitions(6), separator=sep_line, sep_baseline=0)
+        sage: ascii_art(*Partitions(6), separator=sep_line, sep_baseline=0)             # optional - sage.combinat
                |       |      |      |     |     |     |    |    |    | *
                |       |      |      |     |     |     |    |    | ** | *
                |       |      |      |     |     | *** |    | ** | *  | *
