@@ -135,4 +135,6 @@
  "sage.sets.set_from_iterator": {"failed": true, "walltime": 2.047290086746216},
  "sage.misc.sagedoc": {"failed": true, "walltime": 5.255258798599243},
  "sage.sets.integer_range": {"failed": true, "walltime": 6.926319122314453},
- "sage.rings.tests": {"failed": true, "walltime": 1.0}}
+ "sage.rings.tests": {"failed": true, "walltime": 1.0},
+ "sage.cpython.wrapperdescr": {"failed": true, "walltime": 1.0},
+ "sage.rings.polynomial.polynomial_ring_homomorphism": {"failed": true, "walltime": 1.0}}
