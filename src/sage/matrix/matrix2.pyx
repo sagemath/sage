@@ -105,12 +105,13 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 # used to deprecate only adjoint method
 from sage.misc.superseded import deprecated_function_alias
 
+
 # temporary hack to silence the warnings from #34806
-from sage.rings.number_field.order import Order as NumberFieldOrder
 def ideal_or_fractional(R, *args):
-    if isinstance(R, NumberFieldOrder):
+    if isinstance(R, sage.rings.abc.Order):
         R = R.number_field()
     return R.ideal(*args)
+
 
 _Fields = Fields()
 
