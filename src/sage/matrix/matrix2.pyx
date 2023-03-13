@@ -3128,8 +3128,8 @@ cdef class Matrix(Matrix1):
 
         Test that :trac:`27937` is fixed::
 
-            sage: R = FreeAbelianMonoid('u,v').algebra(QQ)
-            sage: matrix(4, 4, lambda i, j: R.an_element())._charpoly_df()
+            sage: R = FreeAbelianMonoid('u,v').algebra(QQ)                              # optional - sage.groups
+            sage: matrix(4, 4, lambda i, j: R.an_element())._charpoly_df()              # optional - sage.groups
             B[1]*x^4 - 4*B[u]*x^3
 
         .. NOTE::
@@ -7236,7 +7236,7 @@ cdef class Matrix(Matrix1):
             [2 0 0]
             [0 2 0]
             [0 0 2]
-            sage: P
+            sage: P                                                                                 # optional - sage.rings.number_field
             [1 0 0]
             [0 0 0]
             [0 0 0]
@@ -10108,19 +10108,19 @@ cdef class Matrix(Matrix1):
         not an integral domain::
 
             sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: A = matrix(S, [[x*y^2,2*x],[2,x^10*y]])
-            sage: A
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: A = matrix(S, [[x*y^2, 2*x], [2, x^10*y]])                            # optional - sage.libs.singular
+            sage: A                                                                     # optional - sage.libs.singular
             [ x*y^2    2*x]
             [     2 x^10*y]
-            sage: A.det()
+            sage: A.det()                                                               # optional - sage.libs.singular
             -4*x
-            sage: A.charpoly('T')
+            sage: A.charpoly('T')                                                       # optional - sage.libs.singular
             T^2 + (-x^10*y - x*y^2)*T - 4*x
-            sage: A.adjugate()
+            sage: A.adjugate()                                                          # optional - sage.libs.singular
             [x^10*y   -2*x]
             [    -2  x*y^2]
-            sage: A.adjugate() * A
+            sage: A.adjugate() * A                                                      # optional - sage.libs.singular
             [-4*x    0]
             [   0 -4*x]
 
@@ -11693,7 +11693,7 @@ cdef class Matrix(Matrix1):
         A trivial matrix is diagonalizable, trivially. ::
 
             sage: A = matrix(QQ, 0, 0)
-            sage: A.is_diagonalizable()
+            sage: A.is_diagonalizable()                                                 # optional - sage.libs.pari
             True
 
         A matrix must be square to be diagonalizable. ::
@@ -16819,7 +16819,7 @@ cdef class Matrix(Matrix1):
             [  0   0|  0   0   0   0|  0   0   0   0   1  -4]
             sage: F.<x> = QQ[]
             sage: polys = A.rational_form(format='invariants')
-            sage: [F(p).factor() for p in polys]
+            sage: [F(p).factor() for p in polys]                                                            # optional - sage.libs.pari
             [x^2 + 2*x + 5, (x^2 - 2) * (x^2 + 2*x + 5), (x^2 - 2) * (x^2 + 2*x + 5)^2]
 
         Rational form may be computed over any field.  The matrix below is
