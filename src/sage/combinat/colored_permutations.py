@@ -87,6 +87,8 @@ class ColoredPermutation(MultiplicativeGroupElement):
         """
         Return the length of the one line form of ``self``.
 
+        EXAMPLES::
+
             sage: C = ColoredPermutations(2, 3)
             sage: s1,s2,t = C.gens()
             sage: len(s1)
