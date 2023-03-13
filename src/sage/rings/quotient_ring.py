@@ -296,7 +296,7 @@ def QuotientRing(R, I, names=None, **kwds):
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     # workaround to silence warning from #34806
-    from sage.rings.number_field.order import Order
+    from sage.rings.abc import Order
     if isinstance(R, Order):
         if not R.is_maximal():
             raise NotImplementedError('only implemented for maximal orders')
