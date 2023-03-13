@@ -718,12 +718,12 @@ cdef class Ring(ParentWithGens):
         This illustrates the use of the ``proof`` parameter::
 
             sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_field(proof = True)
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_field(proof=True)                                                # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_field(proof = False)
+            sage: S.is_field(proof=False)                                               # optional - sage.libs.singular
             False
         """
         if self.is_zero():
@@ -857,19 +857,19 @@ cdef class Ring(ParentWithGens):
             sage: Qp(7).is_integral_domain()                                                                            # optional - sage.rings.padics
             True
             sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_integral_domain()
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_integral_domain()                                                # optional - sage.libs.singular
             False
 
         This illustrates the use of the ``proof`` parameter::
 
             sage: R.<a,b> = ZZ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_integral_domain(proof=True)
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_integral_domain(proof=True)                                      # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_integral_domain(proof=False)
+            sage: S.is_integral_domain(proof=False)                                     # optional - sage.libs.singular
             False
 
         TESTS:

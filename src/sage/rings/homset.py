@@ -248,14 +248,15 @@ class RingHomset_quo_ring(RingHomset_generic):
     EXAMPLES::
 
         sage: R.<x,y> = PolynomialRing(QQ, 2)
-        sage: S.<a,b> = R.quotient(x^2 + y^2)
-        sage: phi = S.hom([b,a]); phi
-        Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
+        sage: S.<a,b> = R.quotient(x^2 + y^2)                                   # optional - sage.libs.singular
+        sage: phi = S.hom([b,a]); phi                                           # optional - sage.libs.singular
+        Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
+         over Rational Field by the ideal (x^2 + y^2)
           Defn: a |--> b
                 b |--> a
-        sage: phi(a)
+        sage: phi(a)                                                            # optional - sage.libs.singular
         b
-        sage: phi(b)
+        sage: phi(b)                                                            # optional - sage.libs.singular
         a
 
     TESTS:
@@ -265,15 +266,15 @@ class RingHomset_quo_ring(RingHomset_generic):
     ::
 
         sage: R.<x,y> = PolynomialRing(QQ, 2)
-        sage: S.<a,b> = R.quotient(x^2 + y^2)
-        sage: H = S.Hom(R)
-        sage: H == loads(dumps(H))
+        sage: S.<a,b> = R.quotient(x^2 + y^2)                                   # optional - sage.libs.singular
+        sage: H = S.Hom(R)                                                      # optional - sage.libs.singular
+        sage: H == loads(dumps(H))                                              # optional - sage.libs.singular
         True
 
     We test pickling of actual homomorphisms in a quotient::
 
-        sage: phi = S.hom([b,a])
-        sage: phi == loads(dumps(phi))
+        sage: phi = S.hom([b,a])                                                # optional - sage.libs.singular
+        sage: phi == loads(dumps(phi))                                          # optional - sage.libs.singular
         True
     """
 

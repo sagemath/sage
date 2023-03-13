@@ -2968,7 +2968,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             [406444, 406444, 406444, 406444, 406444, 406444, 406444, 406444]
             sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)                    # optional - sage.libs.pari
             (13, 13, 104)
-            sage: all(x^2 == 169 for x in v)
+            sage: all(x^2 == 169 for x in v)                                            # optional - sage.libs.pari
             True
 
         Modulo a power of 2::

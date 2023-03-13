@@ -128,9 +128,9 @@ Obtain specializations in characteristic 0::
     [     0 301/26 275/26]
 
     sage: S.<x, y, z, t> = QQ[]
-    sage: T = S.quo(x+y+z)
-    sage: F = T.fraction_field()
-    sage: fF = L.hom((x, y, z, t), codomain=F); fF
+    sage: T = S.quo(x + y + z)
+    sage: F = T.fraction_field()                                                                    # optional - sage.libs.singular
+    sage: fF = L.hom((x, y, z, t), codomain=F); fF                                                  # optional - sage.libs.singular
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
             (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -141,11 +141,11 @@ Obtain specializations in characteristic 0::
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k:fF(v) for k, v in m1.dict().items()}); mF1                                # optional - sage.modules
+    sage: mF1 = matrix({k:fF(v) for k, v in m1.dict().items()}); mF1                                # optional - sage.libs.singular sage.modules
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                                      # optional - sage.modules
+    sage: mF1.base_ring() == F                                                                      # optional - sage.libs.singular sage.modules
     True
 
 TESTS::
@@ -206,14 +206,14 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         [z, y, x]
 
         sage: R.<x, y> = ZZ[]
-        sage: Q.<a, b> = R.quo(x**2 - 5)
-        sage: p = b**2 - 5
-        sage: p == (b-a)*(b+a)
+        sage: Q.<a, b> = R.quo(x**2 - 5)                                                                                # optional - sage.libs.singular
+        sage: p = b**2 - 5                                                                                              # optional - sage.libs.singular
+        sage: p == (b-a)*(b+a)                                                                                          # optional - sage.libs.singular
         True
-        sage: normalize_extra_units(Q, [p])                                                                             # optional - sage.libs.pari
+        sage: normalize_extra_units(Q, [p])                                                                             # optional - sage.libs.pari sage.libs.singular
         doctest:...: UserWarning: Localization may not be represented uniquely
         [b^2 - 5]
-        sage: normalize_extra_units(Q, [p], warning=False)                                                              # optional - sage.libs.pari
+        sage: normalize_extra_units(Q, [p], warning=False)                                                              # optional - sage.libs.pari sage.libs.singular
         [b^2 - 5]
     """
     # convert to base ring
@@ -389,9 +389,9 @@ class LocalizationElement(IntegralDomainElement):
         EXAMPLES::
 
             sage: P.<X, Y> = QQ['x, y']
-            sage: L = P.localization(X-Y)
+            sage: L = P.localization(X - Y)
             sage: x, y = L.gens()
-            sage: p = (x^2 - y^2)/(x-y)^2
+            sage: p = (x^2 - y^2)/(x-y)^2                                                           # optional - sage.libs.singular
             sage: p.factor()
             (1/(x - y)) * (x + y)
         """
@@ -467,9 +467,9 @@ class LocalizationElement(IntegralDomainElement):
 
             sage: P.<x,y,z> = ZZ[]
             sage: L = Localization(P, x*y*z)
-            sage: L(x*y*z).inverse_of_unit()
+            sage: L(x*y*z).inverse_of_unit()                                                        # optional - sage.libs.singular
             1/(x*y*z)
-            sage: L(z).inverse_of_unit()
+            sage: L(z).inverse_of_unit()                                                            # optional - sage.libs.singular
             1/z
         """
         parent = self.parent()

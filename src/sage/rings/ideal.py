@@ -1738,21 +1738,21 @@ def Cyclic(R, n=None, homog=False, singular=None):
     An example from a multivariate polynomial ring over the
     rationals::
 
-        sage: P.<x,y,z> = PolynomialRing(QQ,3,order='lex')
-        sage: I = sage.rings.ideal.Cyclic(P)
-        sage: I
+        sage: P.<x,y,z> = PolynomialRing(QQ, 3, order='lex')
+        sage: I = sage.rings.ideal.Cyclic(P)                                            # optional - sage.libs.singular
+        sage: I                                                                         # optional - sage.libs.singular
         Ideal (x + y + z, x*y + x*z + y*z, x*y*z - 1) of Multivariate Polynomial
         Ring in x, y, z over Rational Field
-        sage: I.groebner_basis()
+        sage: I.groebner_basis()                                                        # optional - sage.libs.singular
         [x + y + z, y^2 + y*z + z^2, z^3 - 1]
 
     We compute a Groebner basis for cyclic 6, which is a standard
     benchmark and test ideal::
 
         sage: R.<x,y,z,t,u,v> = QQ['x,y,z,t,u,v']
-        sage: I = sage.rings.ideal.Cyclic(R,6)
-        sage: B = I.groebner_basis()
-        sage: len(B)
+        sage: I = sage.rings.ideal.Cyclic(R, 6)                                         # optional - sage.libs.singular
+        sage: B = I.groebner_basis()                                                    # optional - sage.libs.singular
+        sage: len(B)                                                                    # optional - sage.libs.singular
         45
     """
     from .rational_field import RationalField
@@ -1797,15 +1797,15 @@ def Katsura(R, n=None, homog=False, singular=None):
 
     EXAMPLES::
 
-        sage: P.<x,y,z> = PolynomialRing(QQ,3)
-        sage: I = sage.rings.ideal.Katsura(P,3); I
+        sage: P.<x,y,z> = PolynomialRing(QQ, 3)
+        sage: I = sage.rings.ideal.Katsura(P, 3); I                                     # optional - sage.libs.singular
         Ideal (x + 2*y + 2*z - 1, x^2 + 2*y^2 + 2*z^2 - x, 2*x*y + 2*y*z - y)
         of Multivariate Polynomial Ring in x, y, z over Rational Field
 
     ::
 
-        sage: Q.<x> = PolynomialRing(QQ, implementation="singular")
-        sage: J = sage.rings.ideal.Katsura(Q,1); J
+        sage: Q.<x> = PolynomialRing(QQ, implementation="singular")                     # optional - sage.libs.singular
+        sage: J = sage.rings.ideal.Katsura(Q,1); J                                      # optional - sage.libs.singular
         Ideal (x - 1) of Multivariate Polynomial Ring in x over Rational Field
     """
     from .rational_field import RationalField
