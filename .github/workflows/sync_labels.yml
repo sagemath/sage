@@ -20,18 +20,17 @@ jobs:
   synchronize:
     runs-on: ubuntu-latest
     steps:
-      # Download the Python script
-      - name: Download script
-        id: download
-        run: |
-          curl -L -O "https://raw.githubusercontent.com/"$REPO"/master/.github/sync_labels.py"
-          chmod a+x sync_labels.py
-        env:
-          REPO: ${{ github.repository }}
+      # Checkout the Python script
+      - name: Checkout files
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/sync_labels.py
 
       # Perform synchronization
       - name: Call script
-        run: ./sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE"
+        run: |
+          chmod a+x .github/sync_labels.py
+          .github/sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACTION: ${{ github.event.action }}
