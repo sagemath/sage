@@ -1177,22 +1177,22 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
-            sage: v = R(-1).sqrt(all=True); v
+            sage: v = R(-1).sqrt(all=True); v                                           # optional - sage.libs.pari
             [78853, 111808, 160142, 193097, 213348, 246303, 294637, 327592]
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                      # optional - sage.libs.pari
             [406444, 406444, 406444, 406444, 406444, 406444, 406444, 406444]
-            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)
+            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)                    # optional - sage.libs.pari
             (13, 13, 104)
-            sage: all(x^2 == 169 for x in v)
+            sage: all(x^2 == 169 for x in v)                                            # optional - sage.libs.pari
             True
 
         ::
 
-            sage: t = FiniteField(next_prime(2^100))(4)
-            sage: t.sqrt(extend = False, all = True)
+            sage: t = FiniteField(next_prime(2^100))(4)                                 # optional - sage.libs.pari
+            sage: t.sqrt(extend=False, all=True)                                        # optional - sage.libs.pari
             [2, 1267650600228229401496703205651]
-            sage: t = FiniteField(next_prime(2^100))(2)
-            sage: t.sqrt(extend = False, all = True)
+            sage: t = FiniteField(next_prime(2^100))(2)                                 # optional - sage.libs.pari
+            sage: t.sqrt(extend=False, all=True)                                        # optional - sage.libs.pari
             []
 
         Modulo a power of 2::
@@ -1446,7 +1446,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         We check that :trac:`32084` is fixed::
 
-            sage: mod(24, 25).nth_root(50)^50
+            sage: mod(24, 25).nth_root(50)^50                                                       # optional - sage.rings.padics
             24
 
         Check that the code path cunningham might be used::
@@ -2962,11 +2962,11 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
-            sage: v = R(-1).sqrt(all=True); v
+            sage: v = R(-1).sqrt(all=True); v                                           # optional - sage.libs.pari
             [78853, 111808, 160142, 193097, 213348, 246303, 294637, 327592]
-            sage: [x^2 for x in v]
+            sage: [x^2 for x in v]                                                      # optional - sage.libs.pari
             [406444, 406444, 406444, 406444, 406444, 406444, 406444, 406444]
-            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)
+            sage: v = R(169).sqrt(all=True); min(v), -max(v), len(v)                    # optional - sage.libs.pari
             (13, 13, 104)
             sage: all(x^2 == 169 for x in v)
             True
@@ -4178,7 +4178,7 @@ def lucas(k, P, Q=1, n=None):
         sage: p = randint(0,100000)
         sage: q = randint(0,100000)
         sage: n = randint(1,100)
-        sage: all(lucas(k,p,q,n)[0] == Mod(lucas_number2(k,p,q),n)
+        sage: all(lucas(k, p, q, n)[0] == Mod(lucas_number2(k, p, q), n)                            # optional - sage.combinat
         ....:     for k in Integers(20))
         True
         sage: from sage.rings.finite_rings.integer_mod import lucas
@@ -4186,7 +4186,7 @@ def lucas(k, P, Q=1, n=None):
         sage: q = randint(0,100000)
         sage: n = randint(1,100)
         sage: k = randint(0,100)
-        sage: lucas(k,p,q,n) == [Mod(lucas_number2(k,p,q),n),Mod(q^(int(k/2)),n)]
+        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n), Mod(q^(int(k/2)), n)]           # optional - sage.combinat
         True
 
     EXAMPLES::
