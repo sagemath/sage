@@ -1499,10 +1499,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
         # Note: for number fields other than QQ we could initialize
         # N=K.ideal(1) or N=OK.ideal(1), which are the same, but for
         # K == QQ it has to be ZZ.ideal(1).
-        OK = self.base_ring().ring_of_integers()
+        K = self.base_field()
+        N = ZZ.ideal(1) if K is QQ else K.fractional_ideal(1)
         self._conductor = prod([d.prime()**d.conductor_valuation()
                                 for d in self.local_data()],
-                               OK.ideal(1))
+                               N)
         return self._conductor
 
     def minimal_discriminant_ideal(self):

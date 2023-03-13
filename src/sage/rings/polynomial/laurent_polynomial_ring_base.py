@@ -353,7 +353,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        check that :trac:`26421` is fixed:
+        check that :trac:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = PolynomialRing(R)

@@ -1337,8 +1337,8 @@ class QuaternionOrder(Parent):
             sage: type(R)
             <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
 
-            Over QQ and number fields it is checked whether the given
-            basis actually gives an order (as a module over the maximal order):
+        Over QQ and number fields it is checked whether the given
+        basis actually gives an order (as a module over the maximal order)::
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)
             sage: A.quaternion_order([1,i,j,i-j])

@@ -1963,7 +1963,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: el == constructed_el
             True
 
-            If a q_basis is available the construction uses a different algorithm which we also check::
+        If a q_basis is available the construction uses a different algorithm which we also check::
 
             sage: basis = QF.q_basis(min_exp=-1)
             sage: QF(qexp) == constructed_el

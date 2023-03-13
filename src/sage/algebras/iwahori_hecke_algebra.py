@@ -2491,6 +2491,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             r"""
             Initialize the `A`-basis of the Iwahori-Hecke algebra ``IHAlgebra``.
 
+            EXAMPLES::
+
                 sage: R.<v> = LaurentPolynomialRing(QQ)
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
                 sage: A = H.A()

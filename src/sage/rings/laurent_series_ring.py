@@ -466,8 +466,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             x^-3
         """
         from sage.rings.fraction_field_element import is_FractionFieldElement
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.structure.element import parent
         from sage.libs.pari.all import pari_gen
 
@@ -500,7 +500,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
                 return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
         elif (is_FractionFieldElement(x)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
-              and (is_Polynomial(x.numerator()) or is_MPolynomial(x.numerator()))):
+              and isinstance(x.numerator(), (Polynomial, MPolynomial))):
             x = self(x.numerator()) / self(x.denominator())
             return (x << n).add_bigoh(prec)
         return self.element_class(self, x, n).add_bigoh(prec)
