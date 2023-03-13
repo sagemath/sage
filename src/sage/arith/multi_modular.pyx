@@ -16,7 +16,7 @@ from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
-from sage.arith.all import random_prime
+from sage.arith.misc import random_prime
 from types import GeneratorType
 from sage.ext.stdsage cimport PY_NEW
 from cpython.object cimport PyObject_RichCompare
