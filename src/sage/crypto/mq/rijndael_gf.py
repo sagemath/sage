@@ -1549,9 +1549,9 @@ class RijndaelGF(SageObject):
         if not isinstance(f, RijndaelGF.Round_Component_Poly_Constr):
             msg = "keyword 'f' must be a Round_Component_Poly_Constr"
             raise TypeError(msg)
-        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if not isinstance(g, RijndaelGF.Round_Component_Poly_Constr) and \
-           not is_MPolynomial(g):
+           not isinstance(g, MPolynomial):
             msg = ("keyword 'g' must be a Round_Component_Poly_Constr or a "
                    "polynomial over {0}")
             raise TypeError(msg.format(self._F))
