@@ -221,8 +221,8 @@ def decomposition(x):
 
     EXAMPLES::
 
-        sage: M = matrix([[2, 3], [3, 4]])                                                                              # optional - sage.modules
-        sage: M.decomposition()                                                                                         # optional - sage.modules
+        sage: M = matrix([[2, 3], [3, 4]])                                                                              # optional - sage.libs.pari sage.modules
+        sage: M.decomposition()                                                                                         # optional - sage.libs.pari sage.modules
         [
         (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
         ]
@@ -336,7 +336,7 @@ def fcp(x, var='x'):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3, 4,5,6, 7,8,9])                                                                              # optional - sage.modules
-        sage: fcp(A, 'x')                                                                                               # optional - sage.modules
+        sage: fcp(A, 'x')                                                                                               # optional - sage.libs.pari sage.modules
         x * (x^2 - 15*x - 18)
     """
     try:
