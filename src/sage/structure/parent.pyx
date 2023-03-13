@@ -362,16 +362,22 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         EXAMPLES::
 
             sage: P.<x,y> = QQ[]
-            sage: Q = P.quotient(x^2+2)
+            sage: Q = P.quotient(x^2 + 2)
             sage: Q.category()
-            Join of Category of commutative rings and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of commutative rings and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class = Q.__class__
             sage: Q._refine_category_(Fields())
             sage: Q.category()
-            Join of Category of fields and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of fields and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class == Q.__class__
             False
-            sage: TestSuite(Q).run()
+            sage: TestSuite(Q).run()                                                    # optional - sage.libs.singular
 
         TESTS:
 
@@ -1010,7 +1016,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
              Integer Ring
             sage: QQ^3                                                                                                  # optional - sage.modules
             Vector space of dimension 3 over Rational Field
-            sage: QQ[x]^3                                                                                               # optional - sage.modules
+            sage: QQ['x']^3                                                                                             # optional - sage.modules
             Ambient free module of rank 3 over the principal ideal domain
              Univariate Polynomial Ring in x over Rational Field
             sage: IntegerModRing(6)^3                                                                                   # optional - sage.modules
