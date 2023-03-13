@@ -1051,7 +1051,7 @@ class LazyFamily(AbstractFamily):
             sage: f = LazyFamily([3,4,7], fun); f
             Lazy family (fun(i))_{i in [3, 4, 7]}
 
-            sage: f = Family(Permutations(3), attrcall("to_lehmer_code"), lazy=True); f
+            sage: f = Family(Permutations(3), attrcall("to_lehmer_code"), lazy=True); f     # optional - sage.combinat
             Lazy family (i.to_lehmer_code())_{i in Standard permutations of 3}
 
             sage: f = LazyFamily([3,4,7], lambda i: 2*i); f
@@ -1449,7 +1449,7 @@ class EnumeratedFamily(LazyFamily):
 
             sage: f = Family(Permutations(3))                                           # optional - sage.combinat
             sage: g = Family(Permutations(3))                                           # optional - sage.combinat
-            sage: f == g
+            sage: f == g                                                                # optional - sage.combinat
             True
         """
         return (isinstance(other, self.__class__) and
@@ -1475,7 +1475,7 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: f = Family(Permutations(3))                                           # optional - sage.combinat
-            sage: [2,1,3] in f
+            sage: [2,1,3] in f                                                          # optional - sage.combinat
             True
         """
         return x in self.enumset
