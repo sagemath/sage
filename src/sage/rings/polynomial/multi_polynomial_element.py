@@ -2202,9 +2202,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: P.<x,y> = PolynomialRing(QQ, 2)
             sage: a = x + y
             sage: b = x^3 - y^3
-            sage: a.resultant(b)
+            sage: a.resultant(b)                                                        # optional - sage.libs.singular
             -2*y^3
-            sage: a.resultant(b, y)
+            sage: a.resultant(b, y)                                                     # optional - sage.libs.singular
             2*x^3
 
         TESTS::

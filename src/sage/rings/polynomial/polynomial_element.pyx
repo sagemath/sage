@@ -6940,7 +6940,7 @@ cdef class Polynomial(CommutativePolynomial):
         ::
 
             sage: y = polygen(ZZ)
-            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:
+            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:                         # optional - sage.libs.singular
             ....:   for p2 in [5*y^2 - 7, -3*y - 1]:
             ....:     for monic in [True,False]:
             ....:       for op in [operator.add, operator.sub, operator.mul, operator.truediv]:
@@ -7088,7 +7088,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)
-            sage: f.compose_power(2).factor()                                           # optional - sage.modules
+            sage: f.compose_power(2).factor()                                           # optional - sage.libs.singular sage.modules
             (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
 
             sage: x = polygen(QQ)
@@ -7155,8 +7155,8 @@ cdef class Polynomial(CommutativePolynomial):
             True
 
             sage: x = polygen(QQ)
-            sage: f = x^2-2*x+2
-            sage: f.adams_operator(10)
+            sage: f = x^2 - 2*x + 2
+            sage: f.adams_operator(10)                                                  # optional - sage.libs.singular
             x^2 + 1024
 
         When f is monic the output will have leading coefficient
@@ -7166,9 +7166,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)
-            sage: f.adams_operator(3).factor()
+            sage: f.adams_operator(3).factor()                                          # optional - sage.libs.singular
             (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator(3,monic=True).factor()
+            sage: f.adams_operator(3, monic=True).factor()                              # optional - sage.libs.singular
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """

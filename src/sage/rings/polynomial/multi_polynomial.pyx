@@ -816,15 +816,15 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: f = (x^2*y + 2*x - 3)
             sage: g = (x + 1)*f
-            sage: g % f
+            sage: g % f                                                                             # optional - sage.libs.singular
             0
 
-            sage: (g+1) % f
+            sage: (g+1) % f                                                                         # optional - sage.libs.singular
             1
 
             sage: M = x*y
             sage: N = x^2*y^3
-            sage: M.divides(N)
+            sage: M.divides(N)                                                                      # optional - sage.libs.singular
             True
         """
         try:
@@ -1517,25 +1517,25 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y,z>=QQ[]
-            sage: f=4*x*y^2 + 1/4*x*y*z + 3/2*x*z^2 - 1/2*z^2
-            sage: f.discriminant(x)
+            sage: R.<x,y,z> = QQ[]
+            sage: f = 4*x*y^2 + 1/4*x*y*z + 3/2*x*z^2 - 1/2*z^2
+            sage: f.discriminant(x)                                                                                     # optional - sage.libs.singular
             1
-            sage: f.discriminant(y)
+            sage: f.discriminant(y)                                                                                     # optional - sage.libs.singular
             -383/16*x^2*z^2 + 8*x*z^2
-            sage: f.discriminant(z)
+            sage: f.discriminant(z)                                                                                     # optional - sage.libs.singular
             -383/16*x^2*y^2 + 8*x*y^2
 
         Note that, unlike the univariate case, the result lives in
         the same ring as the polynomial::
 
-            sage: R.<x,y>=QQ[]
-            sage: f=x^5*y+3*x^2*y^2-2*x+y-1
-            sage: f.discriminant(y)
+            sage: R.<x,y> = QQ[]
+            sage: f = x^5*y+3*x^2*y^2-2*x+y-1
+            sage: f.discriminant(y)                                                                                     # optional - sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.polynomial(y).discriminant()
+            sage: f.polynomial(y).discriminant()                                                                        # optional - sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.discriminant(y).parent()==f.polynomial(y).discriminant().parent()
+            sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()                                 # optional - sage.libs.singular
             False
 
         TESTS:
