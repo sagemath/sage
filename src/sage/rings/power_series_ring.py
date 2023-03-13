@@ -59,13 +59,13 @@ Sage can compute with power series over the symbolic ring.
 
 ::
 
-    sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
-    sage: a, b, c = var('a,b,c')
-    sage: f = a + b*t + c*t^2 + O(t^3)
-    sage: f*f
+    sage: K.<t> = PowerSeriesRing(SR, default_prec=5)                                   # optional - sage.symbolic
+    sage: a, b, c = var('a,b,c')                                                        # optional - sage.symbolic
+    sage: f = a + b*t + c*t^2 + O(t^3)                                                  # optional - sage.symbolic
+    sage: f*f                                                                           # optional - sage.symbolic
     a^2 + 2*a*b*t + (b^2 + 2*a*c)*t^2 + O(t^3)
-    sage: f = sqrt(2) + sqrt(3)*t + O(t^3)
-    sage: f^2
+    sage: f = sqrt(2) + sqrt(3)*t + O(t^3)                                              # optional - sage.symbolic
+    sage: f^2                                                                           # optional - sage.symbolic
     2 + 2*sqrt(3)*sqrt(2)*t + 3*t^2 + O(t^3)
 
 Elements are first coerced to constants in ``base_ring``, then coerced
