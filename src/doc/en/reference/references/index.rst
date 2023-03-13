@@ -2069,9 +2069,14 @@ REFERENCES:
              *Ten New Orders for Hadamard Matrices of Skew Type*,
              Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
 
-.. [Djo1994] \D. Đoković.
+.. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
+
+.. [Djo1994b] \D. Đoković.
+             *Two Hadamard matrices of order 956 of Goethals-Seidel type*,
+             Combinatorica  14(3) (1994): 375-377.
+             :doi:`10.1007/BF01212983`
 
 .. [Djo2008a] \D. Đoković.
             *Skew-Hadamard matrices of orders 188 and 388 exist*,
@@ -2082,6 +2087,11 @@ REFERENCES:
             *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
             Journal of Combinatorial Designs 16 (2008): 493-498.
             :arxiv:`0706.1973`
+
+.. [Djo2008c] \D. Đoković.
+            *Hadamard matrices of order 764 exist*,
+            Combinatorica 28(4) (2008): 487-489.
+            :doi:`10.1007/s00493-008-2384-z`
 
 .. [Djo2023a]  \D. Đoković.
             *Skew-Hadamard matrices of order 276*.
@@ -2608,6 +2618,9 @@ REFERENCES:
             TR-737-05, (2005).
             ftp://ftp.cs.princeton.edu/reports/2005/737.pdf
 
+.. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
+             algebra, 1(141):187–203, 1991.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -2770,6 +2783,9 @@ REFERENCES:
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
+             1998.
 
 .. [Gor1980] Daniel Gorenstein, Finite Groups (New York: Chelsea
              Publishing, 1980)
@@ -3879,6 +3895,7 @@ REFERENCES:
              set as the intersection of super greedy linear extensions. Order 4,
              293-311 (1987).
              :doi:`10.1007/BF00337892`
+             
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4140,6 +4157,11 @@ REFERENCES:
 .. [Lom2019] Davide Lombardo, *Computing the geometric endomorphism ring
              of a genus 2 Jacobian*, Mathematics of Computation 88 (2019),
              889-929. :doi:`10.1090/mcom/3358`.
+
+.. [Lon2013] \S. London,
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*. 
+            PhD Thesis, University of Illinois at Chicago, 2013.
+            https://hdl.handle.net/10027/9916
 
 .. [LOS2012] \C. Lecouvey, M. Okado, M. Shimozono.
              "Affine crystals, one-dimensional sums and parabolic Lusztig
@@ -4516,6 +4538,11 @@ REFERENCES:
 .. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
              International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
 
+.. [Miy1991] \M. Miyamoto.
+            *A construction of Hadamard matrices*,
+            Journal of Combinatorial Theory, Series A 57(1) (1991): 86-108.
+            :doi:`10.1016/0097-3165(91)90008-5`
+
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
              `Downloadable from Munthe-Kaas's website
@@ -4640,6 +4667,11 @@ REFERENCES:
             *Crystal approach to affine Schubert calculus*.
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
+
+.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
+            of a finite rank two Drinfeld module. In Proceedings of the 2019
+            ACM on International Symposium on Symbolic and Algebraic
+            Computation, pages 307–314. ACM, 2019.
 
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
@@ -5220,6 +5252,8 @@ REFERENCES:
 
 .. [Ros2002] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
              Sequences. *Communications in Math. and in Computer Chem.*
+
+.. [Rosen2002] \M. Rosen. Number theory in function fields. Springer, 2022.
 
 .. [Rot2001] Gunter Rote, *Division-Free Algorithms for the
              Determinant and the Pfaffian: Algebraic and Combinatorial
@@ -6091,6 +6125,9 @@ REFERENCES:
 
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
+
+.. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
+            Fields. Birkh\"auser, 2006.
 
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.

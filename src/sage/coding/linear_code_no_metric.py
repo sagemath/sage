@@ -538,7 +538,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [1 2 0 1]
             [0 0 1 2]
 
-        Specific systematic positions can also be requested:
+        Specific systematic positions can also be requested::
 
             sage: C.systematic_generator_matrix(systematic_positions=[3,2])
             [1 2 0 1]

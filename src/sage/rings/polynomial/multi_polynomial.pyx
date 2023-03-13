@@ -20,6 +20,9 @@ from itertools import chain, islice
 from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
+    from sage.misc.superseded import deprecation
+    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.structure.element.MPolynomial) instead")
+
     return isinstance(x, MPolynomial)
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -32,7 +35,7 @@ from sage.rings.real_mpfr import RealField_class, RealField
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 
-cdef class MPolynomial(CommutativeRingElement):
+cdef class MPolynomial(CommutativePolynomial):
 
     ####################
     # Some standard conversions
@@ -2852,3 +2855,26 @@ cdef remove_from_tuple(e, int ind):
         return w[0]
     else:
         return tuple(w)
+
+
+cdef class MPolynomial_libsingular(MPolynomial):
+    r"""
+    Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular`
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: R1.<x> = QQ[]
+        sage: isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial_libsingular)
+        False
+        sage: R2.<y,z> = QQ[]
+        sage: isinstance(y, sage.rings.polynomial.multi_polynomial.MPolynomial_libsingular)
+        True
+
+    By design, there is a unique direct subclass::
+
+        sage: len(sage.rings.polynomial.multi_polynomial.MPolynomial_libsingular.__subclasses__()) <= 1
+        True
+    """
