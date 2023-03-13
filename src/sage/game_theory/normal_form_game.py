@@ -2743,8 +2743,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._is_degenerate_pure()
             True
 
-            Whilst this game is not degenerate in pure strategies, it is
-            actually degenerate, but only in mixed strategies.
+        Whilst this game is not degenerate in pure strategies, it is
+        actually degenerate, but only in mixed strategies::
 
             sage: A = matrix([[3, 0], [0, 3], [1.5, 1.5]])
             sage: B = matrix([[4, 3], [2, 6], [3, 1]])

@@ -22,7 +22,7 @@ from multiprocessing import shared_memory
 from sage.algebras.fusion_rings.poly_tup_engine cimport poly_to_tup, tup_fixes_sq, _flatten_coeffs
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
+from sage.rings.polynomial.multi_polynomial cimport MPolynomial_libsingular
 from sage.rings.polynomial.polydict cimport ETuple
 
 import numpy as np

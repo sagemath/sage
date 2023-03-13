@@ -61,7 +61,7 @@ from . import polydict
 from sage.structure.factorization import Factorization
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 from sage.structure.sequence import Sequence
-from .multi_polynomial import MPolynomial
+from .multi_polynomial import MPolynomial, is_MPolynomial
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -70,9 +70,6 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 from sage.rings.real_mpfr import RealField
-
-def is_MPolynomial(x):
-    return isinstance(x, MPolynomial)
 
 
 class MPolynomial_element(MPolynomial):

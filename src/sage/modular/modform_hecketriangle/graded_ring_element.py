@@ -1566,7 +1566,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         Y  = SC.f_i_ZZ().base_extend(formal_d.parent())
 
         if (self.parent().is_modular()):
-            qexp = self._rat.subs(x=X, y=Y, d=formal_d)
+            # z does not appear in self._rat but we need to specialize it for
+            # the evaluation to land in the correct parent
+            qexp = self._rat.subs(x=X, y=Y, z=0, d=formal_d)
         else:
             Z = SC.E2_ZZ().base_extend(formal_d.parent())
             qexp = self._rat.subs(x=X, y=Y, z=Z, d=formal_d)

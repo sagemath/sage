@@ -9,7 +9,7 @@ Quartic curve constructor
 #*****************************************************************************
 
 from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic
 
@@ -50,7 +50,7 @@ def QuarticCurve(F, PP=None, check=False):
         ValueError: Argument F (=x^4 + y^4) must be a polynomial in 3 variables
 
     """
-    if not is_MPolynomial(F):
+    if not isinstance(F, MPolynomial):
         raise ValueError(f"Argument F (={F}) must be a multivariate polynomial")
     P = F.parent()
     if not P.ngens() == 3:

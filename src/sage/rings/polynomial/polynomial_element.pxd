@@ -1,11 +1,12 @@
-from sage.structure.element import Element, CommutativeAlgebraElement
+from sage.structure.element import Element
 from sage.structure.element cimport Element, CommutativeAlgebraElement, ModuleElement
 from sage.structure.parent cimport Parent
 from sage.rings.integer cimport Integer
+from .commutative_polynomial cimport CommutativePolynomial
 from .polynomial_compiled cimport CompiledPolynomialFunction
 
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class Polynomial(CommutativePolynomial):
     cdef Polynomial _new_generic(self, list coeffs)
     cdef char _is_gen
     cdef CompiledPolynomialFunction _compiled
