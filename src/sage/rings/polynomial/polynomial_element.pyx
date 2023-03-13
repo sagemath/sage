@@ -121,7 +121,6 @@ from sage.arith.functions import lcm
 from . import polynomial_fateman
 
 from sage.rings.ideal import is_Ideal
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
@@ -3350,6 +3349,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.change_variable_name('theta')
             -2/7*theta^3 + 2/3*theta - 19/993
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
         R = PolynomialRing(self._parent.base_ring(), names=var)
         return R(self)
 
@@ -7216,6 +7217,8 @@ cdef class Polynomial(CommutativePolynomial):
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
         u, v = PolynomialRing(self._parent.base_ring(), ['u', 'v']).gens()
         R = (u - v**n).resultant(self(v), v)
         R = R([self.variables()[0], 0])
@@ -9012,6 +9015,8 @@ cdef class Polynomial(CommutativePolynomial):
         For full definitions and related discussion, see [BrHu2019]_ and
         [HMMS2019]_.
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
         R = PolynomialRing(self.base_ring(), 1, [self.variable_name()])
         return R(self).is_lorentzian(explain=explain)
 
@@ -10461,6 +10466,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         if var == x_name:
             return sum(self.coefficients())*x**self.degree()
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         P = PolynomialRing(self.base_ring(), [x_name, var])
         return P(self)._homogenize(1)
@@ -11970,6 +11977,8 @@ def universal_discriminant(n):
     .. SEEALSO::
         :meth:`Polynomial.discriminant`
     """
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
     pr1 = PolynomialRing(ZZ, n + 1, 'a')
     pr2 = PolynomialRing(pr1, 'x')
     p = pr2(list(pr1.gens()))
