@@ -510,7 +510,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
         sage: G.invariants()                                                                        # optional - sage.libs.pari
         (6, 42)
         sage: P, Q = G.torsion_subgroup(6).gens()                                                   # optional - sage.libs.pari
-        sage: G.discrete_log(2*P + 3*Q, [P, Q])  # indirect doctest
+        sage: G.discrete_log(2*P + 3*Q, [P, Q])  # indirect doctest                                 # optional - sage.groups
         (2, 3)
     """
     from itertools import product as iproduct
