@@ -725,9 +725,15 @@ def format(s, embedded=False):
         s = s[first_newline + len(os.linesep):]
 
     try:
-        import sage.all
+        import sage.all as toplevel
     except ImportError:
-        pass
+        try:
+            import sage.all__sagemath_polyhedra as toplevel
+        except ImportError:
+            try:
+                import sage.all__sagemath_categories as toplevel
+            except ImportError:
+                import sage.all__sagemath_objects as toplevel
 
     docs = set([])
     if 'noreplace' not in directives:
@@ -744,7 +750,7 @@ def format(s, embedded=False):
                 t = ''
             else:
                 try:
-                    x = eval('sage.all.%s' % obj, locals())
+                    x = eval('%s.%s' % (toplevel.__name__, obj), locals())
                 except AttributeError:
                     # A pair <<<...>>> has been found, but the object not.
                     i_0 += i + 6 + j

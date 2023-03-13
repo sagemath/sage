@@ -79,7 +79,18 @@ def produce_latex_macro(name, *sample_args):
     # this import is used inside a string below
     names_split = name.rsplit('.', 1)
     if len(names_split) == 1:
-        module = 'sage.all'
+
+        try:
+            import sage.all as toplevel
+        except ImportError:
+            try:
+                import sage.all__sagemath_polyhedra as toplevel
+            except ImportError:
+                try:
+                    import sage.all__sagemath_categories as toplevel
+                except ImportError:
+                    import sage.all__sagemath_objects as toplevel
+        module = toplevel.__name__
         real_name = names_split[0]
     else:
         module, real_name = names_split
