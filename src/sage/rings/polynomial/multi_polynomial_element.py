@@ -1074,7 +1074,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         from sage.categories.number_fields import NumberFields
 
         K = self.base_ring()
-        if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K):
+        if K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class)):
             from sage.schemes.projective.projective_space import ProjectiveSpace
             Pr = ProjectiveSpace(K, self.number_of_terms()-1)
             return Pr.point(self.coefficients()).global_height(prec=prec)
@@ -1132,7 +1132,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -1180,7 +1180,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
