@@ -1131,7 +1131,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             ...
             ValueError: Curves have different base fields: use the field parameter.
 
-        When the field is given:
+        When the field is given::
 
             sage: E1 = EllipticCurve(GF(13^2,'a'),[2,7]); E1
             Elliptic Curve defined by y^2 = x^3 + 2*x + 7 over Finite Field in a of size 13^2

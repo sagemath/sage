@@ -114,7 +114,7 @@ import sage.libs.ntl.all as ntl
 import sage.interfaces.gap
 
 import sage.rings.complex_mpfr
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
 import sage.rings.real_mpfi
 import sage.rings.complex_double
@@ -647,7 +647,7 @@ class NumberFieldFactory(UniqueFactory):
             raise TypeError("You must specify the name of the generator.")
         name = normalize_names(1, name)
 
-        if not is_Polynomial(polynomial):
+        if not isinstance(polynomial, Polynomial):
             try:
                 polynomial = polynomial.polynomial(QQ)
             except (AttributeError, TypeError):
@@ -868,7 +868,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
     f = polynomials[0]
     name = names[0]
     w = NumberFieldTower(polynomials[1:], names=names[1:], check=check, embeddings=embeddings[1:], latex_names=latex_names[1:], assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structures=structures[1:])
-    var = f.variable_name() if is_Polynomial(f) else 'x'
+    var = f.variable_name() if isinstance(f, Polynomial) else 'x'
 
     R = w[var]  # polynomial ring
     return w.extension(R(f), name, check=check, embedding=embeddings[0], structure=structures[0], latex_name=latex_names[0])  # currently, extension does not accept assume_disc_small, or maximize_at_primes
@@ -1708,7 +1708,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             a^2
 
         An error is raised when a PARI element with an incorrect
-        modulus is given:
+        modulus is given::
 
             sage: K(pari("Mod(-5/3*q^2 + 5/3*q - 1/6, q^3 - 999)"))
             Traceback (most recent call last):
@@ -8693,8 +8693,8 @@ class NumberField_absolute(NumberField_generic):
             (Number Field in a0 with defining polynomial x^2 - 23 with a0 = -4.795831523312720?,
              -4.795831523312719)
 
-            If we take a different embedding of the large field, we get a
-            different embedding of the degree 2 subfield::
+        If we take a different embedding of the large field, we get a
+        different embedding of the degree 2 subfield::
 
             sage: K.<a> = NumberField(x^4 - 23, embedding=-50)
             sage: L2, _, _ = K.subfields(2)[0]; L2, CDF(L2.gen()) # indirect doctest
@@ -12534,7 +12534,7 @@ def _splitting_classes_gens_(K, m, d):
             p = u.lift()
             while not p.is_prime():
                 p += m
-            f = R.ideal(p).prime_factors()[0].residue_class_degree()
+            f = K.fractional_ideal(p).prime_factors()[0].residue_class_degree()
             h = g**f
             if h not in H:
                 Hgens += [h]
