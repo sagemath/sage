@@ -28,15 +28,17 @@ from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 
 class DrinfeldModule(Parent, UniqueRepresentation):
