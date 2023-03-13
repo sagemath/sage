@@ -58,6 +58,7 @@ exclude sage/modules/vector_*double*.*  # depends on numpy
 exclude sage/modules/vector_numpy*.*    # depends on numpy
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
+prune sage/modules/fp_graded
 
 # Also just modules
 graft sage/groups/additive_abelian
