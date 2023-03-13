@@ -1827,7 +1827,8 @@ cdef class CoercionModel:
 
             sage: P.<x> = ZZ['x']
             sage: P.get_action(ZZ)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Right scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
             sage: ZZ.get_action(P) is None
             True
             sage: cm = sage.structure.element.get_coercion_model()
@@ -1835,20 +1836,23 @@ cdef class CoercionModel:
         If R or S is a Parent, ask it for an action by/on R::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
 
         If R or S a type, recursively call get_action with the Sage versions of R and/or S::
 
             sage: cm.discover_action(P, int, operator.mul)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
-            with precomposition on right by Native morphism:
+            Right scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
+             with precomposition on right by Native morphism:
               From: Set of Python objects of class 'int'
               To:   Integer Ring
 
         If op is division, look for action on right by inverse::
 
             sage: cm.discover_action(P, ZZ, operator.truediv)
-            Right inverse action by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+            Right inverse action by Rational Field on
+             Univariate Polynomial Ring in x over Integer Ring
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field
@@ -1867,12 +1871,13 @@ cdef class CoercionModel:
 
         Check that :trac:`18221` is fixed::
 
-            sage: F.<x> = FreeAlgebra(QQ)
-            sage: x / 2
+            sage: F.<x> = FreeAlgebra(QQ)                                               # optional - sage.combinat sage.modules
+            sage: x / 2                                                                 # optional - sage.combinat sage.modules
             1/2*x
-            sage: cm.discover_action(F, ZZ, operator.truediv)
-            Right inverse action by Rational Field on Free Algebra on 1 generators (x,) over Rational Field
-            with precomposition on right by Natural morphism:
+            sage: cm.discover_action(F, ZZ, operator.truediv)                           # optional - sage.combinat sage.modules
+            Right inverse action by Rational Field on
+             Free Algebra on 1 generators (x,) over Rational Field
+             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field
         """

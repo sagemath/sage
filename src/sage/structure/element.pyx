@@ -3154,22 +3154,22 @@ cdef class CommutativeRingElement(RingElement):
         and an ideal::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: (x^2 + y^2 + z^2).mod(x+y+z)
+            sage: (x^2 + y^2 + z^2).mod(x + y + z)                                      # optional - sage.libs.singular
             2*y^2 + 2*y*z + 2*z^2
 
         Notice above that `x` is eliminated.  In the next example,
         both `y` and `z` are eliminated::
 
-            sage: (x^2 + y^2 + z^2).mod( (x - y, y - z) )
+            sage: (x^2 + y^2 + z^2).mod( (x - y, y - z) )                               # optional - sage.libs.singular
             3*z^2
             sage: f = (x^2 + y^2 + z^2)^2; f
             x^4 + 2*x^2*y^2 + y^4 + 2*x^2*z^2 + 2*y^2*z^2 + z^4
-            sage: f.mod( (x - y, y - z) )
+            sage: f.mod( (x - y, y - z) )                                               # optional - sage.libs.singular
             9*z^4
 
         In this example `y` is eliminated::
 
-            sage: (x^2 + y^2 + z^2).mod( (x^3, y - z) )
+            sage: (x^2 + y^2 + z^2).mod( (x^3, y - z) )                                 # optional - sage.libs.singular
             x^2 + 2*z^2
         """
         from sage.rings.ideal import is_Ideal
