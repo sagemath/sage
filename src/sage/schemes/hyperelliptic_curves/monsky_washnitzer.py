@@ -64,12 +64,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.all import pAdicField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational import Rational
-from sage.rings.rational_field import QQ
-from sage.rings.rational_field import RationalField as Rationals
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import CommutativeAlgebra
 from sage.rings.ring import IntegralDomain
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -497,7 +492,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
             ...
             ArithmeticError: 2 and 3 must be invertible in the coefficient ring (=Ring of integers modulo 10) of Q
         """
-        if not is_Polynomial(Q):
+        if not isinstance(Q, Polynomial):
             raise TypeError("Q (=%s) must be a polynomial" % Q)
 
         if Q.degree() != 3 or not Q[2].is_zero():
@@ -2397,7 +2392,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
             Q = C.hyperelliptic_polynomials()[0].change_ring(R)
             self._curve = C
 
-        if is_Polynomial(Q):
+        if isinstance(Q, Polynomial):
             self._Q = Q.change_ring(R)
             self._coeffs = self._Q.coefficients(sparse=False)
             if self._coeffs.pop() != 1:

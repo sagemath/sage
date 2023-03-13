@@ -173,12 +173,12 @@ cdef class SBox(SageObject):
             sage: S.output_size()
             3
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
 
         if "S" in kwargs:
             args = kwargs["S"]
 
-        if len(args) == 1 and is_Polynomial(args[0]):
+        if len(args) == 1 and isinstance(args[0], Polynomial):
             # SBox defined via Univariate Polynomial, compute lookup table
             # by evaluating the polynomial on every base_ring element
             poly = args[0]

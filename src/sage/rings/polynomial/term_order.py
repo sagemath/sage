@@ -1790,7 +1790,7 @@ class TermOrder(SageObject):
         TESTS:
 
         The 'degneglex' ordering is somehow special: SINGULAR handles it
-        using an extra weight vector block.
+        using an extra weight vector block. ::
 
             sage: T = TermOrder("degneglex", 2)
             sage: P = PolynomialRing(QQ,2, names='x', order=T)

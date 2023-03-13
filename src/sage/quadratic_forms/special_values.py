@@ -15,13 +15,11 @@ from sage.arith.misc import (bernoulli,
                              kronecker as kronecker_symbol)
 from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
-from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-
-lazy_import("sage.symbolic.constants", ["pi", "I"])
+from sage.symbolic.constants import pi, I
 
 
 # ---------------- The Gamma Function  ------------------

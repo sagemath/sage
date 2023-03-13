@@ -4271,7 +4271,7 @@ class Permutation(CombinatorialElement):
             sage: p.permutohedron_join(p)
             [1]
 
-        The left permutohedron:
+        The left permutohedron::
 
             sage: p = Permutation([3,1,2])
             sage: q = Permutation([1,3,2])
@@ -4387,7 +4387,7 @@ class Permutation(CombinatorialElement):
             sage: p.permutohedron_meet(p)
             [1]
 
-        The left permutohedron:
+        The left permutohedron::
 
             sage: p = Permutation([3,1,2])
             sage: q = Permutation([1,3,2])

@@ -24,14 +24,12 @@ quadratic forms over the rationals.
 from copy import deepcopy
 
 from sage.arith.misc import hilbert_symbol, prime_divisors
+from sage.functions.all import sgn
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
-
-lazy_import("sage.functions.all", "sgn")
 
 
 def rational_diagonal_form(self, return_matrix=False):

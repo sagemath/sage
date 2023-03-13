@@ -31,6 +31,7 @@ from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.structure.sage_object cimport SageObject
+from sage.symbolic.constants import euler_gamma, pi
 
 
 cdef extern from "<math.h>":

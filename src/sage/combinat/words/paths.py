@@ -384,7 +384,7 @@ class WordPaths_all(FiniteWords):
             True
 
         If size of alphabet is twice the number of steps, then opposite
-        vectors are used for the second part of the alphabet.
+        vectors are used for the second part of the alphabet::
 
             sage: WordPaths('abcd',[(2,1),(2,4)])
             Word Paths over 4 steps

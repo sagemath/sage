@@ -635,7 +635,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             Category of finite dimensional unital cellular semigroup algebras
              over Rational Field
 
-        In the following case, a usual group algebra is returned:
+        In the following case, a usual group algebra is returned::
 
             sage: S = SymmetricGroup([2,3,5])
             sage: S.algebra(QQ)

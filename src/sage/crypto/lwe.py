@@ -92,8 +92,10 @@ REFERENCES:
 """
 
 from sage.arith.misc import euler_phi, next_prime
-from sage.misc.functional import cyclotomic_polynomial, round, sqrt
-from sage.misc.lazy_import import lazy_import
+from sage.functions.log import log
+from sage.functions.other import floor, ceil
+from sage.misc.functional import cyclotomic_polynomial, round
+from sage.misc.functional import sqrt
 from sage.misc.prandom import randint
 from sage.misc.randstate import set_random_seed
 from sage.modules.free_module import FreeModule
@@ -106,11 +108,8 @@ from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianD
 from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
 from sage.structure.element import parent
 from sage.structure.sage_object import SageObject
-
-lazy_import("sage.functions.log", "log")
-lazy_import("sage.functions.other", ["floor", "ceil"])
-lazy_import("sage.symbolic.constants", "pi")
-lazy_import("sage.symbolic.ring", "SR")
+from sage.symbolic.constants import pi
+from sage.symbolic.ring import SR
 
 
 class UniformSampler(SageObject):

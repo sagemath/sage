@@ -19,7 +19,7 @@ from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -72,7 +72,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
         poly, IS = key
-        if not is_Polynomial(poly):
+        if not isinstance(poly, Polynomial):
             raise TypeError("poly (= %s) must be a polynomial." % poly)
         if not isinstance(IS, (list, tuple)):
             raise TypeError("IS (= %s) must be an initial in the key space." % IS)

@@ -1379,7 +1379,16 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.<x,y,z> = ZZ[]
             sage: mons = R.monomials_of_degree(2)
             sage: mons
-            [x^2, x*y, x*z, y^2, y*z, z^2]
+            [z^2, y*z, x*z, y^2, x*y, x^2]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order=TermOrder('wdeglex', [1, 2, 1]))
+            sage: P.monomials_of_degree(2)
+            [z^2, y, x*z, x^2]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='lex')
+            sage: P.monomials_of_degree(3)
+            [z^3, y*z^2, y^2*z, y^3, x*z^2, x*y*z, x*y^2, x^2*z, x^2*y, x^3]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='invlex')
+            sage: P.monomials_of_degree(3)
+            [x^3, x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
 
         The number of such monomials equals `\binom{n+k-1}{k}`
         where `n` is the number of variables and `k` the degree::
@@ -1387,8 +1396,11 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: len(mons) == binomial(3+2-1,2)
             True
         """
-        from sage.combinat.integer_vector import IntegerVectors
-        return [self.monomial(*a) for a in IntegerVectors(degree, self.ngens())]
+        deg_of_gens = [x.degree() for x in self.gens()]
+        from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+        mons = [self.monomial(*a) for a in WeightedIntegerVectors(degree, deg_of_gens)]
+        mons.sort()  # This could be implemented in WeightedIntegerVectors instead
+        return mons
 
     def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""

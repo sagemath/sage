@@ -711,9 +711,11 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat sage.groups
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()                                          # optional - sage.combinat sage.groups
-                        sage: PvW0 in Magmas().Unital().Realizations()                                                  # optional - sage.combinat sage.groups
+                    EXAMPLES::
+
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
+                        sage: PvW0 in Magmas().Unital().Realizations()
                         True
                         sage: PvW0.one()                                                                                # optional - sage.combinat sage.groups
                         1

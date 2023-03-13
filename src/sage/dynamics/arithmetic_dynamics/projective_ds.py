@@ -76,12 +76,12 @@ from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (
     _fast_possible_periods,
     _all_periodic_points)
+from sage.functions.other import ceil
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.functional import sqrt
-from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
 from sage.modules.free_module_element import vector
 from sage.parallel.ncpus import ncpus
@@ -116,9 +116,7 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
-
-lazy_import("sage.functions.other", "ceil")
-lazy_import("sage.symbolic.constants", "e")
+from sage.symbolic.constants import e
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
