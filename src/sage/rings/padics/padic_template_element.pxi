@@ -35,6 +35,7 @@ from sage.rings.infinity import infinity
 from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import canonical_coercion
 import itertools
 
@@ -155,7 +156,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 x = x + [k.prime_subfield().zero()] * (k.degree() - len(x))
         elif isinstance(x, (Integer, Rational, list, tuple)):
             pass
-        elif sage.rings.polynomial.polynomial_element.is_Polynomial(x) and x.variable_name() == self.parent().variable_name():
+        elif isinstance(x, Polynomial) and x.variable_name() == self.parent().variable_name():
             x = x.list()
         else:
             x = Rational(x)

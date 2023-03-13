@@ -32,8 +32,8 @@ from sage.rings.all import Ideal, QQ
 from sage.rings.ring import is_Ring, PrincipalIdealDomain
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
@@ -576,9 +576,9 @@ class QuadraticForm(SageObject):
             M_ring = M.base_ring()
             matrix_init_flag = True
 
-        elif is_Polynomial(R) or is_MPolynomial(R):
+        elif isinstance(R, (Polynomial, MPolynomial)):
             p = R
-            
+
             if not p.is_zero() and not (p.is_homogeneous() and p.degree() == 2):
                 raise ValueError("polynomial is neither zero nor homogeneous of degree 2")
 
