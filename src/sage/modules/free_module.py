@@ -243,11 +243,11 @@ class FreeModuleFactory(UniqueFactory):
 
             sage: R.<x,y> = QQ[]
             sage: Q = R.quo(R.ideal([x^2 - y^2 - 1]))
-            sage: Q.is_integral_domain()
+            sage: Q.is_integral_domain()                                                # optional - sage.libs.singular
             True
-            sage: Q2 = FreeModule(Q, 2)
-            sage: from sage.modules.free_module import FreeModule_ambient_domain
-            sage: isinstance(Q2, FreeModule_ambient_domain)
+            sage: Q2 = FreeModule(Q, 2)                                                 # optional - sage.libs.singular
+            sage: from sage.modules.free_module import FreeModule_ambient_domain        # optional - sage.libs.singular
+            sage: isinstance(Q2, FreeModule_ambient_domain)                             # optional - sage.libs.singular
             True
         """
         base_ring, rank, sparse, inner_product_matrix = key
@@ -1811,10 +1811,10 @@ class Module_free_ambient(Module):
             sage: S.<x,y,z> = PolynomialRing(QQ)
             sage: M = S**2
             sage: N = M.submodule([vector([x - y, z]), vector([y * z, x * z])])
-            sage: res = N.free_resolution()
-            sage: res
+            sage: res = N.free_resolution()                                             # optional - sage.libs.singular
+            sage: res                                                                   # optional - sage.libs.singular
             S^2 <-- S^2 <-- 0
-            sage: ascii_art(res.chain_complex())
+            sage: ascii_art(res.chain_complex())                                        # optional - sage.libs.singular
                         [x - y   y*z]
                         [    z   x*z]
              0 <-- C_0 <-------------- C_1 <-- 0
@@ -1843,13 +1843,13 @@ class Module_free_ambient(Module):
             sage: S.<x,y,z> = PolynomialRing(QQ)
             sage: M = S**2
             sage: N = M.submodule([vector([x - y, z]), vector([y * z, x * z])])
-            sage: N.graded_free_resolution(shifts=[1, -1])
+            sage: N.graded_free_resolution(shifts=[1, -1])                              # optional - sage.libs.singular
             S(-1)⊕S(1) <-- S(-2)⊕S(-3) <-- 0
-            sage: N.graded_free_resolution(shifts=[2, 3])
+            sage: N.graded_free_resolution(shifts=[2, 3])                               # optional - sage.libs.singular
             S(-2)⊕S(-3) <-- S(-3)⊕S(-4) <-- 0
 
             sage: N = M.submodule([vector([x^3 - y^6, z^2]), vector([y * z, x])])
-            sage: N.graded_free_resolution(degrees=[2, 1, 3], shifts=[2, 3])
+            sage: N.graded_free_resolution(degrees=[2, 1, 3], shifts=[2, 3])            # optional - sage.libs.singular
             S(-2)⊕S(-3) <-- S(-6)⊕S(-8) <-- 0
         """
         from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
