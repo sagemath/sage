@@ -421,7 +421,7 @@ Methods
 #                     2018      Erik M. Bray <erik.bray@lri.fr>
 #                               Meghana M Reddy <mreddymeghana@gmail.com>
 #                     2019      Rajat Mittal <rajat.mttl@gmail.com>
-#                     2020      Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                     2020      Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -5605,7 +5605,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.layout(layout='planar', external_face=(3,1))
             {0: [2, 1], 1: [0, 2], 2: [1, 1], 3: [1, 0]}
 
-        Choose the embedding:
+        Choose the embedding::
 
             sage: H = graphs.LadderGraph(4)
             sage: em = {0:[1,4], 4:[0,5], 1:[5,2,0], 5:[4,6,1], 2:[1,3,6], 6:[7,5,2], 3:[7,2], 7:[3,6]}
@@ -6356,7 +6356,7 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
-        Issue :trac:`22003` is fixed:
+        Issue :trac:`22003` is fixed::
 
             sage: Graph(1).num_faces()
             1
@@ -20622,7 +20622,7 @@ class GenericGraph(GenericGraph_pyx):
              9: (0.47..., 0.15...)}
             sage: P = G.plot(save_pos=True, layout='spring')
 
-            The following illustrates the format of a position dictionary.
+        The following illustrates the format of a position dictionary::
 
             sage: G.get_pos() # currently random across platforms, see #9593
             {0: [1.17..., -0.855...],

@@ -646,7 +646,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         sage: Z = InfinitePolynomialRing_sparse(QQ, ['x','y'], 'lex')
 
     Nevertheless, since infinite polynomial rings are supposed to be unique
-    parent structures, they do not evaluate equal.
+    parent structures, they do not evaluate equal. ::
 
         sage: Z == X
         False

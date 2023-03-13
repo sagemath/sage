@@ -2339,6 +2339,7 @@ class DirichletGroupFactory(UniqueFactory):
         sage: parent(val)
         Gaussian Integers in Cyclotomic Field of order 4 and degree 2
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val)
+        doctest:warning ... DeprecationWarning: ...
         17
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val) * GF(29)(3)
         22

@@ -655,7 +655,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        see that this method does not harm pickling:
+        see that this method does not harm pickling::
 
             sage: A4 = PermutationGroup([[(1,2,3)],[(2,3,4)]])
             sage: A4.gap()
@@ -663,7 +663,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: TestSuite(A4).run()
 
         the following test shows, that support for the ``self._libgap``
-        attribute is needed in the constructor of the class:
+        attribute is needed in the constructor of the class::
 
             sage: PG = PGU(6,2)
             sage: g, h = PG.gens()

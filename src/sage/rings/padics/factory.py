@@ -3019,7 +3019,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         40
 
     However, both the default precision and the halting precision can be
-    customized at the creation of the parent as follows:
+    customized at the creation of the parent as follows::
 
         sage: S = ZpER(5, prec=10, halt=100)
         sage: S.default_prec()

@@ -3975,7 +3975,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         TESTS:
 
-        Check the derivative of the logarithm:
+        Check the derivative of the logarithm::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
             sage: -log(1-z).derivative()

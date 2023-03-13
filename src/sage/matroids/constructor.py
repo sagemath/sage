@@ -360,7 +360,7 @@ def Matroid(groundset=None, data=None, **kwds):
             [0, 1, 2, 3]
 
         The GraphicMatroid object forces its graph to be connected. If a
-        disconnected graph is used as input, it will connect the components.
+        disconnected graph is used as input, it will connect the components::
 
             sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
             sage: G = G1.disjoint_union(G2)
