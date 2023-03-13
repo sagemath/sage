@@ -166,8 +166,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-
-from .polynomial_element import PolynomialBaseringInjection
 from .polynomial_real_mpfr_dense import PolynomialRealDense
 from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
@@ -679,6 +677,8 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))
         """
+        from .polynomial_element import PolynomialBaseringInjection
+
         return PolynomialBaseringInjection(self.base_ring(), self)
 
     def _coerce_map_from_(self, P):
