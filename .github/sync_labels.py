@@ -3,6 +3,7 @@
 
 r"""
 Python script to sync labels that are migrated from Trac selection lists.
+For more information see https://github.com/sagemath/sage/pull/35172
 """
 
 ##############################################################################
@@ -22,7 +23,7 @@ from json import loads
 from enum import Enum
 
 class Action(Enum):
-    """
+    r"""
     Enum for GitHub event ``action``.
     """
     opened = 'opened'
@@ -37,7 +38,7 @@ class Action(Enum):
     submitted = 'submitted'
 
 class RevState(Enum):
-    """
+    r"""
     Enum for GitHub event ``review_state``.
     """
     commented = 'commented'
@@ -45,21 +46,15 @@ class RevState(Enum):
     changes_requested = 'changes_requested'
 
 class ReviewDecision(Enum):
-    """
+    r"""
     Enum for ``gh pr view`` results for ``reviewDecision``.
     """
     changes_requested = 'CHANGES_REQUESTED'
     approved = 'APPROVED'
     unclear = 'COMMENTED'
 
-class SelectionList(Enum):
-    """
-    Abstract Enum for selection lists.
-    """
-    pass
-
-class Priority(SelectionList):
-    """
+class Priority(Enum):
+    r"""
     Enum for priority labels.
     """
     blocker = 'p: blocker /1'
@@ -68,8 +63,8 @@ class Priority(SelectionList):
     minor = 'p: minor /4'
     trivial = 'p: trivial /5'
 
-class State(SelectionList):
-    """
+class State(Enum):
+    r"""
     Enum for state labels.
     """
     positive_review = 's: positive review'
@@ -77,24 +72,32 @@ class State(SelectionList):
     needs_review = 's: needs review'
     needs_info = 's: needs info'
 
+class Resolution(Enum):
+    r"""
+    Enum for resolution labels.
+    """
+    duplicate = 'r: duplicate'
+    invalid = 'r: invalid'
+    wontfix = 'r: wontfix'
+    worksforme = 'r: worksforme'
 
 def selection_list(label):
+    r"""
+    Return the selection list to which ``label`` belongs to.
     """
-    Return the selection list to which `label` belongs to.
-    """
-    for sel_list in [Priority, State]:
+    for sel_list in [Priority, State, Resolution]:
         for item in sel_list:
             if label == item.value:
                 return sel_list
     return None
 
 class GhLabelSynchronizer:
-    """
-    Handler for access to GitHub issue via the `gh` in the bash command line
+    r"""
+    Handler for access to GitHub issue via the ``gh`` in the bash command line
     of the GitHub runner.
     """
     def __init__(self, url, actor):
-        """
+        r"""
         Python constructor sets the issue / PR url and list of active labels.
         """
         self._url = url
@@ -120,13 +123,13 @@ class GhLabelSynchronizer:
     # methods to obtain properties of the issue
     # -------------------------------------------------------------------------
     def is_pull_request(self):
-        """
+        r"""
         Return if we are treating a pull request.
         """
         return self._pr
 
     def reset_view(self):
-        """
+        r"""
         Reset cache of ``gh view`` results. 
         """
         self._labels = None
@@ -139,8 +142,8 @@ class GhLabelSynchronizer:
         self._commit_date = None
 
     def view(self, key):
-        """
-        Return data obtained from `gh` command `view`.
+        r"""
+        Return data obtained from ``gh`` command ``view``.
         """
         issue = 'issue'
         if self._pr:
@@ -150,7 +153,7 @@ class GhLabelSynchronizer:
         return loads(check_output(cmd, shell=True))[key]
 
     def is_open(self):
-        """
+        r"""
         Return if the issue res. PR is open.
         """
         if self._open is not None:
@@ -163,7 +166,7 @@ class GhLabelSynchronizer:
         return self._open
 
     def is_draft(self):
-        """
+        r"""
         Return if the PR is a draft.
         """
         if self._draft is not None:
@@ -176,7 +179,7 @@ class GhLabelSynchronizer:
         return self._draft
 
     def get_labels(self):
-        """
+        r"""
         Return the list of labels of the issue resp. PR.
         """
         if self._labels is not None:
@@ -187,7 +190,7 @@ class GhLabelSynchronizer:
         return self._labels
 
     def get_author(self):
-        """
+        r"""
         Return the author of the issue resp. PR.
         """
         if self._author is not None:
@@ -198,7 +201,7 @@ class GhLabelSynchronizer:
         return self._author
 
     def get_commits(self):
-        """
+        r"""
         Return the list of commits of the PR.
         """
         if not self.is_pull_request():
@@ -213,7 +216,7 @@ class GhLabelSynchronizer:
         return self._commits
 
     def get_review_decision(self):
-        """
+        r"""
         Return the reviewDecision of the PR.
         """
         if not self.is_pull_request():
@@ -231,7 +234,7 @@ class GhLabelSynchronizer:
         return self._review_decision
 
     def get_reviews(self, complete=False):
-        """
+        r"""
         Return the list of reviews of the PR. Per default only those reviews
         are returned which have been submitted after the youngest commit.
         Use keyword ``complete`` to get them all.
@@ -255,7 +258,7 @@ class GhLabelSynchronizer:
         return new_revs
 
     def active_partners(self, item):
-        """
+        r"""
         Return the list of other labels from the selection list
         of the given one that are already present on the issue / PR.
         """
@@ -268,8 +271,8 @@ class GhLabelSynchronizer:
     # methods to validate the issue state
     # -------------------------------------------------------------------------
     def needs_work_valid(self):
-        """
-        Return `True` if the PR needs work. This is the case if
+        r"""
+        Return ``True`` if the PR needs work. This is the case if
         the review decision requests changes or if there is any
         review reqesting changes.
         """
@@ -292,8 +295,8 @@ class GhLabelSynchronizer:
         return False
 
     def positive_review_valid(self):
-        """
-        Return `True` if the PR has positive review. This is the
+        r"""
+        Return ``True`` if the PR has positive review. This is the
         case if the review decision is approved or if there is any
         approved review but no changes requesting one.
         """
@@ -320,7 +323,7 @@ class GhLabelSynchronizer:
         return False
 
     def needs_review_valid(self):
-        """
+        r"""
         Return ``True`` if the PR needs review. This is the case if
         all proper reviews are older than the youngest commit.
         """
@@ -339,7 +342,7 @@ class GhLabelSynchronizer:
         return True
 
     def approve_allowed(self):
-        """
+        r"""
         Return if the actor has permission to approve this PR.
         """
         revs = self.get_reviews(complete=True)
@@ -357,7 +360,7 @@ class GhLabelSynchronizer:
         return self.actor_valid()
 
     def actor_valid(self):
-        """
+        r"""
         Return if the actor has permission to approve this PR.
         """
         author = self.get_author()
@@ -386,8 +389,8 @@ class GhLabelSynchronizer:
     # methods to change the issue
     # -------------------------------------------------------------------------
     def gh_cmd(self, cmd, arg, option):
-        """
-        Perform a system call to `gh` for `cmd` to an isuue resp. PR.
+        r"""
+        Perform a system call to ``gh`` for ``cmd`` to an isuue resp. PR.
         """
         issue = 'issue'
         if self._pr:
@@ -399,41 +402,41 @@ class GhLabelSynchronizer:
             warning('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
 
     def edit(self, arg, option):
-        """
-        Perform a system call to `gh` to edit an issue resp. PR.
+        r"""
+        Perform a system call to ``gh`` to edit an issue resp. PR.
         """
         self.gh_cmd('edit', arg, option)
 
     def review(self, arg, text):
-        """
-        Perform a system call to `gh` to review a PR.
+        r"""
+        Perform a system call to ``gh`` to review a PR.
         """
         self.gh_cmd('review', arg, '-b \"%s\"' % text)
 
     def approve(self):
-        """
+        r"""
         Approve the PR by the actor.
         """
         self.review('--approve', '%s approved this PR' % self._actor)
         info('PR %s approved by %s' % (self._issue, self._actor))
 
     def request_changes(self):
-        """
+        r"""
         Request changes for this PR by the actor.
         """
         self.review('--request-changes', '%s requested changes for this PR' % self._actor)
         info('Changes requested for PR %s by %s' % (self._issue, self._actor))
 
     def add_comment(self, text):
-        """
-        Perform a system call to `gh` to add a comment to an issue or PR.
+        r"""
+        Perform a system call to ``gh`` to add a comment to an issue or PR.
         """
 
         self.gh_cmd('comment', text, '-b')
         info('Add comment to %s: %s' % (self._issue, text))
 
     def add_label(self, label):
-        """
+        r"""
         Add the given label to the issue or PR.
         """
         if not label in self.get_labels():
@@ -441,14 +444,14 @@ class GhLabelSynchronizer:
             info('Add label to %s: %s' % (self._issue, label))
 
     def add_default_label(self, item):
-        """
+        r"""
         Add the given label if there is no active partner.
         """
         if not self.active_partners(item):
             self.add_label(item.value)
 
     def select_label(self, item):
-        """
+        r"""
         Add the given label and remove all others.
         """
         self.add_label(item.value)
@@ -458,7 +461,7 @@ class GhLabelSynchronizer:
                 self.remove_label(other.value)
 
     def remove_label(self, label):
-        """
+        r"""
         Remove the given label from the issue or PR of the handler.
         """
         if label in self.get_labels():
@@ -466,7 +469,7 @@ class GhLabelSynchronizer:
             info('Remove label from %s: %s' % (self._issue, label))
 
     def reject_label_addition(self, item):
-        """
+        r"""
         Post a comment that the given label can not be added and select
         a corresponding other one.
         """
@@ -478,7 +481,7 @@ class GhLabelSynchronizer:
         return
 
     def reject_label_removal(self, item):
-        """
+        r"""
         Post a comment that the given label can not be removed and select
         a corresponding other one.
         """
@@ -494,7 +497,7 @@ class GhLabelSynchronizer:
     # methods to act on events
     # -------------------------------------------------------------------------
     def on_label_add(self, label):
-        """
+        r"""
         Check if the given label belongs to a selection list. If so, remove
         all other labels of that list. In case of a state label reviews are
         booked accordingly.
@@ -541,12 +544,15 @@ class GhLabelSynchronizer:
                     self.reject_label_addition(item)
                     return
 
+        if sel_list is Resolution:
+            self.remove_all_labels_of_sel_list(Priority)
+
         for other in sel_list:
             if other != item:
                 self.remove_label(other.value)
 
     def on_label_removal(self, label):
-        """
+        r"""
         Check if the given label belongs to a selection list. If so, the
         removement is rejected and a comment is posted to instead add a
         replacement for ``label`` from the list. Exceptions are State labels
@@ -565,15 +571,15 @@ class GhLabelSynchronizer:
             self.reject_label_removal(item)
         return
             
-    def remove_all_state_labels(self):
+    def remove_all_labels_of_sel_list(self, sel_list):
+        r"""
+        Remove all labels of given selection list.
         """
-        Remove all state labels.
-        """
-        for item in State:
+        for item in sel_list:
             self.remove_label(item.value)
 
     def run(self, action, label=None, rev_state=None):
-        """
+        r"""
         Run the given action.
         """
         self.reset_view() # this is just needed for run_tests
@@ -583,7 +589,7 @@ class GhLabelSynchronizer:
                 self.add_default_label(State.needs_review)
 
         if action in (Action.closed, Action.reopened, Action.converted_to_draft):
-            self.remove_all_state_labels()
+            self.remove_all_labels_of_sel_list(State)
 
         if action is Action.labeled:
             self.on_label_add(label)
@@ -608,7 +614,7 @@ class GhLabelSynchronizer:
                     self.select_label(State.needs_work)
 
     def run_tests(self):
-        """
+        r"""
         Simulative run over all posibble events.
 
         This is not intended to validate all functionality. It just
@@ -632,6 +638,10 @@ class GhLabelSynchronizer:
                         self.add_label(prio.value)
                     else:
                         self.remove_label(prio.value)
+                    self.run(action, label=prio.value)
+                res = Resolution.worksforme
+                if action is Action.labeled:
+                    self.add_label(res.value)
                     self.run(action, label=prio.value)
             elif action == Action.submitted and self.is_pull_request():
                 for stat in RevState:
