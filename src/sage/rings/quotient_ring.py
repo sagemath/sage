@@ -459,7 +459,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if R not in _Rings:
             raise TypeError("The first argument must be a ring, but %s is not"%R)
         # workaround to silence warning from #34806
-        from sage.rings.number_field.order import Order
+        from sage.rings.abc import Order
         if isinstance(R, Order):
             M = R.number_field().ideal_monoid()
         else:
