@@ -13,6 +13,7 @@ from sage.groups.all__sagemath_polyhedra import *
 from sage.numerical.all__sagemath_polyhedra import *
 from sage.parallel.all import *
 
+from sage.homology.all__sagemath_polyhedra import *
 # commented out in MANIFEST.in.m4
 #from sage.topology.all import *
 #from sage.tensor.all import *

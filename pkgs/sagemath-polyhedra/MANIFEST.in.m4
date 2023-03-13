@@ -119,6 +119,16 @@ include sage/numerical/backends/matrix_*.p*
 include sage/numerical/backends/ppl_*.p*
 include sage/numerical/backends/scip_*.p*
 
+# just modules
+graft sage/homology
+# exclude stuff moved to sage/topology
+exclude sage/homology/cell_*.p*
+exclude sage/homology/cubical_*.p*
+exclude sage/homology/delta_*.p*
+exclude sage/homology/examples.p*
+exclude sage/homology/simplicial_*.p*
+exclude sage/homology/tests.p*
+
 
 global-exclude *.py[co]
 global-exclude *.so
