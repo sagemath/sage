@@ -229,7 +229,8 @@ class PolynomialRing_general(ring.Algebra):
     Univariate polynomial ring over a ring.
     """
 
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         """
         EXAMPLES::
 
@@ -1667,7 +1668,8 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
     """
     Univariate polynomial ring over a commutative ring.
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         if base_ring not in _CommutativeRings:
             raise TypeError("Base ring %s must be a commutative ring."%repr(base_ring))
         # We trust that, if a category is given, that it is useful.
@@ -2002,7 +2004,8 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
 class PolynomialRing_field(PolynomialRing_integral_domain,
                            ring.PrincipalIdealDomain):
-    def __init__(self, base_ring, name="x", sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name="x", sparse=False, implementation=None,
+                 element_class=None, category=None):
         """
         TESTS::
 
@@ -2846,7 +2849,8 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
     r"""
     A class for polynomial ring over complete discrete valuation rings
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         r"""
         TESTS::
 
@@ -2874,7 +2878,8 @@ class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
     """
     A class for polynomial ring over complete discrete valuation fields
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         r"""
         TESTS::
 
@@ -2902,7 +2907,7 @@ class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
     r"""
     A class for dense polynomial ring over padic rings
     """
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvr.__init__(self, base_ring, sparse=False, name=name, element_class=element_class, category=category)
 
     @staticmethod
@@ -2929,7 +2934,7 @@ class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
     r"""
     A class for dense polynomial ring over padic fields
     """
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvf.__init__(self, base_ring, sparse=False, name=name, element_class=element_class, category=category)
 
     @staticmethod
@@ -2953,7 +2958,7 @@ class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
 
 
 class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -2973,7 +2978,7 @@ class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic
 
 
 class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -2992,7 +2997,7 @@ class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic
 
 
 class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -3012,7 +3017,7 @@ class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_
 
 
 class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padic_field_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
