@@ -210,7 +210,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         print(f"Checking whether {E} is a Q-curve")
 
     try:
-        assert is_NumberField(E.base_field())
+        assert isinstance(E.base_field(), NumberField)
     except (AttributeError, AssertionError):
         raise TypeError(f"{E} must be an elliptic curve defined over a number field")
 

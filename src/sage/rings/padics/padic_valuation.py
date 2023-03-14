@@ -133,7 +133,7 @@ class PadicValuationFactory(UniqueFactory):
             return self.create_key_for_integers(R, prime), {}
         elif isinstance(R, pAdicGeneric):
             return self.create_key_for_local_ring(R, prime), {}
-        elif is_NumberField(R.fraction_field()) or is_PolynomialQuotientRing(R):
+        elif isinstance(R.fraction_field(), NumberField) or is_PolynomialQuotientRing(R):
             return self.create_key_and_extra_args_for_number_field(R, prime, approximants=approximants)
         else:
             raise NotImplementedError("p-adic valuations not implemented for %r"%(R,))
@@ -363,7 +363,7 @@ class PadicValuationFactory(UniqueFactory):
         """
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
         from sage.rings.number_field.number_field_base import NumberField
-        if is_NumberField(R.fraction_field()):
+        if isinstance(R.fraction_field(), NumberField):
             L = R.fraction_field()
             G = L.relative_polynomial()
             K = L.base_ring()
@@ -804,7 +804,7 @@ class pAdicValuation_base(DiscreteValuation):
                 elif self.domain().is_subring(ring.base_ring()):
                     return sum([w.extensions(ring) for w in self.extensions(ring.base_ring())], [])
             from sage.rings.number_field.number_field_base import NumberField
-            if is_NumberField(ring.fraction_field()):
+            if isinstance(ring.fraction_field(), NumberField):
                 if ring.base_ring().fraction_field() is self.domain().fraction_field():
                     approximants = self.mac_lane_approximants(ring.fraction_field().relative_polynomial().change_ring(self.domain()), assume_squarefree=True, require_incomparability=True)
                     return [pAdicValuation(ring, approximant, approximants) for approximant in approximants]

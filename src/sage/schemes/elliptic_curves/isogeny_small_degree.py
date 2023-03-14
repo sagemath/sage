@@ -704,7 +704,7 @@ def isogenies_2(E, minimal_models=True):
     x = f2.parent().gen()
     ff = [x-x2i for x2i in x2]
     from sage.rings.number_field.number_field_base import NumberField
-    model = "minimal" if minimal_models and is_NumberField(E.base_field()) else None
+    model = "minimal" if minimal_models and isinstance(E.base_field(), NumberField) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
@@ -752,7 +752,7 @@ def isogenies_3(E, minimal_models=True):
     x = f3.parent().gen()
     ff = [x - x3i for x3i in x3]
     from sage.rings.number_field.number_field_base import NumberField
-    model = "minimal" if minimal_models and is_NumberField(E.base_field()) else None
+    model = "minimal" if minimal_models and isinstance(E.base_field(), NumberField) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
