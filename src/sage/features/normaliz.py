@@ -1,6 +1,16 @@
 r"""
 Feature for testing the presence of ``pynormaliz``
 """
+
+# *****************************************************************************
+#       Copyright (C) 2021 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
