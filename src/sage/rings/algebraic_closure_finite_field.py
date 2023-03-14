@@ -340,25 +340,34 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         return True
 
-    def sqrt(self):
+    def sqrt(self, all=False):
         """
         Return a square root of ``self``.
+
+        If the optional keyword argument ``all`` is set to ``True``,
+        return a list of all square roots of ``self`` instead.
 
         EXAMPLES::
 
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2).sqrt()
             z4^3 + z4 + 1
-
+            sage: F.gen(2).sqrt(all=True)
+            [z4^3 + z4 + 1, 2*z4^3 + 2*z4 + 2]
+            sage: (F.gen(2)^2).sqrt()
+            z2
+            sage: (F.gen(2)^2).sqrt(all=True)
+            [z2, 2*z2]
         """
         F = self.parent()
         x = self._value
-        if x.is_square():
-            return self.__class__(F, x.sqrt(extend=False))
-        else:
+        if not x.is_square():
             l = self._level
             x = F.inclusion(l, 2*l)(x)
-            return self.__class__(F, x.sqrt(extend=False))
+        sqrt = x.sqrt(extend=False, all=all)
+        if all:
+            return [self.__class__(F, y) for y in sqrt]
+        return self.__class__(F, sqrt)
 
     def nth_root(self, n):
         """
