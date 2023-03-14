@@ -20,7 +20,6 @@ The class inheritance hierarchy is:
   - :class:`Algebra`
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing`
     - :class:`CommutativeAlgebra`
     - :class:`IntegralDomain`
 
@@ -35,9 +34,7 @@ Subclasses of :class:`PrincipalIdealDomain` are
 
 Some aspects of this structure may seem strange, but this is an unfortunate
 consequence of the fact that Cython classes do not support multiple
-inheritance. Hence, for instance, :class:`Field` cannot be a subclass of both
-:class:`NoetherianRing` and :class:`PrincipalIdealDomain`, although all fields
-are Noetherian PIDs.
+inheritance.
 
 (A distinct but equally awkward issue is that sometimes we may not know *in
 advance* whether or not a ring belongs in one of these classes; e.g. some
@@ -1606,7 +1603,7 @@ cdef class IntegralDomain(CommutativeRing):
          - ``category`` (default: ``None``) -- a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`NoetherianRing`,
+        :class:`IntegralDomain`, like
         :class:`PrincipalIdealDomain`, :class:`DedekindDomain`,
         :class:`EuclideanDomain`, :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
@@ -1731,33 +1728,6 @@ cdef class IntegralDomain(CommutativeRing):
         else:
             return False
 
-cdef class NoetherianRing(CommutativeRing):
-    """
-    Generic Noetherian ring class.
-
-    A Noetherian ring is a commutative ring in which every ideal is
-    finitely generated.
-
-    This class is deprecated, and not actually used anywhere in the
-    Sage code base.  If you think you need it, please create a
-    category :class:`NoetherianRings`, move the code of this class
-    there, and use it instead.
-    """
-    def is_noetherian(self):
-        """
-        Return ``True`` since this ring is Noetherian.
-
-        EXAMPLES::
-
-            sage: ZZ.is_noetherian()
-            True
-            sage: QQ.is_noetherian()
-            True
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: R.is_noetherian()
-            True
-        """
-        return True
 
 cdef class DedekindDomain(IntegralDomain):
     """
