@@ -1688,8 +1688,8 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: d2 = B._element_from_libbraiding(l)
             sage: print(len(d2.Tietze()))
             13
-            sage: print(c.conjugating_braid(b))
-            None
+            sage: c.conjugating_braid(b) is None
+            True
         """
         l = conjugatingbraid(self, other)
         if not l:
@@ -1729,7 +1729,12 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- a braid in the same braid group as `self`.
+        - ``other`` -- a braid in the same braid group as ``self``
+
+        OUTPUT:
+        
+        A pure braid `d` such that `other` equals `d^-1 * self * d`.
+         
 
         EXAMPLES::
 
@@ -1786,24 +1791,20 @@ class Braid(FiniteTypeArtinGroupElement):
         p3 = b0.permutation().inverse()
         if p3.is_one():
             return b0
-        LB = self.centralizer()
         G = SymmetricGroup(n)
-        LP = [G(a.permutation()) for a in LB]
+        LP = {G(a.permutation()): a for a in self.centralizer()}
         p3 = G(p3)
         if p3 not in G.subgroup(LP):
             return None
-        P = p3.word_problem(LP, display=False, as_list=True)
-        b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
+        P = p3.word_problem(list(LP), display=False, as_list=True)
+        b1 = prod(LP[G(a)] ** b for a,b in P)
         b0 = b1 * b0
         n0 = len(b0.Tietze())
         L = leftnormalform(b0)
         L[0][0] %= 2
         b2 = B._element_from_libbraiding(L)
         n2 = len(b2.Tietze())
-        if n2 <= n0:
-            return b2
-        else:
-            return b0
+        return b2 if n2 <= n0 else b0
 
 
     def ultra_summit_set(self):
@@ -2562,7 +2563,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return the number of group elements.
 
-        OUTPUT:
+        OUTPUT:.
 
         Infinity.
 
