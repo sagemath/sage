@@ -1651,7 +1651,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- the other braid to look for conjugating braid
+        - ``other`` -- a braid in the same braid group as `self`.
+
+        OUTPUT:
+
+        A braid `d` such that `other` equals `d^-1 * self * d`.
 
         EXAMPLES::
 
@@ -1695,9 +1699,6 @@ class Braid(FiniteTypeArtinGroupElement):
             n = B.strands()
             l[0][0] %= 2
             return B._element_from_libbraiding(l)
-            #k = int(l[0][0] % 2)
-            #b0 = B.delta() ** k * B(prod(B(a) for a in l[1:]))
-            #return b0
 
     def is_conjugated(self, other):
         """
@@ -1723,11 +1724,12 @@ class Braid(FiniteTypeArtinGroupElement):
     
     def pure_conjugating_braid(self, other):
         r"""
-        Return a pure conjugating braid, if it exists.
+        Return a pure conjugating braid, i.e. a conjugating braid whose
+        associated permutation is the identity, if it exists.
 
         INPUT:
 
-        - ``other`` -- the other braid to look for conjugating braid
+        - ``other`` -- a braid in the same braid group as `self`.
 
         EXAMPLES::
 
