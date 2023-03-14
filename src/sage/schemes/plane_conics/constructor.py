@@ -37,7 +37,7 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.fraction_field import is_FractionField
 
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import is_NumberField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine

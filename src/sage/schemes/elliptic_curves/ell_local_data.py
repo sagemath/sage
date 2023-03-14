@@ -95,7 +95,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
 
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.ideal import is_Ideal
 
 from .constructor import EllipticCurve

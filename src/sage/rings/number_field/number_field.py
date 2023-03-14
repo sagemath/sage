@@ -918,7 +918,7 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
 
     ::
 
-        sage: from sage.rings.number_field.number_field import is_NumberField
+        sage: from sage.rings.number_field.number_field_base import is_NumberField
         sage: type(K)
         <class 'sage.rings.number_field.number_field.NumberField_quadratic_with_category'>
         sage: is_NumberField(K)

@@ -3462,7 +3462,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             # nothing else helps, hence, we move to the pushout of the codomains of the embeddings
             try:
                 P = pushout(self.embeddings[0].parent(), other.embeddings[0].parent())
-                from sage.rings.number_field.number_field import is_NumberField
+                from sage.rings.number_field.number_field_base import is_NumberField
                 if is_NumberField(P):
                     return P.construction()[0]
             except CoercionException:

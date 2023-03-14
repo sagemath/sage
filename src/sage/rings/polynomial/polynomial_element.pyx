@@ -5261,8 +5261,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (PolynomialRing(Integers(31),name='x').0+5).root_field('a')
             Ring of integers modulo 31
         """
-        from sage.rings.number_field.number_field import is_NumberField, NumberField
-
         R = self.base_ring()
         if not R.is_integral_domain():
             raise ValueError("the base ring must be a domain")
@@ -5272,6 +5270,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         if self.degree() <= 1:
             return R.fraction_field()
+
+        from sage.rings.number_field.number_field import NumberField
+        from sage.rings.number_field.number_field_base import is_NumberField
 
         if is_IntegerRing(R):
             return NumberField(self, names)

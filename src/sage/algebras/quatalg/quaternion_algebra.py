@@ -46,7 +46,7 @@ from sage.rings.ring import Algebra
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
