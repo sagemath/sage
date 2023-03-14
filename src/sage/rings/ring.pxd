@@ -19,9 +19,6 @@ cdef class IntegralDomain(CommutativeRing):
 cdef class PrincipalIdealDomain(IntegralDomain):
     pass
 
-cdef class EuclideanDomain(PrincipalIdealDomain):
-    pass
-
 cdef class Field(PrincipalIdealDomain):
     pass
 
