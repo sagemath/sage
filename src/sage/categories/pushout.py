@@ -3484,7 +3484,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             try:
                 P = pushout(self.embeddings[0].parent(), other.embeddings[0].parent())
                 from sage.rings.number_field.number_field_base import NumberField
-                if isinstance(p, NumberField):
+                if isinstance(P, NumberField):
                     return P.construction()[0]
             except CoercionException:
                 return None
