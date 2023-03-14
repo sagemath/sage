@@ -1791,9 +1791,8 @@ class Braid(FiniteTypeArtinGroupElement):
         b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
         b0 = b1 * b0
         L = leftnormalform(b0)
-        k = int(L[0][0] % 2)
-        b0 = B.delta() ** k * B(prod(B(a) for a in L[1:]))
-        return b0
+        L[0][0] %= 2
+        return B._element_from_libbraiding(L)
 
     def ultra_summit_set(self):
         """
