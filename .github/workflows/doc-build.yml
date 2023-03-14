@@ -14,7 +14,7 @@ concurrency:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:dev
+    container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
