@@ -711,6 +711,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Return one or all points with given `x`-coordinate.
 
+        This method is deterministic: It returns the same data each
+        time when called again with the same `x`.
+
         INPUT:
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
@@ -873,6 +876,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             []
             sage: E.lift_x(7, all=True)                                                     # optional - sage.rings.finite_rings
             [(7 : 3 : 1), (7 : 14 : 1)]
+
+        Check determinism::
+
+            sage: F.<t> = GF((101,3))
+            sage: {(t+1).sqrt() for _ in range(1000)}   # both square roots can occur
+            {29*t^2 + 56*t + 26, 72*t^2 + 45*t + 75}
+            sage: E = EllipticCurve(F, [1,1])
+            sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
+            {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
         """
         K = self.base_ring()
         L = x.parent()
@@ -909,6 +921,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             if D.is_square():  # avoid automatic creation of sqrts
                 ys = [(-b+d)/2 for d in D.sqrt(all=True)]
 
+        ys.sort()  # ensure deterministic behavior
+
         # Return the point(s) if any:
 
         if ys:
@@ -939,6 +953,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ys = [y1]
         else:
             ys = [y1, y2]
+        ys.sort()  # ensure deterministic behavior
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
