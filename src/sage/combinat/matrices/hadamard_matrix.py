@@ -29,13 +29,15 @@ The Hadamard conjecture (possibly due to Paley) states that a Hadamard
 matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
-The module below implements the Paley constructions (see for example
-[Hora]_) and the Sylvester construction. It also allows you to pull a
-Hadamard matrix from the database at [SloaHada]_.
+The module below implements constructions of Hadamard and skew Hadamard matrices
+for all known orders `\le 1000`, plus some more greater than `1000`. It also
+allows you to pull a Hadamard matrix from the database at [SloaHada]_.
 
 AUTHORS:
 
 - David Joyner (2009-05-17): initial version
+- Matteo Cati (2023-03-18): implemented more constructions for Hadamard and skew
+  Hadamard matrices, to cover all known orders up to 1000.
 
 REFERENCES:
 
@@ -1644,6 +1646,9 @@ def hadamard_matrix(n, existence=False, check=True):
     r"""
     Tries to construct a Hadamard matrix using the available methods.
 
+    Currently all orders `\le 1000` for which a construction is
+    known are implemented. For `n > 1000`, only some orders are available.
+
     INPUT:
 
     - ``n`` (integer) -- dimension of the matrix
@@ -3069,8 +3074,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     Tries to construct a skew Hadamard matrix
 
     A Hadamard matrix `H` is called skew if `H=S-I`, for `I` the identity matrix
-    and `-S=S^\top`. Currently constructions from Section 14.1 of [Ha83]_ and few
-    more exotic ones are implemented.
+    and `-S=S^\top`. Currently all orders `\le 1000` for which a construction is
+    known are implemented. For `n > 1000`, only some orders are available.
 
     INPUT:
 
