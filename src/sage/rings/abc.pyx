@@ -1,7 +1,7 @@
 """
 Abstract base classes for rings
 """
-from sage.rings.ring import PrincipalIdealDomain
+from sage.rings.ring import IntegralDomain
 
 
 class NumberField_quadratic(Field):
@@ -392,7 +392,7 @@ class Order:
     pass
 
 
-class pAdicRing(PrincipalIdealDomain):
+class pAdicRing(IntegralDomain):
     r"""
     Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
 

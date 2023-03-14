@@ -23,13 +23,9 @@ The class inheritance hierarchy is:
     - :class:`CommutativeAlgebra`
     - :class:`IntegralDomain`
 
-      - :class:`PrincipalIdealDomain`
+      - :class:`Field`
 
-Subclasses of :class:`PrincipalIdealDomain` are
-
-- :class:`Field`
-
-  - :class:`~sage.rings.finite_rings.finite_field_base.FiniteField`
+        - :class:`~sage.rings.finite_rings.finite_field_base.FiniteField`
 
 Some aspects of this structure may seem strange, but this is an unfortunate
 consequence of the fact that Cython classes do not support multiple
@@ -408,7 +404,8 @@ cdef class Ring(ParentWithGens):
 
         if coerce:
             gens = [self(g) for g in gens]
-        if isinstance(self, PrincipalIdealDomain):
+
+        if self in PrincipalIdealDomains():
             # Use GCD algorithm to obtain a principal ideal
             g = gens[0]
             if len(gens) == 1:
@@ -420,6 +417,7 @@ cdef class Ring(ParentWithGens):
                 for h in gens[1:]:
                     g = g.gcd(h)
             gens = [g]
+
         if 'ideal_class' in kwds:
             C = kwds['ideal_class']
             del kwds['ideal_class']
@@ -1548,11 +1546,9 @@ cdef class IntegralDomain(CommutativeRing):
          - ``category`` (default: ``None``) -- a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like
-        :class:`PrincipalIdealDomain`,
-        :class:`EuclideanDomain`, :class:`Field`, ... in order to
+        :class:`IntegralDomain`, :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
-        PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
+        -> IntegralDomain.__init__ ->
         ...
 
         EXAMPLES::
@@ -1561,34 +1557,15 @@ cdef class IntegralDomain(CommutativeRing):
             sage: F.category()
             Category of integral domains
 
-            sage: F = PrincipalIdealDomain(QQ)
-            sage: F.category()
-            Category of principal ideal domains
-
-            sage: F = EuclideanDomain(QQ)
-            sage: F.category()
-            Category of euclidean domains
-
             sage: F = Field(QQ)
             sage: F.category()
             Category of fields
-
-        If a category is specified, then the category is set to the
-        join of that category with the default category::
-
-            sage: F = PrincipalIdealDomain(QQ, category=EnumeratedSets())
 
         The default value for the category is specified by the class
         attribute ``default_category``::
 
             sage: IntegralDomain._default_category
             Category of integral domains
-
-            sage: PrincipalIdealDomain._default_category
-            Category of principal ideal domains
-
-            sage: EuclideanDomain._default_category
-            Category of euclidean domains
 
             sage: Field._default_category
             Category of fields
@@ -1674,155 +1651,6 @@ cdef class IntegralDomain(CommutativeRing):
             return False
 
 
-cdef class PrincipalIdealDomain(IntegralDomain):
-    """
-    Generic principal ideal domain.
-
-    This class is deprecated. Please use the
-    :class:`~sage.categories.principal_ideal_domains.PrincipalIdealDomains`
-    category instead.
-    """
-    _default_category = PrincipalIdealDomains()
-
-    def is_noetherian(self):
-        """
-        Every principal ideal domain is noetherian, so we return ``True``.
-
-        EXAMPLES::
-
-            sage: Zp(5).is_noetherian()
-            True
-        """
-        return True
-
-    def class_group(self):
-        """
-        Return the trivial group, since the class group of a PID is trivial.
-
-        EXAMPLES::
-
-            sage: QQ.class_group()
-            Trivial Abelian group
-        """
-        from sage.groups.abelian_gps.abelian_group import AbelianGroup
-        return AbelianGroup([])
-
-    def gcd(self, x, y, coerce=True):
-        r"""
-        Return the greatest common divisor of ``x`` and ``y``, as elements
-        of ``self``.
-
-        EXAMPLES:
-
-        The integers are a principal ideal domain and hence a GCD domain::
-
-            sage: ZZ.gcd(42, 48)
-            6
-            sage: 42.factor(); 48.factor()
-            2 * 3 * 7
-            2^4 * 3
-            sage: ZZ.gcd(2^4*7^2*11, 2^3*11*13)
-            88
-            sage: 88.factor()
-            2^3 * 11
-
-        In a field, any nonzero element is a GCD of any nonempty set
-        of nonzero elements. In previous versions, Sage used to return
-        1 in the case of the rational field. However, since :trac:`10771`,
-        the rational field is considered as the
-        *fraction field* of the integer ring. For the fraction field
-        of an integral domain that provides both GCD and LCM, it is
-        possible to pick a GCD that is compatible with the GCD of the
-        base ring::
-
-            sage: QQ.gcd(ZZ(42), ZZ(48)); type(QQ.gcd(ZZ(42), ZZ(48)))
-            6
-            <class 'sage.rings.rational.Rational'>
-            sage: QQ.gcd(1/2, 1/3)
-            1/6
-
-        Polynomial rings over fields are GCD domains as well. Here is a simple
-        example over the ring of polynomials over the rationals as well as
-        over an extension ring. Note that ``gcd`` requires x and y to be
-        coercible::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = NumberField(x^2 - 2, 'a')
-            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)
-            sage: print(f); print(g)
-            x^2 - 2
-            x^3 - a*x^2 - 2*x + 2*a
-            sage: f in R
-            True
-            sage: g in R
-            False
-            sage: R.gcd(f,g)
-            Traceback (most recent call last):
-            ...
-            TypeError: Unable to coerce 2*a to a rational
-            sage: R.base_extend(S).gcd(f,g)
-            x^2 - 2
-            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))
-            x - a
-        """
-        if coerce:
-            x = self(x)
-            y = self(y)
-        return x.gcd(y)
-
-    def content(self, x, y, coerce=True):
-        r"""
-        Return the content of `x` and `y`, i.e. the unique element `c` of
-        ``self`` such that `x/c` and `y/c` are coprime and integral.
-
-        EXAMPLES::
-
-            sage: QQ.content(ZZ(42), ZZ(48)); type(QQ.content(ZZ(42), ZZ(48)))
-            6
-            <class 'sage.rings.rational.Rational'>
-            sage: QQ.content(1/2, 1/3)
-            1/6
-            sage: factor(1/2); factor(1/3); factor(1/6)
-            2^-1
-            3^-1
-            2^-1 * 3^-1
-            sage: a = (2*3)/(7*11); b = (13*17)/(19*23)
-            sage: factor(a); factor(b); factor(QQ.content(a,b))
-            2 * 3 * 7^-1 * 11^-1
-            13 * 17 * 19^-1 * 23^-1
-            7^-1 * 11^-1 * 19^-1 * 23^-1
-
-        Note the changes to the second entry::
-
-            sage: c = (2*3)/(7*11); d = (13*17)/(7*19*23)
-            sage: factor(c); factor(d); factor(QQ.content(c,d))
-            2 * 3 * 7^-1 * 11^-1
-            7^-1 * 13 * 17 * 19^-1 * 23^-1
-            7^-1 * 11^-1 * 19^-1 * 23^-1
-            sage: e = (2*3)/(7*11); f = (13*17)/(7^3*19*23)
-            sage: factor(e); factor(f); factor(QQ.content(e,f))
-            2 * 3 * 7^-1 * 11^-1
-            7^-3 * 13 * 17 * 19^-1 * 23^-1
-            7^-3 * 11^-1 * 19^-1 * 23^-1
-        """
-        if coerce:
-            x = self(x)
-            y = self(y)
-        return x.content(y)
-
-    def _ideal_class_(self, n=0):
-        """
-        Ideals in PIDs have their own special class.
-
-        EXAMPLES::
-
-            sage: ZZ._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-        """
-        from sage.rings.ideal import Ideal_pid
-        return Ideal_pid
-
-
 cpdef bint _is_Field(x) except -2:
     """
     Return ``True`` if ``x`` is a field.
@@ -1859,7 +1687,7 @@ from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-cdef class Field(PrincipalIdealDomain):
+cdef class Field(IntegralDomain):
     """
     Generic field
     """

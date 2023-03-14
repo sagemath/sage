@@ -32,7 +32,7 @@ from sage.categories.morphism import Morphism
 from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from .local_generic import LocalGeneric
-from sage.rings.ring import PrincipalIdealDomain
+from sage.rings.ring import IntegralDomain
 from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.rings.padics.padic_printing import pAdicPrinter
@@ -41,7 +41,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal
 
 
-class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
+class pAdicGeneric(IntegralDomain, LocalGeneric):
     def __init__(self, base, p, prec, print_mode, names, element_class, category=None):
         r"""
         Initialize ``self``.
@@ -57,6 +57,13 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         EXAMPLES::
 
             sage: R = Zp(17)  # indirect doctest
+
+        TESTS::
+
+            sage: Zp(5).is_noetherian()
+            True
+            sage: Zp(5).class_group()
+            Trivial Abelian group
         """
         if category is None:
             if self.is_field():

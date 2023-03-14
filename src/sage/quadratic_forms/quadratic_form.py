@@ -21,6 +21,7 @@ AUTHORS:
 from warnings import warn
 from copy import deepcopy
 
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.structure.element import is_Matrix
@@ -31,7 +32,7 @@ from sage.arith.misc import GCD
 from sage.arith.functions import lcm as LCM
 from sage.rings.ideal import Ideal
 from sage.rings.rational_field import QQ
-from sage.rings.ring import is_Ring, PrincipalIdealDomain
+from sage.rings.ring import is_Ring
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -1633,7 +1634,7 @@ class QuadraticForm(SageObject):
         except AttributeError:
 
             # Check that the base ring is a PID
-            if not isinstance(self.base_ring(), PrincipalIdealDomain):
+            if not self.base_ring() in PrincipalIdealDomains():
                 raise TypeError("the level (as a number) is only defined over a Principal Ideal Domain ; try using level_ideal()")
 
             # Warn the user if the form is defined over a field!
