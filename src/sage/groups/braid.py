@@ -1789,7 +1789,7 @@ class Braid(FiniteTypeArtinGroupElement):
         LP = [G(a.permutation()) for a in LB]
         if p3 not in G.subgroup(LP):
             return None
-        P = p3.word_problem(LP, display = False, as_list = True)
+        P = p3.word_problem(LP, display=False, as_list=True)
         b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
         b0 = b1 * b0
         return b0
