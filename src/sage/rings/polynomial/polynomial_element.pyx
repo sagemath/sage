@@ -5109,7 +5109,7 @@ cdef class Polynomial(CommutativePolynomial):
             y = self._parent.quo(self).gen()
             from sage.groups.generic import order_from_multiple
             return n == order_from_multiple(y, n, n_prime_divs, operation="*")
-        elif isinstance(R, NumberFieldOrder):
+        elif isinstance(R, sage.rings.abc.Order):
             K = R.number_field()
             return K.fractional_ideal(self.coefficients()) == K.fractional_ideal(1)
         else:
