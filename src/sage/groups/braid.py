@@ -1664,7 +1664,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([2, 1, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
-            sage: print (d1)
+            sage: print(d1)
             s1*s0
             sage: d1 * c / d1 == a
             True
@@ -1676,7 +1676,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
-            sage: print (len(d1.Tietze()))
+            sage: print(len(d1.Tietze()))
             7
             sage: d1 * c / d1 == a
             True
@@ -1686,9 +1686,9 @@ class Braid(FiniteTypeArtinGroupElement):
             s1^2*s0^2*s1^2*s0
             sage: l = sage.groups.braid.conjugatingbraid(a,c)
             sage: d2 = B._element_from_libbraiding(l)
-            sage: print (len(d2.Tietze()))
+            sage: print(len(d2.Tietze()))
             13
-            sage: print (c.conjugating_braid(b))
+            sage: print(c.conjugating_braid(b))
             None
         """
         l = conjugatingbraid(self, other)
@@ -1738,63 +1738,72 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([3, 2,])
             sage: c = b ^ 12 * a / b ^ 12
             sage: d1 = a.conjugating_braid(c)
-            sage: print (len(d1.Tietze()))
+            sage: print(len(d1.Tietze()))
             30
-            sage: print (d1.permutation())
+            sage: print(d1.permutation())
             [3, 4, 1, 2]
             sage: d1 * c / d1 == a
             True
             sage: d1 * a / d1 == c
             False
             sage: d2 = a.pure_conjugating_braid(c)
-            sage: print (len(d2.Tietze()))
+            sage: print(len(d2.Tietze()))
             24
-            sage: print (d2.permutation())
+            sage: print(d2.permutation())
             [1, 2, 3, 4]
             sage: d2 * c / d2 == a
             True
-            sage: print (d2)
+            sage: print(d2)
             (s0*s1*s2^2*s1*s0)^4
             sage: print(a.conjugating_braid(b))
             None
             sage: print(a.pure_conjugating_braid(b))
             None
-            sage: a1=B([1])
-            sage: a2=B([2])
+            sage: a1 = B([1])
+            sage: a2 = B([2])
             sage: a1.conjugating_braid(a2)
             s1*s0
             sage: a1.permutation()
             [2, 1, 3, 4]
             sage: a2.permutation()
             [1, 3, 2, 4]
-            sage: print (a1.pure_conjugating_braid(a2))
+            sage: print(a1.pure_conjugating_braid(a2))
             None
             sage: (a1^2).conjugating_braid(a2^2)
             s1*s0
-            sage: print ((a1^2).pure_conjugating_braid(a2^2))
+            sage: print((a1^2).pure_conjugating_braid(a2^2))
             None
         """
         B = self.parent()
         n = B.strands()
-        G = SymmetricGroup(n)
-        p1 = G(self.permutation())
-        p2 = G(other.permutation())
+        p1 = self.permutation()
+        p2 = other.permutation()
         if p1 != p2:
             return None
         b0 = self.conjugating_braid(other)
-        if not b0:
+        if b0 is None:
             return None
-        p3 = G(b0.permutation().inverse())
+        p3 = b0.permutation().inverse()
         if p3.is_one():
             return b0
         LB = self.centralizer()
+        G = SymmetricGroup(n)
         LP = [G(a.permutation()) for a in LB]
+        p3 = G(p3)
         if p3 not in G.subgroup(LP):
             return None
         P = p3.word_problem(LP, display=False, as_list=True)
         b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
         b0 = b1 * b0
-        return b0
+        n0 = len(b0.Tietze())
+        L = leftnormalform(b0)
+        L[0][0] %= 2
+        b2 = B._element_from_libbraiding(L)
+        n2 = len(b2.Tietze())
+        if n2 <= n0:
+            return b2
+        else:
+            return b0
 
 
     def ultra_summit_set(self):
