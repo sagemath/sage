@@ -708,13 +708,7 @@ class Rings(CategoryWithAxiom):
 
         def _ideal_class_(self, n=0):
             """
-            Return the class that is used to implement ideals of this ring.
-
-            .. NOTE::
-
-                We copy the code from :class:`~sage.rings.ring.Ring`. This is
-                necessary because not all rings inherit from that class, such
-                as matrix algebras.
+            Return the class or callable that is used to create ideals of this ring.
 
             INPUT:
 
@@ -723,8 +717,12 @@ class Rings(CategoryWithAxiom):
 
             OUTPUT:
 
-            The class that is used to implement ideals of this ring with
+            The class or callable object that is used to create ideals of this ring with
             ``n`` generators.
+
+            The default input of `n=0` indicates an unspecified number of generators,
+            in which case a class or callable that works for any number of
+            generators is returned.
 
             .. NOTE::
 
@@ -733,26 +731,37 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: ZZ._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: RR._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: R.<x,y> = GF(5)[]
+                sage: R._ideal_class_(1)
+                <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
+                sage: S = R.quo(x^3-y^2)
+                sage: S._ideal_class_(1)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
+                sage: S._ideal_class_(2)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
+                sage: T.<z> = S[]
+                sage: T._ideal_class_(5)
+                <class 'sage.rings.ideal.Ideal_generic'>
+                sage: T._ideal_class_(1)
+                <class 'sage.rings.ideal.Ideal_principal'>
+
+            Since :trac:`7797`, non-commutative rings have ideals as well::
+
+                sage: A = SteenrodAlgebra(2)
+                sage: A._ideal_class_()
+                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
+
                 sage: MS = MatrixSpace(QQ,2,2)
                 sage: MS._ideal_class_()
                 <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            We do not know of a commutative ring in Sage that does not inherit
-            from the base class of rings. So, we need to cheat in the next
-            example::
-
-                sage: super(Ring,QQ)._ideal_class_.__module__
-                'sage.categories.rings'
-                sage: super(Ring,QQ)._ideal_class_()
-                <class 'sage.rings.ideal.Ideal_generic'>
-                sage: super(Ring,QQ)._ideal_class_(1)
-                <class 'sage.rings.ideal.Ideal_principal'>
-                sage: super(Ring,QQ)._ideal_class_(2)
-                <class 'sage.rings.ideal.Ideal_generic'>
             """
-            from sage.rings.noncommutative_ideals import Ideal_nc
             try:
                 if not self.is_commutative():
+                    from sage.rings.noncommutative_ideals import Ideal_nc
                     return Ideal_nc
             except (NotImplementedError, AttributeError):
                 return Ideal_nc
