@@ -94,6 +94,7 @@ AUTHORS:
 - Brent Baccala (2019-12-20): support orders in characteristic zero
 
 """
+
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -105,10 +106,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sage.rings.abc
-
 from sage.categories.integral_domains import IntegralDomains
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation

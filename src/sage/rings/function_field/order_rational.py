@@ -1,7 +1,15 @@
-# some tests are marked # optional - sage.libs.pari         (because they use finite fields)
 r"""
 Orders of rational function fields
 """
+
+#*****************************************************************************
+#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 import sage.rings.abc
 
@@ -11,11 +19,8 @@ from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.rings.number_field.number_field_base import NumberField
 
-from .ideal import (
-    FunctionFieldIdeal,
-    FunctionFieldIdeal_rational,
-    FunctionFieldIdealInfinite_rational,
-)
+from .ideal import FunctionFieldIdeal
+from .ideal_rational import FunctionFieldIdeal_rational, FunctionFieldIdealInfinite_rational
 from .order import FunctionFieldMaximalOrder, FunctionFieldMaximalOrderInfinite
 
 

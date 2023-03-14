@@ -43,7 +43,7 @@ import sage.rings.number_field as number_field
 
 from sage.interfaces.singular import singular
 from sage.rings.rational_field import is_RationalField
-from sage.rings.function_field.function_field import RationalFunctionField
+from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.integer_ring import ZZ
 
@@ -162,7 +162,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
             return singular(f"std(ideal({base_ring.__minpoly}))", type='qring'), None
 
-    elif isinstance(base_ring, sage.rings.function_field.function_field.RationalFunctionField) \
+    elif isinstance(base_ring, sage.rings.function_field.function_field_rational.RationalFunctionField) \
             and base_ring.constant_field().is_prime_field():
         gen = str(base_ring.gen())
         return make_ring(f"({base_ring.characteristic()},{gen})"), None

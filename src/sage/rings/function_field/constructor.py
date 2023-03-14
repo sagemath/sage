@@ -99,13 +99,13 @@ class FunctionFieldFactory(UniqueFactory):
             True
         """
         if key[0].is_finite():
-            from .function_field import RationalFunctionField_global
+            from .function_field_rational import RationalFunctionField_global
             return RationalFunctionField_global(key[0], names=key[1])
         elif key[0].characteristic() == 0:
-            from .function_field import RationalFunctionField_char_zero
+            from .function_field_rational import RationalFunctionField_char_zero
             return RationalFunctionField_char_zero(key[0], names=key[1])
         else:
-            from .function_field import RationalFunctionField
+            from .function_field_rational import RationalFunctionField
             return RationalFunctionField(key[0], names=key[1])
 
 FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
@@ -185,26 +185,27 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             sage: L is M                                                                # optional - sage.libs.singular
             True
         """
-        from . import function_field
+        from . import function_field_polymod, function_field_rational
+
         f = key[0]
         names = key[1]
         base_field = f.base_ring()
-        if isinstance(base_field, function_field.RationalFunctionField):
+        if isinstance(base_field, function_field_rational.RationalFunctionField):
             k = base_field.constant_field()
             if k.is_finite(): # then we are in positive characteristic
                 # irreducible and separable
                 if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
                     # monic and integral
                     if f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
-                        return function_field.FunctionField_global_integral(f, names)
+                        return function_field_polymod.FunctionField_global_integral(f, names)
                     else:
-                        return function_field.FunctionField_global(f, names)
+                        return function_field_polymod.FunctionField_global(f, names)
             elif k.characteristic() == 0:
                 if f.is_irreducible() and f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
-                    return function_field.FunctionField_char_zero_integral(f, names)
+                    return function_field_polymod.FunctionField_char_zero_integral(f, names)
                 else:
-                    return function_field.FunctionField_char_zero(f, names)
-        return function_field.FunctionField_polymod(f, names)
+                    return function_field_polymod.FunctionField_char_zero(f, names)
+        return function_field_polymod.FunctionField_polymod(f, names)
 
 FunctionFieldExtension = FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")
