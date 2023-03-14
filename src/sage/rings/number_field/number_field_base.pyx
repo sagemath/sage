@@ -9,13 +9,13 @@ TESTS::
 """
 
 
-def is_NumberField(x):
+def isinstance(x, NumberField):
     """
     Return True if x is of number field type.
 
     EXAMPLES::
 
-        sage: from sage.rings.number_field.number_field_base import is_NumberField
+        sage: from sage.rings.number_field.number_field_base import NumberField
         sage: is_NumberField(NumberField(x^2+1,'a'))
         True
         sage: is_NumberField(QuadraticField(-97,'theta'))
@@ -25,9 +25,9 @@ def is_NumberField(x):
 
     Note that the rational numbers QQ are a number field.::
 
-        sage: is_NumberField(QQ)
+        sage: isinstance(QQ, NumberField)
         True
-        sage: is_NumberField(ZZ)
+        sage: isinstance(ZZ, NumberField)
         False
     """
     return isinstance(x, NumberField)

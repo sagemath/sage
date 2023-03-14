@@ -122,7 +122,7 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
 
         if R.characteristic() != 0:
@@ -362,7 +362,7 @@ class PadicValuationFactory(UniqueFactory):
 
         """
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         if is_NumberField(R.fraction_field()):
             L = R.fraction_field()
             G = L.relative_polynomial()
@@ -395,7 +395,7 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         R = key[0]
         parent = DiscretePseudoValuationSpace(R)
         if isinstance(R, pAdicGeneric):
@@ -410,7 +410,7 @@ class PadicValuationFactory(UniqueFactory):
             approximants = extra_args['approximants']
             parent = DiscretePseudoValuationSpace(R)
             K = R.fraction_field()
-            if is_NumberField(K):
+            if isinstance(K, NumberField):
                 G = K.relative_polynomial()
             elif is_PolynomialQuotientRing(R):
                 G = R.modulus()
@@ -803,7 +803,7 @@ class pAdicValuation_base(DiscreteValuation):
                         return self._extensions_to_quotient(ring)
                 elif self.domain().is_subring(ring.base_ring()):
                     return sum([w.extensions(ring) for w in self.extensions(ring.base_ring())], [])
-            from sage.rings.number_field.number_field_base import is_NumberField
+            from sage.rings.number_field.number_field_base import NumberField
             if is_NumberField(ring.fraction_field()):
                 if ring.base_ring().fraction_field() is self.domain().fraction_field():
                     approximants = self.mac_lane_approximants(ring.fraction_field().relative_polynomial().change_ring(self.domain()), assume_squarefree=True, require_incomparability=True)

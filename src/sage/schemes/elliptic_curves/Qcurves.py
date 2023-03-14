@@ -204,7 +204,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         TypeError: Elliptic Curve defined by ... must be an elliptic curve
         defined over a number field
     """
-    from sage.rings.number_field.number_field_base import is_NumberField
+    from sage.rings.number_field.number_field_base import NumberField
 
     if verbose:
         print(f"Checking whether {E} is a Q-curve")
