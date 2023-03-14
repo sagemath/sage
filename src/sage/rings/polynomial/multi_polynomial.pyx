@@ -1900,9 +1900,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
            sage: R.<x1,x2> = QQ[]
            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g
+           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                                           # optional - sage.libs.singular
            1/16*x1 + 3/16
-           sage: (f*g).reduce(I)
+           sage: (f*g).reduce(I)                                                                    # optional - sage.libs.singular
            1
 
         Test a non-invertible element::
@@ -1910,7 +1910,7 @@ cdef class MPolynomial(CommutativePolynomial):
            sage: R.<x1,x2> = QQ[]
            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
            sage: f = x1 + x2
-           sage: f.inverse_mod(I)
+           sage: f.inverse_mod(I)                                                                   # optional - sage.libs.singular
            Traceback (most recent call last):
            ...
            ArithmeticError: element is non-invertible
