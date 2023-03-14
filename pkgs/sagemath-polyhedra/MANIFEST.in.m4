@@ -130,6 +130,13 @@ exclude sage/homology/examples.p*
 exclude sage/homology/simplicial_*.p*
 exclude sage/homology/tests.p*
 
+include sage/rings/derivation.p*
+include sage/rings/function_field/differential.p*
+include sage/rings/function_field/derivations.*                         # module elements
+include sage/rings/function_field/differential.*                        # module elements
+include sage/rings/function_field/divisor.*                             # module elements
+include sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
+include sage/rings/function_field/function_field_valuation.*            # ??
 
 global-exclude *.py[co]
 global-exclude *.so

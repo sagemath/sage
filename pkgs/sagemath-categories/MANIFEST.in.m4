@@ -114,6 +114,7 @@ include sage/rings/polynomial/laurent_polynomial_ring_base.p*
 include sage/rings/polynomial/ideal.p*
 include sage/rings/polynomial/toy*.p*
 include sage/rings/polynomial/symmetric_*.p*
+## include sage/rings/polynomial/ore*.p*                                   # need for sage.categories.drinfeld_modules
 
 graft sage/rings/function_field
 exclude sage/rings/function_field/derivations.*                         # module elements

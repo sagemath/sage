@@ -1841,8 +1841,13 @@ class InteractiveLPProblem(SageObject):
             x = newx
             f = newf
 
-        objective_name = polygen(ZZ, kwds.get("objective_name", default_variable_name(
-            "primal objective" if self.is_primal() else "dual objective")))
+        objective_name = kwds.get("objective_name", default_variable_name(
+            "primal objective" if self.is_primal() else "dual objective"))
+        if isinstance(objective_name, str):
+            if objective_name.startswith('-'):
+                objective_name = -polygen(ZZ, objective_name[1:])
+            else:
+                objective_name = polygen(ZZ, objective_name)
         is_negative = self._is_negative
         constant_term = self._constant_term
         if self._problem_type == "min":
@@ -3905,7 +3910,12 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
-        self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
+        if isinstance(objective_name, str):
+            if objective_name.startswith('-'):
+                objective_name = -polygen(ZZ, objective_name[1:])
+            else:
+                objective_name = polygen(ZZ, objective_name)
+        self._AbcvBNz = [A, b, c, objective_value, B, N, objective_name]
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2):

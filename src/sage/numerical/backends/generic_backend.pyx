@@ -1644,7 +1644,11 @@ def default_mip_solver(solver=None):
             raise ValueError("Gurobi is not available. Please refer to the documentation to install it.")
 
     elif solver == "Glpk" or solver == "Glpk/exact":
-        default_solver = solver
+        try:
+            from sage.numerical.backends.glpk_backend import GLPKBackend
+            default_solver = solver
+        except ImportError:
+            raise ValueError("GLPK is not available. Please refer to the documentation to install it.")
 
     elif solver == "Interactivelp":
         default_solver = solver
@@ -1659,7 +1663,8 @@ def default_mip_solver(solver=None):
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
-cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
+
+cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
     """
     Return a solver according to the given preferences
 
