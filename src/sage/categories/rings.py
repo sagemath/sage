@@ -1159,7 +1159,10 @@ class Rings(CategoryWithAxiom):
 
             if isinstance(arg, tuple):
                 from sage.categories.morphism import Morphism
-                from sage.rings.derivation import RingDerivation
+                try:
+                    from sage.rings.derivation import RingDerivation
+                except ImportError:
+                    RingDerivation = ()
                 if len(arg) == 2 and isinstance(arg[1], (Morphism, RingDerivation)):
                     from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
                     return OrePolynomialRing(self, arg[1], names=arg[0])
