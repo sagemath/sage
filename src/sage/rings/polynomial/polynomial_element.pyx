@@ -135,9 +135,6 @@ from sage.categories.morphism cimport Morphism
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
-from sage.categories.number_fields import NumberFields
-
 
 cpdef is_Polynomial(f):
     """
@@ -5832,6 +5829,8 @@ cdef class Polynomial(CommutativePolynomial):
         if self.is_zero():
             return RealField(prec).zero()
 
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         K = self.base_ring()
@@ -5887,6 +5886,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height(2, prec=2)
             0.75
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -5935,6 +5937,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height_arch(0, prec=2)
             1.0
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
