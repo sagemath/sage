@@ -4893,7 +4893,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = 2*x*y + z
             sage: p = r * (3*x*y*z - 1)
             sage: q = r * (x + y + z - 2)
-            sage: p.gcd(q)
+            sage: p.gcd(q)                                                              # optional - sage.libs.singular
             z + 2*x*y
 
             sage: R.<x> = QQ[]
@@ -4901,13 +4901,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = 2*x*y + 1
             sage: p = r * (x - 1/2 * y)
             sage: q = r * (x*y^2 - x + 1/3)
-            sage: p.gcd(q)
+            sage: p.gcd(q)                                                              # optional - sage.libs.singular
             2*x*y + 1
 
         TESTS::
 
             sage: Pol = QQ['x','y']['x']
-            sage: Pol.one().gcd(1)
+            sage: Pol.one().gcd(1)                                                      # optional - sage.libs.singular
             1
         """
         cdef Polynomial _other = <Polynomial> other
@@ -6891,11 +6891,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(ZZ)
             sage: p1 = x^2 - 1
             sage: p2 = x^4 - 1
-            sage: p1.composed_op(p2, operator.add)
+            sage: p1.composed_op(p2, operator.add)                              # optional - sage.libs.singular
             x^8 - 4*x^6 + 4*x^4 - 16*x^2
-            sage: p1.composed_op(p2, operator.mul)
+            sage: p1.composed_op(p2, operator.mul)                              # optional - sage.libs.singular
             x^8 - 2*x^4 + 1
-            sage: p1.composed_op(p2, operator.truediv)
+            sage: p1.composed_op(p2, operator.truediv)                          # optional - sage.libs.singular
             x^8 - 2*x^4 + 1
 
         This function works over any field. However for base rings other than
@@ -6940,7 +6940,7 @@ cdef class Polynomial(CommutativePolynomial):
         ::
 
             sage: y = polygen(ZZ)
-            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:
+            sage: for p1 in [2*y^3 - y + 3, -y^5 - 2, 4*y - 3]:                         # optional - sage.libs.singular
             ....:   for p2 in [5*y^2 - 7, -3*y - 1]:
             ....:     for monic in [True,False]:
             ....:       for op in [operator.add, operator.sub, operator.mul, operator.truediv]:
@@ -7088,7 +7088,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)
-            sage: f.compose_power(2).factor()                                           # optional - sage.modules
+            sage: f.compose_power(2).factor()                                           # optional - sage.libs.singular sage.modules
             (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
 
             sage: x = polygen(QQ)
@@ -7155,8 +7155,8 @@ cdef class Polynomial(CommutativePolynomial):
             True
 
             sage: x = polygen(QQ)
-            sage: f = x^2-2*x+2
-            sage: f.adams_operator(10)
+            sage: f = x^2 - 2*x + 2
+            sage: f.adams_operator(10)                                                  # optional - sage.libs.singular
             x^2 + 1024
 
         When f is monic the output will have leading coefficient
@@ -7166,9 +7166,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)
-            sage: f.adams_operator(3).factor()
+            sage: f.adams_operator(3).factor()                                          # optional - sage.libs.singular
             (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator(3,monic=True).factor()
+            sage: f.adams_operator(3, monic=True).factor()                              # optional - sage.libs.singular
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """
@@ -7187,12 +7187,12 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(QQ)
-            sage: f = x^4-x+2
-            sage: [f.symmetric_power(k) for k in range(5)]
+            sage: f = x^4 - x + 2
+            sage: [f.symmetric_power(k) for k in range(5)]                              # optional - sage.libs.singular
             [x - 1, x^4 - x + 2, x^6 - 2*x^4 - x^3 - 4*x^2 + 8, x^4 - x^3 + 8, x - 2]
 
-            sage: f = x^5-2*x+2
-            sage: [f.symmetric_power(k) for k in range(6)]
+            sage: f = x^5 - 2*x + 2
+            sage: [f.symmetric_power(k) for k in range(6)]                              # optional - sage.libs.singular
             [x - 1,
              x^5 - 2*x + 2,
              x^10 + 2*x^8 - 4*x^6 - 8*x^5 - 8*x^4 - 8*x^3 + 16,
@@ -7203,7 +7203,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c,d> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x-a)*(x-b)*(x-c)*(x-d)
-            sage: [f.symmetric_power(k).factor() for k in range(5)]
+            sage: [f.symmetric_power(k).factor() for k in range(5)]                     # optional - sage.libs.singular
             [x - 1,
              (-x + d) * (-x + c) * (-x + b) * (-x + a),
              (x - c*d) * (x - b*d) * (x - a*d) * (x - b*c) * (x - a*c) * (x - a*b),
@@ -8432,7 +8432,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: Pols_x.<x> = QQ[]
             sage: Pols_xy.<y> = Pols_x[]
-            sage: ((y - 1)*(y - x))._roots_in_subring(QQ, True, None)
+            sage: ((y - 1)*(y - x))._roots_in_subring(QQ, True, None)                               # optional - sage.libs.singular
             [(1, 1)]
         """
         K = self._parent.base_ring()

@@ -371,29 +371,29 @@ class IndexedGenerators():
             sage: e['aa'] + 2*e['bb']                                                                                   # optional - sage.modules
             F[a, a] + 2*F[b, b]
 
-            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="")                                         # optional - sage.modules
-            sage: original_print_options = QS3.print_options()                                                          # optional - sage.modules
-            sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])                                                                     # optional - sage.modules
-            sage: a                      # indirect doctest                                                             # optional - sage.modules
+            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="")                                         # optional - sage.combinat sage.modules
+            sage: original_print_options = QS3.print_options()                                                          # optional - sage.combinat sage.modules
+            sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])                                                                     # optional - sage.combinat sage.modules
+            sage: a                      # indirect doctest                                                             # optional - sage.combinat sage.modules
             2*[[1, 2, 3]] + 4*[[3, 2, 1]]
 
-            sage: QS3.print_options(bracket = False)                                                                    # optional - sage.modules
-            sage: a              # indirect doctest                                                                     # optional - sage.modules
+            sage: QS3.print_options(bracket = False)                                                                    # optional - sage.combinat sage.modules
+            sage: a              # indirect doctest                                                                     # optional - sage.combinat sage.modules
             2*[1, 2, 3] + 4*[3, 2, 1]
 
-            sage: QS3.print_options(prefix='')                                                                          # optional - sage.modules
-            sage: a              # indirect doctest                                                                     # optional - sage.modules
+            sage: QS3.print_options(prefix='')                                                                          # optional - sage.combinat sage.modules
+            sage: a              # indirect doctest                                                                     # optional - sage.combinat sage.modules
             2*[1, 2, 3] + 4*[3, 2, 1]
 
-            sage: QS3.print_options(bracket="|", scalar_mult=" *@* ")                                                   # optional - sage.modules
-            sage: a              # indirect doctest                                                                     # optional - sage.modules
+            sage: QS3.print_options(bracket="|", scalar_mult=" *@* ")                                                   # optional - sage.combinat sage.modules
+            sage: a              # indirect doctest                                                                     # optional - sage.combinat sage.modules
             2 *@* |[1, 2, 3]| + 4 *@* |[3, 2, 1]|
 
-            sage: QS3.print_options(bracket="|", scalar_mult="*", iterate_key=True)                                     # optional - sage.modules
-            sage: a              # indirect doctest                                                                     # optional - sage.modules
+            sage: QS3.print_options(bracket="|", scalar_mult="*", iterate_key=True)                                     # optional - sage.combinat sage.modules
+            sage: a              # indirect doctest                                                                     # optional - sage.combinat sage.modules
             2*|1, 2, 3| + 4*|3, 2, 1|
 
-            sage: QS3.print_options(**original_print_options) # reset                                                   # optional - sage.modules
+            sage: QS3.print_options(**original_print_options) # reset                                                   # optional - sage.combinat sage.modules
 
         TESTS::
 
@@ -556,21 +556,21 @@ class IndexedGenerators():
             sage: latex(e['a'] + 2*e['b'])    # indirect doctest                                                        # optional - sage.modules
             C_{a} + 2 C_{b}
 
-            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="", scalar_mult="*")                        # optional - sage.modules
-            sage: original_print_options = QS3.print_options()                                                          # optional - sage.modules
-            sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])                                                                     # optional - sage.modules
-            sage: latex(a)                     # indirect doctest                                                       # optional - sage.modules
+            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="", scalar_mult="*")                        # optional - sage.combinat sage.modules
+            sage: original_print_options = QS3.print_options()                                                          # optional - sage.combinat sage.modules
+            sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])                                                                     # optional - sage.combinat sage.modules
+            sage: latex(a)                     # indirect doctest                                                       # optional - sage.combinat sage.modules
             2 [1, 2, 3] + 4 [3, 2, 1]
-            sage: QS3.print_options(latex_bracket=True)                                                                 # optional - sage.modules
-            sage: latex(a)                     # indirect doctest                                                       # optional - sage.modules
+            sage: QS3.print_options(latex_bracket=True)                                                                 # optional - sage.combinat sage.modules
+            sage: latex(a)                     # indirect doctest                                                       # optional - sage.combinat sage.modules
             2 \left[ [1, 2, 3] \right] + 4 \left[ [3, 2, 1] \right]
-            sage: QS3.print_options(latex_bracket="(")                                                                  # optional - sage.modules
-            sage: latex(a)                     # indirect doctest                                                       # optional - sage.modules
+            sage: QS3.print_options(latex_bracket="(")                                                                  # optional - sage.combinat sage.modules
+            sage: latex(a)                     # indirect doctest                                                       # optional - sage.combinat sage.modules
             2 \left( [1, 2, 3] \right) + 4 \left( [3, 2, 1] \right)
-            sage: QS3.print_options(latex_bracket=('\\myleftbracket', '\\myrightbracket'))                              # optional - sage.modules
-            sage: latex(a)                     # indirect doctest                                                       # optional - sage.modules
+            sage: QS3.print_options(latex_bracket=('\\myleftbracket', '\\myrightbracket'))                              # optional - sage.combinat sage.modules
+            sage: latex(a)                     # indirect doctest                                                       # optional - sage.combinat sage.modules
             2 \myleftbracket [1, 2, 3] \myrightbracket + 4 \myleftbracket [3, 2, 1] \myrightbracket
-            sage: QS3.print_options(**original_print_options) # reset                                                   # optional - sage.modules
+            sage: QS3.print_options(**original_print_options) # reset                                                   # optional - sage.combinat sage.modules
 
         TESTS::
 

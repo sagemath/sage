@@ -303,47 +303,54 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     EXAMPLES::
 
-        sage: bernoulli(12)
+        sage: bernoulli(12)                                                             # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(50)
+        sage: bernoulli(50)                                                             # optional - sage.libs.flint
         495057205241079648212477525/66
 
     We demonstrate each of the alternative algorithms::
 
-        sage: bernoulli(12, algorithm='arb')
+        sage: bernoulli(12, algorithm='arb')                                            # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(12, algorithm='flint')
+        sage: bernoulli(12, algorithm='flint')                                          # optional - sage.libs.flint
         -691/2730
-        sage: bernoulli(12, algorithm='gap')
+        sage: bernoulli(12, algorithm='gap')                                            # optional - sage.libs.gap
         -691/2730
-        sage: bernoulli(12, algorithm='gp')
+        sage: bernoulli(12, algorithm='gp')                                             # optional - sage.libs.pari
         -691/2730
         sage: bernoulli(12, algorithm='magma')           # optional - magma
         -691/2730
-        sage: bernoulli(12, algorithm='pari')
+        sage: bernoulli(12, algorithm='pari')                                           # optional - sage.libs.pari
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm')
+        sage: bernoulli(12, algorithm='bernmm')                                         # optional - sage.libs.ntl
         -691/2730
-        sage: bernoulli(12, algorithm='bernmm', num_threads=4)
+        sage: bernoulli(12, algorithm='bernmm', num_threads=4)                          # optional - sage.libs.ntl
         -691/2730
 
     TESTS::
 
-        sage: algs = ['arb', 'gap', 'gp', 'pari', 'bernmm', 'flint']
+        sage: algs = []
+        sage: algs += ['arb']                                                           # optional - sage.libs.flint
+        sage: algs += ['gap']                                                           # optional - sage.libs.gap
+        sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
+        sage: algs += ['flint']                                                         # optional - sage.libs.flint
         sage: test_list = [ZZ.random_element(2, 2255) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 21s on sage.math, 2011)
-        sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
+        sage: all(len(set(x)) == 1 for x in vals)  # long time (depends on previous line)
         True
-        sage: algs = ['gp', 'pari', 'bernmm']
+        sage: algs = []
+        sage: algs += ['gp', 'pari']                                                    # optional - sage.libs.pari
+        sage: algs += ['bernmm']                                                        # optional - sage.libs.ntl
         sage: test_list = [ZZ.random_element(2256, 5000) for _ in range(500)]
         sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 30s on sage.math, 2011)
         sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
         True
         sage: from numpy import int8                                                    # optional - numpy
-        sage: bernoulli(int8(12))                                                       # optional - numpy
+        sage: bernoulli(int8(12))                                                       # optional - numpy sage.libs.flint
         -691/2730
         sage: from gmpy2 import mpz
-        sage: bernoulli(mpz(12))
+        sage: bernoulli(mpz(12))                                                        # optional - sage.libs.flint
         -691/2730
 
     AUTHOR:
@@ -5301,11 +5308,11 @@ def two_squares(n):
         ValueError: 21 is not a sum of 2 squares
         sage: two_squares(21^2)
         (0, 21)
-        sage: a,b = two_squares(100000000000000000129); a,b
+        sage: a,b = two_squares(100000000000000000129); a,b                         # optional - sage.libs.pari
         (4418521500, 8970878873)
-        sage: a^2 + b^2
+        sage: a^2 + b^2                                                             # optional - sage.libs.pari
         100000000000000000129
-        sage: two_squares(2^222+1)
+        sage: two_squares(2^222+1)                                                  # optional - sage.libs.pari
         (253801659504708621991421712450521, 2583712713213354898490304645018692)
         sage: two_squares(0)
         (0, 0)
@@ -5316,7 +5323,7 @@ def two_squares(n):
 
     TESTS::
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                  # optional - sage.libs.pari
         ....:     a = ZZ.random_element(2**16, 2**20)
         ....:     b = ZZ.random_element(2**16, 2**20)
         ....:     n = a**2 + b**2
@@ -5423,11 +5430,11 @@ def three_squares(n):
         (3, 24, 49)
         sage: three_squares(7^100)
         (0, 0, 1798465042647412146620280340569649349251249)
-        sage: three_squares(11^111-1)
+        sage: three_squares(11^111-1)                                               # optional - sage.libs.pari
         (616274160655975340150706442680, 901582938385735143295060746161, 6270382387635744140394001363065311967964099981788593947233)
-        sage: three_squares(7 * 2^41)
+        sage: three_squares(7 * 2^41)                                               # optional - sage.libs.pari
         (1048576, 2097152, 3145728)
-        sage: three_squares(7 * 2^42)
+        sage: three_squares(7 * 2^42)                                               # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: 30786325577728 is not a sum of 3 squares
@@ -5440,7 +5447,7 @@ def three_squares(n):
 
     TESTS::
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                  # optional - sage.libs.pari
         ....:     a = ZZ.random_element(2**16, 2**20)
         ....:     b = ZZ.random_element(2**16, 2**20)
         ....:     c = ZZ.random_element(2**16, 2**20)
@@ -5567,15 +5574,15 @@ def four_squares(n):
         (0, 0, 3, 11)
         sage: four_squares(1101011011004)
         (90, 102, 1220, 1049290)
-        sage: four_squares(10^100-1)
+        sage: four_squares(10^100-1)                                                # optional - sage.libs.pari
         (155024616290, 2612183768627, 14142135623730950488016887, 99999999999999999999999999999999999999999999999999)
-        sage: for i in range(2^129, 2^129+10000):  # long time
+        sage: for i in range(2^129, 2^129+10000):  # long time                      # optional - sage.libs.pari
         ....:     S = four_squares(i)
         ....:     assert sum(x^2 for x in S) == i
 
     TESTS::
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                  # optional - sage.libs.pari
         ....:     n = ZZ.random_element(2**32,2**34)
         ....:     aa,bb,cc,dd = four_squares(n)
         ....:     assert aa**2 + bb**2 + cc**2 + dd**2 == n
@@ -5644,7 +5651,7 @@ def sum_of_k_squares(k, n):
         (1, 2, 5, 98)
         sage: sum_of_k_squares(5, 9634)
         (0, 1, 2, 5, 98)
-        sage: sum_of_k_squares(6, 11^1111-1)
+        sage: sum_of_k_squares(6, 11^1111-1)                                        # optional - sage.libs.pari
         (19215400822645944253860920437586326284, 37204645194585992174252915693267578306, 3473654819477394665857484221256136567800161086815834297092488779216863122, 5860191799617673633547572610351797996721850737768032876360978911074629287841061578270832330322236796556721252602860754789786937515870682024273948, 20457423294558182494001919812379023992538802203730791019728543439765347851316366537094696896669915675685581905102118246887673397020172285247862426612188418787649371716686651256443143210952163970564228423098202682066311189439731080552623884051737264415984619097656479060977602722566383385989, 311628095411678159849237738619458396497534696043580912225334269371611836910345930320700816649653412141574887113710604828156159177769285115652741014638785285820578943010943846225597311231847997461959204894255074229895666356909071243390280307709880906261008237873840245959883405303580405277298513108957483306488193844321589356441983980532251051786704380984788999660195252373574924026139168936921591652831237741973242604363696352878914129671292072201700073286987126265965322808664802662993006926302359371379531571194266134916767573373504566621665949840469229781956838744551367172353)
         sage: sum_of_k_squares(7, 0)
         (0, 0, 0, 0, 0, 0, 0)
@@ -6078,7 +6085,7 @@ def dedekind_sum(p, q, algorithm='default'):
 
     Several small values::
 
-        sage: for q in range(10): print([dedekind_sum(p,q) for p in range(q+1)])
+        sage: for q in range(10): print([dedekind_sum(p,q) for p in range(q+1)])        # optional - sage.libs.flint
         [0]
         [0, 0]
         [0, 0, 0]
@@ -6092,44 +6099,44 @@ def dedekind_sum(p, q, algorithm='default'):
 
     Check relations for restricted arguments::
 
-        sage: q = 23; dedekind_sum(1, q); (q-1)*(q-2)/(12*q)
+        sage: q = 23; dedekind_sum(1, q); (q-1)*(q-2)/(12*q)                            # optional - sage.libs.flint
         77/46
         77/46
         sage: p, q = 100, 723    # must be coprime
-        sage: dedekind_sum(p, q) + dedekind_sum(q, p)
+        sage: dedekind_sum(p, q) + dedekind_sum(q, p)                                   # optional - sage.libs.flint
         31583/86760
-        sage: -1/4 + (p/q + q/p + 1/(p*q))/12
+        sage: -1/4 + (p/q + q/p + 1/(p*q))/12                                           # optional - sage.libs.flint
         31583/86760
 
     We check that evaluation works with large input::
 
-        sage: dedekind_sum(3^54 - 1, 2^93 + 1)
+        sage: dedekind_sum(3^54 - 1, 2^93 + 1)                                          # optional - sage.libs.flint
         459340694971839990630374299870/29710560942849126597578981379
-        sage: dedekind_sum(3^54 - 1, 2^93 + 1, algorithm='pari')
+        sage: dedekind_sum(3^54 - 1, 2^93 + 1, algorithm='pari')                        # optional - sage.libs.pari
         459340694971839990630374299870/29710560942849126597578981379
 
     We check consistency of the results::
 
-        sage: dedekind_sum(5, 7, algorithm='default')
+        sage: dedekind_sum(5, 7, algorithm='default')                                   # optional - sage.libs.flint
         -1/14
-        sage: dedekind_sum(5, 7, algorithm='flint')
+        sage: dedekind_sum(5, 7, algorithm='flint')                                     # optional - sage.libs.flint
         -1/14
-        sage: dedekind_sum(5, 7, algorithm='pari')
+        sage: dedekind_sum(5, 7, algorithm='pari')                                      # optional - sage.libs.pari
         -1/14
-        sage: dedekind_sum(6, 8, algorithm='default')
+        sage: dedekind_sum(6, 8, algorithm='default')                                   # optional - sage.libs.flint
         -1/8
-        sage: dedekind_sum(6, 8, algorithm='flint')
+        sage: dedekind_sum(6, 8, algorithm='flint')                                     # optional - sage.libs.flint
         -1/8
-        sage: dedekind_sum(6, 8, algorithm='pari')
+        sage: dedekind_sum(6, 8, algorithm='pari')                                      # optional - sage.libs.pari
         -1/8
 
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int8                                                    # optional - numpy
-        sage: dedekind_sum(int8(5), int8(7), algorithm='default')                       # optional - numpy
+        sage: dedekind_sum(int8(5), int8(7), algorithm='default')                       # optional - numpy sage.libs.flint
         -1/14
         sage: from gmpy2 import mpz
-        sage: dedekind_sum(mpz(5), mpz(7), algorithm='default')
+        sage: dedekind_sum(mpz(5), mpz(7), algorithm='default')                         # optional - sage.libs.flint
         -1/14
 
     REFERENCES:

@@ -139,9 +139,9 @@ def characteristic_polynomial(x, var='x'):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3,4,5,6,7,8,9])                                                                                # optional - sage.modules
-        sage: charpoly(A)                                                                                               # optional - sage.modules
+        sage: charpoly(A)                                                                                               # optional - sage.libs.pari sage.modules
         x^3 - 15*x^2 - 18*x
-        sage: charpoly(A, 't')                                                                                          # optional - sage.modules
+        sage: charpoly(A, 't')                                                                                          # optional - sage.libs.pari sage.modules
         t^3 - 15*t^2 - 18*t
 
         sage: k.<alpha> = GF(7^10); k                                                                                   # optional - sage.libs.pari
@@ -215,8 +215,8 @@ def decomposition(x):
 
     EXAMPLES::
 
-        sage: M = matrix([[2, 3], [3, 4]])                                                                              # optional - sage.modules
-        sage: M.decomposition()                                                                                         # optional - sage.modules
+        sage: M = matrix([[2, 3], [3, 4]])                                                                              # optional - sage.libs.pari sage.modules
+        sage: M.decomposition()                                                                                         # optional - sage.libs.pari sage.modules
         [
         (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
         ]
@@ -330,7 +330,7 @@ def fcp(x, var='x'):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                                                 # optional - sage.modules
         sage: A = M([1,2,3, 4,5,6, 7,8,9])                                                                              # optional - sage.modules
-        sage: fcp(A, 'x')                                                                                               # optional - sage.modules
+        sage: fcp(A, 'x')                                                                                               # optional - sage.libs.pari sage.modules
         x * (x^2 - 15*x - 18)
     """
     try:
@@ -1199,13 +1199,13 @@ def minimal_polynomial(x, var='x'):
     EXAMPLES::
 
         sage: a = matrix(ZZ, 2, [1..4])                                                                                 # optional - sage.modules
-        sage: minpoly(a)                                                                                                # optional - sage.modules
+        sage: minpoly(a)                                                                                                # optional - sage.libs.pari sage.modules
         x^2 - 5*x - 2
-        sage: minpoly(a, 't')                                                                                           # optional - sage.modules
+        sage: minpoly(a, 't')                                                                                           # optional - sage.libs.pari sage.modules
         t^2 - 5*t - 2
-        sage: minimal_polynomial(a)                                                                                     # optional - sage.modules
+        sage: minimal_polynomial(a)                                                                                     # optional - sage.libs.pari sage.modules
         x^2 - 5*x - 2
-        sage: minimal_polynomial(a, 'theta')                                                                            # optional - sage.modules
+        sage: minimal_polynomial(a, 'theta')                                                                            # optional - sage.libs.pari sage.modules
         theta^2 - 5*theta - 2
     """
     try:
@@ -1932,9 +1932,9 @@ def sqrt(x, *args, **kwds):
     For a non-symbolic square root, there are a few options.
     The best is to numerically approximate afterward::
 
-        sage: sqrt(2).n()
+        sage: sqrt(2).n()                                                                                               # optional - sage.symbolic
         1.41421356237310
-        sage: sqrt(2).n(prec=100)
+        sage: sqrt(2).n(prec=100)                                                                                       # optional - sage.symbolic
         1.4142135623730950488016887242
 
     Or one can input a numerical type::

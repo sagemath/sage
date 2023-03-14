@@ -1560,20 +1560,20 @@ class Sets(Category_singleton):
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example(); A.rename("A")                                                                    # optional - sage.modules
-                sage: A.cartesian_product(A, A)                                                                         # optional - sage.modules
+                sage: A = C.example(); A.rename("A")                                                                    # optional - sage.combinat sage.modules
+                sage: A.cartesian_product(A, A)                                                                         # optional - sage.combinat sage.modules
                 A (+) A (+) A
                 sage: ZZ.cartesian_product(GF(2), FiniteEnumeratedSet([1,2,3]))                                         # optional - sage.libs.pari
                 The Cartesian product of (Integer Ring, Finite Field of size 2, {1, 2, 3})
 
-                sage: C = ZZ.cartesian_product(A); C                                                                    # optional - sage.modules
+                sage: C = ZZ.cartesian_product(A); C                                                                    # optional - sage.combinat sage.modules
                 The Cartesian product of (Integer Ring, A)
 
             TESTS::
 
-                sage: type(C)                                                                                           # optional - sage.modules
+                sage: type(C)                                                                                           # optional - sage.combinat sage.modules
                 <class 'sage.sets.cartesian_product.CartesianProduct_with_category'>
-                sage: C.category()                                                                                      # optional - sage.modules
+                sage: C.category()                                                                                      # optional - sage.combinat sage.modules
                 Join of Category of rings and ...
                     and Category of Cartesian products of commutative additive groups
 
@@ -1764,9 +1764,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example()                                                                                   # optional - sage.modules
-                sage: a, b, c = A.algebra_generators()                                                                  # optional - sage.modules
-                sage: a.cartesian_product(b, c)                                                                         # optional - sage.modules
+                sage: A = C.example()                                                                                   # optional - sage.combinat sage.modules
+                sage: a, b, c = A.algebra_generators()                                                                  # optional - sage.combinat sage.modules
+                sage: a.cartesian_product(b, c)                                                                         # optional - sage.combinat sage.modules
                 B[(0, word: a)] + B[(1, word: b)] + B[(2, word: c)]
 
             FIXME: is this a policy that we want to enforce on all parents?
@@ -2721,10 +2721,10 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             EXAMPLES::
 
-                sage: Sets().WithRealizations().example()                                                               # optional - sage.modules
+                sage: Sets().WithRealizations().example()                                                               # optional - sage.combinat sage.modules
                 The subset algebra of {1, 2, 3} over Rational Field
 
-                sage: Sets().WithRealizations().example(ZZ, Set([1,2]))                                                 # optional - sage.modules
+                sage: Sets().WithRealizations().example(ZZ, Set([1,2]))                                                 # optional - sage.combinat sage.modules
                 The subset algebra of {1, 2} over Integer Ring
             """
             from sage.rings.rational_field import QQ
@@ -2750,8 +2750,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example()                                                       # optional - sage.modules
-                    sage: A._test_with_realizations()                                                                   # optional - sage.modules
+                    sage: A = Sets().WithRealizations().example()                                                       # optional - sage.combinat sage.modules
+                    sage: A._test_with_realizations()                                                                   # optional - sage.combinat sage.modules
 
                 See the documentation for :class:`TestSuite`
                 for more information.
@@ -2781,13 +2781,13 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(QQ['x']); A                                             # optional - sage.modules
+                    sage: A = Sets().WithRealizations().example(QQ['x']); A                                             # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Univariate Polynomial Ring in x over Rational Field
-                    sage: class ANewRealizationOfA(CombinatorialFreeModule):                                            # optional - sage.modules
+                    sage: class ANewRealizationOfA(CombinatorialFreeModule):                                            # optional - sage.combinat sage.modules
                     ....:     pass
-                    sage: category = A.Realizations() & Algebras(QQ[x]).WithBasis()                                     # optional - sage.modules
-                    sage: R = ANewRealizationOfA(A.base_ring(), A.F().basis().keys(), category=category)                # optional - sage.modules
-                    sage: R in A.realizations()  # indirect doctest                                                     # optional - sage.modules
+                    sage: category = A.Realizations() & Algebras(QQ[x]).WithBasis()                                     # optional - sage.combinat sage.modules
+                    sage: R = ANewRealizationOfA(A.base_ring(), A.F().basis().keys(), category=category)                # optional - sage.combinat sage.modules
+                    sage: R in A.realizations()  # indirect doctest                                                     # optional - sage.combinat sage.modules
                     True
 
                 Note: the test above uses ``QQ[x]`` to not interfer

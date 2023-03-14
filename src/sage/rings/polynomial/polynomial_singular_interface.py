@@ -349,7 +349,7 @@ class PolynomialRing_singular_repr:
 
         EXAMPLES::
 
-            sage: PolynomialRing(QQ,'u_ba')._singular_init_()
+            sage: PolynomialRing(QQ,'u_ba')._singular_init_()                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1

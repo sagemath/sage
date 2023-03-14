@@ -35,29 +35,31 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
 
     TESTS::
 
-        sage: K = Qp(5, print_mode="digits", prec=5)
-        sage: H = matrix(K, 3, 3, range(9))
-        sage: H
+        sage: K = Qp(5, print_mode="digits", prec=5)                                    # optional - sage.rings.padics
+        sage: H = matrix(K, 3, 3, range(9))                                             # optional - sage.rings.padics
+        sage: H                                                                         # optional - sage.rings.padics
         [        0  ...00001  ...00002]
         [ ...00003  ...00004 ...000010]
         [ ...00011  ...00012  ...00013]
-        sage: H.hessenbergize()
-        sage: H
+        sage: H.hessenbergize()                                                         # optional - sage.rings.padics
+        sage: H                                                                         # optional - sage.rings.padics
         [        0  ...00010  ...00002]
         [ ...00003  ...00024 ...000010]
         [ ...00000  ...44440  ...44443]
 
     ::
 
-        sage: M = random_matrix(K, 6, 6)
-        sage: M.charpoly()[0] == M.determinant()
+        sage: M = random_matrix(K, 6, 6)                                                # optional - sage.rings.padics
+        sage: M.charpoly()[0] == M.determinant()                                        # optional - sage.rings.padics
         True
 
     We check that :trac:`31753` is resolved::
 
-        sage: R.<t> = GF(5)[[]]
-        sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2, 1 + t + O(t^3), 2 + t^2, 3 + 2*t + O(t^3), t - t^2, 2*t, 1 + t ])
-        sage: M.charpoly()
+        sage: R.<t> = GF(5)[[]]                                                         # optional - sage.libs.pari
+        sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2,                                    # optional - sage.libs.pari
+        ....:                    1 + t + O(t^3), 2 + t^2, 3 + 2*t + O(t^3),
+        ....:                    t - t^2, 2*t, 1 + t ])
+        sage: M.charpoly()                                                              # optional - sage.libs.pari
         x^3 + (1 + 4*t + 4*t^2 + O(t^3))*x^2 + (t + 2*t^2 + O(t^3))*x + 3 + 2*t^2 + O(t^3)
     """
     cdef Py_ssize_t n, i, j, k

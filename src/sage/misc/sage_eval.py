@@ -71,7 +71,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         36
         sage: eval('bernoulli(6)')
         36
-        sage: sage_eval('bernoulli(6)')
+        sage: sage_eval('bernoulli(6)')                                                 # optional - sage.libs.flint
         1/42
 
     ::
@@ -132,13 +132,13 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ::
 
         sage: R.<x> = PolynomialRing(RationalField())
-        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')
+        sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')                           # optional - sage.libs.gap
         'Rationals[x]'
-        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff
+        sage: ff = gap.eval('x:=IndeterminatesOfPolynomialRing(R);; f:=x^2+1;'); ff     # optional - sage.libs.gap
         'x^2+1'
-        sage: sage_eval(ff, locals={'x':x})
+        sage: sage_eval(ff, locals={'x':x})                                             # optional - sage.libs.gap
         x^2 + 1
-        sage: eval(ff)
+        sage: eval(ff)                                                                  # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         RuntimeError: Use ** for exponentiation, not '^', which means xor

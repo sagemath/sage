@@ -1582,7 +1582,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(12345678900)
             sage: R
             Ring of integers modulo 12345678900
-            sage: gap(R) # indirect doctest
+            sage: gap(R) # indirect doctest                                             # optional - sage.libs.gap
             (Integers mod 12345678900)
         """
         return 'ZmodnZ({})'.format(self.order())

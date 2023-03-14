@@ -1249,15 +1249,15 @@ def clean_namespace(namespace=None):
     EXAMPLES::
 
         sage: from sage.misc.lazy_import import attributes, clean_namespace
-        sage: from sage.calculus.calculus import maxima as C
-        sage: attributes(C)['_as_name']
+        sage: from sage.calculus.calculus import maxima as C                                        # optional - sage.symbolic
+        sage: attributes(C)['_as_name']                                                             # optional - sage.symbolic
         'maxima'
-        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__
+        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__                        # optional - sage.symbolic
         True
-        sage: clean_namespace(globals())
-        sage: attributes(C)['_as_name']
+        sage: clean_namespace(globals())                                                            # optional - sage.symbolic
+        sage: attributes(C)['_as_name']                                                             # optional - sage.symbolic
         'C'
-        sage: attributes(C)['_namespace'] is globals()
+        sage: attributes(C)['_namespace'] is globals()                                              # optional - sage.symbolic
         True
     """
     cdef LazyImport w

@@ -288,7 +288,7 @@ class AnInfinity():
         """
         TESTS::
 
-            sage: maxima(-oo)
+            sage: maxima(-oo)                                                                                           # optional - sage.symbolic
             minf
             sage: [x._maxima_init_() for x in [unsigned_infinity, oo, -oo]]
             ['inf', 'inf', 'minf']

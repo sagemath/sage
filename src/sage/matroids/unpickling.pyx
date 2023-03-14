@@ -211,11 +211,11 @@ def unpickle_binary_matrix(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.lean_matrix import *
-        sage: A = BinaryMatrix(2, 5)
-        sage: A == loads(dumps(A))  # indirect doctest
+        sage: A = BinaryMatrix(2, 5)                                                    # optional - sage.libs.pari
+        sage: A == loads(dumps(A))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: C = BinaryMatrix(2, 2, Matrix(GF(2), [[1, 1], [0, 1]]))
-        sage: C == loads(dumps(C))
+        sage: C = BinaryMatrix(2, 2, Matrix(GF(2), [[1, 1], [0, 1]]))                   # optional - sage.libs.pari
+        sage: C == loads(dumps(C))                                                      # optional - sage.libs.pari
         True
     """
     cdef BinaryMatrix A
@@ -240,11 +240,11 @@ def unpickle_ternary_matrix(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.lean_matrix import *
-        sage: A = TernaryMatrix(2, 5)
-        sage: A == loads(dumps(A))  # indirect doctest
+        sage: A = TernaryMatrix(2, 5)                                                   # optional - sage.libs.pari
+        sage: A == loads(dumps(A))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: C = TernaryMatrix(2, 2, Matrix(GF(3), [[1, 1], [0, 1]]))
-        sage: C == loads(dumps(C))
+        sage: C = TernaryMatrix(2, 2, Matrix(GF(3), [[1, 1], [0, 1]]))                  # optional - sage.libs.pari
+        sage: C == loads(dumps(C))                                                      # optional - sage.libs.pari
         True
     """
     cdef TernaryMatrix A
@@ -270,11 +270,11 @@ def unpickle_quaternary_matrix(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.lean_matrix import *
-        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))
-        sage: A == loads(dumps(A))  # indirect doctest
+        sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))                               # optional - sage.libs.pari
+        sage: A == loads(dumps(A))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))
-        sage: C == loads(dumps(C))
+        sage: C = QuaternaryMatrix(2, 2, Matrix(GF(4, 'x'), [[1, 1], [0, 1]]))          # optional - sage.libs.pari
+        sage: C == loads(dumps(C))                                                      # optional - sage.libs.pari
         True
     """
     cdef QuaternaryMatrix A
@@ -388,12 +388,12 @@ def unpickle_linear_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
+        sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],              # optional - sage.libs.pari
         ....:                                               [0, 1, 1, 1, 3]]))
-        sage: M == loads(dumps(M))  # indirect doctest
+        sage: M == loads(dumps(M))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: M.rename("U35")
-        sage: loads(dumps(M))
+        sage: M.rename("U35")                                                           # optional - sage.libs.pari
+        sage: loads(dumps(M))                                                           # optional - sage.libs.pari
         U35
     """
     if version != 0:
@@ -434,12 +434,12 @@ def unpickle_binary_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 0, 1],
+        sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 0, 1],                    # optional - sage.libs.pari
         ....:                            [0, 0, 1, 1]]))
-        sage: M == loads(dumps(M))  # indirect doctest
+        sage: M == loads(dumps(M))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: M.rename("U34")
-        sage: loads(dumps(M))
+        sage: M.rename("U34")                                                           # optional - sage.libs.pari
+        sage: loads(dumps(M))                                                           # optional - sage.libs.pari
         U34
     """
     if version != 0:
@@ -481,12 +481,12 @@ def unpickle_ternary_matroid(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = TernaryMatroid(Matrix(GF(3), [[1, 0, 0, 1], [0, 1, 0, 1],
+        sage: M = TernaryMatroid(Matrix(GF(3), [[1, 0, 0, 1], [0, 1, 0, 1],             # optional - sage.libs.pari
         ....:           [0, 0, 1, 1]]))
-        sage: M == loads(dumps(M))  # indirect doctest
+        sage: M == loads(dumps(M))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: M.rename("U34")
-        sage: loads(dumps(M))
+        sage: M.rename("U34")                                                           # optional - sage.libs.pari
+        sage: loads(dumps(M))                                                           # optional - sage.libs.pari
         U34
     """
     if version != 0:
@@ -528,16 +528,16 @@ def unpickle_quaternary_matroid(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = QuaternaryMatroid(Matrix(GF(3), [[1, 0, 0, 1], [0, 1, 0, 1],
+        sage: M = QuaternaryMatroid(Matrix(GF(3), [[1, 0, 0, 1], [0, 1, 0, 1],          # optional - sage.libs.pari
         ....:          [0, 0, 1, 1]]))
-        sage: M == loads(dumps(M))  # indirect doctest
+        sage: M == loads(dumps(M))  # indirect doctest                                  # optional - sage.libs.pari
         True
-        sage: M.rename("U34")
-        sage: loads(dumps(M))
+        sage: M.rename("U34")                                                           # optional - sage.libs.pari
+        sage: loads(dumps(M))                                                           # optional - sage.libs.pari
         U34
-        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],
+        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],                      # optional - sage.libs.pari
         ....:                                           [1, 0, 1]]))
-        sage: loads(dumps(M)).representation()
+        sage: loads(dumps(M)).representation()                                          # optional - sage.libs.pari
         [1 0 1]
         [1 0 1]
     """

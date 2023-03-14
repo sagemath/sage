@@ -397,19 +397,19 @@ def register_unpickle_override(module, name, callable, call_name=None):
     pickle to play with::
 
         sage: from sage.structure.element import Element
-        sage: class SourPickle(CombinatorialObject): pass
-        sage: class SweetPickle(CombinatorialObject, Element): pass
-        sage: import __main__
-        sage: __main__.SourPickle = SourPickle
-        sage: __main__.SweetPickle = SweetPickle  # a hack to allow us to pickle command line classes
-        sage: gherkin = dumps(SourPickle([1, 2, 3]))
+        sage: class SourPickle(CombinatorialObject): pass                                                               # optional - sage.combinat
+        sage: class SweetPickle(CombinatorialObject, Element): pass                                                     # optional - sage.combinat
+        sage: import __main__                                                                                           # optional - sage.combinat
+        sage: __main__.SourPickle = SourPickle                                                                          # optional - sage.combinat
+        sage: __main__.SweetPickle = SweetPickle  # a hack to allow us to pickle command line classes                   # optional - sage.combinat
+        sage: gherkin = dumps(SourPickle([1, 2, 3]))                                                                    # optional - sage.combinat
 
     Using :func:`register_unpickle_override` we try to sweeten our pickle, but
     we are unable to eat it::
 
-        sage: from sage.misc.persist import register_unpickle_override
-        sage: register_unpickle_override('__main__', 'SourPickle', SweetPickle)
-        sage: loads(gherkin)
+        sage: from sage.misc.persist import register_unpickle_override                                                  # optional - sage.combinat
+        sage: register_unpickle_override('__main__', 'SourPickle', SweetPickle)                                         # optional - sage.combinat
+        sage: loads(gherkin)                                                                                            # optional - sage.combinat
         Traceback (most recent call last):
         ...
         KeyError: 0
@@ -420,7 +420,7 @@ def register_unpickle_override(module, name, callable, call_name=None):
     unpickling for :class:`CombinatorialObject`. We can fix this by explicitly
     defining a new :meth:`__setstate__` method::
 
-        sage: class SweeterPickle(CombinatorialObject, Element):
+        sage: class SweeterPickle(CombinatorialObject, Element):                                                        # optional - sage.combinat
         ....:     def __setstate__(self, state):
         ....:         # a pickle from CombinatorialObject is just its instance
         ....:         # dictionary
@@ -433,11 +433,11 @@ def register_unpickle_override(module, name, callable, call_name=None):
         ....:             if P is not None:
         ....:                 self._set_parent(P)
         ....:             self.__dict__ = D
-        sage: __main__.SweeterPickle = SweeterPickle
-        sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)
-        sage: loads(gherkin)
+        sage: __main__.SweeterPickle = SweeterPickle                                                                    # optional - sage.combinat
+        sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)                                       # optional - sage.combinat
+        sage: loads(gherkin)                                                                                            # optional - sage.combinat
         [1, 2, 3]
-        sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle
+        sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle                       # optional - sage.combinat
         [1, 2, 3]
 
     The ``state`` passed to :meth:`__setstate__` will usually be something like
@@ -574,7 +574,7 @@ def unpickle_global(module, name):
     Test that :func:`register_unpickle_override` calls in lazily imported modules
     are respected::
 
-        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')                                      # optional - sage.combinat sage.modules
         <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
