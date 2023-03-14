@@ -1693,9 +1693,11 @@ class Braid(FiniteTypeArtinGroupElement):
         else:
             B = self.parent()
             n = B.strands()
-            k = int(l[0][0] % 2)
-            b0 = B.delta() ** k * B(prod(B(a) for a in l[1:]))
-            return b0
+            l[0][0] %= 2
+            return B._element_from_libbraiding(l)
+            #k = int(l[0][0] % 2)
+            #b0 = B.delta() ** k * B(prod(B(a) for a in l[1:]))
+            #return b0
 
     def is_conjugated(self, other):
         """
@@ -1790,9 +1792,8 @@ class Braid(FiniteTypeArtinGroupElement):
         P = p3.word_problem(LP, display = False, as_list = True)
         b1 = prod(LB[LP.index(G(a))] ** b for a,b in P)
         b0 = b1 * b0
-        L = leftnormalform(b0)
-        L[0][0] %= 2
-        return B._element_from_libbraiding(L)
+        return b0
+
 
     def ultra_summit_set(self):
         """
