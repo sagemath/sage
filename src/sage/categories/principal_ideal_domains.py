@@ -66,6 +66,8 @@ class PrincipalIdealDomains(Category_singleton):
 
             EXAMPLES::
 
+                sage: ZZ.is_noetherian()
+                True
             """
             return True
 
