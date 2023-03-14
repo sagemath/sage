@@ -16,10 +16,6 @@ cdef class CommutativeRing(Ring):
 cdef class IntegralDomain(CommutativeRing):
     pass
 
-cdef class DedekindDomain(IntegralDomain):
-    pass
-
-
 cdef class PrincipalIdealDomain(IntegralDomain):
     pass
 

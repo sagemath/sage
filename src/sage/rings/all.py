@@ -39,8 +39,7 @@ from sage.misc.lazy_import import lazy_import
 from .all__sagemath_categories import *
 
 # Ring base classes
-from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
-    DedekindDomain, PrincipalIdealDomain)
+from .ring import Ring, Field, CommutativeRing, IntegralDomain, PrincipalIdealDomain
 
 # Ring element base classes
 from sage.structure.element import (CommutativeAlgebraElement,

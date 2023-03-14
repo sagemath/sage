@@ -4024,8 +4024,90 @@ def is_DedekindDomainElement(x):
     """
     return isinstance(x, DedekindDomainElement)
 
+
 cdef class DedekindDomainElement(IntegralDomainElement):
+    r"""
+    Element class for Dedekind domains.
+
+    A Dedekind domain is a Noetherian integral domain of Krull
+    dimension one that is integrally closed in its field of fractions.
+
+    EXAMPLES:
+
+        The integers, `\ZZ`, are a Dedekind domain::
+
+            sage: ZZ.is_noetherian()
+            True
+            sage: ZZ.krull_dimension()
+            1
+            sage: ZZ.is_integrally_closed()
+            True
+
+        The rings of integers of number fields are Dedekind domains::
+
+            sage: K = NumberField(x^2 + 1, 's')                                         # optional - sage.rings.number_field
+            sage: OK = K.ring_of_integers(); OK                                         # optional - sage.rings.number_field
+            Gaussian Integers in Number Field in s with defining polynomial x^2 + 1
+            sage: OK.is_noetherian()                                                    # optional - sage.rings.number_field
+            True
+            sage: OK.krull_dimension()                                                  # optional - sage.rings.number_field
+            1
+            sage: OK.is_integrally_closed()                                             # optional - sage.rings.number_field
+            True
+
+        Other orders in number fields are not Dedekind domains::
+
+            sage: S = ZZ[sqrt(5)]                                                       # optional - sage.rings.number_field sage.symbolic
+            sage: S.is_noetherian()                                                     # optional - sage.rings.number_field sage.symbolic
+            True
+            sage: S.krull_dimension()                                                   # optional - sage.rings.number_field sage.symbolic
+            1
+            sage: S.is_integrally_closed()                                              # optional - sage.rings.number_field sage.symbolic
+            False
+
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: R = K.order(2*i); R                                                   # optional - sage.rings.number_field
+            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.is_noetherian()                                                     # optional - sage.rings.number_field
+            True
+            sage: R.krull_dimension()                                                   # optional - sage.rings.number_field
+            1
+            sage: R.is_integrally_closed()                                              # optional - sage.rings.number_field
+            False
+            sage: R.is_maximal()                                                        # optional - sage.rings.number_field
+            False
+
+        The rationals are not a Dedekind domain because their Krull dimension is 0::
+
+            sage: QQ.is_noetherian()
+            True
+            sage: QQ.krull_dimension()
+            0
+            sage: QQ.integral_closure() == QQ
+            True
+            sage: QQ.is_integrally_closed()
+            True
+
+        Not a Dedekind domain because the Krull dimension is not 1::
+
+            sage: T.<x,y> = PolynomialRing(QQ, 2); T
+            Multivariate Polynomial Ring in x, y over Rational Field
+            sage: T.is_noetherian()
+            True
+            sage: T.krull_dimension()
+            2
+            sage: T.is_integral_domain()
+            True
+
+            sage: U.<x,y,z> = PolynomialRing(ZZ,3); U
+            Multivariate Polynomial Ring in x, y, z over Integer Ring
+            sage: U.is_noetherian()
+            True
+            sage: U.krull_dimension()
+            4
+    """
     pass
+
 
 def is_PrincipalIdealDomainElement(x):
     """

@@ -23,7 +23,6 @@ The class inheritance hierarchy is:
     - :class:`CommutativeAlgebra`
     - :class:`IntegralDomain`
 
-      - :class:`DedekindDomain`
       - :class:`PrincipalIdealDomain`
 
 Subclasses of :class:`PrincipalIdealDomain` are
@@ -37,10 +36,7 @@ consequence of the fact that Cython classes do not support multiple
 inheritance.
 
 (A distinct but equally awkward issue is that sometimes we may not know *in
-advance* whether or not a ring belongs in one of these classes; e.g. some
-orders in number fields are Dedekind domains, but others are not, and we still
-want to offer a unified interface, so orders are never instances of the
-:class:`DedekindDomain` class.)
+advance* whether or not a ring belongs in one of these classes.)
 
 AUTHORS:
 
@@ -1604,7 +1600,7 @@ cdef class IntegralDomain(CommutativeRing):
 
         This method is used by all the abstract subclasses of
         :class:`IntegralDomain`, like
-        :class:`PrincipalIdealDomain`, :class:`DedekindDomain`,
+        :class:`PrincipalIdealDomain`,
         :class:`EuclideanDomain`, :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
         PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
@@ -1727,130 +1723,6 @@ cdef class IntegralDomain(CommutativeRing):
             raise NotImplementedError("unable to determine whether or not is a field.")
         else:
             return False
-
-
-cdef class DedekindDomain(IntegralDomain):
-    """
-    Generic Dedekind domain class.
-
-    A Dedekind domain is a Noetherian integral domain of Krull
-    dimension one that is integrally closed in its field of fractions.
-
-    This class is deprecated, and not actually used anywhere in the
-    Sage code base.  If you think you need it, please create a
-    category :class:`DedekindDomains`, move the code of this class
-    there, and use it instead.
-    """
-    def krull_dimension(self):
-        """
-        Return 1 since Dedekind domains have Krull dimension 1.
-
-        EXAMPLES:
-
-        The following are examples of Dedekind domains (Noetherian integral
-        domains of Krull dimension one that are integrally closed over its
-        field of fractions)::
-
-            sage: ZZ.krull_dimension()
-            1
-            sage: K = NumberField(x^2 + 1, 's')
-            sage: OK = K.ring_of_integers()
-            sage: OK.krull_dimension()
-            1
-
-        The following are not Dedekind domains but have
-        a ``krull_dimension`` function::
-
-            sage: QQ.krull_dimension()
-            0
-            sage: T.<x,y> = PolynomialRing(QQ,2); T
-            Multivariate Polynomial Ring in x, y over Rational Field
-            sage: T.krull_dimension()
-            2
-            sage: U.<x,y,z> = PolynomialRing(ZZ,3); U
-            Multivariate Polynomial Ring in x, y, z over Integer Ring
-            sage: U.krull_dimension()
-            4
-
-            sage: K.<i> = QuadraticField(-1)
-            sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.is_maximal()
-            False
-            sage: R.krull_dimension()
-            1
-        """
-        return 1
-
-    def is_integrally_closed(self):
-        """
-        Return ``True`` since Dedekind domains are integrally closed.
-
-        EXAMPLES:
-
-        The following are examples of Dedekind domains (Noetherian integral
-        domains of Krull dimension one that are integrally closed over its
-        field of fractions).
-
-        ::
-
-            sage: ZZ.is_integrally_closed()
-            True
-            sage: K = NumberField(x^2 + 1, 's')
-            sage: OK = K.ring_of_integers()
-            sage: OK.is_integrally_closed()
-            True
-
-        These, however, are not Dedekind domains::
-
-            sage: QQ.is_integrally_closed()
-            True
-            sage: S = ZZ[sqrt(5)]; S.is_integrally_closed()
-            False
-            sage: T.<x,y> = PolynomialRing(QQ,2); T
-            Multivariate Polynomial Ring in x, y over Rational Field
-            sage: T.is_integral_domain()
-            True
-        """
-        return True
-
-    def integral_closure(self):
-        r"""
-        Return ``self`` since Dedekind domains are integrally closed.
-
-        EXAMPLES::
-
-            sage: K = NumberField(x^2 + 1, 's')
-            sage: OK = K.ring_of_integers()
-            sage: OK.integral_closure()
-            Gaussian Integers in Number Field in s with defining polynomial x^2 + 1
-            sage: OK.integral_closure() == OK
-            True
-
-            sage: QQ.integral_closure() == QQ
-            True
-        """
-        return self
-
-    def is_noetherian(self):
-        r"""
-        Return ``True`` since Dedekind domains are Noetherian.
-
-        EXAMPLES:
-
-        The integers, `\ZZ`, and rings of integers of number
-        fields are Dedekind domains::
-
-            sage: ZZ.is_noetherian()
-            True
-            sage: K = NumberField(x^2 + 1, 's')
-            sage: OK = K.ring_of_integers()
-            sage: OK.is_noetherian()
-            True
-            sage: QQ.is_noetherian()
-            True
-        """
-        return True
 
 
 cdef class PrincipalIdealDomain(IntegralDomain):
