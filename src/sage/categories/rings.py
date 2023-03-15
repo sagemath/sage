@@ -764,6 +764,7 @@ class Rings(CategoryWithAxiom):
                     from sage.rings.noncommutative_ideals import Ideal_nc
                     return Ideal_nc
             except (NotImplementedError, AttributeError):
+                from sage.rings.noncommutative_ideals import Ideal_nc
                 return Ideal_nc
             from sage.rings.ideal import Ideal_generic, Ideal_principal
             if n == 1:
