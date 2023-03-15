@@ -899,9 +899,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``coeff_indices`` (list or tuple, default: ``None``) -- a list or a
           tuple of indices for the coefficients of the Drinfeld module. If
-          this option is not ``None``, then the method will return only the basic
-          `j`-invariant parameters that involves the given indices. By default,
-          the method will use all the coefficients.
+          this option is not ``None``, then the method will return only the
+          basic `j`-invariant parameters that involves the given indices. By
+          default, the method will use all the coefficients.
 
         - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
           will return only the parameters for which the basic `j`-invariant is
@@ -1005,7 +1005,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                     self.coefficients(sparse=False)[1:-1], start=1) if g]
             else:
                 coeff_indices = list(range(1, r))
-        elif isinstance(coeff_indices, (tuple, list)):  # check if coeff_indices is valid
+        # check if coeff_indices is valid:
+        elif isinstance(coeff_indices, (tuple, list)):
             coeff_indices = list(coeff_indices)
             if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
                 raise TypeError("the elements of the list 'coeff_indices' "
@@ -1026,17 +1027,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         equation = [0]
         inequalities = []
+        # Create the equation:
+        # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1)
+        #  = d_r (q^r - 1)
         for idx, i in enumerate(coeff_indices):
-            # create the equation:
-            #     d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             equation.append(q**i - 1)
 
-            # create inequalities of the form 0 <= delta_i
+            # Create inequalities of the form 0 <= delta_i
             lower_bounds = [0]*(len(coeff_indices) + 2)
             lower_bounds[idx + 1] = 1
 
-            # create inequalities of the form delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
-            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))] + [0]*(len(coeff_indices) + 1)
+            # Create inequalities of the form
+            # delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
+            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))]\
+                + [0]*(len(coeff_indices) + 1)
             upper_bounds[idx + 1] = -1
 
             inequalities.extend((lower_bounds, upper_bounds))
@@ -1049,7 +1053,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # Compute its integral points
         integral_points = polyhedron.integral_points()
 
-        return [(tuple(coeff_indices), tuple(p)) for p in integral_points if gcd(p) == 1]
+        return [(tuple(coeff_indices), tuple(p)) for p in integral_points
+                if gcd(p) == 1]
 
     def basic_j_invariants(self):
         r"""
@@ -1086,7 +1091,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: J_phi[((1, 2), (7, 4, 1))]
             T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
         """
-        return {p: self.j_invariant(p, check=False) for p in self.basic_j_invariant_parameters()}
+        return {p: self.j_invariant(p, check=False)
+                for p in self.basic_j_invariant_parameters()}
 
     def coefficient(self, n):
         r"""
@@ -1302,12 +1308,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return True
         # check if self and psi are patterned alike:
         if not all(bool(g_self) == bool(g_psi) for g_self, g_psi in\
-            zip(self._gen.coefficients(sparse=False), psi._gen.coefficients(sparse=False))):
+            zip(self._gen.coefficients(sparse=False),
+                psi._gen.coefficients(sparse=False))):
             return False
         # check that all the nonzero basic j-invariants agree
         isom = True
         for p in self.basic_j_invariant_parameters(nonzero=True):
-            if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
+            if self.j_invariant(p, check=False) != psi.j_invariant(p,check=False):
                 isom = False
                 break
         return isom
@@ -1319,15 +1326,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r` with
         `g_r \neq 0`. Then the
-        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r))`-`j`*-invariant* of `\phi`
-        is defined by
+        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r))`-`j`-*invariant* of
+        `\phi` is defined by
 
         .. MATH::
 
             j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi) := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
-        where `1\leq k_1 < k_2 < \ldots < k_n \leq r - 1` and the integers `d_i`
-        satisfies the *weight-0 condition*:
+        where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and the
+        integers `d_i` satisfy the *weight-0 condition*:
 
         .. MATH::
 
@@ -1340,30 +1347,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad 1 \leq i \leq n,
 
         then the `j`-invariant is called *basic*. See the method
-        :meth:`basic_j_invariant_parameters` for computing the list of all basic
-        `j`-invariant parameters.
+        :meth:`basic_j_invariant_parameters` for computing the list of all
+        basic `j`-invariant parameters.
 
         INPUT:
 
-        - ``parameter`` (integer, tuple or list, default: None) -- this
-          parameter is either a list, a tuple or an integer between 1 and
-          `r-1` (`r` is the rank).
+        - ``parameter`` (tuple or list, integer or NoneType; default:
+          ``None``):
 
           - If ``parameter`` is a list or a tuple, then it must be of the form:
-            `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))` where
+            `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))`, where
             the `k_i` and `d_i` are integers satisfying the weight-0 condition
             described above.
 
           - If ``parameter`` is an integer `k` then the method returns
-            the ``j``-invariant associated to the parameter `((k,), (d_k, d_r))`;
+            the ``j``-invariant associated to the parameter
+            `((k,), (d_k, d_r))`;
 
           - If ``parameter`` is ``None`` and the rank of the Drinfeld module is
             2, then the method returns its usual `j`-invariant, that is the
             `j`-invariant for the parameter `((1,), (q+1, 1))`.
 
         - ``check`` (bool, default: ``True``) -- if this flag is set to
-          ``False`` then the code will not check if the given parameter is valid
-          and satisfy the weight-0 condition.
+          ``False`` then the code will not check if the given parameter is
+          valid and satisfy the weight-0 condition.
 
         OUTPUT: the `j`-invariant of ``self`` for the given parameter.
 
@@ -1495,9 +1502,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise TypeError("first component of input 'parameter' must be "
                                 "a tuple or a list")
             if not isinstance(parameter[1], (tuple, list)):
-                raise TypeError("second component of input 'parameter' must be "
-                                "a tuple or a list")
-            if not len(parameter[0]) < r or not len(parameter[1]) == len(parameter[0]) + 1:
+                raise TypeError("second component of input 'parameter' must "
+                                "be a tuple or a list")
+            if not len(parameter[0]) < r or\
+                       not len(parameter[1]) == len(parameter[0]) + 1:
                 raise ValueError("components of input 'parameters' are of "
                                  "incorrect length")
             if not all(p in ZZ for p in parameter[0]):
@@ -1506,9 +1514,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if not all(p in ZZ for p in parameter[1]):
                 raise TypeError("second component of input 'parameter' must "
                                 "contain only integers")
+            # check that the weight-0 condition is statisfied:
+            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             if check:
-                # check that the weight-0 condition is statisfied:
-                # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
                 right = parameter[1][-1]*(q**r - 1)
                 left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
                         range(len(parameter[0])))
@@ -1518,7 +1526,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         else:
             raise TypeError("input 'parameter' must be a tuple or a list of "
                             "length 2 or an integer")
-        num = prod(self._gen[k]**d for k, d in zip(parameter[0], parameter[1][:-1]))
+        num = prod(self._gen[k]**d
+                   for k, d in zip(parameter[0], parameter[1][:-1]))
         return num/(self._gen[-1]**parameter[1][-1])
 
     def morphism(self):
