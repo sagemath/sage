@@ -4507,6 +4507,21 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: T(1-x-2*y + x*y^2)(1/(1-a), 3)
             3 + 8*a + 8*a^2 + 8*a^3 + 8*a^4 + 8*a^5 + 8*a^6 + O(a,b)^7
 
+        Check that issue :trac:`35261` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
+            sage: f = L(fun)
+            sage: g = L.undefined(valuation=1)
+            sage: g.define((~f.shift(-1)(g)).shift(1))
+            sage: g
+            z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
+
+            sage: f = L(fun)
+            sage: g = L.undefined(valuation=1)
+            sage: g.define((z - (f - z)(g)))
+            sage: g
+            z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
         """
         fP = parent(self)
         if len(g) != fP._arity:
@@ -4712,6 +4727,16 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = L([-1], valuation=1, degree=3, constant=-1)
             sage: f.revert()
             (-z) + z^3 + (-z^4) + (-2*z^5) + 6*z^6 + z^7 + O(z^8)
+
+        Check that issue :trac:`35261` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
+            sage: f
+            z + z^2 + z^4 + O(z^7)
+            sage: f.revert()
+            z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
+
         """
         P = self.parent()
         if P._arity != 1:
