@@ -14,6 +14,7 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.misc import inject_variable
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
+from sage.rings.number_field.number_field import CyclotomicField
 
 class FusionDouble(CombinatorialFreeModule):
     r"""
@@ -81,6 +82,7 @@ class FusionDouble(CombinatorialFreeModule):
                 self._chi[count] = chi
                 count += 1
         self._rank = count
+        self._cyclotomic_order = G.exponent()
         cat = AlgebrasWithBasis(ZZ).Subobjects()
         CombinatorialFreeModule.__init__(self, ZZ, [k for k in self._names], category=cat)
         if inject_variables:
@@ -100,6 +102,7 @@ class FusionDouble(CombinatorialFreeModule):
     def inject_variables(self):
         for i in range(self._rank):
             inject_variable(self._names[i],self.monomial(i))
+
     @cached_method
     def s_ij(self, i, j):
         sum = 0
@@ -131,7 +134,7 @@ class FusionDouble(CombinatorialFreeModule):
     def Nk_ij(self, i, j, k):
         r"""
         Returns the fusion coefficient `N^k_{ij}`, computed using the Verlinde formula:
-        
+
         .. MATH::
             N^k_{ij} = \sum_l \frac{s(i, \ell)\, s(j, \ell)\, \overline{s(k, \ell)}}{s(I, \ell)},
 
@@ -190,6 +193,9 @@ class FusionDouble(CombinatorialFreeModule):
                 res += i.chi()(i_twist * x * i_twist.inverse()) * j.chi()(j_twist * x * j_twist.inverse()) * k.chi()(x).conjugate()
         return c * res
 
+    def field(self):
+        return CyclotomicField(4 * self._cyclotomic_order)
+
     def is_multiplicity_free(self, verbose=False):
         """
         Returns True if all fusion coefficients are at most 1.
@@ -245,6 +251,12 @@ class FusionDouble(CombinatorialFreeModule):
 
 
     class Element(CombinatorialFreeModule.Element):
+        def is_simple_object(self):
+            r"""
+            Determine whether ``self`` is a simple object of the fusion ring.
+            """
+            return self in self.parent().basis()
+
         def g(self):
            """
            Returns the conjugacy class representative of the underlying
@@ -270,6 +282,22 @@ class FusionDouble(CombinatorialFreeModule):
             """
             return self.chi()(self.g()) / self.chi()(self.parent()._G.one())
 
+        def twist(self, reduced=True):
+            r"""
+            Return a rational number `h` such that `\theta = e^{i \pi h}`
+            is the twist of ``self``. The quantity `e^{i \pi h}` is
+            also available using :meth:`ribbon`.
+
+            This method is only available for simple objects.
+            """
+            if not self.is_simple_object():
+                raise ValueError("quantum twist is only available for simple objects of a FusionRing")
+            zeta = self.parent().field().gen()
+            rib = self.ribbon()
+            for k in range(4*self.parent()._cyclotomic_order):
+                if zeta**k == rib:
+                    return k/(2*self.parent()._cyclotomic_order)
+
         def dual(self):
             """
             Returns the dual of self.
@@ -282,3 +310,364 @@ class FusionDouble(CombinatorialFreeModule):
             """
             return self.parent().dual(self)
             return
+
+# Code below this line should be removed later. 
+# Cloned from sage trac repository, commit 1b99dcc .
+
+class FMatrix1:
+    """
+    Experimental code for working with F-matrices. The F-matrix
+    is only determined up to a gauge. It is possible to make
+    the F-matrices unitary, or it is possible to make them
+    cyclotomic. We choose the latter.
+
+    A good account of the mechanics of finding the F-matrix
+    can be found in [Bond2002]_ Section 2.5.
+
+    Due to the large number of equations we may fail to find a
+    Groebner basis if there are too many variables. Therefore
+    self.get_solution() will refuse to run if there are more
+    that 4 fields.
+
+    A1 level 3:
+    CPU times: user 1min 58s, sys: 212 ms, total: 1min 59s
+    Wall time: 1min 59s
+
+    ..EXAMPLES::
+
+        sage: FR = FusionRing("A1",2)
+        sage: FR.fusion_labels(["i0","p","s"],inject_variables=True)
+        sage: fmats = FMatrix(FR)
+        Defining fx0, fx1, fx2, fx3, fx4, fx5, fx6, fx7, fx8, fx9, fx10, fx11, fx12, fx13
+        sage: fmats.get_solution()
+        Setting up hexagons and pentagons...
+        equations: 14
+        equations: 41
+        Finding a Groebner basis...
+        Solving...
+        Fixing the gauge...
+        adding equation... x1 - 1
+        adding equation... x4 - 1
+        Done!
+        {(p, p, p, p, i0, i0): 1/2*zeta32^12 - 1/2*zeta32^4,
+        (p, p, p, p, i0, s): 1,
+        (p, p, p, p, s, i0): -1/2,
+        (p, p, p, p, s, s): 1/2*zeta32^12 - 1/2*zeta32^4,
+        (p, p, s, i0, s, p): 1,
+        (p, p, s, s, i0, p): zeta32^12 - zeta32^4,
+        (p, s, p, i0, p, p): -1,
+        (p, s, p, s, p, p): 1,
+        (p, s, s, p, p, i0): 1/2*zeta32^12 - 1/2*zeta32^4,
+        (s, p, p, i0, p, s): -1,
+        (s, p, p, s, p, i0): -1/2*zeta32^12 + 1/2*zeta32^4,
+        (s, p, s, p, p, p): -1,
+        (s, s, p, p, i0, p): zeta32^12 - zeta32^4,
+        (s, s, s, s, i0, i0): 1}
+        sage: F = fmats.assemble_matrices()
+        sage: F[p,p,p,p]
+        [1/2*zeta32^12 - 1/2*zeta32^4                         -1/2]
+        [                           1 1/2*zeta32^12 - 1/2*zeta32^4]
+
+    """
+    def __init__(self, fusion_ring, fusion_label="f", var_prefix='fx', max_fields=4):
+        self.FR = fusion_ring
+        if self.FR._fusion_labels is None:
+            self.FR.fusion_labels(fusion_label, inject_variables=True)
+        #Set up F-symbols entry by entry
+        n_vars = self.findcases()
+        self._poly_ring = PolynomialRing(self.FR.field(),n_vars,var_prefix)
+        self._poly_ring.inject_variables()
+        self._var_to_sextuple, self._fvars = self.findcases(output=True)
+        self._max_fields = max_fields
+
+        #Initialize set of defining equations
+        self.ideal_basis = set()
+
+        #Initialize empty set of solved F-symbols
+        self.solved = set()
+
+    def total_f_symbols(self):
+        """
+        Count total number of F-symbols. (Initial number of variables)
+        """
+        return len(self._poly_ring.gens())
+
+    def remaining_vars(self):
+        """
+        Return a list of unknown F-symbols (reflects current stage of computation)
+        """
+        return [var for var in self._poly_ring.gens() if var not in self.solved]
+
+    def sreduce_equations(self, nonzeros=None, output=False):
+        if nonzeros is None:
+            nonzeros = self._poly_ring.gens()
+        reduced = [self.sreduce(eq, nonzeros) for eq in self.ideal_basis]
+        if output:
+            return reduced
+        self.ideal_basis = set(reduced)
+
+    #TODO: implement reduction heuristics described in Bonderson p. 37:
+    #subsitute for one variable in an equation containing only two terms (perhaps using eqn.specialization)
+    #substitute for a variable that appears as a single linear term in an equation
+    def reduce_heuristics(self, eqns):
+        raise NotImplementedError
+
+    #TODO: implement method. Produce a list of conditions that would make the
+    #F-symbols unitary. Based on output parameter, return it or add it to
+    #ideal_basis set
+    def unitarity_constraints(self, output=True):
+        raise NotImplementedError
+
+    def assemble_matrices(self):
+        """
+        Construct a dictionary mapping a 4-tuple (a, b, c, d) to an F-matrix F_d^{abc}
+        """
+        ret = dict()
+        for a in self.FR.basis():
+            for b in self.FR.basis():
+                for c in self.FR.basis():
+                    for d in self.FR.basis():
+                        supp = [self.fmat(a,b,c,d,x,y) for x in self.FR.basis() for y in self.FR.basis() if self.fmat(a,b,c,d,x,y) != 0]
+
+                        if len(supp) > 0:
+                            #Assume relevant F-symbols can be assembled into square matrix
+                            ret[(a,b,c,d)] = matrix(round(sqrt(len(supp))),supp).transpose()
+        return ret
+
+    def fix_gauge(self):
+        """
+        Fix the gauge by forcing F-symbols not already fixed to equal 1.
+        This method should be used AFTER adding hex and pentagon eqns to ideal_basis
+        """
+        while len(self.solved) < len(self._poly_ring.gens()):
+            #Get a variable that has not been fixed
+            #In ascending index order, for consistent results
+            for var in self._poly_ring.gens():
+                if var not in self.solved:
+                    break
+
+            #Fix var = 1, substitute, and solve equations
+            self.ideal_basis.add(var-1)
+            print("adding equation...", var-1)
+            self.ideal_basis = set(Ideal(list(self.ideal_basis)).groebner_basis())
+            self.substitute_known_values()
+            self.update_equations()
+
+    def substitute_known_values(self, eqns=None):
+        if not eqns:
+            eqns = self.ideal_basis
+
+        for eq in eqns:
+            #Ensure polynomial is degree 1 in a single variable
+            if sum(eq.degrees()) == 1 and eq.monomials()[0] not in self.solved:
+                var = eq.monomials()[0]
+                self._fvars[self._var_to_sextuple[var]] = -eq.constant_coefficient()
+                #Add variable to set of known values
+                self.solved.add(var)
+
+    def update_equations(self):
+        """
+        Update ideal_basis equations by plugging in known values
+        """
+        special_values = { known : self._fvars[self._var_to_sextuple[known]] for known in self.solved }
+        self.ideal_basis = set(eq.specialization(special_values) for eq in self.ideal_basis)
+        self.ideal_basis.discard(0)
+
+    def get_solution(self, factor=False):
+        """
+        Retrieve a set of F-symbols satisfying the hex and pentagon relations.
+        """
+        if len(self.FR.basis()) <= self._max_fields:
+            print("Setting up hexagons and pentagons...")
+            eqns = self.hexagon(factor=factor)+self.pentagon(factor=factor)
+            print("Finding a Groebner basis...")
+            self.ideal_basis = set(Ideal(eqns).groebner_basis())
+            print("Solving...")
+            self.substitute_known_values()
+            print("Fixing the gauge...")
+            self.fix_gauge()
+            print("Done!")
+            return self._fvars
+        else:
+            raise NotImplementedError
+
+    def get_ideal(self):
+        return Ideal(list(self.ideal_basis))
+
+    def add_equations(self, eqns):
+        #TODO: consider replacing set union by ideal intersection. (study computational cost)
+        self.ideal_basis = self.ideal_basis.union(set(eqns))
+
+    def clear_equations(self):
+        self.ideal_basis = set()
+
+    def clear_vars(self):
+        self._fvars = { self._var_to_sextuple[key] : key for key in self._var_to_sextuple }
+
+    def clear(self):
+        self.clear_equations()
+        self.clear_vars()
+
+    def fmat(self, a, b, c, d, x, y, data=True):
+        """
+        Set up an entry of the F matrix
+        """
+        #Determine if fusion tree is admissible
+        admissible = self.FR.Nk_ij(a,b,x) * self.FR.Nk_ij(x,c,d) * self.FR.Nk_ij(b,c,y) * self.FR.Nk_ij(a,y,d)
+
+        if admissible == 0:
+            return 0
+
+        #Some known zero F-symbols
+        if a == self.FR.one():
+            if x == b and y == d:
+                return 1
+            else:
+                return 0
+        if b == self.FR.one():
+            if x == a and y == c:
+                return 1
+            else:
+                return 0
+        if c == self.FR.one():
+            if x == d and y == b:
+                return 1
+            else:
+                return 0
+        if data:
+            return self._fvars.get((a,b,c,d,x,y),0)
+        else:
+            return (a,b,c,d,x,y)
+
+    def findcases(self,output=False):
+        """
+        Find the unknown F-matrix entries. If run with output=True,
+        this returns two dictionaries; otherwise it just returns the
+        number of unknown values.
+        """
+        i = 0
+        if output:
+            idx_map = dict()
+            ret = dict()
+        for a in self.FR.basis():
+            for b in self.FR.basis():
+                for c in self.FR.basis():
+                    for d in self.FR.basis():
+                        for x in self.FR.basis():
+                            for y in self.FR.basis():
+                                fm = self.fmat(a, b, c, d, x, y, data=False)
+                                if fm is not None and fm not in [0,1]:
+                                    if output:
+                                        v = self._poly_ring.gens()[i]
+                                        ret[(a,b,c,d,x,y)] = v
+                                        idx_map[v] = (a, b, c, d, x, y)
+                                    i += 1
+        if output:
+            return idx_map, ret
+        else:
+            return i
+
+    def singletons(self):
+        """
+        Find variables that are automatically nonzero, because their F-matrix is 1x1
+        """
+        ret = []
+        for a in self.FR.basis():
+            for b in self.FR.basis():
+                for c in self.FR.basis():
+                    for d in self.FR.basis():
+                        supp = [[x,y] for x in self.FR.basis() for y in self.FR.basis() if self.fmat(a,b,c,d,x,y) != 0]
+                        if len(supp) == 1:
+                            [x,y] = supp[0]
+                            if self.fmat(a,b,c,d,x,y) not in [0,1]:
+                                ret.append(self.fmat(a,b,c,d,x,y))
+        return ret
+
+    def sreduce(self, expr, nonzeros=None):
+        """
+        From an equation, discard the leading coefficient and
+        any factors that are singletons (variables guaranteed to
+        be nonzero).
+        """
+        if nonzeros is None:
+            nonzeros = self._poly_ring.gens()
+        ret = 1
+        for (a,e) in expr.factor()._Factorization__x:
+            if a not in nonzeros:
+                ret *= a^e
+        return ret
+
+    def feq(self, a, b, c, d, e, f, g, k, l):
+        """
+        Pentagon axiom following Bonderson (2.77)
+        """
+        lhs = self.fmat(f,c,d,e,g,l)*self.fmat(a,b,l,e,f,k)
+        rhs = sum(self.fmat(a,b,c,g,f,h)*self.fmat(a,h,d,e,g,k)*self.fmat(b,c,d,k,h,l) for h in self.FR.basis())
+        return lhs - rhs
+
+    def req(self, a, b, c, d, e, g):
+        """
+        Hexagon axiom following Bonderson (2.78)
+        """
+        lhs = self.FR.r_matrix(a,c,e)*self.fmat(a,c,b,d,e,g)*self.FR.r_matrix(b,c,g)
+        rhs = sum(self.fmat(c,a,b,d,e,f)*self.FR.r_matrix(f,c,d)*self.fmat(a,b,c,d,f,g) for f in self.FR.basis())
+        return lhs-rhs
+
+    def hexagon(self, verbose=False, output=True, factor=False):
+        """
+        Display the information we get from the hexagon relations,
+        Bonderson's version
+        """
+        ret = []
+        for a in self.FR.basis():
+            for b in self.FR.basis():
+                for c in self.FR.basis():
+                    for d in self.FR.basis():
+                        for e in self.FR.basis():
+                            for g in self.FR.basis():
+                                rd = self.req(a,b,c,d,e,g)
+                                if rd != 0:
+                                    if factor:
+                                        rd = self.sreduce(rd)
+                                    ret.append(rd)
+                                    if verbose:
+                                        print ("%s,%s,%s,%s,%s,%s : %s"%(a,b,c,d,e,g,rd.factor()))
+        print ("equations: %s"%len(ret))
+        if output:
+            return ret
+
+    def pentagon(self, verbose=False, output=True, factor=None):
+        """
+        Display the information from the pentagon relations.
+        """
+        ret = []
+        for a in self.FR.basis():
+            for b in self.FR.basis():
+                for c in self.FR.basis():
+                    for d in self.FR.basis():
+                        for e in self.FR.basis():
+                            for f in self.FR.basis():
+                                for g in self.FR.basis():
+                                    for k in self.FR.basis():
+                                        for l in self.FR.basis():
+                                            pd = self.feq(a,b,c,d,e,f,g,k,l)
+                                            if pd != 0:
+                                                if factor:
+                                                    pd = self.sreduce(pd)
+                                                ret.append(pd)
+                                                if verbose:
+                                                    print ("%s,%s,%s,%s,%s,%s,%s,%s,%s : %s"%(a,b,c,d,e,f,g,k,l,pd))
+        print ("equations: %s"%len(ret))
+        if output:
+            return ret
+
+    def equation_graph(self, equations):
+        G = graphs.EmptyGraph()
+        for e in equations:
+            s = [v for v in e.variables()]
+            for x in s:
+                for y in s:
+                    if y!=x:
+                        G.add_edge(x,y)
+        return(G)
+
