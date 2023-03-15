@@ -2331,7 +2331,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     if n % 4 != 0 or not is_prime_power(q) or q % 8 != 5:
         raise ValueError(f'The order {n} is not covered by the Spence construction.')
 
-    G, D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False)
+    G, D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False, return_group=True)
     D_fixed = get_fixed_relative_difference_set(G, D)
     D_union = D_fixed + [q+1+el for el in D_fixed]
     D_union = list(set([el % (4*(q+1)) for el in D_union]))
@@ -2568,7 +2568,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     if skew_supplementary_difference_set(n//4, existence=True):
         t = n//4
 
-        G, [S1, S2, S3, S4] = skew_supplementary_difference_set(t, check=False)
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set(t, check=False, return_group=True)
         Glist = list(G)
 
         A = matrix([[-1 if y-x in S1 else +1 for y in Glist] for x in Glist])
