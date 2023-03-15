@@ -254,8 +254,10 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     def _element_constructor_(self, x, check=False):
         r"""
-        Create an element from x. This may be either an element of self, an element of the
-        ambient group, or an iterable (in which case the result is the corresponding
+        Create an element from ``x``.
+
+        This may be either an element of self, an element of the ambient
+        group, or an iterable (in which case the result is the corresponding
         product of the generators of self).
 
         EXAMPLES::
@@ -624,6 +626,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     and an element lying outside the subgroup, extend the basis
     to the subgroup spanned jointly by the original subgroup and
     the new element.
+
     Used as a subroutine in :func:`basis_from_generators`.
 
     This function modifies ``alphas`` and ``vals`` in place.
@@ -648,7 +651,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     """
     k = len(rel)
     assert isinstance(alphas, list) and isinstance(vals, list)
-    assert len(alphas) == len(vals) == k-1
+    assert len(alphas) == len(vals) == k - 1
     assert all(r >= 0 for r in rel)
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 #    assert all(a.order() == p**v for a,v in zip(alphas,vals))
@@ -658,11 +661,11 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         if not rel[i]:
             continue
         q = rel[i].p_primary_part(p)
-        alphas[i] *= rel[i]//q
+        alphas[i] *= rel[i] // q
         rel[i] = q
     min_r = min(filter(bool, rel))
     val_rlast = rel[-1].valuation(p)
-    assert rel[-1] == p**val_rlast
+    assert rel[-1] == p ** val_rlast
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 
     # step 2
@@ -695,11 +698,10 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
             e = _discrete_log_pgroup(p, vals, alphas, -beta_q)
         except TypeError:
             continue
-        else:
-            # step 6
-            _expand_basis_pgroup(p, alphas, vals, beta, h, list(e) + [p**v])
-#            assert alphas[-1].order() == p**vals[-1]
-            return
+        # step 6
+        _expand_basis_pgroup(p, alphas, vals, beta, h, list(e) + [p**v])
+#        assert alphas[-1].order() == p**vals[-1]
+        break
     else:
         alphas.append(beta)
         vals.append(h)
@@ -714,10 +716,10 @@ def basis_from_generators(gens, ords=None):
     .. NOTE::
 
         A *basis* of a finite abelian group is a generating
-        set `\{g_1,...,g_n\}` such that each element of the
+        set `\{g_1, \ldots, g_n\}` such that each element of the
         group can be written as a unique linear combination
-        `\alpha_1 g_1 + ... + \alpha_n g_n` with each
-        `\alpha_i \in \{0,...,\mathrm{ord}(g_i)-1\}`.
+        `\alpha_1 g_1 + \cdots + \alpha_n g_n` with each
+        `\alpha_i \in \{0, \ldots, \mathrm{ord}(g_i)-1\}`.
 
     ALGORITHM: [Suth2007]_, Algorithm 9.1 & Remark 9.1
 
@@ -741,25 +743,25 @@ def basis_from_generators(gens, ords=None):
         sage: E.abelian_group().invariants()
         (3024, 313157428926517503432720)
     """
-    if ords is None:
-        ords = [g.order() for g in gens]
     if not gens:
         return [], []
+    if ords is None:
+        ords = [g.order() for g in gens]
 
     from sage.arith.functions import lcm
     lam = lcm(ords)
     ps = sorted(lam.prime_factors(), key=lam.valuation)
 
-    gammas, ms = [], []
+    gammas = []
+    ms = []
     for p in ps:
-        pgens = [(o.prime_to_m_part(p) * g, o.p_primary_part(p)) for g,o in zip(gens,ords) if not o%p]
+        pgens = [(o.prime_to_m_part(p) * g, o.p_primary_part(p)) for g, o in zip(gens, ords) if not o % p]
         assert pgens
         pgens.sort(key=lambda tup: tup[1])
 
         alpha, ord_alpha = pgens.pop()
         vals = [ord_alpha.valuation(p)]
         alphas = [alpha]
-        del ord_alpha, alpha
 
         while pgens:
             beta, ord_beta = pgens.pop()
@@ -780,21 +782,20 @@ def basis_from_generators(gens, ords=None):
                     e = _discrete_log_pgroup(p, vals, alphas, -beta_q)
                 except TypeError:
                     continue
-                else:
-                    _expand_basis_pgroup(p, alphas, vals, beta, val_beta, list(e) + [p**v])
-#                    assert all(a.order() == p**v for a,v in zip(alphas, vals))
-                    break
+                _expand_basis_pgroup(p, alphas, vals, beta, val_beta, list(e) + [p**v])
+#                assert all(a.order() == p**v for a,v in zip(alphas, vals))
+                break
             else:
                 alphas.append(beta)
                 vals.append(val_beta)
 
-        for i,(v,a) in enumerate(reversed(sorted(zip(vals, alphas)))):
+        for i, (v, a) in enumerate(sorted(zip(vals, alphas), reverse=True)):
             if i < len(gammas):
                 gammas[i] += a
-                ms[i] *= p**v
+                ms[i] *= p ** v
             else:
                 gammas.append(a)
-                ms.append(p**v)
+                ms.append(p ** v)
 
 ##    assert len({sum(i*g for i,g in zip(vec,gammas))
 ##                for vec in __import__('itertools').product(*map(range,ms))}) \
