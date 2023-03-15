@@ -708,8 +708,8 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
             # as coercion
             # -------------------------------------------------------------------------------------
             reset_coercion = False
-            from sage.rings.number_field.number_field_base import NumberField
-            if isinstance(base_ring, NumberField):
+            from sage.rings.number_field.number_field import NumberField_generic
+            if isinstance(base_ring, NumberField_generic):
                 reset_coercion = True
             elif base_ring.is_finite() and not base_ring.is_prime_field():
                 reset_coercion = True

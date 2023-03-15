@@ -8308,7 +8308,7 @@ class NumberField_absolute(NumberField_generic):
         if is_NumberFieldOrder(R) and self.has_coerce_map_from(R.number_field()):
             return self._generic_coerce_map(R)
         # R is not QQ by the above tests
-        if isinstance(R, NumberField_generic) and R.coerce_embedding() is not None:
+        if isinstance(R, number_field_base.NumberField) and R.coerce_embedding() is not None:
             if self.coerce_embedding() is not None:
                 try:
                     return number_field_morphisms.EmbeddedNumberFieldMorphism(R, self)
