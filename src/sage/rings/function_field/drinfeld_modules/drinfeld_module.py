@@ -171,7 +171,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: rho(T) == rho_T
         True
 
-    Images under the Drinfeld module are computed by calling the object::
+    Images under the Drinfeld module are computed by calling the
+    object::
 
         sage: phi(T)  # phi_T, the generator of the Drinfeld module
         t^2 + t + z
@@ -200,7 +201,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: The base field of a Drinfeld module
 
-    The base field of the Drinfeld module is retrieved using :meth:`base`::
+    The base field of the Drinfeld module is retrieved using
+    :meth:`base`::
 
         sage: phi.base()
         Finite Field in z of size 3^12 over its base
@@ -213,8 +215,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           To:   Finite Field in z of size 3^12 over its base
           Defn: T |--> z
 
-    Note that the base field is *not* the field `K`. Rather, it is a ring
-    extension (see :class:`sage.rings.ring_extension.RingExtension`) whose
+    Note that the base field is *not* the field `K`. Rather, it is a
+    ring extension
+    (see :class:`sage.rings.ring_extension.RingExtension`) whose
     underlying ring is `K` and whose base is the base morphism::
 
         sage: phi.base() is K
@@ -892,28 +895,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the list of basic `j`-invariant parameters.
 
-        See the method :meth:`j_invariant` for the definition of the basic
-        `j`-invariant parameters.
+        See the method :meth:`j_invariant` for the definition of the
+        basic `j`-invariant parameters.
 
         INPUT:
 
-        - ``coeff_indices`` (list or tuple, default: ``None``) -- a list or a
-          tuple of indices for the coefficients of the Drinfeld module. If
-          this option is not ``None``, then the method will return only the
-          basic `j`-invariant parameters that involves the given indices. By
-          default, the method will use all the coefficients.
+        - ``coeff_indices`` (list or tuple, default: ``None``) -- a list
+          or a tuple of indices for the coefficients of the Drinfeld
+          module. If this option is not ``None``, then the method will
+          return only the basic `j`-invariant parameters that involves
+          the given indices. By default, the method will use all the
+          coefficients.
 
-        - ``nonzero`` (bool, Default: ``False``) -- setting this to ``True``
-          will return only the parameters for which the basic `j`-invariant is
-          nonzero
+        - ``nonzero`` (bool, Default: ``False``) -- setting this to
+          ``True`` will return only the parameters for which the basic
+          `j`-invariant is nonzero.
 
         .. WARNING::
 
-            The usage of this method can be very computationally expensive
-            depending if the given Drinfeld module is of rank strictly greater
-            4 and for large value of `q`. Setting the ``nonzero`` flag to
-            ``True`` can speed up the computation considerably if the Drinfeld
-            module possesses multiple zero coefficients.
+            The usage of this method can be very computationally
+            expensive depending if the given Drinfeld module is of rank
+            strictly greater 4 and for large value of `q`. Setting the
+            ``nonzero`` flag to ``True`` can speed up the computation
+            considerably if the Drinfeld module possesses multiple zero
+            coefficients.
 
         EXAMPLES::
 
@@ -942,8 +947,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 2), (12, 29, 6)),
              ((1, 2), (31, 31, 7))]
 
-        If a list of indices is given, then only the parameters involving those
-        coefficients will be computed::
+        If a list of indices is given, then only the parameters
+        involving those coefficients will be computed::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
@@ -957,8 +962,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ...
              ((1, 5), (146, 74, 25))]
 
-        Use ``nonzero=True`` to speed up the computations for Drinfeld modules
-        for which some coefficients are zero::
+        Use ``nonzero=True`` to speed up the computations for Drinfeld
+        modules for which some coefficients are zero::
 
             sage: A = GF(5)['T']
             sage: K.<T> = Frac(A)
@@ -1047,7 +1052,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         equation.append(1 - q**r)
 
-        # Create the polyhedron defined by the equation and the inequalities.
+        # Create the polyhedron defined by the equation and the
+        # inequalities.
         polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
 
         # Compute its integral points
@@ -1058,11 +1064,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def basic_j_invariants(self):
         r"""
-        Return a dictionary whose keys are the basic `j`-invariants parameters
-        and values are the corresponding `j`-invariant.
+        Return a dictionary whose keys are the basic `j`-invariants
+        parameters and values are the corresponding `j`-invariant.
 
-        See the method :meth:`j_invariant` for the definition of the basic
-        `j`-invariants.
+        See the method :meth:`j_invariant` for the definition of the
+        basic `j`-invariants.
 
         EXAMPLES::
 
@@ -1321,56 +1327,61 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def j_invariant(self, parameter=None, check=True):
         r"""
-        Return the `j`-invariant of the Drinfeld `\mathbb{F}_q[T]`-module for
-        the given parameter.
+        Return the `j`-invariant of the Drinfeld
+        `\mathbb{F}_q[T]`-module for the given parameter.
 
         Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r` with
         `g_r \neq 0`. Then the
-        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r))`-`j`-*invariant* of
-        `\phi` is defined by
+        `((k_1, \ldots, k_n), (d_1, \ldots, d_n, d_r))`-`j`-*invariant*
+        of `\phi` is defined by
 
         .. MATH::
 
-            j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi) := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi)
+            := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
-        where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and the
-        integers `d_i` satisfy the *weight-0 condition*:
+        where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and
+        the integers `d_i` satisfy the *weight-0 condition*:
 
         .. MATH::
 
-            d_1 (q^{k_1} - 1) + d_2 (q^{k_2} - 1) + ... + d_{n} (q^{k_n} - 1) = d_r (q^r - 1).
+            d_1 (q^{k_1} - 1) + d_2 (q^{k_2} - 1)
+            + \cdots + d_{n} (q^{k_n} - 1) = d_r (q^r - 1).
 
         Furthermore, if `\gcd(d_1,\ldots, d_n, d_r) = 1` and
 
         .. MATH::
 
-            0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1), \quad 1 \leq i \leq n,
+            0 \leq d_i \leq (q^r - 1)/(q^{\gcd(i, r)} - 1),
+            \quad 1 \leq i \leq n,
 
         then the `j`-invariant is called *basic*. See the method
-        :meth:`basic_j_invariant_parameters` for computing the list of all
-        basic `j`-invariant parameters.
+        :meth:`basic_j_invariant_parameters` for computing the list of
+        all basic `j`-invariant parameters.
 
         INPUT:
 
         - ``parameter`` (tuple or list, integer or NoneType; default:
           ``None``):
 
-          - If ``parameter`` is a list or a tuple, then it must be of the form:
-            `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))`, where
-            the `k_i` and `d_i` are integers satisfying the weight-0 condition
-            described above.
+          - If ``parameter`` is a list or a tuple, then it must be of
+            the form:
+            `((k_1, k_2, \ldots, k_n), (d_1, d_2, \ldots, d_n, d_r))`,
+            where the `k_i` and `d_i` are integers satisfying the
+            weight-0 condition described above.
 
           - If ``parameter`` is an integer `k` then the method returns
             the ``j``-invariant associated to the parameter
             `((k,), (d_k, d_r))`;
 
-          - If ``parameter`` is ``None`` and the rank of the Drinfeld module is
-            2, then the method returns its usual `j`-invariant, that is the
-            `j`-invariant for the parameter `((1,), (q+1, 1))`.
+          - If ``parameter`` is ``None`` and the rank of the Drinfeld
+            module is 2, then the method returns its usual
+            `j`-invariant, that is the `j`-invariant for the parameter
+            `((1,), (q+1, 1))`.
 
         - ``check`` (bool, default: ``True``) -- if this flag is set to
-          ``False`` then the code will not check if the given parameter is
-          valid and satisfy the weight-0 condition.
+          ``False`` then the code will not check if the given parameter
+          is valid and satisfy the weight-0 condition.
 
         OUTPUT: the `j`-invariant of ``self`` for the given parameter.
 
@@ -1421,8 +1432,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant([[3], [400, 57]]) == phi.j_invariant(3)
             True
 
-        The list of all basic `j`-invariant parameters can be retrieved using
-        the method :meth:`basic_j_invariant_parameters`::
+        The list of all basic `j`-invariant parameters can be retrieved
+        using the method :meth:`basic_j_invariant_parameters`::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
