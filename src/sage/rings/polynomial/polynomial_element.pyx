@@ -5271,13 +5271,14 @@ cdef class Polynomial(CommutativePolynomial):
         if self.degree() <= 1:
             return R.fraction_field()
 
-        from sage.rings.number_field.number_field import NumberField
-        from sage.rings.number_field.number_field_base import NumberField
-
         if is_IntegerRing(R):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
-        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField):
+        from sage.rings.number_field.number_field_base import NumberField as NumberField_base
+
+        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField_base):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
         return R.fraction_field()[self._parent.variable_name()].quotient(self, names)
