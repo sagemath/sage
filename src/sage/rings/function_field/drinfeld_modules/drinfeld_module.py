@@ -1005,7 +1005,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                     self.coefficients(sparse=False)[1:-1], start=1) if g]
             else:
                 coeff_indices = list(range(1, r))
-        # check if coeff_indices is valid:
+        # Check if coeff_indices is valid:
         elif isinstance(coeff_indices, (tuple, list)):
             coeff_indices = list(coeff_indices)
             if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
@@ -1299,19 +1299,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi)
             False
         """
-        # trivial checks:
+        # Trivial checks:
         if self._gen == psi._gen:
             return True
         if self._gen.degree() != psi._gen.degree():
             return False
         if self._gen.degree() == 1:
             return True
-        # check if self and psi are patterned alike:
+        # Check if self and psi are patterned alike:
         if not all(bool(g_self) == bool(g_psi) for g_self, g_psi in\
             zip(self._gen.coefficients(sparse=False),
                 psi._gen.coefficients(sparse=False))):
             return False
-        # check that all the nonzero basic j-invariants agree
+        # Check that all the nonzero basic j-invariants agree
         isom = True
         for p in self.basic_j_invariant_parameters(nonzero=True):
             if self.j_invariant(p, check=False) != psi.j_invariant(p,check=False):
@@ -1514,7 +1514,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if not all(p in ZZ for p in parameter[1]):
                 raise TypeError("second component of input 'parameter' must "
                                 "contain only integers")
-            # check that the weight-0 condition is statisfied:
+            # Check that the weight-0 condition is satisfied:
             # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
             if check:
                 right = parameter[1][-1]*(q**r - 1)
