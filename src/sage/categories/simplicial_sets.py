@@ -343,6 +343,14 @@ class SimplicialSets(Category_singleton):
                 r"""
                 Return the fundamental group and dictionary sending each edge to
                 the corresponding group element
+
+                TESTS::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: RP2._universal_cover_dict()
+                    (Finitely presented group < e | e^2 >, {f: e})
+                    sage: RP2.nondegenerate_simplices()
+                    [1, f, f * f]
                 """
                 from sage.groups.free_group import FreeGroup
                 skel = self.n_skeleton(2)
@@ -445,7 +453,6 @@ class SimplicialSets(Category_singleton):
                      (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
                      (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
                      (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2)))}
-
                 """
                 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
@@ -528,7 +535,6 @@ class SimplicialSets(Category_singleton):
                     Z x Z x Z x Z
                     sage: C.fundamental_group()
                     Finitely presented group < e0, e1, e2, e3 |  >
-
                 """
                 return self.covering_map(character).domain()
 
@@ -555,11 +561,8 @@ class SimplicialSets(Category_singleton):
                      (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
-
-
                 """
                 return self.universal_cover_map().domain()
-
 
             def is_simply_connected(self):
                 """
