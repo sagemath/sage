@@ -984,16 +984,16 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         ...
         ValueError: n must be a positive multiple of four.
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set
+    from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
 
     if n <= 0 or n % 4 != 0:
         raise ValueError(f'n must be a positive multiple of four.')
     t = n // 4
 
     if existence:
-        return supplementary_difference_set(t, existence=True)
+        return supplementary_difference_set_hadamard(t, existence=True)
 
-    _, [S1, S2, S3, S4] = supplementary_difference_set(t, check=False)
+    _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
     a = [-1 if i in S1 else 1 for i in range(t)]
     b = [-1 if i in S2 else 1 for i in range(t)]
     c = [-1 if i in S3 else 1 for i in range(t)]

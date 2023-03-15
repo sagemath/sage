@@ -1887,6 +1887,21 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     return G, [K1, K2, K3, K4]
 
 
+def supplementary_difference_set(q, existence=False, check=True):
+    r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
+
+    This is a deprecated version of :func:`supplementary_difference_set_from_rel_diff_set`,
+    please use that instead.
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(35211, 'This function is deprecated, please use supplementary_difference_set_from_rel_diff_set instead.')
+
+    if existence:
+        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
+    _, s = supplementary_difference_set_from_rel_diff_set(q, check=check)
+    return s
+
+
 def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
     r"""Construct an equivalent relative difference set fixed by the size of the set.
 
@@ -2577,7 +2592,7 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
     return Z, [S1, S2, S3, S4]
 
 
-def supplementary_difference_set(n, existence=False, check=True):
+def supplementary_difference_set_hadamard(n, existence=False, check=True):
     r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_.
@@ -2610,32 +2625,32 @@ def supplementary_difference_set(n, existence=False, check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import supplementary_difference_set
-        sage: G, [S1, S2, S3, S4] = supplementary_difference_set(191)
+        sage: from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(191)
 
     If existence is ``True``, the function returns a boolean::
 
-        sage: supplementary_difference_set(191, existence=True)
+        sage: supplementary_difference_set_hadamard(191, existence=True)
         True
-        sage: supplementary_difference_set(17, existence=True)
+        sage: supplementary_difference_set_hadamard(17, existence=True)
         False
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
-        sage: G, [S1, S2, S3, S4] = supplementary_difference_set(191, check=False)
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(191, check=False)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-191, G=G)
         True
-        sage: G, [S1, S2, S3, S4] = supplementary_difference_set(37, check=False)
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(37, check=False)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-37, G=G)
         True
-        sage: supplementary_difference_set(7)
+        sage: supplementary_difference_set_hadamard(7)
         Traceback (most recent call last):
         ...
         ValueError: SDS of order 7 not yet implemented.
-        sage: supplementary_difference_set(7, existence=True)
+        sage: supplementary_difference_set_hadamard(7, existence=True)
         False
-        sage: supplementary_difference_set(127, existence=True)
+        sage: supplementary_difference_set_hadamard(127, existence=True)
         True
     """
 
