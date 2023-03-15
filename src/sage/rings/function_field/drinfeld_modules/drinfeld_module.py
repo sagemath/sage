@@ -983,23 +983,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.basic_j_invariant_parameters([1, 'x'])
             Traceback (most recent call last):
             ...
-            TypeError: the elements of the list 'coeff_indices' must be integers
+            TypeError: coefficients indices must be integers
             sage: phi.basic_j_invariant_parameters([1, 10])
             Traceback (most recent call last):
             ...
-            ValueError: the maximum or the minimum of the list coeff_indices must be > 0 and < 3 respectively
+            ValueError: indices must be > 0 and < 3
             sage: phi.basic_j_invariant_parameters([1, 1])
             Traceback (most recent call last):
             ...
-            ValueError: the elements of coeff_indices should be distinct and sorted
+            ValueError: indices must be distinct and sorted
             sage: phi.basic_j_invariant_parameters([2, 1])
             Traceback (most recent call last):
             ...
-            ValueError: the elements of coeff_indices should be distinct and sorted
+            ValueError: indices must be distinct and sorted
             sage: phi.basic_j_invariant_parameters('x')
             Traceback (most recent call last):
             ...
-            TypeError: input 'coeff_indices' must be NoneType, a tuple or a list
+            TypeError: indices must be None, a tuple or a list
         """
         r = self._gen.degree()
         if coeff_indices is None:
@@ -1012,20 +1012,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         elif isinstance(coeff_indices, (tuple, list)):
             coeff_indices = list(coeff_indices)
             if not all(isinstance(k, (int, Integer)) for k in coeff_indices):
-                raise TypeError("the elements of the list 'coeff_indices' "
-                                "must be integers")
+                raise TypeError('coefficients indices must be integers')
             if max(coeff_indices) >= r or min(coeff_indices) <= 0:
-                raise ValueError("the maximum or the minimum of the list "
-                    f"coeff_indices must be > 0 and < {r} respectively")
+                raise ValueError(f'indices must be > 0 and < {r}')
             if not all(coeff_indices[i] < coeff_indices[i+1] for i in
                        range(len(coeff_indices) - 1)):
-                raise ValueError("the elements of coeff_indices should be "
-                                 "distinct and sorted")
+                raise ValueError('indices must be distinct and sorted')
             if nonzero:
                 coeff_indices = [k for k in coeff_indices if self._gen[k]]
         else:
-            raise TypeError("input 'coeff_indices' must be NoneType, a tuple "
-                            "or a list")
+            raise TypeError('indices must be None, a tuple or a list')
         # Create the equation and inequalities for the polyhedron:
         q = self._Fq.order()
         equation = [0]
@@ -1095,7 +1091,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: J_phi[((1, 2), (7, 4, 1))]
             T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
         """
-        return {parameter: self.j_invariant(p, check=False)
+        return {parameter: self.j_invariant(parameter, check=False)
                 for parameter in self.basic_j_invariant_parameters()}
 
     def coefficient(self, n):
@@ -1450,43 +1446,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant()
             Traceback (most recent call last):
             ...
-            TypeError: input 'parameter' must be different from NoneType if the rank is greater than 2
+            TypeError: parameter must be different from NoneType if the rank is greater than 2
             sage: phi.j_invariant(-1)
             Traceback (most recent call last):
             ...
-            ValueError: input 'parameter' must be >= 1 or < the rank (=4)
+            ValueError: integer parameter must be >= 1 and < the rank (=4)
             sage: phi.j_invariant('x')
             Traceback (most recent call last):
             ...
-            TypeError: input 'parameter' must be a tuple or a list of length 2 or an integer
+            TypeError: parameter must be a tuple or a list of length 2 or an integer
             sage: phi.j_invariant((1, 2, 3))
             Traceback (most recent call last):
             ...
-            ValueError: input 'parameter' must be of length 2
+            ValueError: list or tuple parameter must be of length 2
             sage: phi.j_invariant(('x', (1, 2, 3)))
             Traceback (most recent call last):
             ...
-            TypeError: first component of input 'parameter' must be a tuple or a list
+            TypeError: list or tuple parameter must contain tuples or lists
             sage: phi.j_invariant(((1, 2), 'x'))
             Traceback (most recent call last):
             ...
-            TypeError: second component of input 'parameter' must be a tuple or a list
+            TypeError: list or tuple parameter must contain tuples or lists
             sage: phi.j_invariant(((1, 2, 3, 4, 5), (2, 1)))
             Traceback (most recent call last):
             ...
-            ValueError: components of input 'parameters' are of incorrect length
+            ValueError: components of tuple or list parameter have incorrect length
             sage: phi.j_invariant(((1, 'x'), (2, 3, 8)))
             Traceback (most recent call last):
             ...
-            TypeError: first component of input 'parameter' must contain only integers
+            TypeError: components of tuple or list parameter must contain only integers
             sage: phi.j_invariant(((1, 2), (2, 3, 'x')))
             Traceback (most recent call last):
             ...
-            TypeError: second component of input 'parameter' must contain only integers
+            TypeError: components of tuple or list parameter must contain only integers
             sage: phi.j_invariant(((1, 2), (4, 3, 7)))
             Traceback (most recent call last):
             ...
-            ValueError: input 'parameter' does not satisfy the weight-0 condition
+            ValueError: parameter does not satisfy the weight-0 condition
             sage: phi.j_invariant(((1, 2), (4, 3, 7)), check=False)
             1/T^13
         """
@@ -1494,46 +1490,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         if parameter is None:
             if r != 2:
-                raise TypeError("input 'parameter' must be different from "
+                raise TypeError("parameter must be different from "
                                  "NoneType if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if parameter in ZZ:
             if parameter <= 0 or parameter >= r:
-                raise ValueError("input 'parameter' must be >= 1 or < the "
+                raise ValueError("integer parameter must be >= 1 and < the "
                                  f"rank (={r})")
             dk = Integer((q**r - 1)/(q**gcd(parameter, r) - 1))
             dr = Integer((q**parameter - 1)/(q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
         elif isinstance(parameter, (tuple, list)):
             if len(parameter) != 2:
-                raise ValueError("input 'parameter' must be of length 2")
-            if not isinstance(parameter[0], (tuple, list)):
-                raise TypeError("first component of input 'parameter' must be "
-                                "a tuple or a list")
-            if not isinstance(parameter[1], (tuple, list)):
-                raise TypeError("second component of input 'parameter' must "
-                                "be a tuple or a list")
+                raise ValueError("list or tuple parameter must be of length 2")
+            if not isinstance(parameter[0], (tuple, list)) \
+                    or not isinstance(parameter[1], (tuple, list)):
+                raise TypeError("list or tuple parameter must contain tuples "
+                                "or lists")
             if not len(parameter[0]) < r or\
                        not len(parameter[1]) == len(parameter[0]) + 1:
-                raise ValueError("components of input 'parameters' are of "
+                raise ValueError("components of tuple or list parameter have "
                                  "incorrect length")
-            if not all(p in ZZ for p in parameter[0]):
-                raise TypeError("first component of input 'parameter' must "
-                                "contain only integers")
-            if not all(p in ZZ for p in parameter[1]):
-                raise TypeError("second component of input 'parameter' must "
+            if not all(p in ZZ for p in parameter[0])\
+                    or not all(p in ZZ for p in parameter[1]):
+                raise TypeError("components of tuple or list parameter must "
                                 "contain only integers")
             # Check that the weight-0 condition is satisfied:
-            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1) = d_r (q^r - 1)
+            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1)
+            #    = d_r (q^r - 1)
             if check:
                 right = parameter[1][-1]*(q**r - 1)
                 left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
                            range(len(parameter[0])))
                 if left != right:
-                    raise ValueError("input 'parameter' does not satisfy the "
+                    raise ValueError("parameter does not satisfy the "
                                     "weight-0 condition")
         else:
-            raise TypeError("input 'parameter' must be a tuple or a list of "
+            raise TypeError("parameter must be a tuple or a list of "
                             "length 2 or an integer")
         num = prod(self._gen[k]**d
                    for k, d in zip(parameter[0], parameter[1][:-1]))
