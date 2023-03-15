@@ -93,7 +93,6 @@ from .number_field_ideal import is_NumberFieldIdeal
 from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
-from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.number_field.order import (RelativeOrder, is_NumberFieldOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
@@ -277,7 +276,7 @@ class NumberField_relative(NumberField_generic):
             raise NotImplementedError("Embeddings not implemented for relative number fields")
         if names is not None:
             name = names
-        if not isinstance(base, NumberField):
+        if not isinstance(base, NumberField_generic):
             raise TypeError("base (=%s) must be a number field"%base)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             try:
