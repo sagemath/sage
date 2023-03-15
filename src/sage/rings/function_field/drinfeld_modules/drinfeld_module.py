@@ -1058,8 +1058,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def basic_j_invariants(self):
         r"""
-        Return a dictionnary whose keys are the basic `j`-invariants parameters
-        and values are the associated `j`-invariant.
+        Return a dictionary whose keys are the basic `j`-invariants parameters
+        and values are the corresponding `j`-invariant.
 
         See the method :meth:`j_invariant` for the definition of the basic
         `j`-invariants.
