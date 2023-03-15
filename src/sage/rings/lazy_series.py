@@ -657,6 +657,22 @@ class LazyModuleElement(Element):
             sage: f.shift(3)
             1/(5^t) + 2/6^t
 
+        .. WARNING::
+
+            When working with an inexact power series (e.g., defined
+            by a function) that has not computed its order and shifting
+            by too much can result in a Laurent series that does not
+            know it is a Laurent series::
+
+                sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
+                sage: L.<x> = LazyPowerSeriesRing(QQ)
+                sage: f = L(fun)
+                sage: fs = f.shift(-4)
+                sage: fs
+                1/x^3 + 1/x^2 + 1 + O(x^3)
+                sage: fs.parent()
+                Lazy Taylor Series Ring in x over Rational Field
+
         TESTS::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
@@ -673,7 +689,16 @@ class LazyModuleElement(Element):
             x^-2
             sage: f.parent()
             Lazy Laurent Series Ring in x over Rational Field
+
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: f = x.shift(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: arity must be equal to 1
         """
+        P = self.parent()
+        if P._arity != 1:
+            raise ValueError("arity must be equal to 1")
         if isinstance(self._coeff_stream, Stream_zero):
             return self
         elif isinstance(self._coeff_stream, Stream_shift):
@@ -691,7 +716,6 @@ class LazyModuleElement(Element):
                                         order=valuation, degree=degree)
         else:
             coeff_stream = Stream_shift(self._coeff_stream, n)
-        P = self.parent()
         # If we shift it too much, then it needs to go into the fraction field
         # FIXME? This is different than the polynomial rings, which truncates the terms
         if (coeff_stream._true_order
@@ -3801,7 +3825,13 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         - `f = a + b z` with `a, b \neq 0`, or
 
-        - `f = a/z` with `a \neq 0`
+        - `f = a/z` with `a \neq 0`.
+
+        .. WARNING::
+
+            For inexact series (e.g., being defined by a function), it is
+            assumed that the series has valuation `1` and is not one of
+            the two other special cases.
 
         EXAMPLES::
 
@@ -4615,15 +4645,21 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         r"""
         Return the compositional inverse of ``self``.
 
-        Given a Taylor series `f`, the compositional inverse is a
-        Laurent series `g` over the same base ring, such that
+        Given a Taylor series `f` in one variable, the compositional
+        inverse is a power series `g` over the same base ring, such that
         `(f \circ g)(z) = f(g(z)) = z`.
 
         The compositional inverse exists if and only if:
 
         - `val(f) = 1`, or
 
-        - `f = a + b z` with `a, b \neq 0`
+        - `f = a + b z` with `a, b \neq 0`.
+
+        .. WARNING::
+
+            For inexact series (e.g., being defined by a function), it is
+            assumed that the series has valuation `1` and is not a linear
+            polynomial.
 
         EXAMPLES::
 
@@ -4743,11 +4779,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
                 if coeff_stream.order() != 1:
                     raise ValueError("compositional inverse does not exist")
-
-        # TODO: coefficients should not be checked here, it prevents
-        # us from using self.define in some cases!
-        if coeff_stream[0]:
-            raise ValueError("cannot determine whether the compositional inverse exists")
 
         g = P.undefined(valuation=1)
         # the following is mathematically equivalent to
