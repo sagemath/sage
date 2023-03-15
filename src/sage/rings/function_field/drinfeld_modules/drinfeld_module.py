@@ -1356,7 +1356,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         INPUT:
 
         - ``parameter`` (tuple or list, integer or NoneType; default:
-          ``None``):
+          ``None``) -- the `j`-invariant parameter:
 
           - If ``parameter`` is a list or a tuple, then it must be of
             the form:
