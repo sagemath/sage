@@ -1625,20 +1625,25 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     return True
 
 
-def is_supplementary_difference_set(G, Ks, lmbda, verbose=False):
+def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=False):
     r"""Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary difference sets over group `G` of order `v`.
 
     From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of a group `G` of order `v`
     such that `|S_i| = k_i`. If, for each `g \in G`, `g \neq 0`, the total number of solutions of `a_i - a'_i = g`, with
     `a_i, a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1, ..., k_n; \lambda\}` supplementary difference sets.
 
-    INPUT:
+    One of the parameters ``v`` or ``G`` must always be specified. If ``G`` is not
+    given, the function will use an ``AdditiveAbelianGroup`` of order ``v``.
 
-    - ``G`` -- a group of order `v`.
+    INPUT:
 
     - ``Ks`` -- a list of sets to be checked.
 
+    - ``v`` -- integer, the parameter `v` of the supplementary difference sets.
+
     - ``lmbda`` -- integer, the parameter `\lambda` of the supplementary difference sets.
+
+    - ``G`` -- a group of order `v`.
 
     - ``verbose`` -- boolean (default False). If true the function will be verbose
       when the sets do not satisfy the contraints.
@@ -1647,23 +1652,52 @@ def is_supplementary_difference_set(G, Ks, lmbda, verbose=False):
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set, is_supplementary_difference_set
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(17)
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], 16)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16, G=G)
         True
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], 14, verbose=True)
-        Number of pairs with difference (1) is 16 != 14
+
+    The parameter ``v`` can be given instead of ``G``::
+
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=16, lmbda=16)
+        True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=20, lmbda=16)
         False
-        sage: is_supplementary_difference_set(AdditiveAbelianGroup([20]), [S1, S2, S3, S4], 16)
+
+    If ``verbose`` is true, the function will be verbose::
+
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=14, G=G, verbose=True)
+        Number of pairs with difference (1) is 16, but lambda is 14
         False
 
     TESTS::
 
-        sage: is_supplementary_difference_set(Zmod(3), [[1], [1]], 0)
+        sage: is_supplementary_difference_set([[1], [1]], lmbda=0, G=Zmod(3))
         True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=17, lmbda=16, G=G)
+        False
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], G=G)
+        True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16)
+        Traceback (most recent call last):
+        ...
+        ValueError: One of G or v must be specified.
 
     .. SEEALSO::
 
         :func:`supplementary_difference_set_from_rel_diff_set`
     """
+
+    if G is None and v is None:
+        raise ValueError('One of G or v must be specified.')
+
+    if G is None:
+        from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
+        G = AdditiveAbelianGroup([v])
+
+    if v is not None and G.order() != v:
+        if verbose:
+            print(f'G has order {G.order()}, but it should be {v}')
+        return False
+
     differences_counter = {el: 0 for el in G}
     for K in Ks:
         for el1 in K:
@@ -1674,9 +1708,11 @@ def is_supplementary_difference_set(G, Ks, lmbda, verbose=False):
     for key, diff in differences_counter.items():
         if key == 0:
             continue
+        if lmbda is None:
+            lmbda = diff
         if diff != lmbda:
             if verbose:
-                print(f'Number of pairs with difference {key} is {diff} != {lmbda}')
+                print(f'Number of pairs with difference {key} is {diff}, but lambda is {lmbda}')
             return False
 
     return True
@@ -1732,10 +1768,10 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
         sage: G, sets = supplementary_difference_set_from_rel_diff_set(17, check=False)
-        sage: is_supplementary_difference_set(G, sets, 16)
+        sage: is_supplementary_difference_set(sets, lmbda=16, G=G)
         True
         sage: G, sets = supplementary_difference_set_from_rel_diff_set(9, check=False)
-        sage: is_supplementary_difference_set(G, sets, 8)
+        sage: is_supplementary_difference_set(sets, lmbda=8, G=G)
         True
         sage: supplementary_difference_set_from_rel_diff_set(7)
         Traceback (most recent call last):
@@ -1755,7 +1791,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     Check that the function works even when s > 1::
 
         sage: G, sets = supplementary_difference_set_from_rel_diff_set(353, check=False) #long time
-        sage: is_supplementary_difference_set(G, sets, 352) #long time
+        sage: is_supplementary_difference_set(sets, lmbda=352, G=G) #long time
         True
 
     .. SEEALSO::
@@ -1846,7 +1882,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     K4 = list(map(lambda x: G[x], psi4.exponents()))
 
     if check:
-        assert is_supplementary_difference_set(G, [K1, K2, K3, K4], q-1)
+        assert is_supplementary_difference_set([K1, K2, K3, K4], lmbda=q-1, G=G)
 
     return G, [K1, K2, K3, K4]
 
@@ -2053,7 +2089,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set(F, [S1, S2, S3, S4], lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=F)
         assert _is_skew_set(F, S1)
 
     return F, [S1, S2, S3, S4]
@@ -2138,7 +2174,7 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set(G, [S1, S2, S3, S4], lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
         assert _is_skew_set(G, S1)
 
     return G, [S1, S2, S3, S4]
@@ -2208,12 +2244,12 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set, _is_skew_set
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(113, check=False, return_group=True)
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], len(S1)+len(S2)+len(S3)+len(S4)-113)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-113, G=G)
         True
         sage: _is_skew_set(G, S1)
         True
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(67, check=False, return_group=True)
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], len(S1)+len(S2)+len(S3)+len(S4)-67)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-67, G=G)
         True
         sage: _is_skew_set(G, S1)
         True
@@ -2431,7 +2467,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set(G, [S1, S2, S3, S4], lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
         assert _is_skew_set(G, S1)
 
     if return_group:
@@ -2500,7 +2536,7 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
         sage: cosets_gen = [1, 3, 7]
         sage: indices = [[1, 2, 4], [1, 2, 4], [0, 2, 3], [3, 4, -1]]
         sage: G, sets = _construction_supplementary_difference_set(43, H, indices, cosets_gen, check=False)
-        sage: is_supplementary_difference_set(G, sets, 35)
+        sage: is_supplementary_difference_set(sets, lmbda=35, G=G)
         True
 
     .. SEEALSO::
@@ -2536,7 +2572,7 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set(Z, [S1, S2, S3, S4], lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=Z)
 
     return Z, [S1, S2, S3, S4]
 
@@ -2588,10 +2624,10 @@ def supplementary_difference_set(n, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set(191, check=False)
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], len(S1)+len(S2)+len(S3)+len(S4)-191)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-191, G=G)
         True
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set(37, check=False)
-        sage: is_supplementary_difference_set(G, [S1, S2, S3, S4], len(S1)+len(S2)+len(S3)+len(S4)-37)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-37, G=G)
         True
         sage: supplementary_difference_set(7)
         Traceback (most recent call last):
@@ -2646,7 +2682,7 @@ def supplementary_difference_set(n, existence=False, check=True):
     S1, S2, S3, S4 = sets
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set(G, [S1, S2, S3, S4], lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
 
     return G, [S1, S2, S3, S4]
 
@@ -2744,7 +2780,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
             print(f'A and B must have size {m}')
         return False
 
-    if not is_supplementary_difference_set(G, [A, B], m-1):
+    if not is_supplementary_difference_set([A, B], lmbda=m-1, G=G):
         if verbose:
             print(f'The sets are not supplementary difference sets with lambda = {m-1}')
         return False
