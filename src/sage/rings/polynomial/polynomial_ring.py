@@ -146,6 +146,7 @@ from sage.structure.element import Element
 
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 
 import sage.rings.ring as ring
 from sage.structure.element import is_RingElement
@@ -1987,7 +1988,11 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.is_sparse(),
                                                     implementation=implementation), self.base_ring()
 
+
 class PolynomialRing_field(PolynomialRing_integral_domain):
+
+    _default_category = PrincipalIdealDomains()
+
     def __init__(self, base_ring, name="x", sparse=False, element_class=None, category=None):
         """
         TESTS::

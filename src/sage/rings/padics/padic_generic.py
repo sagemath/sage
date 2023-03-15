@@ -42,6 +42,9 @@ from sage.structure.richcmp import richcmp_not_equal
 
 
 class pAdicGeneric(IntegralDomain, LocalGeneric):
+
+    _default_category = PrincipalIdealDomains()
+
     def __init__(self, base, p, prec, print_mode, names, element_class, category=None):
         r"""
         Initialize ``self``.
