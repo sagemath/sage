@@ -411,7 +411,7 @@ class SimplicialSets(Category_singleton):
                 r"""
                 Return the covering map associated to a character.
 
-                The character is represented by a dictionary, that assigns an
+                The character is represented by a dictionary that assigns an
                 element of a finite group to each nondegenerate 1-dimensional
                 cell. It should correspond to an epimorphism from the fundamental
                 group.
