@@ -900,25 +900,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``coeff_indices`` (list or tuple, default: ``None``) -- a list
-          or a tuple of indices for the coefficients of the Drinfeld
-          module. If this option is not ``None``, then the method will
-          return only the basic `j`-invariant parameters that involves
-          the given indices. By default, the method will use all the
-          coefficients.
+        - ``coeff_indices`` (list or tuple, or NoneType; default:
+          ``None``) -- indices of the Drinfeld module generator
+          coefficients to be considered in the computation. If the
+          parameter is ``None`` (default), all the coefficients are
+          involved.
 
-        - ``nonzero`` (bool, Default: ``False``) -- setting this to
-          ``True`` will return only the parameters for which the basic
-          `j`-invariant is nonzero.
+        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+          is set to ``True``, then only the parameters for which the
+          corresponding basic `j`-invariant is nonzero are returned.
 
         .. WARNING::
 
             The usage of this method can be very computationally
-            expensive depending if the given Drinfeld module is of rank
-            strictly greater 4 and for large value of `q`. Setting the
-            ``nonzero`` flag to ``True`` can speed up the computation
-            considerably if the Drinfeld module possesses multiple zero
-            coefficients.
+            expensive. This can happen if the rank is greater than four,
+            or if `q` is large. Setting the ``nonzero`` flag to ``True``
+            can speed up the computation considerably if the Drinfeld
+            module generator possesses multiple zero coefficients.
 
         EXAMPLES::
 
@@ -947,8 +945,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 2), (12, 29, 6)),
              ((1, 2), (31, 31, 7))]
 
-        If a list of indices is given, then only the parameters
-        involving those coefficients will be computed::
+        Specify a list of indices to restrict which coefficients appear
+        in the parameters::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
@@ -963,7 +961,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 5), (146, 74, 25))]
 
         Use ``nonzero=True`` to speed up the computations for Drinfeld
-        modules for which some coefficients are zero::
+        modules having multiple zero coefficients::
 
             sage: A = GF(5)['T']
             sage: K.<T> = Frac(A)
@@ -1039,13 +1037,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             equation.append(q**i - 1)
 
             # Create inequalities of the form 0 <= delta_i
-            lower_bounds = [0]*(len(coeff_indices) + 2)
+            lower_bounds = [0] * (len(coeff_indices) + 2)
             lower_bounds[idx + 1] = 1
 
             # Create inequalities of the form
             # delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
-            upper_bounds = [Integer((q**r - 1)/(q**(gcd(i, r)) - 1))]\
-                + [0]*(len(coeff_indices) + 1)
+            upper_bounds = [Integer((q**r - 1) / (q**(gcd(i, r)) - 1))]\
+                            + [0]*(len(coeff_indices) + 1)
             upper_bounds[idx + 1] = -1
 
             inequalities.extend((lower_bounds, upper_bounds))
@@ -1097,8 +1095,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: J_phi[((1, 2), (7, 4, 1))]
             T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
         """
-        return {p: self.j_invariant(p, check=False)
-                for p in self.basic_j_invariant_parameters()}
+        return {parameter: self.j_invariant(p, check=False)
+                for parameter in self.basic_j_invariant_parameters()}
 
     def coefficient(self, n):
         r"""
@@ -1530,7 +1528,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             if check:
                 right = parameter[1][-1]*(q**r - 1)
                 left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
-                        range(len(parameter[0])))
+                           range(len(parameter[0])))
                 if left != right:
                     raise ValueError("input 'parameter' does not satisfy the "
                                     "weight-0 condition")
