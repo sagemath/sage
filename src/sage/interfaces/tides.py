@@ -356,6 +356,8 @@ def remove_constants(l1,l2):
     Given two lists, remove the entries in the first that are real constants,
     and also the corresponding elements in the second one.
 
+    EXAMPLES::
+
         sage: from sage.interfaces.tides import subexpressions_list, remove_constants
         sage: f(a)=[1+cos(7)*a]
         sage: l1, l2 = subexpressions_list(f)
