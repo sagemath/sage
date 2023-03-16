@@ -68,10 +68,10 @@ class QuotientRingElement(RingElement):
 
     ::
 
-        sage: S.<a,b> = R.quotient(x^2 + y^2)
-        sage: a
+        sage: S.<a,b> = R.quotient(x^2 + y^2)                                           # optional - sage.libs.singular
+        sage: a                                                                         # optional - sage.libs.singular
         a
-        sage: b
+        sage: b                                                                         # optional - sage.libs.singular
         b
         sage: a^2 + b^2 == 0                                                            # optional - sage.libs.singular
         True
@@ -263,8 +263,8 @@ class QuotientRingElement(RingElement):
 
             sage: R.<x,y> = QQ[]
             sage: I = R.ideal(x^3, y^3)
-            sage: S.<xb,yb> = R.quo(I)
-            sage: pari(xb)
+            sage: S.<xb,yb> = R.quo(I)                                                  # optional - sage.libs.singular
+            sage: pari(xb)                                                              # optional - sage.libs.pari sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: Pari does not support quotients by non-principal ideals
@@ -691,7 +691,7 @@ class QuotientRingElement(RingElement):
 
         TESTS::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: (a+3*a*b+b).lt()
             3*a*b
