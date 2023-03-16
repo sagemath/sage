@@ -117,11 +117,13 @@ include sage/rings/polynomial/symmetric_*.p*
 ## include sage/rings/polynomial/ore*.p*                                   # need for sage.categories.drinfeld_modules
 
 graft sage/rings/function_field
-exclude sage/rings/function_field/derivations.*                         # module elements
+exclude sage/rings/function_field/*_polymod.*                           # needs Singular
+exclude sage/rings/function_field/derivations*.*                        # module elements
 exclude sage/rings/function_field/differential.*                        # module elements
 exclude sage/rings/function_field/divisor.*                             # module elements
 exclude sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
-exclude sage/rings/function_field/function_field_valuation.*            # ??
+exclude sage/rings/function_field/valuation*.*                          # ??
+prune sage/rings/function_field/drinfeld_modules                        # needs ore_polynomial etc.
 
 include sage/rings/power_series_mpoly.p*
 include sage/rings/power_series_poly.p*
