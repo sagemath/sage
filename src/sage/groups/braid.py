@@ -1448,9 +1448,17 @@ class Braid(FiniteTypeArtinGroupElement):
             return {qa: C[qa].homology() for qa in C}
         return self.annular_khovanov_complex(qagrad, ring).homology()
 
-    def left_normal_form(self):
+    def left_normal_form(self, algorithm='artin'):
         r"""
         Return the left normal form of the braid.
+        
+        INPUT:
+        
+        - `algorithm` : string (default: ``artin``). For `artin` the general
+        method for Artin group is used. For `libbraiding`, the algorithm
+        uses the package `libbraiding`.
+        
+        OUTPUT:
         
         A tuple of simple generators in the left normal form. The first
         element is a power of `\Delta`, and the rest are elements of the
@@ -1458,10 +1466,14 @@ class Braid(FiniteTypeArtinGroupElement):
 
         EXAMPLES::
 
-            sage: B = BraidGroup(4)
-            sage: b = B([1, 2, 3, -1, 2, -3])
-            sage: b.left_normal_form()
-            (s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            sage: B = BraidGroup(6)
+            sage: b = B([-2, 2, -4, -4, 4, -5, -1, 4, -1, 1])
+            sage: L1 = b.left_normal_form(); L1
+            (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
+            s0*s2*s1*s0*s3*s2*s1*s0*s4*s3*s2*s1,
+            s3)
+            sage: L1 == b.left_normal_form(algorithm='libbraiding')
+            True
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
@@ -1471,9 +1483,16 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B([1,2,1]).left_normal_form()
             (s0*s1*s0,)
         """
-        l = leftnormalform(self)
-        B = self.parent()
-        return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
+        if algorithm == 'libbraiding':
+            l = leftnormalform(self)
+            B = self.parent()
+            return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
+        elif algorithm == 'artin':
+            lnfp = self._left_normal_form_coxeter()
+            P = self.parent()
+            return tuple([P.delta() ** lnfp[0]] +
+                        [P._standard_lift(w) for w in lnfp[1:]])
+
 
     def _left_normal_form_coxeter(self):
         r"""
@@ -1501,8 +1520,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         .. NOTE::
 
-            This method is not used anymore since the above left_normal_form is faster.
-            It is kept here since it may be used elsewhere.
+            For long braids this method is slower than leftnormalform from `libbraiding`.
 
         .. TODO::
 
@@ -2563,7 +2581,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return the number of group elements.
 
-        OUTPUT:.
+        OUTPUT:
 
         Infinity.
 
