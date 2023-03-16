@@ -385,8 +385,9 @@ class Stream_inexact(Stream):
             except KeyError:
                 c = self.get_coefficient(n)
                 self._cache[n] = c
-                # note that self._approximate_order is not in self._cache
                 if not self._true_order and n == self._approximate_order:
+                # note that self._approximate_order is not in
+                # self._cache if self._true_order is False
                     if c:
                         self._true_order = True
                         self._approximate_order = n
