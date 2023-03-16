@@ -1672,8 +1672,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return self.is_norm(L, element=True, proof=proof)[0]
 
         K = self.parent()
-        from sage.rings.number_field.number_field_base import is_NumberField
-        if not is_NumberField(L):
+        from sage.rings.number_field.number_field_base import NumberField
+        if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
         from sage.rings.number_field.number_field import is_AbsoluteNumberField
@@ -3812,8 +3812,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if base is self.parent():
             return MatrixSpace(base,1)([self])
         if base is not None and base is not self.base_ring():
-            from sage.rings.number_field.number_field_base import is_NumberField
-            if is_NumberField(base):
+            from sage.rings.number_field.number_field_base import NumberField
+            if isinstance(base, NumberField):
                 return self._matrix_over_base(base)
             else:
                 return self._matrix_over_base_morphism(base)

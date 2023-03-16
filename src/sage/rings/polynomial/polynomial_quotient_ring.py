@@ -1308,9 +1308,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: len(iso_classes[1][1])                                                            # optional - sage.rings.number_field
             2
         """
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         K = self.base_ring()
-        if not is_NumberField(K) or not self.__polynomial.is_squarefree():
+        if not isinstance(K, NumberField) or not self.__polynomial.is_squarefree():
             raise NotImplementedError
 
         from sage.rings.ideal import is_Ideal

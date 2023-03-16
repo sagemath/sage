@@ -4783,7 +4783,7 @@ cdef class Polynomial(CommutativePolynomial):
             raise TypeError("You must specify the name of the generator.")
         name = normalize_names(1, names)[0]
 
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         from sage.rings.finite_rings.finite_field_base import FiniteField
 
         f = self.monic()            # Given polynomial, made monic
@@ -4792,7 +4792,7 @@ cdef class Polynomial(CommutativePolynomial):
             F = F.fraction_field()
             f = self.change_ring(F)
 
-        if is_NumberField(F):
+        if isinstance(F, NumberField):
             from sage.rings.number_field.splitting_field import splitting_field
             return splitting_field(f, name, map, **kwds)
         elif isinstance(F, FiniteField):
@@ -5309,9 +5309,13 @@ cdef class Polynomial(CommutativePolynomial):
         from sage.rings.number_field.number_field import is_NumberField, NumberField
 
         if is_IntegerRing(R):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
-        if sage.rings.rational_field.is_RationalField(R) or is_NumberField(R):
+        from sage.rings.number_field.number_field_base import NumberField as NumberField_base
+
+        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField_base):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
         return R.fraction_field()[self._parent.variable_name()].quotient(self, names)
