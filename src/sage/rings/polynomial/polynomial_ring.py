@@ -1862,7 +1862,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: all(p.is_weil_polynomial() for p in L)
             True
 
-        Setting multiple leading coefficients:
+        Setting multiple leading coefficients::
 
             sage: R.<T> = QQ[]
             sage: l = R.weil_polynomials(4,2,lead=((1,0),(2,4),(1,2)))

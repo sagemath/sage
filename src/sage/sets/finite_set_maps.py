@@ -305,7 +305,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
         An exception :class:`~sage.categories.sets_cat.EmptySetError`
         is raised if this set is empty, that is if the codomain is
-        empty and the domain is not.
+        empty and the domain is not. ::
 
             sage: M = FiniteSetMaps(4, 0)
             sage: M.cardinality()

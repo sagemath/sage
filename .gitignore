@@ -19,6 +19,7 @@
 /config.status
 /configure
 /conftest*
+/confdefs.h
 
 /m4/sage_spkg_configures.m4
 

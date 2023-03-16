@@ -25,18 +25,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.schemes.curves.projective_curve import Hasse_bounds
-from .ell_field import EllipticCurve_field
-from .constructor import EllipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
-from sage.rings.all import Integer, ZZ, PolynomialRing, GF, polygen
-from sage.rings.finite_rings.element_base import is_FiniteFieldElement
 import sage.groups.generic as generic
-from . import ell_point
-from sage.arith.all import gcd, lcm, binomial
-from sage.misc.cachefunc import cached_method
+
+from sage.arith.functions import lcm
+from sage.arith.misc import binomial, GCD as gcd
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+from sage.misc.cachefunc import cached_method
+from sage.rings.finite_rings.element_base import is_FiniteFieldElement
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.schemes.curves.projective_curve import Hasse_bounds
+from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+
+from . import ell_point
+from .constructor import EllipticCurve
+from .ell_field import EllipticCurve_field
 
 
 class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_field):
@@ -1125,7 +1131,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             ...
             ValueError: Curves have different base fields: use the field parameter.
 
-        When the field is given:
+        When the field is given::
 
             sage: E1 = EllipticCurve(GF(13^2,'a'),[2,7]); E1
             Elliptic Curve defined by y^2 = x^3 + 2*x + 7 over Finite Field in a of size 13^2

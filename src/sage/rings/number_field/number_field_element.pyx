@@ -169,9 +169,8 @@ def _inverse_mod_generic(elt, I):
     """
     from sage.matrix.constructor import matrix
     R = elt.parent()
-    try:
-        I = R.ideal(I)
-    except ValueError:
+    I = R.number_field().fractional_ideal(I)
+    if not I.is_integral():
         raise ValueError("inverse is only defined modulo integral ideals")
     if I == 0:
         raise ValueError("inverse is not defined modulo the zero ideal")
@@ -1987,6 +1986,9 @@ cdef class NumberFieldElement(FieldElement):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
+        from .order import is_NumberFieldOrder
+        if is_NumberFieldOrder(K):
+            K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
         for P,e in fac:
@@ -1998,6 +2000,29 @@ cdef class NumberFieldElement(FieldElement):
         element_product = prod([p**e for p,e in element_fac], K(1))
         from sage.structure.all import Factorization
         return Factorization(element_fac, unit=self/element_product)
+
+    def is_prime(self):
+        r"""
+        Test whether this number-field element is prime as
+        an algebraic integer.
+
+        Note that the behavior of this method differs from the behavior
+        of :meth:`~sage.structure.element.RingElement.is_prime` in a
+        general ring, according to which (number) fields would have no
+        nonzero prime elements.
+
+        EXAMPLES::
+
+            sage: K.<i> = NumberField(x^2+1)
+            sage: (1+i).is_prime()
+            True
+            sage: ((1+i)/2).is_prime()
+            False
+        """
+        if not self or not self.is_integral():
+            return False
+        I = self.number_field().fractional_ideal(self)
+        return I.is_prime()
 
     @coerce_binop
     def gcd(self, other):
@@ -2068,7 +2093,8 @@ cdef class NumberFieldElement(FieldElement):
         if not is_NumberFieldOrder(R) or not R.is_maximal():
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
-        g = R.ideal(self, other).gens_reduced()
+        K = R.number_field()
+        g = K.fractional_ideal(self, other).gens_reduced()
         if len(g) > 1:
             raise ArithmeticError("ideal (%r, %r) is not principal, gcd is not defined" % (self, other) )
 
