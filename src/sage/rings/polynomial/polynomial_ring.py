@@ -2055,6 +2055,19 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
         from sage.rings.polynomial.ideal import Ideal_1poly_field
         return Ideal_1poly_field
 
+    def is_noetherian(self):
+        """
+        Every principal ideal domain is noetherian, so we return ``True``.
+
+        EXAMPLES::
+
+            sage: ZZ.is_noetherian()
+            True
+        """
+        # This duplicates PrincipalIdealDomains.ParentMethods.is_noetherian;
+        # but we have to override the method PolynomialRing_general.is_noetherian.
+        return True
+
     def divided_difference(self, points, full_table=False):
         r"""
         Return the Newton divided-difference coefficients of the
