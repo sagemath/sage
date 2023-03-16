@@ -911,8 +911,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         .. WARNING::
 
-            The usage of this method can be very computationally
-            expensive. This can happen if the rank is greater than four,
+            The usage of this method can be computationally
+            expensive e.g. if the rank is greater than four,
             or if `q` is large. Setting the ``nonzero`` flag to ``True``
             can speed up the computation considerably if the Drinfeld
             module generator possesses multiple zero coefficients.
@@ -983,18 +983,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             TypeError: coefficients indices must be integers
+
             sage: phi.basic_j_invariant_parameters([1, 10])
             Traceback (most recent call last):
             ...
             ValueError: indices must be > 0 and < 3
+
             sage: phi.basic_j_invariant_parameters([1, 1])
             Traceback (most recent call last):
             ...
             ValueError: indices must be distinct and sorted
+
             sage: phi.basic_j_invariant_parameters([2, 1])
             Traceback (most recent call last):
             ...
             ValueError: indices must be distinct and sorted
+
             sage: phi.basic_j_invariant_parameters('x')
             Traceback (most recent call last):
             ...
@@ -1030,28 +1034,21 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         #   = d_r (q^r - 1)
         for idx, i in enumerate(coeff_indices):
             equation.append(q**i - 1)
-
             # Create inequalities of the form 0 <= delta_i
             lower_bounds = [0] * (len(coeff_indices) + 2)
             lower_bounds[idx + 1] = 1
-
             # Create inequalities of the form
-            # delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
+            #   delta_i <= (q^r - 1)/(q^{gcd(i,r)} - 1)
             upper_bounds = [Integer((q**r - 1) / (q**(gcd(i, r)) - 1))]\
                             + [0]*(len(coeff_indices) + 1)
             upper_bounds[idx + 1] = -1
-
             inequalities.extend((lower_bounds, upper_bounds))
-
         equation.append(1 - q**r)
-
         # Create the polyhedron defined by the equation and the
         # inequalities.
         polyhedron = Polyhedron(ieqs=inequalities, eqns=[equation])
-
         # Compute its integral points
         integral_points = polyhedron.integral_points()
-
         return [(tuple(coeff_indices), tuple(p)) for p in integral_points
                 if gcd(p) == 1]
 
@@ -1060,8 +1057,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return a dictionary whose keys are all the basic `j`-invariants
         parameters and values are the corresponding `j`-invariant.
 
-        See the method :meth:`j_invariant` for the definition of the
-        basic `j`-invariants.
+        See the method :meth:`j_invariant` for definitions.
 
         EXAMPLES::
 
@@ -1311,12 +1307,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 psi._gen.coefficients(sparse=False))):
             return False
         # Check that all the nonzero basic j-invariants agree
-        isom = True
         for p in self.basic_j_invariant_parameters(nonzero=True):
-            if self.j_invariant(p, check=False) != psi.j_invariant(p,check=False):
-                isom = False
-                break
-        return isom
+            if self.j_invariant(p, check=False) != psi.j_invariant(p, check=False):
+                return False
+        return True
 
     def j_invariant(self, parameter=None, check=True):
         r"""
@@ -1445,43 +1439,53 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.j_invariant()
             Traceback (most recent call last):
             ...
-            TypeError: parameter must be different from NoneType if the rank is greater than 2
+            TypeError: parameter must not be None if the rank is greater than 2
+
             sage: phi.j_invariant(-1)
             Traceback (most recent call last):
             ...
             ValueError: integer parameter must be >= 1 and < the rank (=4)
+
             sage: phi.j_invariant('x')
             Traceback (most recent call last):
             ...
             TypeError: parameter must be a tuple or a list of length 2 or an integer
+
             sage: phi.j_invariant((1, 2, 3))
             Traceback (most recent call last):
             ...
             ValueError: list or tuple parameter must be of length 2
+
             sage: phi.j_invariant(('x', (1, 2, 3)))
             Traceback (most recent call last):
             ...
             TypeError: list or tuple parameter must contain tuples or lists
+
             sage: phi.j_invariant(((1, 2), 'x'))
             Traceback (most recent call last):
             ...
             TypeError: list or tuple parameter must contain tuples or lists
+
             sage: phi.j_invariant(((1, 2, 3, 4, 5), (2, 1)))
             Traceback (most recent call last):
             ...
             ValueError: components of tuple or list parameter have incorrect length
+
             sage: phi.j_invariant(((1, 'x'), (2, 3, 8)))
             Traceback (most recent call last):
             ...
             TypeError: components of tuple or list parameter must contain only integers
+
             sage: phi.j_invariant(((1, 2), (2, 3, 'x')))
             Traceback (most recent call last):
             ...
             TypeError: components of tuple or list parameter must contain only integers
+
             sage: phi.j_invariant(((1, 2), (4, 3, 7)))
             Traceback (most recent call last):
             ...
             ValueError: parameter does not satisfy the weight-0 condition
+
             sage: phi.j_invariant(((1, 2), (4, 3, 7)), check=False)
             1/T^13
         """
@@ -1489,8 +1493,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         if parameter is None:
             if r != 2:
-                raise TypeError("parameter must be different from "
-                                 "NoneType if the rank is greater than 2")
+                raise TypeError("parameter must not be None "
+                                 "if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if parameter in ZZ:
             if parameter <= 0 or parameter >= r:
