@@ -676,7 +676,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
               From: Multivariate Polynomial Ring in x, y over Rational Field
               To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
               Defn: Natural quotient map
-            sage: L = S.lifting_map(); L
+            sage: L = S.lifting_map(); L                                                                                # optional - sage.libs.singular
             Set-theoretic ring morphism:
               From: Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
               To:   Multivariate Polynomial Ring in x, y over Rational Field
@@ -1012,7 +1012,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<a,b> = R.quotient(x^2 + y^2)
+            sage: S.<a,b> = R.quotient(x^2 + y^2)                                       # optional - sage.libs.singular
             sage: S.coerce(0)                                                           # optional - sage.libs.singular
             0
             sage: S.coerce(2/3)                                                         # optional - sage.libs.singular

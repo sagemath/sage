@@ -1092,8 +1092,8 @@ cdef class RingHomomorphism(RingMap):
         (:trac:`31178`)::
 
             sage: R.<x,y> = QQ[]
-            sage: B.<c,d> = R.quotient(R.ideal(x))
-            sage: g = R.hom([d^2, d^3], B)
+            sage: B.<c,d> = R.quotient(R.ideal(x))                                      # optional - sage.libs.singular
+            sage: g = R.hom([d^2, d^3], B)                                              # optional - sage.libs.singular
             sage: g.inverse_image(d)                                                    # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
@@ -1355,8 +1355,8 @@ cdef class RingHomomorphism(RingMap):
             ZeroDivisionError: ring homomorphism not surjective
             sage: f.is_injective()                                                      # optional - sage.libs.singular
             True
-            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)
-            sage: g = Q.hom([y*z, x*z, x*y], Q)
+            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # optional - sage.libs.singular
+            sage: g = Q.hom([y*z, x*z, x*y], Q)                                         # optional - sage.libs.singular
             sage: g.inverse()                                                           # optional - sage.libs.singular
             Ring endomorphism of Quotient of Multivariate Polynomial Ring
             in x, y, z over Rational Field by the ideal (x*y*z - 1)

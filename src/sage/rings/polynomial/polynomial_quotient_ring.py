@@ -1106,14 +1106,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         irreducible::
 
             sage: x = polygen(ZZ, 'x')
-            sage: B = ZZ.extension(x^2 - 5, 'a')
-            sage: R.<y> = PolynomialRing(B)
-            sage: S = R.quotient(y^2 - y - 1)                                   # optional - sage.libs.pari
-            sage: S.is_integral_domain()                                        # optional - sage.libs.pari
+            sage: B = ZZ.extension(x^2 - 5, 'a')                                        # optional - sage.rings.number_field
+            sage: R.<y> = PolynomialRing(B)                                             # optional - sage.rings.number_field
+            sage: S = R.quotient(y^2 - y - 1)                                           # optional - sage.libs.pari sage.rings.number_field
+            sage: S.is_integral_domain()                                                # optional - sage.libs.pari sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_integral_domain(proof = False)                           # optional - sage.libs.pari
+            sage: S.is_integral_domain(proof = False)                                   # optional - sage.libs.pari sage.rings.number_field
             False
 
         The reason that the modulus y^2 - y -1 is not prime is that it

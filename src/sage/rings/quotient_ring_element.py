@@ -693,7 +693,7 @@ class QuotientRingElement(RingElement):
 
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: (a+3*a*b+b).lt()
+            sage: (a + 3*a*b + b).lt()                                                      # optional - sage.libs.singular
             3*a*b
         """
         return self.__class__(self.parent(), self.__rep.lt())
