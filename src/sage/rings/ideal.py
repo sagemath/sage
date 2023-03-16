@@ -376,11 +376,11 @@ class Ideal_generic(MonoidElement):
         EXAMPLES::
 
             sage: P.<a,b,c> = QQ[]
-            sage: I = P*[a, b]
-            sage: a + b in I
+            sage: I = P * [a, b]
+            sage: a + b in I                                                            # optional - sage.libs.singular
             True
             sage: P2.<w,x,y,z> = QQ[]
-            sage: x + 2*y + w*z in I
+            sage: x + 2*y + w*z in I                                                    # optional - sage.libs.singular
             False
         """
         try:
@@ -800,24 +800,24 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal([x, y])
-            sage: I.is_prime()        # a maximal ideal
+            sage: I.is_prime()        # a maximal ideal                                 # optional - sage.libs.singular
             True
-            sage: I = R.ideal([x^2-y])
-            sage: I.is_prime()        # a non-maximal prime ideal
+            sage: I = R.ideal([x^2 - y])
+            sage: I.is_prime()        # a non-maximal prime ideal                       # optional - sage.libs.singular
             True
             sage: I = R.ideal([x^2, y])
-            sage: I.is_prime()        # a non-prime primary ideal
+            sage: I.is_prime()        # a non-prime primary ideal                       # optional - sage.libs.singular
             False
             sage: I = R.ideal([x^2, x*y])
-            sage: I.is_prime()        # a non-prime non-primary ideal
+            sage: I.is_prime()        # a non-prime non-primary ideal                   # optional - sage.libs.singular
             False
 
             sage: S = Integers(8)
-            sage: S.ideal(0).is_prime()
+            sage: S.ideal(0).is_prime()                                                 # optional - sage.libs.singular
             False
-            sage: S.ideal(2).is_prime()
+            sage: S.ideal(2).is_prime()                                                 # optional - sage.libs.singular
             True
-            sage: S.ideal(4).is_prime()
+            sage: S.ideal(4).is_prime()                                                 # optional - sage.libs.singular
             False
 
         Note that this method is not implemented for all rings where it
@@ -888,7 +888,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal(x^2, x*y)
-            sage: I.embedded_primes()
+            sage: I.embedded_primes()                                                   # optional - sage.libs.singular
             [Ideal (y, x) of Multivariate Polynomial Ring in x, y over Rational Field]
         """
         # by definition, embedded primes are associated primes that

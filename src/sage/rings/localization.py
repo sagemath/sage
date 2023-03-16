@@ -150,7 +150,7 @@ Obtain specializations in characteristic 0::
 
 TESTS::
 
-    sage: TestSuite(L).run()
+    sage: TestSuite(L).run()                                                                        # optional - sage.libs.singular sage.modules
 
 AUTHORS:
 
@@ -392,7 +392,7 @@ class LocalizationElement(IntegralDomainElement):
             sage: L = P.localization(X - Y)
             sage: x, y = L.gens()
             sage: p = (x^2 - y^2)/(x-y)^2                                                           # optional - sage.libs.singular
-            sage: p.factor()
+            sage: p.factor()                                                                        # optional - sage.libs.singular
             (1/(x - y)) * (x + y)
         """
         num = self._value.numerator()

@@ -1640,9 +1640,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         An example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)
-            sage: R.<x,y,z,w> = PolynomialRing(F,4)
-            sage: R.macaulay_resultant([z,x^3,5*y,w])                                               # optional - sage.modules
+            sage: F = FiniteField(11)                                                               # optional - sage.libs.pari
+            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                                # optional - sage.libs.pari
+            sage: R.macaulay_resultant([z,x^3,5*y,w])                                               # optional - sage.libs.pari sage.modules
             4
 
         Example when the denominator in the algorithm vanishes(in this case

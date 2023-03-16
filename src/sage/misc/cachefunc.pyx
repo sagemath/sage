@@ -278,18 +278,18 @@ ought to be chosen. A typical example is
 (several arguments)::
 
     sage: P.<a,b,c,d> = QQ[]
-    sage: I = P*[a,b]
+    sage: I = P * [a, b]
     sage: I.gens()
     [a, b]
     sage: I.gens() is I.gens()
     True
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # optional - sage.libs.singular
     [a, b]
-    sage: I.groebner_basis() is I.groebner_basis()
+    sage: I.groebner_basis() is I.groebner_basis()                                      # optional - sage.libs.singular
     True
-    sage: type(I.gens)
+    sage: type(I.gens)                                                                  # optional - sage.libs.singular
     <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
-    sage: type(I.groebner_basis)
+    sage: type(I.groebner_basis)                                                        # optional - sage.libs.singular
     <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
 By :trac:`12951`, the cached_method decorator is also supported on non-c(p)def
@@ -847,7 +847,7 @@ cdef class CachedFunction():
         TESTS::
 
             sage: P.<x,y> = QQ[]
-            sage: I = P*[x,y]
+            sage: I = P * [x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: print(sage_getdoc(I.groebner_basis)) # indirect doctest
             WARNING: the enclosing module is marked...
@@ -1445,30 +1445,30 @@ class CachedMethodPickle():
     EXAMPLES::
 
         sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-        sage: I = R*(x^3 + y^3 + z^3,x^4-y^4)
-        sage: I.groebner_basis()
+        sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
+        sage: I.groebner_basis()                                                        # optional - sage.libs.singular
         [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
          x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
          x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]
-        sage: I.groebner_basis
+        sage: I.groebner_basis                                                          # optional - sage.libs.singular
         Cached version of <function ...groebner_basis at 0x...>
 
     We now pickle and unpickle the ideal. The cached method
     ``groebner_basis`` is replaced by a placeholder::
 
-        sage: J = loads(dumps(I))
-        sage: J.groebner_basis
+        sage: J = loads(dumps(I))                                                       # optional - sage.libs.singular
+        sage: J.groebner_basis                                                          # optional - sage.libs.singular
         Pickle of the cached method "groebner_basis"
 
     But as soon as any other attribute is requested from the
     placeholder, it replaces itself by the cached method, and
     the entries of the cache are actually preserved::
 
-        sage: J.groebner_basis.is_in_cache()
+        sage: J.groebner_basis.is_in_cache()                                            # optional - sage.libs.singular
         True
-        sage: J.groebner_basis
+        sage: J.groebner_basis                                                          # optional - sage.libs.singular
         Cached version of <function ...groebner_basis at 0x...>
-        sage: J.groebner_basis() == I.groebner_basis()
+        sage: J.groebner_basis() == I.groebner_basis()                                  # optional - sage.libs.singular
         True
 
     TESTS:
@@ -1547,10 +1547,10 @@ class CachedMethodPickle():
         TESTS::
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: I = R*(x^3 + y^3 + z^3,x^4-y^4)
-            sage: G = I.groebner_basis()
-            sage: J = loads(dumps(I))
-            sage: J.groebner_basis  #indirect doctest
+            sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
+            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
+            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
+            sage: J.groebner_basis  # indirect doctest                                  # optional - sage.libs.singular
             Pickle of the cached method "groebner_basis"
         """
         return 'Pickle of the cached method "{}"'.format(self._name)
@@ -1563,22 +1563,22 @@ class CachedMethodPickle():
         TESTS::
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: I = R*(x^3 + y^3 + z^3,x^4-y^4)
-            sage: I.groebner_basis()
+            sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
+            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
             [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
              x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]
-            sage: J = loads(dumps(I))
-            sage: J.groebner_basis
+            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
+            sage: J.groebner_basis                                                      # optional - sage.libs.singular
             Pickle of the cached method "groebner_basis"
 
         When we now pickle ``J``, the pickle of the cached method
         needs to be taken care of::
 
-            sage: K = loads(dumps(J))  # indirect doctest
-            sage: K.groebner_basis
+            sage: K = loads(dumps(J))  # indirect doctest                               # optional - sage.libs.singular
+            sage: K.groebner_basis                                                      # optional - sage.libs.singular
             Pickle of the cached method "groebner_basis"
-            sage: K.groebner_basis.cache
+            sage: K.groebner_basis.cache                                                # optional - sage.libs.singular
             {(('', None, None, False), ()):
             [y^5*z^3 - 1/4*x^2*z^6 + 1/2*x*y*z^6 + 1/4*y^2*z^6,
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
@@ -1623,10 +1623,10 @@ class CachedMethodPickle():
         TESTS::
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: I = R*(x^3 + y^3 + z^3,x^4-y^4)
-            sage: G = I.groebner_basis()
-            sage: J = loads(dumps(I))
-            sage: J.groebner_basis
+            sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
+            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
+            sage: J = loads(dumps(I))                                                   # optional - sage.libs.singular
+            sage: J.groebner_basis                                                      # optional - sage.libs.singular
             Pickle of the cached method "groebner_basis"
 
         If an attribute of name ``s`` is requested (say,
@@ -1641,9 +1641,9 @@ class CachedMethodPickle():
         In that way, the unpickling of the cached method is
         finally accomplished::
 
-            sage: J.groebner_basis.is_in_cache()  #indirect doctest
+            sage: J.groebner_basis.is_in_cache()  # indirect doctest                    # optional - sage.libs.singular
             True
-            sage: J.groebner_basis
+            sage: J.groebner_basis                                                      # optional - sage.libs.singular
             Cached version of <function ...groebner_basis at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
@@ -1757,14 +1757,14 @@ cdef class CachedMethodCaller(CachedFunction):
         TESTS::
 
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: I = R*(x^3 + y^3 + z^3,x^4-y^4)
-            sage: G = I.groebner_basis()
-            sage: J = loads(dumps(I))  #indirect doctest
-            sage: J.groebner_basis
+            sage: I = R * (x^3 + y^3 + z^3, x^4 - y^4)
+            sage: G = I.groebner_basis()                                                # optional - sage.libs.singular
+            sage: J = loads(dumps(I))  # indirect doctest                               # optional - sage.libs.singular
+            sage: J.groebner_basis                                                      # optional - sage.libs.singular
             Pickle of the cached method "groebner_basis"
-            sage: J.groebner_basis.is_in_cache()
+            sage: J.groebner_basis.is_in_cache()                                        # optional - sage.libs.singular
             True
-            sage: J.groebner_basis
+            sage: J.groebner_basis                                                      # optional - sage.libs.singular
             Cached version of <function ...groebner_basis at 0x...>
         """
         if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance,self._cachedmethod._cache_name):
@@ -1779,12 +1779,12 @@ cdef class CachedMethodCaller(CachedFunction):
         EXAMPLES::
 
             sage: P.<a,b,c,d> = QQ[]
-            sage: I = P*[a,b]
-            sage: I.groebner_basis()
+            sage: I = P * [a, b]
+            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
             [a, b]
-            sage: I.groebner_basis._instance_call() is I.groebner_basis()
+            sage: I.groebner_basis._instance_call() is I.groebner_basis()               # optional - sage.libs.singular
             False
-            sage: I.groebner_basis._instance_call() == I.groebner_basis()
+            sage: I.groebner_basis._instance_call() == I.groebner_basis()               # optional - sage.libs.singular
             True
 
         ::

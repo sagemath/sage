@@ -1083,8 +1083,8 @@ cdef class RingHomomorphism(RingMap):
 
         A degenerate case::
 
-            sage: R.<x,y> = QQ['x,y'].quotient(1)
-            sage: f = R.hom([y, x], R)
+            sage: R.<x,y> = QQ['x,y'].quotient(1)                                       # optional - sage.libs.singular
+            sage: f = R.hom([y, x], R)                                                  # optional - sage.libs.singular
             sage: f.inverse_image(x), f.inverse_image(y)  # indirect doctest            # optional - sage.libs.singular
             (0, 0)
 
@@ -1166,8 +1166,8 @@ cdef class RingHomomorphism(RingMap):
         A degenerate case::
 
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([0, 0], R.quotient(1))
-            sage: f.kernel().is_one()
+            sage: f = R.hom([0, 0], R.quotient(1))                                      # optional - sage.libs.singular
+            sage: f.kernel().is_one()                                                   # optional - sage.libs.singular
             True
 
         ::
@@ -1353,7 +1353,7 @@ cdef class RingHomomorphism(RingMap):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not surjective
-            sage: f.is_injective()
+            sage: f.is_injective()                                                      # optional - sage.libs.singular
             True
             sage: Q.<x,y,z> = R.quotient(x*y*z - 1)
             sage: g = Q.hom([y*z, x*z, x*y], Q)
@@ -1618,7 +1618,7 @@ cdef class RingHomomorphism(RingMap):
             sage: R.<x,y,z> = QQ[]
             sage: R.hom([y*z, x*z, x*y], R).is_surjective()                     # optional - sage.libs.singular
             False
-            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)
+            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                             # optional - sage.libs.singular
             sage: R.hom([y*z, x*z, x*y], Q).is_surjective()                     # optional - sage.libs.singular
             True
 
@@ -1643,7 +1643,7 @@ cdef class RingHomomorphism(RingMap):
             sage: R.hom([y*z, x*z, x*y], R).is_invertible()                     # optional - sage.libs.singular
             False
             sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                             # optional - sage.libs.singular
-            sage: Q.hom([y*z, x*z, x*y], Q).is_invertible()
+            sage: Q.hom([y*z, x*z, x*y], Q).is_invertible()                     # optional - sage.libs.singular
             True
 
         ALGORITHM:
@@ -2420,7 +2420,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         sage: S.<x> = QQ[]
         sage: f = S.hom([x^2])
         sage: g = f.extend_to_fraction_field()                                          # optional - sage.libs.singular
-        sage: type(g)
+        sage: type(g)                                                                   # optional - sage.libs.singular
         <class 'sage.rings.morphism.RingHomomorphism_from_fraction_field'>
     """
     def __init__(self, parent, morphism):
