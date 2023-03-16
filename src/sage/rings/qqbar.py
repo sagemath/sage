@@ -578,7 +578,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import NumberField, GaussianField, CyclotomicField
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
-from sage.arith.all import factor
+from sage.arith.misc import factor
 from . import infinity
 from sage.categories.action import Action
 
@@ -730,7 +730,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         REFERENCES:
 
         - [GCL1992]_ Section 8.8
-        - https://trac.sagemath.org/attachment/ticket/25390/qqbar.pdf
+        - :trac:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
 
         .. TODO::
 
@@ -908,7 +908,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             #    norm_f = prod([numfield_f.map_coefficients(h)
             #                   for h in numfield.embeddings(QQbar)])
             #
-            # As nbruin pointed out during the review of Trac #25390,
+            # As nbruin pointed out during the review of Issue #25390,
             # this can be accomplished more efficiently using the resultant
             # of the polynomial with the number field's minimal polynomial.
             #
@@ -1534,7 +1534,7 @@ def is_AlgebraicRealField(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicRealField is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicRealField instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         [True, False, False, False, False]
     """
     from sage.misc.superseded import deprecation
@@ -2087,7 +2087,7 @@ def is_AlgebraicField(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicField is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicField instead
-        See https://trac.sagemath.org/32660 for details.
+        See https://github.com/sagemath/sage/issues/32660 for details.
         [False, True, False, False, False]
     """
     from sage.misc.superseded import deprecation
@@ -2113,7 +2113,7 @@ def is_AlgebraicField_common(F):
         doctest:warning...
         DeprecationWarning: is_AlgebraicField_common is deprecated;
         use isinstance(..., sage.rings.abc.AlgebraicField_common) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         [True, True, False, False, False]
     """
     from sage.misc.superseded import deprecation
@@ -2230,30 +2230,76 @@ def clear_denominators(poly):
         (2, x + 3)
         sage: clear_denominators(x^2 + x/2 + 1/4)
         (2, x^2 + x + 1)
-    """
 
-    # This algorithm factors the polynomial denominators.
-    # We should check the size of the denominators and switch to
-    # an alternate, less precise algorithm if we decide factoring
-    # would be too slow.
+    TESTS::
+
+        sage: R.<y> = QQ[]
+        sage: coefficients_as_integer_ratios = [
+        ....:     (-2774600080567517563395913264491323241652779066919616441429094563840,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (-24216324060414384566983400245979288839929814383090701293489050615808,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (325579773864372490083706670433410006284520887405882567940047555526656,
+        ....:      180143564412823751787837643000565238870031999674661705128541236331583133845246252269971),
+        ....:     (-86736048492777879473586471630941922517134071457946320753641122078523392,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (-2338058278498910195688689352766977573607428722429118859280880481590329344,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (105830270645785996318880019945503938356315302592627229453391693256551317504,
+        ....:      1381100660498315430373421929671000164670245330839073072652149478542137359480221267403111),
+        ....:     (1110926147990548796149597141538460730252912439930561079348611699181798425600,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (-89705438380888704653335165590083767769953879654958783855317882966200828559360,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (1151092895747371986483047191334923516591005329489629755485810229546333821625856,
+        ....:      1381100660498315430373421929671000164670245330839073072652149478542137359480221267403111),
+        ....:     (24725641793859400310483886670136079788266826658111372723121573233077840328938576,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (-31051495080139473677925068000403254349133134904365702868216464107777210775457136,
+        ....:      153455628944257270041491325519000018296693925648785896961349942060237484386691251933679),
+        ....:     (9431591461895130351865642769482226964622378075329823505708119342634182162193000560,
+        ....:      4143301981494946291120265789013000494010735992517219217956448435626412078440663802209333),
+        ....:     (1721694880863483428337378731387732043714427651970488363462560317808769716807148992,
+        ....:      153455628944257270041491325519000018296693925648785896961349942060237484386691251933679),
+        ....:     (255327752077837584624694974814916395144764296822788813014081161094149724325120096,
+        ....:      27080405107810106477910233915117650287651869232138687699061754481218379597651397400061),
+        ....:     (238105337335596176836773151768694069523377650990453522899627157538495252117232992338,
+        ....:      27080405107810106477910233915117650287651869232138687699061754481218379597651397400061),
+        ....:     (1255826892296350234297164500548658984205287902407560187136301197703464130999349114638,
+        ....:      14336685057075938723599535602121108975815695475838128781856222960645024492874269211797),
+        ....:     (1, 1)]
+        sage: p = R(coefficients_as_integer_ratios)
+        sage: a = QQbar.polynomial_root(
+        ....:     AA.common_polynomial(p),
+        ....:     CIF(RIF(-RR(0.036151142425748496), -RR(0.036151142425748489)),
+        ....:     RIF(-RR(0.011298617187916445), -RR(0.011298617187916443))))
+        sage: a.exactify()
+        sage: a
+        -0.03615114242574849? - 0.011298617187916444?*I
+    """
 
     d = poly.denominator()
     if d == 1:
         return d, poly
     deg = poly.degree()
-    factors = {}
-    for i in range(deg):
-        d = poly[i].denominator()
-        df = factor(d)
-        for f, e in df:
-            oe = 0
-            if f in factors:
-                oe = factors[f]
-            min_e = (e + (deg - i) - 1) // (deg - i)
-            factors[f] = max(oe, min_e)
-    change = 1
-    for f, e in factors.items():
-        change = change * f**e
+    denoms = [c.denominator() for c in poly]
+    if all(d.nbits() < 128 for d in denoms):
+        # Factor the polynomial denominators.
+        factors = {}
+        for i, d in enumerate(denoms):
+            df = factor(d)
+            for f, e in df:
+                oe = 0
+                if f in factors:
+                    oe = factors[f]
+                min_e = (e + (deg - i) - 1) // (deg - i)
+                factors[f] = max(oe, min_e)
+        change = 1
+        for f, e in factors.items():
+            change = change * f**e
+    else:
+        # Factoring would be too slow.
+        change = poly.monic().denominator()
     poly = poly * (change**deg)
     poly = poly(poly.parent().gen() / change)
     return change, poly
@@ -2854,7 +2900,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
     if not ar.overlaps(br):
         # NOTE: do not try to use "ar < br" here as it will coerce to a common
         # precision which is to be avoided. See
-        # https://trac.sagemath.org/ticket/29220
+        # https://github.com/sagemath/sage/issues/29220
         return 1 if ar._richcmp_(br, op_GT) else -1
 
     ai = a._value.imag()
@@ -2897,7 +2943,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
 
         # NOTE: do not try to use "ai < bi" here as it will coerce to a common
         # precision which is to be avoided. See
-        # https://trac.sagemath.org/ticket/29220
+        # https://github.com/sagemath/sage/issues/29220
         return 1 if ai._richcmp_(bi, op_GT) else -1
 
     # not able to determine equality
@@ -4910,7 +4956,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         if not ri1.overlaps(ri2):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return ri1._richcmp_(ri2, op)
 
         if op == op_EQ or op == op_NE:
@@ -5299,7 +5345,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             TypeError: unsupported operand parent(s) for ^: 'Algebraic Real Field' and 'Algebraic Real Field'
         """
         # For some crazy unspecified reason, we must allow this if the
-        # base is QQbar(1). See Trac #22120 and #24490.
+        # base is QQbar(1). See Issue #22120 and #24490.
         if self == 1:
             return self
         raise TypeError("unsupported operand parent(s) for ^: '{0}' and '{0}'".format(self.parent()))
@@ -5446,7 +5492,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         if not self._value.overlaps(other._value):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return self._value._richcmp_(other._value, op)
 
         if op == op_EQ or op == op_NE:
@@ -5487,7 +5533,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         if not self._value.overlaps(other._value):
             # NOTE: do not call richcmp here as self._value and other._value
             # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
+            # https://github.com/sagemath/sage/issues/29220
             return self._value._richcmp_(other._value, op)
 
         return rich_to_bool(op, (self - other).sign())
@@ -7482,7 +7528,7 @@ class ANRoot(ANDescr):
                 # This try/except can be triggered if ifield is Real
                 # but the entries in v have some imaginary part that
                 # is only known to be 0 to very low precision, e.g.,
-                # as in Trac #12727.  In such cases, we instead create
+                # as in Issue #12727.  In such cases, we instead create
                 # the polynomial over the appropriate complex interval
                 # field, which is mathematically safe, unlike taking
                 # real parts would be.

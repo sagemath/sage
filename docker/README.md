@@ -26,7 +26,7 @@ There are several flavours of this image.
     ```
     docker run -p8888:8888 sagemath/sagemath:latest sage-jupyter
     ```
-* [`sagemath/sagemath-dev`![image size](https://img.shields.io/microbadger/image-size/sagemath/sagemath-dev.svg)](https://hub.docker.com/r/sagemath/sagemath-dev) contains all the build artifacts to rebuild Sage quickly (currently, this is broken, see [#34241](https://trac.sagemath.org/ticket/34241).) This version is probably only relevant for Sage developers. Run this image with:
+* [`sagemath/sagemath-dev`![image size](https://img.shields.io/microbadger/image-size/sagemath/sagemath-dev.svg)](https://hub.docker.com/r/sagemath/sagemath-dev) contains all the build artifacts to rebuild Sage quickly (currently, this is broken, see [#34241](https://github.com/sagemath/sage/issues/34241).) This version is probably only relevant for Sage developers. Run this image with:
     ```
     docker run -it sagemath/sagemath-dev:develop
     ```

@@ -1140,7 +1140,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             :doc:`subring`
         """
         if self is not SR:
-            raise NotImplementedError('Cannot create subring of %s.' % (self,))
+            raise NotImplementedError('cannot create subring of %s' % (self,))
         from .subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
@@ -1325,7 +1325,7 @@ def is_SymbolicExpressionRing(R):
         doctest:warning...
         DeprecationWarning: is_SymbolicExpressionRing is deprecated;
         use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
-        See https://trac.sagemath.org/32665 for details.
+        See https://github.com/sagemath/sage/issues/32665 for details.
         False
         sage: is_SymbolicExpressionRing(SR)
         True

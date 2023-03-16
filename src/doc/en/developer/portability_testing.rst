@@ -1164,23 +1164,7 @@ provides sample ``devcontainer.json`` configuration files
 <https://github.com/sagemath/sage/tree/develop/.devcontainer/>`_ for this
 purpose.
 
-To get started, symlink (or copy) one of the sample files to
-``$SAGE_ROOT/.devcontainer/devcontainer.json``. For example, choose
-`$SAGE_ROOT/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
-<https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_, which uses the Docker image based on ``ubuntu-jammy-standard``,
-the most recent
-development version of Sage (``dev`` tag), and a full installation of
-the Sage distribution (``with-targets``).
-
-In macOS for example, you can do this using the shell as follows::
-
-  [mkoeppe@sage sage] $ (cd .devcontainer && ln -s portability-ubuntu-jammy-standard/devcontainer.json .)
-
-Now start VS Code::
-
-  [mkoeppe@sage sage] $ code .
-
-Then VS Code may prompt you whether you would like to open the current
+If you open the sage folder in VS Code, it may prompt you whether you would like to open the current
 directory in the dev container (yes).  If it does not, use the command palette
 (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the command "Remote-Containers:
 Reopen Folder in Container" , and hit :kbd:`Enter`.
@@ -1189,6 +1173,14 @@ If the above ``code .`` command does not work, start VS Code as a regular
 application, then in the command palette of VS Code, enter "Remote-Containers:
 Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
+
+VS Code then prompts you to choose a dev container configuration. 
+For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
+which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
+development version of Sage (``dev`` tag), and a full installation of
+the Sage distribution (``with-targets``). Other dev container configurations
+are described below.
 
 Once VS Code starts configuring the dev container, by clicking on "show log",
 you can see what it does:
@@ -1225,8 +1217,7 @@ in a terminal, `open a new terminal in VS Code
    ``configure`` script.
 
 You can edit a copy of the configuration file to change to a different platform, another
-version, or build stage.  After editing the configuration file (or changing the
-symlink), run "Remote-Containers: Rebuild Container" from the command
+version, or build stage.  After editing the configuration file, run "Remote-Containers: Rebuild Container" from the command
 palette. See the `VS Code devcontainer.json reference
 <https://code.visualstudio.com/docs/remote/devcontainerjson-reference>`_
 and the `GitHub introduction to dev containers
@@ -1248,8 +1239,7 @@ installation of SageMath in this container by building from the current source t
   project <https://hub.docker.com/r/computop/sage/>`_, providing
   SnapPy, Regina, PHCPack, etc.
 
-If you want to use one of these ``devcontainer.json`` files, symlink (or copy)
-it and start VS Code as explained above. After VS Code finished configuring the
+After VS Code finished configuring the
 dev container, to use Sage in a terminal, `open a new terminal in VS Code
 <https://code.visualstudio.com/docs/terminal/basics>`_, type ``./sage`` and hit
 :kbd:`Enter`.
@@ -1284,8 +1274,7 @@ work without change) or to adapt them to your needs.
   project <https://hub.docker.com/r/computop/sage/>`_, providing
   SnapPy, Regina, PHCPack, etc.
 
-If you want to use one of these ``devcontainer.json`` files, symlink (or copy)
-it and start VS Code as explained above. After VS Code finished configuring the
+After VS Code finished configuring the
 dev container, to use Sage in a terminal, `open a new terminal in VS Code
 <https://code.visualstudio.com/docs/terminal/basics>`_, type ``sage`` and hit
 :kbd:`Enter`. (Do not use ``./sage``; this will not work because the source

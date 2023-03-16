@@ -60,7 +60,7 @@ We compute in a quotient of a polynomial ring over `\ZZ/17\ZZ`::
 Note that the result of a computation is not necessarily reduced::
 
     sage: (a+b)^17
-    256*a*b^16 + 256*b^17
+    a*b^16 + b^17
     sage: S(17) == 0
     True
 
@@ -2187,7 +2187,7 @@ class MPolynomialIdeal_singular_repr(
             return PolynomialSequence(nR, sorted([nR(f) for f in nIs],reverse=True), immutable=True)
 
         else:
-            raise TypeError("Cannot convert basis with given algorithm")
+            raise TypeError("cannot convert basis with given algorithm")
 
     @handle_AA_and_QQbar
     def elimination_ideal(self, variables, algorithm=None, *args, **kwds):

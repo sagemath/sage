@@ -296,14 +296,14 @@ cpdef to_backend(arg):
 
 cpdef from_backend(arg, E):
     r"""
-    Try to reconstruct something (somehow related to ``E``) 
+    Try to reconstruct something (somehow related to ``E``)
     whose backend is ``arg``.
 
     INPUT:
 
     - ``arg`` -- any argument
 
-    - ``E`` -- a ring extension 
+    - ``E`` -- a ring extension
 
     EXAMPLES::
 

@@ -984,7 +984,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             if isinstance(other, Polynomial):
                 # we have a univariate polynomial.
                 # That case had only been implemented
-                # in trac ticket #9138:
+                # in github issue #9138:
                 for i in range(len(coefs)):
                     if self._base(coefs[i]).is_one():
                         p += var_mapping[0]
@@ -1012,7 +1012,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         try:
             i = int(other)
         except Exception:
-            try:    # last chance: try Sage's conversions over GF(2), Trac #13284
+            try:    # last chance: try Sage's conversions over GF(2), Issue #13284
                 return self._convert(self.cover_ring()(other))
             except Exception:
                 raise TypeError("cannot convert %s to BooleanPolynomial" % (type(other)))
@@ -1221,7 +1221,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             sage: r = B.random_element(terms=(n/2)**2)
         """
         from sage.rings.integer import Integer
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
 
         if not vars_set:
             vars_set=range(self.ngens())

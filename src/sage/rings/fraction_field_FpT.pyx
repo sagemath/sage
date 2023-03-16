@@ -100,7 +100,7 @@ cdef class FpTElement(FieldElement):
         sage: R.<t> = GF(5)[]
         sage: K = R.fraction_field()
         sage: A.<x> = K[]
-        sage: x.divides(x)  # Testing ticket #27064
+        sage: x.divides(x)  # Testing issue #27064
         True
     """
 

@@ -1489,7 +1489,7 @@ cdef py_factorial(x):
     # factorial(x) is only defined for non-negative integers x
     # so we first test if x can be coerced into ZZ and is non-negative.
     # If this is not the case then we return the symbolic expression gamma(x+1)
-    # This fixes Trac 9240
+    # This fixes Issue 9240
     try:
         x_in_ZZ = ZZ(x)
         coercion_success = True

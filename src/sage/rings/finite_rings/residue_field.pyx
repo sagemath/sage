@@ -870,7 +870,7 @@ cdef class ReductionMap(Map):
         self._PBinv = PBinv
         self._to_order = to_order # used for lift
         self._PB = PB # used for lift
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 

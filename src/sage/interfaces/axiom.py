@@ -953,7 +953,7 @@ def is_AxiomElement(x):
         sage: from sage.interfaces.axiom import is_AxiomElement
         sage: is_AxiomElement(2)
         doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_AxiomElement(axiom(2))  # optional - axiom
         True
