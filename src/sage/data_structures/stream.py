@@ -385,12 +385,8 @@ class Stream_inexact(Stream):
             except KeyError:
                 c = self.get_coefficient(n)
                 self._cache[n] = c
-                if self._true_order:
-                    return c
-                # we assume that self._approximate_order is not in
-                # self._cache. (there should be a possibility to
-                # check this assumption in a testsuite)
-                if n == self._approximate_order:
+                # note that self._approximate_order is not in self._cache
+                if not self._true_order and n == self._approximate_order:
                     if c:
                         self._true_order = True
                         self._approximate_order = n
@@ -399,12 +395,13 @@ class Stream_inexact(Stream):
                         while ao in self._cache:
                             if self._cache[ao]:
                                 self._true_order = True
-                                self._approximate_order = ao
-                                return c
+                                break
                             ao += 1
                         self._approximate_order = ao
 
-                return c
+            return c
+
+        # Now we consider the dense implementation
 
         i = n - self._offset
         if i >= len(self._cache):
