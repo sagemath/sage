@@ -858,7 +858,7 @@ class RationalFunctionField_char_zero(RationalFunctionField):
             sage: [d(x^9,i) for i in range(10)]                                         # optional - sage.modules
             [x^9, 9*x^8, 36*x^7, 84*x^6, 126*x^5, 126*x^4, 84*x^3, 36*x^2, 9*x, 1]
         """
-        from .derivations import FunctionFieldHigherDerivation_char_zero
+        from .derivations_polymod import FunctionFieldHigherDerivation_char_zero
         return FunctionFieldHigherDerivation_char_zero(self)
 
 
@@ -988,5 +988,5 @@ class RationalFunctionField_global(RationalFunctionField):
             sage: [d(x^7,i) for i in range(10)]                                         # optional - sage.libs.pari
             [x^7, 2*x^6, x^5, 0, 0, x^2, 2*x, 1, 0, 0]
         """
-        from .derivations import RationalFunctionFieldHigherDerivation_global
+        from .derivations_polymod import RationalFunctionFieldHigherDerivation_global
         return RationalFunctionFieldHigherDerivation_global(self)
