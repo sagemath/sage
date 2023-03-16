@@ -1605,7 +1605,7 @@ class BinaryQF(SageObject):
             sage: xy is None or Q(*xy) == n
             True
 
-        ...also when using the ``"cornacchia"`` algorithm::
+        Also when using the ``"cornacchia"`` algorithm::
 
             sage: abc = [1,0,randrange(1,10^3)]
             sage: Q = BinaryQF(abc)
@@ -1674,7 +1674,7 @@ class BinaryQF(SageObject):
                 y_num = n // x - Q._a * x
                 if Q._b.divides(y_num):
                     y = y_num // Q._b
-                    return tuple(row[0]*x + row[1]*y for row in M.rows())
+                    return tuple([row[0]*x + row[1]*y for row in M.rows()])
 
             return None
 
@@ -1685,7 +1685,7 @@ class BinaryQF(SageObject):
             return tuple(map(ZZ, sol)) if sol else None
 
         if algorithm != 'general':
-            raise NotImplementedError(f'algorithm {algorithm!r} is unknown')
+            raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
 
         flag = 2  # single solution, possibly imprimitive
         sol = self.__pari__().qfbsolve(n, flag)
