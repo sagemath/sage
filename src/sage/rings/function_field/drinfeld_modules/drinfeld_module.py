@@ -1273,8 +1273,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def is_isomorphic(self, psi):
         r"""
-        Return ``True``  whether ``self`` is isomorphic to the Drinfeld module
-        `\psi`.
+        Return ``True``  whether ``self`` is isomorphic to the other
+        Drinfeld module
 
         EXAMPLES::
 
