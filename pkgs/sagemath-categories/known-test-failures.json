@@ -137,4 +137,5 @@
  "sage.sets.integer_range": {"failed": true, "walltime": 6.926319122314453},
  "sage.rings.tests": {"failed": true, "walltime": 1.0},
  "sage.cpython.wrapperdescr": {"failed": true, "walltime": 1.0},
- "sage.rings.polynomial.polynomial_ring_homomorphism": {"failed": true, "walltime": 1.0}}
+ "sage.rings.polynomial.polynomial_ring_homomorphism": {"failed": true, "walltime": 1.0},
+ "sage.rings.function_field.function_field_rational": {"failed": true, "walltime": 1.0}}
