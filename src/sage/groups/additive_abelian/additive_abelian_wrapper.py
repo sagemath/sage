@@ -718,12 +718,11 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
             continue
         # step 6
         _expand_basis_pgroup(p, alphas, vals, beta, h, list(e) + [p**v])
-#        assert alphas[-1].order() == p**vals[-1]
         break
     else:
         alphas.append(beta)
         vals.append(h)
-#        assert alphas[-1].order() == p**vals[-1]
+#    assert alphas[-1].order() == p**vals[-1]
 
 def basis_from_generators(gens, ords=None):
     r"""
