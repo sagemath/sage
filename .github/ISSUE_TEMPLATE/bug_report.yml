@@ -3,6 +3,11 @@ description: Report a bug
 title: "<title>"
 labels: "t: bug"
 body:
+  - type: markdown
+    attributes:
+      value: |
+        * Please search to see if an issue already exists for the bug you encountered.
+        * Please read [README.md](https://github.com/sagemath/sage/blob/develop/README.md) and [the Troubleshooting section in the Installation Guide](https://doc.sagemath.org/html/en/installation/troubles.html).
   - type: textarea
     attributes:
       label: Steps To Reproduce
@@ -48,15 +53,9 @@ body:
       required: true
   - type: checkboxes
     attributes:
-      label: Is there an existing issue for this?
-      description: Please search to see if an issue already exists for the bug you encountered.
+      label: Checklist
       options:
       - label: I have searched the existing issues for a bug report that matches the one I want to file, without success.
         required: true
-  - type: checkboxes
-    attributes:
-      label: Did you read the documentation and troubleshoot guide?
-      description: Please read [README.md](https://github.com/sagemath/sage/blob/develop/README.md) and [the Troubleshooting section in the Installation Guide](https://doc.sagemath.org/html/en/installation/troubles.html).
-      options:
       - label: I have read the documentation and troubleshoot guide
         required: true
