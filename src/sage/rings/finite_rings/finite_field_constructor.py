@@ -803,7 +803,7 @@ class FiniteFieldFactory(UniqueFactory):
             return obj
 
         key = obj._factory_data[2]
-        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, backend = key
+        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, check_prime, check_irreducible, backend = key
 
         order = kwds.pop("order", order)
 
@@ -819,7 +819,9 @@ class FiniteFieldFactory(UniqueFactory):
 
         proof = kwds.pop("proof", proof)
 
-        check_irreducible = kwds.pop("check_irreducible", True)
+        check_prime = kwds.pop("check_prime", check_prime)
+
+        check_irreducible = kwds.pop("check_irreducible", check_irreducible)
 
         prefix = kwds.pop("prefix", prefix)
 
@@ -834,7 +836,7 @@ class FiniteFieldFactory(UniqueFactory):
         if kwds:
             raise ValueError("can only change arguments that GF understands when changing a finite field")
 
-        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base, backend=backend)
+        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_prime=check_prime, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base, backend=backend)
 
     def create_object(self, version, key, **kwds):
         """
