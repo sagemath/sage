@@ -1524,7 +1524,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                            range(len(parameter[0])))
                 if left != right:
                     raise ValueError("parameter does not satisfy the "
-                                    "weight-0 condition")
+                                     "weight-0 condition")
         else:
             raise TypeError("parameter must be a tuple or a list of "
                             "length 2 or an integer")
