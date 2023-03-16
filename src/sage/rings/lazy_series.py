@@ -540,7 +540,7 @@ class LazyModuleElement(Element):
             sage: m = L(lambda n: n, valuation=0); m
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: m.map_coefficients(lambda c: c + 1)
-            2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+            2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + 8*z^7 + O(z^8)
 
         Test the zero series::
 
@@ -2648,7 +2648,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: N = L(lambda n: 1, valuation=0); N
             1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
             sage: M * N
-            z + 3*z^2 + 6*z^3 + 10*z^4 + 15*z^5 + 21*z^6 + O(z^7)
+            z + 3*z^2 + 6*z^3 + 10*z^4 + 15*z^5 + 21*z^6 + 28*z^7 + O(z^8)
 
             sage: L.one() * M is M
             True
@@ -2765,7 +2765,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: M = L(lambda n: n, valuation=0); M
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7)
             sage: M^2
-            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + O(z^7)
+            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + 56*z^7 + 84*z^8 + O(z^9)
 
         We can create a really large power of a monomial, even with
         the dense implementation::
@@ -2947,7 +2947,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: N = L(lambda n: 1, 0); N
             1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
             sage: P = M / N; P
-            z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
+            z + z^2 + z^3 + z^4 + z^5 + z^6 + z^7 + O(z^8)
 
         Lazy Laurent series that have a sparse implementation can be divided::
 

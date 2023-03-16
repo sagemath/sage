@@ -251,7 +251,7 @@ class Stream_inexact(Stream):
             sage: f._cache
             [-3, -2, -1, 0, 1, 2, 3, 4]
         """
-        # self[n] = self._cache[n-self._offset]
+        # self[n] == self._cache[n-self._offset]
         if self._is_sparse:
             raise ValueError("_offset is only for dense streams")
         return self._approximate_order
@@ -386,8 +386,8 @@ class Stream_inexact(Stream):
                 c = self.get_coefficient(n)
                 self._cache[n] = c
                 if not self._true_order and n == self._approximate_order:
-                # note that self._approximate_order is not in
-                # self._cache if self._true_order is False
+                # self._approximate_order is not in self._cache if
+                # self._true_order is False
                     if c:
                         self._true_order = True
                         self._approximate_order = n
@@ -399,18 +399,25 @@ class Stream_inexact(Stream):
                                 break
                             ao += 1
                         self._approximate_order = ao
+                return c
 
-            return c
-
-        # Now we consider the dense implementation
-
+        # Dense implementation
         i = n - self._offset
         if i >= len(self._cache):
             a = len(self._cache) + self._offset
-            # It is important to extend by generator:
-            # self._iter might recurse, and thereby extend the
-            # cache itself, too.
-            self._cache.extend(next(self._iter) for _ in range(a, n+1))
+            if self._true_order:
+                # It is important to extend by generator:
+                # self._iter might recurse, and thereby extend the
+                # cache itself, too.
+                self._cache.extend(next(self._iter) for _ in range(a, n+1))
+            else:
+                for _ in range(a, n+1):
+                    c = next(self._iter)
+                    self._cache.append(c)
+                    if c:
+                        self._true_order = True
+                    else:
+                        self._approximate_order += 1
 
         return self._cache[i]
 
@@ -444,41 +451,19 @@ class Stream_inexact(Stream):
             sage: f = Stream_function(lambda n: n, True, 0)
             sage: f.order()
             1
+
+        TESTS::
+
+            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
+            sage: f.order()
+            1
         """
         if self._true_order:
             return self._approximate_order
-        if self._is_sparse:
-            n = self._approximate_order
-            cache = self._cache
-            while True:
-                if n in cache:
-                    if cache[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-                else:
-                    if self[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-        else:
-            n = self._approximate_order
-            cache = self._cache
-            while True:
-                if n - self._offset < len(cache):
-                    if cache[n - self._offset]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-                else:
-                    if self[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
+        n = self._approximate_order
+        while not self[n]:
+            n += 1
+        return n
 
     def __ne__(self, other):
         """
