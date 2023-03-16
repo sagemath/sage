@@ -601,5 +601,3 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             return []
         else:
             return [(self.ring().ideal(g), m)]
-
-

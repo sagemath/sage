@@ -659,5 +659,3 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         from .valuation_ring import FunctionFieldValuationRing
 
         return FunctionFieldValuationRing(self.function_field(), self)
-
-

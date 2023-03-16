@@ -84,5 +84,3 @@ class FunctionFieldDerivation(RingDerivationWithoutTwist):
             x*d/dx
         """
         return self._lmul_(factor)
-
-

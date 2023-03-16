@@ -2532,4 +2532,3 @@ class FunctionField_global_integral(FunctionField_global, FunctionField_integral
     finite constant field.
     """
     pass
-

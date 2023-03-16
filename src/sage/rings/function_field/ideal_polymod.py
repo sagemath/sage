@@ -1689,5 +1689,3 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
             prime = FunctionFieldIdealInfinite_polymod(O, iprime)
             factors.append((prime, exp))
         return factors
-
-

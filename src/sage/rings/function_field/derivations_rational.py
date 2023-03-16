@@ -109,5 +109,3 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
             x*d/dx
         """
         return type(self)(self.parent(), [factor * self._u])
-
-

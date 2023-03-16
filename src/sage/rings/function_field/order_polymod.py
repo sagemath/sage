@@ -1431,4 +1431,3 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                     decomposition.append((prime, degree, index))
 
         return decomposition
-

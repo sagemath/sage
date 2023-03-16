@@ -889,4 +889,3 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
 
         cache[f, i] = der
         return der
-
