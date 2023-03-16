@@ -1529,7 +1529,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                             "length 2 or an integer")
         num = prod(self._gen[k]**d
                    for k, d in zip(parameter[0], parameter[1][:-1]))
-        return num/(self._gen[-1]**parameter[1][-1])
+        return num / (self._gen[-1]**parameter[1][-1])
 
     def morphism(self):
         r"""
