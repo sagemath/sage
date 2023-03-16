@@ -1515,8 +1515,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise TypeError("components of tuple or list parameter must "
                                 "contain only integers")
             # Check that the weight-0 condition is satisfied:
-            # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1)
-            #    = d_r (q^r - 1)
+            #   d_1 (q - 1) + ... + d_{r-1} (q^{r-1} - 1)
+            #   = d_r (q^r - 1)
             if check:
                 right = parameter[1][-1]*(q**r - 1)
                 left = sum(parameter[1][i]*(q**(parameter[0][i]) - 1) for i in
