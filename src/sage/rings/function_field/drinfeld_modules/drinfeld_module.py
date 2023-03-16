@@ -895,8 +895,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the list of basic `j`-invariant parameters.
 
-        See the method :meth:`j_invariant` for the definition of the
-        basic `j`-invariant parameters.
+        See the method :meth:`j_invariant` for definitions.
 
         INPUT:
 
