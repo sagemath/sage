@@ -757,7 +757,10 @@ class FunctionField(Field):
             sage: K(L(x)) # indirect doctest                                            # optional - sage.rings.function_field
             x
         """
-        from .function_field_polymod import FunctionField_polymod
+        try:
+            from .function_field_polymod import FunctionField_polymod
+        except ImportError:
+            FunctionField_polymod = ()
         if isinstance(R, FunctionField_polymod):
             base_conversion = self.convert_map_from(R.base_field())
             if base_conversion is not None:
