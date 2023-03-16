@@ -553,11 +553,11 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
         sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                             # optional - sage.libs.pari
         sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                                  # optional - sage.libs.pari
         sage: h = L.higher_derivation()                                                             # optional - sage.libs.pari
-        sage: h                                                                                     # optional - sage.libs.pari sage.modules
+        sage: h                                                                                     # optional - sage.libs.pari
         Higher derivation map:
           From: Function field in y defined by y^3 + x^3*y + x
           To:   Function field in y defined by y^3 + x^3*y + x
-        sage: h(y^2, 2)                                                                             # optional - sage.libs.pari sage.modules
+        sage: h(y^2, 2)                                                                             # optional - sage.libs.pari
         ((x^7 + 1)/x^2)*y^2 + x^3*y
     """
 
@@ -569,8 +569,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
-            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari sage.modules
-            sage: TestSuite(h).run(skip=['_test_category'])                                         # optional - sage.libs.pari sage.modules
+            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
+            sage: TestSuite(h).run(skip=['_test_category'])                                         # optional - sage.libs.pari
         """
         from sage.matrix.constructor import matrix
 
@@ -597,8 +597,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
-            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari sage.modules
-            sage: h(y^2,2)  # indirect doctest                                                      # optional - sage.libs.pari sage.modules
+            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
+            sage: h(y^2,2)  # indirect doctest                                                      # optional - sage.libs.pari
             ((x^7 + 1)/x^2)*y^2 + x^3*y
         """
         return self._derive(f, *args, **kwds)
@@ -614,18 +614,18 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
-            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari sage.modules
-            sage: y^3                                                                               # optional - sage.libs.pari sage.modules
+            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
+            sage: y^3                                                                               # optional - sage.libs.pari
             x^3*y + x
-            sage: h._derive(y^3,0)                                                                  # optional - sage.libs.pari sage.modules
+            sage: h._derive(y^3,0)                                                                  # optional - sage.libs.pari
             x^3*y + x
-            sage: h._derive(y^3,1)                                                                  # optional - sage.libs.pari sage.modules
+            sage: h._derive(y^3,1)                                                                  # optional - sage.libs.pari
             x^4*y^2 + 1
-            sage: h._derive(y^3,2)                                                                  # optional - sage.libs.pari sage.modules
+            sage: h._derive(y^3,2)                                                                  # optional - sage.libs.pari
             x^10*y^2 + (x^8 + x)*y
-            sage: h._derive(y^3,3)                                                                  # optional - sage.libs.pari sage.modules
+            sage: h._derive(y^3,3)                                                                  # optional - sage.libs.pari
             (x^9 + x^2)*y^2 + x^7*y
-            sage: h._derive(y^3,4)                                                                  # optional - sage.libs.pari sage.modules
+            sage: h._derive(y^3,4)                                                                  # optional - sage.libs.pari
             (x^22 + x)*y^2 + ((x^21 + x^14 + x^7 + 1)/x)*y
         """
         F = self._field
@@ -713,9 +713,9 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
-            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari sage.modules
-            sage: b = h._prime_power_representation(y)                                              # optional - sage.libs.pari sage.modules
-            sage: y == b[0]^2 + b[1]^2 * x                                                          # optional - sage.libs.pari sage.modules
+            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
+            sage: b = h._prime_power_representation(y)                                              # optional - sage.libs.pari
+            sage: y == b[0]^2 + b[1]^2 * x                                                          # optional - sage.libs.pari
             True
         """
         F = self._field
@@ -759,8 +759,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
-            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari sage.modules
-            sage: h._pth_root((x^2 + y^2)^2)                                                        # optional - sage.libs.pari sage.modules
+            sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
+            sage: h._pth_root((x^2 + y^2)^2)                                                        # optional - sage.libs.pari
             y^2 + x^2
         """
         from sage.modules.free_module_element import vector

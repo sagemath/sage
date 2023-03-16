@@ -5,9 +5,9 @@ For global function fields, which have positive characteristics, the higher
 derivation is available::
 
     sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                 # optional - sage.libs.pari
-    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                                      # optional - sage.libs.pari
-    sage: h = L.higher_derivation()                                                                 # optional - sage.libs.pari
-    sage: h(y^2, 2)                                                                                 # optional - sage.libs.pari
+    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                                      # optional - sage.libs.pari sage.rings.function_field
+    sage: h = L.higher_derivation()                                                                 # optional - sage.libs.pari sage.rings.function_field
+    sage: h(y^2, 2)                                                                                 # optional - sage.libs.pari sage.rings.function_field
     ((x^7 + 1)/x^2)*y^2 + x^3*y
 
 AUTHORS:
