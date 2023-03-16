@@ -3,8 +3,6 @@ Please provide a concise, informative and self-explanatory title.
 Don't put issue numbers in there, do this in the PR body below.
 For example, instead of "Fixes #1234" use "Introduce new method to calculate 1+1"
 -->
-### 📚 Description
-
 <!-- Describe your changes here in detail -->
 <!-- Why is this change required? What problem does it solve? -->
 <!-- If it resolves an open issue, please link to the issue here. For example "Closes #1337" -->
