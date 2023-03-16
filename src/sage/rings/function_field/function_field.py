@@ -866,48 +866,49 @@ class FunctionField(Field):
         function field::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: v = K.valuation(1); v
+            sage: v = K.valuation(1); v                                                 # optional - sage.rings.function_field
             (x - 1)-adic valuation
-            sage: v(x)
+            sage: v(x)                                                                  # optional - sage.rings.function_field
             0
-            sage: v(x - 1)
+            sage: v(x - 1)                                                              # optional - sage.rings.function_field
             1
 
         A place can also be specified with an irreducible polynomial::
 
-            sage: v = K.valuation(x - 1); v
+            sage: v = K.valuation(x - 1); v                                             # optional - sage.rings.function_field
             (x - 1)-adic valuation
 
         Similarly, for a finite non-rational place::
 
-            sage: v = K.valuation(x^2 + 1); v
+            sage: v = K.valuation(x^2 + 1); v                                           # optional - sage.rings.function_field
             (x^2 + 1)-adic valuation
-            sage: v(x^2 + 1)
+            sage: v(x^2 + 1)                                                            # optional - sage.rings.function_field
             1
-            sage: v(x)
+            sage: v(x)                                                                  # optional - sage.rings.function_field
             0
 
         Or for the infinite place::
 
-            sage: v = K.valuation(1/x); v
+            sage: v = K.valuation(1/x); v                                               # optional - sage.rings.function_field
             Valuation at the infinite place
-            sage: v(x)
+            sage: v(x)                                                                  # optional - sage.rings.function_field
             -1
 
         Instead of specifying a generator of a place, we can define a valuation on a
         rational function field by giving a discrete valuation on the underlying
         polynomial ring::
 
-            sage: R.<x> = QQ[]
-            sage: w = valuations.GaussValuation(R, valuations.TrivialValuation(QQ)).augmentation(x - 1, 1)
-            sage: v = K.valuation(w); v
+            sage: R.<x> = QQ[]                                                          # optional - sage.rings.function_field
+            sage: u = valuations.GaussValuation(R, valuations.TrivialValuation(QQ))     # optional - sage.rings.function_field
+            sage: w = u.augmentation(x - 1, 1)                                          # optional - sage.rings.function_field
+            sage: v = K.valuation(w); v                                                 # optional - sage.rings.function_field
             (x - 1)-adic valuation
 
         Note that this allows us to specify valuations which do not correspond to a
         place of the function field::
 
-            sage: w = valuations.GaussValuation(R, QQ.valuation(2))
-            sage: v = K.valuation(w); v
+            sage: w = valuations.GaussValuation(R, QQ.valuation(2))                     # optional - sage.rings.function_field
+            sage: v = K.valuation(w); v                                                 # optional - sage.rings.function_field
             2-adic valuation
 
         The same is possible for valuations with `v(1/x) > 0` by passing in an
@@ -917,18 +918,20 @@ class FunctionField(Field):
         applying the substitution `x \mapsto 1/x` (here, the inverse map is also `x
         \mapsto 1/x`)::
 
-            sage: w = valuations.GaussValuation(R, QQ.valuation(2)).augmentation(x, 1)
-            sage: w = K.valuation(w)
-            sage: v = K.valuation((w, K.hom([~K.gen()]), K.hom([~K.gen()]))); v
-            Valuation on rational function field induced by [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ] (in Rational function field in x over Rational Field after x |--> 1/x)
+            sage: w = valuations.GaussValuation(R, QQ.valuation(2)).augmentation(x, 1)  # optional - sage.rings.function_field
+            sage: w = K.valuation(w)                                                    # optional - sage.rings.function_field
+            sage: v = K.valuation((w, K.hom([~K.gen()]), K.hom([~K.gen()]))); v         # optional - sage.rings.function_field
+            Valuation on rational function field
+            induced by [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ]
+            (in Rational function field in x over Rational Field after x |--> 1/x)
 
         Note that classical valuations at finite places or the infinite place are
         always normalized such that the uniformizing element has valuation 1::
 
-            sage: K.<t> = FunctionField(GF(3))                                          # optional - sage.libs.pari
-            sage: M.<x> = FunctionField(K)                                              # optional - sage.libs.pari
-            sage: v = M.valuation(x^3 - t)                                              # optional - sage.libs.pari
-            sage: v(x^3 - t)                                                            # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(3))                                          # optional - sage.libs.pari sage.rings.function_field
+            sage: M.<x> = FunctionField(K)                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: v = M.valuation(x^3 - t)                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: v(x^3 - t)                                                            # optional - sage.libs.pari sage.rings.function_field
             1
 
         However, if such a valuation comes out of a base change of the ground
