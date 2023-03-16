@@ -12,6 +12,7 @@ For example, instead of "Fixes #1234" use "Introduce new method to calculate 1+1
 <!-- Put an `x` in all the boxes that apply. -->
 <!-- If your change requires a documentation PR, please link it appropriately -->
 <!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+<!-- Feel free to remove irrelevant items. -->
 
 - [ ] I have made sure that the title is self-explanatory and the description concisely explains the PR.
 - [ ] I have linked an issue or discussion.
