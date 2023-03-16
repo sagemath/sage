@@ -781,7 +781,16 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     def basis_of_weight(self, weight):
         r"""
-        Return a basis of elements generating the subspace of the given weight.
+        Return a basis of elements generating the subspace of the given
+        weight.
+
+        INPUT:
+
+        - ``weight`` (integer) -- the weight of the subspace
+
+        OUTPUT:
+
+        A list of quasimodular forms of the given weight.
 
         EXAMPLES::
 
@@ -806,8 +815,10 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         basis = []
         E2 = self.weight_2_eisenstein_series()
+        M = self.__modular_forms_subring
         for j in range(weight//2):
-            basis += [f*E2**j for f in self.__modular_forms_subring.modular_forms_of_weight(weight - 2*j).basis()]
+            basis += [f*E2**j for f
+                      in M.modular_forms_of_weight(weight - 2*j).basis()]
         if not weight%2:
             basis.append(E2**(Integer(weight/2)))
         return basis
