@@ -14,6 +14,7 @@ Features for testing the presence of Python modules in the Sage library
 
 from . import PythonModule, StaticFile
 from .join_feature import JoinFeature
+from .singular import sage__libs__singular
 
 
 class sagemath_doc_html(StaticFile):
@@ -155,6 +156,29 @@ class sage__plot(JoinFeature):
                              [PythonModule('sage.plot.plot')])
 
 
+class sage__rings__function_field(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.function_field`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__rings__function_field
+        sage: sage__rings__function_field().is_present()  # optional - sage.rings.function_field
+        FeatureTestResult('sage.rings.function_field', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__function_field
+            sage: isinstance(sage__rings__function_field(), sage__rings__function_field)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.rings.function_field',
+                             [PythonModule('sage.rings.function_field.function_field_polymod'),
+                              sage__libs__singular()])
+
+
 class sage__rings__number_field(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
@@ -271,6 +295,7 @@ def all_features():
             sage__graphs(),
             sage__groups(),
             sage__plot(),
+            sage__rings__function_field(),
             sage__rings__number_field(),
             sage__rings__padics(),
             sage__rings__real_double(),
