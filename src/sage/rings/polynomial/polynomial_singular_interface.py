@@ -47,12 +47,7 @@ except ImportError:
     singular = None
 
 from sage.rings.rational_field import is_RationalField
-
-try:
-    from sage.rings.function_field.function_field import RationalFunctionField
-except ImportError:
-    RationalFunctionField = ()
-
+from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
