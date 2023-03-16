@@ -1026,8 +1026,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         equation = [0]
         inequalities = []
         # Create the equation:
-        # d_1 (q - 1) + d_2 (q^2 - 1) + ... + d_{r-1} (q^{r-1} - 1)
-        #  = d_r (q^r - 1)
+        #   d_1 (q - 1) + ... + d_{r-1} (q^{r-1} - 1)
+        #   = d_r (q^r - 1)
         for idx, i in enumerate(coeff_indices):
             equation.append(q**i - 1)
 
