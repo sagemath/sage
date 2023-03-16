@@ -1285,8 +1285,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi = DrinfeldModule(A, [T, c^4*T^3, c^(24)*T^9, c^(124)*T])
             sage: phi.is_isomorphic(psi)
             True
-            sage: phi0 = DrinfeldModule(A, [T, 1, 1, 1])
-            sage: phi.is_isomorphic(phi0)
+            sage: rho = DrinfeldModule(A, [T, 1, 1, 1])
+            sage: phi.is_isomorphic(rho)
             False
 
         ::
