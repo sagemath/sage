@@ -1013,8 +1013,12 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``name`` (string, default: ``'z'``) -- the name of the generator of
-          the lazy power series ring.
+        - ``name`` (string, default: ``'z'``) -- the name of the
+          generator of the lazy power series ring.
+
+        OUTPUT:
+
+        A lazy power series over the base field.
 
         EXAMPLES::
 
@@ -1025,8 +1029,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: exp = phi.exponential(); exp
             z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
 
-        The exponential is returned as a lazy power series, meaning that any of
-        its coefficients can be computed on demands::
+        The exponential is returned as a lazy power series, meaning that
+        any of its coefficients can be computed on demands::
 
             sage: exp[2^4]
             1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
@@ -1066,7 +1070,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         REFERENCE:
 
-        See section 4.6 of [Gos1998]_ for the definition of the exponential.
+        See section 4.6 of [Gos1998]_ for the definition of the
+        exponential.
         """
         L = LazyPowerSeriesRing(self._base, name)
         return L(self._compute_coefficient_exp, valuation=1)
@@ -1267,6 +1272,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         By definition, the logarithm is the compositional inverse of the
         exponential (see :meth:`exponential`).
 
+        INPUT:
+
+        - ``name`` (string, default: ``'z'``) -- the name of the
+          generator of the lazy power series ring.
+
+        OUTPUT:
+
+        A lazy power series over the base field.
+
         EXAMPLES::
 
             sage: A = GF(2)['T']
@@ -1275,8 +1289,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: log = phi.logarithm(); log
             z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
 
-        The logarithm is returned as a lazy power series, meaning that any of
-        its coefficients can be computed on demands::
+        The logarithm is returned as a lazy power series, meaning that
+        any of its coefficients can be computed on demands::
 
             sage: log[2^4]
             1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
