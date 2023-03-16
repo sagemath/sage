@@ -649,23 +649,30 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         sage: len({i*alphas[0] + j*alphas[1] for i in range(3^2) for j in range(3^1)})
         27
     """
+    # The given assertions should hold, but were commented out for speed.
+
     k = len(rel)
-    assert isinstance(alphas, list) and isinstance(vals, list)
-    assert len(alphas) == len(vals) == k - 1
-    assert all(r >= 0 for r in rel)
+    if not (isinstance(alphas, list) and isinstance(vals, list)):
+        raise TypeError('alphas and vals must be lists for mutability')
+    if not len(alphas) == len(vals) == k - 1:
+        raise ValueError(f'alphas and/or vals have incorrect length')
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 #    assert all(a.order() == p**v for a,v in zip(alphas,vals))
 
     # step 1
+    min_r = rel[-1]
     for i in range(k-1):
         if not rel[i]:
             continue
         q = rel[i].p_primary_part(p)
         alphas[i] *= rel[i] // q
         rel[i] = q
-    min_r = min(filter(bool, rel))
+        if not min_r or q < min_r:
+            min_r = q
+    if min_r <= 0:
+        raise ValueError('rel must have nonnegative entries and at least one nonzero entry')
     val_rlast = rel[-1].valuation(p)
-    assert rel[-1] == p ** val_rlast
+#    assert rel[-1] == p ** val_rlast
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 
     # step 2
