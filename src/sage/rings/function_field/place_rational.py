@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
 
 #*****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
@@ -21,11 +22,11 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari
-            sage: i = O.ideal(x^2 + x + 1)                                              # optional - sage.libs.pari
-            sage: p = i.place()                                                         # optional - sage.libs.pari
-            sage: p.degree()                                                            # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: i = O.ideal(x^2 + x + 1)
+            sage: p = i.place()
+            sage: p.degree()
             2
         """
         if self.is_infinite_place():
@@ -39,10 +40,10 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
-            sage: F.places()                                                            # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))
+            sage: F.places()
             [Place (1/x), Place (x), Place (x + 1)]
-            sage: [p.is_infinite_place() for p in F.places()]                           # optional - sage.libs.pari
+            sage: [p.is_infinite_place() for p in F.places()]
             [True, False, False]
         """
         F = self.function_field()
@@ -54,10 +55,10 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
-            sage: F.places()                                                            # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))
+            sage: F.places()
             [Place (1/x), Place (x), Place (x + 1)]
-            sage: [p.local_uniformizer() for p in F.places()]                           # optional - sage.libs.pari
+            sage: [p.local_uniformizer() for p in F.places()]
             [1/x, x, x + 1]
         """
         return self.prime_ideal().gen()
@@ -68,17 +69,17 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari
-            sage: p = O.ideal(x^2 + x + 1).place()                                      # optional - sage.libs.pari
-            sage: k, fr_k, to_k = p.residue_field()                                     # optional - sage.libs.pari
-            sage: k                                                                     # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: p = O.ideal(x^2 + x + 1).place()
+            sage: k, fr_k, to_k = p.residue_field()
+            sage: k
             Finite Field in z2 of size 2^2
-            sage: fr_k                                                                  # optional - sage.libs.pari
+            sage: fr_k
             Ring morphism:
               From: Finite Field in z2 of size 2^2
               To:   Valuation ring at Place (x^2 + x + 1)
-            sage: to_k                                                                  # optional - sage.libs.pari
+            sage: to_k
             Ring morphism:
               From: Valuation ring at Place (x^2 + x + 1)
               To:   Finite Field in z2 of size 2^2
@@ -96,16 +97,16 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari
-            sage: i = O.ideal(x^2 + x + 1)                                              # optional - sage.libs.pari
-            sage: p = i.place()                                                         # optional - sage.libs.pari
-            sage: R, fr, to = p._residue_field()                                        # optional - sage.libs.pari
-            sage: R                                                                     # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: i = O.ideal(x^2 + x + 1)
+            sage: p = i.place()
+            sage: R, fr, to = p._residue_field()
+            sage: R
             Finite Field in z2 of size 2^2
-            sage: [fr(e) for e in R.list()]                                             # optional - sage.libs.pari
+            sage: [fr(e) for e in R.list()]
             [0, x, x + 1, 1]
-            sage: to(x*(x+1)) == to(x) * to(x+1)                                        # optional - sage.libs.pari
+            sage: to(x*(x+1)) == to(x) * to(x+1)
             True
         """
         F = self.function_field()
@@ -162,10 +163,10 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.libs.pari
-            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
-            sage: p.valuation_ring()                                                    # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: p.valuation_ring()
             Valuation ring at Place (x, x*y)
         """
         from .valuation_ring import FunctionFieldValuationRing

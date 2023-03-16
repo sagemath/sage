@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.function_field
 
 #*****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
@@ -22,8 +23,8 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                    # optional - sage.libs.singular
-        sage: x*y + 1/x^3                                                               # optional - sage.libs.singular
+        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+        sage: x*y + 1/x^3
         x*y + 1/x^3
     """
     def __init__(self, parent, x, reduce=True):
@@ -33,8 +34,8 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: TestSuite(x*y + 1/x^3).run()                                          # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: TestSuite(x*y + 1/x^3).run()
         """
         FieldElement.__init__(self, parent)
         if reduce:
@@ -49,10 +50,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<T> = K[]
-            sage: L.<y> = K.extension(T^2 - x*T + 4*x^3)                                # optional - sage.libs.singular
-            sage: f = y/x^2 + x/(x^2+1); f                                              # optional - sage.libs.singular
+            sage: L.<y> = K.extension(T^2 - x*T + 4*x^3)
+            sage: f = y/x^2 + x/(x^2+1); f
             1/x^2*y + x/(x^2 + 1)
-            sage: f.element()                                                           # optional - sage.libs.singular
+            sage: f.element()
             1/x^2*y + x/(x^2 + 1)
         """
         return self._x
@@ -64,8 +65,8 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: y._repr_()                                                            # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y._repr_()
             'y'
         """
         return self._x._repr(name=self.parent().variable_name())
@@ -77,12 +78,12 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: bool(y)                                                               # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: bool(y)
             True
-            sage: bool(L(0))                                                            # optional - sage.libs.singular
+            sage: bool(L(0))
             False
-            sage: bool(L.coerce(L.polynomial()))                                        # optional - sage.libs.singular
+            sage: bool(L.coerce(L.polynomial()))
             False
         """
         return not not self._x
@@ -94,8 +95,8 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         TESTS::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]}) >= 24          # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]}) >= 24
             True
         """
         return hash(self._x)
@@ -107,10 +108,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: L(0) == 0                                                             # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: L(0) == 0
             True
-            sage: y != L(2)                                                             # optional - sage.libs.singular
+            sage: y != L(2)
             True
         """
         cdef FunctionFieldElement left = <FunctionFieldElement>self
@@ -128,12 +129,12 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: (2*y + x/(1+x^3))  +  (3*y + 5*x*y)         # indirect doctest        # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: (2*y + x/(1+x^3))  +  (3*y + 5*x*y)         # indirect doctest
             (5*x + 5)*y + x/(x^3 + 1)
-            sage: (y^2 - x*y + 4*x^3)==0                      # indirect doctest        # optional - sage.libs.singular
+            sage: (y^2 - x*y + 4*x^3)==0                      # indirect doctest
             True
-            sage: -y + y                                                                # optional - sage.libs.singular
+            sage: -y + y
             0
         """
         cdef FunctionFieldElement res = self._new_c()
@@ -151,10 +152,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: (2*y + x/(1+x^3))  -  (3*y + 5*x*y)         # indirect doctest        # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: (2*y + x/(1+x^3))  -  (3*y + 5*x*y)         # indirect doctest
             (-5*x - 1)*y + x/(x^3 + 1)
-            sage: y - y                                                                 # optional - sage.libs.singular
+            sage: y - y
             0
         """
         cdef FunctionFieldElement res = self._new_c()
@@ -172,8 +173,8 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: y  *  (3*y + 5*x*y)                          # indirect doctest       # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y  *  (3*y + 5*x*y)                          # indirect doctest
             (5*x^2 + 3*x)*y - 20*x^4 - 12*x^3
         """
         cdef FunctionFieldElement res = self._new_c()
@@ -191,10 +192,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: (2*y + x/(1+x^3))  /  (2*y + x/(1+x^3))       # indirect doctest      # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: (2*y + x/(1+x^3))  /  (2*y + x/(1+x^3))       # indirect doctest
             1
-            sage: 1 / (y^2 - x*y + 4*x^3)                       # indirect doctest      # optional - sage.libs.singular
+            sage: 1 / (y^2 - x*y + 4*x^3)                       # indirect doctest
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Cannot invert 0
@@ -208,10 +209,10 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: a = ~(2*y + 1/x); a                           # indirect doctest      # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: a = ~(2*y + 1/x); a                           # indirect doctest
             (-1/8*x^2/(x^5 + 1/8*x^2 + 1/16))*y + (1/8*x^3 + 1/16*x)/(x^5 + 1/8*x^2 + 1/16)
-            sage: a*(2*y + 1/x)                                                         # optional - sage.libs.singular
+            sage: a*(2*y + 1/x)
             1
         """
         if self.is_zero():
@@ -229,12 +230,12 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.libs.singular
-            sage: a = ~(2*y + 1/x); a                                                   # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: a = ~(2*y + 1/x); a
             (-1/8*x^2/(x^5 + 1/8*x^2 + 1/16))*y + (1/8*x^3 + 1/16*x)/(x^5 + 1/8*x^2 + 1/16)
-            sage: a.list()                                                              # optional - sage.libs.singular
+            sage: a.list()
             [(1/8*x^3 + 1/16*x)/(x^5 + 1/8*x^2 + 1/16), -1/8*x^2/(x^5 + 1/8*x^2 + 1/16)]
-            sage: (x*y).list()                                                          # optional - sage.libs.singular
+            sage: (x*y).list()
             [0, x]
         """
         return self._x.padded_list(self._parent.degree())

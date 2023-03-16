@@ -486,8 +486,8 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: O = K.maximal_order(); I = O.ideal(x^2+1)
-            sage: t = O(x+1).inverse_mod(I); t
+            sage: O = K.maximal_order(); I = O.ideal(x^2 + 1)
+            sage: t = O(x + 1).inverse_mod(I); t
             -1/2*x + 1/2
             sage: (t*(x+1) - 1) in I
             True

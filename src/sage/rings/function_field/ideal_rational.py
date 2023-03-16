@@ -91,12 +91,12 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
-            sage: I = O.ideal(x,x^2+1)
-            sage: J = O.ideal(x^2+x+1,x)
+            sage: I = O.ideal(x, x^2 + 1)
+            sage: J = O.ideal(x^2 + x + 1, x)
             sage: I == J
             True
             sage: I = O.ideal(x)
-            sage: J = O.ideal(x+1)
+            sage: J = O.ideal(x + 1)
             sage: I < J
             True
         """
@@ -114,8 +114,8 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
-            sage: I = O.ideal(x,x^2+1)
-            sage: J = O.ideal(x^2+x+1,x)
+            sage: I = O.ideal(x, x^2 + 1)
+            sage: J = O.ideal(x^2 + x + 1, x)
             sage: I + J == J + I
             True
         """
@@ -133,8 +133,8 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
-            sage: I = O.ideal(x,x^2+x)
-            sage: J = O.ideal(x^2,x)
+            sage: I = O.ideal(x, x^2 + x)
+            sage: J = O.ideal(x^2, x)
             sage: I * J == J * I
             True
         """
@@ -152,7 +152,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
-            sage: I = O.ideal(x^3+x^2)
+            sage: I = O.ideal(x^3 + x^2)
             sage: 2 * I
             Ideal (x^3 + x^2) of Maximal order of Rational function field in x over Rational Field
             sage: x * I
@@ -212,7 +212,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(QQ)
             sage: O = K.maximal_order()
-            sage: I = O.ideal(x^3+x^2)
+            sage: I = O.ideal(x^3 + x^2)
             sage: I.module()                                                                                            # optional - sage.modules
             Free module of degree 1 and rank 1 over Maximal order of Rational
             function field in x over Rational Field
@@ -236,7 +236,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(GF(4))                                                                          # optional - sage.libs.pari
             sage: O = K.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x^2+x)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x^2 + x)                                                                                  # optional - sage.libs.pari
             sage: I.gen()                                                                                               # optional - sage.libs.pari
             x^2 + x
         """
@@ -250,7 +250,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(GF(4))                                                                          # optional - sage.libs.pari
             sage: O = K.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x^2+x)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x^2 + x)                                                                                  # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x^2 + x,)
         """
@@ -265,7 +265,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
             sage: K.<x> = FunctionField(GF(4))                                                                          # optional - sage.libs.pari
             sage: O = K.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x^2+x)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x^2 + x)                                                                                  # optional - sage.libs.pari
             sage: I.gens_over_base()                                                                                    # optional - sage.libs.pari
             (x^2 + x,)
         """
@@ -307,7 +307,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: p = O.ideal(x)
-            sage: p.valuation(O.ideal(x+1))  # indirect doctest
+            sage: p.valuation(O.ideal(x + 1))  # indirect doctest
             0
             sage: p.valuation(O.ideal(x^2))  # indirect doctest
             2
@@ -416,8 +416,8 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
             sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
             sage: Oinf = K.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal(x+1)                                                                                   # optional - sage.libs.pari
-            sage: J = Oinf.ideal(x^2+x)                                                                                 # optional - sage.libs.pari
+            sage: I = Oinf.ideal(x + 1)                                                                                 # optional - sage.libs.pari
+            sage: J = Oinf.ideal(x^2 + x)                                                                               # optional - sage.libs.pari
             sage: I + J == J                                                                                            # optional - sage.libs.pari
             True
         """
@@ -520,7 +520,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
             sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
             sage: Oinf = K.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal((x+1)/(x^3+x),(x^2+1)/x^4)                                                             # optional - sage.libs.pari
+            sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)                                                            # optional - sage.libs.pari
             sage: I.gen()                                                                                               # optional - sage.libs.pari
             1/x^2
         """
@@ -534,7 +534,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
             sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
             sage: Oinf = K.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal((x+1)/(x^3+x),(x^2+1)/x^4)                                                             # optional - sage.libs.pari
+            sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)                                                            # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (1/x^2,)
         """
@@ -549,7 +549,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
             sage: K.<x> = FunctionField(GF(2))                                                                          # optional - sage.libs.pari
             sage: Oinf = K.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal((x+1)/(x^3+x),(x^2+1)/x^4)                                                             # optional - sage.libs.pari
+            sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)                                                            # optional - sage.libs.pari
             sage: I.gens_over_base()                                                                                    # optional - sage.libs.pari
             (1/x^2,)
         """

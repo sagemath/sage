@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.function_field
+
 #*****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
 #
@@ -98,8 +100,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: J.is_zero()                                                                                           # optional - sage.libs.pari
             True
 
-            sage: K.<x>=FunctionField(GF(2)); _.<Y>=K[]                                                                 # optional - sage.libs.pari
-            sage: L.<y>=K.extension(Y^2 + Y + x + 1/x)                                                                  # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(GF(2)); _.<Y>=K[]                                                               # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y); I                                                                                     # optional - sage.libs.pari
             Ideal (y) of Maximal order of Function field in y
@@ -169,29 +171,29 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             False
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 - x^3 - 1)                                                                    # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal([y]); I                                                                                   # optional - sage.libs.singular
+            sage: L.<y> = K.extension(Y^2 - x^3 - 1)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal([y]); I
             Ideal (y) of Maximal order of Function field in y
             defined by y^2 - x^3 - 1
-            sage: x * y in I                                                                                            # optional - sage.libs.singular
+            sage: x * y in I
             True
-            sage: y / x in I                                                                                            # optional - sage.libs.singular
+            sage: y / x in I
             False
-            sage: y^2 - 2 in I                                                                                          # optional - sage.libs.singular
+            sage: y^2 - 2 in I
             False
 
-            sage: K.<x> = FunctionField(QQ); _.<Y> = K[]                                                                # optional - sage.libs.singular
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal([y]); I                                                                                   # optional - sage.libs.singular
+            sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal([y]); I
             Ideal (y) of Maximal order of Function field in y
             defined by y^2 + y + (x^2 + 1)/x
-            sage: x * y in I                                                                                            # optional - sage.libs.singular
+            sage: x * y in I
             True
-            sage: y / x in I                                                                                            # optional - sage.libs.singular
+            sage: y / x in I
             False
-            sage: y^2 - 2 in I                                                                                          # optional - sage.libs.singular
+            sage: y^2 - 2 in I
             False
         """
         from sage.modules.free_module_element import vector
@@ -240,29 +242,29 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         ::
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 - x^3 - 1)                                                                    # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y)                                                                                        # optional - sage.libs.singular
-            sage: ~I                                                                                                    # optional - sage.libs.singular
+            sage: L.<y> = K.extension(Y^2 - x^3 - 1)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: ~I
             Ideal ((1/(x^3 + 1))*y) of Maximal order of Function field in y defined by y^2 - x^3 - 1
-            sage: I^(-1)                                                                                                # optional - sage.libs.singular
+            sage: I^(-1)
             Ideal ((1/(x^3 + 1))*y) of Maximal order of Function field in y defined by y^2 - x^3 - 1
-            sage: ~I * I                                                                                                # optional - sage.libs.singular
+            sage: ~I * I
             Ideal (1) of Maximal order of Function field in y defined by y^2 - x^3 - 1
 
         ::
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y)                                                                                        # optional - sage.libs.singular
-            sage: ~I                                                                                                    # optional - sage.libs.singular
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: ~I
             Ideal ((x/(x^2 + 1))*y + x/(x^2 + 1)) of Maximal order
             of Function field in y defined by y^2 + y + (x^2 + 1)/x
-            sage: I^(-1)                                                                                                # optional - sage.libs.singular
+            sage: I^(-1)
             Ideal ((x/(x^2 + 1))*y + x/(x^2 + 1)) of Maximal order
             of Function field in y defined by y^2 + y + (x^2 + 1)/x
-            sage: ~I * I                                                                                                # optional - sage.libs.singular
+            sage: ~I * I
             Ideal (1) of Maximal order of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
         R = self.ring()
@@ -319,14 +321,14 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
-            sage: J = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: J = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I + J                                                                                                 # optional - sage.libs.pari
             Ideal (y) of Maximal order of Function field in y defined by y^2 + x^3*y + x
 
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
-            sage: J = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: J = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I + J                                                                                                 # optional - sage.libs.pari
             Ideal (1, y) of Maximal order of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
@@ -346,7 +348,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
-            sage: J = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: J = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I * J                                                                                                 # optional - sage.libs.pari
             Ideal (x^4 + x^2 + x, x*y + x^2) of Maximal order
             of Function field in y defined by y^2 + x^3*y + x
@@ -354,7 +356,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
-            sage: J = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: J = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I * J                                                                                                 # optional - sage.libs.pari
             Ideal ((x + 1)*y + (x^2 + 1)/x) of Maximal order
             of Function field in y defined by y^2 + y + (x^2 + 1)/x
@@ -396,14 +398,14 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: J = O.ideal(x)                                                                                        # optional - sage.libs.pari
             sage: x * I ==  I * J                                                                                       # optional - sage.libs.pari
             True
 
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: J = O.ideal(x)                                                                                        # optional - sage.libs.pari
             sage: x * I ==  I * J                                                                                       # optional - sage.libs.pari
             True
@@ -436,7 +438,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: J = O.ideal(x)                                                                                        # optional - sage.libs.pari
             sage: I.intersect(J) == I * J * (I + J)^-1                                                                  # optional - sage.libs.pari
             True
@@ -488,9 +490,9 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         ::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y*(y+1)); I.hnf()                                                                         # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y*(y+1)); I.hnf()
             [x^6 + x^3         0]
             [  x^3 + 1         1]
         """
@@ -514,12 +516,12 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         ::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                                    # optional - sage.libs.singular
-            sage: O = L.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y/(y+1))                                                                                  # optional - sage.libs.singular
-            sage: d = I.denominator(); d                                                                                # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y/(y+1))
+            sage: d = I.denominator(); d
             x^3
-            sage: d in O                                                                                                # optional - sage.libs.singular
+            sage: d in O
             True
         """
         return self._denominator
@@ -535,7 +537,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                                             # optional - sage.libs.pari
             sage: F.<y> = K.extension(y^2 - x^3 - 1)                                                                    # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.module()                                                                                            # optional - sage.libs.pari
             Free module of degree 2 and rank 2 over Maximal order
             of Rational function field in x over Finite Field of size 7
@@ -559,13 +561,13 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens_over_base()                                                                                    # optional - sage.libs.pari
             (x^4 + x^2 + x, y + x)
 
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens_over_base()                                                                                    # optional - sage.libs.pari
             (x^3 + 1, y + x)
         """
@@ -604,13 +606,13 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x^4 + x^2 + x, y + x)
 
-            sage: L.<y> = K.extension(Y^2 +Y + x + 1/x)                                                                 # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x^3 + 1, y + x)
         """
@@ -627,9 +629,9 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)                                               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.denominator() * I.basis_matrix() == I.hnf()                                                         # optional - sage.libs.pari
             True
         """
@@ -647,9 +649,9 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)                                               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.is_integral()                                                                                       # optional - sage.libs.pari
             False
             sage: J = I.denominator() * I                                                                               # optional - sage.libs.pari
@@ -659,7 +661,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.is_integral()                                                                                       # optional - sage.libs.pari
             False
             sage: J = I.denominator() * I                                                                               # optional - sage.libs.pari
@@ -667,13 +669,13 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             True
 
             sage: K.<x> = FunctionField(QQ); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.singular
-            sage: O = F.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.singular
-            sage: I.is_integral()                                                                                       # optional - sage.libs.singular
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x, 1/y)
+            sage: I.is_integral()
             False
-            sage: J = I.denominator() * I                                                                               # optional - sage.libs.singular
-            sage: J.is_integral()                                                                                       # optional - sage.libs.singular
+            sage: J = I.denominator() * I
+            sage: J.is_integral()
             True
         """
         return self.denominator() == 1
@@ -687,9 +689,9 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.ideal_below()                                                                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
@@ -702,7 +704,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x,1/y)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.pari
             sage: I.ideal_below()                                                                                       # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
@@ -713,15 +715,15 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             in x over Finite Field of size 2
 
             sage: K.<x> = FunctionField(QQ); _.<t> = K[]
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.singular
-            sage: O = F.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(x, 1/y)                                                                                   # optional - sage.libs.singular
-            sage: I.ideal_below()                                                                                       # optional - sage.libs.singular
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x, 1/y)
+            sage: I.ideal_below()
             Traceback (most recent call last):
             ...
             TypeError: not an integral ideal
-            sage: J = I.denominator() * I                                                                               # optional - sage.libs.singular
-            sage: J.ideal_below()                                                                                       # optional - sage.libs.singular
+            sage: J = I.denominator() * I
+            sage: J.ideal_below()
             Ideal (x^3 + x^2 + x) of Maximal order of Rational function field
             in x over Rational Field
         """
@@ -753,7 +755,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)                                               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: i1 = O.ideal(x)                                                                                       # optional - sage.libs.pari
             sage: i2 = O.ideal(y)                                                                                       # optional - sage.libs.pari
@@ -799,7 +801,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)                                               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
             sage: [f.is_prime() for f,_ in I.factor()]                                                                  # optional - sage.libs.pari
@@ -813,10 +815,10 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             [True, True]
 
             sage: K.<x> = FunctionField(QQ); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.singular
-            sage: O = F.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y)                                                                                        # optional - sage.libs.singular
-            sage: [f.is_prime() for f,_ in I.factor()]                                                                  # optional - sage.libs.singular
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: [f.is_prime() for f,_ in I.factor()]
             [True, True]
         """
         factors = self.factor()
@@ -933,10 +935,10 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
              Ideal (x + 1) of Maximal order of Rational function field in x over Finite Field of size 2]
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)                                                        # optional - sage.libs.singular
-            sage: O = F.maximal_order()                                                                                 # optional - sage.libs.singular
-            sage: I = O.ideal(y)                                                                                        # optional - sage.libs.singular
-            sage: [f.prime_below() for f,_ in I.factor()]                                                               # optional - sage.libs.singular
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(y)
+            sage: [f.prime_below() for f,_ in I.factor()]
             [Ideal (x) of Maximal order of Rational function field in x over Rational Field,
              Ideal (x^2 + x + 1) of Maximal order of Rational function field in x over Rational Field]
         """
@@ -949,7 +951,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
             sage: I = O.ideal(y)                                                                                        # optional - sage.libs.pari
             sage: I == I.factor().prod()  # indirect doctest                                                            # optional - sage.libs.pari
@@ -1069,13 +1071,13 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 - x^3*Y - x)                                                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x^4 + x^2 + x, y + x)
 
-            sage: L.<y> = K.extension(Y^2 +Y + x + 1/x)                                                                 # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x+y)                                                                                      # optional - sage.libs.pari
+            sage: I = O.ideal(x + y)                                                                                    # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x^3 + 1, y + x)
         """
@@ -1148,13 +1150,13 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: F.<y> = K.extension(Y^3 + x^3*Y + x)                                                                  # optional - sage.libs.pari
             sage: O = F.maximal_order()                                                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x^2,x*y,x+y)                                                                              # optional - sage.libs.pari
+            sage: I = O.ideal(x^2, x*y, x + y)                                                                          # optional - sage.libs.pari
             sage: I._gens_two()                                                                                         # optional - sage.libs.pari
             (x, y)
 
             sage: K.<x> = FunctionField(GF(3))                                                                          # optional - sage.libs.pari
             sage: _.<Y> = K[]                                                                                           # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y-x)                                                                              # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y - x)                                                                            # optional - sage.libs.pari
             sage: y.zeros()[0].prime_ideal()._gens_two()                                                                # optional - sage.libs.pari
             (x,)
         """
@@ -1257,7 +1259,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                                 # optional - sage.libs.pari
-        sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                          # optional - sage.libs.pari
+        sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                      # optional - sage.libs.pari
         sage: Oinf = F.maximal_order_infinite()                                                                         # optional - sage.libs.pari
         sage: Oinf.ideal(1/y)                                                                                           # optional - sage.libs.pari
         Ideal (1/x^4*y^2) of Maximal infinite order of Function field
@@ -1270,7 +1272,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         TESTS::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(1/y)                                                                                   # optional - sage.libs.pari
             sage: TestSuite(I).run()                                                                                    # optional - sage.libs.pari
@@ -1334,7 +1336,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(1/x^2*1/y)                                                                             # optional - sage.libs.pari
             sage: J = Oinf.ideal(1/x)                                                                                   # optional - sage.libs.pari
@@ -1364,7 +1366,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(1/x^2*1/y)                                                                             # optional - sage.libs.pari
             sage: J = Oinf.ideal(1/x)                                                                                   # optional - sage.libs.pari
@@ -1390,7 +1392,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: J = Oinf.ideal(1/x)                                                                                   # optional - sage.libs.pari
             sage: J^3                                                                                                   # optional - sage.libs.pari
@@ -1436,7 +1438,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); _.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(1/x^2*1/y)                                                                             # optional - sage.libs.pari
             sage: J = Oinf.ideal(1/x)                                                                                   # optional - sage.libs.pari
@@ -1491,16 +1493,16 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal(x+y)                                                                                   # optional - sage.libs.pari
+            sage: I = Oinf.ideal(x + y)                                                                                 # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x, y, 1/x^2*y^2)
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: Oinf = L.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal(x+y)                                                                                   # optional - sage.libs.pari
+            sage: I = Oinf.ideal(x + y)                                                                                 # optional - sage.libs.pari
             sage: I.gens()                                                                                              # optional - sage.libs.pari
             (x, y)
         """
@@ -1515,16 +1517,16 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); R.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal(x+y)                                                                                   # optional - sage.libs.pari
+            sage: I = Oinf.ideal(x + y)                                                                                 # optional - sage.libs.pari
             sage: I.gens_two()                                                                                          # optional - sage.libs.pari
             (x, y)
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^2+Y+x+1/x)                                                                      # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: Oinf = L.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: I = Oinf.ideal(x+y)                                                                                   # optional - sage.libs.pari
+            sage: I = Oinf.ideal(x + y)                                                                                 # optional - sage.libs.pari
             sage: I.gens_two()                                                                                          # optional - sage.libs.pari
             (x,)
         """
@@ -1607,7 +1609,7 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(3^2)); _.<t> = PolynomialRing(K)                                             # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3+t^2-x^4)                                                                      # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 + t^2 - x^4)                                                                  # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(1/x)                                                                                   # optional - sage.libs.pari
             sage: I.factor()                                                                                            # optional - sage.libs.pari
@@ -1651,8 +1653,8 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: K.<x>=FunctionField(GF(2)); _.<Y> = K[]                                                               # optional - sage.libs.pari
-            sage: L.<y>=K.extension(Y^2 + Y + x + 1/x)                                                                  # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                                             # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                                # optional - sage.libs.pari
             sage: Oinf = L.maximal_order_infinite()                                                                     # optional - sage.libs.pari
             sage: I = Oinf.ideal(y)                                                                                     # optional - sage.libs.pari
             sage: [f.valuation(I) for f,_ in I.factor()]                                                                # optional - sage.libs.pari
@@ -1670,9 +1672,9 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)                                               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)                                                              # optional - sage.libs.pari
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                                            # optional - sage.libs.pari
             sage: Oinf = F.maximal_order_infinite()                                                                     # optional - sage.libs.pari
-            sage: f= 1/x                                                                                                # optional - sage.libs.pari
+            sage: f = 1/x                                                                                               # optional - sage.libs.pari
             sage: I = Oinf.ideal(f)                                                                                     # optional - sage.libs.pari
             sage: I._factor()                                                                                           # optional - sage.libs.pari
             [(Ideal (1/x, 1/x^4*y^2 + 1/x^2*y + 1) of Maximal infinite order of Function field in y

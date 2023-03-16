@@ -83,8 +83,8 @@ class RationalFunctionField(FunctionField):
 
         sage: R.<x> = FunctionField(QQ)
         sage: L.<y> = R[]
-        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # optional - sage.libs.singular
-        sage: (y/x).divisor()                                                           # optional - sage.libs.singular sage.modules
+        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # optional - sage.rings.function_field
+        sage: (y/x).divisor()                                                           # optional - sage.rings.function_field sage.modules
         - Place (x, y - 1)
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
@@ -93,15 +93,15 @@ class RationalFunctionField(FunctionField):
         sage: NF.<i> = NumberField(z^2 + 1)                                             # optional - sage.rings.number_field
         sage: R.<x> = FunctionField(NF)                                                 # optional - sage.rings.number_field
         sage: L.<y> = R[]                                                               # optional - sage.rings.number_field
-        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # optional - sage.libs.singular sage.modules sage.rings.number_field
+        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # optional - sage.rings.function_field sage.modules sage.rings.number_field
 
-        sage: (x/y*x.differential()).divisor()                                          # optional - sage.libs.singular sage.modules sage.rings.number_field
+        sage: (x/y*x.differential()).divisor()                                          # optional - sage.rings.function_field sage.modules sage.rings.number_field
         -2*Place (1/x, 1/x*y - 1)
          - 2*Place (1/x, 1/x*y + 1)
          + Place (x, y - 1)
          + Place (x, y + 1)
 
-        sage: (x/y).divisor()                                                           # optional - sage.libs.singular sage.modules sage.rings.number_field
+        sage: (x/y).divisor()                                                           # optional - sage.rings.function_field sage.modules sage.rings.number_field
         - Place (x - i, y)
          + Place (x, y - 1)
          + Place (x, y + 1)
@@ -233,8 +233,8 @@ class RationalFunctionField(FunctionField):
         Some indirect test of conversion::
 
             sage: S.<x, y> = K[]
-            sage: I = S * [x^2 - y^2, y - t]                                            # optional - sage.libs.singular
-            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
+            sage: I = S * [x^2 - y^2, y - t]                                            # optional - sage.rings.function_field
+            sage: I.groebner_basis()                                                    # optional - sage.rings.function_field
             [x^2 - t^2, y - t]
 
         """
@@ -432,18 +432,18 @@ class RationalFunctionField(FunctionField):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # optional - sage.libs.singular
+            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # optional - sage.rings.function_field
             Function field in y defined by y^5 + x*y - x^3 - 3*x
 
         A nonintegral defining polynomial::
 
             sage: K.<t> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1))                                # optional - sage.libs.singular
+            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1))                                # optional - sage.rings.function_field
             Function field in y defined by y^3 + 1/t*y + t^3/(t + 1)
 
         The defining polynomial need not be monic or integral::
 
-            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # optional - sage.libs.singular
+            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # optional - sage.rings.function_field
             Function field in y defined by t*y^3 + 1/t*y + t^3/(t + 1)
         """
         from . import constructor
@@ -635,7 +635,7 @@ class RationalFunctionField(FunctionField):
         We make a map from a rational function field to itself::
 
             sage: K.<x> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: K.hom( (x^4 + 2)/x)                                                   # optional - sage.libs.pari
+            sage: K.hom((x^4 + 2)/x)                                                    # optional - sage.libs.pari
             Function Field endomorphism of Rational function field in x over Finite Field of size 7
               Defn: x |--> (x^4 + 2)/x
 
@@ -643,15 +643,15 @@ class RationalFunctionField(FunctionField):
         non-rational extension field::
 
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                  # optional - sage.libs.pari
-            sage: f = K.hom(y^2 + y  + 2); f                                            # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: f = K.hom(y^2 + y  + 2); f                                            # optional - sage.libs.pari sage.rings.function_field
             Function Field morphism:
               From: Rational function field in x over Finite Field of size 7
               To:   Function field in y defined by y^3 + 6*x^3 + x
               Defn: x |--> y^2 + y + 2
-            sage: f(x)                                                                  # optional - sage.libs.pari
+            sage: f(x)                                                                  # optional - sage.libs.pari sage.rings.function_field
             y^2 + y + 2
-            sage: f(x^2)                                                                # optional - sage.libs.pari
+            sage: f(x^2)                                                                # optional - sage.libs.pari sage.rings.function_field
             5*y^2 + (x^3 + 6*x + 4)*y + 2*x^3 + 5*x + 4
         """
         if isinstance(im_gens, CategoryObject):

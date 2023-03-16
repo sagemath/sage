@@ -12,8 +12,8 @@ EXAMPLES:
 All rational places of a function field can be computed::
 
     sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                     # optional - sage.libs.pari
-    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                          # optional - sage.libs.pari
-    sage: L.places()                                                                    # optional - sage.libs.pari
+    sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                          # optional - sage.libs.pari sage.rings.function_field
+    sage: L.places()                                                                    # optional - sage.libs.pari sage.rings.function_field
     [Place (1/x, 1/x^3*y^2 + 1/x),
      Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1),
      Place (x, y)]
@@ -76,8 +76,8 @@ class FunctionFieldPlace(Element):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                 # optional - sage.libs.pari
-        sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                      # optional - sage.libs.pari
-        sage: L.places_finite()[0]                                                      # optional - sage.libs.pari
+        sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                      # optional - sage.libs.pari sage.rings.function_field
+        sage: L.places_finite()[0]                                                      # optional - sage.libs.pari sage.rings.function_field
         Place (x, y)
     """
     def __init__(self, parent, prime):
@@ -87,9 +87,9 @@ class FunctionFieldPlace(Element):
         TESTS::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari
-            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
-            sage: TestSuite(p).run()                                                    # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: TestSuite(p).run()                                                    # optional - sage.libs.pari sage.rings.function_field
         """
         Element.__init__(self, parent)
 
@@ -102,9 +102,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari
-            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
-            sage: {p: 1}                                                                # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: {p: 1}                                                                # optional - sage.libs.pari sage.rings.function_field
             {Place (x, y): 1}
         """
         return hash((self.function_field(), self._prime))
@@ -116,9 +116,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
-            sage: p                                                                     # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: p                                                                     # optional - sage.libs.pari sage.rings.function_field
             Place (x, y)
         """
         try:
@@ -135,9 +135,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari
-            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari
-            sage: latex(p)                                                              # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places_finite()[0]                                              # optional - sage.libs.pari sage.rings.function_field
+            sage: latex(p)                                                              # optional - sage.libs.pari sage.rings.function_field
             \left(y\right)
         """
         return self._prime._latex_()
@@ -149,13 +149,13 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari
-            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari
-            sage: p1 < p2                                                               # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: p1 < p2                                                               # optional - sage.libs.pari sage.rings.function_field
             True
-            sage: p2 < p1                                                               # optional - sage.libs.pari
+            sage: p2 < p1                                                               # optional - sage.libs.pari sage.rings.function_field
             False
-            sage: p1 == p3                                                              # optional - sage.libs.pari
+            sage: p1 == p3                                                              # optional - sage.libs.pari sage.rings.function_field
             False
         """
         from sage.rings.function_field.order import FunctionFieldOrderInfinite
@@ -176,10 +176,10 @@ class FunctionFieldPlace(Element):
 
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)               # optional - sage.libs.pari
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)                                    # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x + 1, y)                                                 # optional - sage.libs.pari
-            sage: P = I.place()                                                         # optional - sage.libs.pari
-            sage: -3*P + 5*P                                                            # optional - sage.libs.pari
+            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari sage.rings.function_field
+            sage: I = O.ideal(x + 1, y)                                                 # optional - sage.libs.pari sage.rings.function_field
+            sage: P = I.place()                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: -3*P + 5*P                                                            # optional - sage.libs.pari sage.rings.function_field
             2*Place (x + 1, y)
         """
         if self_on_left:
@@ -193,9 +193,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari
-            sage: -p1 + p2                                                              # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: -p1 + p2                                                              # optional - sage.libs.pari sage.rings.function_field
             - Place (1/x, 1/x^3*y^2 + 1/x)
              + Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
         """
@@ -209,9 +209,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari
-            sage: p1 + p2 + p3                                                          # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p1, p2, p3 = L.places()[:3]                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: p1 + p2 + p3                                                          # optional - sage.libs.pari sage.rings.function_field
             Place (1/x, 1/x^3*y^2 + 1/x)
              + Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
              + Place (x, y)
@@ -226,9 +226,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p1, p2 = L.places()[:2]                                               # optional - sage.libs.pari
-            sage: p1 - p2                                                               # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p1, p2 = L.places()[:2]                                               # optional - sage.libs.pari sage.rings.function_field
+            sage: p1 - p2                                                               # optional - sage.libs.pari sage.rings.function_field
             Place (1/x, 1/x^3*y^2 + 1/x)
              - Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
         """
@@ -271,9 +271,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p = L.places()[0]                                                     # optional - sage.libs.pari
-            sage: p.function_field() == L                                               # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places()[0]                                                     # optional - sage.libs.pari sage.rings.function_field
+            sage: p.function_field() == L                                               # optional - sage.libs.pari sage.rings.function_field
             True
         """
         return self.parent()._field
@@ -285,9 +285,9 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: p = L.places()[0]                                                     # optional - sage.libs.pari
-            sage: p.prime_ideal()                                                       # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: p = L.places()[0]                                                     # optional - sage.libs.pari sage.rings.function_field
+            sage: p.prime_ideal()                                                       # optional - sage.libs.pari sage.rings.function_field
             Ideal (1/x^3*y^2 + 1/x) of Maximal infinite order of Function field
             in y defined by y^3 + x^3*y + x
         """
@@ -300,11 +300,11 @@ class FunctionFieldPlace(Element):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)               # optional - sage.libs.pari
-            sage: F.<y> = K.extension(Y^2 - x^3 - 1)                                    # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari
-            sage: I = O.ideal(x + 1,y)                                                  # optional - sage.libs.pari
-            sage: P = I.place()                                                         # optional - sage.libs.pari
-            sage: P.divisor()                                                           # optional - sage.libs.pari
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)                                    # optional - sage.libs.pari sage.rings.function_field
+            sage: O = F.maximal_order()                                                 # optional - sage.libs.pari sage.rings.function_field
+            sage: I = O.ideal(x + 1,y)                                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: P = I.place()                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: P.divisor()                                                           # optional - sage.libs.pari sage.rings.function_field
             Place (x + 1, y)
         """
         from .divisor import prime_divisor
@@ -322,8 +322,8 @@ class PlaceSet(UniqueRepresentation, Parent):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                 # optional - sage.libs.pari
-        sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                      # optional - sage.libs.pari
-        sage: L.place_set()                                                             # optional - sage.libs.pari
+        sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                      # optional - sage.libs.pari sage.rings.function_field
+        sage: L.place_set()                                                             # optional - sage.libs.pari sage.rings.function_field
         Set of places of Function field in y defined by y^3 + x^3*y + x
     """
     Element = FunctionFieldPlace
@@ -335,9 +335,9 @@ class PlaceSet(UniqueRepresentation, Parent):
         TESTS::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: places = L.place_set()                                                # optional - sage.libs.pari
-            sage: TestSuite(places).run()                                               # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: places = L.place_set()                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: TestSuite(places).run()                                               # optional - sage.libs.pari sage.rings.function_field
         """
         self.Element = field._place_class
         Parent.__init__(self, category = Sets().Infinite())
@@ -351,8 +351,8 @@ class PlaceSet(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: L.place_set()                                                         # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: L.place_set()                                                         # optional - sage.libs.pari sage.rings.function_field
             Set of places of Function field in y defined by y^3 + x^3*y + x
         """
         return "Set of places of {}".format(self._field)
@@ -364,10 +364,10 @@ class PlaceSet(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: places = L.place_set()                                                # optional - sage.libs.pari
-            sage: O = L.maximal_order()                                                 # optional - sage.libs.pari
-            sage: places(O.ideal(x,y))                                                  # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: places = L.place_set()                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: O = L.maximal_order()                                                 # optional - sage.libs.pari sage.rings.function_field
+            sage: places(O.ideal(x, y))                                                 # optional - sage.libs.pari sage.rings.function_field
             Place (x, y)
         """
         from .ideal import FunctionFieldIdeal
@@ -384,9 +384,9 @@ class PlaceSet(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: places = L.place_set()                                                # optional - sage.libs.pari
-            sage: places.an_element()  # random                                         # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: places = L.place_set()                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: places.an_element()  # random                                         # optional - sage.libs.pari sage.rings.function_field
             Ideal (x) of Maximal order of Rational function field in x
             over Finite Field of size 2
         """
@@ -407,9 +407,9 @@ class PlaceSet(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
-            sage: PS = L.place_set()                                                    # optional - sage.libs.pari
-            sage: PS.function_field() == L                                              # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: PS = L.place_set()                                                    # optional - sage.libs.pari sage.rings.function_field
+            sage: PS.function_field() == L                                              # optional - sage.libs.pari sage.rings.function_field
             True
         """
         return self._field

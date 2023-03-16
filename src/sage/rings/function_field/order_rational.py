@@ -95,9 +95,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.singular
-            sage: O = L.equation_order()                                                            # optional - sage.libs.singular
-            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])                                        # optional - sage.libs.singular
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.function_field
+            sage: O.ideal_with_gens_over_base([x^3 + 1, -y])                                        # optional - sage.rings.function_field
             Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
         """
         return self.ideal(gens)
@@ -387,11 +387,11 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: O = K.maximal_order()
             sage: O.ideal(x)
             Ideal (x) of Maximal order of Rational function field in x over Rational Field
-            sage: O.ideal([x,1/x]) == O.ideal(x,1/x) # multiple generators may be given as a list
+            sage: O.ideal([x, 1/x]) == O.ideal(x, 1/x)  # multiple generators may be given as a list
             True
-            sage: O.ideal(x^3+1,x^3+6)
+            sage: O.ideal(x^3 + 1, x^3 + 6)
             Ideal (1) of Maximal order of Rational function field in x over Rational Field
-            sage: I = O.ideal((x^2+1)*(x^3+1),(x^3+6)*(x^2+1)); I
+            sage: I = O.ideal((x^2+1)*(x^3+1), (x^3+6)*(x^2+1)); I
             Ideal (x^2 + 1) of Maximal order of Rational function field in x over Rational Field
             sage: O.ideal(I)
             Ideal (x^2 + 1) of Maximal order of Rational function field in x over Rational Field
@@ -540,11 +540,11 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
             sage: O = K.maximal_order_infinite()
             sage: O.ideal(x)
             Ideal (x) of Maximal infinite order of Rational function field in x over Rational Field
-            sage: O.ideal([x,1/x]) == O.ideal(x,1/x) # multiple generators may be given as a list
+            sage: O.ideal([x, 1/x]) == O.ideal(x ,1/x)  # multiple generators may be given as a list
             True
-            sage: O.ideal(x^3+1,x^3+6)
+            sage: O.ideal(x^3 + 1, x^3 + 6)
             Ideal (x^3) of Maximal infinite order of Rational function field in x over Rational Field
-            sage: I = O.ideal((x^2+1)*(x^3+1),(x^3+6)*(x^2+1)); I
+            sage: I = O.ideal((x^2+1)*(x^3+1), (x^3+6)*(x^2+1)); I
             Ideal (x^5) of Maximal infinite order of Rational function field in x over Rational Field
             sage: O.ideal(I)
             Ideal (x^5) of Maximal infinite order of Rational function field in x over Rational Field
