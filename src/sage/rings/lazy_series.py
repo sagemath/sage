@@ -659,10 +659,10 @@ class LazyModuleElement(Element):
 
         .. WARNING::
 
-            When working with an inexact power series (e.g., defined
-            by a function) that has not computed its order and shifting
-            by too much can result in a Laurent series that does not
-            know it is a Laurent series::
+            When working with a power series not known to be eventually 
+            constant (e.g., defined by a function) that has not computed
+            its order and shifting by too much can result in a Laurent
+            series that does not know it is a Laurent series::
 
                 sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
                 sage: L.<x> = LazyPowerSeriesRing(QQ)
@@ -3829,8 +3829,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         .. WARNING::
 
-            For inexact series (e.g., being defined by a function), it is
-            assumed that the series has valuation `1` and is not one of
+            For power series not known to be eventually constant
+            (e.g., being defined by a function), it is assumed that
+            the series has valuation `1` and is not one of
             the two other special cases.
 
         EXAMPLES::
@@ -4657,9 +4658,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         .. WARNING::
 
-            For inexact series (e.g., being defined by a function), it is
-            assumed that the series has valuation `1` and is not a linear
-            polynomial.
+            For series not known to be eventually constant (e.g., being
+            defined by a function), it is assumed that the series
+            has valuation `1` and is not a linear polynomial.
 
         EXAMPLES::
 
