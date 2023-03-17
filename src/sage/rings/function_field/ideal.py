@@ -233,7 +233,7 @@ class FunctionFieldIdeal(Element):
 
             sage: K.<x> = FunctionField(GF(7))                                                                          # optional - sage.libs.pari
             sage: O = K.equation_order()                                                                                # optional - sage.libs.pari
-            sage: I = O.ideal(x^3+1)                                                                                    # optional - sage.libs.pari
+            sage: I = O.ideal(x^3 + 1)                                                                                  # optional - sage.libs.pari
             sage: I / I                                                                                                 # optional - sage.libs.pari
             Ideal (1) of Maximal order of Rational function field in x
             over Finite Field of size 7
@@ -257,7 +257,7 @@ class FunctionFieldIdeal(Element):
 
             sage: K.<x> = FunctionField(GF(7))                                                                          # optional - sage.libs.pari
             sage: O = K.equation_order()                                                                                # optional - sage.libs.pari
-            sage: I = O.ideal(x, x^2, x^2+x)                                                                            # optional - sage.libs.pari
+            sage: I = O.ideal(x, x^2, x^2 + x)                                                                          # optional - sage.libs.pari
             sage: I.gens_reduced()                                                                                      # optional - sage.libs.pari
             (x,)
         """
