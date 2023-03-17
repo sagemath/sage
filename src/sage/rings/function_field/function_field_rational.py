@@ -32,11 +32,11 @@ class RationalFunctionField(FunctionField):
 
     EXAMPLES::
 
-        sage: K.<t> = FunctionField(GF(3)); K                                           # optional - sage.libs.pari
+        sage: K.<t> = FunctionField(GF(3)); K                                           # optional - sage.rings.finite_rings
         Rational function field in t over Finite Field of size 3
-        sage: K.gen()                                                                   # optional - sage.libs.pari
+        sage: K.gen()                                                                   # optional - sage.rings.finite_rings
         t
-        sage: 1/t + t^3 + 5                                                             # optional - sage.libs.pari
+        sage: 1/t + t^3 + 5                                                             # optional - sage.rings.finite_rings
         (t^4 + 2*t + 1)/t
 
         sage: K.<t> = FunctionField(QQ); K
@@ -49,14 +49,14 @@ class RationalFunctionField(FunctionField):
     There are various ways to get at the underlying fields and rings
     associated to a rational function field::
 
-        sage: K.<t> = FunctionField(GF(7))                                              # optional - sage.libs.pari
-        sage: K.base_field()                                                            # optional - sage.libs.pari
+        sage: K.<t> = FunctionField(GF(7))                                              # optional - sage.rings.finite_rings
+        sage: K.base_field()                                                            # optional - sage.rings.finite_rings
         Rational function field in t over Finite Field of size 7
-        sage: K.field()                                                                 # optional - sage.libs.pari
+        sage: K.field()                                                                 # optional - sage.rings.finite_rings
         Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7
-        sage: K.constant_field()                                                        # optional - sage.libs.pari
+        sage: K.constant_field()                                                        # optional - sage.rings.finite_rings
         Finite Field of size 7
-        sage: K.maximal_order()                                                         # optional - sage.libs.pari
+        sage: K.maximal_order()                                                         # optional - sage.rings.finite_rings
         Maximal order of Rational function field in t over Finite Field of size 7
 
         sage: K.<t> = FunctionField(QQ)
@@ -321,10 +321,10 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
-            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: S.<X> = R[]                                                           # optional - sage.libs.pari
-            sage: f = (1/t)*(X^4 - 1/t^2)*(X^3 - t^3)                                   # optional - sage.libs.pari
-            sage: R._to_bivariate_polynomial(f)                                         # optional - sage.libs.pari
+            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
+            sage: S.<X> = R[]                                                           # optional - sage.rings.finite_rings
+            sage: f = (1/t)*(X^4 - 1/t^2)*(X^3 - t^3)                                   # optional - sage.rings.finite_rings
+            sage: R._to_bivariate_polynomial(f)                                         # optional - sage.rings.finite_rings
             (X^7*t^2 - X^4*t^5 - X^3 + t^3, t^3)
         """
         v = f.list()
@@ -356,34 +356,34 @@ class RationalFunctionField(FunctionField):
 
         We do a factorization over a finite prime field::
 
-            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: S.<X> = R[]                                                           # optional - sage.libs.pari
-            sage: f = (1/t)*(X^4 - 1/t^2)*(X^3 - t^3)                                   # optional - sage.libs.pari
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: R.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
+            sage: S.<X> = R[]                                                           # optional - sage.rings.finite_rings
+            sage: f = (1/t)*(X^4 - 1/t^2)*(X^3 - t^3)                                   # optional - sage.rings.finite_rings
+            sage: f.factor()                                                            # optional - sage.rings.finite_rings
             (1/t) * (X + 3*t) * (X + 5*t) * (X + 6*t) * (X^2 + 1/t) * (X^2 + 6/t)
-            sage: f.factor().prod() == f                                                # optional - sage.libs.pari
+            sage: f.factor().prod() == f                                                # optional - sage.rings.finite_rings
             True
 
         Factoring over a function field over a non-prime finite field::
 
-            sage: k.<a> = GF(9)                                                         # optional - sage.libs.pari
-            sage: R.<t> = FunctionField(k)                                              # optional - sage.libs.pari
-            sage: S.<X> = R[]                                                           # optional - sage.libs.pari
-            sage: f = (1/t)*(X^3 - a*t^3)                                               # optional - sage.libs.pari
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: k.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
+            sage: R.<t> = FunctionField(k)                                              # optional - sage.rings.finite_rings
+            sage: S.<X> = R[]                                                           # optional - sage.rings.finite_rings
+            sage: f = (1/t)*(X^3 - a*t^3)                                               # optional - sage.rings.finite_rings
+            sage: f.factor()                                                            # optional - sage.rings.finite_rings
             (1/t) * (X + (a + 2)*t)^3
-            sage: f.factor().prod() == f                                                # optional - sage.libs.pari
+            sage: f.factor().prod() == f                                                # optional - sage.rings.finite_rings
             True
 
         Factoring over a function field over a tower of finite fields::
 
-            sage: k.<a> = GF(4)                                                         # optional - sage.libs.pari
-            sage: R.<b> = k[]                                                           # optional - sage.libs.pari
-            sage: l.<b> = k.extension(b^2 + b + a)                                      # optional - sage.libs.pari
-            sage: K.<x> = FunctionField(l)                                              # optional - sage.libs.pari
-            sage: R.<t> = K[]                                                           # optional - sage.libs.pari
-            sage: F = t*x                                                               # optional - sage.libs.pari
-            sage: F.factor(proof=False)                                                 # optional - sage.libs.pari
+            sage: k.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: R.<b> = k[]                                                           # optional - sage.rings.finite_rings
+            sage: l.<b> = k.extension(b^2 + b + a)                                      # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(l)                                              # optional - sage.rings.finite_rings
+            sage: R.<t> = K[]                                                           # optional - sage.rings.finite_rings
+            sage: F = t*x                                                               # optional - sage.rings.finite_rings
+            sage: F.factor(proof=False)                                                 # optional - sage.rings.finite_rings
             (x) * t
 
         """
@@ -607,8 +607,8 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: K.base_field()                                                        # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
+            sage: K.base_field()                                                        # optional - sage.rings.finite_rings
             Rational function field in t over Finite Field of size 7
         """
         return self
@@ -634,24 +634,24 @@ class RationalFunctionField(FunctionField):
 
         We make a map from a rational function field to itself::
 
-            sage: K.<x> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: K.hom((x^4 + 2)/x)                                                    # optional - sage.libs.pari
+            sage: K.<x> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
+            sage: K.hom((x^4 + 2)/x)                                                    # optional - sage.rings.finite_rings
             Function Field endomorphism of Rational function field in x over Finite Field of size 7
               Defn: x |--> (x^4 + 2)/x
 
         We construct a map from a rational function field into a
         non-rational extension field::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                  # optional - sage.libs.pari sage.rings.function_field
-            sage: f = K.hom(y^2 + y  + 2); f                                            # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                             # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                  # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: f = K.hom(y^2 + y  + 2); f                                            # optional - sage.rings.finite_rings sage.rings.function_field
             Function Field morphism:
               From: Rational function field in x over Finite Field of size 7
               To:   Function field in y defined by y^3 + 6*x^3 + x
               Defn: x |--> y^2 + y + 2
-            sage: f(x)                                                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: f(x)                                                                  # optional - sage.rings.finite_rings sage.rings.function_field
             y^2 + y + 2
-            sage: f(x^2)                                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: f(x^2)                                                                # optional - sage.rings.finite_rings sage.rings.function_field
             5*y^2 + (x^3 + 6*x + 4)*y + 2*x^3 + 5*x + 4
         """
         if isinstance(im_gens, CategoryObject):
@@ -674,8 +674,8 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.libs.pari
-            sage: K.field()                                                             # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(7))                                          # optional - sage.rings.finite_rings
+            sage: K.field()                                                             # optional - sage.rings.finite_rings
             Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7
 
         .. SEEALSO::
@@ -827,12 +827,12 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: p = F.places_finite(2)[0]                                             # optional - sage.libs.pari
-            sage: R, fr_R, to_R = F.residue_field(p)                                    # optional - sage.libs.pari
-            sage: R                                                                     # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: p = F.places_finite(2)[0]                                             # optional - sage.rings.finite_rings
+            sage: R, fr_R, to_R = F.residue_field(p)                                    # optional - sage.rings.finite_rings
+            sage: R                                                                     # optional - sage.rings.finite_rings
             Finite Field in z2 of size 5^2
-            sage: to_R(x) in R                                                          # optional - sage.libs.pari
+            sage: to_R(x) in R                                                          # optional - sage.rings.finite_rings
             True
         """
         return place.residue_field(name=name)
@@ -878,8 +878,8 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: F.places()                                                            # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: F.places()                                                            # optional - sage.rings.finite_rings
             [Place (1/x),
              Place (x),
              Place (x + 1),
@@ -902,8 +902,8 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: F.places_finite()                                                     # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: F.places_finite()                                                     # optional - sage.rings.finite_rings
             [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
         """
         return list(self._places_finite(degree))
@@ -918,8 +918,8 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: F._places_finite()                                                    # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: F._places_finite()                                                    # optional - sage.rings.finite_rings
             <generator object ...>
         """
         O = self.maximal_order()
@@ -937,8 +937,8 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: F.place_infinite()                                                    # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: F.place_infinite()                                                    # optional - sage.rings.finite_rings
             Place (1/x)
         """
         return self.maximal_order_infinite().prime_ideal().place()
@@ -953,17 +953,17 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)                                                         # optional - sage.libs.pari
-            sage: K.<x> = FunctionField(F)                                              # optional - sage.libs.pari
-            sage: K.get_place(1)                                                        # optional - sage.libs.pari
+            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(F)                                              # optional - sage.rings.finite_rings
+            sage: K.get_place(1)                                                        # optional - sage.rings.finite_rings
             Place (x)
-            sage: K.get_place(2)                                                        # optional - sage.libs.pari
+            sage: K.get_place(2)                                                        # optional - sage.rings.finite_rings
             Place (x^2 + x + 1)
-            sage: K.get_place(3)                                                        # optional - sage.libs.pari
+            sage: K.get_place(3)                                                        # optional - sage.rings.finite_rings
             Place (x^3 + x + 1)
-            sage: K.get_place(4)                                                        # optional - sage.libs.pari
+            sage: K.get_place(4)                                                        # optional - sage.rings.finite_rings
             Place (x^4 + x + 1)
-            sage: K.get_place(5)                                                        # optional - sage.libs.pari
+            sage: K.get_place(5)                                                        # optional - sage.rings.finite_rings
             Place (x^5 + x^2 + 1)
 
         """
@@ -981,11 +981,11 @@ class RationalFunctionField_global(RationalFunctionField):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.libs.pari
-            sage: d = F.higher_derivation()                                             # optional - sage.libs.pari
-            sage: [d(x^5,i) for i in range(10)]                                         # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
+            sage: d = F.higher_derivation()                                             # optional - sage.rings.finite_rings
+            sage: [d(x^5,i) for i in range(10)]                                         # optional - sage.rings.finite_rings
             [x^5, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-            sage: [d(x^7,i) for i in range(10)]                                         # optional - sage.libs.pari
+            sage: [d(x^7,i) for i in range(10)]                                         # optional - sage.rings.finite_rings
             [x^7, 2*x^6, x^5, 0, 0, x^2, 2*x, 1, 0, 0]
         """
         from .derivations_polymod import RationalFunctionFieldHigherDerivation_global

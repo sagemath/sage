@@ -1,5 +1,5 @@
 # sage.doctest:           optional - sage.modules           (because __init__ constructs a vector space)
-# some tests are marked # optional - sage.libs.pari         (because they use finite fields)
+# some tests are marked # optional - sage.rings.finite_rings         (because they use finite fields)
 r"""
 Orders of function fields given by a basis over the maximal order of the base field
 """
@@ -30,9 +30,9 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                             # optional - sage.libs.pari
-        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                              # optional - sage.libs.pari sage.rings.function_field
-        sage: O = L.equation_order(); O                                                             # optional - sage.libs.pari sage.rings.function_field
+        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                             # optional - sage.rings.finite_rings
+        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                              # optional - sage.rings.finite_rings sage.rings.function_field
+        sage: O = L.equation_order(); O                                                             # optional - sage.rings.finite_rings sage.rings.function_field
         Order in Function field in y defined by y^4 + x*y + 4*x + 1
 
     The basis only defines an order if the module it generates is closed under
@@ -67,10 +67,10 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: TestSuite(O).run()                                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: TestSuite(O).run()                                                                # optional - sage.rings.finite_rings sage.rings.function_field
         """
         if len(basis) == 0:
             raise ValueError("basis must have positive length")
@@ -152,13 +152,13 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         We construct some ideals in a nontrivial function field::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order(); O                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order(); O                                                         # optional - sage.rings.finite_rings sage.rings.function_field
             Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I = O.ideal_with_gens_over_base([1, y]);  I                                       # optional - sage.libs.pari sage.rings.function_field
+            sage: I = O.ideal_with_gens_over_base([1, y]);  I                                       # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (1) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I.module()                                                                        # optional - sage.libs.pari sage.rings.function_field
+            sage: I.module()                                                                        # optional - sage.rings.finite_rings sage.rings.function_field
             Free module of degree 2 and rank 2 over
              Maximal order of Rational function field in x over Finite Field of size 7
             Echelon basis matrix:
@@ -167,14 +167,14 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         There is no check if the resulting object is really an ideal::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: I = O.ideal_with_gens_over_base([y]); I                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: I = O.ideal_with_gens_over_base([y]); I                                           # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: y in I                                                                            # optional - sage.libs.pari sage.rings.function_field
+            sage: y in I                                                                            # optional - sage.rings.finite_rings sage.rings.function_field
             True
-            sage: y^2 in I                                                                          # optional - sage.libs.pari sage.rings.function_field
+            sage: y^2 in I                                                                          # optional - sage.rings.finite_rings sage.rings.function_field
             False
         """
         F = self.function_field()
@@ -207,16 +207,16 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         A fractional ideal of a nontrivial extension::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: O = K.maximal_order()                                                             # optional - sage.libs.pari
-            sage: I = O.ideal(x^2 - 4)                                                              # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.pari sage.rings.function_field
-            sage: S = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: S.ideal(1/y)                                                                      # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: O = K.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: I = O.ideal(x^2 - 4)                                                              # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: S = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: S.ideal(1/y)                                                                      # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (1, (6/(x^3 + 1))*y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I2 = S.ideal(x^2 - 4); I2                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: I2 = S.ideal(x^2 - 4); I2                                                         # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (x^2 + 3) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I2 == S.ideal(I)                                                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: I2 == S.ideal(I)                                                                  # optional - sage.rings.finite_rings sage.rings.function_field
             True
         """
         if len(gens) == 1:
@@ -236,10 +236,10 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.polynomial()                                                                    # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.polynomial()                                                                    # optional - sage.rings.finite_rings sage.rings.function_field
             y^4 + x*y + 4*x + 1
         """
         return self._field.polynomial()
@@ -250,10 +250,10 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.basis()                                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.basis()                                                                         # optional - sage.rings.finite_rings sage.rings.function_field
             (1, y, y^2, y^3)
         """
         return self._basis
@@ -265,10 +265,10 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.free_module()                                                                   # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.free_module()                                                                   # optional - sage.rings.finite_rings sage.rings.function_field
             Free module of degree 4 and rank 4 over Maximal order of Rational
             function field in x over Finite Field of size 7
             Echelon basis matrix:
@@ -289,11 +289,11 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: f = (x + y)^3                                                                     # optional - sage.libs.pari sage.rings.function_field
-            sage: O.coordinate_vector(f)                                                            # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: f = (x + y)^3                                                                     # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.coordinate_vector(f)                                                            # optional - sage.rings.finite_rings sage.rings.function_field
             (x^3, 3*x^2, 3*x, 1)
         """
         return self._module.coordinate_vector(self._to_module(e), check=False)
@@ -312,16 +312,16 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                             # optional - sage.libs.pari
-        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                              # optional - sage.libs.pari sage.rings.function_field
-        sage: O = L.equation_order_infinite(); O                                                    # optional - sage.libs.pari sage.rings.function_field
+        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                             # optional - sage.rings.finite_rings
+        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                              # optional - sage.rings.finite_rings sage.rings.function_field
+        sage: O = L.equation_order_infinite(); O                                                    # optional - sage.rings.finite_rings sage.rings.function_field
         Infinite order in Function field in y defined by y^4 + x*y + 4*x + 1
 
     The basis only defines an order if the module it generates is closed under
     multiplication and contains the identity element (only checked when
     ``check`` is ``True``)::
 
-        sage: O = L.order_infinite_with_basis([1, y, 1/x^2*y^2, y^3]); O                            # optional - sage.libs.pari sage.rings.function_field
+        sage: O = L.order_infinite_with_basis([1, y, 1/x^2*y^2, y^3]); O                            # optional - sage.rings.finite_rings sage.rings.function_field
         Traceback (most recent call last):
         ...
         ValueError: the module generated by basis (1, y, 1/x^2*y^2, y^3) must be closed under multiplication
@@ -330,7 +330,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
     degree of the function field of its elements (only checked when ``check``
     is ``True``)::
 
-        sage: O = L.order_infinite_with_basis([1, y, 1/x^2*y^2, 1 + y]); O                          # optional - sage.libs.pari sage.rings.function_field
+        sage: O = L.order_infinite_with_basis([1, y, 1/x^2*y^2, 1 + y]); O                          # optional - sage.rings.finite_rings sage.rings.function_field
         Traceback (most recent call last):
         ...
         ValueError: The given basis vectors must be linearly independent.
@@ -338,9 +338,9 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
     Note that 1 does not need to be an element of the basis, as long as it is
     in the module spanned by it::
 
-        sage: O = L.order_infinite_with_basis([1 + 1/x*y, 1/x*y, 1/x^2*y^2, 1/x^3*y^3]); O          # optional - sage.libs.pari sage.rings.function_field
+        sage: O = L.order_infinite_with_basis([1 + 1/x*y, 1/x*y, 1/x^2*y^2, 1/x^3*y^3]); O          # optional - sage.rings.finite_rings sage.rings.function_field
         Infinite order in Function field in y defined by y^4 + x*y + 4*x + 1
-        sage: O.basis()                                                                             # optional - sage.libs.pari sage.rings.function_field
+        sage: O.basis()                                                                             # optional - sage.rings.finite_rings sage.rings.function_field
         (1/x*y + 1, 1/x*y, 1/x^2*y^2, 1/x^3*y^3)
     """
     def __init__(self, basis, check=True):
@@ -349,10 +349,10 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order_infinite()                                                   # optional - sage.libs.pari sage.rings.function_field
-            sage: TestSuite(O).run()                                                                # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order_infinite()                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: TestSuite(O).run()                                                                # optional - sage.rings.finite_rings sage.rings.function_field
         """
         if len(basis) == 0:
             raise ValueError("basis must have positive length")
@@ -442,13 +442,13 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         We construct some ideals in a nontrivial function field::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order(); O                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order(); O                                                         # optional - sage.rings.finite_rings sage.rings.function_field
             Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I = O.ideal_with_gens_over_base([1, y]);  I                                       # optional - sage.libs.pari sage.rings.function_field
+            sage: I = O.ideal_with_gens_over_base([1, y]);  I                                       # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (1) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I.module()                                                                        # optional - sage.libs.pari sage.rings.function_field
+            sage: I.module()                                                                        # optional - sage.rings.finite_rings sage.rings.function_field
             Free module of degree 2 and rank 2 over Maximal order of Rational function field in x over Finite Field of size 7
             Echelon basis matrix:
             [1 0]
@@ -456,14 +456,14 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         There is no check if the resulting object is really an ideal::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: I = O.ideal_with_gens_over_base([y]); I                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)                                                # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: I = O.ideal_with_gens_over_base([y]); I                                           # optional - sage.rings.finite_rings sage.rings.function_field
             Ideal (y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: y in I                                                                            # optional - sage.libs.pari sage.rings.function_field
+            sage: y in I                                                                            # optional - sage.rings.finite_rings sage.rings.function_field
             True
-            sage: y^2 in I                                                                          # optional - sage.libs.pari sage.rings.function_field
+            sage: y^2 in I                                                                          # optional - sage.rings.finite_rings sage.rings.function_field
             False
         """
         F = self.function_field()
@@ -519,10 +519,10 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.polynomial()                                                                    # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.polynomial()                                                                    # optional - sage.rings.finite_rings sage.rings.function_field
             y^4 + x*y + 4*x + 1
         """
         return self._field.polynomial()
@@ -533,10 +533,10 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.basis()                                                                         # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.basis()                                                                         # optional - sage.rings.finite_rings sage.rings.function_field
             (1, y, y^2, y^3)
         """
         return self._basis
@@ -548,10 +548,10 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.libs.pari sage.rings.function_field
-            sage: O = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
-            sage: O.free_module()                                                                   # optional - sage.libs.pari sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]                                         # optional - sage.rings.finite_rings
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)                                          # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O = L.equation_order()                                                            # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: O.free_module()                                                                   # optional - sage.rings.finite_rings sage.rings.function_field
             Free module of degree 4 and rank 4 over Maximal order of Rational
             function field in x over Finite Field of size 7
             Echelon basis matrix:

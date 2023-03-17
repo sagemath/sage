@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: optional - sage.rings.finite_rings
 # sage.doctest: optional - sage.rings.function_field
 r"""
 Valuation rings of function fields

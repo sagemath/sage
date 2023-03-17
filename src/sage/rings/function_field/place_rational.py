@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings       (because all doctests use finite fields)
 
 #*****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>

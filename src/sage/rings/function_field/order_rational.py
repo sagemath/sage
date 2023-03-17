@@ -34,9 +34,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
     EXAMPLES::
 
-        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.libs.pari
+        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.rings.finite_rings
         Rational function field in t over Finite Field of size 19
-        sage: R = K.maximal_order(); R                                                              # optional - sage.libs.pari
+        sage: R = K.maximal_order(); R                                                              # optional - sage.rings.finite_rings
         Maximal order of Rational function field in t over Finite Field of size 19
     """
     def __init__(self, field):
@@ -125,44 +125,44 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                             # optional - sage.libs.pari
-            sage: I = O.ideal(x^2 + x + 1)                                                          # optional - sage.libs.pari
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.libs.pari
-            sage: R                                                                                 # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.rings.finite_rings
+            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: I = O.ideal(x^2 + x + 1)                                                          # optional - sage.rings.finite_rings
+            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.rings.finite_rings
+            sage: R                                                                                 # optional - sage.rings.finite_rings
             Finite Field in z2 of size 2^2
-            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.libs.pari
+            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.rings.finite_rings
             [True, True, True, True]
-            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.libs.pari
+            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.rings.finite_rings
             [True, True, True, True]
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.libs.pari
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.libs.pari
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.rings.finite_rings
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.rings.finite_rings
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.libs.pari
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.rings.finite_rings
             True
-            sage: to_R(e1).parent() is R                                                            # optional - sage.libs.pari
+            sage: to_R(e1).parent() is R                                                            # optional - sage.rings.finite_rings
             True
-            sage: to_R(e2).parent() is R                                                            # optional - sage.libs.pari
+            sage: to_R(e2).parent() is R                                                            # optional - sage.rings.finite_rings
             True
 
-            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                             # optional - sage.libs.pari
-            sage: I = O.ideal(x + 1)                                                                # optional - sage.libs.pari
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.libs.pari
-            sage: R                                                                                 # optional - sage.libs.pari
+            sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.rings.finite_rings
+            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: I = O.ideal(x + 1)                                                                # optional - sage.rings.finite_rings
+            sage: R, fr_R, to_R = O._residue_field(I)                                               # optional - sage.rings.finite_rings
+            sage: R                                                                                 # optional - sage.rings.finite_rings
             Finite Field of size 2
-            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.libs.pari
+            sage: [to_R(fr_R(e)) == e for e in R]                                                   # optional - sage.rings.finite_rings
             [True, True]
-            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.libs.pari
+            sage: [to_R(fr_R(e)).parent() is R for e in R]                                          # optional - sage.rings.finite_rings
             [True, True]
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.libs.pari
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.libs.pari
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # optional - sage.rings.finite_rings
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # optional - sage.rings.finite_rings
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.libs.pari
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # optional - sage.rings.finite_rings
             True
-            sage: to_R(e1).parent() is R                                                            # optional - sage.libs.pari
+            sage: to_R(e1).parent() is R                                                            # optional - sage.rings.finite_rings
             True
-            sage: to_R(e2).parent() is R                                                            # optional - sage.libs.pari
+            sage: to_R(e2).parent() is R                                                            # optional - sage.rings.finite_rings
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -251,32 +251,32 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(4)                                                                     # optional - sage.libs.pari
-            sage: F.<x> = FunctionField(k)                                                          # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                             # optional - sage.libs.pari
-            sage: O._ring                                                                           # optional - sage.libs.pari
+            sage: k.<a> = GF(4)                                                                     # optional - sage.rings.finite_rings
+            sage: F.<x> = FunctionField(k)                                                          # optional - sage.rings.finite_rings
+            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: O._ring                                                                           # optional - sage.rings.finite_rings
             Univariate Polynomial Ring in x over Finite Field in a of size 2^2
-            sage: f = x^3 + x + 1                                                                   # optional - sage.libs.pari
-            sage: _f = f.numerator()                                                                # optional - sage.libs.pari
-            sage: _f.is_irreducible()                                                               # optional - sage.libs.pari
+            sage: f = x^3 + x + 1                                                                   # optional - sage.rings.finite_rings
+            sage: _f = f.numerator()                                                                # optional - sage.rings.finite_rings
+            sage: _f.is_irreducible()                                                               # optional - sage.rings.finite_rings
             True
-            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.libs.pari sage.modules
-            sage: K                                                                                 # optional - sage.libs.pari sage.modules
+            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.rings.finite_rings sage.modules
+            sage: K                                                                                 # optional - sage.rings.finite_rings sage.modules
             Finite Field in z6 of size 2^6
-            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.libs.pari sage.modules
+            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.rings.finite_rings sage.modules
             True
 
-            sage: k.<a> = GF(2)                                                                     # optional - sage.libs.pari
-            sage: F.<x> = FunctionField(k)                                                          # optional - sage.libs.pari
-            sage: O = F.maximal_order()                                                             # optional - sage.libs.pari
-            sage: O._ring                                                                           # optional - sage.libs.pari
+            sage: k.<a> = GF(2)                                                                     # optional - sage.rings.finite_rings
+            sage: F.<x> = FunctionField(k)                                                          # optional - sage.rings.finite_rings
+            sage: O = F.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: O._ring                                                                           # optional - sage.rings.finite_rings
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
-            sage: f = x^3 + x + 1                                                                   # optional - sage.libs.pari
-            sage: _f = f.numerator()                                                                # optional - sage.libs.pari
-            sage: _f.is_irreducible()                                                               # optional - sage.libs.pari
+            sage: f = x^3 + x + 1                                                                   # optional - sage.rings.finite_rings
+            sage: _f = f.numerator()                                                                # optional - sage.rings.finite_rings
+            sage: _f.is_irreducible()                                                               # optional - sage.rings.finite_rings
             True
-            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.libs.pari sage.modules
-            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.libs.pari sage.modules
+            sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # optional - sage.rings.finite_rings sage.modules
+            sage: all(to_K(fr_K(e)) == e for e in K)                                                # optional - sage.rings.finite_rings sage.modules
             True
 
         """
@@ -337,9 +337,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.libs.pari
-            sage: O = K.maximal_order()                                                             # optional - sage.libs.pari
-            sage: O.basis()                                                                         # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
+            sage: O = K.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: O.basis()                                                                         # optional - sage.rings.finite_rings
             (1,)
         """
         return self._basis
@@ -425,9 +425,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
     EXAMPLES::
 
-        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.libs.pari
+        sage: K.<t> = FunctionField(GF(19)); K                                                      # optional - sage.rings.finite_rings
         Rational function field in t over Finite Field of size 19
-        sage: R = K.maximal_order_infinite(); R                                                     # optional - sage.libs.pari
+        sage: R = K.maximal_order_infinite(); R                                                     # optional - sage.rings.finite_rings
         Maximal infinite order of Rational function field in t over Finite Field of size 19
     """
     def __init__(self, field, category=None):
@@ -436,9 +436,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         TESTS::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.libs.pari
-            sage: O = K.maximal_order_infinite()                                                    # optional - sage.libs.pari
-            sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')                                        # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
+            sage: O = K.maximal_order_infinite()                                                    # optional - sage.rings.finite_rings
+            sage: TestSuite(O).run(skip='_test_gcd_vs_xgcd')                                        # optional - sage.rings.finite_rings
         """
         FunctionFieldMaximalOrderInfinite.__init__(self, field, ideal_class=FunctionFieldIdealInfinite_rational,
                                                    category=PrincipalIdealDomains().or_subcategory(category))
@@ -476,9 +476,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.libs.pari
-            sage: O = K.maximal_order()                                                             # optional - sage.libs.pari
-            sage: O.basis()                                                                         # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
+            sage: O = K.maximal_order()                                                             # optional - sage.rings.finite_rings
+            sage: O.basis()                                                                         # optional - sage.rings.finite_rings
             (1,)
         """
         return 1/self.function_field().gen()
@@ -518,9 +518,9 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.libs.pari
-            sage: O = K.maximal_order_infinite()                                                    # optional - sage.libs.pari
-            sage: O.prime_ideal()                                                                   # optional - sage.libs.pari
+            sage: K.<t> = FunctionField(GF(19))                                                     # optional - sage.rings.finite_rings
+            sage: O = K.maximal_order_infinite()                                                    # optional - sage.rings.finite_rings
+            sage: O.prime_ideal()                                                                   # optional - sage.rings.finite_rings
             Ideal (1/t) of Maximal infinite order of Rational function field in t
             over Finite Field of size 19
         """

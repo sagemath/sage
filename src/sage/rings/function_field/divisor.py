@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari               (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
 # sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
