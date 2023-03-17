@@ -214,7 +214,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
             sage: S = L.equation_order()                                                            # optional - sage.libs.pari sage.rings.function_field
             sage: S.ideal(1/y)                                                                      # optional - sage.libs.pari sage.rings.function_field
             Ideal (1, (6/(x^3 + 1))*y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
-            sage: I2 = S.ideal(x^2-4); I2                                                           # optional - sage.libs.pari sage.rings.function_field
+            sage: I2 = S.ideal(x^2 - 4); I2                                                         # optional - sage.libs.pari sage.rings.function_field
             Ideal (x^2 + 3) of Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I2 == S.ideal(I)                                                                  # optional - sage.libs.pari sage.rings.function_field
             True
