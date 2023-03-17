@@ -628,12 +628,18 @@ class LazyModuleElement(Element):
         initial_coefficients = [coeff_stream[i] for i in range(v, d)]
         return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
-    def shift(self, n):
+    def shift(self, n, use_fraction_field=False):
         r"""
         Return ``self`` with the indices shifted by ``n``.
 
         For example, a Laurent series is multiplied by the power `z^n`,
         where `z` is the variable of ``self``.
+
+        INPUT:
+
+        - ``n`` -- the amount to shift
+        - ``use_fraction_field`` -- (default: ``False``) convert the result
+          into the fraction field
 
         EXAMPLES::
 
@@ -657,21 +663,42 @@ class LazyModuleElement(Element):
             sage: f.shift(3)
             1/(5^t) + 2/6^t
 
+        We compare the shifting with the ``use_fraction_field`` option::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: f = L([1,2,3,4]); f
+            1 + 2*x + 3*x^2 + 4*x^3
+            sage: f.shift(-3)
+            4
+            sage: f.shift(-3, use_fraction_field=True)
+            x^-3 + 2*x^-2 + 3*x^-1 + 4
+
         .. WARNING::
 
-            When working with a power series not known to be eventually 
-            constant (e.g., defined by a function) that has not computed
-            its order and shifting by too much can result in a Laurent
-            series that does not know it is a Laurent series::
+            When working with a power series not known to be eventually
+            constant, if one shifts below the minimal valuation and then
+            shifts back, this remembers the terms that would have been
+            truncated. That is, these entries are not replaced by `0`::
 
                 sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
                 sage: L.<x> = LazyPowerSeriesRing(QQ)
-                sage: f = L(fun)
+                sage: f = L(fun); f
+                x + x^2 + x^4 + O(x^7)
                 sage: fs = f.shift(-4)
                 sage: fs
-                1/x^3 + 1/x^2 + 1 + O(x^3)
-                sage: fs.parent()
-                Lazy Taylor Series Ring in x over Rational Field
+                1 + x^4 + O(x^7)
+                sage: fs.shift(4)
+                x + x^2 + x^4 + O(x^7)
+
+            This is slightly different than streams that are known to
+            be eventually constant::
+
+                sage: f = L([1,2,3,4], constant=7); f
+                1 + 2*x + 3*x^2 + 4*x^3 + 7*x^4 + 7*x^5 + 7*x^6 + O(x^7)
+                sage: fs = f.shift(-4); fs
+                7 + 7*x + 7*x^2 + O(x^3)
+                sage: fs.shift(4)
+                7*x^4 + 7*x^5 + 7*x^6 + O(x^7)
 
         TESTS::
 
@@ -686,6 +713,8 @@ class LazyModuleElement(Element):
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: f = x.shift(-3); f
+            0
+            sage: f = x.shift(-3, use_fraction_field=True); f
             x^-2
             sage: f.parent()
             Lazy Laurent Series Ring in x over Rational Field
@@ -695,33 +724,50 @@ class LazyModuleElement(Element):
             Traceback (most recent call last):
             ...
             ValueError: arity must be equal to 1
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: f = L([1,2,3,4])
+            sage: f.shift(-10) == L.zero()
+            True
         """
         P = self.parent()
         if P._arity != 1:
             raise ValueError("arity must be equal to 1")
+
+        if use_fraction_field:
+            P = P.fraction_field()
+
         if isinstance(self._coeff_stream, Stream_zero):
+            if use_fraction_field:
+                return P.zero()
             return self
-        elif isinstance(self._coeff_stream, Stream_shift):
+
+        if isinstance(self._coeff_stream, Stream_shift):
             n += self._coeff_stream._shift
             if n:
                 coeff_stream = Stream_shift(self._coeff_stream._series, n)
+                if P._minimal_valuation is not None:
+                    coeff_stream._approximate_order = max(coeff_stream._approximate_order, P._minimal_valuation)
             else:
                 coeff_stream = self._coeff_stream._series
         elif isinstance(self._coeff_stream, Stream_exact):
             init_coeff = self._coeff_stream._initial_coefficients
             degree = self._coeff_stream._degree + n
             valuation = self._coeff_stream._approximate_order + n
+            if P._minimal_valuation is not None and P._minimal_valuation > valuation:
+                init_coeff = init_coeff[P._minimal_valuation-valuation:]
+                valuation = P._minimal_valuation
+                if not init_coeff and not self._coeff_stream._constant:
+                    return P.zero()
             coeff_stream = Stream_exact(init_coeff,
                                         constant=self._coeff_stream._constant,
                                         order=valuation, degree=degree)
         else:
             coeff_stream = Stream_shift(self._coeff_stream, n)
-        # If we shift it too much, then it needs to go into the fraction field
-        # FIXME? This is different than the polynomial rings, which truncates the terms
-        if (coeff_stream._true_order
-            and P._minimal_valuation is not None
-            and coeff_stream._approximate_order < P._minimal_valuation):
-            P = P.fraction_field()
+
+        if P._minimal_valuation is not None:
+            coeff_stream._approximate_order = max(coeff_stream._approximate_order, P._minimal_valuation)
+
         return P.element_class(P, coeff_stream)
 
     __lshift__ = shift
@@ -3827,13 +3873,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         - `f = a/z` with `a \neq 0`.
 
-        .. WARNING::
-
-            For power series not known to be eventually constant
-            (e.g., being defined by a function), it is assumed that
-            the series has valuation `1` and is not one of
-            the two other special cases.
-
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
@@ -3851,6 +3890,17 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: s = L(degree=1, constant=1)
             sage: s.revert()
             z - z^2 + z^3 - z^4 + z^5 - z^6 + z^7 + O(z^8)
+
+        .. WARNING::
+
+            For series not known to be eventually constant (e.g., being
+            defined by a function) with approximate valuation `\leq 1`
+            (but not necessarily its true valuation), this assumes
+            that this is the actual valuation::
+
+                sage: f = L(lambda n: n if n > 2 else 0, valuation=1)
+                sage: f.revert()
+                <repr(... failed: ValueError: inverse does not exist>
 
         TESTS::
 
@@ -4656,12 +4706,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         - `f = a + b z` with `a, b \neq 0`.
 
-        .. WARNING::
-
-            For series not known to be eventually constant (e.g., being
-            defined by a function), it is assumed that the series
-            has valuation `1` and is not a linear polynomial.
-
         EXAMPLES::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
@@ -4678,6 +4722,17 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: s.revert()
             z - z^2 + z^3 - z^4 + z^5 - z^6 + z^7 + O(z^8)
 
+        .. WARNING::
+
+            For series not known to be eventually constant (e.g., being
+            defined by a function) with approximate valuation `\leq 1`
+            (but not necessarily its true valuation), this assumes
+            that this is the actual valuation::
+
+                sage: f = L(lambda n: n if n > 2 else 0)
+                sage: f.revert()
+                <repr(... failed: ValueError: generator already executing>
+
         TESTS::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
@@ -4686,7 +4741,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: s.revert()
             1/2*z + O(z^8)
 
-            sage: (2+3*z).revert()
+            sage: (2 + 3*z).revert()
             -2/3 + 1/3*z
 
             sage: s = L(lambda n: 2 if n == 0 else 3 if n == 1 else 0, valuation=0); s
@@ -4726,6 +4781,13 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             ValueError: compositional inverse does not exist
 
             sage: L(1).revert()
+            Traceback (most recent call last):
+            ...
+            ValueError: compositional inverse does not exist
+
+        `\mathrm{val}(f) > 1`::
+
+            sage: L(lambda n: n, valuation=2).revert()
             Traceback (most recent call last):
             ...
             ValueError: compositional inverse does not exist
@@ -4780,6 +4842,13 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
                 if coeff_stream.order() != 1:
                     raise ValueError("compositional inverse does not exist")
+
+        if coeff_stream._approximate_order > 1:
+            raise ValueError("compositional inverse does not exist")
+        # TODO: coefficients should not be checked here, it prevents
+        # us from using self.define in some cases!
+        if coeff_stream._approximate_order == 0 and coeff_stream[0]:
+            raise ValueError("cannot determine whether the compositional inverse exists")
 
         g = P.undefined(valuation=1)
         # the following is mathematically equivalent to
