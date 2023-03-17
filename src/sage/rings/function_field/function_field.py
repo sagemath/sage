@@ -1197,7 +1197,7 @@ class FunctionField(Field):
             sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: E = F.extension_constant_field(GF(2^4))
             sage: E
-            Function field in y defined by y^2 + y + (x^2 + 1)/x over its base
+            Function field in y defined by y^2 + y + (x^2 + 1)/x noncanonically over its base
             sage: E.constant_base_field()
             Finite Field in z4 of size 2^4
         """
