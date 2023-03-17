@@ -20,6 +20,21 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added higher derivations and completions
 
 """
+# ****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011-2017 Julian Rüth <julian.rueth@gmail.com>
+#                     2017      Alyson Deines
+#                     2017-2019 Kwankyu Lee
+#                     2018-2019 Travis Scrimshaw
+#                     2019      Brent Baccala
+#                     2022      Xavier Caruso
+#                     2022      Frédéric Chapoton
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.derivation import RingDerivationWithoutTwist
 
