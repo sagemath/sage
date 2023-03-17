@@ -1223,8 +1223,8 @@ class FunctionField_polymod(FunctionField):
         An example with higher degrees::
 
             sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]                                                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^5-x); R.<z> = L[]                                                               # optional - sage.libs.pari
-            sage: M.<z> = L.extension(z^3-x)                                                                            # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^5 - x); R.<z> = L[]                                                             # optional - sage.libs.pari
+            sage: M.<z> = L.extension(z^3 - x)                                                                          # optional - sage.libs.pari
             sage: M.simple_model()                                                                                      # optional - sage.libs.pari
             (Function field in z defined by z^15 + x*z^12 + x^2*z^9 + 2*x^3*z^6 + 2*x^4*z^3 + 2*x^5 + 2*x^3,
              Function Field morphism:
@@ -1241,8 +1241,8 @@ class FunctionField_polymod(FunctionField):
         This also works for inseparable extensions::
 
             sage: K.<x> = FunctionField(GF(2)); R.<y> = K[]                                                             # optional - sage.libs.pari
-            sage: L.<y> = K.extension(y^2-x); R.<z> = L[]                                                               # optional - sage.libs.pari
-            sage: M.<z> = L.extension(z^2-y)                                                                            # optional - sage.libs.pari
+            sage: L.<y> = K.extension(y^2 - x); R.<z> = L[]                                                             # optional - sage.libs.pari
+            sage: M.<z> = L.extension(z^2 - y)                                                                          # optional - sage.libs.pari
             sage: M.simple_model()                                                                                      # optional - sage.libs.pari
             (Function field in z defined by z^4 + x, Function Field morphism:
                From: Function field in z defined by z^4 + x
@@ -1315,9 +1315,9 @@ class FunctionField_polymod(FunctionField):
 
             sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.libs.pari
             sage: R.<Y> = K[]                                                           # optional - sage.libs.pari
-            sage: L.<y> = K.extension(Y^2-x)                                            # optional - sage.libs.pari
+            sage: L.<y> = K.extension(Y^2 - x)                                          # optional - sage.libs.pari
             sage: R.<Z> = L[]                                                           # optional - sage.libs.pari
-            sage: M.<z> = L.extension(Z^2-y)                                            # optional - sage.libs.pari
+            sage: M.<z> = L.extension(Z^2 - y)                                          # optional - sage.libs.pari
             sage: M.primitive_element()                                                 # optional - sage.libs.pari
             z
         """
