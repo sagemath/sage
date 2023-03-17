@@ -118,7 +118,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b.coxeter_group_element().reduced_word()
             [1, 2, 3, 2]
         """
-        if W == None:
+        if W is None:
             W = self.parent().coxeter_group()
         s = W.simple_reflections()
         I = W.index_set()
