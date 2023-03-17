@@ -48,7 +48,9 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+#       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2019      Brent Baccala
+#                     2021      Jonathan Kliem
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
