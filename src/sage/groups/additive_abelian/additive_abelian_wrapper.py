@@ -670,18 +670,23 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
 #    assert all(a.order() == p**v for a,v in zip(alphas,vals))
 
+    if rel[-1] < 0:
+        raise ValueError('rel must have nonnegative entries')
+
     # step 1
-    min_r = rel[-1]
+    min_r = rel[-1] or float('inf')
     for i in range(k-1):
         if not rel[i]:
             continue
+        if rel[i] < 0:
+            raise ValueError('rel must have nonnegative entries')
         q = rel[i].p_primary_part(p)
         alphas[i] *= rel[i] // q
         rel[i] = q
-        if not min_r or q < min_r:
+        if q < min_r:
             min_r = q
-    if min_r <= 0:
-        raise ValueError('rel must have nonnegative entries and at least one nonzero entry')
+    if min_r == float('inf'):
+        raise ValueError('rel must have at least one nonzero entry')
     val_rlast = rel[-1].valuation(p)
 #    assert rel[-1] == p ** val_rlast
 #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
