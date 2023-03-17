@@ -148,7 +148,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)                                  # optional - sage.libs.pari
             sage: O = L.maximal_order()                                                 # optional - sage.libs.pari
-            sage: p = O.ideal(x,y).place()                                              # optional - sage.libs.pari
+            sage: p = O.ideal(x, y).place()                                             # optional - sage.libs.pari
             sage: p.gaps()  # indirect doctest                                          # optional - sage.libs.pari
             [1, 2, 4]
 

@@ -304,7 +304,7 @@ class FunctionFieldPlace(Element):
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)               # optional - sage.libs.pari
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)                                    # optional - sage.libs.pari sage.rings.function_field
             sage: O = F.maximal_order()                                                 # optional - sage.libs.pari sage.rings.function_field
-            sage: I = O.ideal(x + 1,y)                                                  # optional - sage.libs.pari sage.rings.function_field
+            sage: I = O.ideal(x + 1, y)                                                 # optional - sage.libs.pari sage.rings.function_field
             sage: P = I.place()                                                         # optional - sage.libs.pari sage.rings.function_field
             sage: P.divisor()                                                           # optional - sage.libs.pari sage.rings.function_field
             Place (x + 1, y)
