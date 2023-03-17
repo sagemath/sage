@@ -380,7 +380,7 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
         Higher derivation map:
           From: Rational function field in x over Finite Field of size 2
           To:   Rational function field in x over Finite Field of size 2
-        sage: h(x^2,2)                                                                              # optional - sage.libs.pari
+        sage: h(x^2, 2)                                                                             # optional - sage.libs.pari
         1
     """
     def __init__(self, field):
@@ -406,7 +406,7 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
             sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.libs.pari
             sage: h = F.higher_derivation()                                                         # optional - sage.libs.pari
-            sage: h(x^2,2)  # indirect doctest                                                      # optional - sage.libs.pari
+            sage: h(x^2, 2)  # indirect doctest                                                     # optional - sage.libs.pari
             1
         """
         return self._derive(f, *args, **kwds)
@@ -422,15 +422,15 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
             sage: F.<x> = FunctionField(GF(2))                                                      # optional - sage.libs.pari
             sage: h = F.higher_derivation()                                                         # optional - sage.libs.pari
-            sage: h._derive(x^3,0)                                                                  # optional - sage.libs.pari
+            sage: h._derive(x^3, 0)                                                                 # optional - sage.libs.pari
             x^3
-            sage: h._derive(x^3,1)                                                                  # optional - sage.libs.pari
+            sage: h._derive(x^3, 1)                                                                 # optional - sage.libs.pari
             x^2
-            sage: h._derive(x^3,2)                                                                  # optional - sage.libs.pari
+            sage: h._derive(x^3, 2)                                                                 # optional - sage.libs.pari
             x
-            sage: h._derive(x^3,3)                                                                  # optional - sage.libs.pari
+            sage: h._derive(x^3, 3)                                                                 # optional - sage.libs.pari
             1
-            sage: h._derive(x^3,4)                                                                  # optional - sage.libs.pari
+            sage: h._derive(x^3, 4)                                                                 # optional - sage.libs.pari
             0
         """
         F = self._field
@@ -614,7 +614,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                         # optional - sage.libs.pari
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                              # optional - sage.libs.pari
             sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
-            sage: h(y^2,2)  # indirect doctest                                                      # optional - sage.libs.pari
+            sage: h(y^2, 2)  # indirect doctest                                                     # optional - sage.libs.pari
             ((x^7 + 1)/x^2)*y^2 + x^3*y
         """
         return self._derive(f, *args, **kwds)
@@ -633,15 +633,15 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
             sage: h = L.higher_derivation()                                                         # optional - sage.libs.pari
             sage: y^3                                                                               # optional - sage.libs.pari
             x^3*y + x
-            sage: h._derive(y^3,0)                                                                  # optional - sage.libs.pari
+            sage: h._derive(y^3, 0)                                                                 # optional - sage.libs.pari
             x^3*y + x
-            sage: h._derive(y^3,1)                                                                  # optional - sage.libs.pari
+            sage: h._derive(y^3, 1)                                                                 # optional - sage.libs.pari
             x^4*y^2 + 1
-            sage: h._derive(y^3,2)                                                                  # optional - sage.libs.pari
+            sage: h._derive(y^3, 2)                                                                 # optional - sage.libs.pari
             x^10*y^2 + (x^8 + x)*y
-            sage: h._derive(y^3,3)                                                                  # optional - sage.libs.pari
+            sage: h._derive(y^3, 3)                                                                 # optional - sage.libs.pari
             (x^9 + x^2)*y^2 + x^7*y
-            sage: h._derive(y^3,4)                                                                  # optional - sage.libs.pari
+            sage: h._derive(y^3, 4)                                                                 # optional - sage.libs.pari
             (x^22 + x)*y^2 + ((x^21 + x^14 + x^7 + 1)/x)*y
         """
         F = self._field
@@ -868,9 +868,9 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
             sage: h = L.higher_derivation()
             sage: y^3
             -x^3*y - x
-            sage: h._derive(y^3,0)
+            sage: h._derive(y^3, 0)
             -x^3*y - x
-            sage: h._derive(y^3,1)
+            sage: h._derive(y^3, 1)
             (-21/4*x^4/(x^7 + 27/4))*y^2 + ((-9/2*x^9 - 45/2*x^2)/(x^7 + 27/4))*y + (-9/2*x^7 - 27/4)/(x^7 + 27/4)
         """
         F = self._field
