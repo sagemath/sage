@@ -90,7 +90,7 @@ from sage.features import PythonModule
 
 
 lazy_import('sage.libs.braiding',
-            ['leftnormalform','rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
+            ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
             feature=PythonModule('sage.libs.braiding', spkg='libbraiding'))
@@ -1448,18 +1448,20 @@ class Braid(FiniteTypeArtinGroupElement):
             return {qa: C[qa].homology() for qa in C}
         return self.annular_khovanov_complex(qagrad, ring).homology()
 
-    def left_normal_form(self, algorithm='artin'):
+
+    @cached_method
+    def left_normal_form(self, algorithm='libbraiding'):
         r"""
         Return the left normal form of the braid.
-        
+
         INPUT:
-        
-        - `algorithm` : string (default: ``artin``). For `artin` the general
+
+        - `algorithm` : string (default: ``libbraiding``). For `artin` the general
           method for Artin group is used. For `libbraiding`, the algorithm
           uses the package `libbraiding`.
-        
+
         OUTPUT:
-        
+
         A tuple of simple generators in the left normal form. The first
         element is a power of `\Delta`, and the rest are elements of the
         natural section lift from the corresponding symmetric group.
@@ -1472,10 +1474,10 @@ class Braid(FiniteTypeArtinGroupElement):
             (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
             s0*s2*s1*s0*s3*s2*s1*s0*s4*s3*s2*s1,
             s3)
-            sage: L1 == b.left_normal_form(algorithm='libbraiding')
+            sage: L1 == b.left_normal_form()
             True
             sage: c = B([1])
-            sage: c.left_normal_form()
+            sage: c.left_normal_form(algorithm='artin')
             (1, s0)
             sage: B = BraidGroup(3)
             sage: B([1,2,-1]).left_normal_form()
@@ -1488,10 +1490,7 @@ class Braid(FiniteTypeArtinGroupElement):
             B = self.parent()
             return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
         elif algorithm == 'artin':
-            lnfp = self._left_normal_form_coxeter()
-            P = self.parent()
-            return tuple([P.delta() ** lnfp[0]] +
-                        [P._standard_lift(w) for w in lnfp[1:]])
+            return FiniteTypeArtinGroupElement.left_normal_form.f(self)
 
 
     def _left_normal_form_coxeter(self):
@@ -1570,7 +1569,7 @@ class Braid(FiniteTypeArtinGroupElement):
     def right_normal_form(self):
         r"""
         Return the right normal form of the braid.
-        
+
         A tuple of simple generators in the right normal form. The last
         element is a power of `\Delta`, and the rest are elements of the
         natural section lift from the corresponding symmetric group.
@@ -1739,7 +1738,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         l = conjugatingbraid(self, other)
         return bool(l)
-    
+
     def pure_conjugating_braid(self, other):
         r"""
         Return a pure conjugating braid, i.e. a conjugating braid whose
@@ -1750,9 +1749,8 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``other`` -- a braid in the same braid group as ``self``
 
         OUTPUT:
-        
+
         A pure braid `d` such that `other` equals `d^-1 * self * d`.
-         
 
         EXAMPLES::
 
