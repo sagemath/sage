@@ -15,6 +15,8 @@ from sage.misc.misc import inject_variable
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
 from sage.rings.number_field.number_field import CyclotomicField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.ideal import Ideal
 
 class FusionDouble(CombinatorialFreeModule):
     r"""
@@ -116,6 +118,9 @@ class FusionDouble(CombinatorialFreeModule):
         coef = 1 / (G.centralizer(a).order() * G.centralizer(b).order())
         return coef * sum
 
+    def s_ijconj(self, i, j):
+        return self.s_ij(i, j).conjugate()
+
     @cached_method
     def N_ijk(self, i, j, k):
         """
@@ -195,6 +200,64 @@ class FusionDouble(CombinatorialFreeModule):
 
     def field(self):
         return CyclotomicField(4 * self._cyclotomic_order)
+
+    def root_of_unity(self, r, base_coercion=True):
+        r"""
+        Return `e^{i\pi r}` as an element of ``self.field()`` if possible.
+
+        INPUT:
+
+        - ``r`` -- a rational number
+
+        EXAMPLES::
+
+            sage: A11 = FusionRing("A1", 1)
+            sage: A11.field()
+            Cyclotomic Field of order 24 and degree 8
+            sage: for n in [1..7]:
+            ....:     try:
+            ....:         print(n, A11.root_of_unity(2/n))
+            ....:     except ValueError as err:
+            ....:         print(n, err)
+            1 1
+            2 -1
+            3 zeta24^4 - 1
+            4 zeta24^6
+            5 not a root of unity in the field
+            6 zeta24^4
+            7 not a root of unity in the field
+        """
+        n = 2 * r * self._cyclotomic_order
+        if n not in ZZ:
+            raise ValueError("not a root of unity in the field")
+        return  self.field().gen() ** n
+
+    def r_matrix(self, i, j, k):
+
+        r"""
+        """
+        if self.Nk_ij(i, j, k) == 0:
+            return self.field().zero()
+        if i != j:
+            ret = self.root_of_unity((k.twist() - i.twist() - j.twist()) / 2)
+        else:
+            i0 = self.one()
+            B = self.basis()
+            ret = sum(y.ribbon()**2 / (i.ribbon() * x.ribbon()**2)
+                   * self.s_ij(i0, y) * self.s_ij(i, z) * self.s_ijconj(x, z)
+                   * self.s_ijconj(k, x) * self.s_ijconj(y, z) / self.s_ij(i0, z)
+                   for x in B for y in B for z in B) / (self.total_q_order()**4)
+        return ret
+
+    def total_q_order(self):
+        r"""
+        Return the positive square root of :meth:`self.global_q_dimension()
+        <global_q_dimension>` as an element of :meth:`self.field() <field>`.
+
+        For the Drinfeld double of a finite group `G`, this equals the
+        cardinality of `G`.
+        """
+        return self._G.order()
 
     def is_multiplicity_free(self, verbose=False):
         """
@@ -316,8 +379,10 @@ class FusionDouble(CombinatorialFreeModule):
 
 class FMatrix1:
     """
-    Experimental code for working with F-matrices. The F-matrix
-    is only determined up to a gauge. It is possible to make
+    Older version of the FMatrix code, cloned from sage
+    trac commit 1b99dcc.
+
+    The F-matrix is only determined up to a gauge. It is possible to make
     the F-matrices unitary, or it is possible to make them
     cyclotomic. We choose the latter.
 
@@ -371,8 +436,6 @@ class FMatrix1:
     """
     def __init__(self, fusion_ring, fusion_label="f", var_prefix='fx', max_fields=4):
         self.FR = fusion_ring
-        if self.FR._fusion_labels is None:
-            self.FR.fusion_labels(fusion_label, inject_variables=True)
         #Set up F-symbols entry by entry
         n_vars = self.findcases()
         self._poly_ring = PolynomialRing(self.FR.field(),n_vars,var_prefix)
@@ -473,13 +536,17 @@ class FMatrix1:
         self.ideal_basis = set(eq.specialization(special_values) for eq in self.ideal_basis)
         self.ideal_basis.discard(0)
 
-    def get_solution(self, factor=False):
+    def get_solution(self, factor=False, pent=True, hexa=True):
         """
         Retrieve a set of F-symbols satisfying the hex and pentagon relations.
         """
         if len(self.FR.basis()) <= self._max_fields:
             print("Setting up hexagons and pentagons...")
-            eqns = self.hexagon(factor=factor)+self.pentagon(factor=factor)
+            eqns = []
+            if pent:
+                eqns += self.pentagon(factor=factor)
+            if hexa:
+                eqns += self.hexagon(factor=factor)
             print("Finding a Groebner basis...")
             self.ideal_basis = set(Ideal(eqns).groebner_basis())
             print("Solving...")
