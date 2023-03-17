@@ -944,8 +944,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 2), (12, 29, 6)),
              ((1, 2), (31, 31, 7))]
 
-        Specify a list of indices to restrict which coefficients appear
-        in the parameters::
+        One can specify the list of coefficients indices to be
+        considered in the computation::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
