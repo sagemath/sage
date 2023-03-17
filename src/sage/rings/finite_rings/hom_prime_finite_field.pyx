@@ -90,7 +90,15 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
             1
             sage: a.parent()
             Finite Field in t of size 3^5
+
+            sage: k = GF(2).extension(1, absolute=False)
+            sage: f = FiniteFieldHomomorphism_prime(Hom(k, GF(2)))
+            sage: f(k(1))
+            1
         """
+        # Have to handle trivial relative extensions separately, otherwise we get an infinite loop
+        if self.domain() is not self.domain().base_ring():
+            x = x.polynomial()[0]
         return self._codomain._element_constructor(x)
 
 
