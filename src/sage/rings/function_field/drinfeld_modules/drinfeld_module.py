@@ -1494,7 +1494,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if parameter is None:
             if r != 2:
                 raise TypeError("parameter must not be None "
-                                 "if the rank is greater than 2")
+                                "if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if parameter in ZZ:
             if parameter <= 0 or parameter >= r:
