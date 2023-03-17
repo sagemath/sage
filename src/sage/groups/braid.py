@@ -183,7 +183,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: K11n42.components_in_closure()
             1
         """
-        cycles = self.permutation().to_cycles(singletons=False)
+        cycles = self.permutation().cycle_tuples()
         return self.strands() - sum(len(c)-1 for c in cycles)
 
     def burau_matrix(self, var='t', reduced=False):
@@ -428,9 +428,15 @@ class Braid(FiniteTypeArtinGroupElement):
                 p = -p
         return p
 
-    def permutation(self):
+    def permutation(self, group = 'symgroup'):
         """
         Return the permutation induced by the braid in its strands.
+
+        INPUT:
+
+        - group - (default : `'symgroup'`) a string variable. If it
+          it is `'symgroup'` it returns an element of a SymmetricGroup;
+          if it is not, it returns an Standard Permutation.
 
         OUTPUT:
 
@@ -441,11 +447,17 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B.<s0,s1,s2> = BraidGroup()
             sage: b = s0*s1/s2/s1
             sage: b.permutation()
+            (1,4,2)
+            sage: c = Permutation(b.permutation()); c
             [4, 1, 3, 2]
-            sage: b.permutation().cycle_string()
-            '(1,4,2)'
+            sage: c == b.permutation(group='standardperm')
+            True
         """
-        return self.coxeter_group_element()
+        if group == 'symgroup':
+            G = SymmetricGroup(self.strands())
+        else:
+            G = None
+        return self.coxeter_group_element(W=G)
 
     def plot(self, color='rainbow', orientation='bottom-top', gap=0.05, aspect_ratio=1, axes=False, **kwds):
         """
@@ -1762,7 +1774,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: print(len(d1.Tietze()))
             30
             sage: print(d1.permutation())
-            [3, 4, 1, 2]
+            (1,3)(2,4)
             sage: d1 * c / d1 == a
             True
             sage: d1 * a / d1 == c
@@ -1771,7 +1783,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: print(len(d2.Tietze()))
             24
             sage: print(d2.permutation())
-            [1, 2, 3, 4]
+            ()
             sage: d2 * c / d2 == a
             True
             sage: print(d2)
@@ -1785,9 +1797,9 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a1.conjugating_braid(a2)
             s1*s0
             sage: a1.permutation()
-            [2, 1, 3, 4]
+            (1,2)
             sage: a2.permutation()
-            [1, 3, 2, 4]
+            (2,3)
             sage: print(a1.pure_conjugating_braid(a2))
             None
             sage: (a1^2).conjugating_braid(a2^2)
@@ -1805,11 +1817,10 @@ class Braid(FiniteTypeArtinGroupElement):
         if b0 is None:
             return None
         p3 = b0.permutation().inverse()
+        G = p3.parent()
         if p3.is_one():
             return b0
-        G = SymmetricGroup(n)
-        LP = {G(a.permutation()): a for a in self.centralizer()}
-        p3 = G(p3)
+        LP = {a.permutation(): a for a in self.centralizer()}
         if p3 not in G.subgroup(LP):
             return None
         P = p3.word_problem(list(LP), display=False, as_list=True)
