@@ -137,8 +137,8 @@ class FiniteField_ntl_gf2e(FiniteFieldAbsolute):
             raise ValueError("q must be a 2-power")
         FiniteFieldAbsolute.__init__(self, GF2, names, normalize=True)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)

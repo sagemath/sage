@@ -105,6 +105,13 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 # used to deprecate only adjoint method
 from sage.misc.superseded import deprecated_function_alias
 
+# temporary hack to silence the warnings from #34806
+from sage.rings.number_field.order import Order as NumberFieldOrder
+def ideal_or_fractional(R, *args):
+    if isinstance(R, NumberFieldOrder):
+        R = R.number_field()
+    return R.ideal(*args)
+
 _Fields = Fields()
 
 cdef class Matrix(Matrix1):
@@ -15993,7 +16000,7 @@ cdef class Matrix(Matrix1):
         try:
             for i in xrange(1, len(pivs)):
                 y = a[i][pivs[i]]
-                I = R.ideal(y)
+                I = ideal_or_fractional(R, y)
                 s = a[0][pivs[i]]
                 t = I.small_residue(s)
                 v = R( (s-t) / y)
@@ -17730,9 +17737,9 @@ def _smith_diag(d, transformation=True):
     else:
         left = right = None
     for i in xrange(n):
-        I = R.ideal(dp[i,i])
+        I = ideal_or_fractional(R, dp[i,i])
 
-        if I == R.unit_ideal():
+        if I == ideal_or_fractional(R, 1):
             if dp[i,i] != 1:
                 if transformation:
                     left.add_multiple_of_row(i,i,R(R(1)/(dp[i,i])) - 1)
@@ -17741,12 +17748,12 @@ def _smith_diag(d, transformation=True):
 
         for j in xrange(i+1,n):
             if dp[j,j] not in I:
-                t = R.ideal([dp[i,i], dp[j,j]]).gens_reduced()
+                t = ideal_or_fractional(R, [dp[i,i], dp[j,j]]).gens_reduced()
                 if len(t) > 1:
                     raise ArithmeticError
                 t = t[0]
                 # find lambda, mu such that lambda*d[i,i] + mu*d[j,j] = t
-                lamb = R(dp[i,i]/t).inverse_mod( R.ideal(dp[j,j]/t))
+                lamb = R(dp[i,i]/t).inverse_mod( ideal_or_fractional(R, dp[j,j]/t))
                 mu = R((t - lamb*dp[i,i]) / dp[j,j])
 
                 newlmat = dp.new_matrix(dp.nrows(), dp.nrows(), 1)
@@ -17821,18 +17828,15 @@ def _generic_clear_column(m):
     # [e,f]
     # is invertible over R
 
-    if a[0,0] != 0:
-        I = R.ideal(a[0, 0]) # need to make sure we change this when a[0,0] changes
-    else:
-        I = R.zero_ideal()
+    I = ideal_or_fractional(R, a[0, 0]) # need to make sure we change this when a[0,0] changes
     for k in xrange(1, a.nrows()):
         if a[k,0] not in I:
             try:
-                v = R.ideal(a[0,0], a[k,0]).gens_reduced()
+                v = ideal_or_fractional(R, a[0,0], a[k,0]).gens_reduced()
             except Exception as msg:
                 raise ArithmeticError("%s\nCan't create ideal on %s and %s" % (msg, a[0,0], a[k,0]))
             if len(v) > 1:
-                raise ArithmeticError("Ideal %s not principal" % R.ideal(a[0,0], a[k,0]))
+                raise ArithmeticError("Ideal %s not principal" % ideal_or_fractional(R, a[0,0], a[k,0]))
             B = v[0]
 
             # now we find c,d, using the fact that c * (a_{0,0}/B) - d *
@@ -17841,7 +17845,7 @@ def _generic_clear_column(m):
             # need to handle carefully the case when a_{k,0}/B is a unit, i.e. a_{k,0} divides
             # a_{0,0}.
 
-            c = R(a[0,0] / B).inverse_mod(R.ideal(a[k,0] / B))
+            c = R(a[0,0] / B).inverse_mod(ideal_or_fractional(R, a[k,0] / B))
             d = R( (c*a[0,0] - B)/(a[k,0]) )
 
             # sanity check
@@ -17850,7 +17854,7 @@ def _generic_clear_column(m):
 
             # now we find e,f such that e*d + c*f = 1 in the same way
             if c != 0:
-                e = d.inverse_mod( R.ideal(c) )
+                e = d.inverse_mod( ideal_or_fractional(R, c) )
                 f = R((1 - d*e)/c)
             else:
                 e = R(-a[k,0]/B) # here d is a unit and this is just 1/d
@@ -17866,7 +17870,7 @@ def _generic_clear_column(m):
             if newlmat.det() != 1:
                 raise ArithmeticError
             a = newlmat*a
-            I = R.ideal(a[0,0])
+            I = ideal_or_fractional(R, a[0,0])
             left_mat = newlmat*left_mat
             if left_mat * m != a:
                 raise ArithmeticError

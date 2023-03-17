@@ -2629,11 +2629,13 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
           complement in the case the latter has to be created; the default
           is built upon the symbol `\setminus`
+        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+          is assumed to be open with respect to the manifold's topology
 
         OUTPUT:
 
-        - instance of :class:`ManifoldSubset` representing the
-          subset that is difference of ``superset`` minus ``self``
+        - instance of :class:`ManifoldSubset` representing the subset that
+          is ``superset`` minus ``self``
 
         EXAMPLES::
 
@@ -2649,6 +2651,15 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             TypeError: superset must be a superset of self
+
+        Demanding that the complement is open makes ``self`` a closed subset::
+
+            sage: A.is_closed()  # False a priori
+            False
+            sage: A.complement(is_open=True)
+            Open subset M_minus_A of the 2-dimensional topological manifold M
+            sage: A.is_closed()
+            True
 
         """
         if superset is None:
@@ -2672,11 +2683,13 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
           difference in the case the latter has to be created; the default
           is built upon the symbol `\setminus`
+        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+          is assumed to be open with respect to the manifold's topology
 
         OUTPUT:
 
-        - instance of :class:`ManifoldSubset` representing the
-          subset that is difference of ``self`` minus ``other``
+        - instance of :class:`ManifoldSubset` representing the subset that is
+          ``self`` minus ``other``
 
         EXAMPLES::
 
@@ -2705,6 +2718,13 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             True
             sage: M.difference(O, is_open=True)
             Open subset CO2 of the 2-dimensional topological manifold M
+
+        Since `O` is open and we have asked `M\setminus O` to be open, `O`
+        is a clopen set (if `O\neq M` and `O\neq\emptyset`, this implies that
+        `M` is not connected)::
+
+            sage: O.is_closed() and O.is_open()
+            True
 
         """
         # See if it has been created already

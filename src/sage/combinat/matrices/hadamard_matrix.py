@@ -179,6 +179,56 @@ def hadamard_matrix_paleyI(n, normalize=True):
     return H
 
 
+def symmetric_conference_matrix_paley(n):
+    r"""
+    Construct a symmetric conference matrix of order n.
+
+    A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
+    and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`. This construction assumes
+    that `q = n-1` is a prime power, with `q \cong 1 \mod 4`. See [Hora]_ or [Lon2013]_.
+
+    These matrices are used in :func:`hadamard_matrix_paleyII`.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the symmetric conference matrix to consruct.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import symmetric_conference_matrix_paley
+        sage: symmetric_conference_matrix_paley(6)
+        [ 0  1  1  1  1  1]
+        [ 1  0  1 -1 -1  1]
+        [ 1  1  0  1 -1 -1]
+        [ 1 -1  1  0  1 -1]
+        [ 1 -1 -1  1  0  1]
+        [ 1  1 -1 -1  1  0]
+
+    TESTS::
+
+        sage: symmetric_conference_matrix_paley(5)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 5 is not covered by Paley construction of symmetric conference matrices.
+    """
+    q = n - 1
+    if not (is_prime_power(q) and (q % 4 == 1)):
+        raise ValueError("The order %s is not covered by Paley construction of symmetric conference matrices." % n)
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    K = FiniteField(q, 'x')
+    K_list = list(K)
+    K_list.insert(0, K.zero())
+    H = matrix(ZZ, [[(1 if (x-y).is_square() else -1)
+                     for x in K_list]
+                    for y in K_list])
+    for i in range(n):
+        H[0, i] = 1
+        H[i, 0] = 1
+        H[i, i] = 0
+    return H
+
+
 def hadamard_matrix_paleyII(n):
     r"""
     Implement the Paley type II construction.
@@ -226,17 +276,7 @@ def hadamard_matrix_paleyII(n):
     if not (n % 2 == 0 and is_prime_power(q) and (q % 4 == 1)):
         raise ValueError("The order %s is not covered by the Paley type II construction." % n)
 
-    from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    K = FiniteField(q, 'x')
-    K_list = list(K)
-    K_list.insert(0, K.zero())
-    H = matrix(ZZ, [[(1 if (x-y).is_square() else -1)
-                     for x in K_list]
-                    for y in K_list])
-    for i in range(q+1):
-        H[0, i] = 1
-        H[i, 0] = 1
-        H[i, i] = 0
+    H = symmetric_conference_matrix_paley(q+1)
 
     tr = { 0: matrix(2, 2, [ 1, -1, -1, -1]),
            1: matrix(2, 2, [ 1,  1,  1, -1]),
@@ -245,6 +285,114 @@ def hadamard_matrix_paleyII(n):
     H = block_matrix(q+1, q+1, [tr[v] for r in H for v in r])
 
     return normalise_hadamard(H)
+
+
+def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
+    r"""
+    Construct Hadamard matrix using Miyamoto construction.
+
+    If `q = n/4` is a prime power, and there exists an Hadamard matrix of order
+    `q-1`, then a Hadamard matrix of order `n` can be constructed (see [Miy1991]_).
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is a Hadamard
+      before returning.
+
+    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` does not satisfies the constraints.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default the function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_miyamoto_construction
+        sage: hadamard_matrix_miyamoto_construction(20)
+        20 x 20 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns a boolean ::
+
+        sage: hadamard_matrix_miyamoto_construction(36, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_miyamoto_construction(68, check=False))
+        True
+        sage: hadamard_matrix_miyamoto_construction(64, existence=True)
+        False
+        sage: hadamard_matrix_miyamoto_construction(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: The order 64 is not covered by Miyamoto construction.
+        sage: hadamard_matrix_miyamoto_construction(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: No Hadamard matrix of order 14 exists.
+    """
+    if n < 0 or n % 4 != 0:
+        raise ValueError(f'No Hadamard matrix of order {n} exists.')
+
+    q = n // 4
+    if existence:
+        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
+
+    if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+        raise ValueError(f'The order {n} is not covered by Miyamoto construction.')
+
+    m = (q-1) // 2
+
+    C = symmetric_conference_matrix_paley(q + 1)
+
+    neg = [i for i in range(2, m+2) if C[1, i] == -1]
+    pos = [i for i in range(m+2, 2*m+2) if C[1, i] == 1]
+
+    for i, j in zip(neg, pos):
+        C.swap_rows(i, j)
+        C.swap_columns(i, j)
+
+    C1 = -C.submatrix(row=2, col=2, nrows=m, ncols=m)
+    C2 = C.submatrix(row=2, col=m+2, nrows=m, ncols=m)
+    C4 = C.submatrix(row=m+2, col=m+2, nrows=m, ncols=m)
+
+    K = hadamard_matrix(q - 1)
+    K1 = K.submatrix(row=0, col=0, nrows=(q-1)//2, ncols=(q-1)//2)
+    K2 = K.submatrix(row=0, col=(q-1)//2, nrows=(q-1)//2, ncols=(q-1)//2)
+    K3 = -K.submatrix(row=(q-1)//2, col=0, nrows=(q-1)//2, ncols=(q-1)//2)
+    K4 = K.submatrix(row=(q-1)//2, col=(q-1)//2, nrows=(q-1)//2, ncols=(q-1)//2)
+
+    Zr = zero_matrix(m)
+    Us = [[C1, C2, Zr, Zr], [C2.T, C4, Zr, Zr], [Zr, Zr, C1, C2], [Zr, Zr, C2.T, C4]]
+    Vs = [[I(m), Zr, K1, K2], [Zr, I(m), K3, K4], [K1.T, K3.T, I(m), Zr], [K2.T, K4.T, Zr, I(m)]]
+
+    def T(i, j):
+        return block_matrix([[Us[i][j]+Vs[i][j], Us[i][j]-Vs[i][j]],
+                             [Us[i][j]-Vs[i][j], Us[i][j]+Vs[i][j]]])
+
+    e = matrix([[1] * (2*m)])
+    one = matrix([1])
+    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
+                      [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
+                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
+                      [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
+                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
+                      [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
+                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
+                      [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
+
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
 
 
 def hadamard_matrix_williamson_type(a, b, c, d, check=True):
@@ -319,7 +467,8 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     Williamson construction of Hadamard matrices. Namely, the function returns the first row of
     4 `n\times n` circulant matrices with the properties described in
     :func:`sage.combinat.matrices.hadamard_matrix.hadamard_matrix_williamson_type`.
-    The matrices for n=29 and n=43 are given in [Ha83]_.
+    The matrices for `n = 3, 5, ..., 29, 37, 43` are given in [Ha83]_. The matrices
+    for `n = 31, 33, 39, 41, 45, 49, 51, 55, 57, 61, 63` are given in [Lon2013]_.
 
     INPUT:
 
@@ -354,31 +503,67 @@ def williamson_type_quadruples_smallcases(n, existence=False):
         ValueError: The Williamson type quadruple of order 123 is not yet implemented.
     """
     db = {
-        1: ([1], [1], [1], [1]),
-        7: ([1, -1, -1, 1, 1, -1, -1],
-            [1, -1, 1, -1, -1, 1, -1],
-            [1, 1, -1, -1, -1, -1, 1],
-            [1, -1, -1, -1, -1, -1, -1]),
-        9: ([1, -1, -1, -1, 1, 1, -1, -1, -1],
-            [1, -1, -1, 1, -1, -1, 1, -1, -1],
-            [1, -1, 1, -1, -1, -1, -1, 1, -1],
-            [1, 1, -1, -1, -1, -1, -1, -1, 1]),
-        29: ([1, 1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, 1, 1],
-             [1, -1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, 1, -1],
-             [1, 1, 1, 1, -1, 1, 1, -1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, -1, 1, 1, -1, 1, 1, 1],
-             [1, 1, -1, -1, 1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, -1, 1]),
-        43: ([1, 1, -1, -1, -1, 1, 1, 1, 1, -1, 1, -1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, 1, -1, 1, 1, 1, 1, -1, -1, -1, 1],
-             [1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1, -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1],
-             [1, 1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1],
-             [1, -1, -1, -1, 1, 1, -1, -1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, -1]),
+        1: ('+', '+', '+', '+'),
+        3: ('+++', '+--', '+--', '+--'),
+        5: ('+-++-', '++--+', '+----', '+----'),
+        7: ('+--++--', '+-+--+-', '++----+', '+------'),
+        9: ('+---++---', '+--+--+--', '+-+----+-', '++------+'),
+        11: ('++--------+', '++-+-++-+-+', '++-++--++-+', '+-++----++-'),
+        13: ('++++-+--+-+++', '+---+-++-+---', '++---+--+---+', '++---+--+---+'),
+        15: ('+-+---++++---+-', '++-++------++-+',
+             '++-++++--++++-+', '++-++-+--+-++-+'),
+        17: ('+---+++----+++---', '++-+---+--+---+-+',
+             '+--+-++++++++-+--', '+-++-+++--+++-++-'),
+        19: ('++--+++-+--+-+++--+', '++-++--+-++-+--++-+',
+             '+-+---++++++++---+-', '++--+-++++++++-+--+'),
+        21: ('+--++++---++---++++--', '++++-+---+--+---+-+++',
+             '++--+-+-++--++-+-+--+', '++-+++++-+--+-+++++-+'),
+        23: ('++---+---+-++-+---+---+', '+-++-++--++++++--++-++-',
+             '+++---++-+-++-+-++---++', '+++-+++-+------+-+++-++'),
+        25: ('++++-+-+-+--++--+-+-+-+++', '++--+--+-++++++++-+--+--+',
+             '+++--+--++++--++++--+--++', '+-+--+++--++++++--+++--+-'),
+        27: ('+--+--+-+++--++--+++-+--+--', '+++-++-+---++--++---+-++-++',
+             '+---+++++-+-++++-+-+++++---', '+---+++++-+-++++-+-+++++---'),
+        29: ('+++---++--+-+----+-+--++---++', '+-+---++--+-++++++-+--++---+-',
+             '++++-++-+---++++++---+-++-+++', '++--+--+-+++-++++-+++-+--+--+'),
+        31: ('++++++-+--+---++++---+--+-+++++', '+--++---+-+-++----++-+-+---++--',
+             '+--++---+-+-++----++-+-+---++--', '+-----+-++-+++----+++-++-+-----'),
+        33: ('++++++-+-+-+++------+++-+-+-+++++', '++-+-++-+----+++--+++----+-++-+-+',
+             '++--++-+++-+--+-++-+--+-+++-++--+', '+--++--+++++-++----++-+++++--++--'),
+        37: ('+--+-+-+-++---+--++++--+---++-+-+-+--', '+---++-++--+-+-++----++-+-+--++-++---',
+             '+++++-+-----++----++----++-----+-++++', '+--+++-+-----+----++----+-----+-+++--'),
+        39: ('+++--+-+-----+--++----++--+-----+-+--++', '+++--++-+---+-+--+----+--+-+---+-++--++',
+             '++++---+--++----+-+--+-+----++--+---+++', '+---++-+-+-----+++-++-+++-----+-+-++---'),
+        41: ('++++--+-++++-++--++----++--++-++++-+--+++', '++++--+-++++-++--++----++--++-++++-+--+++',
+             '+++-++-+-+-+-----+++--+++-----+-+-+-++-++', '+--+--+-+-+-+++++---++---+++++-+-+-+--+--'),
+        43: ('++---++++-+--+--++--------++--+--+-++++---+', '+++-+-++--+-+-++++-+----+-++++-+-+--++-+-++',
+             '++-++++++----+-+--++-++-++--+-+----++++++-+', '+---++--++++-+-+++-++--++-+++-+-++++--++---'),
+        45: ('+++++-++----+-++--++-++-++--++-+----++-++++', '+++---++--+-+-+-++--------++-+-+-+--++---++',
+             '++-+-++++-+--+--+++--++--+++--+--+-++++-+-+', '+-++-----++++-+-+++-++++-+++-+-++++-----++-'),
+        49: ('++++-++-+---++-+++---++-++-++---+++-++---+-++-+++', '++++-++-+---++-+++---++-++-++---+++-++---+-++-+++',
+             '+----+-++++--+-+++-+-+++--+++-+-+++-+--++++-+----', '+++++-+----++-+---+-+---++---+-+---+-++----+-++++'),
+        51: ('+---+++-++-+-+++--+++++--++--+++++--+++-+-++-+++---', '----+++-++-+-+++--+++++--++--+++++--+++-+-++-+++---',
+             '-+--+----+-+++-+-+++++--+--+--+++++-+-+++-+----+--+', '-+--+----+-+++-+-+++++--+--+--+++++-+-+++-+----+--+'),
+        55: ('+-+--+-+-++--+-+++++-+++--++++--+++-+++++-+--++-+-+--+-', '--+--+-+-++--+-+++++-+++--++++--+++-+++++-+--++-+-+--+-',
+             '+++----++-++--++----+-+-++++++++-+-+----++--++-++----++', '+++----++-++--++----+-+-++++++++-+-+----++--++-++----++'),
+        57: ('+---++-+--++++-+++-++---+-++++++-+---++-+++-++++--+-++---', '----++-+--++++-+++-++---+-++++++-+---++-+++-++++--+-++---',
+             '--+-+-+++--+--+-++---+++++-++++-+++++---++-+--+--+++-+-+-', '--+-+-+++--+--+-++---+++++-++++-+++++---++-+--+--+++-+-+-'),
+        61: ('++--+--++--+-+-++++--+-----+------+-----+--++++-+-+--++--+--+', '++--+--++--+-+-++++--+-----+------+-----+--++++-+-+--++--+--+',
+             '+---+-+-++++---++--+-++-+---++++++---+-++-+--++---++++-+-+---', '++++-+-+----+++--++-+--+-+++------+++-+--+-++--+++----+-+-+++'),
+        63: ('++-+++--++-++--+--+-++-+-+++--------+++-+-++-+--+--++-++--+++-+', '-+-+++--++-++--+--+-++-+-+++--------+++-+-++-+--+--++-++--+++-+',
+             '++++-++-+-++++-+---+---+++---++++++---+++---+---+-++++-+-++-+++', '++++-++-+-++++-+---+---+++---++++++---+++---+---+-++++-+-++-+++'),
     }
+
+    def pmtoZ(s):
+        return [1 if x == '+' else -1 for x in s]
 
     if existence:
         return n in db
 
     if n not in db:
         raise ValueError("The Williamson type quadruple of order %s is not yet implemented." % n)
-    a, b, c, d = map(vector, db[n])
+
+    a, b, c, d = map(lambda s: vector(pmtoZ(s)), db[n])
     return a, b, c, d
 
 
@@ -406,10 +591,10 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
         116 x 116 dense matrix over Integer Ring...
         sage: williamson_hadamard_matrix_smallcases(172)
         172 x 172 dense matrix over Integer Ring...
-        sage: williamson_hadamard_matrix_smallcases(100)
+        sage: williamson_hadamard_matrix_smallcases(1000)
         Traceback (most recent call last):
         ...
-        ValueError: The Williamson type Hadamard matrix of order 100 is not yet implemented.
+        ValueError: The Williamson type Hadamard matrix of order 1000 is not yet implemented.
     """
     assert n % 4 == 0
 
@@ -736,6 +921,92 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
                          [-B*R,      A, -D.T*R,  C.T*R],
                          [-C*R,  D.T*R,      A, -B.T*R],
                          [-D*R, -C.T*R,  B.T*R,      A]])
+
+
+def hadamard_matrix_from_sds(n, existence=False, check=True):
+    r"""Construction of Hadamard matrices from supplementary difference sets.
+
+    Given four SDS with parameters `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` with
+    `n_1 + n_2 + n_3 + n_4 = n+\lambda` we can construct four (-1,+1) sequences `a_i = (a_{i,0},...,a_{i,n-1})`
+    where `a_{i,j} = -1` iff `j \in S_i`. These will be the fist rows of four circulant
+    matrices `A_1, A_2, A_3, A_4` which, when plugged into the Goethals-Seidel array, create an
+    Hadamard matrix of order `4n` (see [Djo1994b]_).
+
+    The supplementary difference sets are taken from
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set`.
+
+    INPUT:
+
+    - ``n`` -- integer, the order of the matrix to be constructed.
+
+    - ``check`` -- boolean: if True (default), check the the matrix is a Hadamard
+      before returning.
+
+    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+
+    OUTPUT:
+
+    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` is not a multiple of `4`.
+    If ``existence`` is true, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default The function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_sds
+        sage: hadamard_matrix_from_sds(148)
+        148 x 148 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns a boolean ::
+
+        sage: hadamard_matrix_from_sds(764, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_sds, is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_from_sds(172))
+        True
+        sage: hadamard_matrix_from_sds(64, existence=True)
+        False
+        sage: hadamard_matrix_from_sds(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: SDS of order 16 not yet implemented.
+        sage: hadamard_matrix_from_sds(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a positive multiple of four.
+    """
+    from sage.combinat.designs.difference_family import supplementary_difference_set
+
+    if n <= 0 or n % 4 != 0:
+        raise ValueError(f'n must be a positive multiple of four.')
+    t = n // 4
+
+    if existence:
+        return supplementary_difference_set(t, existence=True)
+
+    S1, S2, S3, S4 = supplementary_difference_set(t, check=False)
+    a = [-1 if i in S1 else 1 for i in range(t)]
+    b = [-1 if i in S2 else 1 for i in range(t)]
+    c = [-1 if i in S3 else 1 for i in range(t)]
+    d = [-1 if i in S4 else 1 for i in range(t)]
+
+    if n == 956:
+        a, b, c, d = [-el for el in d], a, b, c
+
+    A, B, C, D = map(matrix.circulant, [a, b, c, d])
+    if check:
+        assert A*A.T+B*B.T+C*C.T+D*D.T == 4*t*I(t)
+
+    H = _construction_goethals_seidel_matrix(A, B, C, D)
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
 
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
@@ -1133,7 +1404,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     r"""Create an Hadamard matrix of order `n` using Spence construction.
 
     This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
-    :func:`sage.combinat.designs.difference_family.supplementary_difference_set` to create the
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
     desired matrix.
 
     INPUT:
@@ -1180,19 +1451,19 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         ...
         AssertionError
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set
+    from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
 
     assert n % 4 == 0 and n > 0
 
     q = n//4
 
     if existence:
-        return supplementary_difference_set(q, existence=True)
+        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
 
-    if not supplementary_difference_set(q, existence=True):
+    if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    S1, S2, S3, S4 = supplementary_difference_set(q, check=False)
+    S1, S2, S3, S4 = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
     A1 = matrix.circulant([1 if j in S1 else -1 for j in range(q-1)])
     A2 = matrix.circulant([1 if j in S4 else -1 for j in range(q-1)])
@@ -1501,6 +1772,14 @@ def hadamard_matrix(n, existence=False, check=True):
         if existence:
             return True
         M = turyn_type_hadamard_matrix_smallcases(n, check=False)
+    elif hadamard_matrix_miyamoto_construction(n, existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_miyamoto_construction(n, check=False)
+    elif hadamard_matrix_from_sds(n, existence=True):
+        if existence:
+            return True
+        M = hadamard_matrix_from_sds(n, check=False)
     elif hadamard_matrix_spence_construction(n, existence=True):
         if existence:
             return True
@@ -2261,7 +2540,7 @@ def skew_hadamard_matrix_324():
     r"""
     Construct a skew Hadamard matrix of order 324.
 
-    The construction is taken from [Djo1994]_. It uses four supplementary difference sets `S_1, S_2, S_3, S_4`,
+    The construction is taken from [Djo1994a]_. It uses four supplementary difference sets `S_1, S_2, S_3, S_4`,
     with `S_1` of skew type. These are then used to generate four matrices of order `81`, which are
     inserted into the Goethals-Seidel array.
 

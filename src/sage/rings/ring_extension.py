@@ -575,7 +575,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
             sage: K = GF(5^3)
             sage: L = K.over(K.frobenius_endomorphism()); L
-            Finite Field in z3 of size 5^3 noncanonically over its base
+            Finite Field in z3 of size 5^3 over its base
             sage: L(K.gen())
             2*z3^2 + 4*z3 + 4
             sage: K.gen()^5
@@ -878,16 +878,10 @@ class RingExtension_generic(CommutativeAlgebra):
         else:
             s = self._repr_topring(**print_options)
             if over > 0:
-                if self._canonical_backend:
-                    s += " over "
-                else:
-                    s += " noncanonically over "
+                s += " over "
                 over -= 1
             else:
-                if self._canonical_backend:
-                    s += " over its base"
-                else:
-                    s += " noncanonically over its base"
+                s += " over its base"
                 return s
         if trivial or over >= 0:
             base = self._base
@@ -2004,7 +1998,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         TESTS:
 
-        Ensure ticket :trac:`34692` is fixed::
+        Ensure issue :trac:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]

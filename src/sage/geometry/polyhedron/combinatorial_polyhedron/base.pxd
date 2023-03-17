@@ -1,9 +1,10 @@
 cimport cython
-from sage.structure.sage_object cimport SageObject
-from .face_iterator             cimport FaceIterator, CombinatorialFace
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
+from sage.data_structures.list_of_pairs cimport ListOfPairs
+from sage.structure.sage_object         cimport SageObject
+from .face_iterator                     cimport FaceIterator, CombinatorialFace
+from .list_of_faces                     cimport ListOfFaces
+from .face_data_structure               cimport face_t
+from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
@@ -24,22 +25,10 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple _far_face_tuple
     cdef tuple _f_vector
 
-    # Edges, ridges and incidences are stored in a pointer of pointers.
-    # The first edge has vertices ``edges[0][0]`` and ``edges[0][1]``,
-    # the second edge has vertices ``edges[0][2]`` and ``edges[0][3]``, etc.
-    # There are ``_length_edges_list`` edges in ``edges[i]``, so the edge
-    # ``_length_edges_list + 1`` has vertices ``edges[1][0]`` and ``edges[1][1]``.
-    # Likewise for ridges and incidences.
-    cdef size_t _length_edges_list
-
-
-    cdef size_t **_edges                    # stores edges labeled by vertex indices
-    cdef size_t _n_edges
-    cdef size_t **_ridges                   # stores ridges labeled by facet indices
-    cdef size_t _n_ridges
-    cdef size_t **_face_lattice_incidences  # stores incidences in Hasse diagram labeled indices of the faces
-    cdef size_t _n_face_lattice_incidences
-    cdef PolyhedronFaceLattice _all_faces   # class to generate Hasse diagram incidences
+    cdef ListOfPairs _edges                    # stores edges labeled by vertex indices
+    cdef ListOfPairs _ridges                   # stores ridges labeled by facet indices
+    cdef ListOfPairs _face_lattice_incidences  # stores incidences in Hasse diagram labeled indices of the faces
+    cdef PolyhedronFaceLattice _all_faces     # class to generate Hasse diagram incidences
 
     cdef tuple Vrep(self)
     cdef tuple facet_names(self)
@@ -69,10 +58,6 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef int _compute_edges_or_ridges(self, int dual, bint do_edges) except -1
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
-            size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt,
-            size_t* f_vector) except -1
-    cdef int _compute_face_lattice_incidences(self) except -1
+            ListOfPairs edges, size_t* f_vector) except -1
 
-    cdef inline int _set_edge(self, size_t a, size_t b, size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt) except -1
-    cdef inline void _free_edges(self, size_t ***edges_pt, size_t counter)
-    cdef inline size_t _get_edge(self, size_t **edges, size_t edge_number, size_t vertex) except -1
+    cdef int _compute_face_lattice_incidences(self) except -1
