@@ -88,7 +88,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.padics.factory import Zp
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.constructor import Matrix
@@ -243,6 +242,8 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
         sage: p_adic_normal_form(Z, 3)[0] == 0
         True
     """
+    from sage.rings.padics.factory import Zp
+
     p = ZZ(p)
     # input checks!!
     G0, denom = G._clear_denom()
