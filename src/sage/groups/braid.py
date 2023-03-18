@@ -1824,10 +1824,10 @@ class Braid(FiniteTypeArtinGroupElement):
         if p3.is_one():
             return b0
         LP = {a.permutation(G=S): a for a in self.centralizer()}
-        if p3 not in G.subgroup(LP):
+        if p3 not in S.subgroup(LP):
             return None
         P = p3.word_problem(list(LP), display=False, as_list=True)
-        b1 = prod(LP[G(a)] ** b for a,b in P)
+        b1 = prod(LP[S(a)] ** b for a,b in P)
         b0 = b1 * b0
         n0 = len(b0.Tietze())
         L = leftnormalform(b0)
