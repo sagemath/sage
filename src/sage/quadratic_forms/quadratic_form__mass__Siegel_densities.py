@@ -13,7 +13,6 @@ Local Masses and Siegel Densities
 from copy import deepcopy
 
 from sage.arith.misc import kronecker, legendre_symbol, prime_divisors
-from sage.functions.all import sgn
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import squarefree_part
 from sage.misc.misc_c import prod
@@ -22,7 +21,6 @@ from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadr
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
@@ -59,6 +57,8 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
         sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
         0
     """
+    from sage.symbolic.constants import pi
+
     # Setup
     n = self.dim()
     s = (n-1) // 2
@@ -190,6 +190,8 @@ def Watson_mass_at_2(self):
         384
 
     """
+    from sage.functions.all import sgn
+
     # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = deepcopy(self)
     Null_Form.__init__(ZZ, 0)

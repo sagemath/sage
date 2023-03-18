@@ -10,7 +10,6 @@ from sage.misc.misc_c import prod
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi
 
 
 def parity(self, allow_rescaling_flag=True):
@@ -600,6 +599,8 @@ def conway_standard_mass(self):
         1/6
 
     """
+    from sage.symbolic.constants import pi
+
     n = self.dim()
     if n % 2 == 0:
         s = n // 2

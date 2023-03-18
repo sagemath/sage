@@ -24,7 +24,6 @@ quadratic forms over the rationals.
 from copy import deepcopy
 
 from sage.arith.misc import hilbert_symbol, prime_divisors
-from sage.functions.all import sgn
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
@@ -896,6 +895,8 @@ def compute_definiteness_string_by_determinants(self):
     # Sanity Check
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
         raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
+
+    from sage.functions.all import sgn
 
     # Some useful variables
     n = self.dim()

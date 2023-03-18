@@ -65,6 +65,8 @@ def gamma__exact(n):
         TypeError: you must give an integer or half-integer argument
     """
     from sage.misc.functional import sqrt
+    from sage.symbolic.constants import pi
+
     n = QQ(n)
 
     if denominator(n) == 1:
@@ -139,6 +141,8 @@ def zeta__exact(n):
     - [IR1990]_
     - [Was1997]_
     """
+    from sage.symbolic.constants import pi
+
     if n < 0:
         return bernoulli(1-n)/(n-1)
     elif n > 1:
@@ -218,7 +222,7 @@ def quadratic_L_function__exact(n, d):
     - [Was1997]_
     """
     from sage.misc.functional import sqrt
-    from sage.symbolic.constants import I
+    from sage.symbolic.constants import I, pi
     from sage.symbolic.ring import SR
 
     if n <= 0:

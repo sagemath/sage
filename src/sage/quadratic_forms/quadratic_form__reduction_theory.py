@@ -3,7 +3,8 @@ Reduction Theory
 """
 from copy import deepcopy
 from sage.matrix.constructor import matrix
-from sage.functions.all import floor
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "floor")
 from sage.misc.mrange import mrange
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
