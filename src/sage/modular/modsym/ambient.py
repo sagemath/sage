@@ -95,7 +95,7 @@ from sage.modules.free_module import is_FreeModule
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
 from sage.rings.ring import Ring
 from sage.structure.factorization import Factorization
@@ -474,7 +474,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             return sum([c*self(y) for c, y in x], self(0))
 
         elif isinstance(x, list):
-            if len(x) == 3 and is_MPolynomial(x[0]):
+            if len(x) == 3 and isinstance(x[0], MPolynomial):
                 return self.modular_symbol_sum(x)
             else:
                 return self.modular_symbol(x)

@@ -39,7 +39,7 @@ from copy import copy
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.parallel.decorate import Parallel
 
@@ -849,7 +849,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         z = [ring.zero()] * nrays
         for i, value in zip(nonzero_coordinates, z_nonzero):
             z[i] = value
-        return [poly(z) for poly in self.polynomials]
+        return [poly.change_ring(ring)(z) for poly in self.polynomials]
 
     def solutions_serial(self, inhomogeneous_equations, log_range):
         """

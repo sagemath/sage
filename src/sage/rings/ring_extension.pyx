@@ -429,6 +429,7 @@ class RingExtensionFactory(UniqueFactory):
             else:
                 use_generic_constructor = False
                 is_backend_exposed = False
+            ring = (<RingExtension_generic>ring)._backend
 
         # We normalize other attributes
         if gens is not None:
@@ -724,7 +725,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
              sage: E.construction()
 
         """
-        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another ticket
+        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another issue
         pass
 
     def from_base_ring(self, r):
@@ -1801,7 +1802,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: L = GF(5^12).over(F)
 
             sage: K.Hom(L)  # indirect doctest
-            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base 
+            Set of Homomorphisms from Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
             to Field in z12 with defining polynomial x^6 + (4*z2 + 3)*x^5 + x^4 + (3*z2 + 1)*x^3 + x^2 + (4*z2 + 1)*x + z2 over its base
 
             sage: K.Hom(L, category=Sets())
@@ -1927,7 +1928,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS:
 
-            Ensure ticket :trac:`34692` is fixed::
+            Ensure issue :trac:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]

@@ -745,7 +745,7 @@ class HasseDiagram(DiGraph):
             sage: Q.rank_function() is None
             True
 
-        test for ticket :trac:`14006`::
+        test for issue :trac:`14006`::
 
             sage: H = Poset()._hasse_diagram
             sage: s = dumps(H)
@@ -1994,7 +1994,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))
@@ -2051,7 +2051,7 @@ class HasseDiagram(DiGraph):
         mt = self.meet_matrix()
         jn = self.join_matrix()
         for e in range(n):
-            # Fix following after ticket #20727
+            # Fix following after issue #20727
             comps[e] = [x for x in range(n) if
                         mt[e, x] == 0 and jn[e, x] == n - 1 and
                         x in orbits[orbit_number[dual_isomorphism[e]]]]

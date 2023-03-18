@@ -27,6 +27,7 @@ Thematic indexes
 - :ref:`sage.combinat.designs.all`
 - :ref:`sage.combinat.posets.all`
 - :ref:`sage.combinat.words`
+- :ref:`sage.combinat.bijectionist`
 
 Utilities
 ---------
@@ -87,6 +88,7 @@ from .free_module import CombinatorialFreeModule
 from .debruijn_sequence import DeBruijnSequences
 
 from .schubert_polynomial import SchubertPolynomialRing
+lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
 from .symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
 from .symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
 from .yang_baxter_graph import YangBaxterGraph
@@ -298,3 +300,6 @@ lazy_import('sage.combinat.growth', 'GrowthDiagram')
 
 # Path Tableaux
 lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
+
+# Bijectionist
+lazy_import('sage.combinat.bijectionist', 'Bijectionist')

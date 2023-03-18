@@ -762,7 +762,7 @@ cdef class FiniteField(Field):
             a + 12
         """
         if self.degree() == 1:
-            from sage.arith.all import primitive_root
+            from sage.arith.misc import primitive_root
             return self(primitive_root(self.order()))
         F, = self.factored_unit_order()
         return self._element_of_factored_order(F)
@@ -1521,7 +1521,7 @@ cdef class FiniteField(Field):
             True
         """
         from .finite_field_constructor import GF
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         if name is None and names is not None:
             name = names
@@ -1532,7 +1532,7 @@ cdef class FiniteField(Field):
                 E = GF((self.characteristic(), modulus), name=name, **kwds)
             elif isinstance(modulus, (list, tuple)):
                 E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
-            elif is_Polynomial(modulus):
+            elif isinstance(modulus, Polynomial):
                 if modulus.change_ring(self).is_irreducible():
                     E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:

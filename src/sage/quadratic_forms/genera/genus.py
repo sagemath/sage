@@ -3045,7 +3045,7 @@ class GenusSymbol_global_ring():
             Genus symbol at 3:     1^3 3^1
 
         A representative of ``g`` is not known yet.
-        Let us trigger its computation:
+        Let us trigger its computation::
 
             sage: g.representative()
             [ 0  0  0  2]

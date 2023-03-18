@@ -1345,7 +1345,7 @@ class FractionWithFactoredDenominator(RingElement):
             (1/3, [(x*y - 1, 1), (x^2 + y^2 - 1, 1)])
         """
         from sage.calculus.functions import jacobian
-        from sage.arith.all import xgcd
+        from sage.arith.misc import XGCD as xgcd
         from sage.sets.set import Set
 
         R = self.denominator_ring
@@ -3732,7 +3732,7 @@ def permutation_sign(s, u):
         sage: s = ['b', 'd']
         sage: permutation_sign(s, u)
         doctest:...: DeprecationWarning: the function permutation_sign is deprecated
-        See https://trac.sagemath.org/29465 for details.
+        See https://github.com/sagemath/sage/issues/29465 for details.
         -1
         sage: s = ['d', 'b']
         sage: permutation_sign(s, u)

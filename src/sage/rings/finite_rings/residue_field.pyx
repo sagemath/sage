@@ -170,7 +170,7 @@ from sage.rings.fraction_field import is_FractionField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport parent
@@ -300,7 +300,7 @@ class ResidueFieldFactory(UniqueFactory):
                         p = p.parent().ring_of_integers().ideal(p)
                     else:
                         p = p.parent().ideal(p)
-                elif is_Polynomial(p):
+                elif isinstance(p, Polynomial):
                     p = p.parent().ideal(p)
                 #elif isinstance(p.parent(), FractionField_1poly_field):
                 #    p = p.parent().ring_of_integers().ideal(p)
@@ -870,7 +870,7 @@ cdef class ReductionMap(Map):
         self._PBinv = PBinv
         self._to_order = to_order # used for lift
         self._PB = PB # used for lift
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 

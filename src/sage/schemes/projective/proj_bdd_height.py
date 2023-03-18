@@ -23,9 +23,9 @@ from math import floor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.rings.rational_field import QQ
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.matrix.constructor import matrix, column_matrix
 from sage.libs.pari.all import pari
 from sage.modules.free_module_element import vector
@@ -277,7 +277,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
     T = column_matrix(fund_unit_logs).delete_rows([r]).change_ring(QQ)
 
-    # insert_row only takes integers, see https://trac.sagemath.org/ticket/11328
+    # insert_row only takes integers, see https://github.com/sagemath/sage/issues/11328
     M = ((-1)*matrix.identity(r)).insert_row(r, [Integer(1) for i in range(r)])
     M = M.transpose().insert_row(0, [Integer(0) for i in range(r + 1)]).transpose()
     M = M.change_ring(QQ)

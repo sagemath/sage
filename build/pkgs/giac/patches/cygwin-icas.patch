@@ -1,6 +1,6 @@
 Disable threaded eval function on Cygwin since it's currently
 buggy, and not strictly needed in the first place since we don't
-build giac with FLTK support; see https://trac.sagemath.org/ticket/27385
+build giac with FLTK support; see https://github.com/sagemath/sage/issues/27385
 --- a/src/icas.cc	2018-12-22 17:08:24.000000000 +0100
 +++ b/src/icas.cc	2019-03-06 14:38:19.814030200 +0100
 @@ -160,7 +160,7 @@
