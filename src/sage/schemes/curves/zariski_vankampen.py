@@ -1075,16 +1075,16 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
          s1*s0*s2*s0^-1*s2*s1^-1]
         sage: flist = (x^2 - y^3, x + 3 * y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist) # optional - sirocco
-        sage: bm1[0] == bm
+        sage: bm1[0] == bm  # optional - sirocco
         True
-        sage: bm1[1]
+        sage: bm1[1]  # optional - sirocco
         {1: 1, 2: 2, 3: 1, 4: 1}
-        sage: braid_monodromy(f, arrangement=flist, computebm=False)==bm1[1]
+        sage: braid_monodromy(f, arrangement=flist, computebm=False)==bm1[1]  # optional - sirocco
         True
-        sage: bm2 = braid_monodromy(f, arrangement=flist, holdstrand=True)
-        sage: bm2[0] == bm
+        sage: bm2 = braid_monodromy(f, arrangement=flist, holdstrand=True)  # optional - sirocco
+        sage: bm2[0] == bm  # optional - sirocco
         True
-        sage: bm2[1] == braid_monodromy(f, arrangement=flist, computebm=False, holdstrand=True)
+        sage: bm2[1] == braid_monodromy(f, arrangement=flist, computebm=False, holdstrand=True)  # optional - sirocco
         True
 
     """
