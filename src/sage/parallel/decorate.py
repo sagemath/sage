@@ -342,7 +342,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 
         sage: @parallel(ncpus=3, timeout=10)
         ....: def fac(n): return factor(2^n-1)
-        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))
+        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))        # optional - sage.libs.pari
         (((101,), {}), 7432339208719 * 341117531003194129)
         (((119,), {}), 127 * 239 * 20231 * 131071 * 62983048367 * 131105292137)
         (((151,), {}), 18121 * 55871 * 165799 * 2332951 * 7289088383388253664437433)
