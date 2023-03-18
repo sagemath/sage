@@ -984,20 +984,28 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             TypeError: coefficients indices must be integers
 
+        ::
+
             sage: phi.basic_j_invariant_parameters([1, 10])
             Traceback (most recent call last):
             ...
             ValueError: indices must be > 0 and < 3
+
+        ::
 
             sage: phi.basic_j_invariant_parameters([1, 1])
             Traceback (most recent call last):
             ...
             ValueError: indices must be distinct and sorted
 
+        ::
+
             sage: phi.basic_j_invariant_parameters([2, 1])
             Traceback (most recent call last):
             ...
             ValueError: indices must be distinct and sorted
+
+        ::
 
             sage: phi.basic_j_invariant_parameters('x')
             Traceback (most recent call last):
@@ -1441,50 +1449,70 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             TypeError: parameter must not be None if the rank is greater than 2
 
+        ::
+
             sage: phi.j_invariant(-1)
             Traceback (most recent call last):
             ...
             ValueError: integer parameter must be >= 1 and < the rank (=4)
+
+        ::
 
             sage: phi.j_invariant('x')
             Traceback (most recent call last):
             ...
             TypeError: parameter must be a tuple or a list of length 2 or an integer
 
+        ::
+
             sage: phi.j_invariant((1, 2, 3))
             Traceback (most recent call last):
             ...
             ValueError: list or tuple parameter must be of length 2
+
+        ::
 
             sage: phi.j_invariant(('x', (1, 2, 3)))
             Traceback (most recent call last):
             ...
             TypeError: list or tuple parameter must contain tuples or lists
 
+        ::
+
             sage: phi.j_invariant(((1, 2), 'x'))
             Traceback (most recent call last):
             ...
             TypeError: list or tuple parameter must contain tuples or lists
+
+        ::
 
             sage: phi.j_invariant(((1, 2, 3, 4, 5), (2, 1)))
             Traceback (most recent call last):
             ...
             ValueError: components of tuple or list parameter have incorrect length
 
+        ::
+
             sage: phi.j_invariant(((1, 'x'), (2, 3, 8)))
             Traceback (most recent call last):
             ...
             TypeError: components of tuple or list parameter must contain only integers
+
+        ::
 
             sage: phi.j_invariant(((1, 2), (2, 3, 'x')))
             Traceback (most recent call last):
             ...
             TypeError: components of tuple or list parameter must contain only integers
 
+        ::
+
             sage: phi.j_invariant(((1, 2), (4, 3, 7)))
             Traceback (most recent call last):
             ...
             ValueError: parameter does not satisfy the weight-0 condition
+
+        ::
 
             sage: phi.j_invariant(((1, 2), (4, 3, 7)), check=False)
             1/T^13
