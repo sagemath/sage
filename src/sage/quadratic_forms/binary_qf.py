@@ -53,8 +53,7 @@ from functools import total_ordering
 
 from sage.libs.pari.all import pari_gen
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import is_fundamental_discriminant
-from sage.arith.misc import gcd
+from sage.arith.misc import gcd, is_fundamental_discriminant
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
@@ -1687,13 +1686,13 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
         sage: len(BinaryQF_reduced_representatives(-13*4))
         2
-        sage: QuadraticField(-13*4, 'a').class_number()
+        sage: QuadraticField(-13*4, 'a').class_number()                                 # optional - sage.rings.number_field
         2
-        sage: p = next_prime(2^20); p
+        sage: p = next_prime(2^20); p                                                   # optional - sage.libs.pari
         1048583
         sage: len(BinaryQF_reduced_representatives(-p))
         689
-        sage: QuadraticField(-p, 'a').class_number()
+        sage: QuadraticField(-p, 'a').class_number()                                    # optional - sage.rings.number_field
         689
 
         sage: BinaryQF_reduced_representatives(-23*9)
