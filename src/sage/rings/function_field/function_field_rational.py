@@ -701,7 +701,7 @@ class RationalFunctionField(FunctionField):
             sage: K.equation_order()
             Maximal order of Rational function field in t over Rational Field
         """
-        from .order import FunctionFieldMaximalOrder_rational
+        from .order_rational import FunctionFieldMaximalOrder_rational
         return FunctionFieldMaximalOrder_rational(self)
 
     equation_order = maximal_order
@@ -722,7 +722,7 @@ class RationalFunctionField(FunctionField):
             sage: K.equation_order_infinite()
             Maximal infinite order of Rational function field in t over Rational Field
         """
-        from .order import FunctionFieldMaximalOrderInfinite_rational
+        from .order_rational import FunctionFieldMaximalOrderInfinite_rational
         return FunctionFieldMaximalOrderInfinite_rational(self)
 
     equation_order_infinite = maximal_order_infinite

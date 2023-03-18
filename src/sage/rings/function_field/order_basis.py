@@ -56,7 +56,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
         Traceback (most recent call last):
         ...
         ValueError: basis (1, x, x^2, x^3, x^4) is not linearly independent
-        sage: sage.rings.function_field.order.FunctionFieldOrder_basis((y,y,y^3,y^4,y^5))           # optional - sage.rings.function_field
+        sage: sage.rings.function_field.order_basis.FunctionFieldOrder_basis((y,y,y^3,y^4,y^5))    # optional - sage.rings.function_field
         Traceback (most recent call last):
         ...
         ValueError: basis (y, y, y^3, y^4, 2*x*y + (x^4 + 1)/x) is not linearly independent

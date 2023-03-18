@@ -495,7 +495,7 @@ class FunctionField(Field):
             ...
             ValueError: the identity element must be in the module spanned by basis (x, x*y + x^2, 2/3*y^2)
         """
-        from .order import FunctionFieldOrder_basis
+        from .order_basis import FunctionFieldOrder_basis
         return FunctionFieldOrder_basis(tuple([self(a) for a in basis]), check=check)
 
     def order(self, x, check=True):
@@ -586,7 +586,7 @@ class FunctionField(Field):
             ...
             ValueError: the identity element must be in the module spanned by basis (1/x, 1/x*y, 1/x^2*y^2)
         """
-        from .order import FunctionFieldOrderInfinite_basis
+        from .order_basis import FunctionFieldOrderInfinite_basis
         return FunctionFieldOrderInfinite_basis(tuple([self(g) for g in basis]), check=check)
 
     def order_infinite(self, x, check=True):

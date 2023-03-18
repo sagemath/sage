@@ -784,7 +784,7 @@ class FunctionField_polymod(FunctionField):
             sage: L.maximal_order()
             Maximal order of Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
         """
-        from .order import FunctionFieldMaximalOrder_polymod
+        from .order_polymod import FunctionFieldMaximalOrder_polymod
         return FunctionFieldMaximalOrder_polymod(self)
 
     def maximal_order_infinite(self):
@@ -808,7 +808,7 @@ class FunctionField_polymod(FunctionField):
             sage: L.maximal_order_infinite()                                            # optional - sage.rings.finite_rings
             Maximal infinite order of Function field in y defined by y^2 + y + (x^2 + 1)/x
         """
-        from .order import FunctionFieldMaximalOrderInfinite_polymod
+        from .order_polymod import FunctionFieldMaximalOrderInfinite_polymod
         return FunctionFieldMaximalOrderInfinite_polymod(self)
 
     def different(self):
@@ -2459,7 +2459,7 @@ class FunctionField_integral(FunctionField_simple):
             sage: F.equation_order()
             Order in Function field in y defined by y^3 - x^6 - 2*x^5 - 3*x^4 - 2*x^3 - x^2
         """
-        from .order import FunctionFieldOrder_basis
+        from .order_basis import FunctionFieldOrder_basis
         a = self.gen()
         basis = [a**i for i in range(self.degree())]
         return FunctionFieldOrder_basis(tuple(basis))
@@ -2512,7 +2512,7 @@ class FunctionField_integral(FunctionField_simple):
             sage: F.equation_order_infinite()
             Infinite order in Function field in y defined by y^3 - x^6 - 2*x^5 - 3*x^4 - 2*x^3 - x^2
         """
-        from .order import FunctionFieldOrderInfinite_basis
+        from .order_basis import FunctionFieldOrderInfinite_basis
         b = self.primitive_integal_element_infinite()
         basis = [b**i for i in range(self.degree())]
         return FunctionFieldOrderInfinite_basis(tuple(basis))
