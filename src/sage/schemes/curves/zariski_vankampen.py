@@ -430,7 +430,7 @@ def newton(f, x0, i0):
 
     INPUT:
 
-    - ``f``` -- a univariate polynomial
+    - ``f`` -- a univariate polynomial
     - ``x0`` -- a number
     - ``I0`` -- an interval
 
@@ -457,15 +457,15 @@ def newton(f, x0, i0):
 
 def fieldI(F0):
     r"""
-    Return the (either double or trivial) extension of a number field which contains `I`.
+    Return the (either double or trivial) extension of a number field which contains ``I``.
 
     INPUT:
 
-    - ``F0`` -- a number field with an embedding in `QQbar`.
+    - ``F0`` -- a number field with an embedding in ``QQbar``.
 
     OUTPUT:
 
-    The extension `F` of `F0` containing  `I` with  an embedding in `QQbar`.
+    The extension ``F`` of ``F0`` containing  ``I`` with  an embedding in ``QQbar``.
 
     EXAMPLES::
 
@@ -619,7 +619,7 @@ def populate_roots_interval_cache(inputs):
 
     INPUT:
 
-    - ``inputs`` -- a list of tuples (flist, x0)
+    - ``inputs`` -- a list of tuples ``(flist, x0)``
 
     EXAMPLES::
 
@@ -861,9 +861,9 @@ def geometric_basis(G, E, EC, p, dual_graph):
       list of vertices in the region and ``E``.
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
-    Each path is a list of vertices, that form a closed path in `G`, based at
-    `p`, that goes to a region, surrounds it, and comes back by the same
-    path it came. The concatenation of all these paths is equivalent to `E`.
+    Each path is a list of vertices, that form a closed path in ``G``, based at
+    ``p``, that goes to a region, surrounds it, and comes back by the same
+    path it came. The concatenation of all these paths is equivalent to ``E``.
 
     EXAMPLES::
 
@@ -1037,7 +1037,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
       with an embedding in the complex numbers
       
     - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
-      in order to provide information for `braid_monodromy_arrangement`.
+      in order to provide information for ``braid_monodromy_arrangement``.
           
     - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the
       string assignment is given. t makes only sense if arrangement has
@@ -1052,7 +1052,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     in the discriminant of the projection of ``f``.
     
     If ``arrangement`` contains more than one element, some information to be used by
-    `braid_monodromy_arrangement` is provided.
+    ``braid_monodromy_arrangement`` is provided.
     
     If ``computebm`` is set to ``False`` only some information to be used by ``strand_components`` is given.
 
