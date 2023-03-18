@@ -62,7 +62,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
 
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 import sage.rings.all as rings
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
@@ -1991,6 +1991,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: E = EllipticCurve([1,2])
+            sage: E._multiple_x_numerator(3)
+            x^9 - 12*x^7 - 192*x^6 + 30*x^5 - 48*x^4 + 228*x^3 + 96*x^2 + 393*x + 528
+            sage: E._multiple_x_numerator(-3)
+            x^9 - 12*x^7 - 192*x^6 + 30*x^5 - 48*x^4 + 228*x^3 + 96*x^2 + 393*x + 528
+
+        ::
+
             sage: E = EllipticCurve("37a")
             sage: P = E.gens()[0]
             sage: x = P[0]
@@ -2043,9 +2051,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_numerator(5)
             x^25 + 65037*x^23 + 55137*x^22 + ... + 813*x^2 + 10220*x + 42539
         """
-        n = rings.Integer(n)
-        if n < 2:
-            raise ValueError("n must be at least 2")
+        n = rings.Integer(n).abs()
+        if not n:
+            raise ValueError("n must be nonzero")
 
         if x is None:
             try:
@@ -2060,6 +2068,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         else:
             cache = None
             xx = x
+
+        if n == 1:
+            return xx
 
         polys = self.division_polynomial_0([-2,-1,n-1,n,n+1], x)
 
@@ -2101,6 +2112,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: E = EllipticCurve([1,2])
+            sage: E._multiple_x_denominator(3)
+            9*x^8 + 36*x^6 + 144*x^5 + 30*x^4 + 288*x^3 + 564*x^2 - 48*x + 1
+            sage: E._multiple_x_denominator(-3)
+            9*x^8 + 36*x^6 + 144*x^5 + 30*x^4 + 288*x^3 + 564*x^2 - 48*x + 1
+
+        ::
+
             sage: E = EllipticCurve("43a")
             sage: P = E.gens()[0]
             sage: x = P[0]
@@ -2128,9 +2147,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_denominator(5)
             25*x^24 + 3100*x^22 + 19000*x^21 + ... + 24111*x^2 + 52039*x + 56726
         """
-        n = rings.Integer(n)
-        if n < 2:
-            raise ValueError("n must be at least 2")
+        n = rings.Integer(n).abs()
+        if not n:
+            raise ValueError("n must be nonzero")
 
         if x is None:
             try:

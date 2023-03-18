@@ -29,7 +29,7 @@ import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.number_field.number_field import is_NumberField
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.ring import is_Ring
 
 from sage.categories.fields import Fields
@@ -420,7 +420,7 @@ class EllipticCurveFactory(UniqueFactory):
         if isinstance(parent(x), sage.rings.abc.SymbolicRing):
             x = x._polynomial_(rings.QQ['x', 'y'])
 
-        if is_MPolynomial(x):
+        if isinstance(x, MPolynomial):
             if y is None:
                 x = coefficients_from_Weierstrass_polynomial(x)
             else:
