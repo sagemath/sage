@@ -433,14 +433,14 @@ class Braid(FiniteTypeArtinGroupElement):
         Return the permutation induced by the braid in its strands.
 
         INPUT:
-        
-        - ``G`` -- (default : ``None``) either ``None`` of `SymmetricGroup(n)`
+
+        - ``G`` -- (default : ``None``) either ``None`` of ``SymmetricGroup(n)``
           where ``n`` is the number of strands of ``self``.
 
         OUTPUT:
 
-        A standard permutation if ``G`` is `None`, an element of ``G`` if it
-        is `SymmetricGroup(n)` and an error, otherwise.
+        A standard permutation if ``G`` is ``None``, an element of ``G`` if it
+        is ``SymmetricGroup(n)`` and an error, otherwise.
 
         EXAMPLES::
 
@@ -1468,9 +1468,9 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - `algorithm` : string (default: ``libbraiding``). For `artin` the general
-          method for Artin group is used. For `libbraiding`, the algorithm
-          uses the package `libbraiding`.
+        - ``algorithm`` : string (default: ``libbraiding``). For ``artin`` the general
+          method for Artin group is used. For ``libbraiding``, the algorithm
+          uses the package ``libbraiding``.
 
         OUTPUT:
 
@@ -1684,7 +1684,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A braid `d` such that `other` equals `d^-1 * self * d`.
+        A braid `d` such that if `o` equals ``other`` and `s` equals ``self``
+        then `o = d^{-1 \cdot s \cdot d`.
 
         EXAMPLES::
 
@@ -1762,7 +1763,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A pure braid `d` such that `other` equals `d^-1 * self * d`.
+        A pure braid `d` such that if `o` equals ``other`` and `s` equals ``self``
+        then `o = d^{-1 \cdot s \cdot d`.
 
         EXAMPLES::
 
