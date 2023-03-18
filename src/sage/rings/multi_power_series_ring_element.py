@@ -921,59 +921,59 @@ class MPowerSeries(PowerSeries):
         algorithm would never terminate). Here, default precision
         comes to our help::
 
-            sage: (1 + a^3).quo_rem(a + a^2)
+            sage: (1 + a^3).quo_rem(a + a^2)                                            # optional - sage.libs.singular
             (a^2 - a^3 + a^4 - a^5 + a^6 - a^7 + a^8 - a^9 + a^10 + O(a, b, c)^11, 1 + O(a, b, c)^12)
 
-            sage: (1+a^3+a*b).quo_rem(b+c)
+            sage: (1 + a^3 + a*b).quo_rem(b + c)                                        # optional - sage.libs.singular
             (a + O(a, b, c)^11, 1 - a*c + a^3 + O(a, b, c)^12)
-            sage: (1+a^3+a*b).quo_rem(b+c, precision=17)
+            sage: (1 + a^3 + a*b).quo_rem(b + c, precision=17)                          # optional - sage.libs.singular
             (a + O(a, b, c)^16, 1 - a*c + a^3 + O(a, b, c)^17)
 
-            sage: (a^2+b^2+c^2).quo_rem(a+b+c)
+            sage: (a^2 + b^2 + c^2).quo_rem(a + b + c)                                  # optional - sage.libs.singular
             (a - b - c + O(a, b, c)^11, 2*b^2 + 2*b*c + 2*c^2 + O(a, b, c)^12)
 
-            sage: (a^2+b^2+c^2).quo_rem(1/(1+a+b+c))
+            sage: (a^2 + b^2 + c^2).quo_rem(1/(1+a+b+c))                                # optional - sage.libs.singular
             (a^2 + b^2 + c^2 + a^3 + a^2*b + a^2*c + a*b^2 + a*c^2 + b^3 + b^2*c + b*c^2 + c^3 + O(a, b, c)^14,
              0)
 
-            sage: (a^2+b^2+c^2).quo_rem(a/(1+a+b+c))
+            sage: (a^2 + b^2 + c^2).quo_rem(a/(1+a+b+c))                                # optional - sage.libs.singular
             (a + a^2 + a*b + a*c + O(a, b, c)^13, b^2 + c^2)
 
-            sage: (1+a+a^15).quo_rem(a^2)
+            sage: (1 + a + a^15).quo_rem(a^2)                                           # optional - sage.libs.singular
             (0 + O(a, b, c)^10, 1 + a + O(a, b, c)^12)
-            sage: (1+a+a^15).quo_rem(a^2, precision=15)
+            sage: (1 + a + a^15).quo_rem(a^2, precision=15)                             # optional - sage.libs.singular
             (0 + O(a, b, c)^13, 1 + a + O(a, b, c)^15)
-            sage: (1+a+a^15).quo_rem(a^2, precision=16)
+            sage: (1 + a + a^15).quo_rem(a^2, precision=16)                             # optional - sage.libs.singular
             (a^13 + O(a, b, c)^14, 1 + a + O(a, b, c)^16)
 
         Illustrating the dependency on the ordering of variables::
 
-            sage: (1+a+b).quo_rem(b+c)
+            sage: (1 + a + b).quo_rem(b + c)                                            # optional - sage.libs.singular
             (1 + O(a, b, c)^11, 1 + a - c + O(a, b, c)^12)
-            sage: (1+b+c).quo_rem(c+a)
+            sage: (1 + b + c).quo_rem(c + a)                                            # optional - sage.libs.singular
             (0 + O(a, b, c)^11, 1 + b + c + O(a, b, c)^12)
-            sage: (1+c+a).quo_rem(a+b)
+            sage: (1 + c + a).quo_rem(a + b)                                            # optional - sage.libs.singular
             (1 + O(a, b, c)^11, 1 - b + c + O(a, b, c)^12)
 
         TESTS::
 
-            sage: (f).quo_rem(R.zero())
+            sage: (f).quo_rem(R.zero())                                                 # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ZeroDivisionError
 
-            sage: (f).quo_rem(R.zero().add_bigoh(2))
+            sage: (f).quo_rem(R.zero().add_bigoh(2))                                    # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ZeroDivisionError
 
         Coercion is applied on ``other``::
 
-            sage: (a+b).quo_rem(1)
+            sage: (a + b).quo_rem(1)                                                    # optional - sage.libs.singular
             (a + b + O(a, b, c)^12, 0 + O(a, b, c)^12)
 
             sage: R.<a,b,c> = PowerSeriesRing(QQ)
-            sage: R(3).quo_rem(2)
+            sage: R(3).quo_rem(2)                                                       # optional - sage.libs.singular
             (3/2 + O(a, b, c)^12, 0 + O(a, b, c)^12)
         """
         parent = self.parent()

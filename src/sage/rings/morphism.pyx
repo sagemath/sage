@@ -2280,24 +2280,24 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         `\QQ`::
 
             sage: R.<x> = QQ[]
-            sage: Q.<a> = R.quotient(x^2 + x + 1)                                                                       # optional - sage.modules
-            sage: f1 = R.hom([a])                                                                                       # optional - sage.libs.singular sage.modules
-            sage: f2 = R.hom([a + a^2 + a + 1])                                                                         # optional - sage.libs.singular sage.modules
-            sage: PR.<s,t> = R[]                                                                                        # optional - sage.libs.singular sage.modules
-            sage: PQ = Q['s','t']                                                                                       # optional - sage.libs.singular sage.modules
-            sage: f1P = PR.hom(f1,PQ)                                                                                   # optional - sage.libs.singular sage.modules
-            sage: f2P = PR.hom(f2,PQ)                                                                                   # optional - sage.libs.singular sage.modules
-            sage: f1P == f2P                                                                                            # optional - sage.libs.singular sage.modules
+            sage: Q.<a> = R.quotient(x^2 + x + 1)                                                                       # optional - sage.libs.pari sage.modules
+            sage: f1 = R.hom([a])                                                                                       # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: f2 = R.hom([a + a^2 + a + 1])                                                                         # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: PR.<s,t> = R[]                                                                                        # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: PQ = Q['s','t']                                                                                       # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: f1P = PR.hom(f1,PQ)                                                                                   # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: f2P = PR.hom(f2,PQ)                                                                                   # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: f1P == f2P                                                                                            # optional - sage.libs.pari sage.libs.singular sage.modules
             True
 
         TESTS::
 
-            sage: f1P == loads(dumps(f1P))                                                                              # optional - sage.libs.singular sage.modules
+            sage: f1P == loads(dumps(f1P))                                                                              # optional - sage.libs.pari sage.libs.singular sage.modules
             True
 
             sage: R.<x,y> = QQ[]; f = R.hom([x, x+y]); g = R.hom([y, x])
             sage: S.<z> = R[]
-            sage: fS = S.hom(f,S); gS = S.hom(g,S)
+            sage: fS = S.hom(f, S); gS = S.hom(g, S)
             sage: fS != gS   # indirect doctest
             True
 

@@ -7139,16 +7139,16 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f2 = f.compose_power(2); f2
+            sage: f2 = f.compose_power(2); f2                                           # optional - sage.libs.singular sage.modules
             x^4 - 4*x^3 + 8*x^2 - 16*x + 16
-            sage: f2 == f.composed_op(f,operator.mul)
+            sage: f2 == f.composed_op(f, operator.mul)                                  # optional - sage.libs.singular sage.modules
             True
-            sage: f3 = f.compose_power(3); f3
+            sage: f3 = f.compose_power(3); f3                                           # optional - sage.libs.singular sage.modules
             x^8 - 8*x^7 + 32*x^6 - 64*x^5 + 128*x^4 - 512*x^3 + 2048*x^2 - 4096*x + 4096
-            sage: f3 == f2.composed_op(f,operator.mul)
+            sage: f3 == f2.composed_op(f, operator.mul)                                 # optional - sage.libs.singular sage.modules
             True
-            sage: f4 = f.compose_power(4)
-            sage: f4 == f3.composed_op(f,operator.mul)
+            sage: f4 = f.compose_power(4)                                               # optional - sage.libs.singular sage.modules
+            sage: f4 == f3.composed_op(f, operator.mul)                                 # optional - sage.libs.singular sage.modules
             True
         """
         try:
