@@ -235,7 +235,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
     TESTS::
 
-        sage: Z = Matrix(ZZ,0,[])
+        sage: Z = Matrix(ZZ, 0, [])
         sage: p_adic_normal_form(Z, 3)
         ([], [])
         sage: Z = matrix.zero(10)
@@ -461,7 +461,7 @@ def _homogeneous_normal_form(G, w):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _homogeneous_normal_form
-        sage: R = Zp(2, type = 'fixed-mod', print_mode='terse', show_prec=False)
+        sage: R = Zp(2, type='fixed-mod', print_mode='terse', show_prec=False)
         sage: U = Matrix(R, 2, [0,1,1,0])
         sage: V = Matrix(R, 2, [2,1,1,2])
         sage: W1 = Matrix(R, 1, [1])
@@ -659,7 +659,7 @@ def _jordan_2_adic(G):
 
         sage: from sage.quadratic_forms.genera.normal_form import _jordan_2_adic
         sage: R = Zp(2, prec=3, print_mode='terse', show_prec=False)
-        sage: A4 = Matrix(R,4,[2, -1, 0, 0, -1, 2, -1, 0, 0, -1, 2, -1, 0, 0, -1, 2])
+        sage: A4 = Matrix(R, 4, [2, -1, 0, 0, -1, 2, -1, 0, 0, -1, 2, -1, 0, 0, -1, 2])
         sage: A4
         [2 7 0 0]
         [7 2 7 0]
@@ -788,7 +788,7 @@ def _normalize(G, normal_odd=True):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _normalize
-        sage: R = Zp(3, prec = 5, type = 'fixed-mod', print_mode='series', show_prec=False)
+        sage: R = Zp(3, prec=5, type='fixed-mod', print_mode='series', show_prec=False)
         sage: G = matrix.diagonal(R, [1,7,3,3*5,3,9,-9,27*13])
         sage: D, B =_normalize(G)
         sage: D
@@ -865,7 +865,7 @@ def _normalize_2x2(G):
     INPUT:
 
     ``G`` - a `2` by `2` matrix over `\ZZ_p`
-    with ``type = 'fixed-mod'`` of the form::
+    with ``type='fixed-mod'`` of the form::
 
         [2a  b]
         [ b 2c] * 2^n
@@ -884,14 +884,14 @@ def _normalize_2x2(G):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _normalize_2x2
-        sage: R = Zp(2, prec = 15, type = 'fixed-mod', print_mode='series', show_prec=False)
+        sage: R = Zp(2, prec=15, type='fixed-mod', print_mode='series', show_prec=False)
         sage: G = Matrix(R, 2, [-17*2,3,3,23*2])
         sage: B =_normalize_2x2(G)
         sage: B * G * B.T
         [2 1]
         [1 2]
 
-        sage: G = Matrix(R,2,[-17*4,3,3,23*2])
+        sage: G = Matrix(R, 2, [-17*4,3,3,23*2])
         sage: B = _normalize_2x2(G)
         sage: B*G*B.T
         [0 1]
@@ -1042,7 +1042,7 @@ def _partial_normal_form_of_block(G):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _partial_normal_form_of_block
-        sage: R = Zp(2,prec=4, type = 'fixed-mod',print_mode='terse', show_prec=False)
+        sage: R = Zp(2, prec=4, type='fixed-mod', print_mode='terse', show_prec=False)
         sage: U = Matrix(R, 2, [0,1,1,0])
         sage: V = Matrix(R, 2, [2,1,1,2])
         sage: W1 = Matrix(R, 1, [1])
@@ -1138,13 +1138,13 @@ def _relations(G, n):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _relations
-        sage: R = Zp(2, type = 'fixed-mod',print_mode='terse', show_prec=False)
-        sage: U = Matrix(R,2,[0,1,1,0])
-        sage: V = Matrix(R,2,[2,1,1,2])
-        sage: W1 = Matrix(R,1,[1])
-        sage: W3 = Matrix(R,1,[3])
-        sage: W5 = Matrix(R,1,[5])
-        sage: W7 = Matrix(R,1,[7])
+        sage: R = Zp(2, type='fixed-mod', print_mode='terse', show_prec=False)
+        sage: U = Matrix(R, 2, [0,1,1,0])
+        sage: V = Matrix(R, 2, [2,1,1,2])
+        sage: W1 = Matrix(R, 1, [1])
+        sage: W3 = Matrix(R, 1, [3])
+        sage: W5 = Matrix(R, 1, [5])
+        sage: W7 = Matrix(R, 1, [7])
         sage: G = Matrix.block_diagonal(W1,W1)
         sage: b = _relations(G,1)
         sage: b * G * b.T
@@ -1398,13 +1398,13 @@ def _two_adic_normal_forms(G, partial=False):
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _two_adic_normal_forms
-        sage: R = Zp(2, type = 'fixed-mod', print_mode='terse', show_prec=False)
-        sage: U = Matrix(R,2,[0,1,1,0])
-        sage: V = Matrix(R,2,[2,1,1,2])
-        sage: W1 = Matrix(R,1,[1])
-        sage: W3 = Matrix(R,1,[3])
-        sage: W5 = Matrix(R,1,[5])
-        sage: W7 = Matrix(R,1,[7])
+        sage: R = Zp(2, type='fixed-mod', print_mode='terse', show_prec=False)
+        sage: U = Matrix(R, 2, [0,1,1,0])
+        sage: V = Matrix(R, 2, [2,1,1,2])
+        sage: W1 = Matrix(R, 1, [1])
+        sage: W3 = Matrix(R, 1, [3])
+        sage: W5 = Matrix(R, 1, [5])
+        sage: W7 = Matrix(R, 1, [7])
         sage: G = Matrix.block_diagonal([2*W1,2*W1,4*V])
         sage: B = _two_adic_normal_forms(G)[1]
         sage: B * G * B.T
