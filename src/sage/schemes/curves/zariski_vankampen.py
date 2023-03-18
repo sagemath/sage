@@ -947,16 +947,16 @@ def geometric_basis(G, E, EC, p, dual_graph):
     InternalEdges = [_ for _ in G.edges(sort = True) if _ not in E.edges(sort = True)]
     InternalVertices=[v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices = InternalVertices, edges = InternalEdges)
-    if not Internal:
+    if not Internal: # Creo que se puede quitar
         for v in E:
             if len(E.neighbors(v)) > 2:
                 Internal.add_vertex(v)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
-        if EC[i] in Internal:
+        if ECi in Internal:
             q = EC[i]
             connecting_path = EC[:i]
             break
-        if EC[-i] in Internal:
+        if EC[-i] in Internal: # creo que sobra
             q = EC[-i]
             connecting_path = list(reversed(EC[-i:]))
             break
@@ -975,10 +975,12 @@ def geometric_basis(G, E, EC, p, dual_graph):
     borra = [_ for _ in Gd.edges(sort = False) if _[2] in cp1]
     Gd.delete_edges(borra)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
-    GL2=[v for r in Gd2.vertices(sort = True) for v in r[1]] + [v for e in Gd2.edges(sort = False) for v in e[2]] + [v for v in cutpath]
-    G2=G.subgraph(GL2)
-    GL1=[v for r in Gd1.vertices(sort = True) for v in r[1]] + [v for e in Gd1.edges(sort = False) for v in e[2]] + [v for v in cutpath]
-    G1=G.subgraph(GL1)
+    GL2 = [v for r in Gd2.vertices(sort = True) for v in r[1]]
+    GL2 += [v for e in Gd2.edges(sort = False) for v in e[2]] + [v for v in cutpath]
+    G2 = G.subgraph(GL2)
+    GL1 = [v for r in Gd1.vertices(sort = True) for v in r[1]]
+    GL1 += [v for e in Gd1.edges(sort = False) for v in e[2]] + [v for v in cutpath]
+    G1 = G.subgraph(GL1)
     if EC[qi + 1] in G2:
         G1, G2 = G2, G1
         Gd1, Gd2 = Gd2, Gd1
@@ -1039,22 +1041,25 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
       in order to provide information for ``braid_monodromy_arrangement``.
           
-    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the
-      string assignment is given. t makes only sense if arrangement has
-      more than one polynomial
- 
-
-
+    - ``computebm`` -- an optional boolean variable (default ``True``) to actually
+      compute the braid monodromy
+    
+    -  ``holdstrand`` -- an optional boolean variable (default ``False``) to stop
+       the computation of string assignment.
+    
     OUTPUT:
 
-    If ``arrangement`` contains only one element, a list of braids. The braids correspond to paths based in the same point;
+    If ``computebm`` is set to ``True`` and ``arrangement`` contains only one element, a list of braids. 
+    The braids correspond to paths based in the same point;
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
     
-    If ``arrangement`` contains more than one element, some information to be used by
-    ``braid_monodromy_arrangement`` is provided.
+    If ``computebm`` is set to ``True`` and ``arrangement`` contains more than one element, 
+    either assignment of the roots over the base point to elements of 
+    ''arrangement`` (``holdstrand`` set to ``True``) or 
+    the assignment of strands to elements of ``arrangement`` (``holdstrand`` set to ``True``).
     
-    If ``computebm`` is set to ``False`` only some information to be used by ``strand_components`` is given.
+    If ``computebm`` is set to ``False`` the second part of the above is given (depending on ``holdstrand``).
 
     .. NOTE::
 
@@ -1066,11 +1071,25 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = (x^2 - y^3) * (x + 3 * y - 5)
-        sage: braid_monodromy(f)  # optional - sirocco
+        sage: bm = braid_monodromy(f); bm  # optional - sirocco
         [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
          s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
          s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
          s1*s0*s2*s0^-1*s2*s1^-1]
+        sage: flist = (x^2 - y^3, x + 3 * y - 5)
+        sage: bm1 = braid_monodromy(f, arrangement=flist) # optional - sirocco
+        sage: bm1[0] == bm
+        True
+        sage: bm1[1]
+        {1: 1, 2: 2, 3: 1, 4: 1}
+        sage: braid_monodromy(f, arrangement=flist, computebm=False)==bm1[1]
+        True
+        sage: bm2 = braid_monodromy(f, arrangement=flist, holdstrand=True)
+        sage: bm2[0] == bm
+        True
+        sage: bm2[1] == braid_monodromy(f, arrangement=flist, computebm=False, holdstrand=True)
+        True
+    
     """
     global roots_interval_cache
     if arrangement == ():
@@ -1105,29 +1124,29 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     p0 = (p[0], p[1])
     # Construct a dual graph for the compact regions; the dual edges
     # of this graph have as labels the corresponding edges in G
-    Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
-    Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
-    DG = Graph(len(Vreg1))
-    DG.relabel(Vreg1)
-    Edges = []
-    crd = {}
-    for i, r in enumerate(Vreg):
-        for e in r:
-            a, b = e[:2]
-            e1 = (b, a, None)
-            if e not in Edges:
-                Edges += [e, e1]
-                crd[e] = (Vreg1[i],)
-                crd[e1] = (Vreg1[i],)
-            else:
-                crd[e] += (Vreg1[i],)
-                crd[e1] += (Vreg1[i],)
-    EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-    for e in EdgesDual:
-        DG.add_edge(crd[e] + (e,))
-    EC0 = orient_circuit(E.eulerian_circuit())
-    EC = [EC0[0][0]] + [e[1] for e in EC0]
     if computebm:
+        Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
+        Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+        DG = Graph(len(Vreg1))
+        DG.relabel(Vreg1)
+        Edges = []
+        crd = {}
+        for i, r in enumerate(Vreg):
+            for e in r:
+                a, b = e[:2]
+                e1 = (b, a, None)
+                if e not in Edges:
+                    Edges += [e, e1]
+                    crd[e] = (Vreg1[i],)
+                    crd[e1] = (Vreg1[i],)
+                else:
+                    crd[e] += (Vreg1[i],)
+                    crd[e1] += (Vreg1[i],)
+        EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+        for e in EdgesDual:
+            DG.add_edge(crd[e] + (e,))
+        EC0 = orient_circuit(E.eulerian_circuit())
+        EC = [EC0[0][0]] + [e[1] for e in EC0]
         geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
         for p in geombasis:
@@ -1164,26 +1183,27 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
                 x1 = tuple(path[i + 1].vector())
                 braidpath = braidpath * segsbraids[(x0, x1)]
             result.append(braidpath)
-    if len(arrangement1) == 1:
-        return result
-    else:
-        p1 = p0[0] + I1 * p0[1]
-        strands = {}
-        roots_base = []
-        for i, h in enumerate(arrangement1):
-            h0 = h.subs({x: p1})
-            h1 = F[y](h0)
-            rt = h1.roots(QQbar, multiplicities = False)
-            roots_base += [(_,i) for _ in rt]
-        if not holdstrand:
-            roots_base.sort()
-            strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
-        if computebm and not holdstrand:
-            return (result, strands)
-        elif computebm and holdstrand:
-            return (result,roots_base)
-        else:
-            return strands
+        if len(arrangement1) == 1:
+            return result
+    p1 = p0[0] + I1 * p0[1]
+    strands = {}
+    roots_base = []
+    for i, h in enumerate(arrangement1):
+        h0 = h.subs({x: p1})
+        h1 = F[y](h0)
+        rt = h1.roots(QQbar, multiplicities = False)
+        roots_base += [(_,i) for _ in rt]
+    if not holdstrand:
+        roots_base.sort()
+        strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
+    if computebm and not holdstrand:
+        return (result, strands)
+    elif computebm and holdstrand:
+        return (result,roots_base)
+    elif not computebm and not holdstrand:
+        return strands
+    elif not computebm and holdstrand:
+        return roots_base
 
 @parallel
 def braid2rels(L, d):
@@ -1398,7 +1418,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
     return G
 
 
-def braid_monodromy_arrangement(flist, nodic = False):
+def braid_monodromy_arrangement(flist):
     r"""
     Compute the braid monodromy of a projection of the curve
     defined by a list of polynomials with the extra information about the correspondence of strands
@@ -1440,13 +1460,11 @@ def braid_monodromy_arrangement(flist, nodic = False):
         d = f.degree()
         dic ={j + 1 : 1 for j in range(d)}
         return (braid_monodromy(f), dic)
-    return braid_monodromy(f, arrangement = flist, holdstrand = nodic)
+    return braid_monodromy(f, arrangement = flist, holdstrand = False)
 
 def strand_components(flist):
     r"""
-    Compute the braid monodromy of a projection of the curve
-    defined by a tuple of polynomials with the extra information about the correspondence of strands
-    and elements of the list.
+    Compute only the assignment from strands to elements of ``flist``.
 
     INPUT:
 
