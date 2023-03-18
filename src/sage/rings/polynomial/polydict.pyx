@@ -1943,8 +1943,14 @@ cdef class ETuple:
 
         TESTS:
 
-        :trac:`34000`::
+        Test segmentation faults occurring as described in :trac:`34000`::
 
+            sage: ETuple([0, 1, 1]).eadd_p(1, 0)
+            (1, 1, 1)
+            sage: ETuple([0, 2, 4, 3]).eadd_p(5, 0)
+            (5, 2, 4, 3)
+            sage: ETuple([0, 2]).eadd_p(5, 0)
+            (5, 2)
             sage: e = ETuple([0, 1, 0])
             sage: e.eadd_p(0, 0).nonzero_positions()
             [1]
