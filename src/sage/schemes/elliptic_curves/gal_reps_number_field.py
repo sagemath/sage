@@ -45,14 +45,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.number_field.number_field import NumberField
+from sage.arith.misc import legendre_symbol, primes
+from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module import VectorSpace
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.misc.functional import cyclotomic_polynomial
-from sage.arith.all import legendre_symbol, primes
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.rings.all import Integer, ZZ, QQ, Infinity
+from sage.structure.sage_object import SageObject
 
 
 class GaloisRepresentation(SageObject):

@@ -3783,7 +3783,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0,  0, 0)
             in 3-d lattice M
 
-        Only two of the above points:
+        Only two of the above points::
 
             sage: p.points(1, 3)                                                # optional - palp
             M(0,  1, 0),
@@ -5251,8 +5251,8 @@ def _palp_convert_permutation(permutation):
             elif o in range(65, 91):
                 i = o - 28
             else:
-                raise ValueError('Cannot convert PALP index '
-                                 + i + ' to number.')
+                raise ValueError('cannot convert PALP index '
+                                 + i + ' to number')
         return i
     n = len(permutation)
     domain = [from_palp_index(i) for i in permutation]
@@ -5260,6 +5260,7 @@ def _palp_convert_permutation(permutation):
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
     S = SymmetricGroup(n)
     return make_permgroup_element(S, domain)
+
 
 def _read_nef_x_partitions(data):
     r"""
