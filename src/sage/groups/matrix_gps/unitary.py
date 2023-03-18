@@ -55,8 +55,7 @@ from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, normalize_args_invariant_form,
-    NamedMatrixGroup_generic, NamedMatrixGroup_gap )
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+    NamedMatrixGroup_generic)
 
 
 def finite_field_sqrt(ring):
@@ -135,6 +134,8 @@ def _UG(n, R, special, var='a', invariant_form=None):
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if is_FiniteField(ring):
+        from .unitary import UnitaryMatrixGroup_gap
+
         cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
         return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)
     else:

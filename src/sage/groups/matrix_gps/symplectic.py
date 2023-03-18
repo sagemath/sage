@@ -160,6 +160,8 @@ def Sp(n, R, var='a', invariant_form=None):
         ltx  = r'\text{{Sp}}_{{{0}}}({1})'.format(degree, latex(ring))
 
     try:
+        from .symplectic_gap import SymplecticMatrixGroup_gap
+
         cmd = 'Sp({0}, {1})'.format(degree, ring._gap_init_())
         return SymplecticMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
     except ValueError:

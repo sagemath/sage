@@ -23,7 +23,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     Check that :trac:`20867` is fixed::
 
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = Sp(4,3)
         sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
         True

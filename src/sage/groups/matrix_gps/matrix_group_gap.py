@@ -32,7 +32,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         ::
 
-            sage: from sage.groups.matrix_gps.matrix_group import MatrixGroup_gap
+            sage: from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
             sage: MatrixGroup_gap(2, ZZ, libgap.eval('GL(2, Integers)'))
             Matrix group over Integer Ring with 3 generators (
             [0 1]  [-1  0]  [1 1]
@@ -283,7 +283,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
         cat = Groups()
         if self in Groups().Finite():
             cat = cat.Finite()
-        from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+        from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         return FinitelyGeneratedMatrixGroup_gap(self.degree(), self.base_ring(),
                                                 libgap_subgroup, ambient=self,
                                                 category=cat)

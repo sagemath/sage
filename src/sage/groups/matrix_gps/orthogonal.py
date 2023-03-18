@@ -203,6 +203,8 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
                                                          '+' if e == 1 else '-')
 
     if is_FiniteField(ring):
+        from .orthogonal_gap import OrthogonalMatrixGroup_gap
+
         cmd  = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
         return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
     else:

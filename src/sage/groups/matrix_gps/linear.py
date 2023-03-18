@@ -163,6 +163,8 @@ def GL(n, R, var='a'):
     name = 'General Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
+        from .linear_gap import LinearMatrixGroup_gap
+
         cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
         return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
                                      category=cat)
@@ -248,6 +250,8 @@ def SL(n, R, var='a'):
     name = 'Special Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
     try:
+        from .linear_gap import LinearMatrixGroup_gap
+
         cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
         return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
                                      category=cat)

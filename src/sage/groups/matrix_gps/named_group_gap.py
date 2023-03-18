@@ -30,7 +30,7 @@ class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
         EXAMPLES::
 
             sage: G = GL(2, GF(3))
-            sage: from sage.groups.matrix_gps.named_group import NamedMatrixGroup_gap
+            sage: from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap
             sage: isinstance(G, NamedMatrixGroup_gap)
             True
         """

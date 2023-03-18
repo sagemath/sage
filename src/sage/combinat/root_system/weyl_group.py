@@ -39,8 +39,8 @@ The Cayley graph of the Weyl Group of type ['D', 4]::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-from sage.groups.matrix_gps.group_element import MatrixGroupElement_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

@@ -19,7 +19,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         [3 4], [10  0]
         )
         sage: type(G)
-        <class 'sage.groups.matrix_gps.finitely_generated.FinitelyGeneratedMatrixGroup_gap_with_category'>
+        <class 'sage.groups.matrix_gps.finitely_generated_gap.FinitelyGeneratedMatrixGroup_gap_with_category'>
         sage: TestSuite(G).run()
     """
 

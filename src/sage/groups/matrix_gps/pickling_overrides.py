@@ -4,7 +4,7 @@ Overrides to unpickle old matrix groups
 
 from sage.structure.sage_object import register_unpickle_override
 
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_gap
 from sage.groups.matrix_gps.linear import GL, LinearMatrixGroup_generic
 
