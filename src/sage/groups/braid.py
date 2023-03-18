@@ -434,13 +434,12 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
         
-        - ``G`` -- (default : `None`) either `None` of a `SymmetricGroup(n)`
-          where `n` is the number of strands of `self.
-          if it is not, it returns an Standard Permutation.
+        - ``G`` -- (default : ``None``) either ``None`` of `SymmetricGroup(n)`
+          where ``n`` is the number of strands of ``self``.
 
         OUTPUT:
 
-        A standard permutation if `G` is `None`, an element of `G` if it
+        A standard permutation if ``G`` is `None`, an element of ``G`` if it
         is `SymmetricGroup(n)` and an error, otherwise.
 
         EXAMPLES::
@@ -1681,7 +1680,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- a braid in the same braid group as `self`.
+        - ``other`` -- a braid in the same braid group as ``self``.
 
         OUTPUT:
 
