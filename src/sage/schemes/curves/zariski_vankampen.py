@@ -199,8 +199,7 @@ def discrim(pols):
     def discrim_pairs(f, g):
         if f == g:
             return R(f.discriminant(y))
-        else:
-            return R(f.resultant(g, y))
+        return R(f.resultant(g, y))
 
     pairs = [(f, f) for f in flist] +  [(f, g) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
@@ -475,8 +474,8 @@ def fieldI(F0):
         sage: F0.<a> = NumberField(p, embedding = a0)
         sage: fieldI(F0)
         Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? + 1.000000000000000?*I
-        
-        
+
+
         sage: from sage.schemes.curves.zariski_vankampen import fieldI
         sage: p = QQ[x](x^4 + 1)
         sage: a0 = p.roots(QQbar, multiplicities = False)[0]
@@ -776,7 +775,7 @@ def orient_circuit(circuit, convex = False):
 
     - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
         by a list of edges
-        
+
     - ``convex`` -- a boolean function, if set to ``True`` a simpler computation is made
 
     OUTPUT:
@@ -844,16 +843,16 @@ def geometric_basis(G, E, EC, p, dual_graph):
     Return a geometric basis, based on a vertex.
 
     INPUT:
-    
+
     - ``G`` -- a graph which correspond to the bounded edgess of a Voronoi Diagram
 
     - ``E`` -- a subgraph of ``G`` which is a cycle; it corresponds to the bounded edges touching
       an unbounded region of a Voronoi Diagram
-      
+
     - ``EC`` -- A counterclockwise orientation of the vertices of ``E``
 
     - ``p`` -- a vertex of ``E``
-      
+
     - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
@@ -1027,8 +1026,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
     return resul
 
 
-    
-
 def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
@@ -1037,28 +1034,28 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
 
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
-      
+
     - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
       in order to provide information for ``braid_monodromy_arrangement``.
-          
+
     - ``computebm`` -- an optional boolean variable (default ``True``) to actually
       compute the braid monodromy
-    
+
     -  ``holdstrand`` -- an optional boolean variable (default ``False``) to stop
        the computation of string assignment.
-    
+
     OUTPUT:
 
-    If ``computebm`` is set to ``True`` and ``arrangement`` contains only one element, a list of braids. 
+    If ``computebm`` is set to ``True`` and ``arrangement`` contains only one element, a list of braids.
     The braids correspond to paths based in the same point;
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
-    
-    If ``computebm`` is set to ``True`` and ``arrangement`` contains more than one element, 
-    either assignment of the roots over the base point to elements of 
-    ''arrangement`` (``holdstrand`` set to ``True``) or 
+
+    If ``computebm`` is set to ``True`` and ``arrangement`` contains more than one element,
+    either assignment of the roots over the base point to elements of
+    ''arrangement`` (``holdstrand`` set to ``True``) or
     the assignment of strands to elements of ``arrangement`` (``holdstrand`` set to ``True``).
-    
+
     If ``computebm`` is set to ``False`` the second part of the above is given (depending on ``holdstrand``).
 
     .. NOTE::
@@ -1089,7 +1086,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         True
         sage: bm2[1] == braid_monodromy(f, arrangement=flist, computebm=False, holdstrand=True)
         True
-    
+
     """
     global roots_interval_cache
     if arrangement == ():
@@ -1316,7 +1313,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
-      
+
     - ``braidmonodromy`` -- (default: ``None``); if it is set to a list of braids
       braid monodromy is not computed ad this list is used instead.
 
@@ -1360,7 +1357,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         sage: f = y^3 + x^3 + zeta * x + 1
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
-        
+
     We compute the fundamental group of the complement of a quartic with ``Puiseux = True``::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
