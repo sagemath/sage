@@ -1742,9 +1742,9 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
         2
         sage: p = next_prime(2^20); p
         1048583
-        sage: len(BinaryQF_reduced_representatives(-p))
+        sage: len(BinaryQF_reduced_representatives(-p))                                 # optional - sage.libs.pari
         689
-        sage: QuadraticField(-p, 'a').class_number()
+        sage: QuadraticField(-p, 'a').class_number()                                    # optional - sage.libs.pari sage.rings.number_field
         689
 
         sage: BinaryQF_reduced_representatives(-23*9)
