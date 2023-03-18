@@ -1685,7 +1685,7 @@ class Braid(FiniteTypeArtinGroupElement):
         OUTPUT:
 
         A braid `d` such that if `o` equals ``other`` and `s` equals ``self``
-        then `o = d^{-1 \cdot s \cdot d`.
+        then `o = d^{-1} \cdot s \cdot d`.
 
         EXAMPLES::
 
@@ -1764,7 +1764,7 @@ class Braid(FiniteTypeArtinGroupElement):
         OUTPUT:
 
         A pure braid `d` such that if `o` equals ``other`` and `s` equals ``self``
-        then `o = d^{-1 \cdot s \cdot d`.
+        then `o = d^{-1} \cdot s \cdot d`.
 
         EXAMPLES::
 
