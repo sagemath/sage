@@ -846,7 +846,7 @@ cdef class PolyDict:
             # First determine the multinomial:
             multi = ""
             for j in e.nonzero_positions(sort=True):
-                if len(multi) > 0:
+                if multi:
                     multi = multi + "*"
                 multi = multi + vars[j]
                 if e[j] != 1:
@@ -855,11 +855,11 @@ cdef class PolyDict:
                     else:
                         multi = multi + "^(%s)" % e[j]
             # Next determine coefficient of multinomial
-            if len(multi) == 0:
+            if not multi:
                 multi = str(c)
             elif c == neg_one and not is_characteristic_2:
                 # handle -1 specially because it's a pain
-                if len(poly) > 0:
+                if poly:
                     sign_switch = True
                 else:
                     multi = "-%s" % multi
@@ -871,7 +871,7 @@ cdef class PolyDict:
                 multi = "%s*%s" % (c, multi)
 
             # Now add on coefficiented multinomials
-            if len(poly) > 0:
+            if poly:
                 if sign_switch:
                     poly = poly + " - "
                 else:
@@ -879,7 +879,7 @@ cdef class PolyDict:
             poly = poly + multi
         poly = poly.lstrip().rstrip()
         poly = poly.replace("+ -", "- ")
-        if len(poly) == 0:
+        if not poly:
             return "0"
         return poly
 
@@ -1527,23 +1527,19 @@ cdef class ETuple:
             d = [self[ind] for ind from start <= ind < stop]
             return ETuple(d)
         else:
-            for ind in range(0, 2*self._nonzero, 2):
-                if self._data[ind] == i:
-                    return self._data[ind+1]
-                elif self._data[ind] > i:
-                    # the indices are sorted in _data, we are beyond, so quit
-                    return 0
-            return 0
+            return self.get_exp(i)
 
     cdef int get_exp(self, size_t i):
         """
         Return the exponent for the ``i``-th variable.
         """
+        # TODO: implement binary search
         cdef size_t ind = 0
-        for ind in range(0, 2*self._nonzero, 2):
-            if self._data[ind] == i:
-                return self._data[ind+1]
-            elif self._data[ind] > i:
+        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
+        for ind in range(self._nonzero):
+            if self._data[2 * ind] == i:
+                return self._data[2 * ind + 1]
+            elif self._data[2 * ind] > i:
                 # the indices are sorted in _data, we are beyond, so quit
                 return 0
         return 0
@@ -1554,7 +1550,7 @@ cdef class ETuple:
         """
         cdef int i
         cdef int result = 0
-        for i from 0 <= i < self._nonzero:
+        for i in range(self._nonzero):
             result += (1000003 * result) ^ self._data[2*i]
             result += (1000003 * result) ^ self._data[2*i+1]
         result = (1000003 * result) ^ self._length
@@ -1591,8 +1587,8 @@ cdef class ETuple:
             return self._length > self._nonzero
 
         cdef size_t ind = 0
-        for ind from 0 <= ind < self._nonzero:
-            if elem == self._data[2*ind+1]:
+        for ind in range(self._nonzero):
+            if elem == self._data[2 * ind + 1]:
                 return True
         return False
 
@@ -1626,10 +1622,10 @@ cdef class ETuple:
         if op == Py_EQ:  # ==
             if self._nonzero != other._nonzero:
                 return False
-            for ind from 0 <= ind < self._nonzero:
-                if self._data[2*ind] != other._data[2*ind]:
+            for ind in range(self._nonzero):
+                if self._data[2 * ind] != other._data[2 * ind]:
                     return False
-                if self._data[2*ind+1] != other._data[2*ind+1]:
+                if self._data[2 * ind + 1] != other._data[2 * ind + 1]:
                     return False
             return self._length == other._length
 
@@ -1790,8 +1786,9 @@ cdef class ETuple:
         cdef int deg = 0
         if len(w) != self._length:
             raise ValueError
-        for i in range(0, 2 * self._nonzero, 2):
-            deg += self._data[i+1] * <int> w[self._data[i]]
+        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
+        for i in range(self._nonzero):
+            deg += self._data[2 * i + 1] * <int> w[self._data[2 * i]]
         return deg
 
     cpdef int unweighted_quotient_degree(self, ETuple other) except *:
@@ -1811,20 +1808,20 @@ cdef class ETuple:
         cdef int deg = 0
         while ind1 < selfnz:
             position = self._data[ind1]
-            exponent = self._data[ind1+1]
+            exponent = self._data[ind1 + 1]
             while ind2 < othernz and other._data[ind2] < position:
                 ind2 += 2
             if ind2 == othernz:
                 while ind1 < selfnz:
-                    deg += self._data[ind1+1]
+                    deg += self._data[ind1 + 1]
                     ind1 += 2
                 return deg
             if other._data[ind2] > position:
                 # other[position] = 0
                 deg += exponent
-            elif other._data[ind2+1] < exponent:
+            elif other._data[ind2 + 1] < exponent:
                 # There is a positive difference that we have to insert
-                deg += (exponent - other._data[ind2+1])
+                deg += (exponent - other._data[ind2 + 1])
             ind1 += 2
         return deg
 
@@ -2093,13 +2090,13 @@ cdef class ETuple:
         cdef ETuple result = <ETuple>self._new()
         if factor == 0:
             result._nonzero = 0  # all zero, no non-zero entries!
-            result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
+            result._data = <int*>sig_malloc(sizeof(int) * result._nonzero * 2)
         else:
             result._nonzero = self._nonzero
-            result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
-            for ind from 0 <= ind < self._nonzero:
-                result._data[2*ind] = self._data[2*ind]
-                result._data[2*ind+1] = self._data[2*ind+1]*factor
+            result._data = <int*>sig_malloc(sizeof(int) * result._nonzero * 2)
+            for ind in range(self._nonzero):
+                result._data[2 * ind] = self._data[2 * ind]
+                result._data[2 * ind + 1] = self._data[2 * ind + 1] * factor
         return result
 
     cpdef ETuple emax(self, ETuple other):
@@ -2253,6 +2250,7 @@ cdef class ETuple:
         cdef ETuple result = self._new()
         result._data = <int*> sig_malloc(sizeof(int) * 2 * self._nonzero)
         result._nonzero = 0
+        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
         for i in range(self._nonzero):
             result._data[2 * result._nonzero + 1] = self._data[2 * i + 1] / n
             if result._data[2 * result._nonzero + 1]:
@@ -2313,27 +2311,28 @@ cdef class ETuple:
         cdef size_t i, j
         cdef int exp1
         cdef ETuple result
-        for i in range(0, 2*self._nonzero,2):
+        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
+        for i in range(self._nonzero):
             if self._data[i] == index:
-                result = <ETuple>self._new()
-                result._data = <int*>sig_malloc(sizeof(int)*self._nonzero*2)
-                exp1 = self._data[i+1]
-                if exp1>1:
+                result = <ETuple> self._new()
+                result._data = <int*>sig_malloc(sizeof(int) * self._nonzero * 2)
+                exp1 = self._data[2 * i + 1]
+                if exp1 > 1:
                     # division doesn't change the number of nonzero positions
                     result._nonzero = self._nonzero
-                    for j in range(0, 2*self._nonzero, 2):
-                        result._data[j] = self._data[j]
-                        result._data[j+1] = self._data[j+1]
-                    result._data[i+1] = exp1-1
+                    for j in range(self._nonzero):
+                        result._data[2 * j] = self._data[2 * j]
+                        result._data[2 * j + 1] = self._data[2 * j + 1]
+                    result._data[2 * i + 1] = exp1 - 1
                 else:
                     # var(index) disappears from self
                     result._nonzero = self._nonzero-1
-                    for j in range(0, i, 2):
-                        result._data[j] = self._data[j]
-                        result._data[j+1] = self._data[j+1]
-                    for j in range(i+2, 2*self._nonzero, 2):
-                        result._data[j-2] = self._data[j]
-                        result._data[j-1] = self._data[j+1]
+                    for j in range(i):
+                        result._data[2 * j] = self._data[2 * j]
+                        result._data[2 * j + 1] = self._data[2 * j + 1]
+                    for j in range(i + 1, self._nonzero):
+                        result._data[2 * j - 2] = self._data[2 * j]
+                        result._data[2 * j - 1] = self._data[2 * j + 1]
                 return result
         return None
 
@@ -2349,16 +2348,17 @@ cdef class ETuple:
             # Trivially self cannot divide other
             return False
         cdef size_t othernz2 = 2 * other._nonzero
-        for ind1 in range(0, 2*self._nonzero, 2):
-            pos1 = self._data[ind1]
-            exp1 = self._data[ind1+1]
+        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
+        for ind1 in range(self._nonzero):
+            pos1 = self._data[2 * ind1]
+            exp1 = self._data[2 * ind1 + 1]
             # Because of the above trivial test, other._nonzero>0.
             # So, other._data[ind2] initially makes sense.
             while other._data[ind2] < pos1:
                 ind2 += 2
                 if ind2 >= othernz2:
                     return False
-            if other._data[ind2] > pos1 or other._data[ind2+1] < exp1:
+            if other._data[ind2] > pos1 or other._data[ind2 + 1] < exp1:
                 # Either other has no exponent at position pos1 or the exponent is less than in self
                 return False
         return True
@@ -2419,7 +2419,7 @@ cdef class ETuple:
             [0, 2]
         """
         cdef size_t ind
-        return [self._data[2*ind] for ind from 0 <= ind < self._nonzero]
+        return [self._data[2 * ind] for ind in range(self._nonzero)]
 
     cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
@@ -2464,7 +2464,7 @@ cdef class ETuple:
             [-1, 1]
         """
         cdef size_t ind
-        return [self._data[2*ind+1] for ind from 0 <= ind < self._nonzero]
+        return [self._data[2 * ind + 1] for ind in range(self._nonzero)]
 
     cpdef ETuple reversed(self):
         """
@@ -2480,10 +2480,10 @@ cdef class ETuple:
         cdef size_t ind
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = self._nonzero
-        result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
+        result._data = <int*>sig_malloc(sizeof(int) * result._nonzero * 2)
         for ind in range(self._nonzero):
-            result._data[2*(result._nonzero-ind-1)] = self._length - self._data[2*ind] - 1
-            result._data[2*(result._nonzero-ind-1)+1] = self._data[2*ind+1]
+            result._data[2 * (result._nonzero - ind - 1)] = self._length - self._data[2 * ind] - 1
+            result._data[2 * (result._nonzero - ind - 1) + 1] = self._data[2 * ind + 1]
         return result
 
     def sparse_iter(self):
@@ -2500,7 +2500,7 @@ cdef class ETuple:
         """
         cdef size_t ind
         for ind in range(self._nonzero):
-            yield (self._data[2*ind], self._data[2*ind+1])
+            yield (self._data[2 * ind], self._data[2 * ind + 1])
 
     def combine_to_positives(self, ETuple other):
         """
