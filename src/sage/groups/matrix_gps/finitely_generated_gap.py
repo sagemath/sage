@@ -315,7 +315,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         PR = PolynomialRing(F, n, [VarStr+str(i) for i in range(1,n+1)])
 
         if q == 0 or (q > 0 and self.cardinality() % q):
-            from sage.all import Matrix
+            from sage.matrix.constructor import Matrix
             try:
                 elements = [g.matrix() for g in self.list()]
             except (TypeError, ValueError):
