@@ -170,18 +170,18 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
             sage: S.<x,y,z,w> = PolynomialRing(QQ)
             sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
-            sage: r = I.graded_free_resolution()
-            sage: r._repr_module(0)
+            sage: r = I.graded_free_resolution()                                        # optional - sage.libs.singular
+            sage: r._repr_module(0)                                                     # optional - sage.libs.singular
             'S(0)'
-            sage: r._repr_module(1)
+            sage: r._repr_module(1)                                                     # optional - sage.libs.singular
             'S(-2)⊕S(-2)⊕S(-2)'
-            sage: r._repr_module(2)
+            sage: r._repr_module(2)                                                     # optional - sage.libs.singular
             'S(-3)⊕S(-3)'
-            sage: r._repr_module(3)
+            sage: r._repr_module(3)                                                     # optional - sage.libs.singular
             '0'
 
-            sage: r = I.graded_free_resolution(shifts=[-1])
-            sage: r._repr_module(0)
+            sage: r = I.graded_free_resolution(shifts=[-1])                             # optional - sage.libs.singular
+            sage: r._repr_module(0)                                                     # optional - sage.libs.singular
             'S(1)'
         """
         self._maps  # to set _res_shifts
@@ -328,8 +328,8 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         sage: R.<x> = QQ[]
         sage: M = matrix([[x^3, 3*x^3, 5*x^3],
         ....:             [0, x, 2*x]])
-        sage: res = FreeResolution(M, graded=True)
-        sage: res
+        sage: res = FreeResolution(M, graded=True)                                      # optional - sage.libs.singular
+        sage: res                                                                       # optional - sage.libs.singular
         S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
     """
     def __init__(self, module, degrees=None, *args, **kwds):
@@ -342,8 +342,8 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             sage: R.<x> = QQ[]
             sage: M = matrix([[x^3, 3*x^3, 5*x^3],
             ....:             [0, x, 2*x]])
-            sage: res = FreeResolution(M, graded=True)
-            sage: TestSuite(res).run(skip="_test_pickling")
+            sage: res = FreeResolution(M, graded=True)                                  # optional - sage.libs.singular
+            sage: TestSuite(res).run(skip="_test_pickling")                             # optional - sage.libs.singular
         """
         super().__init__(module, degrees=degrees, *args, **kwds)
 
@@ -364,25 +364,25 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             sage: R.<x> = QQ[]
             sage: M = matrix([[x^3, 3*x^3, 5*x^3],
             ....:             [0, x, 2*x]])
-            sage: res = FreeResolution(M, graded=True)
-            sage: res
+            sage: res = FreeResolution(M, graded=True)                                  # optional - sage.libs.singular
+            sage: res                                                                   # optional - sage.libs.singular
             S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
-            sage: res._maps
+            sage: res._maps                                                             # optional - sage.libs.singular
             [
             [  x^3     0]
             [3*x^3     x]
             [5*x^3   2*x]
             ]
-            sage: res._res_shifts
+            sage: res._res_shifts                                                       # optional - sage.libs.singular
             [[3, 1]]
 
             sage: I = R.ideal([x^4])
-            sage: res = I.graded_free_resolution(shifts=[1], degrees=[2])
-            sage: res
+            sage: res = I.graded_free_resolution(shifts=[1], degrees=[2])               # optional - sage.libs.singular
+            sage: res                                                                   # optional - sage.libs.singular
             S(-1) <-- S(-9) <-- 0
-            sage: res._maps
+            sage: res._maps                                                             # optional - sage.libs.singular
             [[x^4]]
-            sage: res._res_shifts
+            sage: res._res_shifts                                                       # optional - sage.libs.singular
             [[9]]
         """
         def compute_degree(base, i):
