@@ -167,7 +167,7 @@ _NumberFields = NumberFields()
 
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 
-lazy_import('sage.arith.misc', "is_fundamental_discriminant", deprecation=99999)
+lazy_import('sage.arith.misc', "is_fundamental_discriminant", deprecation=35305)
 
 
 def is_NumberFieldHomsetCodomain(codomain):
