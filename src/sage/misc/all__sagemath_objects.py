@@ -38,3 +38,5 @@ from .randstate import seed, set_random_seed, initial_seed, current_randstate
 from .prandom import *
 
 from .timing import walltime, cputime
+
+from .sage_timeit_class import timeit
