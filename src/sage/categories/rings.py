@@ -71,7 +71,7 @@ class Rings(CategoryWithAxiom):
                 True
                 sage: R.hom([x, x^2], R).is_injective()                                 # optional - sage.libs.singular
                 False
-                sage: S.<u,v> = R.quotient(x^3*y)
+                sage: S.<u,v> = R.quotient(x^3*y)                                       # optional - sage.libs.singular
                 sage: R.hom([v, u], S).is_injective()                                   # optional - sage.libs.singular
                 False
                 sage: S.hom([-u, v], S).is_injective()                                  # optional - sage.libs.singular
