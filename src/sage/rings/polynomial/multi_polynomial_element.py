@@ -386,7 +386,7 @@ class MPolynomial_element(MPolynomial):
             1/2*x
         """
         if right.is_constant():
-            inv = self.base_ring().one() / self.base_ring()(right)
+            inv = self.base_ring().one() / right.constant_coefficient()
             return inv * self
         return self.parent().fraction_field()(self, right, coerce=False)
 
