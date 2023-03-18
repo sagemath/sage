@@ -98,8 +98,8 @@ import sage.rings.number_field.number_field as number_field
 import sage.rings.all as rings
 
 from sage.arith.functions import lcm
-from sage.arith.misc import (binomial, factorial, prime_divisors,
-                             GCD as gcd, XGCD as xgcd)
+from sage.arith.misc import (binomial, factorial, is_fundamental_discriminant,
+                             prime_divisors, GCD as gcd, XGCD as xgcd)
 from sage.matrix.constructor import Matrix as matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -5706,7 +5706,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         # both ell_1 and ell_2 are inert
         D = -5
         while True:
-            if number_field.is_fundamental_discriminant(D) and \
+            if is_fundamental_discriminant(D) and \
                D % ell_1 and D % ell_2 and \
                E.satisfies_heegner_hypothesis(D) and \
                is_inert(D, ell_1) and is_inert(D, ell_2) and \
@@ -6075,7 +6075,7 @@ def class_number(D):
         ...
         ValueError: D (=-5) must be a fundamental discriminant
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not is_fundamental_discriminant(D):
         raise ValueError("D (=%s) must be a fundamental discriminant" % D)
     return QuadraticField(D, 'a').class_number()
 
@@ -6226,7 +6226,7 @@ def satisfies_weak_heegner_hypothesis(N, D):
         sage: EllipticCurve('37a').heegner_discriminants_list(10)
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not is_fundamental_discriminant(D):
         return False
     if D >= 0:
         return False
@@ -7234,7 +7234,7 @@ def satisfies_heegner_hypothesis(self, D):
         sage: E.satisfies_heegner_hypothesis(-11)
         False
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not is_fundamental_discriminant(D):
         return False
     D = ZZ(D)
     if D >= 0:

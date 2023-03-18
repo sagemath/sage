@@ -222,7 +222,7 @@ def quadratic_L_function__exact(n, d):
     - [Was1997]_
     """
     from sage.misc.functional import sqrt
-    from sage.symbolic.constants import pi, I
+    from sage.symbolic.constants import I, pi
     from sage.symbolic.ring import SR
 
     if n <= 0:
