@@ -1741,7 +1741,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         A list of braids. The braids correspond to paths based in the same point;
         each of this paths is the conjugated of a loop around one of the points
-        in the discriminant of the projection of `self`.
+        in the discriminant of the projection of ``self``.
 
         NOTE:
 
