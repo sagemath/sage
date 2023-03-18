@@ -131,19 +131,19 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 2}
 
-            sage: PolyDict({(2,3):0, (1,2):3, (2,1):4})
+            sage: PolyDict({(2, 3): 0, (1, 2): 3, (2, 1): 4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 0}
 
-            sage: PolyDict({(0,0):RIF(-1,1)})
+            sage: PolyDict({(0, 0): RIF(-1,1)})
             PolyDict with representation {(0, 0): 0.?}
 
         TESTS::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2, 3):2, (1, 2):3, (2, 1):4})
+            sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             sage: len(f)
             3
             sage: f = PolyDict({}, zero=3, force_int_exponents=True, force_etuples=True)
@@ -492,7 +492,7 @@ cdef class PolyDict:
 
         INPUT:
 
-        - ``w`` (optional) -- a tuple of weights
+        - ``w`` -- (optional) a tuple of weights
 
         EXAMPLES::
 
@@ -1423,7 +1423,7 @@ cdef class ETuple:
 
     def __bool__(self):
         r"""
-        Return whether this polynomial is nonzero.
+        Return whether self is nonzero.
 
         TESTS::
 
