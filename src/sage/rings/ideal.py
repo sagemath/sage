@@ -956,7 +956,7 @@ class Ideal_generic(MonoidElement):
         ::
 
             sage: I = QQ['x', 'y'].ideal(-5)
-            sage: I.is_trivial()
+            sage: I.is_trivial()                                                        # optional - sage.libs.singular
             True
 
         ::
@@ -969,7 +969,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R = QQ['x', 'y']
             sage: I = R.ideal(R.gens())
-            sage: I.is_trivial()
+            sage: I.is_trivial()                                                        # optional - sage.libs.singular
             False
         """
         return self.is_zero() or self == self.ring().unit_ideal()

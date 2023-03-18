@@ -877,7 +877,7 @@ cdef class Ring(ParentWithGens):
         Make sure :trac:`10481` is fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: R.<a> = ZZ['x'].quo(x^2)
+            sage: R.<a> = ZZ['x'].quo(x^2)                                              # optional - sage.libs.pari
             sage: R.fraction_field()
             Traceback (most recent call last):
             ...
@@ -887,11 +887,11 @@ cdef class Ring(ParentWithGens):
 
         Forward the proof flag to ``is_field``, see :trac:`22910`::
 
-            sage: R1.<x> = GF(5)[]                                              # optional - sage.libs.pari
-            sage: F1 = R1.quotient_ring(x^2+x+1)                                # optional - sage.libs.pari
-            sage: R2.<x> = F1[]                                                 # optional - sage.libs.pari
-            sage: F2 = R2.quotient_ring(x^2+x+1)                                # optional - sage.libs.pari
-            sage: F2.is_integral_domain(False)                                  # optional - sage.libs.pari
+            sage: R1.<x> = GF(5)[]                                                      # optional - sage.libs.pari
+            sage: F1 = R1.quotient_ring(x^2 + x + 1)                                    # optional - sage.libs.pari
+            sage: R2.<x> = F1[]                                                         # optional - sage.libs.pari
+            sage: F2 = R2.quotient_ring(x^2 + x + 1)                                    # optional - sage.libs.pari
+            sage: F2.is_integral_domain(False)                                          # optional - sage.libs.pari
             False
         """
         if self.is_field(proof):

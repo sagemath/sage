@@ -2218,15 +2218,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: P.<x,y> = MPolynomialRing_polydict_domain(QQ, 2, order='degrevlex')
             sage: a = x + y
             sage: b = x^3 - y^3
-            sage: a.resultant(b)
+            sage: a.resultant(b)                                                        # optional - sage.libs.singular
             -2*y^3
-            sage: a.resultant(b, y)
+            sage: a.resultant(b, y)                                                     # optional - sage.libs.singular
             2*x^3
 
         Check that :trac:`15061` is fixed::
 
-            sage: R.<x, y> = AA[]                                               # optional - sage.rings.number_field
-            sage: (x^2 + 1).resultant(x^2 - y)                                  # optional - sage.rings.number_field
+            sage: R.<x, y> = AA[]                                                       # optional - sage.rings.number_field
+            sage: (x^2 + 1).resultant(x^2 - y)                                          # optional - sage.libs.singular sage.rings.number_field
             y^2 + 2*y + 1
 
         Test for :trac:`2693`::
@@ -2234,17 +2234,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = RR[]
             sage: p = x + y
             sage: q = x*y
-            sage: p.resultant(q)
+            sage: p.resultant(q)                                                        # optional - sage.libs.singular
             -y^2
 
         Check that this method works over QQbar (:trac:`25351`)::
 
-            sage: P.<x,y> = QQbar[]                                             # optional - sage.rings.number_field
-            sage: a = x + y                                                     # optional - sage.rings.number_field
-            sage: b = x^3 - y^3                                                 # optional - sage.rings.number_field
-            sage: a.resultant(b)                                                # optional - sage.rings.number_field
+            sage: P.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
+            sage: a = x + y                                                             # optional - sage.rings.number_field
+            sage: b = x^3 - y^3                                                         # optional - sage.rings.number_field
+            sage: a.resultant(b)                                                        # optional - sage.libs.singular sage.rings.number_field
             (-2)*y^3
-            sage: a.resultant(b, y)                                             # optional - sage.rings.number_field
+            sage: a.resultant(b, y)                                                     # optional - sage.libs.singular sage.rings.number_field
             2*x^3
         """
         R = self.parent()

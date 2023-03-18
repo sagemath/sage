@@ -897,22 +897,22 @@ class MPowerSeries(PowerSeries):
             sage: g = 1 + 2*a - 3*a*b + R.O(3)
             sage: q, r = f.quo_rem(g); q, r
             (1 - a + b + 2*a^2 + O(a, b, c)^3, 0 + O(a, b, c)^3)
-            sage: f == q*g+r
+            sage: f == q*g + r
             True
 
             sage: q, r = (a*f).quo_rem(g); q, r
             (a - a^2 + a*b + 2*a^3 + O(a, b, c)^4, 0 + O(a, b, c)^4)
-            sage: a*f == q*g+r
+            sage: a*f == q*g + r
             True
 
-            sage: q, r = (a*f).quo_rem(a*g); q, r
+            sage: q, r = (a*f).quo_rem(a*g); q, r                                       # optional - sage.libs.singular
             (1 - a + b + 2*a^2 + O(a, b, c)^3, 0 + O(a, b, c)^4)
-            sage: a*f == q*(a*g)+r
+            sage: a*f == q*(a*g) + r                                                    # optional - sage.libs.singular
             True
 
-            sage: q, r = (a*f).quo_rem(b*g); q, r
+            sage: q, r = (a*f).quo_rem(b*g); q, r                                       # optional - sage.libs.singular
             (a - 3*a^2 + O(a, b, c)^3, a + a^2 + O(a, b, c)^4)
-            sage: a*f == q*(b*g)+r
+            sage: a*f == q*(b*g) + r                                                    # optional - sage.libs.singular
             True
 
         Trying to divide two polynomials, we run into the issue that
@@ -921,7 +921,7 @@ class MPowerSeries(PowerSeries):
         algorithm would never terminate). Here, default precision
         comes to our help::
 
-            sage: (1+a^3).quo_rem(a+a^2)
+            sage: (1 + a^3).quo_rem(a + a^2)
             (a^2 - a^3 + a^4 - a^5 + a^6 - a^7 + a^8 - a^9 + a^10 + O(a, b, c)^11, 1 + O(a, b, c)^12)
 
             sage: (1+a^3+a*b).quo_rem(b+c)
@@ -1037,30 +1037,30 @@ class MPowerSeries(PowerSeries):
 
         When possible, division by non-units also works::
 
-            sage: a/(a*f)
+            sage: a/(a*f)                                                               # optional - sage.libs.singular
             1 - a - b + a^2 + 3*a*b + b^2 + O(a, b, c)^3
 
-            sage: a/(R.zero())
+            sage: a/(R.zero())                                                          # optional - sage.libs.singular
             Traceback (most recent call last):
             ZeroDivisionError
 
-            sage: (a*f)/f
+            sage: (a*f)/f                                                               # optional - sage.libs.singular
             a + O(a, b, c)^4
-            sage: f/(a*f)
+            sage: f/(a*f)                                                               # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: not divisible
 
         An example where one loses precision::
 
-            sage: ((1+a)*f - f) / a*f
+            sage: ((1+a)*f - f) / a*f                                                   # optional - sage.libs.singular
             1 + 2*a + 2*b + O(a, b, c)^2
 
         TESTS::
 
-            sage: ((a+b)*f) / f == (a+b)
+            sage: ((a+b)*f) / f == (a+b)                                                # optional - sage.libs.singular
             True
-            sage: ((a+b)*f) / (a+b) == f
+            sage: ((a+b)*f) / (a+b) == f                                                # optional - sage.libs.singular
             True
         """
         if denom_r.is_unit(): # faster if denom_r is a unit
@@ -1083,7 +1083,7 @@ class MPowerSeries(PowerSeries):
             False
             sage: g in R.base_extend(Zmod(2))
             True
-            sage: g.polynomial() == f.polynomial() % 2
+            sage: g.polynomial() == f.polynomial() % 2                                              # optional - sage.libs.singular
             True
         """
         if isinstance(other, (int, Integer)):

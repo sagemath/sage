@@ -306,14 +306,14 @@ def PolynomialRing(base_ring, *args, **kwds):
     example, here is a ring with generators labeled by the primes less
     than 100::
 
-        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R
+        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R                                                 # optional - sage.libs.pari
         Multivariate Polynomial Ring in x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97 over Integer Ring
 
     By calling the
     :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
     method, all those variable names are available for interactive use::
 
-        sage: R.inject_variables()
+        sage: R.inject_variables()                                                                                      # optional - sage.libs.pari
         Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
         sage: (x2 + x41 + x71)^2
         x2^2 + 2*x2*x41 + x41^2 + 2*x2*x71 + 2*x41*x71 + x71^2
