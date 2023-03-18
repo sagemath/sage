@@ -944,7 +944,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
-    InternalEdges = [_ for _ in G.edges(sort = False) if _ not in E.edges(sort = True)]
+    InternalEdges = [_ for _ in G.edges(sort = True) if _ not in E.edges(sort = True)]
     InternalVertices=[v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices = InternalVertices, edges = InternalEdges)
     if not Internal:
