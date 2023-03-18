@@ -1468,15 +1468,9 @@ def strand_components(flist):
     - ``flist`` -- a  list of polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-
     OUTPUT:
 
     - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
-
-    .. NOTE::
-
-        The projection over the `x` axis is used if there are no vertical asymptotes.
-        Otherwise, a linear change of variables is done to fall into the previous case.
 
     EXAMPLES::
 
