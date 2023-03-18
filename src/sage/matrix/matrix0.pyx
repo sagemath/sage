@@ -5776,19 +5776,19 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLES::
 
             sage: R.<a,b,c,d> = ZZ[]
-            sage: RR = R.quotient(a*d-b*c-1)
-            sage: a,b,c,d = RR.gens()
-            sage: m = matrix(2, [a,b,c,d])
-            sage: n = m.inverse_of_unit()
-            sage: m * n
+            sage: RR = R.quotient(a*d - b*c - 1)                                        # optional - sage.libs.singular
+            sage: a,b,c,d = RR.gens()                                                   # optional - sage.libs.singular
+            sage: m = matrix(2, [a,b, c,d])                                             # optional - sage.libs.singular
+            sage: n = m.inverse_of_unit()                                               # optional - sage.libs.singular
+            sage: m * n                                                                 # optional - sage.libs.singular
             [1 0]
             [0 1]
 
-            sage: matrix(RR, 2, 1, [a,b]).inverse_of_unit()
+            sage: matrix(RR, 2, 1, [a,b]).inverse_of_unit()                             # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ArithmeticError: self must be a square matrix
-            sage: matrix(RR, 1, 1, [2]).inverse_of_unit()
+            sage: matrix(RR, 1, 1, [2]).inverse_of_unit()                               # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: Lifting of multivariate polynomials over non-fields is not implemented.
@@ -5801,9 +5801,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Tests for :trac:`28570`::
 
-            sage: P = posets.TamariLattice(7)
-            sage: M = P._hasse_diagram._leq_matrix
-            sage: M.inverse_of_unit()   # this was very slow, now 1s
+            sage: P = posets.TamariLattice(7)                                           # optional - sage.combinat sage.graphs
+            sage: M = P._hasse_diagram._leq_matrix                                      # optional - sage.combinat sage.graphs
+            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # optional - sage.combinat sage.graphs
             429 x 429 sparse matrix over Integer Ring...
 
             sage: m = matrix(Zmod(2**2), 1, 1, [1], sparse=True)
