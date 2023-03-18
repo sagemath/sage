@@ -1755,7 +1755,7 @@ def intmod_gap_to_sage(x):
         sage: b.parent()
         Ring of integers modulo 65537
     """
-    from sage.rings.finite_rings.all import FiniteField
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.rings.finite_rings.integer_mod import Mod
     from sage.rings.integer import Integer
     s = str(x)
