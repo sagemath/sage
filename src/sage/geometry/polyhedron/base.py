@@ -317,12 +317,12 @@ class Polyhedron_base(Polyhedron_base7):
         The boundary complex of the octahedron::
 
             sage: oc = polytopes.octahedron()
-            sage: sc_oc = oc.boundary_complex()
-            sage: fl_oc = oc.face_lattice()                     # optional - sage.combinat
-            sage: fl_sc = sc_oc.face_poset()                    # optional - sage.combinat
-            sage: [len(x) for x in fl_oc.level_sets()]          # optional - sage.combinat
+            sage: sc_oc = oc.boundary_complex()                                         # optional - sage.graphs
+            sage: fl_oc = oc.face_lattice()                                             # optional - sage.combinat sage.graphs
+            sage: fl_sc = sc_oc.face_poset()                                            # optional - sage.combinat sage.graphs
+            sage: [len(x) for x in fl_oc.level_sets()]                                  # optional - sage.combinat sage.graphs
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]          # optional - sage.combinat
+            sage: [len(x) for x in fl_sc.level_sets()]                                  # optional - sage.combinat sage.graphs
             [6, 12, 8]
             sage: sc_oc.euler_characteristic()
             2
