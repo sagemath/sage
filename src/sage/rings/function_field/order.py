@@ -109,20 +109,10 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
-from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 
 from .ideal import IdealMonoid, FunctionFieldIdeal
-
-lazy_import('sage.rings.function_field.order_basis',
-            ['FunctionFieldOrder_basis', 'FunctionFieldOrderInfinite_basis'])
-lazy_import('sage.rings.function_field.order_rational',
-            ['FunctionFieldMaximalOrder_rational', 'FunctionFieldMaximalOrderInfinite_rational'])
-lazy_import('sage.rings.function_field.order_polymod',
-            ['FunctionFieldMaximalOrder_polymod', 'FunctionFieldMaximalOrderInfinite_polymod'])
-lazy_import('sage.rings.function_field.order_global',
-            ['FunctionFieldMaximalOrder_global'])
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):

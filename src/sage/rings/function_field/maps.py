@@ -60,13 +60,7 @@ from sage.rings.morphism import RingHomomorphism
 
 lazy_import("sage.rings.function_field.derivations", (
     "FunctionFieldDerivation",
-    "FunctionFieldDerivation_rational",
-    "FunctionFieldDerivation_separable",
-    "FunctionFieldDerivation_inseparable",
     "FunctionFieldHigherDerivation",
-    "RationalFunctionFieldHigherDerivation_global",
-    "FunctionFieldHigherDerivation_global",
-    "FunctionFieldHigherDerivation_char_zero",
 ), deprecation=35230)
 
 
