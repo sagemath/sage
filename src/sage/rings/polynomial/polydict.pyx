@@ -163,29 +163,29 @@ cdef class PolyDict:
             from sage.misc.superseded import deprecation
             deprecation(34000, 'the arguments "zero", "forced_int_exponents" and "forced_etuples" of PolyDict constructor are deprecated')
 
-        cdef dict v
-
+        self.__repn = {}
         if isinstance(pdict, (tuple, list)):
-            v = {}
-            for w in pdict:
-                v[ETuple(w[1])] = w[0]
+            for coeff, exp in pdict:
+                if type(exp) is not ETuple:
+                    exp = ETuple(exp)
+                self.__repn[exp] = coeff
         elif isinstance(pdict, dict):
-            v = <dict> pdict.copy()
+            if all(type(k) is ETuple for k in pdict):
+                self.__repn = (<dict> pdict).copy()
+            else:
+                self.__repn = {}
+                for exp, coeff in pdict.items():
+                    if type(exp) is not ETuple:
+                        exp = ETuple(exp)
+                    self.__repn[exp] = coeff
         else:
-            raise TypeError("pdict must be a dict or a list")
+            raise TypeError("pdict must be a dict or a list of pairs (coeff, exponent)")
 
-        for k in list(v):
-            if type(k) is not ETuple:
-                val = v[k]
-                del v[k]
-                v[ETuple(k)] = val
-
-        self.__repn = v
         if remove_zero is not None:
             from sage.misc.superseded import deprecation
             deprecation(34000, 'the argument "remove_zero" of PolyDict constructor is deprecated; call the method remove_zeros')
-        if remove_zero:
-            self.remove_zeros()
+            if remove_zero:
+                self.remove_zeros()
 
     cpdef remove_zeros(self):
         r"""
