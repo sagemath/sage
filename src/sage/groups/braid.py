@@ -434,7 +434,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``G`` - (default : `None`) either `None` of a `SymmetricGroup(n)`
+        - ``G`` -- (default : `None`) either `None` of a `SymmetricGroup(n)`
           where `n` is the number of strands of `self.
           if it is not, it returns an Standard Permutation.
 
@@ -650,7 +650,7 @@ class Braid(FiniteTypeArtinGroupElement):
         lexicographically.  It is a matrix whose entries are in the
         ring of Laurent polynomials on the given variables.  By
         default, the variables are ``'x'`` and ``'y'``.
-
+.
         INPUT:
 
         - ``variables`` -- string (default: ``'x,y'``). A string
