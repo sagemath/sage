@@ -47,10 +47,10 @@ class SageTimeitResult():
         sage: number = 7
         sage: repeat = 13
         sage: precision = int(5)
-        sage: best = pi / 10 ^ 9
+        sage: best = pi / 10 ^ 9                                                        # optional - sage.symbolic
         sage: order = 3
-        sage: stats = (number, repeat, precision, best * scaling[order], units[order])
-        sage: SageTimeitResult(stats)
+        sage: stats = (number, repeat, precision, best * scaling[order], units[order])  # optional - sage.symbolic
+        sage: SageTimeitResult(stats)                                                   # optional - sage.symbolic
         7 loops, best of 13: 3.1416 ns per loop
 
     If the third argument is not a Python integer, a ``TypeError`` is raised::
