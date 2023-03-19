@@ -18,6 +18,7 @@ from sage.homology.all__sagemath_polyhedra import *
 #from sage.topology.all import *
 #from sage.tensor.all import *
 #from sage.matroids.all import *
+from sage.quadratic_forms.all import *
 
 true = True
 false = False
