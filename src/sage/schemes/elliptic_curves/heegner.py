@@ -117,6 +117,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.quadratic_forms.all import (BinaryQF,
                                       BinaryQF_reduced_representatives)
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
@@ -2683,7 +2684,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
                 elif isinstance(f, BinaryQF):
                     # convert from BinaryQF
                     f = tuple(f)
-                elif sage.rings.number_field.number_field_element.is_NumberFieldElement(f):
+                elif isinstance(f, NumberFieldElement_base):
                     # tau = number field element
                     g = f.minpoly()
                     if g.degree() != 2:
