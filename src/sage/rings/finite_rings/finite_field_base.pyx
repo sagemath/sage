@@ -1153,6 +1153,7 @@ cdef class FiniteField(Field):
             else:
                 return PolynomialRing(GF(self.characteristic()), variable_name)
 
+    @cached_method(key=lambda self, base, basis, map, subfield: (subfield or base, tuple(basis) if basis else None, map))
     def free_module(self, base=None, basis=None, map=None, subfield=None):
         """
         Return the vector space over the subfield isomorphic to this
@@ -1229,6 +1230,37 @@ cdef class FiniteField(Field):
             True
             sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
             True
+
+        TESTS::
+
+            The various calling conventions should not conflict with each other.
+
+            sage: K = GF(81)
+            sage: K.free_module(map=False)
+            Vector space of dimension 4 over Finite Field of size 3
+            sage: K.free_module(K.prime_subfield(), map=False)
+            Vector space of dimension 4 over Finite Field of size 3
+            sage: iota = Hom(K.prime_subfield(), K).an_element()
+            sage: K.free_module(iota, map=False)
+            Vector space of dimension 4 over Finite Field of size 3
+            sage: K.free_module(K.subfield(2, "g2"), map=False)
+            Vector space of dimension 2 over Finite Field in g2 of size 3^2
+
+            Same test, in reverse order with map=True
+
+            sage: K.free_module.clear_cache()
+            sage: V, _, _ = K.free_module(K.subfield(2, "g2"), map=True)
+            sage: V
+            Vector space of dimension 2 over Finite Field in g2 of size 3^2
+            sage: V, _, _ = K.free_module(iota, map=True)
+            sage: V
+            Vector space of dimension 4 over Finite Field of size 3
+            sage: V, _, _ = K.free_module(K.prime_subfield(), map=True)
+            sage: V
+            Vector space of dimension 4 over Finite Field of size 3
+            sage: V, _, _ = K.free_module(map=True)
+            sage: V
+            Vector space of dimension 4 over Finite Field of size 3
         """
         from sage.modules.all import VectorSpace
         from sage.categories.morphism import is_Morphism
