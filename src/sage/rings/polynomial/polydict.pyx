@@ -1538,19 +1538,38 @@ cdef class ETuple:
         else:
             return self.get_exp(i)
 
+    cdef size_t get_position(self, size_t i, size_t start, size_t end):
+        r"""
+        Return where to insert ``i`` in the data between ``start`` and ``end``.
+        """
+        if end <= start:
+            return start
+        cdef size_t left = start
+        cdef size_t right = end - 1
+        cdef size_t mid
+        if self._data[2 * left] >= i:
+            return left
+        if self._data[2 * right] < i:
+            return end
+        if self._data[2 * right] == i:
+            return right
+        while right - left > 1:
+            mid = (left + right) / 2
+            if self._data[2 * mid] == i:
+                return mid
+            if self._data[2 * mid] > i:
+                right = mid
+            else:
+                left = mid
+        return right
+
     cdef int get_exp(self, size_t i):
         """
         Return the exponent for the ``i``-th variable.
         """
-        # TODO: implement binary search
-        cdef size_t ind = 0
-        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
-        for ind in range(self._nonzero):
-            if self._data[2 * ind] == i:
-                return self._data[2 * ind + 1]
-            elif self._data[2 * ind] > i:
-                # the indices are sorted in _data, we are beyond, so quit
-                return 0
+        cdef size_t ind = self.get_position(i, 0, self._nonzero)
+        if ind != self._nonzero and self._data[2 * ind] == i:
+            return self._data[2 * ind + 1]
         return 0
 
     def __hash__(self):
@@ -1899,8 +1918,8 @@ cdef class ETuple:
             OverflowError: exponent overflow (...)   # 64-bit
             OverflowError: Python int too large to convert to C unsigned long  # 32-bit
         """
-        if self._length!=other._length:
-            raise ArithmeticError
+        if self._length != other._length:
+            raise ArithmeticError('ETuple of different lengths')
 
         cdef size_t ind1 = 0
         cdef size_t ind2 = 0
@@ -2026,7 +2045,7 @@ cdef class ETuple:
             (1, 3, 5)
         """
         if self._length != other._length:
-            raise ArithmeticError
+            raise ArithmeticError('ETuple of different lengths')
 
         cdef size_t ind1 = 0
         cdef size_t ind2 = 0
@@ -2202,7 +2221,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef int dotprod(self, ETuple other):
+    cpdef int dotprod(self, ETuple other) except *:
         """
         Return the dot product of this tuple by ``other``.
 
@@ -2217,7 +2236,6 @@ cdef class ETuple:
             sage: f = ETuple([0,-2,1])
             sage: e.dotprod(f)
             -3
-
         """
         if self._length != other._length:
             raise ArithmeticError
@@ -2273,13 +2291,15 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cdef ETuple divide_by_gcd(self, ETuple other):
+    cpdef ETuple divide_by_gcd(self, ETuple other):
         """
         Return ``self / gcd(self, other)``.
 
         The entries of the result are the maximum of 0 and the
         difference of the corresponding entries of ``self`` and ``other``.
         """
+        if self._length != other._length:
+            raise ArithmeticError('ETuple of different lengths')
         cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in 2-steps.
         cdef size_t ind2 = 0
         cdef int exponent
@@ -2314,68 +2334,92 @@ cdef class ETuple:
             ind1 += 2
         return result
 
-    cdef ETuple divide_by_var(self, size_t index):
+    cpdef ETuple divide_by_var(self, size_t pos):
         """
-        Return division of ``self`` by ``var(index)`` or ``None``.
+        Return division of ``self`` by the variable with index ``pos``.
 
-        If ``self[Index] == 0`` then None is returned. Otherwise, an
-        :class:`~sage.rings.polynomial.polydict.ETuple` is returned
-        that is zero in position ``index`` and coincides with ``self``
-        in the other positions.
+        If ``self[pos] == 0`` then a ``ArithmeticError`` is raised. Otherwise,
+        an :class:`~sage.rings.polynomial.polydict.ETuple` is returned that is
+        zero in position ``pos`` and coincides with ``self`` in the other
+        positions.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple([1, 2, 0, 1])
+            sage: e.divide_by_var(0)
+            (0, 2, 0, 1)
+            sage: e.divide_by_var(1)
+            (1, 1, 0, 1)
+            sage: e.divide_by_var(3)
+            (1, 2, 0, 0)
+            sage: e.divide_by_var(2)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: not divisible by this variable
         """
-        cdef size_t i, j
         cdef int exp1
         cdef ETuple result
-        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
-        for i in range(self._nonzero):
-            if self._data[i] == index:
-                result = <ETuple> self._new()
-                result._data = <int*>sig_malloc(sizeof(int) * self._nonzero * 2)
-                exp1 = self._data[2 * i + 1]
-                if exp1 > 1:
-                    # division doesn't change the number of nonzero positions
-                    result._nonzero = self._nonzero
-                    for j in range(self._nonzero):
-                        result._data[2 * j] = self._data[2 * j]
-                        result._data[2 * j + 1] = self._data[2 * j + 1]
-                    result._data[2 * i + 1] = exp1 - 1
-                else:
-                    # var(index) disappears from self
-                    result._nonzero = self._nonzero-1
-                    for j in range(i):
-                        result._data[2 * j] = self._data[2 * j]
-                        result._data[2 * j + 1] = self._data[2 * j + 1]
-                    for j in range(i + 1, self._nonzero):
-                        result._data[2 * j - 2] = self._data[2 * j]
-                        result._data[2 * j - 1] = self._data[2 * j + 1]
-                return result
-        return None
+        cdef size_t ind
 
-    cdef bint divides(self, ETuple other):
+        ind = self.get_position(pos, 0, self._nonzero)
+        if ind == self._nonzero or self._data[2 * ind] != pos:
+            raise ArithmeticError('not divisible by this variable')
+        result = <ETuple> self._new()
+        result._data = <int*> sig_malloc(sizeof(int) * 2 * self._nonzero)
+        exp1 = self._data[2 * ind + 1]
+        if exp1 > 1:
+            # division doesn't change the number of nonzero positions
+            result._nonzero = self._nonzero
+            memcpy(result._data, self._data, sizeof(int) * 2 * self._nonzero)
+            result._data[2 * ind + 1] = exp1 - 1
+        else:
+            # var(pos) disappears from self
+            result._nonzero = self._nonzero-1
+            memcpy(result._data, self._data, sizeof(int) * 2 * ind)
+            if ind + 1 < self._nonzero:
+                memcpy(result._data + 2 * ind, self._data + 2 * (ind + 1), sizeof(int) * 2 * (self._nonzero - ind - 1))
+        return result
+
+    cpdef bint divides(self, ETuple other):
         """
-        Whether ``self`` divides ``other``, i.e., no entry of ``self``
+        Return whether ``self`` divides ``other``, i.e., no entry of ``self``
         exceeds that of ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: ETuple([1, 1, 0, 1, 0]).divides(ETuple([2, 2, 2, 2, 2]))
+            True
+            sage: ETuple([0, 3, 0, 1, 0]).divides(ETuple([2, 2, 2, 2, 2]))
+            False
+            sage: ETuple([0, 3, 0, 1, 0]).divides(ETuple([0, 3, 2, 2, 2]))
+            True
+            sage: ETuple([0, 0, 0, 0, 0]).divides(ETuple([2, 2, 2, 2, 2]))
+            True
+
+            sage: ETuple({104: 18, 256: 25, 314:78}, length=400r).divides(ETuple({104: 19, 105: 20, 106: 21}, length=400r))
+            False
+            sage: ETuple({104: 18, 256: 25, 314:78}, length=400r).divides(ETuple({104: 19, 105: 20, 106: 21, 255: 2, 256: 25, 312: 5, 314: 79, 315: 28}, length=400r))
+            True
         """
-        cdef size_t ind1     # will be increased in 2-steps
-        cdef size_t ind2 = 0 # will be increased in 2-steps
-        cdef int pos1, exp1
-        if self._nonzero > other._nonzero:
-            # Trivially self cannot divide other
-            return False
-        cdef size_t othernz2 = 2 * other._nonzero
-        # NOTE: cython does optimize range(a) and range(a, b) but not range(a, b, c)
-        for ind1 in range(self._nonzero):
-            pos1 = self._data[2 * ind1]
-            exp1 = self._data[2 * ind1 + 1]
-            # Because of the above trivial test, other._nonzero>0.
-            # So, other._data[ind2] initially makes sense.
-            while other._data[ind2] < pos1:
-                ind2 += 2
-                if ind2 >= othernz2:
-                    return False
-            if other._data[ind2] > pos1 or other._data[ind2 + 1] < exp1:
-                # Either other has no exponent at position pos1 or the exponent is less than in self
+        cdef size_t ind1 = 0
+        cdef size_t ind2 = 0
+        cdef int pos1
+
+        if self._length != other._length:
+            raise ArithmeticError('ETuple of different length')
+
+        while ind1 < self._nonzero:
+            if self._nonzero - ind1 > other._nonzero - ind2:
                 return False
+            pos1 = self._data[2 * ind1]
+            ind2 = other.get_position(pos1, ind2, other._nonzero)
+            if ind2 == other._nonzero or other._data[2 * ind2] != pos1 or other._data[2 * ind2 + 1] < self._data[2 * ind1 + 1]:
+                return False
+            ind1 += 1
+            ind2 += 1
+
         return True
 
     cpdef bint is_constant(self):
