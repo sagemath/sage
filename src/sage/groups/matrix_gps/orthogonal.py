@@ -33,7 +33,7 @@ GO(e,d,q)` if `q` is even.)
 
 EXAMPLES::
 
-    sage: GO(3,7)
+    sage: GO(3,7)                                                                                   # optional - sage.libs.pari
     General Orthogonal Group of degree 3 over Finite Field of size 7
 
     sage: G = SO(4, GF(7), 1); G                                                                    # optional - sage.libs.pari
@@ -477,10 +477,10 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: GO(2,3,+1).invariant_bilinear_form()
+            sage: GO(2,3,+1).invariant_bilinear_form()                                              # optional - sage.libs.pari
             [0 1]
             [1 0]
-            sage: GO(2,3,-1).invariant_bilinear_form()
+            sage: GO(2,3,-1).invariant_bilinear_form()                                              # optional - sage.libs.pari
             [2 1]
             [1 1]
             sage: G = GO(4, QQ)
