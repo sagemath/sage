@@ -11,6 +11,8 @@ algebraic closure of `\QQ`.
    :maxdepth: 1
 
    sage/rings/function_field/function_field
+   sage/rings/function_field/function_field_rational
+   sage/rings/function_field/function_field_polymod
    sage/rings/function_field/element
    sage/rings/function_field/element_rational
    sage/rings/function_field/element_polymod
