@@ -106,7 +106,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             144
             sage: Psmaller.cardinality()
             21499084800
-            sage: Psmaller.degree()
+            sage: Psmaller.degree()                     # random
             80
 
         .. NOTE::
