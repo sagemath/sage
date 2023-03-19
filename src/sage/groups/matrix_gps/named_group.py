@@ -41,7 +41,7 @@ EXAMPLES::
 ##############################################################################
 
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
-form sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
+from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
 from sage.structure.unique_representation import CachedRepresentation
 
 

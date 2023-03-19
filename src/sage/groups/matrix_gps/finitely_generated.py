@@ -62,24 +62,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import QQbar
-from sage.structure.element import is_Matrix
-from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
-from sage.matrix.constructor import matrix
-from sage.structure.sequence import Sequence
-from sage.misc.cachefunc import cached_method
-from sage.modules.free_module_element import vector
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.fraction_field import FractionField
-from sage.misc.functional import cyclotomic_polynomial
-from sage.rings.number_field.number_field import CyclotomicField
-from sage.combinat.integer_vector import IntegerVectors
-
+from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
-from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import is_MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import is_Matrix
+from sage.structure.sequence import Sequence
 
 
 def normalize_square_matrices(matrices):
@@ -296,6 +287,8 @@ def MatrixGroup(*gens, **kwds):
     from sage.libs.gap.libgap import libgap
     category = kwds.get('category', None)
     try:
+        from .finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
+
         gap_gens = [libgap(matrix_gen) for matrix_gen in gens]
         gap_group = libgap.Group(gap_gens)
         return FinitelyGeneratedMatrixGroup_gap(degree, base_ring, gap_group,

@@ -5,6 +5,7 @@ Orthogonal Linear Groups with GAP
 from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap
 from sage.groups.matrix_gps.orthogonal import OrthogonalMatrixGroup_generic
+from sage.misc.cachefunc import cached_method
 
 
 class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_gap, FinitelyGeneratedMatrixGroup_gap):

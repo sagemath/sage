@@ -134,7 +134,7 @@ def _UG(n, R, special, var='a', invariant_form=None):
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if is_FiniteField(ring):
-        from .unitary import UnitaryMatrixGroup_gap
+        from .unitary_gap import UnitaryMatrixGroup_gap
 
         cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
         return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)

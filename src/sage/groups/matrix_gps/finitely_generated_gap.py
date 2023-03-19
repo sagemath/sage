@@ -2,7 +2,19 @@
 Finitely Generated Matrix Groups with GAP
 """
 
+from sage.combinat.integer_vector import IntegerVectors
+from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.functional import cyclotomic_polynomial
+from sage.modules.free_module_element import vector
+from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import CyclotomicField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.qqbar import QQbar
 
 
 class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):

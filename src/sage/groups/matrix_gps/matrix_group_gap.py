@@ -2,7 +2,10 @@ r"""
 Matrix group over a ring that GAP understands
 """
 
+from sage.categories.groups import Groups
+from sage.groups.group import Group
 from sage.groups.libgap_mixin import GroupMixinLibGAP
+from sage.groups.libgap_wrapper import ParentLibGAP
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_gap
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
 
