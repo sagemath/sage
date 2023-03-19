@@ -239,7 +239,7 @@ to put together.
     ....:     graph +=  arrow( [0,0], [360, 0], color = "#000" )
     ....:     # let's set tics
     ....:     # or http://aghitza.org/posts/tweak_labels_and_ticks_in_2d_plots_using_matplotlib/
-    ....:     # or wayt for http://trac.sagemath.org/sage_trac/ticket/1431
+    ....:     # or wayt for https://github.com/sagemath/sage/issues/1431
     ....:     # ['$-\pi/3$', '$2\pi/3$', '$5\pi/3$']
     ....:     for x in range(0, 361, 30):
     ....:         graph += point( [x, 0] )

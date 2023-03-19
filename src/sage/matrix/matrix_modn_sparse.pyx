@@ -113,7 +113,7 @@ from sage.misc.verbose import verbose, get_verbose
 
 from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 
 from sage.structure.element import is_Vector
 
@@ -137,7 +137,7 @@ ai = arith_int()
 
 # The 46341 below is because the mod-n sparse code still uses
 # int's, even on 64-bit computers.  Improving this is
-# Trac Ticket #12679.
+# Github Issue #12679.
 MAX_MODULUS = 46341
 
 cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):

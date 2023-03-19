@@ -23,7 +23,8 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import RealField, RationalField
+from sage.rings.real_mpfr import RealField
+from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose

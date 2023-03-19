@@ -22,6 +22,7 @@ Comprehensive Module List
     sage/combinat/alternating_sign_matrix
     sage/combinat/backtrack
     sage/combinat/baxter_permutations
+    sage/combinat/bijectionist
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
     sage/combinat/blob_algebra
@@ -145,6 +146,7 @@ Comprehensive Module List
     sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
+    sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links

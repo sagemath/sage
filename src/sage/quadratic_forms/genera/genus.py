@@ -22,7 +22,8 @@ AUTHORS:
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import LCM, fundamental_discriminant
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import fundamental_discriminant
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
@@ -3045,7 +3046,7 @@ class GenusSymbol_global_ring():
             Genus symbol at 3:     1^3 3^1
 
         A representative of ``g`` is not known yet.
-        Let us trigger its computation:
+        Let us trigger its computation::
 
             sage: g.representative()
             [ 0  0  0  2]

@@ -62,7 +62,8 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.interfaces.singular import singular
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -72,8 +73,7 @@ from sage.calculus.functions import jacobian
 import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
@@ -274,7 +274,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         SchemeMorphism_polynomial.__init__(self, parent, polys, check)
 
-        self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
+        R = polys[0].base_ring()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
 
     def __call__(self, x, check=True):
         r"""
@@ -727,7 +728,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         R = self.base_ring()
         if R not in _Fields:
             return DynamicalSystem_projective(list(self), self.domain())
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return DynamicalSystem_projective_finite_field(list(self), self.domain())
         return DynamicalSystem_projective_field(list(self), self.domain())
 
@@ -1006,7 +1007,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         # scales by 1/gcd of the coefficients.
         if R in _NumberFields:
             O = R.maximal_order()
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             O = R
         elif isinstance(R, QuotientRing_generic):
             O = R.ring()
@@ -1762,7 +1763,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 return self
         elif self.base_ring() != QQbar and K_pre.is_isomorphic(self.base_ring()):
             return self
-        # Trac 23808: The field K_pre returned above does not have its embedding set to be phi
+        # Issue 23808: The field K_pre returned above does not have its embedding set to be phi
         # and phi is forgotten, so we redefine K_pre to be a field K with phi as the specified
         # embedding:
         if K_pre is QQ:
@@ -1872,7 +1873,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1929,7 +1930,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
             sage: f.indeterminacy_points()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::

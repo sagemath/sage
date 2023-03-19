@@ -772,7 +772,7 @@ class WordMorphism(SageObject):
             doctest:warning
             ...
             DeprecationWarning: the "datatype" argument is deprecated
-            See https://trac.sagemath.org/26307 for details.
+            See https://github.com/sagemath/sage/issues/26307 for details.
 
             sage: type(w)
             <class 'sage.combinat.words.word.FiniteWord_list'>
@@ -793,7 +793,7 @@ class WordMorphism(SageObject):
             doctest:warning
             ...
             DeprecationWarning: the "datatype" argument is deprecated
-            See https://trac.sagemath.org/26307 for details.
+            See https://github.com/sagemath/sage/issues/26307 for details.
             sage: type(w)
             <class 'sage.combinat.words.word.FiniteWord_list'>
             sage: w = m([0],4,datatype='str')
@@ -1907,7 +1907,7 @@ class WordMorphism(SageObject):
             sage: for w in f.fixed_points(): print(w)
             abcabbccabcabcabbccbccabcabbccabcabbccab...
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1918,7 +1918,7 @@ class WordMorphism(SageObject):
             sage: s7r.periodic_point(2)
             word: 2,1,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,10,9,8,7,6,5,4,3,2,9,8,7,6,5,4,3,2,8,...
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: s = "1->321331332133133,2->133321331332133133,3->2133133133321331332133133"
             sage: s = WordMorphism(s)
@@ -1994,7 +1994,7 @@ class WordMorphism(SageObject):
             sage: f.fixed_points()
             []
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -3003,7 +3003,7 @@ class WordMorphism(SageObject):
 
         # 1D plots
         if dim_fractal == 1:
-            from sage.all import plot
+            from sage.plot.plot import plot
             for a in col_dict:
                 # We plot only the points with a color in col_dict and with positive opacity
                 if (a in col_dict) and (opacity[a] > 0):

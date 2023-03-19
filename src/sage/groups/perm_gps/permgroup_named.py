@@ -86,24 +86,24 @@ REFERENCES:
 # ****************************************************************************
 from pathlib import Path
 
-from sage.rings.all import Integer
-from sage.libs.gap.libgap import libgap
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.all import factor, valuation
+from sage.arith.misc import factor, valuation
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.misc.functional import is_even
-from sage.misc.cachefunc import cached_method, weak_cached_function
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_element import SymmetricGroupElement
-from sage.structure.unique_representation import CachedRepresentation
+from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_method, weak_cached_function
+from sage.misc.functional import is_even
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.sets.family import Family
-from sage.sets.primes import Primes
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
@@ -330,6 +330,42 @@ class SymmetricGroup(PermutationGroup_symalt):
             Symmetric group of order 3! as a permutation group
         """
         return "Symmetric group of order {}! as a permutation group".format(self.degree())
+
+    def _coerce_map_from_(self, G):
+        """
+        Return if there is a coercion map from ``G`` into ``self``.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: S5 = SymmetricGroup(5)
+            sage: S5.coerce_map_from(J3)
+            Conversion via _from_cactus_group_element map:
+              From: Cactus Group with 3 fruit
+              To:   Symmetric group of order 5! as a permutation group
+            sage: S2 = SymmetricGroup(2)
+            sage: S2._coerce_map_from_(J3) is None
+            True
+        """
+        from sage.groups.cactus_group import CactusGroup
+        if isinstance(G, CactusGroup) and G._n <= self._deg:
+            return self._from_cactus_group_element
+        return super()._coerce_map_from_(G)
+
+    def _from_cactus_group_element(self, x):
+        """
+        Return an element of ``self`` from a cactus group element.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: s12,s13,s23 = J3.gens()
+            sage: elt = s12*s23*s13
+            sage: S5 = SymmetricGroup(5)
+            sage: S5._from_cactus_group_element(elt)
+            (2,3)
+        """
+        return self(x.to_permutation())
 
     def cartan_type(self):
         r"""
@@ -599,7 +635,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             Category of finite dimensional unital cellular semigroup algebras
              over Rational Field
 
-        In the following case, a usual group algebra is returned:
+        In the following case, a usual group algebra is returned::
 
             sage: S = SymmetricGroup([2,3,5])
             sage: S.algebra(QQ)

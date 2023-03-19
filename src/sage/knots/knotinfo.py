@@ -48,6 +48,12 @@ For different conventions regarding normalization of the polynomial invariants s
 the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
 :meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
+Furthermore, note that not all columns available in the database are visible on the web
+pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
+It is planned to remove non-visible columns from the database in the future (see
+the `Python Wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for
+updated information).
+
 EXAMPLES::
 
     sage: from sage.knots.knotinfo import KnotInfo
@@ -1714,9 +1720,23 @@ class KnotInfoBase(Enum):
 
         .. NOTE ::
 
-            The Khovanov polynomial given in KnotInfo corresponds to the mirror
-            image of the given knot for a `list of 140 exceptions
-            <https://raw.githubusercontent.com/soehms/database_knotinfo/main/hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
+            The data used here were calculated with the program
+            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. They are no longer
+            visible on the website as of October 30, 2022. Instead, data
+            computed with `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
+            are now displayed. The latter program is more accurate in terms of
+            orientation and reflection as it is based on ``PD`` code.
+
+            Even if they are not visible on the website, the data produced by
+            ``KhoHo`` are still available in the database. But maybe this will be
+            discontinued (check out the `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for updated information).
+            This interface will be adapted to the changes in an upcoming
+            release.
+
+            Since the results of ``KhoHo`` were computed using the ``DT`` notation,
+            the Khovanov polynomial returned by this method belongs to the
+            mirror image of the given knot for a `list of 140 exceptions
+            <https://raw.githubusercontent.com/soehms/database_knotinfo/ main /hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
 
         EXAMPLES::
 
