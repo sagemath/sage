@@ -944,8 +944,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 2), (12, 29, 6)),
              ((1, 2), (31, 31, 7))]
 
-        Specify a list of indices to restrict which coefficients appear
-        in the parameters::
+        One can specify the list of coefficients indices to be
+        considered in the computation::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
@@ -1522,7 +1522,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if parameter is None:
             if r != 2:
                 raise TypeError("parameter must not be None "
-                                 "if the rank is greater than 2")
+                                "if the rank is greater than 2")
             return self._gen[1]**(q+1)/self._gen[2]
         if parameter in ZZ:
             if parameter <= 0 or parameter >= r:
