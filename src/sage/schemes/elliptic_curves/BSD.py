@@ -2,7 +2,9 @@
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors
-from sage.rings.all import ZZ, Infinity, QuadraticField
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.number_field.number_field import QuadraticField
 from sage.functions.other import ceil
 
 
@@ -480,7 +482,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         # We do not know BSD(E,p) for even a single p, since it's
         # an open problem to show that L^r(E,1)/(Reg*Omega) is
         # rational for any curve with r >= 2.
-        from sage.sets.all import Primes
+        from sage.sets.primes import Primes
         BSD.primes = Primes()
         if return_BSD:
             BSD.rank = rank_lower_bd

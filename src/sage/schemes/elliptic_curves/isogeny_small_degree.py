@@ -536,7 +536,7 @@ def _sporadic_Q_data(j):
         ....:     g = E.division_polynomial(ell)
         ....:     assert g % f == 0
     """
-    from sage.rings.all import RealField
+    from sage.rings.real_mpfr import RealField
     from sage.misc.misc_c import prod
     ell = sporadic_j[j]
     E = EllipticCurve(j=j).short_weierstrass_model()

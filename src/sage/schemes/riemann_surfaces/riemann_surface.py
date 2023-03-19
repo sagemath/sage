@@ -2128,6 +2128,7 @@ class RiemannSurface():
         # CCzg is required to be known as we need to know the ring which the minpolys
         # lie in.
         CCzg, bounding_data_list = bounding_data
+        CCz = CCzg.univariate_ring(CCzg.gen(1)).base_ring()
 
         d_edge = tuple(u[0] for u in upstairs_edge)
         # Using a try-catch here allows us to retain a certain amount of back
@@ -2193,7 +2194,7 @@ class RiemannSurface():
                 z_1 = a0lc.abs() * prod((cz - r).abs() - rho_z for r in a0roots)
                 n = minpoly.degree(CCzg.gen(1))
                 ai_new = [
-                    (minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
+                    CCz(minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
                     for i in range(n)
                 ]
                 ai_pos = [self._RRz([c.abs() for c in h.list()]) for h in ai_new]

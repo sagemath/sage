@@ -1390,7 +1390,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         We use different algorithms depending on available information. One of
         the common cases is a fan which is KNOWN to be complete, i.e. we do
-        not even need to check if it is complete.
+        not even need to check if it is complete::
 
             sage: fan = toric_varieties.P1xP1().fan()                           # optional - palp
             sage: fan.cone_lattice() # indirect doctest                         # optional - palp

@@ -111,27 +111,27 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy, deepcopy
+from itertools import combinations, product
+
 from cpython.object cimport Py_EQ, Py_NE
 
 from sage.data_structures.bitset_base cimport *
-from sage.structure.richcmp cimport rich_to_bool
-from sage.matroids.matroid cimport Matroid
-from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
-                           TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
-                           RationalMatrix, generic_identity)
-from .set_system cimport SetSystem
-from .utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
-from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
-
-from sage.matrix.matrix2 cimport Matrix
-import sage.matrix.constructor
+from sage.graphs.spanning_tree import kruskal
 from sage.matrix.constructor import matrix
-from copy import copy, deepcopy
-from sage.rings.all import ZZ, QQ, FiniteField, GF
-import itertools
-from itertools import combinations, product
+from sage.matrix.matrix2 cimport Matrix
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
+                                        TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
+                                        RationalMatrix, generic_identity)
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
+from sage.matroids.utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp cimport rich_to_bool
 
 cdef bint GF2_not_defined = True
 cdef GF2, GF2_one, GF2_zero

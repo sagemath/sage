@@ -904,7 +904,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             True
 
         Note that coerce map does not exist between ``p``-adic rings with
-        lattice precision and other ``p``-adic rings.
+        lattice precision and other ``p``-adic rings. ::
 
             sage: S = Zp(2)
             sage: R.has_coerce_map_from(S)
@@ -913,7 +913,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             False
 
         Similarly there is no coercion maps between ``p``-adic rings with
-        different labels.
+        different labels. ::
 
             sage: R2 = ZpLC(2, label='coerce')
             sage: R.has_coerce_map_from(R2)
@@ -1033,7 +1033,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
             True
 
         Note that coerce map does not exist between ``p``-adic fields with
-        lattice precision and other ``p``-adic rings.
+        lattice precision and other ``p``-adic rings. ::
 
             sage: L = Qp(2)
             sage: K.has_coerce_map_from(L)

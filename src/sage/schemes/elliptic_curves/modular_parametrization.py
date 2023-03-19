@@ -44,7 +44,10 @@ AUTHORS:
 
 from . import heegner
 
-from sage.rings.all import (LaurentSeriesRing, RationalField, ComplexField, QQ)
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import RationalField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.rational_field import QQ
 
 
 class ModularParameterization:
