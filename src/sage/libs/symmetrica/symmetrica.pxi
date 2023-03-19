@@ -401,7 +401,7 @@ cdef void late_import():
            SymmetricFunctions, \
            sqrt, \
            builtinlist, \
-           MPolynomialRing_base, is_MPolynomial,\
+           MPolynomialRing_base, MPolynomial,\
            SchubertPolynomialRing, SchubertPolynomial_class,\
            two, fifteen, thirty, zero, sage_maxint
 
@@ -453,8 +453,8 @@ cdef void late_import():
 
     import sage.rings.polynomial.multi_polynomial_ring
     MPolynomialRing_base = sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_base
-    import sage.rings.polynomial.multi_polynomial_element
-    is_MPolynomial = sage.rings.polynomial.multi_polynomial_element.is_MPolynomial
+    import sage.rings.polynomial.multi_polynomial
+    MPolynomial = sage.rings.polynomial.multi_polynomial.MPolynomial
 
     import sage.combinat.schubert_polynomial
     SchubertPolynomialRing = sage.combinat.schubert_polynomial.SchubertPolynomialRing

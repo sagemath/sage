@@ -453,7 +453,7 @@ def _sympysage_rf(self):
         sage: assert rising_factorial(x,y)._sympy_() == rfxy.rewrite('gamma', piecewise=False)
         sage: assert rising_factorial(x,y) == rfxy._sage_()
     """
-    from sage.arith.all import rising_factorial
+    from sage.arith.misc import rising_factorial
     return rising_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_ff(self):
@@ -466,7 +466,7 @@ def _sympysage_ff(self):
         sage: assert falling_factorial(x,y)._sympy_() == ffxy.rewrite('gamma') # known bug
         sage: assert falling_factorial(x,y) == ffxy._sage_()
     """
-    from sage.arith.all import falling_factorial
+    from sage.arith.misc import falling_factorial
     return falling_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_lgamma(self):

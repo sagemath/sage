@@ -36,9 +36,9 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.all import zero_matrix
+from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition

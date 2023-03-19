@@ -128,7 +128,23 @@ PIP_PACKAGES = @SAGE_PIP_PACKAGES@
 # Packages that use the 'script' package build rules
 SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
+# Packages for which we build wheels for PyPI
+PYPI_WHEEL_PACKAGES =				\
+	sage_sws2rst				\
+	sage_setup				\
+	sagemath_environment			\
+	sagemath_objects			\
+	sagemath_repl				\
+	sagemath_categories
 
+# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
+WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
+	sage_conf				\
+	sagelib					\
+	sage_docbuild
+
+# Packages for which build sdists for PyPI
+PYPI_SDIST_PACKAGES = $(WHEEL_PACKAGES)
 
 # Generate the actual inst_<pkgname> variables; for each package that is
 # actually built this generates a line like:
@@ -198,6 +214,7 @@ SAGE_I_TARGETS = sagelib doc
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build all-sageruntime \
 	all-start build-start base toolchain toolchain-deps base-toolchain \
+	pypi-sdists pypi-wheels wheels \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-uninstall \
@@ -418,6 +435,25 @@ list-broken-packages: auditwheel_or_delocate
 	    echo >&2 "$$fix_broken_packages"; \
 	fi
 
+pypi-sdists: $(PYPI_SDIST_PACKAGES:%=%-sdist)
+	@echo "Built sdists are in upstream/"
+
+# Ensuring wheels are present, even for packages that may have been installed
+# as editable. Until we have better uninstallation of script packages, we
+# just remove the timestamps, which will lead to rebuilds of the packages.
+pypi-wheels:
+	for a in $(PYPI_WHEEL_PACKAGES); do \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
+	done
+	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(PYPI_WHEEL_PACKAGES)
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
+
+wheels:
+	for a in $(WHEEL_PACKAGES); do \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
+	done
+	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(WHEEL_PACKAGES)
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
 
 #==============================================================================
 # Setting SAGE_CHECK... variables
@@ -710,6 +746,13 @@ $(1)-$(4)-uninstall:
 $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
+
+$(1)-sdist: FORCE python_build sage_setup cython
+	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
 # Recursive tox invocation (note - we do not set the environment here).
 # Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini

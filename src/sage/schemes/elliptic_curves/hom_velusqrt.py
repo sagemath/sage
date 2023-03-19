@@ -511,7 +511,7 @@ def _point_outside_subgroup(P):
         ...
         ValueError: ECDLog problem has no solution (...)
 
-    An example where the group is non-cyclic:
+    An example where the group is non-cyclic::
 
         sage: E.<P,_> = EllipticCurve(GF(71^2), [0,1])
         sage: E.abelian_group()

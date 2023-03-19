@@ -217,8 +217,8 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n, Partition
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
@@ -501,7 +501,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym.macdonald(q=1,t=3).P()
                 Sym in the Macdonald P with q=1 and t=3 basis
 
-            Hall-Littlewood polynomials:
+            Hall-Littlewood polynomials::
 
                 sage: Sym.hall_littlewood().P()
                 Sym in the Hall-Littlewood P basis
@@ -1015,7 +1015,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 m = lam.to_exp_dict() # == {i: m_i | i occurs in lam}
                 p = self.realization_of().power()
                 h = self.realization_of().complete()
-                from sage.arith.all import moebius, squarefree_divisors
+                from sage.arith.misc import moebius, squarefree_divisors
                 mu = moebius
 
                 def component(i, g):  # == h_g[L_i]
@@ -1809,7 +1809,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: TestSuite(s).run()
         """
         R = Sym.base_ring()
-        from sage.categories.all import CommutativeRings
+        from sage.categories.commutative_rings import CommutativeRings
         if R not in CommutativeRings():
             raise TypeError("argument R must be a commutative ring")
         try:
@@ -4711,7 +4711,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         parent = self.parent()
         if parent.has_coerce_map_from(QQ):
             from sage.combinat.partition import Partition
-            from sage.arith.all import gcd, lcm
+            from sage.arith.misc import gcd
+            from sage.arith.functions import lcm
             from itertools import product, repeat, chain
             p = parent.realization_of().power()
 
@@ -6409,7 +6410,7 @@ def _nonnegative_coefficients(x):
         sage: _nonnegative_coefficients(x^2-4)
         False
     """
-    if is_Polynomial(x) or is_MPolynomial(x):
+    if isinstance(x, Polynomial) or isinstance(x, MPolynomial):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0

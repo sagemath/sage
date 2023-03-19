@@ -596,9 +596,9 @@ class RewritingSystem():
             sage: k = G.rewriting_system()
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
-            [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
-              [ A*a, <identity ...> ], [ b^2, <identity ...> ],
-              [ b*B, <identity ...> ], [ B*b, <identity ...> ] ]
+            [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ],
+              [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
         """
         return self._gap
 
