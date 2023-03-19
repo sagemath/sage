@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Automorphisms of Quadratic Forms
 """

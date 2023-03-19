@@ -44,11 +44,13 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q.theta_series()
+        sage: Q.theta_series()                                                          # optional - sage.libs.pari
         1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + O(q^10)
 
-        sage: Q.theta_series(25)
-        1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10 + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18 + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
+        sage: Q.theta_series(25)                                                        # optional - sage.libs.pari
+        1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10
+        + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18
+        + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
 
     """
     # Sanity Check: Max is an integer or an allowed string:
@@ -99,9 +101,10 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Prec = 100
-        sage: compute = Q.theta_by_pari(Prec, '')
-        sage: exact = [1] + [8 * sum([d  for d in divisors(i)  if d % 4 != 0])  for i in range(1, Prec)]
-        sage: compute == exact
+        sage: compute = Q.theta_by_pari(Prec, '')                                       # optional - sage.libs.pari
+        sage: exact = [1] + [8 * sum([d  for d in divisors(i)  if d % 4 != 0])          # optional - sage.libs.pari
+        ....:                for i in range(1, Prec)]
+        sage: compute == exact                                                          # optional - sage.libs.pari
         True
 
     """
