@@ -670,8 +670,8 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.list_external_initializations()
             []
-            sage: T = Q.theta_series()
-            sage: Q.list_external_initializations()
+            sage: T = Q.theta_series()                                                  # optional - sage.libs.pari
+            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
             []
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False, number_of_automorphisms=3, determinant=0)
             sage: Q.list_external_initializations()
@@ -695,7 +695,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q.__pari__()
+            sage: Q.__pari__()                                                          # optional - sage.libs.pari
             [2, 0; 0, 10]
 
         """
@@ -708,7 +708,7 @@ class QuadraticForm(SageObject):
         EXAMPLES::
 
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
-            sage: Q._pari_init_()
+            sage: Q._pari_init_()                                                       # optional - sage.libs.pari
             'Mat([2,0;0,10])'
         """
         return self.matrix()._pari_init_()
@@ -837,10 +837,10 @@ class QuadraticForm(SageObject):
 
             sage: Q1 = QuadraticForm(QQ, 2, [1,1,1])
             sage: Q2 = QuadraticForm(QQ, 2, [1,1,1])
-            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])
+            sage: Q3 = QuadraticForm(QuadraticField(2), 2, [1,1,1])                     # optional - sage.rings.number_field
             sage: hash(Q1) == hash(Q2)
             True
-            sage: hash(Q1) == hash(Q3)
+            sage: hash(Q1) == hash(Q3)                                                  # optional - sage.rings.number_field
             False
         """
         return hash(self.__base_ring) ^ hash(tuple(self.__coeffs))
@@ -1324,17 +1324,17 @@ class QuadraticForm(SageObject):
 
         ::
 
-            sage: F.<a> = NumberField(x^2 - 5)
-            sage: Z = F.ring_of_integers()
-            sage: Q = QuadraticForm(Z,3,[2*a, 3*a, 0 , 1 - a, 0, 2*a + 4])
-            sage: P = Q.polynomial(names='y'); P
+            sage: F.<a> = NumberField(x^2 - 5)                                                              # optional - sage.rings.number_field
+            sage: Z = F.ring_of_integers()                                                                  # optional - sage.rings.number_field
+            sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])                                 # optional - sage.rings.number_field
+            sage: P = Q.polynomial(names='y'); P                                                            # optional - sage.rings.number_field
             2*a*y0^2 + 3*a*y0*y1 + (-a + 1)*y1^2 + (2*a + 4)*y2^2
-            sage: Q = QuadraticForm(F,4,[a, 3*a, 0, 1 - a, a - 3, 0, 2*a + 4, 4 + a, 0, 1])
-            sage: Q.polynomial(names='z')
+            sage: Q = QuadraticForm(F, 4, [a, 3*a, 0, 1 - a, a - 3, 0, 2*a + 4, 4 + a, 0, 1])               # optional - sage.rings.number_field
+            sage: Q.polynomial(names='z')                                                                   # optional - sage.rings.number_field
             a*z0^2 + (3*a)*z0*z1 + (a - 3)*z1^2 + (a + 4)*z2^2 + (-a + 1)*z0*z3 + (2*a + 4)*z1*z3 + z3^2
-            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)
-            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])
-            sage: Q.polynomial()
+            sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)                                                    # optional - sage.rings.number_field
+            sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])                                 # optional - sage.rings.number_field
+            sage: Q.polynomial()                                                                            # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: Can only create polynomial rings over commutative rings.
@@ -1737,10 +1737,10 @@ class QuadraticForm(SageObject):
 
         This does not work if the characteristic is 2::
 
-            sage: Q = DiagonalQuadraticForm(GF(2),[1,1,1])
-            sage: v = vector((1,1,1))
-            sage: w = vector((1,1,1))
-            sage: Q.bilinear_map(v,w)
+            sage: Q = DiagonalQuadraticForm(GF(2),[1,1,1])                              # optional - sage.libs.pari
+            sage: v = vector((1,1,1))                                                   # optional - sage.libs.pari
+            sage: w = vector((1,1,1))                                                   # optional - sage.libs.pari
+            sage: Q.bilinear_map(v,w)                                                   # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: not defined for rings of characteristic 2

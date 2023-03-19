@@ -815,10 +815,10 @@ class TernaryQF(SageObject):
              (1, 2, 1)
              sage: Q((1, 2, 1))
              15
-             sage: v = Q.pseudorandom_primitive_zero_mod_p(1009)
-             sage: Q(v) % 1009
+             sage: v = Q.pseudorandom_primitive_zero_mod_p(1009)                        # optional - sage.libs.pari
+             sage: Q(v) % 1009                                                          # optional - sage.libs.pari
              0
-             sage: v[2]
+             sage: v[2]                                                                 # optional - sage.libs.pari
              1
         """
         [a,b,c,r,s,t] = self.coefficients()
@@ -851,10 +851,10 @@ class TernaryQF(SageObject):
             3 * 13 * 19
             sage: Q.find_zeros_mod_p(2)
             [(1, 0, 0), (1, 1, 0), (0, 0, 1)]
-            sage: zeros_17 = Q.find_zeros_mod_p(17)
-            sage: len(zeros_17)
+            sage: zeros_17 = Q.find_zeros_mod_p(17)                                     # optional - sage.libs.pari
+            sage: len(zeros_17)                                                         # optional - sage.libs.pari
             18
-            sage: [Q(v)%17 for v in zeros_17]
+            sage: [Q(v)%17 for v in zeros_17]                                           # optional - sage.libs.pari
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
@@ -891,18 +891,18 @@ class TernaryQF(SageObject):
             sage: Q.disc()
             29
             sage: v = (9, 7, 1)
-            sage: v in Q.find_zeros_mod_p(11)
+            sage: v in Q.find_zeros_mod_p(11)                                           # optional - sage.libs.pari
             True
-            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat = True)
-            sage: Q11
+            sage: Q11, M = Q.find_p_neighbor_from_vec(11, v, mat=True)                  # optional - sage.libs.pari
+            sage: Q11                                                                   # optional - sage.libs.pari
             Ternary quadratic form with integer coefficients:
             [1 2 4]
             [-1 -1 0]
-            sage: M
+            sage: M                                                                     # optional - sage.libs.pari
             [    -1  -5/11   7/11]
             [     0 -10/11   3/11]
             [     0  -3/11  13/11]
-            sage: Q(M) == Q11
+            sage: Q(M) == Q11                                                           # optional - sage.libs.pari
             True
         """
         if mat:
