@@ -121,6 +121,9 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     return genera
 
 
+genera = staticmethod(genera)
+
+
 def _local_genera(p, rank, det_val, max_scale, even):
     r"""
     Return all `p`-adic genera with the given conditions.
