@@ -489,25 +489,25 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         for j in range(1, n+1):
             e = p_GetExp(p, j, r)
             if e > 0:
-                multi += " "+latex_gens[j-1]
+                multi += " " + latex_gens[j-1]
             if e > 1:
-                multi += "^{%d}"%e
+                multi += "^{%d}" % e
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa( p_GetCoeff(p, r), r, base)
+        c =  si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
-            if  c == -1:
-                multi = "-%s"%(multi)
+            if c == -1:
+                multi = "-%s" % (multi)
             else:
                 sc = latex(c)
                 # Add parenthesis if the coefficient consists of terms divided by +, -
                 # (starting with - is not enough) and is not the constant term
                 if not atomic_repr and multi and (sc.find("+") != -1 or sc[1:].find("-") != -1):
-                    sc = "\\left(%s\\right)"%sc
-                multi = "%s %s"%(sc,multi)
+                    sc = "\\left(%s\\right)" % sc
+                multi = "%s %s" % (sc, multi)
 
         # Now add on coefficiented multinomials
         if poly:
