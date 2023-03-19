@@ -86,6 +86,7 @@ Matrix and Affine Groups
    sage/groups/matrix_gps/orthogonal
    sage/groups/matrix_gps/orthogonal_gap
    sage/groups/matrix_gps/isometries
+   sage/groups/matrix_gps/symplectic
    sage/groups/matrix_gps/symplectic_gap
    sage/groups/matrix_gps/unitary
    sage/groups/matrix_gps/unitary_gap
