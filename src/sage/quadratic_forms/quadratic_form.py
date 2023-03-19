@@ -40,6 +40,7 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 from sage.structure.sage_object import SageObject
+from sage.misc.superseded import deprecated_function_alias
 
 
 def QuadraticForm__constructor(R, n=None, entries=None):
@@ -1567,8 +1568,7 @@ class QuadraticForm(SageObject):
         """
         return self.det() / ZZ(2**self.dim())
 
-
-    def base_change_to(self, R):
+    def change_ring(self, R):
         """
         Alters the quadratic form to have all coefficients
         defined over the new base_ring R.  Here R must be
@@ -1593,16 +1593,13 @@ class QuadraticForm(SageObject):
             [ 1 0 ]
             [ * 1 ]
 
-        ::
-
-            sage: Q1 = Q.base_change_to(IntegerModRing(5)); Q1
+            sage: Q1 = Q.change_ring(IntegerModRing(5)); Q1
             Quadratic form in 2 variables over Ring of integers modulo 5 with coefficients:
             [ 1 0 ]
             [ * 1 ]
 
             sage: Q1([35,11])
             1
-
         """
         # Check that a canonical coercion is possible
         if not is_Ring(R):
@@ -1611,6 +1608,8 @@ class QuadraticForm(SageObject):
             raise TypeError(f"there is no canonical coercion from {self.base_ring()} to R")
         # Return the coerced form
         return QuadraticForm(R, self.dim(), [R(x) for x in self.coefficients()])
+
+    base_change_to = deprecated_function_alias(35248, change_ring)
 
     def level(self):
         r"""
