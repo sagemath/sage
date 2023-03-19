@@ -428,36 +428,34 @@ class Braid(FiniteTypeArtinGroupElement):
                 p = -p
         return p
 
-    def permutation(self, G = None):
+    def permutation(self, W = None):
         """
         Return the permutation induced by the braid in its strands.
 
         INPUT:
 
-        - ``G`` -- (default : ``None``) either ``None`` of ``SymmetricGroup(n)``
-          where ``n`` is the number of strands of ``self``.
+        - ``W`` -- (default : ``None``); the ``SymmetricGroup(n)``
+          where ``n`` is the number of strands of ``self`` is
+          an alternative option.
 
         OUTPUT:
 
-        A standard permutation if ``G`` is ``None``, an element of ``G`` if it
-        is ``SymmetricGroup(n)`` and an error, otherwise.
+        A standard permutation if ``W`` is ``None``, an element of ``W`` if it
+        is ``SymmetricGroup(n)``.
 
         EXAMPLES::
 
             sage: B.<s0,s1,s2> = BraidGroup()
             sage: S = SymmetricGroup(4)
             sage: b = s0*s1/s2/s1
-            sage: b.permutation(G=S)
+            sage: b.permutation(W=S)
             (1,4,2)
-            sage: c = Permutation(b.permutation(G=S)); c
+            sage: c = Permutation(b.permutation(W=S)); c
             [4, 1, 3, 2]
             sage: c == b.permutation()
             True
         """
-        if G == SymmetricGroup(self.strands()) or G is None:
-            return self.coxeter_group_element(W=G)
-        else:
-            raise ValueError('bad value of G')
+        return self.coxeter_group_element(W)
 
     def plot(self, color='rainbow', orientation='bottom-top', gap=0.05, aspect_ratio=1, axes=False, **kwds):
         """
@@ -1776,7 +1774,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: d1 = a.conjugating_braid(c)
             sage: print(len(d1.Tietze()))
             30
-            sage: print(d1.permutation(G=S))
+            sage: print(d1.permutation(W=S))
             (1,3)(2,4)
             sage: d1 * c / d1 == a
             True
@@ -1785,7 +1783,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: d2 = a.pure_conjugating_braid(c)
             sage: print(len(d2.Tietze()))
             24
-            sage: print(d2.permutation(G=S))
+            sage: print(d2.permutation(W=S))
             ()
             sage: d2 * c / d2 == a
             True
@@ -1799,9 +1797,9 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a2 = B([2])
             sage: a1.conjugating_braid(a2)
             s1*s0
-            sage: a1.permutation(G=S)
+            sage: a1.permutation(W=S)
             (1,2)
-            sage: a2.permutation(G=S)
+            sage: a2.permutation(W=S)
             (2,3)
             sage: print(a1.pure_conjugating_braid(a2))
             None
@@ -1813,17 +1811,17 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         n = B.strands()
         S = SymmetricGroup(n)
-        p1 = self.permutation(G=S)
-        p2 = other.permutation(G=S)
+        p1 = self.permutation(W=S)
+        p2 = other.permutation(W=S)
         if p1 != p2:
             return None
         b0 = self.conjugating_braid(other)
         if b0 is None:
             return None
-        p3 = b0.permutation(G=S).inverse()
+        p3 = b0.permutation(W=S).inverse()
         if p3.is_one():
             return b0
-        LP = {a.permutation(G=S): a for a in self.centralizer()}
+        LP = {a.permutation(W=S): a for a in self.centralizer()}
         if p3 not in S.subgroup(LP):
             return None
         P = p3.word_problem(list(LP), display=False, as_list=True)
