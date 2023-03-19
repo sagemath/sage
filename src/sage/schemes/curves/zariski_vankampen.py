@@ -270,6 +270,113 @@ def corrected_voronoi_diagram(points):
             break
     return V
 
+def voronoi_cells(V):
+    r"""
+    Compute the graph, the boundary graph, a base point, a positive orientation of the boundary graph,
+    and the dual graph of a corrected Voronoi diagram.
+
+    INPUT:
+
+    - ``V`` -- a corrected Voronoi diagram
+
+    OUTPUT:
+
+    The graph of the 1-skeleton of ``G``, the subgraph ``E`` of the boundary, a vertex `p` in ``E``,
+    a counterclockwise orientation ``EC`` of ``E`` (as an ordered list of vertices with identical
+    first and last elements), and the dual graph ``DG`` of ``V``, where the vertices are labelled
+    by the compact regions of ``V`` and the edges by their dual edges.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import corrected_voronoi_diagram, voronoi_cells
+        sage: points = (2, I, 0.000001, 0, 0.000001*I)
+        sage: V = corrected_voronoi_diagram(points)
+        sage: G, E, p, EC, DG = voronoi_cells(V)
+        sage: Gv = G.vertices(sort=True)
+        sage: Ge = G.edges(sort=True)
+        sage: len(Gv), len(Ge)
+        (12, 16)
+        sage: Ev = E.vertices(sort=True); Ev
+        [A vertex at (-4, 4),
+        A vertex at (-49000001/14000000, 1000001/2000000),
+        A vertex at (-7/2, -7/2),
+        A vertex at (-7/2, 1/2000000),
+        A vertex at (1/2000000, -7/2),
+        A vertex at (2000001/2000000, -24500001/7000000),
+        A vertex at (11/4, 4),
+        A vertex at (9/2, -9/2),
+        A vertex at (9/2, 9/2)]
+        sage: Ev.index(p)
+        7
+        sage: EC
+        [A vertex at (9/2, -9/2),
+        A vertex at (9/2, 9/2),
+        A vertex at (11/4, 4),
+        A vertex at (-4, 4),
+        A vertex at (-49000001/14000000, 1000001/2000000),
+        A vertex at (-7/2, 1/2000000),
+        A vertex at (-7/2, -7/2),
+        A vertex at (1/2000000, -7/2),
+        A vertex at (2000001/2000000, -24500001/7000000),
+        A vertex at (9/2, -9/2)]
+        sage: len(DG.vertices(sort=True)), len(DG.edges(sort=True))
+        (5, 7)
+        sage: edg = DG.edges(sort=True)[0]; edg
+        ((0,
+        (A vertex at (9/2, -9/2),
+        A vertex at (2000001/2000000, -24500001/7000000),
+        A vertex at (2000001/2000000, 500001/1000000),
+        A vertex at (2000001/2000000, -24500001/7000000),
+        A vertex at (11/4, 4),
+        A vertex at (2000001/2000000, 500001/1000000),
+        A vertex at (9/2, 9/2),
+        A vertex at (11/4, 4),
+        A vertex at (9/2, -9/2),
+        A vertex at (9/2, 9/2))),
+        (1,
+        (A vertex at (11/4, 4),
+        A vertex at (2000001/2000000, 500001/1000000),
+        A vertex at (1000001/2000000, 1000001/2000000),
+        A vertex at (2000001/2000000, 500001/1000000),
+        A vertex at (-49000001/14000000, 1000001/2000000),
+        A vertex at (1000001/2000000, 1000001/2000000),
+        A vertex at (-4, 4),
+        A vertex at (11/4, 4),
+        A vertex at (-49000001/14000000, 1000001/2000000),
+        A vertex at (-4, 4))),
+        (A vertex at (2000001/2000000, 500001/1000000), A vertex at (11/4, 4), None))
+        sage: list(Ge).index(edg[-1])
+        13
+"""
+    V0 = [_ for _ in V.regions().values() if _.is_compact()]
+    Vnc = [_ for _ in V.regions().values() if not _.is_compact()]
+    G = G=Graph([u.vertices() for v in V0 for u in v.faces(1)], format = 'list_of_edges')
+    E=Graph([u.vertices() for v in Vnc for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
+    p = next(E.vertex_iterator())
+    EC0 = orient_circuit(E.eulerian_circuit())
+    EC = [EC0[0][0]] + [e[1] for e in EC0]
+    Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
+    DG = Graph(len(V0))
+    DG.relabel(Vreg1)
+    Edges = []
+    crd = {}
+    for i, v in enumerate(V0):
+        r = [e.vertices() + (None, ) for e in v.facets()]
+        for e in r:
+            a, b = e[:2]
+            e1 = (b, a, None)
+            if e not in Edges:
+                Edges += [e, e1]
+                crd[e] = (Vreg1[i],)
+                crd[e1] = (Vreg1[i],)
+            else:
+                crd[e] += (Vreg1[i],)
+                crd[e1] += (Vreg1[i],)
+    EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+    for e in EdgesDual:
+        DG.add_edge(crd[e] + (e,))
+    return (G, E, p, EC, DG)
+
 
 def segments(points):
     """
@@ -1108,42 +1215,9 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
         glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     disc = discrim(glist)
     V = corrected_voronoi_diagram(tuple(disc))
-    V0 = [_ for _ in V.regions().values() if _.is_compact()]
-    G = Graph()
-    for reg in V0:
-        regv = reg.vertex_graph()
-        G = G.union(regv)
-    E = Graph()
-    for reg in V.regions().values():
-        if reg.rays() or reg.lines():
-            E = E.union(reg.vertex_graph())
-    p = next(E.vertex_iterator())
+    G, E, p, EC, DG = voronoi_cells(V)
     p0 = (p[0], p[1])
-    # Construct a dual graph for the compact regions; the dual edges
-    # of this graph have as labels the corresponding edges in G
     if computebm:
-        Vreg = [[e.vertices() + (None, ) for e in _.facets()] for _ in V0]
-        Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
-        DG = Graph(len(Vreg1))
-        DG.relabel(Vreg1)
-        Edges = []
-        crd = {}
-        for i, r in enumerate(Vreg):
-            for e in r:
-                a, b = e[:2]
-                e1 = (b, a, None)
-                if e not in Edges:
-                    Edges += [e, e1]
-                    crd[e] = (Vreg1[i],)
-                    crd[e1] = (Vreg1[i],)
-                else:
-                    crd[e] += (Vreg1[i],)
-                    crd[e1] += (Vreg1[i],)
-        EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-        for e in EdgesDual:
-            DG.add_edge(crd[e] + (e,))
-        EC0 = orient_circuit(E.eulerian_circuit())
-        EC = [EC0[0][0]] + [e[1] for e in EC0]
         geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
         for p in geombasis:
@@ -1364,9 +1438,9 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
         sage: g = fundamental_group(f, puiseux = True); print (g) # optional - sirocco
-        Finitely presented group < x0, x1, x2, x3 | x3^-1*x2^-1*x0*x2, x1*x2*x1^-1*x0^-1, x0*x2^-1*x1^-1*x2, x3*x1^-1 >
+        Finitely presented group < x0, x1, x2, x3 | x3*x2^-1*x1^-1*x2, x3*x2^-1*x1^-1*x0^-1*x1*x2^-1*x1^-1*x0*x1*x2, x0^-1*x2, x1*x2*x1*x2^-1*x1^-1*x0^-1 >
         sage: g.simplified() # optional - sirocco
-        Finitely presented group < x0, x1 | x1^-1*x0^2*x1^-1, (x1*x0^-1)^3 >
+        Finitely presented group < x0, x1 | x0^-1*x1^2*x0^-1, (x1^-1*x0)^3 >
         sage: g = fundamental_group(f, puiseux = True, projective = True); print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
 
@@ -1376,9 +1450,9 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
         sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
-        [s0^-1*s1*s2*s0*s1*s0^-1*s1^-1, (s1*s0)^2, s0^-1*s1^-1*s0^-1*s1*s0*s2*s1]
+        [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2]
         sage: g = fundamental_group(f, projective = True, braidmonodromy = bm); print (g) # optional - sirocco
-        Finitely presented group < x0, x2 | x0^2*x2^2, x0^2*x2^-2, x2*(x0^-1*x2^-1)^2*x0^-1 >
+        Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
         sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
     """
