@@ -1580,7 +1580,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         `1 \leqslant k \leqslant r-1` and the values are the
         `j_k`-invariants
 
-        Recall that the `j_k`-invariants of self are defined by:
+        Recall that the `j_k`-invariant of self is defined by:
 
         .. MATH::
 
