@@ -45,15 +45,11 @@ from cpython.object cimport (Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE)
 from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.structure.richcmp cimport rich_to_bool
-from sage.structure.parent cimport Parent
-
-import copy
 
 from functools import reduce
 from pprint import pformat
 
 from sage.arith.power import generic_power
-from sage.misc.misc import cputime
 from sage.misc.latex import latex
 
 
