@@ -64,7 +64,6 @@ AUTHORS:
 
 from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
-from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import is_MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -284,18 +283,23 @@ def MatrixGroup(*gens, **kwds):
     MS = gens.universe()
     base_ring = MS.base_ring()
     degree = ZZ(MS.ncols())   # == MS.nrows()
-    from sage.libs.gap.libgap import libgap
     category = kwds.get('category', None)
     try:
+        from sage.libs.gap.libgap import libgap
         from .finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
-
-        gap_gens = [libgap(matrix_gen) for matrix_gen in gens]
-        gap_group = libgap.Group(gap_gens)
-        return FinitelyGeneratedMatrixGroup_gap(degree, base_ring, gap_group,
-                                                category=category)
-    except (TypeError, ValueError):
-        return FinitelyGeneratedMatrixGroup_generic(degree, base_ring, gens,
+    except ImportError:
+        pass
+    else:
+        try:
+            gap_gens = [libgap(matrix_gen) for matrix_gen in gens]
+            gap_group = libgap.Group(gap_gens)
+            return FinitelyGeneratedMatrixGroup_gap(degree, base_ring, gap_group,
                                                     category=category)
+        except (TypeError, ValueError):
+            pass
+
+    return FinitelyGeneratedMatrixGroup_generic(degree, base_ring, gens,
+                                                category=category)
 
 ###################################################################
 #

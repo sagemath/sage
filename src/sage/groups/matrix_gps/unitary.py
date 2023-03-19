@@ -134,12 +134,16 @@ def _UG(n, R, special, var='a', invariant_form=None):
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if isinstance(ring, FiniteField):
-        from .unitary_gap import UnitaryMatrixGroup_gap
+        try:
+            from .unitary_gap import UnitaryMatrixGroup_gap
+        except ImportError:
+            pass
+        else:
+            cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
+            return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)
 
-        cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
-        return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)
-    else:
-        return UnitaryMatrixGroup_generic(degree, ring, special, name, ltx, invariant_form=invariant_form)
+    return UnitaryMatrixGroup_generic(degree, ring, special, name, ltx,
+                                      invariant_form=invariant_form)
 
 
 

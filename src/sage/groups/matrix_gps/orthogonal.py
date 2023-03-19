@@ -203,12 +203,15 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
                                                          '+' if e == 1 else '-')
 
     if isinstance(ring, FiniteField):
-        from .orthogonal_gap import OrthogonalMatrixGroup_gap
+        try:
+            from .orthogonal_gap import OrthogonalMatrixGroup_gap
+        except ImportError:
+            pass
+        else:
+            cmd = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
+            return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
 
-        cmd  = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
-        return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
-    else:
-        return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
+    return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
 
 
 
