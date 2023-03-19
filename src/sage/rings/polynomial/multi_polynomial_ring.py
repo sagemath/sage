@@ -911,11 +911,14 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
             (-x + 1)*y + (2*x^2 + 1)*z + 1
         """
-        ans = self(0)
-        elt = ans.element()
+        elt = PolyDict({}, check=False)
         for t in terms:
             elt += self(t).element()
-        return ans
+        # NOTE: here we should be using self.element_class but polynomial rings are not complient
+        # with categories...
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+        return MPolynomial_polydict(self, elt)
+
 
 class MPolynomialRing_polydict_domain(IntegralDomain,
                                       MPolynomialRing_polydict):
