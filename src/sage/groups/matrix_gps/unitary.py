@@ -55,8 +55,7 @@ from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, normalize_args_invariant_form,
-    NamedMatrixGroup_generic, NamedMatrixGroup_gap )
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+    NamedMatrixGroup_generic)
 
 
 def finite_field_sqrt(ring):
@@ -135,6 +134,8 @@ def _UG(n, R, special, var='a', invariant_form=None):
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if isinstance(ring, FiniteField):
+        from .unitary_gap import UnitaryMatrixGroup_gap
+
         cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
         return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)
     else:
@@ -434,43 +435,3 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
                 raise TypeError('matrix must be unitary')
             else:
                 raise TypeError('matrix must be unitary with respect to the hermitian form\n{}'.format(H))
-
-class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, FinitelyGeneratedMatrixGroup_gap):
-    r"""
-    The general or special unitary group in GAP.
-
-    TESTS:
-
-    Check that :trac:`20867` is fixed::
-
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-        sage: G = GU(3,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-    """
-
-    @cached_method
-    def invariant_form(self):
-        """
-        Return the hermitian form preserved by the unitary group.
-
-        OUTPUT:
-
-        A square matrix describing the bilinear form
-
-        EXAMPLES::
-
-            sage: G32=GU(3,2)
-            sage: G32.invariant_form()
-            [0 0 1]
-            [0 1 0]
-            [1 0 0]
-        """
-        d = self.degree()
-        R = self.base_ring()
-        # note that self.gap().InvariantSesquilinearForm()['matrix'].matrix().base_ring() != R for example for self = GU(3.2)
-        # therefore we have to coerce into the right matrix space
-        from sage.matrix.constructor import matrix
-        m = matrix(R, d, d, self.gap().InvariantSesquilinearForm()['matrix'].matrix())
-        m.set_immutable()
-        return m

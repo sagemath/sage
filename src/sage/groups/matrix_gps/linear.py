@@ -59,12 +59,11 @@ REFERENCES: See [KL1990]_ and [Car1972]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.latex import latex
-from sage.groups.matrix_gps.named_group import (
-    normalize_args_vectorspace, NamedMatrixGroup_generic, NamedMatrixGroup_gap )
 from sage.categories.fields import Fields
 from sage.categories.groups import Groups
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.named_group import (
+    normalize_args_vectorspace, NamedMatrixGroup_generic)
+from sage.misc.latex import latex
 
 
 ###############################################################################
@@ -164,6 +163,8 @@ def GL(n, R, var='a'):
     name = 'General Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
+        from .linear_gap import LinearMatrixGroup_gap
+
         cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
         return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
                                      category=cat)
@@ -249,6 +250,8 @@ def SL(n, R, var='a'):
     name = 'Special Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
     try:
+        from .linear_gap import LinearMatrixGroup_gap
+
         cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
         return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
                                      category=cat)
@@ -282,19 +285,3 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         else:
             if x.determinant() == 0:
                 raise TypeError('matrix must non-zero determinant')
-
-
-class LinearMatrixGroup_gap(NamedMatrixGroup_gap, LinearMatrixGroup_generic, FinitelyGeneratedMatrixGroup_gap):
-    r"""
-    The general or special linear group in GAP.
-
-    TESTS:
-
-    Check that :trac:`20867` is fixed::
-
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-        sage: G = GL(3,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-    """
-    pass

@@ -45,8 +45,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, normalize_args_invariant_form,
-    NamedMatrixGroup_generic, NamedMatrixGroup_gap)
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+    NamedMatrixGroup_generic)
 
 
 ###############################################################################
@@ -161,6 +160,8 @@ def Sp(n, R, var='a', invariant_form=None):
         ltx  = r'\text{{Sp}}_{{{0}}}({1})'.format(degree, latex(ring))
 
     try:
+        from .symplectic_gap import SymplecticMatrixGroup_gap
+
         cmd = 'Sp({0}, {1})'.format(degree, ring._gap_init_())
         return SymplecticMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
     except ValueError:
@@ -238,47 +239,3 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
         F = self.invariant_form()
         if x * F * x.transpose() != F:
             raise TypeError('matrix must be symplectic with respect to the alternating form\n{}'.format(F))
-
-
-class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_gap, FinitelyGeneratedMatrixGroup_gap):
-    r"""
-    Symplectic group in GAP.
-
-    EXAMPLES::
-
-        sage: Sp(2,4)
-        Symplectic Group of degree 2 over Finite Field in a of size 2^2
-
-        sage: latex(Sp(4,5))
-        \text{Sp}_{4}(\Bold{F}_{5})
-
-    TESTS:
-
-    Check that :trac:`20867` is fixed::
-
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-        sage: G = Sp(4,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-    """
-
-    @cached_method
-    def invariant_form(self):
-        """
-        Return the quadratic form preserved by the symplectic group.
-
-        OUTPUT:
-
-        A matrix.
-
-        EXAMPLES::
-
-            sage: Sp(4, GF(3)).invariant_form()
-            [0 0 0 1]
-            [0 0 1 0]
-            [0 2 0 0]
-            [2 0 0 0]
-        """
-        m = self.gap().InvariantBilinearForm()['matrix'].matrix()
-        m.set_immutable()
-        return m

@@ -497,7 +497,7 @@ class TypeSpace(SageObject):
             True
         """
         f = self.prime() ** self.u()
-        from sage.groups.matrix_gps.all import SL
+        from sage.groups.matrix_gps.linear import SL
         G = SL(2, Zmod(f))
         gg = G(g)
         s = G([1,1,0,1])
