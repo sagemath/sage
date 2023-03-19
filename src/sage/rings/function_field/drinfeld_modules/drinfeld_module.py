@@ -1310,9 +1310,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi = DrinfeldModule(A, [Frac(A).gen(), 1, 1])
             sage: phi.is_isomorphic(psi)
             False
+            sage: phi.is_isomorphic(A)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a Drinfeld module
         """
+        if not isinstance(psi, DrinfeldModule):
+            raise TypeError("input must be a Drinfeld module")
         # Trivial checks:
-        if self.characteristic() != psi.characteristic():
+        if self.category() != psi.category():
             return False
         if self._gen == psi._gen:
             return True
