@@ -450,8 +450,10 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sig_off()
             raise TypeError(f"unable to convert PARI {x.type()} to finite field element")
 
-        elif (isinstance(x, FreeModuleElement)
-              and x.parent() is self._parent.vector_space(map=False)):
+        elif ((isinstance(x, list) and len(x) == self._parent.degree()) or
+              (isinstance(x, FreeModuleElement)
+               and x.parent() is self._parent.vector_space(map=False))):
+            # Construction from a list/vector of d elements of Fp.
             g = (<pari_gen>self._parent._gen_pari).g
             t = g[1]  # codeword: t_FF_FpXQ, t_FF_Flxq, t_FF_F2xq
             n = len(x)
@@ -496,11 +498,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             self.construct_from(x.constant_coefficient())
 
         elif isinstance(x, list):
-            if len(x) == self._parent.degree():
-                self.construct_from(self._parent.vector_space(map=False)(x))
-            else:
-                Fp = self._parent.base_ring()
-                self.construct_from(self._parent.polynomial_ring()([Fp(y) for y in x]))
+            Fp = self._parent.base_ring()
+            self.construct_from(self._parent.polynomial_ring()([Fp(y) for y in x]))
 
         elif isinstance(x, str):
             self.construct_from(self._parent.polynomial_ring()(x))
