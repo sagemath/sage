@@ -17,7 +17,6 @@ from sage.arith.misc import (CRT_vectors,
                              hilbert_symbol,
                              kronecker as kronecker_symbol,
                              prime_to_m_part)
-from sage.libs.pari.all import pari
 from sage.misc.functional import is_odd
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
@@ -525,6 +524,8 @@ def representation_number_list(self, B):
         sage: Q.representation_number_list(10)                                                      # optional - sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
+    from sage.libs.pari.all import pari
+
     ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
     return ans.sage()
 

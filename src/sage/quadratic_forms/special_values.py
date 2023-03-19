@@ -13,7 +13,6 @@ from sage.arith.misc import (bernoulli,
                              factorial,
                              fundamental_discriminant,
                              kronecker as kronecker_symbol)
-from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -64,17 +63,18 @@ def gamma__exact(n):
         ...
         TypeError: you must give an integer or half-integer argument
     """
-    from sage.misc.functional import sqrt
-    from sage.symbolic.constants import pi
-
     n = QQ(n)
 
     if denominator(n) == 1:
         if n <= 0:
             return infinity
         return factorial(n - 1)
-    elif denominator(n) == 2:
+
+    if denominator(n) == 2:
         # now n = 1/2 + an integer
+        from sage.misc.functional import sqrt
+        from sage.symbolic.constants import pi
+
         ans = QQ.one()
         while n != QQ((1, 2)):
             if n < 0:
@@ -86,8 +86,8 @@ def gamma__exact(n):
 
         ans *= sqrt(pi)
         return ans
-    else:
-        raise TypeError("you must give an integer or half-integer argument")
+
+    raise TypeError("you must give an integer or half-integer argument")
 
 # ------------- The Riemann Zeta Function  --------------
 
@@ -141,12 +141,12 @@ def zeta__exact(n):
     - [IR1990]_
     - [Was1997]_
     """
-    from sage.symbolic.constants import pi
-
     if n < 0:
         return bernoulli(1-n)/(n-1)
     elif n > 1:
         if (n % 2 == 0):
+            from sage.symbolic.constants import pi
+
             return ZZ(-1)**(n//2 + 1) * ZZ(2)**(n-1) * pi**n * bernoulli(n) / factorial(n)
         else:
             raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
@@ -179,6 +179,8 @@ def QuadraticBernoulliNumber(k, d):
 
     - [Iwa1972]_, pp 7-16.
     """
+    from sage.combinat.combinat import bernoulli_polynomial
+
     # Ensure the character is primitive
     d1 = fundamental_discriminant(d)
     f = abs(d1)
@@ -223,10 +225,6 @@ def quadratic_L_function__exact(n, d):
     - [IR1990]_
     - [Was1997]_
     """
-    from sage.misc.functional import sqrt
-    from sage.symbolic.constants import I, pi
-    from sage.symbolic.ring import SR
-
     if n <= 0:
         return QuadraticBernoulliNumber(1-n,d)/(n-1)
     elif n >= 1:
@@ -238,6 +236,10 @@ def quadratic_L_function__exact(n, d):
 
         # Compute the positive special values (p17)
         if ((n - delta) % 2 == 0):
+            from sage.misc.functional import sqrt
+            from sage.symbolic.constants import I, pi
+            from sage.symbolic.ring import SR
+
             f = abs(fundamental_discriminant(d))
             if delta == 0:
                 GS = sqrt(f)
