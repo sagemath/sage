@@ -845,7 +845,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ring = self.parent()
         one = ring.base_ring().one()
         for exp in self._exponents:
-            yield (elt[exp], MPolynomial_polydict(ring, polydict.PolyDict({exp:one})))
+            yield (elt[exp], MPolynomial_polydict(ring, polydict.PolyDict({exp: one}, check=False)))
 
     def __getitem__(self, x):
         """
@@ -1459,7 +1459,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         ring = self.parent()
         one = ring.base_ring().one()
-        return [MPolynomial_polydict(ring, polydict.PolyDict({m:one}))
+        return [MPolynomial_polydict(ring, polydict.PolyDict({m: one}, check=False))
                 for m in self._exponents]
 
     def constant_coefficient(self):
@@ -1708,9 +1708,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             if self.is_zero():
                 return self
             R = self.parent()
-            f = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
+            f = self._MPolynomial_element__element.lcmt(R.term_order().greater_tuple)
             one = R.base_ring().one()
-            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f:one}))
+            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f: one}, check=False))
             return self.__lm
 
     def lc(self):
@@ -1767,8 +1767,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return self
             R = self.parent()
             f = self._MPolynomial_element__element.dict()
-            res = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
-            self.__lt = MPolynomial_polydict(R, polydict.PolyDict({res:f[res]}))
+            res = self._MPolynomial_element__element.lcmt(R.term_order().greater_tuple)
+            self.__lt = MPolynomial_polydict(R, polydict.PolyDict({res: f[res]}, check=False))
             return self.__lt
 
     def __eq__(self, right):
@@ -1881,7 +1881,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var is not a generator; do term-by-term differentiation recursively
             # var may be, for example, a generator of the base ring
             d = dict([(e, x._derivative(var)) for (e, x) in self.dict().items()])
-            d = polydict.PolyDict(d)
+            d = polydict.PolyDict(d, check=False)
             d.remove_zeros()
             return MPolynomial_polydict(P, d)
 
@@ -1976,7 +1976,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var may be, for example, a generator of the base ring
             d = {e: x.integral(var)
                  for e, x in self.dict().items()}
-            d = polydict.PolyDict(d)
+            d = polydict.PolyDict(d, check=False)
             d.remove_zeros()
         else:
             # integrate w.r.t. indicated variable

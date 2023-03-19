@@ -113,7 +113,7 @@ cdef class PolyDict:
     whose values are coefficients on which it is implicitely assumed that
     arithmetic operations can be performed.
     """
-    def __init__(self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None):
+    def __init__(self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None, bint check=True):
         """
         INPUT:
 
@@ -127,6 +127,9 @@ cdef class PolyDict:
         - ``force_int_exponents`` -- deprecated
 
         - ``force_etuples`` -- deprecated
+
+        - ``check`` -- if set to ``False`` then assumes that the exponents are all valid ``ETuple``. In
+          that case the construction is a bit faster.
 
         EXAMPLES::
 
@@ -164,13 +167,19 @@ cdef class PolyDict:
             deprecation(34000, 'the arguments "zero", "forced_int_exponents" and "forced_etuples" of PolyDict constructor are deprecated')
 
         self.__repn = {}
+        cdef bint has_only_etuple = True
         if isinstance(pdict, (tuple, list)):
             for coeff, exp in pdict:
-                if type(exp) is not ETuple:
+                if check and type(exp) is not ETuple:
                     exp = ETuple(exp)
                 self.__repn[exp] = coeff
         elif isinstance(pdict, dict):
-            if all(type(k) is ETuple for k in pdict):
+            if check:
+                for k in (<dict> pdict):
+                    if type(k) is not ETuple:
+                        has_only_etuple = False
+                        break
+            if has_only_etuple:
                 self.__repn = (<dict> pdict).copy()
             else:
                 self.__repn = {}
