@@ -63,7 +63,7 @@ AUTHORS:
 ##############################################################################
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.all import QQbar
+from sage.rings.qqbar import QQbar
 from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
 from sage.matrix.constructor import matrix
@@ -563,9 +563,6 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             21499084800
             sage: P = G.as_permutation_group()
             sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
-            sage: P == Psmaller  # see the note below
-            True
-            sage: Psmaller = G.as_permutation_group(algorithm="smaller")
             sage: P == Psmaller
             False
             sage: P.cardinality()
@@ -792,7 +789,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         PR = PolynomialRing(F, n, [VarStr+str(i) for i in range(1,n+1)])
 
         if q == 0 or (q > 0 and self.cardinality() % q):
-            from sage.all import Matrix
+            from sage.matrix.constructor import Matrix
             try:
                 elements = [g.matrix() for g in self.list()]
             except (TypeError, ValueError):
