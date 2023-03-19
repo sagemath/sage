@@ -270,13 +270,19 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: k = FiniteField(3^11, 't', impl='pari_ffelt')
         sage: k([ 0, 1/2 ])
         2*t
+        sage: k([ 0, 1/2, 0, 0, 0, 0, 0, 0, 0, -1, 0 ])
+        2*t^9 + 2*t
         sage: k([ k(0), k(1) ])
         t
         sage: k([ GF(3)(2), GF(3^5,'u')(1) ])
         t + 2
         sage: R.<x> = PolynomialRing(k)
+        sage: k([ x/x ])
+        1
         sage: k([ R(-1), x/x ])
         t + 2
+        sage: k([ R(-1), R(0), 0 ])
+        2
 
     Check that zeros are created correctly (:trac:`11685`)::
 
@@ -496,7 +502,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             self.construct_from(x.constant_coefficient())
 
         elif isinstance(x, list):
-            if len(x) == self._parent.degree():
+            n = len(x)
+            if n == 0:
+                self.construct_from(None)
+            elif n == 1:
+                Fp = self._parent.base_ring()
+                self.construct_from(Fp(x[0]))
+            elif n == self._parent.degree():
                 self.construct_from(self._parent.vector_space(map=False)(x))
             else:
                 Fp = self._parent.base_ring()
