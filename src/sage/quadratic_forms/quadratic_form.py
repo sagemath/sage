@@ -40,7 +40,7 @@ from sage.modules.free_module_element import vector
 from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 from sage.structure.sage_object import SageObject
-from sage.combinat.integer_lists.invlex import IntegerListsLex
+
 
 def QuadraticForm__constructor(R, n=None, entries=None):
     """
@@ -594,6 +594,8 @@ class QuadraticForm(SageObject):
             elif n == 1:
                 exponents = [2]
             else:
+                from sage.combinat.integer_lists.invlex import IntegerListsLex
+
                 exponents = IntegerListsLex(2, length=n)
             for alpha in exponents:
                 entries.append(p[alpha])

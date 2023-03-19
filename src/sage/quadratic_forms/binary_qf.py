@@ -51,13 +51,18 @@ AUTHORS:
 # ****************************************************************************
 from functools import total_ordering
 
-from sage.libs.pari.all import pari_gen
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import gcd, is_fundamental_discriminant
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
+
+
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
 
 
 @total_ordering

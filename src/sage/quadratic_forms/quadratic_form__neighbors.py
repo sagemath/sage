@@ -4,7 +4,6 @@ Neighbors
 
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.rational_field import QQ
 from copy import deepcopy
 from sage.matrix.constructor import matrix
@@ -179,6 +178,9 @@ def find_p_neighbor_from_vec(self, p, y):
         raise ValueError("y=%s must be of square divisible by p=%s"%(y,p))
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+
     n = self.dim()
     G = self.Hessian_matrix()
     R = self.base_ring()
@@ -380,6 +382,8 @@ def orbits_lines_mod_p(self, p):
         (1, 1, 1)]
     """
     from sage.libs.gap.libgap import libgap
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+
     # careful the self.automorphism_group() acts from the left
     # but in gap we act from the right!! --> transpose
     gens = self.automorphism_group().gens()
