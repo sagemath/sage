@@ -1512,7 +1512,7 @@ def _vizing_edge_coloring(g):
     ALGORITHM:
 
     This function's implementation is based on the algorithm described at [MG1992]_
-    
+
     EXAMPLES:
 
     Coloring the edges of the Petersen Graph::
@@ -1642,12 +1642,13 @@ def _vizing_edge_coloring(g):
         rotate_fan(fan_center, fan)
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
-    matchings = dict()
-    for edge, c in e_colors.items(): 
+    matchings = {}
+    for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 
     return classes
+
 
 def round_robin(n):
     r"""

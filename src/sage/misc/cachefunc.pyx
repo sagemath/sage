@@ -107,9 +107,9 @@ By :trac:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
 category (previously, the cache would have been broken)::
 
-    sage: cython_code = ["from sage.misc.cachefunc import cached_method", 
+    sage: cython_code = ["from sage.misc.cachefunc import cached_method",
     ....: "from sage.misc.cachefunc import cached_in_parent_method",
-    ....: "from sage.categories.category import Category", 
+    ....: "from sage.categories.category import Category",
     ....: "from sage.categories.objects import Objects",
     ....: "class MyCategory(Category):",
     ....: "    @cached_method",
