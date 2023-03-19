@@ -239,6 +239,7 @@ from sage.data_structures.stream import (
     Stream_exact,
     Stream_uninitialized,
     Stream_shift,
+    Stream_truncated,
     Stream_function,
     Stream_derivative,
     Stream_dirichlet_convolve,
@@ -634,7 +635,9 @@ class LazyModuleElement(Element):
         Return ``self`` with the indices shifted by ``n``.
 
         For example, a Laurent series is multiplied by the power `z^n`,
-        where `z` is the variable of ``self``.
+        where `z` is the variable of ``self``. For series with a fixed
+        minimal valuation (e.g., power series), this removes any terms
+        that are less than the minimal valuation.
 
         INPUT:
 
@@ -664,6 +667,38 @@ class LazyModuleElement(Element):
             sage: f.shift(3)
             1/(5^t) + 2/6^t
 
+        Examples with power series (where the minimal valuation is `0`)::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: f = 1 / (1 - x)
+            sage: f.shift(2)
+            x^2 + x^3 + x^4 + O(x^5)
+            sage: g = f.shift(-1); g
+            1 + x + x^2 + O(x^3)
+            sage: f == g
+            True
+            sage: g[-1]
+            0
+            sage: h = L(lambda n: 1)
+            sage: LazyPowerSeriesRing.options.halting_precision(20)  # verify up to degree 20
+            sage: f == h
+            True
+            sage: h == f
+            True
+            sage: h.shift(-1) == h
+            True
+            sage: LazyPowerSeriesRing.options._reset()
+
+            sage: fp = L([3,3,3], constant=1)
+            sage: fp.shift(2)
+            3*x^2 + 3*x^3 + 3*x^4 + x^5 + x^6 + x^7 + O(x^8)
+            sage: fp.shift(-2)
+            3 + x + x^2 + x^3 + O(x^4)
+            sage: fp.shift(-7)
+            1 + x + x^2 + O(x^3)
+            sage: fp.shift(-5) == g
+            True
+
         We compare the shifting with the ``use_fraction_field`` option::
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
@@ -674,32 +709,19 @@ class LazyModuleElement(Element):
             sage: f.shift(-3, use_fraction_field=True)
             x^-3 + 2*x^-2 + 3*x^-1 + 4
 
-        .. WARNING::
+        An example with a more general function::
 
-            When working with a power series not known to be eventually
-            constant, if one shifts below the minimal valuation and then
-            shifts back, this remembers the terms that would have been
-            truncated. That is, these entries are not replaced by `0`::
-
-                sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
-                sage: L.<x> = LazyPowerSeriesRing(QQ)
-                sage: f = L(fun); f
-                x + x^2 + x^4 + O(x^7)
-                sage: fs = f.shift(-4)
-                sage: fs
-                1 + x^4 + O(x^7)
-                sage: fs.shift(4)
-                x + x^2 + x^4 + O(x^7)
-
-            This is slightly different than streams that are known to
-            be eventually constant::
-
-                sage: f = L([1,2,3,4], constant=7); f
-                1 + 2*x + 3*x^2 + 4*x^3 + 7*x^4 + 7*x^5 + 7*x^6 + O(x^7)
-                sage: fs = f.shift(-4); fs
-                7 + 7*x + 7*x^2 + O(x^3)
-                sage: fs.shift(4)
-                7*x^4 + 7*x^5 + 7*x^6 + O(x^7)
+            sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: f = L(fun); f
+            x + x^2 + x^4 + O(x^7)
+            sage: fs = f.shift(-4)
+            sage: fs
+            1 + x^4 + O(x^7)
+            sage: fs.shift(4)
+            x^4 + x^8 + O(x^11)
+            sage: f.shift(-4, use_fraction_field=True)
+            x^-3 + x^-2 + 1 + O(x^3)
 
         TESTS::
 
@@ -730,6 +752,34 @@ class LazyModuleElement(Element):
             sage: f = L([1,2,3,4])
             sage: f.shift(-10) == L.zero()
             True
+
+        Check the truncation works correctly::
+
+            sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
+            sage: f.valuation()
+            1
+            sage: f._coeff_stream._true_order
+            True
+            sage: g = f.shift(-5)
+            sage: g
+            x^3 + O(x^7)
+            sage: g._coeff_stream._approximate_order
+            0
+            sage: g._coeff_stream._true_order
+            False
+            sage: g.valuation()
+            3
+
+            sage: f = L([1,2,3,4], constant=7)
+            sage: fs = f.shift(-4)
+            sage: fs = f.shift(-4); fs
+            7 + 7*x + 7*x^2 + O(x^3)
+            sage: fs.shift(4)
+            7*x^4 + 7*x^5 + 7*x^6 + O(x^7)
+
+            sage: f = L([1,2,3,4], constant=0)
+            sage: type(f.shift(-5)._coeff_stream)
+            <class 'sage.data_structures.stream.Stream_zero'>
         """
         P = self.parent()
         if P._arity != 1:
@@ -746,9 +796,11 @@ class LazyModuleElement(Element):
         if isinstance(self._coeff_stream, Stream_shift):
             n += self._coeff_stream._shift
             if n:
-                coeff_stream = Stream_shift(self._coeff_stream._series, n)
-                if P._minimal_valuation is not None:
-                    coeff_stream._approximate_order = max(coeff_stream._approximate_order, P._minimal_valuation)
+                if (P._minimal_valuation is not None
+                    and P._minimal_valuation > self._coeff_stream._approximate_order + n):
+                    coeff_stream = Stream_truncated(self._coeff_stream._series, n, P._minimal_valuation)
+                else:
+                    coeff_stream = Stream_shift(self._coeff_stream._series, n)
             else:
                 coeff_stream = self._coeff_stream._series
         elif isinstance(self._coeff_stream, Stream_exact):
@@ -756,18 +808,21 @@ class LazyModuleElement(Element):
             degree = self._coeff_stream._degree + n
             valuation = self._coeff_stream._approximate_order + n
             if P._minimal_valuation is not None and P._minimal_valuation > valuation:
+                # We need to truncate some terms
                 init_coeff = init_coeff[P._minimal_valuation-valuation:]
-                valuation = P._minimal_valuation
                 if not init_coeff and not self._coeff_stream._constant:
                     return P.zero()
+                degree = max(degree, P._minimal_valuation)
+                valuation = P._minimal_valuation
             coeff_stream = Stream_exact(init_coeff,
                                         constant=self._coeff_stream._constant,
                                         order=valuation, degree=degree)
         else:
-            coeff_stream = Stream_shift(self._coeff_stream, n)
-
-        if P._minimal_valuation is not None:
-            coeff_stream._approximate_order = max(coeff_stream._approximate_order, P._minimal_valuation)
+            if (P._minimal_valuation is not None
+                and P._minimal_valuation > self._coeff_stream._approximate_order + n):
+                coeff_stream = Stream_truncated(self._coeff_stream, n, P._minimal_valuation)
+            else:
+                coeff_stream = Stream_shift(self._coeff_stream, n)
 
         return P.element_class(P, coeff_stream)
 
