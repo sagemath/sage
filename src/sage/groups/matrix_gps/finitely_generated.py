@@ -6,10 +6,10 @@ finite set of generating matrices.
 
 EXAMPLES::
 
-    sage: F = GF(3)
-    sage: gens = [matrix(F,2, [1,0, -1,1]), matrix(F,2, [1,1,0,1])]
-    sage: G = MatrixGroup(gens)
-    sage: G.conjugacy_classes_representatives()
+    sage: F = GF(3)                                                                     # optional - sage.libs.pari
+    sage: gens = [matrix(F,2, [1,0, -1,1]), matrix(F,2, [1,1,0,1])]                     # optional - sage.libs.pari
+    sage: G = MatrixGroup(gens)                                                         # optional - sage.libs.pari
+    sage: G.conjugacy_classes_representatives()                                         # optional - sage.libs.pari
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -18,7 +18,7 @@ EXAMPLES::
 The finitely generated matrix groups can also be constructed as
 subgroups of matrix groups::
 
-    sage: SL2Z = SL(2,ZZ)
+    sage: SL2Z = SL(2, ZZ)
     sage: S, T = SL2Z.gens()
     sage: SL2Z.subgroup([T^2])
     Subgroup with 1 generators (
@@ -155,37 +155,37 @@ def QuaternionMatrixGroupGF3():
     is the product of `I` and `J`. ::
 
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
-        sage: Q = QuaternionMatrixGroupGF3()
-        sage: Q.order()
+        sage: Q = QuaternionMatrixGroupGF3()                                            # optional - sage.libs.pari
+        sage: Q.order()                                                                 # optional - sage.libs.pari
         8
-        sage: aye = Q.gens()[0]; aye
+        sage: aye = Q.gens()[0]; aye                                                    # optional - sage.libs.pari
         [1 1]
         [1 2]
-        sage: jay = Q.gens()[1]; jay
+        sage: jay = Q.gens()[1]; jay                                                    # optional - sage.libs.pari
         [2 1]
         [1 1]
-        sage: kay = aye*jay; kay
+        sage: kay = aye*jay; kay                                                        # optional - sage.libs.pari
         [0 2]
         [1 0]
 
     TESTS::
 
-        sage: groups.matrix.QuaternionGF3()
+        sage: groups.matrix.QuaternionGF3()                                             # optional - sage.libs.pari
         Matrix group over Finite Field of size 3 with 2 generators (
         [1 1]  [2 1]
         [1 2], [1 1]
         )
 
-        sage: Q = QuaternionMatrixGroupGF3()
-        sage: QP = Q.as_permutation_group()
-        sage: QP.is_isomorphic(QuaternionGroup())
+        sage: Q = QuaternionMatrixGroupGF3()                                            # optional - sage.libs.pari
+        sage: QP = Q.as_permutation_group()                                             # optional - sage.libs.pari
+        sage: QP.is_isomorphic(QuaternionGroup())                                       # optional - sage.libs.pari
         True
-        sage: H = DihedralGroup(4)
-        sage: H.order()
+        sage: H = DihedralGroup(4)                                                      # optional - sage.groups sage.libs.pari
+        sage: H.order()                                                                 # optional - sage.groups sage.libs.pari
         8
-        sage: QP.is_abelian(), H.is_abelian()
+        sage: QP.is_abelian(), H.is_abelian()                                           # optional - sage.groups sage.libs.pari
         (False, False)
-        sage: QP.is_isomorphic(H)
+        sage: QP.is_isomorphic(H)                                                       # optional - sage.groups sage.libs.pari
         False
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -210,9 +210,9 @@ def MatrixGroup(*gens, **kwds):
 
     EXAMPLES::
 
-        sage: F = GF(5)
-        sage: gens = [matrix(F,2,[1,2, -1, 1]), matrix(F,2, [1,1, 0,1])]
-        sage: G = MatrixGroup(gens); G
+        sage: F = GF(5)                                                                 # optional - sage.libs.pari
+        sage: gens = [matrix(F,2, [1,2, -1, 1]), matrix(F,2, [1,1, 0,1])]               # optional - sage.libs.pari
+        sage: G = MatrixGroup(gens); G                                                  # optional - sage.libs.pari
         Matrix group over Finite Field of size 5 with 2 generators (
         [1 2]  [1 1]
         [4 1], [0 1]
@@ -224,8 +224,8 @@ def MatrixGroup(*gens, **kwds):
     matrices over the finite field, so creates that matrix group
     there::
 
-        sage: gens = [matrix(2,[1,2, -1, 1]), matrix(GF(7), 2, [1,1, 0,1]), 2]
-        sage: G = MatrixGroup(gens); G
+        sage: gens = [matrix(2,[1,2, -1, 1]), matrix(GF(7), 2, [1,1, 0,1]), 2]          # optional - sage.libs.pari
+        sage: G = MatrixGroup(gens); G                                                  # optional - sage.libs.pari
         Matrix group over Finite Field of size 7 with 3 generators (
         [1 2]  [1 1]  [2 0]
         [6 1], [0 1], [0 2]
@@ -233,17 +233,17 @@ def MatrixGroup(*gens, **kwds):
 
     Each generator must be invertible::
 
-        sage: G = MatrixGroup([matrix(ZZ,2,[1,2,3,4])])
+        sage: G = MatrixGroup([matrix(ZZ, 2, [1,2,3,4])])
         Traceback (most recent call last):
         ...
         ValueError: each generator must be an invertible matrix
 
-        sage: F = GF(5); MS = MatrixSpace(F,2,2)
-        sage: MatrixGroup([MS.0])
+        sage: F = GF(5); MS = MatrixSpace(F, 2, 2)                                      # optional - sage.libs.pari
+        sage: MatrixGroup([MS.0])                                                       # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: each generator must be an invertible matrix
-        sage: MatrixGroup([MS.0], check=False)  # works formally but is mathematical nonsense
+        sage: MatrixGroup([MS.0], check=False)  # works formally but is mathematical nonsense   # optional - sage.libs.pari
         Matrix group over Finite Field of size 5 with 1 generators (
         [1 0]
         [0 0]
@@ -328,9 +328,9 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
         False
 
-        sage: G = GL(2, GF(3))
-        sage: H = G.as_matrix_group()
-        sage: H == G, G == H
+        sage: G = GL(2, GF(3))                                                                      # optional - sage.libs.pari
+        sage: H = G.as_matrix_group()                                                               # optional - sage.libs.pari
+        sage: H == G, G == H                                                                        # optional - sage.libs.pari
         (True, True)
     """
 
@@ -366,24 +366,24 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: F = GF(3); MS = MatrixSpace(F,2,2)
-            sage: gens = [MS([[1,0],[0,1]]), MS([[1,1],[0,1]])]
-            sage: G = MatrixGroup(gens)
-            sage: gens[0] in G
+            sage: F = GF(3); MS = MatrixSpace(F,2,2)                                    # optional - sage.libs.pari
+            sage: gens = [MS([[1,0],[0,1]]), MS([[1,1],[0,1]])]                         # optional - sage.libs.pari
+            sage: G = MatrixGroup(gens)                                                 # optional - sage.libs.pari
+            sage: gens[0] in G                                                          # optional - sage.libs.pari
             True
-            sage: gens = G.gens()
-            sage: gens[0] in G
+            sage: gens = G.gens()                                                       # optional - sage.libs.pari
+            sage: gens[0] in G                                                          # optional - sage.libs.pari
             True
-            sage: gens = [MS([[1,0],[0,1]]),MS([[1,1],[0,1]])]
+            sage: gens = [MS([[1,0],[0,1]]),MS([[1,1],[0,1]])]                          # optional - sage.libs.pari
 
-            sage: F = GF(5); MS = MatrixSpace(F,2,2)
-            sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])
-            sage: G
+            sage: F = GF(5); MS = MatrixSpace(F,2,2)                                    # optional - sage.libs.pari
+            sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])                               # optional - sage.libs.pari
+            sage: G                                                                     # optional - sage.libs.pari
             Matrix group over Finite Field of size 5 with 2 generators (
             [1 0]  [1 2]
             [0 1], [3 4]
             )
-            sage: G.gens()
+            sage: G.gens()                                                              # optional - sage.libs.pari
             (
             [1 0]  [1 2]
             [0 1], [3 4]
@@ -402,13 +402,13 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: H = GL(2, GF(3))
-            sage: h1, h2 = H([[1,0],[2,1]]), H([[1,1],[0,1]])
-            sage: G = H.subgroup([h1, h2])
-            sage: G.gen(0)
+            sage: H = GL(2, GF(3))                                                      # optional - sage.libs.pari
+            sage: h1, h2 = H([[1,0],[2,1]]), H([[1,1],[0,1]])                           # optional - sage.libs.pari
+            sage: G = H.subgroup([h1, h2])                                              # optional - sage.libs.pari
+            sage: G.gen(0)                                                              # optional - sage.libs.pari
             [1 0]
             [2 1]
-            sage: G.gen(0).matrix() == h1.matrix()
+            sage: G.gen(0).matrix() == h1.matrix()                                      # optional - sage.libs.pari
             True
         """
         return self.gens()[i]
@@ -423,10 +423,10 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: H = GL(2, GF(3))
-            sage: h1, h2 = H([[1,0],[2,1]]), H([[1,1],[0,1]])
-            sage: G = H.subgroup([h1, h2])
-            sage: G.ngens()
+            sage: H = GL(2, GF(3))                                                      # optional - sage.libs.pari
+            sage: h1, h2 = H([[1,0],[2,1]]), H([[1,1],[0,1]])                           # optional - sage.libs.pari
+            sage: G = H.subgroup([h1, h2])                                              # optional - sage.libs.pari
+            sage: G.ngens()                                                             # optional - sage.libs.pari
             2
         """
         return len(self._gens_matrix)

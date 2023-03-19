@@ -3,17 +3,17 @@ Symplectic Linear Groups
 
 EXAMPLES::
 
-    sage: G = Sp(4,GF(7));  G
+    sage: G = Sp(4, GF(7));  G                                                          # optional - sage.libs.pari
     Symplectic Group of degree 4 over Finite Field of size 7
-    sage: g = prod(G.gens());  g
+    sage: g = prod(G.gens());  g                                                        # optional - sage.libs.pari
     [3 0 3 0]
     [1 0 0 0]
     [0 1 0 1]
     [0 2 0 0]
-    sage: m = g.matrix()
-    sage: m * G.invariant_form() * m.transpose() == G.invariant_form()
+    sage: m = g.matrix()                                                                # optional - sage.libs.pari
+    sage: m * G.invariant_form() * m.transpose() == G.invariant_form()                  # optional - sage.libs.pari
     True
-    sage: G.order()
+    sage: G.order()                                                                     # optional - sage.libs.pari
     276595200
 
 AUTHORS:
@@ -108,14 +108,14 @@ def Sp(n, R, var='a', invariant_form=None):
         [ 0  0  0  2]
         [-1  0  0  0]
         [ 0 -2  0  0]
-        sage: pm = Permutation([2,1,4,3]).to_matrix()
-        sage: g = Sp4(pm); g in Sp4; g
+        sage: pm = Permutation([2,1,4,3]).to_matrix()                                               # optional - sage.combinat
+        sage: g = Sp4(pm); g in Sp4; g                                                              # optional - sage.combinat
         True
         [0 1 0 0]
         [1 0 0 0]
         [0 0 0 1]
         [0 0 1 0]
-        sage: Sp4m(pm)
+        sage: Sp4m(pm)                                                                              # optional - sage.combinat
         Traceback (most recent call last):
         ...
         TypeError: matrix must be symplectic with respect to the alternating form
@@ -124,7 +124,7 @@ def Sp(n, R, var='a', invariant_form=None):
         [-1  0  0  0]
         [ 0 -2  0  0]
 
-        sage: Sp(4,3, invariant_form=[[0,0,0,1],[0,0,1,0],[0,2,0,0], [2,0,0,0]])
+        sage: Sp(4,3, invariant_form=[[0,0,0,1],[0,0,1,0],[0,2,0,0], [2,0,0,0]])                    # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
@@ -137,7 +137,7 @@ def Sp(n, R, var='a', invariant_form=None):
         Symplectic Group of degree 2 over Finite Field of size 3
 
         sage: G = Sp(4,5)                                                                           # optional - sage.libs.pari
-        sage: TestSuite(G).run()
+        sage: TestSuite(G).run()                                                                    # optional - sage.libs.pari
     """
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     if degree % 2:
