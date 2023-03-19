@@ -1853,16 +1853,19 @@ class Stream_cauchy_compose(Stream_binary):
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if n < 0:
-            return sum(self._left[i] * self._neg_powers[-i][n]
-                       for i in range(fv, n // gv + 1))
+            return sum(f_coeff_i * self._neg_powers[-i][n]
+                       for i in range(fv, n // gv + 1)
+                       if (f_coeff_i := self._left[i]))
         # n > 0
         while len(self._pos_powers) <= n // gv:
             # TODO: possibly we always want a dense cache here?
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1], self._right, self._is_sparse))
-        ret = sum(self._left[i] * self._neg_powers[-i][n] for i in range(fv, 0))
+        ret = sum(f_coeff_i * self._neg_powers[-i][n] for i in range(fv, 0)
+                  if (f_coeff_i := self._left[i]))
         if n == 0:
             ret += self._left[0]
-        return ret + sum(self._left[i] * self._pos_powers[i][n] for i in range(1, n // gv+1))
+        return ret + sum(f_coeff_i * self._pos_powers[i][n] for i in range(1, n // gv + 1)
+                         if (f_coeff_i := self._left[i]))
 
 
 class Stream_plethysm(Stream_binary):
