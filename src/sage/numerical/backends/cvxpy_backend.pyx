@@ -932,4 +932,3 @@ cdef class CVXPYBackend:
             self.col_lower_bound[index] = value
         else:
             return self.col_lower_bound[index]
-
