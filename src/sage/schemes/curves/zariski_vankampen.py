@@ -49,6 +49,7 @@ from sage.combinat.permutation import Permutation
 from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.groups.braid import BraidGroup
+from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.misc.cachefunc import cached_function
@@ -582,6 +583,7 @@ def fieldI(F0):
         sage: fieldI(F0)
         Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? + 1.000000000000000?*I
 
+    Another example where ``F`` and ``F0`` coincide.
 
         sage: from sage.schemes.curves.zariski_vankampen import fieldI
         sage: p = QQ[x](x^4 + 1)
@@ -887,7 +889,8 @@ def orient_circuit(circuit, convex = False):
 
     OUTPUT:
 
-    The same circuit if it goes counterclockwise, and its reversed otherwise
+    The same circuit if it goes counterclockwise, and its reversed otherwise, given as
+    the ordered list of vertices with identic extremities
 
     EXAMPLES::
 
@@ -973,41 +976,10 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, orient_circuit
+        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, voronoi_cells
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
-        sage: V0 = [_ for _ in V.regions().values() if _.is_compact()]
-        sage: G = Graph()
-        sage: for reg in V0:
-        ....:     regv = reg.vertex_graph()
-        ....:     G = G.union(regv)
-        sage: E = Graph()
-        sage: for reg  in V.regions().values():
-        ....:     if reg.rays() or reg.lines():
-        ....:         E  = E.union(reg.vertex_graph())
-        sage: p = E.vertices(sort=True)[0]
-        sage: Vreg = [[e.vertices()+(None,) for e in _.facets()] for _ in V0]
-        sage: Vreg1 = {V0.index(_):(V0.index(_),tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
-        sage: DG = Graph(len(Vreg1))
-        sage: DG.relabel(Vreg1)
-        sage: Edges = []
-        sage: crd = {}
-        sage: for i, r in enumerate(Vreg):
-        ....:     for e in r:
-        ....:         a, b = e[ : 2]
-        ....:         e1 = (b, a, None)
-        ....:         if e not in Edges:
-        ....:             Edges += [e, e1]
-        ....:             crd[e]=(Vreg1[i],)
-        ....:             crd[e1]=(Vreg1[i],)
-        ....:         else:
-        ....:             crd[e] += (Vreg1[i],)
-        ....:             crd[e1] += (Vreg1[i],)
-        sage: EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-        sage: for e in EdgesDual:
-        ....:     DG.add_edge(crd[e] + (e,))
-        sage: EC0 = orient_circuit(E.eulerian_circuit())
-        sage: EC = [EC0[0][0]] + [e[1] for e in EC0]
+        sage: G, E, p, EC, DG = voronoi_cells(V)
         sage: geometric_basis(G, E, EC, p, DG)
         [[A vertex at (-2, -2),
           A vertex at (2, -2),
@@ -1300,7 +1272,6 @@ def braid2rels(L, d):
         sage: braid2rels(L, 4) # optional - sirocco
         [(4, 1, -2, -1), (2, -4, -2, 1)]
     """
-    from sage.groups.finitely_presented import wrap_FpGroup
     B = BraidGroup(d)
     F = FreeGroup(d)
     L1 = copy(L)
@@ -1340,7 +1311,7 @@ def braid2rels(L, d):
         else:
             b = prod(A1[:-1])
         b1 = len(b.Tietze()) / len(A1)
-        par = (A1[-1].exponent_sum() / d / (d - 1) * 2)%2
+        par = (A1[-1].exponent_sum() / d / (d - 1) * 2) % 2
         if res is None or b1 < res[3]:
             res = [tau, A1[:-1], par, b1]
     if res[2] == 1:
@@ -1384,6 +1355,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
       the complement in the affine plane will be computed
 
     - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+      ``simplified`` is set to ``False``, and
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
@@ -1401,13 +1373,19 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: fundamental_group(f) # optional - sirocco
-        Finitely presented group < ... >
+        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
         sage: fundamental_group(f, simplified=False) # optional - sirocco
-        Finitely presented group < ... >
+        Finitely presented group < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-1*x1^-1, x0*x1*x0^-1*x2^-1 >
+        sage: fundamental_group(f, projective=True) # optional - sirocco
+        Finitely presented group < x0 | x0^3 >
+        sage: bm = braid_monodromy(f); bm # optional - sirocco
+        [(s1*s0)^2]
+        sage: fundamental_group(f, braidmonodromy=bm) # optional - sirocco
+        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
 
     ::
 
@@ -1415,7 +1393,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
         sage: fundamental_group(f) # optional - sirocco
-        Finitely presented group < ... >
+        Finitely presented group < x0, x1, x2 | x0*x1*x2*x0^-1*x2^-1*x1^-1, x2*x0*x1*x2^-1*x1^-1*x0^-1 >
 
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
@@ -1432,7 +1410,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
 
-    We compute the fundamental group of the complement of a quartic with ``Puiseux = True``::
+    We compute the fundamental group of the complement of a quartic with ``True`` for ``Puiseux``::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
         sage: R.<x, y> = QQ[]
