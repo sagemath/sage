@@ -531,4 +531,3 @@ cdef pent_verify(factory, tuple mp_params):
             feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, nonuple)
         if i % 50000000 == 0 and i and verbose:
             print("{:5d}m equations checked... {} potential misses so far...".format(i // 1000000, len(worker_results)))
-

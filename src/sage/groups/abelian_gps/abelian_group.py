@@ -202,21 +202,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.functions import lcm
+from sage.arith.misc import divisors, gcd
+from sage.categories.groups import Groups
+from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
+from sage.groups.group import AbelianGroup as AbelianGroupBase
+from sage.matrix.constructor import matrix
+from sage.matrix.special import diagonal_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator, mrange
+from sage.modules.free_module_element import vector
+from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.infinity import infinity
-from sage.arith.all import divisors, gcd, lcm
-from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.mrange import mrange, cartesian_product_iterator
-from sage.groups.group import AbelianGroup as AbelianGroupBase
-from sage.categories.groups import Groups
-from sage.matrix.constructor import matrix
-from sage.matrix.special import diagonal_matrix
-from sage.modules.free_module_element import vector
 
 
 # TODO: this uses perm groups - the AbelianGroupElement instance method

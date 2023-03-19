@@ -81,7 +81,7 @@ AUTHORS:
 
 from sage.arith.misc import gcd, binomial
 
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
@@ -256,7 +256,7 @@ def ProjectiveSpace(n, R=None, names=None):
     if R is None:
         R = ZZ  # default is the integers
     if R in _Fields:
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
         if is_RationalField(R):
             return ProjectiveSpace_rational_field(n, R, names)
@@ -2253,7 +2253,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         """
         if F is None:
             return [P for P in self]
-        elif not is_FiniteField(F):
+        elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return [P for P in self.base_extend(F)]
 

@@ -231,7 +231,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.misc.cachefunc import cached_method
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
 

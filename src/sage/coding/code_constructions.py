@@ -40,20 +40,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.misc_c import prod
-from sage.arith.all import quadratic_residues, gcd
-
-from sage.structure.sequence import Sequence, Sequence_generic
-
-from sage.matrix.matrix_space import MatrixSpace
+from sage.arith.misc import gcd, quadratic_residues
 from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import random_matrix
-
+from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.sequence import Sequence, Sequence_generic
 
 from .linear_code import LinearCode
 
@@ -753,7 +750,7 @@ def ToricCode(P,F):
 
     - David Joyner (07-2006)
     """
-    from sage.combinat.all import Tuples
+    from sage.combinat.tuple import Tuples
     mset = [x for x in F if x != 0]
     d = len(P[0])
     pts = Tuples(mset, d).list()
