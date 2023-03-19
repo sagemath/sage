@@ -2249,7 +2249,7 @@ class DiGraph(GenericGraph):
                 if with_labels:
                     return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
                 else:
-                    return eccentricity(self, algorithm=algo)
+                    return eccentricity(self, algorithm=algo, vertex_list=v)
 
             if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
                 dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
@@ -2343,11 +2343,17 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: radius is not defined for the empty DiGraph
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.radius()
+            1
         """
         if not self.order():
             raise ValueError("radius is not defined for the empty DiGraph")
 
-        return min(self.eccentricity(v=None, by_weight=by_weight,
+        return min(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=check_weight,
                                      algorithm=algorithm))
@@ -2476,6 +2482,15 @@ class DiGraph(GenericGraph):
             3
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.diameter()
+            +Infinity
+            sage: H.add_edge('John', 42)
+            sage: H.diameter()
+            1
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty DiGraph")
@@ -2507,7 +2522,7 @@ class DiGraph(GenericGraph):
             from sage.graphs.distances_all_pairs import diameter
             return diameter(self, algorithm='standard')
 
-        return max(self.eccentricity(v=None, by_weight=by_weight,
+        return max(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=False,
                                      algorithm=algorithm))
