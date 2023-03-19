@@ -23,6 +23,7 @@ from copy import deepcopy
 
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.ring import Ring
@@ -37,43 +38,31 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.modules.free_module_element import vector
-from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 from sage.structure.sage_object import SageObject
-
-
-def QuadraticForm__constructor(R, n=None, entries=None):
-    """
-    Wrapper for the QuadraticForm class constructor.  This is meant
-    for internal use within the QuadraticForm class code only.  You
-    should instead directly call QuadraticForm().
-
-    EXAMPLES::
-
-        sage: from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor
-        sage: QuadraticForm__constructor(ZZ, 3)   # Makes a generic quadratic form over the integers
-        Quadratic form in 3 variables over Integer Ring with coefficients:
-        [ 0 0 0 ]
-        [ * 0 0 ]
-        [ * * 0 ]
-
-    """
-    return QuadraticForm(R, n, entries)
+from sage.misc.superseded import deprecation, deprecated_function_alias
 
 
 def is_QuadraticForm(Q):
     """
-    Determine if the object Q is an element of the QuadraticForm class.
+    Determine if the object ``Q`` is an element of the :class:`QuadraticForm` class.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
         sage: from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-        sage: is_QuadraticForm(Q)  ##random
+        sage: is_QuadraticForm(Q)
+        doctest:...: DeprecationWarning: the function is_QuadraticForm is deprecated;
+        use isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead...
         True
-        sage: is_QuadraticForm(2)  ##random
+        sage: is_QuadraticForm(2)
         False
     """
+    deprecation(35305,
+                "the function is_QuadraticForm is deprecated; use "
+                "isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead")
     return isinstance(Q, QuadraticForm)
 
 
@@ -321,11 +310,12 @@ class QuadraticForm(SageObject):
     # ---------------------------
 
     # Routines to compute the p-adic local normal form
-    from sage.quadratic_forms.quadratic_form__local_normal_form import \
-            find_entry_with_minimal_scale_at_prime, \
-            local_normal_form, \
-            jordan_blocks_by_scale_and_unimodular, \
-            jordan_blocks_in_unimodular_list_by_scale_power
+    lazy_import("sage.quadratic_forms.quadratic_form__local_normal_form", [
+            "find_entry_with_minimal_scale_at_prime",
+            "local_normal_form",
+            "jordan_blocks_by_scale_and_unimodular",
+            "jordan_blocks_in_unimodular_list_by_scale_power"
+        ])
 
     # Routines to perform elementary variable substitutions
     from sage.quadratic_forms.quadratic_form__variable_substitutions import \
@@ -418,8 +408,9 @@ class QuadraticForm(SageObject):
             theta_by_cholesky
 
     # Routines to compute the product of all local densities
-    from sage.quadratic_forms.quadratic_form__siegel_product import \
-            siegel_product
+    lazy_import("sage.quadratic_forms.quadratic_form__siegel_product", [
+            "siegel_product"
+        ])
 
     # Routines to compute p-neighbors
     from sage.quadratic_forms.quadratic_form__neighbors import \
@@ -437,11 +428,11 @@ class QuadraticForm(SageObject):
             minkowski_reduction, \
             minkowski_reduction_for_4vars__SP
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
-    from sage.quadratic_forms.quadratic_form__genus import \
-            global_genus_symbol, \
-            local_genus_symbol, \
-            CS_genus_symbol_list
-
+    lazy_import("sage.quadratic_forms.quadratic_form__genus", [
+            "global_genus_symbol",
+            "local_genus_symbol",
+            "CS_genus_symbol_list"
+        ])
 
     # Routines to compute local masses for ZZ.
     from sage.quadratic_forms.quadratic_form__mass import \
@@ -471,13 +462,14 @@ class QuadraticForm(SageObject):
 #            conway_p_mass_adjustment
 
     # Routines to check local representability of numbers
-    from sage.quadratic_forms.quadratic_form__local_representation_conditions import \
-            local_representation_conditions, \
-            is_locally_universal_at_prime, \
-            is_locally_universal_at_all_primes, \
-            is_locally_universal_at_all_places, \
-            is_locally_represented_number_at_place, \
-            is_locally_represented_number
+    lazy_import("sage.quadratic_forms.quadratic_form__local_representation_conditions", [
+            "local_representation_conditions",
+            "is_locally_universal_at_prime",
+            "is_locally_universal_at_all_primes",
+            "is_locally_universal_at_all_places",
+            "is_locally_represented_number_at_place",
+            "is_locally_represented_number"
+        ])
 
     # Routines to make a split local covering of the given quadratic form.
     from sage.quadratic_forms.quadratic_form__split_local_covering import \
@@ -487,15 +479,16 @@ class QuadraticForm(SageObject):
             split_local_cover
 
     # Routines to make automorphisms of the given quadratic form.
-    from sage.quadratic_forms.quadratic_form__automorphisms import \
-            basis_of_short_vectors, \
-            short_vector_list_up_to_length, \
-            short_primitive_vector_list_up_to_length, \
-            _compute_automorphisms, \
-            automorphism_group, \
-            automorphisms, \
-            number_of_automorphisms, \
-            set_number_of_automorphisms
+    lazy_import("sage.quadratic_forms.quadratic_form__automorphisms", [
+            "basis_of_short_vectors",
+            "short_vector_list_up_to_length",
+            "short_primitive_vector_list_up_to_length",
+            "_compute_automorphisms",
+            "automorphism_group",
+            "automorphisms",
+            "number_of_automorphisms",
+            "set_number_of_automorphisms"
+        ])
 
     # Routines to test the local and global equivalence/isometry of two quadratic forms.
     from sage.quadratic_forms.quadratic_form__equivalence_testing import \
@@ -505,9 +498,14 @@ class QuadraticForm(SageObject):
             is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
-    from sage.quadratic_forms.qfsolve import solve
+    lazy_import("sage.quadratic_forms.qfsolve", [
+            "solve"
+        ])
 
-
+    # Genus
+    lazy_import("sage.quadratic_forms.genera.genus", [
+            "genera"
+        ])
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -1558,8 +1556,7 @@ class QuadraticForm(SageObject):
         """
         return self.det() / ZZ(2**self.dim())
 
-
-    def base_change_to(self, R):
+    def change_ring(self, R):
         """
         Alters the quadratic form to have all coefficients
         defined over the new base_ring R.  Here R must be
@@ -1584,16 +1581,13 @@ class QuadraticForm(SageObject):
             [ 1 0 ]
             [ * 1 ]
 
-        ::
-
-            sage: Q1 = Q.base_change_to(IntegerModRing(5)); Q1
+            sage: Q1 = Q.change_ring(IntegerModRing(5)); Q1
             Quadratic form in 2 variables over Ring of integers modulo 5 with coefficients:
             [ 1 0 ]
             [ * 1 ]
 
             sage: Q1([35,11])
             1
-
         """
         # Check that a canonical coercion is possible
         if not is_Ring(R):
@@ -1602,6 +1596,8 @@ class QuadraticForm(SageObject):
             raise TypeError(f"there is no canonical coercion from {self.base_ring()} to R")
         # Return the coerced form
         return QuadraticForm(R, self.dim(), [R(x) for x in self.coefficients()])
+
+    base_change_to = deprecated_function_alias(35248, change_ring)
 
     def level(self):
         r"""
@@ -1765,8 +1761,6 @@ class QuadraticForm(SageObject):
         if self.base_ring().characteristic() == 2:
             raise TypeError("not defined for rings of characteristic 2")
         return (self(v+w) - self(v) - self(w))/2
-
-    genera = staticmethod(genera)
 
 
 def DiagonalQuadraticForm(R, diag):

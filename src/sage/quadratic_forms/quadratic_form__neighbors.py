@@ -274,7 +274,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         True
         sage: mass == sum(1/q.number_of_automorphisms() for q in g2)          # long time           # optional - sage.symbolic
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                                # optional - sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                                # optional - sage.libs.gap sage.symbolic
         True
 
     TESTS::
