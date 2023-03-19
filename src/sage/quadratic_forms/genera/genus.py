@@ -30,9 +30,6 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import RationalField, QQ
 from sage.rings.integer import Integer
-from sage.interfaces.gp import gp
-from sage.libs.pari import pari
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from copy import copy, deepcopy
 from sage.misc.verbose import verbose
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
@@ -917,6 +914,9 @@ def p_adic_symbol(A, p, val):
     """
     if p % 2 == 0:
         return two_adic_symbol(A, val)
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     m0 = min([ c.valuation(p) for c in A.list() ])
     q = p**m0
     n = A.nrows()
@@ -1148,6 +1148,8 @@ def two_adic_symbol(A, val):
         [[0, 2, 3, 1, 4], [1, 1, 1, 1, 1], [2, 1, 1, 1, 1]]
 
     """
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     n = A.nrows()
     # deal with the empty matrix
     if n == 0:
@@ -2991,9 +2993,13 @@ class GenusSymbol_global_ring():
             L = local_modification(L, sym.gram_matrix(), p)
         L = L.gram_matrix().change_ring(ZZ)
         if LLL:
+            from sage.libs.pari import pari
+
             sig = self.signature_pair_of_matrix()
             if sig[0] * sig[1] != 0:
                 from sage.env import SAGE_EXTCODE
+                from sage.interfaces.gp import gp
+
                 m = pari(L)
                 gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
                 m = gp.eval('qflllgram_indefgoon(%s)'%m)

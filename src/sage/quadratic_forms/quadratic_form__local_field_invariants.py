@@ -28,7 +28,6 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
 
 
 def rational_diagonal_form(self, return_matrix=False):
@@ -826,6 +825,8 @@ def compute_definiteness(self):
 
     """
     # Sanity Check
+    from sage.rings.real_mpfr import RR
+
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
         raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 
@@ -899,6 +900,8 @@ def compute_definiteness_string_by_determinants(self):
         'neg_def'
     """
     # Sanity Check
+    from sage.rings.real_mpfr import RR
+
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
         raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 

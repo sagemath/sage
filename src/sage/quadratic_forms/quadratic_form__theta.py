@@ -11,7 +11,6 @@ AUTHORS:
 """
 from copy import deepcopy
 
-from sage.rings.real_mpfr import RealField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
 
@@ -178,6 +177,7 @@ def theta_by_cholesky(self, q_prec):
 
     from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
     from sage.misc.functional import sqrt
+    from sage.rings.real_mpfr import RealField
 
     n = self.dim()
     theta = [0 for i in range(q_prec+1)]
