@@ -611,8 +611,9 @@ def multinomial_odd(list,p):
         sage: multinomial_odd([1,2,4], 107)
         105
     """
-    from sage.rings.all import GF, Integer
-    from sage.arith.all import binomial
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+    from sage.rings.integer import Integer
+    from sage.arith.misc import binomial
     n = sum(list)
     answer = 1
     F = GF(p)

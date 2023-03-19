@@ -337,7 +337,7 @@ class Set_base():
         if set_self is not self:
             from sage.misc.sage_unittest import TestSuite
             tester.info("\n  Running the test suite of Set(self)")
-            TestSuite(set_self).run(skip="_test_pickling",  # see Trac #32025
+            TestSuite(set_self).run(skip="_test_pickling",  # see Issue #32025
                                     verbose=tester._verbose,
                                     prefix=tester._prefix + "  ")
             tester.info(tester._prefix + " ", newline=False)
@@ -616,7 +616,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
 
         Finite fields better illustrate the difference between
-        ``__contains__`` for objects and their underlying sets.
+        ``__contains__`` for objects and their underlying sets::
 
             sage: X = Set(GF(7))
             sage: X

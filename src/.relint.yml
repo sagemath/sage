@@ -35,7 +35,7 @@
 
 # From various typo tickets
 
-# https://trac.sagemath.org/ticket/30585
+# https://github.com/sagemath/sage/issues/30585
 - name: 'typo "homogenous" detected'
   hint: |
     in mathematics it should be "homogeneous"
@@ -49,6 +49,6 @@
     Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import,
     Hint: or use 'sage --fiximports' to fix automatically in the source file.
   # Keep in sync with SAGE_ROOT/src/sage/misc/replace_dot_all.py
-  pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
+  pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings(|[.]finite_rings)|sets))[.]all\s+import'
   filePattern: '.*[.](py|pyx|pxi)$'
   error: false # Make this a warning instead of an error for now

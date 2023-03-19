@@ -86,7 +86,8 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose, get_verbose
-from sage.categories.all import Fields, IntegralDomains
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -103,6 +104,13 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 
 # used to deprecate only adjoint method
 from sage.misc.superseded import deprecated_function_alias
+
+# temporary hack to silence the warnings from #34806
+from sage.rings.number_field.order import Order as NumberFieldOrder
+def ideal_or_fractional(R, *args):
+    if isinstance(R, NumberFieldOrder):
+        R = R.number_field()
+    return R.ideal(*args)
 
 _Fields = Fields()
 
@@ -3670,7 +3678,7 @@ cdef class Matrix(Matrix1):
 
     def _right_kernel_matrix_over_number_field(self):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
@@ -3724,7 +3732,7 @@ cdef class Matrix(Matrix1):
 
     def _right_kernel_matrix_over_field(self, *args, **kwds):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
@@ -3868,6 +3876,38 @@ cdef class Matrix(Matrix1):
                 % (self.nrows(), self.ncols()), level=1, t=tm)
         return 'computed-smith-form', self.new_matrix(nrows=len(basis), ncols=self._ncols, entries=basis)
 
+    def _right_kernel_matrix_over_integer_mod_ring(self):
+        r"""
+        Return a pair that includes a matrix of basis vectors
+        for the right kernel of ``self``.
+
+        OUTPUT:
+
+        Returns a pair. First item is the string 'computed-pari-matkermod'
+        that identifies the nature of the basis vectors.
+
+        Second item is a matrix whose rows are a basis for the right kernel,
+        over the integer modular ring, as computed by :pari:`matkermod`.
+
+        EXAMPLES::
+
+            sage: A = matrix(Zmod(24480), [[1,2,3,4,5],[7,7,7,7,7]])
+            sage: result = A._right_kernel_matrix_over_integer_mod_ring()
+            sage: result[0]
+            'computed-pari-matkermod'
+            sage: P = result[1]; P
+            [    1 24478     1     0     0]
+            [    2 24477     0     1     0]
+            [    3 24476     0     0     1]
+            sage: A*P.transpose() == 0
+            True
+        """
+        R = self.base_ring()
+        pariM = self.change_ring(ZZ).__pari__()
+        basis = list(pariM.matkermod(R.characteristic()))
+        from sage.matrix.matrix_space import MatrixSpace
+        return 'computed-pari-matkermod', MatrixSpace(R, len(basis), ncols=self._ncols)(basis)
+
     def right_kernel_matrix(self, *args, **kwds):
         r"""
         Returns a matrix whose rows form a basis
@@ -3888,10 +3928,11 @@ cdef class Matrix(Matrix1):
             over the rationals and integers
           - 'pluq' - PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` - default: 'echelon' - a keyword that describes
+        - ``basis`` - default: 'default' - a keyword that describes
           the format of the basis returned.  Allowable values are:
 
-          - 'echelon': the basis matrix is returned in echelon form
+          - 'default': uses 'echelon' over fields; 'computed' otherwise.
+          - 'echelon': the basis matrix is returned in echelon form.
           - 'pivot' : each basis vector is computed from the reduced
             row-echelon form of ``self`` by placing a single one in a
             non-pivot column and zeros in the remaining non-pivot columns.
@@ -4372,10 +4413,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: 'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over Rational Field
-            sage: matrix(Integers(6), 2, 2).right_kernel_matrix(algorithm='generic')
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 6'.
             sage: matrix(QQ, 2, 2).right_kernel_matrix(algorithm='pluq')
             Traceback (most recent call last):
             ...
@@ -4430,13 +4467,15 @@ cdef class Matrix(Matrix1):
         # Determine the basis format of independent spanning set to return
         basis = kwds.pop('basis', None)
         if basis is None:
-            basis = 'echelon'
-        elif basis not in ['computed', 'echelon', 'pivot', 'LLL']:
+            basis = 'default'
+        elif basis not in ['default', 'computed', 'echelon', 'pivot', 'LLL']:
             raise ValueError("matrix kernel basis format '%s' not recognized" % basis )
         elif basis == 'pivot' and R not in _Fields:
             raise ValueError('pivot basis only available over a field, not over %s' % R)
         elif basis == 'LLL' and not is_IntegerRing(R):
             raise ValueError('LLL-reduced basis only available over the integers, not over %s' % R)
+        if basis == 'default':
+            basis = 'echelon' if R in _Fields else 'computed'
 
         # Determine proof keyword for integer matrices
         proof = kwds.pop('proof', None)
@@ -4484,6 +4523,9 @@ cdef class Matrix(Matrix1):
         if M is None and R.is_integral_domain():
             format, M = self._right_kernel_matrix_over_domain()
 
+        if M is None and isinstance(R, sage.rings.abc.IntegerModRing):
+            format, M = self._right_kernel_matrix_over_integer_mod_ring()
+
         if M is None:
             raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
 
@@ -4522,6 +4564,24 @@ cdef class Matrix(Matrix1):
                 return M.LLL()
             else:
                 return M
+
+    def left_kernel_matrix(self, *args, **kwds):
+        r"""
+        Returns a matrix whose rows form a basis for the left kernel
+        of ``self``.
+
+        This method is a thin wrapper around :meth:`right_kernel_matrix`.
+        For supported parameters and input/output formats, see there.
+
+        EXAMPLES::
+
+            sage: M = matrix([[1,2],[3,4],[5,6]])
+            sage: K = M.left_kernel_matrix(); K
+            [ 1 -2  1]
+            sage: K * M
+            [0 0]
+        """
+        return self.transpose().right_kernel_matrix(*args, **kwds)
 
     def right_kernel(self, *args, **kwds):
         r"""
@@ -5189,8 +5249,8 @@ cdef class Matrix(Matrix1):
 
     def image(self):
         """
-        Return the image of the homomorphism on rows defined by this
-        matrix.
+        Return the image of the homomorphism on rows defined by right
+        multiplication by this matrix: that is, the row-space.
 
         EXAMPLES::
 
@@ -5213,6 +5273,12 @@ cdef class Matrix(Matrix1):
 
             sage: image(B) == B.row_module()
             True
+            sage: image(B) == B.transpose().column_module()
+            True
+
+        .. SEEALSO::
+
+            :meth:`row_module`, :meth:`column_module`
         """
         return self.row_module()
 
@@ -6722,7 +6788,7 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)
             doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             []
 
         Check :trac:`30518`::
@@ -9936,7 +10002,7 @@ cdef class Matrix(Matrix1):
 
             sage: M.adjoint()
             ...: DeprecationWarning: adjoint is deprecated. Please use adjugate instead.
-            See http://trac.sagemath.org/10501 for details.
+            See https://github.com/sagemath/sage/issues/10501 for details.
             [ 41/10  -1/28]
             [-33/13    5/3]
             sage: M.adjoint_classical()
@@ -12747,7 +12813,7 @@ cdef class Matrix(Matrix1):
         if extend:
             # Try to use the algebraic reals but fall back to what is
             # probably QQbar if we find an entry in "L" that won't fit
-            # in AA. This was Trac ticket #18381.
+            # in AA. This was Github issue #18381.
             from sage.rings.qqbar import AA
             try:
                 C = L.change_ring(AA)
@@ -13327,7 +13393,7 @@ cdef class Matrix(Matrix1):
                 max_location = -1
                 if partial:
                     # abs() necessary to convert zero to the
-                    # correct type for comparisons (Trac #12208)
+                    # correct type for comparisons (Issue #12208)
                     max_entry = abs(zero)
                     for i in range(k,m):
                         entry = abs(M.get_unsafe(i,k))
@@ -15934,7 +16000,7 @@ cdef class Matrix(Matrix1):
         try:
             for i in xrange(1, len(pivs)):
                 y = a[i][pivs[i]]
-                I = R.ideal(y)
+                I = ideal_or_fractional(R, y)
                 s = a[0][pivs[i]]
                 t = I.small_residue(s)
                 v = R( (s-t) / y)
@@ -16820,7 +16886,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: 'subdivide' keyword must be True or False, not garbage
         """
-        from sage.arith.all import gcd
+        from sage.arith.misc import GCD as gcd
         import sage.rings.polynomial.polynomial_ring_constructor
         from sage.matrix.constructor import (block_diagonal_matrix,
                                              companion_matrix)
@@ -17671,9 +17737,9 @@ def _smith_diag(d, transformation=True):
     else:
         left = right = None
     for i in xrange(n):
-        I = R.ideal(dp[i,i])
+        I = ideal_or_fractional(R, dp[i,i])
 
-        if I == R.unit_ideal():
+        if I == ideal_or_fractional(R, 1):
             if dp[i,i] != 1:
                 if transformation:
                     left.add_multiple_of_row(i,i,R(R(1)/(dp[i,i])) - 1)
@@ -17682,12 +17748,12 @@ def _smith_diag(d, transformation=True):
 
         for j in xrange(i+1,n):
             if dp[j,j] not in I:
-                t = R.ideal([dp[i,i], dp[j,j]]).gens_reduced()
+                t = ideal_or_fractional(R, [dp[i,i], dp[j,j]]).gens_reduced()
                 if len(t) > 1:
                     raise ArithmeticError
                 t = t[0]
                 # find lambda, mu such that lambda*d[i,i] + mu*d[j,j] = t
-                lamb = R(dp[i,i]/t).inverse_mod( R.ideal(dp[j,j]/t))
+                lamb = R(dp[i,i]/t).inverse_mod( ideal_or_fractional(R, dp[j,j]/t))
                 mu = R((t - lamb*dp[i,i]) / dp[j,j])
 
                 newlmat = dp.new_matrix(dp.nrows(), dp.nrows(), 1)
@@ -17762,18 +17828,15 @@ def _generic_clear_column(m):
     # [e,f]
     # is invertible over R
 
-    if a[0,0] != 0:
-        I = R.ideal(a[0, 0]) # need to make sure we change this when a[0,0] changes
-    else:
-        I = R.zero_ideal()
+    I = ideal_or_fractional(R, a[0, 0]) # need to make sure we change this when a[0,0] changes
     for k in xrange(1, a.nrows()):
         if a[k,0] not in I:
             try:
-                v = R.ideal(a[0,0], a[k,0]).gens_reduced()
+                v = ideal_or_fractional(R, a[0,0], a[k,0]).gens_reduced()
             except Exception as msg:
                 raise ArithmeticError("%s\nCan't create ideal on %s and %s" % (msg, a[0,0], a[k,0]))
             if len(v) > 1:
-                raise ArithmeticError("Ideal %s not principal" % R.ideal(a[0,0], a[k,0]))
+                raise ArithmeticError("Ideal %s not principal" % ideal_or_fractional(R, a[0,0], a[k,0]))
             B = v[0]
 
             # now we find c,d, using the fact that c * (a_{0,0}/B) - d *
@@ -17782,7 +17845,7 @@ def _generic_clear_column(m):
             # need to handle carefully the case when a_{k,0}/B is a unit, i.e. a_{k,0} divides
             # a_{0,0}.
 
-            c = R(a[0,0] / B).inverse_mod(R.ideal(a[k,0] / B))
+            c = R(a[0,0] / B).inverse_mod(ideal_or_fractional(R, a[k,0] / B))
             d = R( (c*a[0,0] - B)/(a[k,0]) )
 
             # sanity check
@@ -17791,7 +17854,7 @@ def _generic_clear_column(m):
 
             # now we find e,f such that e*d + c*f = 1 in the same way
             if c != 0:
-                e = d.inverse_mod( R.ideal(c) )
+                e = d.inverse_mod( ideal_or_fractional(R, c) )
                 f = R((1 - d*e)/c)
             else:
                 e = R(-a[k,0]/B) # here d is a unit and this is just 1/d
@@ -17807,7 +17870,7 @@ def _generic_clear_column(m):
             if newlmat.det() != 1:
                 raise ArithmeticError
             a = newlmat*a
-            I = R.ideal(a[0,0])
+            I = ideal_or_fractional(R, a[0,0])
             left_mat = newlmat*left_mat
             if left_mat * m != a:
                 raise ArithmeticError

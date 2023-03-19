@@ -404,7 +404,7 @@ def is_RingHomomorphism(phi):
         doctest:warning
         ...
         DeprecationWarning: is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         True
         sage: sage.rings.morphism.is_RingHomomorphism(2/3)
         False
@@ -1654,7 +1654,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
         doctest:warning
         ...
         DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         sage: TestSuite(f).run()
 
     """
@@ -1668,7 +1668,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
             doctest:warning
             ...
             DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-            See http://trac.sagemath.org/23204 for details.
+            See https://github.com/sagemath/sage/issues/23204 for details.
             sage: isinstance(f, RingHomomorphism_coercion)
             True
 
@@ -3160,7 +3160,7 @@ def _tensor_product_ring(B, A):
         ...
         ValueError: term ordering must be global
     """
-    from .finite_rings.finite_field_base import is_FiniteField
+    from .finite_rings.finite_field_base import FiniteField
     from .number_field.number_field_base import is_NumberField
     from .polynomial.multi_polynomial_ring import is_MPolynomialRing
     from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
@@ -3178,7 +3178,7 @@ def _tensor_product_ring(B, A):
     def term_order(A):
         # univariate rings do not have a term order
         if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
-            or ((is_NumberField(A) or is_FiniteField(A))
+            or ((is_NumberField(A) or isinstance(A, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
         try:
@@ -3201,7 +3201,7 @@ def _tensor_product_ring(B, A):
         elif is_QuotientRing(A):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
-        elif ((is_NumberField(A) or is_FiniteField(A))
+        elif ((is_NumberField(A) or isinstance(A, FiniteField))
               and not A.is_prime_field()):
             to_R = A.polynomial_ring().hom(R_gens_A, R, check=False)
             return [to_R(A.polynomial())]

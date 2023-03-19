@@ -29,7 +29,8 @@ from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 from sage.structure.richcmp import (richcmp, richcmp_not_equal, op_EQ, op_NE)
 from sage.structure.sequence import Sequence
-from sage.rings.all import Integer, PolynomialRing
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 class baseWI():
     r"""
@@ -372,52 +373,71 @@ def _isomorphisms(E, F):
 class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
     r"""
     Class representing a Weierstrass isomorphism between two elliptic curves.
+
+    INPUT:
+
+    - ``E`` -- an ``EllipticCurve``, or ``None`` (see below).
+
+    - ``urst`` -- a 4-tuple `(u,r,s,t)`, a :class:`baseWI` object,
+                  or ``None`` (see below).
+
+    - ``F`` -- an ``EllipticCurve``, or ``None`` (see below).
+
+    Given two Elliptic Curves ``E`` and ``F`` (represented by Weierstrass
+    models as usual), and a transformation ``urst`` from ``E`` to ``F``,
+    construct an isomorphism from ``E`` to ``F``.
+    An exception is raised if ``urst(E) != F``.  At most one of ``E``,
+    ``F``, ``urst`` can be ``None``.  In this case, the missing input is
+    constructed from the others in such a way that ``urst(E) == F`` holds,
+    and an exception is raised if this is impossible (typically because
+    ``E`` and ``F`` are not isomorphic).
+
+    Users will not usually need to use this class directly, but instead use
+    methods such as
+    :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.isomorphism_to`
+    or
+    :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.isomorphisms`.
+
+    Explicitly, the isomorphism defined by `(u,r,s,t)` maps a point `(x,y)`
+    to the point
+
+    .. MATH::
+
+        ((x-r) / u^2, \; (y - s(x-r) - t) / u^3) .
+
+    If the domain `E` has Weierstrass coefficients `[a_1,a_2,a_3,a_4,a_6]`,
+    the codomain `F` is given by
+
+    .. MATH::
+
+        a_1' &= (a_1 + 2s) / u \\
+        a_2' &= (a_2 - a_1s + 3r - s^2) / u^2 \\
+        a_3' &= (a_3 + a_1r + 2t) / u^3 \\
+        a_4' &= (a_4 + 2a_2r - a_1(rs+t) - a_3s + 3r^2 - 2st) / u^4 \\
+        a_6' &= (a_6 - a_1rt + a_2r^2 - a_3t + a_4r + r^3 - t^2) / u^6 .
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+        sage: WeierstrassIsomorphism(EllipticCurve([0,1,2,3,4]), (-1,2,3,4))
+        Elliptic-curve morphism:
+        From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
+        To:   Elliptic Curve defined by y^2 - 6*x*y - 10*y = x^3 - 2*x^2 - 11*x - 2 over Rational Field
+        Via:  (u,r,s,t) = (-1, 2, 3, 4)
+        sage: E = EllipticCurve([0,1,2,3,4])
+        sage: F = EllipticCurve(E.cremona_label())
+        sage: WeierstrassIsomorphism(E, None, F)
+        Elliptic-curve morphism:
+        From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
+        To:   Elliptic Curve defined by y^2  = x^3 + x^2 + 3*x + 5 over Rational Field
+        Via:  (u,r,s,t) = (1, 0, 0, -1)
+        sage: w = WeierstrassIsomorphism(None, (1,0,0,-1), F)
+        sage: w._domain == E
+        True
     """
     def __init__(self, E=None, urst=None, F=None):
         r"""
-        Constructor for WeierstrassIsomorphism class,
-
-        INPUT:
-
-        - ``E`` -- an EllipticCurve, or None (see below).
-
-        - ``urst`` -- a 4-tuple `(u,r,s,t)`, or None (see below).
-
-        - ``F`` -- an EllipticCurve, or None (see below).
-
-        Given two Elliptic Curves ``E`` and ``F`` (represented by
-        Weierstrass models as usual), and a transformation ``urst``
-        from ``E`` to ``F``, construct an isomorphism from ``E`` to
-        ``F``.  An exception is raised if ``urst(E)!=F``.  At most one
-        of ``E``, ``F``, ``urst`` can be None.  If ``F==None`` then
-        ``F`` is constructed as ``urst(E)``.  If ``E==None`` then
-        ``E`` is constructed as ``urst^-1(F)``.  If ``urst==None``
-        then an isomorphism from ``E`` to ``F`` is constructed if
-        possible, and an exception is raised if they are not
-        isomorphic.  Otherwise ``urst`` can be a tuple of length 4 or
-        a object of type ``baseWI``.
-
-        Users will not usually need to use this class directly, but instead use
-        methods such as ``isomorphism`` of elliptic curves.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
-            sage: WeierstrassIsomorphism(EllipticCurve([0,1,2,3,4]),(-1,2,3,4))
-            Elliptic-curve morphism:
-            From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
-            To:   Elliptic Curve defined by y^2 - 6*x*y - 10*y = x^3 - 2*x^2 - 11*x - 2 over Rational Field
-            Via:  (u,r,s,t) = (-1, 2, 3, 4)
-            sage: E = EllipticCurve([0,1,2,3,4])
-            sage: F = EllipticCurve(E.cremona_label())
-            sage: WeierstrassIsomorphism(E,None,F)
-            Elliptic-curve morphism:
-            From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
-            To:   Elliptic Curve defined by y^2  = x^3 + x^2 + 3*x + 5 over Rational Field
-            Via:  (u,r,s,t) = (1, 0, 0, -1)
-            sage: w = WeierstrassIsomorphism(None,(1,0,0,-1),F)
-            sage: w._domain==E
-            True
+        Constructor for the ``WeierstrassIsomorphism`` class.
 
         TESTS:
 

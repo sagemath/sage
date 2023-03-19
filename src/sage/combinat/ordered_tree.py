@@ -224,7 +224,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         .. NOTE::
 
-            It is possible to bypass the automatic parent mechanism using:
+            It is possible to bypass the automatic parent mechanism using::
 
                 sage: t1 = OrderedTree.__new__(OrderedTree, Parent(), [])
                 sage: t1.__init__(Parent(), [])

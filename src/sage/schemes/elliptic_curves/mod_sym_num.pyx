@@ -164,18 +164,16 @@ AUTHORS:
 from cysignals.memory cimport sig_malloc, sig_free, sig_realloc
 from cysignals.signals cimport sig_check
 
+from sage.arith.misc import euler_phi, kronecker as kronecker_symbol
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.complex_mpfr cimport ComplexNumber
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.real_mpfr cimport RealNumber, RealField
-from sage.rings.rational cimport Rational
-from sage.rings.integer cimport Integer
-
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
-from sage.arith.all import kronecker_symbol
-from sage.arith.misc import euler_phi
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfr cimport RealNumber, RealField
+
 
 cdef extern from "<math.h>":
     double log(double)

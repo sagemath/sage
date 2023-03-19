@@ -27,20 +27,18 @@ AUTHORS:
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import is_FractionField
-
 from sage.rings.number_field.number_field import is_NumberField
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
+from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
 from sage.structure.element import is_Matrix
 
@@ -204,7 +202,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
         F = vector(temp_ring.gens()) * F * vector(temp_ring.gens())
 
-    if not is_MPolynomial(F):
+    if not isinstance(F, MPolynomial):
         raise TypeError("F (=%s) must be a three-variable polynomial or "
                         "a sequence of points or coefficients" % F)
 
@@ -233,7 +231,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)
-        if is_FiniteField(base_field):
+        if isinstance(base_field, FiniteField):
             return ProjectiveConic_finite_field(P2, F)
         if is_RationalField(base_field):
             return ProjectiveConic_rational_field(P2, F)

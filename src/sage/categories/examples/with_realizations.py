@@ -10,7 +10,9 @@ Examples of parents endowed with multiple realizations
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
-from sage.categories.all import Rings, Algebras, AlgebrasWithBasis
+from sage.categories.rings import Rings
+from sage.categories.algebras import Algebras
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.realizations import Category_realization_of_parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent

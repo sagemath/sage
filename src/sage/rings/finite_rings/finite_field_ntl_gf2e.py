@@ -52,6 +52,7 @@ def late_import():
     import sage.rings.polynomial.polynomial_element
     is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
 
+
 class FiniteField_ntl_gf2e(FiniteField):
     """
     Finite Field of characteristic 2 and order `2^n`.
@@ -138,8 +139,8 @@ class FiniteField_ntl_gf2e(FiniteField):
             raise ValueError("q must be a 2-power")
         FiniteField.__init__(self, GF2, names, normalize=True)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)

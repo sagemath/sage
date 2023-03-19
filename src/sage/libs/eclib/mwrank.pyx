@@ -593,9 +593,9 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 3
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 7)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 7)
             done
             P2 = [-2:3:1]         is generator number 2
@@ -603,10 +603,10 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 4
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             possible kernel vector = [1,1]
             This point may be in 2E(Q): [14:-52:1]
-            ...and it is! 
+            ...and it is!
             Replacing old generator #1 with new generator [1:-1:1]
             Reducing index bound from 4 to 2
             Points have successfully been 2-saturated (max q used = 7)
@@ -618,9 +618,9 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 3
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 13)
             done, index = 1.
             P4 = [-1:3:1]        = -1*P1 + -1*P2 + -1*P3 (mod torsion)

@@ -27,7 +27,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.interfaces.gap import gap
 from sage.rings.integer import Integer
-from sage.rings.all import CyclotomicField
+from sage.rings.number_field.number_field import CyclotomicField
 from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
@@ -36,7 +36,7 @@ from sage.libs.gap.element import GapElement as LibGapElement
 #
 # This module needs to be rewritten to implement the ring of class
 # functions in the usual parent/element pattern. But
-# http://trac.sagemath.org/14014 is already too long...
+# https://github.com/sagemath/sage/issues/14014 is already too long...
 
 
 def ClassFunction(group, values):

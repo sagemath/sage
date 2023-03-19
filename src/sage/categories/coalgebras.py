@@ -10,7 +10,7 @@ Coalgebras
 # *****************************************************************************
 
 from .category_types import Category_over_base_ring
-from sage.categories.all import Modules
+from sage.categories.modules import Modules
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory

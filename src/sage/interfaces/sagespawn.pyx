@@ -249,7 +249,7 @@ class SagePtyProcess(PtyProcess):
             # We need to avoid a race condition where the spawned
             # process has not started up completely yet: we need to
             # wait until the spawned process has changed its process
-            # group. See Trac #18741.
+            # group. See Issue #18741.
             pg = getpgid(self.pid)
             while pg == thispg:
                 counter += 1
