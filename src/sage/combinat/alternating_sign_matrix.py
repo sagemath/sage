@@ -46,7 +46,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
