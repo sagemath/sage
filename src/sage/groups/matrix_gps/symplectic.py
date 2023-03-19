@@ -80,13 +80,13 @@ def Sp(n, R, var='a', invariant_form=None):
 
     EXAMPLES::
 
-        sage: Sp(4, 5)
+        sage: Sp(4, 5)                                                                              # optional - sage.libs.pari
         Symplectic Group of degree 4 over Finite Field of size 5
 
         sage: Sp(4, IntegerModRing(15))
         Symplectic Group of degree 4 over Ring of integers modulo 15
 
-        sage: Sp(3, GF(7))
+        sage: Sp(3, GF(7))                                                                          # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: the degree must be even
@@ -133,10 +133,10 @@ def Sp(n, R, var='a', invariant_form=None):
 
         sage: TestSuite(Sp4).run()
         sage: TestSuite(Sp4m).run()
-        sage: groups.matrix.Sp(2, 3)
+        sage: groups.matrix.Sp(2, 3)                                                                # optional - sage.libs.pari
         Symplectic Group of degree 2 over Finite Field of size 3
 
-        sage: G = Sp(4,5)
+        sage: G = Sp(4,5)                                                                           # optional - sage.libs.pari
         sage: TestSuite(G).run()
     """
     degree, ring = normalize_args_vectorspace(n, R, var=var)
@@ -175,9 +175,9 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
 
     EXAMPLES::
 
-        sage: Sp43 = Sp(4,3); Sp43
+        sage: Sp43 = Sp(4,3); Sp43                                                                  # optional - sage.libs.pari
         Symplectic Group of degree 4 over Finite Field of size 3
-        sage: latex(Sp43)
+        sage: latex(Sp43)                                                                           # optional - sage.libs.pari
         \text{Sp}_{4}(\Bold{F}_{3})
 
         sage: Sp4m = Sp(4,QQ, invariant_form=(0, 0, 1, 0, 0, 0, 0, 2, -1, 0, 0, 0, 0, -2, 0, 0)); Sp4m
@@ -233,8 +233,8 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: G = Sp(4,GF(5))
-            sage: G._check_matrix(G.an_element().matrix())
+            sage: G = Sp(4,GF(5))                                                                   # optional - sage.libs.pari
+            sage: G._check_matrix(G.an_element().matrix())                                          # optional - sage.libs.pari
         """
         F = self.invariant_form()
         if x * F * x.transpose() != F:
