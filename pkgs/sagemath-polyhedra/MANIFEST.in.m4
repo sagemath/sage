@@ -101,6 +101,19 @@ prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/ribbon_graph.p*                    # depends on sage.groups.perm_gps
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
+graft sage/quadratic_forms
+
+graft sage/groups/affine_gps
+include sage/groups/matrix_gps/all.p*
+include sage/groups/matrix_gps/finitely_generated.p*
+include sage/groups/matrix_gps/group_element.p*
+include sage/groups/matrix_gps/linear.p*
+include sage/groups/matrix_gps/matrix_group.p*
+include sage/groups/matrix_gps/named_group.p*
+include sage/groups/matrix_gps/orthogonal.p*
+include sage/groups/matrix_gps/symplectic.p*
+include sage/groups/matrix_gps/unitary.p*
+
 # simplicial complexes
 #graft sage/topology            # depends on sage.combinat.subset
 
