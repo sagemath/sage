@@ -249,7 +249,22 @@ cdef class PolyDict:
                 if zero_test(self.__repn[k]):
                     del self.__repn[k]
 
-    def coerce_coefficients(self, Parent A):
+    def apply_map(self, f):
+        r"""
+        Apply the map ``f`` on the coefficients (inplace).
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: f = PolyDict({(1, 0): 1, (1, 1): -2})
+            sage: f.apply_map(lambda x: x^2)
+            sage: f
+            PolyDict with representation {(1, 0): 1, (1, 1): 4}
+        """
+        for k, v in self.__repn.items():
+            self.__repn[k] = f(v)
+
+    def coerce_coefficients(self, A):
         r"""
         Coerce the coefficients in the parent ``A``
 
@@ -260,11 +275,16 @@ cdef class PolyDict:
             sage: f
             PolyDict with representation {(2, 3): 0}
             sage: f.coerce_coefficients(QQ)
+            doctest:warning
+            ...
+            DeprecationWarning: coerce_cefficients is deprecated; use apply_map instead
+            See https://github.com/sagemath/sage/issues/34000 for details.
             sage: f
             PolyDict with representation {(2, 3): 0}
         """
-        for k, v in self.__repn.items():
-            self.__repn[k] = A.coerce(v)
+        from sage.misc.superseded import deprecation
+        deprecation(34000, 'coerce_cefficients is deprecated; use apply_map instead')
+        self.apply_map(A.coerce)
 
     def __hash__(self):
         """
