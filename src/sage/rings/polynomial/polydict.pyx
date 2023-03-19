@@ -2381,7 +2381,7 @@ cdef class ETuple:
                 memcpy(result._data + 2 * ind, self._data + 2 * (ind + 1), sizeof(int) * 2 * (self._nonzero - ind - 1))
         return result
 
-    cpdef bint divides(self, ETuple other):
+    cpdef bint divides(self, ETuple other) except *:
         """
         Return whether ``self`` divides ``other``, i.e., no entry of ``self``
         exceeds that of ``other``.
@@ -2438,7 +2438,7 @@ cdef class ETuple:
         """
         return self._nonzero == 0
 
-    cpdef bint is_multiple_of(self, int n):
+    cpdef bint is_multiple_of(self, int n) except *:
         r"""
         Test whether each entry is a multiple of ``n``.
 

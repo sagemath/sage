@@ -31,8 +31,8 @@ cdef class ETuple:
     cpdef ETuple divide_by_gcd(self, ETuple other)
     cpdef ETuple divide_by_var(self, size_t pos)
     cpdef bint divides(self, ETuple other)
-    cpdef bint is_constant(self)
-    cpdef bint is_multiple_of(self, int n)
+    cpdef bint is_constant(self) except *
+    cpdef bint is_multiple_of(self, int n) except *
     cpdef list nonzero_positions(self, bint sort=*)
     cpdef common_nonzero_positions(self, ETuple other, bint sort=*)
     cpdef list nonzero_values(self, bint sort=*)
