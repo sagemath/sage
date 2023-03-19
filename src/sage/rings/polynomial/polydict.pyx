@@ -196,9 +196,18 @@ cdef class PolyDict:
             if remove_zero:
                 self.remove_zeros()
 
-    cpdef remove_zeros(self):
+    cdef PolyDict _new(self, dict pdict):
+        cdef PolyDict ans = PolyDict.__new__(PolyDict)
+        ans.__repn = pdict
+        return ans
+
+    cpdef remove_zeros(self, zero_test=None):
         r"""
         Remove the entries with zero coefficients.
+
+        INPUT:
+
+        - ``zero_test`` -- optional function that performs test to zero of a coefficient
 
         EXAMPLES::
 
@@ -209,10 +218,35 @@ cdef class PolyDict:
             sage: f.remove_zeros()
             sage: f
             PolyDict with representation {}
+
+            sage: R.<t> = PowerSeriesRing(QQ)
+            sage: f = PolyDict({(1, 1): O(t), (1, 0): R.zero()})
+            sage: f.remove_zeros(lambda s: s.is_zero() and s.prec() is Infinity)
+            sage: f
+            PolyDict with representation {(1, 1): O(t^1)}
         """
-        if not all(self.__repn.values()):
+        if not self.__repn:
+            return
+        cdef bint has_zero_coefficient = False
+        if zero_test is None:
+            for coeff in self.__repn.values():
+                if not coeff:
+                    has_zero_coefficient = True
+                    break
+            if not has_zero_coefficient:
+                return
             for k in list(self.__repn):
                 if not self.__repn[k]:
+                    del self.__repn[k]
+        else:
+            for coeff in self.__repn.values():
+                if zero_test(coeff):
+                    has_zero_coefficient = True
+                    break
+            if not has_zero_coefficient:
+                return
+            for k in list(self.__repn):
+                if zero_test(self.__repn[k]):
                     del self.__repn[k]
 
     def coerce_coefficients(self, Parent A):
@@ -231,11 +265,6 @@ cdef class PolyDict:
         """
         for k, v in self.__repn.items():
             self.__repn[k] = A.coerce(v)
-
-    cdef PolyDict _new(self, dict pdict):
-        cdef PolyDict ans = PolyDict.__new__(PolyDict)
-        ans.__repn = pdict
-        return ans
 
     def __hash__(self):
         """
@@ -966,31 +995,46 @@ cdef class PolyDict:
         """
         Multiply two PolyDict's in the same number of variables.
 
+        The algorithm do not test whether a product of coefficients is zero
+        or whether a final coefficient is zero because there is no reliable way
+        to do so in general (eg power series ring or p-adic rings).
+
         EXAMPLES:
-        We multiply two polynomials in 2 variables::
+
+        Multiplication of polynomials in 2 variables with rational coefficients::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: g = PolyDict({(1,5):-3, (2,3):-2, (1,1):3})
-            sage: f*g
+            sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
+            sage: g = PolyDict({(1, 5): -3, (2, 3): -2, (1, 1): 3})
+            sage: f * g
             PolyDict with representation {(2, 3): 9, (2, 7): -9, (3, 2): 12, (3, 4): 6, (3, 5): -6, (3, 6): -12, (3, 8): -6, (4, 4): -8, (4, 6): -4}
+
+        Multiplication of polynomials in 2 variables with power series coefficients::
+
+            sage: R.<t> = PowerSeriesRing(QQ)
+            sage: f = PolyDict({(1, 0): 1 + O(t), (0, 1): 1 + O(t^2)})
+            sage: g = PolyDict({(1, 0): 1, (0, 1): -1})
+            sage: f * g
+            PolyDict with representation {(0, 2): -1 + O(t^2), (1, 1): O(t^1), (2, 0): 1 + O(t)}
+            sage: f = PolyDict({(1, 0): O(t), (0, 1): O(t)})
+            sage: g = PolyDict({(1, 0): 1, (0, 1): O(t)})
+            sage: f * g
+            PolyDict with representation {(0, 2): O(t^2), (1, 1): O(t^1), (2, 0): O(t^1)}
         """
         cdef PyObject *cc
-        cdef dict newpoly = {}
-        if not self.__repn:   # product is zero anyways
-            return self
-        elif not right.__repn:
-            return right
+        cdef dict newpoly
+        if not self.__repn or not right.__repn:
+            return self._new({})
+        newpoly = {}
         for e0, c0 in self.__repn.items():
             for e1, c1 in right.__repn.items():
                 e = (<ETuple> e0).eadd(<ETuple> e1)
                 c = c0 * c1
-                if c:
-                    cc = PyDict_GetItem(newpoly, e)
-                    if cc == <PyObject*>0:
-                        PyDict_SetItem(newpoly, e, c)
-                    else:
-                        PyDict_SetItem(newpoly, e, <object>cc+c)
+                cc = PyDict_GetItem(newpoly, e)
+                if cc == <PyObject*> 0:
+                    PyDict_SetItem(newpoly, e, c)
+                else:
+                    PyDict_SetItem(newpoly, e, <object> cc + c)
         return self._new(newpoly)
 
     def scalar_rmult(self, s):
