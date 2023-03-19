@@ -9,7 +9,6 @@ Split Local Covering
 from copy import deepcopy
 
 from sage.quadratic_forms.extras import extend_to_primitive
-from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor, is_QuadraticForm
 
 import sage.rings.abc
 from sage.rings.real_double import RDF
@@ -392,9 +391,11 @@ def split_local_cover(self):
         [ * * 7 ]
 
     """
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+
     # 0. If a split local cover already exists, then return it.
     if hasattr(self, "__split_local_cover"):
-        if is_QuadraticForm(self.__split_local_cover):  # Here the computation has been done.
+        if isinstance(self.__split_local_cover, QuadraticForm):  # Here the computation has been done.
             return self.__split_local_cover
         elif self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
@@ -412,7 +413,7 @@ def split_local_cover(self):
 
         # 2. Check if any of the primitive ones produce a split local cover
         for v in current_vectors:
-            Q = QuadraticForm__constructor(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
+            Q = QuadraticForm(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
             if Q.local_representation_conditions() == self.local_representation_conditions():
                 self.__split_local_cover = Q
                 return Q
