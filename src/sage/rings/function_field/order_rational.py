@@ -1,5 +1,5 @@
 r"""
-Orders of rational function fields
+Orders of function fields: rational
 """
 
 #*****************************************************************************

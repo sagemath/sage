@@ -1,7 +1,6 @@
 # sage.doctest: optional - sage.rings.function_field
-
 r"""
-Orders of function fields - polymod implementation
+Orders of function fields: extension
 """
 
 #*****************************************************************************

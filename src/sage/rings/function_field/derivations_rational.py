@@ -1,3 +1,7 @@
+r"""
+Derivations of function fields: rational
+"""
+
 # ****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2011-2017 Julian Rüth <julian.rueth@gmail.com>

@@ -1,4 +1,7 @@
 # sage.doctest: optional - sage.rings.function_field
+r"""
+Elements of function fields: extension
+"""
 
 #*****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
