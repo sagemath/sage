@@ -1,7 +1,7 @@
 # sage.doctest:           optional - sage.modules           (because __init__ constructs a vector space)
 # some tests are marked # optional - sage.rings.finite_rings         (because they use finite fields)
 r"""
-Orders of function fields given by a basis over the maximal order of the base field
+Orders of function fields: basis
 """
 
 #*****************************************************************************
