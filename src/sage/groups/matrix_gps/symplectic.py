@@ -161,11 +161,16 @@ def Sp(n, R, var='a', invariant_form=None):
 
     try:
         from .symplectic_gap import SymplecticMatrixGroup_gap
+    except ImportError:
+        pass
+    else:
+        try:
+            cmd = 'Sp({0}, {1})'.format(degree, ring._gap_init_())
+            return SymplecticMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
+        except ValueError:
+            pass
 
-        cmd = 'Sp({0}, {1})'.format(degree, ring._gap_init_())
-        return SymplecticMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
-    except ValueError:
-        return SymplecticMatrixGroup_generic(degree, ring, True, name, ltx, invariant_form=invariant_form)
+    return SymplecticMatrixGroup_generic(degree, ring, True, name, ltx, invariant_form=invariant_form)
 
 
 

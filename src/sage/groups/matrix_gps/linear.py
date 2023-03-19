@@ -164,13 +164,18 @@ def GL(n, R, var='a'):
     ltx = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
         from .linear_gap import LinearMatrixGroup_gap
-
-        cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
-                                     category=cat)
-    except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, False, name, ltx,
+    except ImportError:
+        pass
+    else:
+        try:
+            cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
+            return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
                                          category=cat)
+        except ValueError:
+            pass
+
+    return LinearMatrixGroup_generic(degree, ring, False, name, ltx,
+                                     category=cat)
 
 
 
@@ -251,13 +256,18 @@ def SL(n, R, var='a'):
     ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
     try:
         from .linear_gap import LinearMatrixGroup_gap
-
-        cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
-                                     category=cat)
-    except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
+    except ImportError:
+        pass
+    else:
+        try:
+            cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
+            return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
                                          category=cat)
+        except ValueError:
+            pass
+
+    return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
+                                     category=cat)
 
 
 
