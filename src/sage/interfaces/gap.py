@@ -1512,6 +1512,8 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     """
     # Create new workspace with filename WORKSPACE
     g = Gap(use_workspace_cache=False, max_workspace_size=None)
+    g.eval('ColorPrompt(false)')
+    g.eval('SetUserPreference("UseColorPrompt", false)')
     g.eval('SetUserPreference("HistoryMaxLines", 30)')
     from sage.tests.gap_packages import all_installed_packages
     for pkg in all_installed_packages(gap=g):
@@ -1753,7 +1755,7 @@ def intmod_gap_to_sage(x):
         sage: b.parent()
         Ring of integers modulo 65537
     """
-    from sage.rings.finite_rings.all import FiniteField
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.rings.finite_rings.integer_mod import Mod
     from sage.rings.integer import Integer
     s = str(x)

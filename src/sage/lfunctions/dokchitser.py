@@ -33,7 +33,7 @@ import re
 import string
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer import Integer
 from sage.misc.sage_eval import sage_eval
 from sage.misc.verbose import verbose
