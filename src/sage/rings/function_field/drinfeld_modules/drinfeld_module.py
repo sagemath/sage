@@ -1574,6 +1574,45 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                    for k, d in zip(parameter[0], parameter[1][:-1]))
         return num / (self._gen[-1]**parameter[1][-1])
 
+    def jk_invariants(self):
+        r"""
+        Return a dictionary whose keys are all the integers
+        `1 \leqslant k \leqslant r-1` and the values are the
+        `j_k`-invariants
+
+        Recall that the `j_k`-invariants of self are defined by:
+
+        .. MATH::
+
+            j_k := \frac{g_k^{(q^r - 1)/(\mathrm{gcd}(k, r) - 1)}}{g_r^{(q^k - 1)/(\mathrm{gcd}(k, r) - 1)}}
+
+        where `g_i` is the `i`-th coefficient of the generator of self.
+
+        EXAMPLES:
+
+            sage: A = GF(3)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1, T+1, T^3, T^6])
+            sage: jk_inv = phi.jk_invariants(); jk_inv
+            {1: 1/T^6, 2: (T^10 + T^9 + T + 1)/T^6, 3: T^42}
+            sage: jk_inv[2]
+            (T^10 + T^9 + T + 1)/T^6
+
+        ::
+
+            sage: F = GF(7**2)
+            sage: A = F['T']
+            sage: E.<z> = F.extension(4)
+            sage: phi = DrinfeldModule(A, [z^2, 1, z+1, z^2, z, z+1])
+            sage: phi.jk_invariants()
+            {1: 5*z^7 + 2*z^6 + 5*z^5 + 2*z^4 + 5*z^3 + z^2 + z + 2,
+             2: 3*z^7 + 4*z^6 + 5*z^5 + 6*z^4 + 4*z,
+             3: 5*z^7 + 6*z^6 + 6*z^5 + 4*z^3 + z^2 + 2*z + 1,
+             4: 3*z^6 + 2*z^5 + 4*z^4 + 2*z^3 + 4*z^2 + 6*z + 2}
+        """
+        r = self._gen.degree()  # rank of self
+        return {k: self.j_invariant(k) for k in range(1, r)}
+
     def morphism(self):
         r"""
         Return the morphism object that defines the Drinfeld module.
