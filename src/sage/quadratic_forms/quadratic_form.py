@@ -40,41 +40,29 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 from sage.structure.sage_object import SageObject
-from sage.misc.superseded import deprecated_function_alias
-
-
-def QuadraticForm__constructor(R, n=None, entries=None):
-    """
-    Wrapper for the QuadraticForm class constructor.  This is meant
-    for internal use within the QuadraticForm class code only.  You
-    should instead directly call QuadraticForm().
-
-    EXAMPLES::
-
-        sage: from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor
-        sage: QuadraticForm__constructor(ZZ, 3)   # Makes a generic quadratic form over the integers
-        Quadratic form in 3 variables over Integer Ring with coefficients:
-        [ 0 0 0 ]
-        [ * 0 0 ]
-        [ * * 0 ]
-
-    """
-    return QuadraticForm(R, n, entries)
+from sage.misc.superseded import deprecation, deprecated_function_alias
 
 
 def is_QuadraticForm(Q):
     """
-    Determine if the object Q is an element of the QuadraticForm class.
+    Determine if the object ``Q`` is an element of the :class:`QuadraticForm` class.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
         sage: from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-        sage: is_QuadraticForm(Q)  ##random
+        sage: is_QuadraticForm(Q)
+        doctest:...: DeprecationWarning: the function is_QuadraticForm is deprecated;
+        use isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead...
         True
-        sage: is_QuadraticForm(2)  ##random
+        sage: is_QuadraticForm(2)
         False
     """
+    deprecation(35305,
+                "the function is_QuadraticForm is deprecated; use "
+                "isinstance(x, sage.quadratic_forms.quadratic_form.QuadraticForm) instead")
     return isinstance(Q, QuadraticForm)
 
 

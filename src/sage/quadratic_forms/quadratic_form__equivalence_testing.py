@@ -12,7 +12,6 @@ from sage.arith.misc import (hilbert_symbol,
                              legendre_symbol,
                              prime_divisors,
                              valuation)
-from sage.quadratic_forms.quadratic_form import is_QuadraticForm
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
@@ -95,8 +94,10 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         sage: P.is_globally_equivalent_to(Q)
         False
     """
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+
     # Check that other is a QuadraticForm
-    if not is_QuadraticForm(other):
+    if not isinstance(other, QuadraticForm):
         raise TypeError("you must compare two quadratic forms, but the argument is not a quadratic form")
 
     # only for definite forms
