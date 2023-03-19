@@ -1301,8 +1301,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi = DrinfeldModule(A, [T, 1, 0, 1, 0, T, 0, T^2, 1, 1])
             sage: phi.is_isomorphic(psi)
             False
+
+        TESTS::
+
+            sage: F.<a> = GF(5^2)
+            sage: A = F['T']
+            sage: phi = DrinfeldModule(A, [a, 1, 1])
+            sage: psi = DrinfeldModule(A, [Frac(A).gen(), 1, 1])
+            sage: phi.is_isomorphic(psi)
+            False
         """
         # Trivial checks:
+        if self.characteristic() != psi.characteristic():
+            return False
         if self._gen == psi._gen:
             return True
         if self._gen.degree() != psi._gen.degree():
