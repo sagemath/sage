@@ -1696,6 +1696,28 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         Return a presentation of the fundamental group of the complement
         of ``self``.
 
+        INPUT:
+
+        - ``puiseux`` -- (default: ``False``) boolean to decide if the
+          presentation is constructed in the classical way or using Puiseux
+          shortcut.
+
+        - ``braidmonodromy`` -- (default: ``False``) If the value is ``False``
+          it apply first the ``braid_monodromy`` method. If it has been already
+          computed it can be passed as a parameter.
+
+        OUTPUT:
+
+        A presentation with generators `x_1, \dots, x_d` and relations. If ``puiseux``
+        is ``False`` the relations are `(x_j\cdot \tau)\cdot x_j^{-1}` for `1\leq j<d`
+        and `tau` a braid in the braid monodromy; finally the presentation
+        is simplified. If ``puiseux`` is ``True``, each
+        `tau` is decomposed as `\alpha^{-1}\cdot\beta\cdot\alpha`, where `\beta` is
+        a positive braid; the relations are `((x_j\cdot \beta)\cdot x_j^{-1})\cdot \alpha`
+        where `j` is an integer of the ``Tietze`` word of `\beta`. This presentation
+        is not simplified by default since it represents the homotopy type of
+        the complement of the curve.
+
         .. NOTE::
 
             The curve must be defined over the rationals or a number field
@@ -1707,6 +1729,15 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: C = A.curve(y^2 - x^3 - x^2)
             sage: C.fundamental_group() # optional - sirocco
             Finitely presented group < x0 |  >
+            sage: bm = C.braid_monodromy() # optional - sirocco
+            sage: C.fundamental_group(braidmonodromy=bm) # optional - sirocco
+            Finitely presented group < x0 |  >
+            sage: g = C.fundamental_group(puiseux=True); g # optional - sirocco
+            Finitely presented group < x0, x1 | x1*x0^-1, x1*x0*x1^-1*x0^-1 >
+            sage: g.simplified() # optional - sirocco
+            Finitely presented group < x0 |  >
+            sage: g == C.fundamental_group(puiseux=True, braidmonodromy=bm) # optional - sirocco
+            True
 
         In the case of number fields, they need to have an embedding
         to the algebraic field::
