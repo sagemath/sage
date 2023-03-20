@@ -45,6 +45,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.misc.cachefunc import cached_function
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+
 
 @cached_function
 def hilbert_class_polynomial(D, algorithm=None):
@@ -925,9 +927,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         raise DeprecationWarning("'method' is deprecated, use 'algorithm instead'")
 
     # First we check that j is an algebraic number:
-    from sage.rings.number_field.number_field_element import NumberFieldElement
-    from sage.rings.number_field.number_field import NumberField
-    if not isinstance(j, NumberFieldElement) and j not in QQ:
+    if not isinstance(j, NumberFieldElement_base) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
     # for j in ZZ we have a lookup-table:
@@ -989,6 +989,8 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     K = j.parent()
     if h < K.absolute_degree():
+        from sage.rings.number_field.number_field import NumberField
+
         K = NumberField(jpol, 'j')
         j = K.gen()
 

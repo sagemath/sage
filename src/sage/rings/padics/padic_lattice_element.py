@@ -1010,7 +1010,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: b.unit_part()
             1 + 16*17 + O(17^3)
 
-        If the element is indistinguishable from zero, an error is raised.
+        If the element is indistinguishable from zero, an error is raised::
 
             sage: c = R(0, 5); c
             O(17^5)

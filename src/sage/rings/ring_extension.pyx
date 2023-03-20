@@ -429,6 +429,7 @@ class RingExtensionFactory(UniqueFactory):
             else:
                 use_generic_constructor = False
                 is_backend_exposed = False
+            ring = (<RingExtension_generic>ring)._backend
 
         # We normalize other attributes
         if gens is not None:

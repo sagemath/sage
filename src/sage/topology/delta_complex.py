@@ -59,7 +59,7 @@ from sage.matrix.constructor import matrix
 from .simplicial_complex import Simplex, lattice_paths, SimplicialComplex
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.cachefunc import cached_method
 
 

@@ -21,7 +21,9 @@ import copy
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import GCD, valuation, is_prime
+from sage.arith.misc import GCD
+from sage.arith.misc import valuation
+from sage.arith.misc import is_prime
 
 
 def find_entry_with_minimal_scale_at_prime(self, p):

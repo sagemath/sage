@@ -31,7 +31,7 @@ from sage.arith.functions import lcm
 from sage.arith.misc import binomial, GCD as gcd
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 from sage.misc.cachefunc import cached_method
-from sage.rings.finite_rings.element_base import is_FiniteFieldElement
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -39,6 +39,7 @@ from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+from sage.structure.element import Element
 
 from . import ell_point
 from .constructor import EllipticCurve
@@ -2260,7 +2261,7 @@ def is_j_supersingular(j, proof=True):
         sage: [p for p in prime_range(100) if is_j_supersingular(GF(p)(123456))]
         [2, 3, 59, 89]
     """
-    if not is_FiniteFieldElement(j):
+    if not (isinstance(j, Element) and isinstance(j.parent(), FiniteField)):
         raise ValueError("%s must be an element of a finite field" % j)
 
     F = j.parent()

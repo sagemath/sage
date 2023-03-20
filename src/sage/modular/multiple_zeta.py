@@ -1083,8 +1083,14 @@ class Multizetas(CombinatorialFreeModule):
             return self.parent().iterated(self)
 
         def single_valued(self):
-            """
+            r"""
             Return the single-valued version of ``self``.
+
+            This is the projection map onto the sub-algebra of
+            single-valued motivic multiple zeta values, as defined by
+            F. Brown in [Bro2013]_.
+
+            This morphism of algebras sends in particular `\zeta(2)` to `0`.
 
             EXAMPLES::
 
@@ -1108,13 +1114,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: Z(5,3).single_valued() == 14*Z(3)*Z(5)
                 True
             """
-            phi_im = self.phi()
-            zin = phi_im.parent()
-            phi_no_f2 = phi_im.without_f2()
-            sv = zin.sum_of_terms(((0, w), cf)
-                                  for (a, b), cf in phi_no_f2.coproduct()
-                                  for w in shuffle(a[1], b[1].reversal(), False))
-            return rho_inverse(sv)
+            return rho_inverse(self.phi().single_valued())
 
         def simplify(self):
             """

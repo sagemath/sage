@@ -33,7 +33,7 @@ from .hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
 from .hom_finite_field cimport FiniteFieldHomomorphism_generic
 from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
-from sage.rings.finite_rings.finite_field_base import FiniteField, is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 
@@ -71,7 +71,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
             TypeError: The domain is not a finite prime field
         """
         domain = parent.domain()
-        if not is_FiniteField(domain) or not domain.is_prime_field():
+        if not isinstance(domain, FiniteField) or not domain.is_prime_field():
             raise TypeError("The domain is not a finite prime field")
         if section_class is None:
             section_class = SectionFiniteFieldHomomorphism_prime
@@ -100,7 +100,7 @@ cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
     fields (i.e. identity map :-).
     """
     def __init__(self, domain, power=1):
-        if not is_FiniteField(domain) or not domain.is_prime_field():
+        if not isinstance(domain, FiniteField) or not domain.is_prime_field():
             raise TypeError("The domain is not a finite prime field")
         FrobeniusEndomorphism_finite_field.__init__(self, Hom(domain, domain))
         self._order = 1
