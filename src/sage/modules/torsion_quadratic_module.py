@@ -610,11 +610,11 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         A systematic test of lattices of small ranks and determinants::
 
-            sage: from sage.quadratic_forms.genera.genus import genera
-            sage: signatures = [(1,0),(1,1),(1,2),(3,0),(0,4)]
-            sage: dets = range(1,33)
-            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])    # long time
-            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)  # long time
+            sage: from sage.quadratic_forms.genera.genus import genera                                          # optional - sage.libs.pari
+            sage: signatures = [(1,0), (1,1), (1,2), (3,0), (0,4)]                                              # optional - sage.libs.pari
+            sage: dets = range(1, 33)                                                                           # optional - sage.libs.pari
+            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])  # long time   # optional - sage.libs.pari
+            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)       # long time   # optional - sage.libs.pari
             True
             """
         from sage.quadratic_forms.genera.genus import (Genus_Symbol_p_adic_ring,

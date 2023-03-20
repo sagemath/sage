@@ -195,17 +195,17 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         sage: Q3 = QuadraticForm(ZZ, 3, [1, 0, 0, 1, 0, 11])
         sage: [Q1.level(), Q2.level(), Q3.level()]
         [44, 44, 44]
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2,2)
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 2)                    # optional - sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2,11)
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q2, 11)                   # optional - sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3,2)
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                    # optional - sage.libs.pari
         False
-        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3,11)
+        sage: Q1.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)                   # optional - sage.libs.pari
         True
-        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3,2)                     # optional - sage.libs.pari
+        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 2)                    # optional - sage.libs.pari
         True
-        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3,11)                    # optional - sage.libs.pari
+        sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)                   # optional - sage.libs.pari
         False
 
     """
