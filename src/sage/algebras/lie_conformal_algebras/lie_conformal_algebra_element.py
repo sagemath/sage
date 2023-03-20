@@ -121,23 +121,23 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             if self.is_zero() or right.is_zero():
                 return {}
             s_coeff = p._s_coeff
-            a,k = self.index()
-            coefa = self.monomial_coefficients()[(a,k)]
-            b,m = right.index()
-            coefb = right.monomial_coefficients()[(b,m)]
+            a, k = self.index()
+            coefa = self.monomial_coefficients()[(a, k)]
+            b, m = right.index()
+            coefb = right.monomial_coefficients()[(b, m)]
             try:
-                mbr = dict(s_coeff[(a,b)])
+                mbr = dict(s_coeff[(a, b)])
             except KeyError:
                 return {}
             pole = max(mbr.keys())
-            ret =  {l: coefa*coefb*(-1)**k/factorial(k)*sum(factorial(l)\
-                    /factorial(m+k+j-l)/factorial(l-k-j)/factorial(j)*\
-                    mbr[j].T(m+k+j-l) for j in mbr if j >= l-m-k and\
+            ret =  {l: coefa*coefb*(-1)**k/factorial(k)*sum(factorial(l)
+                    /factorial(m+k+j-l)/factorial(l-k-j)/factorial(j)*
+                    mbr[j].T(m+k+j-l) for j in mbr if j >= l-m-k and
                     j <= l-k) for l in range(m+k+pole+1)}
             return {k: v for k, v in ret.items() if v}
 
-        diclist = [i._bracket_(j) for i in self.terms() for
-                   j in right.terms()]
+        diclist = [i._bracket_(j) for i in self.terms()
+                   for j in right.terms()]
         ret = {}
         pz = p.zero()
         for d in diclist:

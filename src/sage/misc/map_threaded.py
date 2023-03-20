@@ -2,6 +2,7 @@
 Threaded map function
 """
 
+
 def map_threaded(function, sequence):
     """
     Apply the function to the elements in the sequence by threading
@@ -31,5 +32,5 @@ def map_threaded(function, sequence):
     """
     if hasattr(sequence, 'apply_map'):
         return sequence.apply_map(function)
-    return [map_threaded(function, x) if isinstance(x, (list, tuple)) \
-             else function(x) for x in sequence]
+    return [map_threaded(function, x) if isinstance(x, (list, tuple))
+            else function(x) for x in sequence]

@@ -87,29 +87,31 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         from sage.rings.integer_ring import ZZ
         try:
-            assert (ngens in ZZ and ngens > 0 and ngens % 2 == 0)
+            assert (ngens in ZZ and ngens > 0 and not ngens % 2)
         except AssertionError:
             raise ValueError("ngens should be an even positive integer, " +
                              "got {}".format(ngens))
         latex_names = None
+        half = ngens // 2
         if (names is None) and (index_set is None):
             from sage.misc.defaults import variable_names as varnames
             from sage.misc.defaults import latex_variable_names as laxnames
-            names = varnames(ngens/2,'beta') + varnames(ngens/2,'gamma')
-            latex_names =  tuple(laxnames(ngens/2,r'\beta') +\
-                                          laxnames(ngens/2,r'\gamma')) + ('K',)
+            names = varnames(half, 'beta') + varnames(half, 'gamma')
+            latex_names = tuple(laxnames(half, r'\beta') +
+                                laxnames(half, r'\gamma')) + ('K',)
 
-        names,index_set = standardize_names_index_set(names=names,
+        names, index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        A = identity_matrix(R, ngens // 2)
+        A = identity_matrix(R, half)
         from sage.matrix.special import block_matrix
-        gram_matrix = block_matrix([[R.zero(),A],[-A,R.zero()]])
-        ghostsdict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
-        weights = (1,)*(ngens//2) + (0,)*(ngens//2)
+        gram_matrix = block_matrix([[R.zero(), A], [-A, R.zero()]])
+        ghostsdict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
+                                                         index_set.rank(j)]}}
+                      for i in index_set for j in index_set}
+        weights = (1,) * half + (0,) * half
         super().__init__(R,
-                         ghostsdict,names=names,
+                         ghostsdict, names=names,
                          latex_names=latex_names,
                          index_set=index_set,
                          weights=weights,

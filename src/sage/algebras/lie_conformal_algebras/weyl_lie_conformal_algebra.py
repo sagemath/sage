@@ -119,7 +119,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         [0 1 0]
         [0 0 1]
     """
-    def __init__(self,R,ngens=None, gram_matrix=None, names=None,
+    def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
         Initialize self.
@@ -131,31 +131,29 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         """
         from sage.matrix.matrix_space import MatrixSpace
         if ngens:
-            try:
-                from sage.rings.integer_ring import ZZ
-                assert ngens in ZZ and ngens % 2 == 0
-            except AssertionError:
-                raise ValueError("ngens needs to be an even positive "+
-                                 "Integer, got {}".format(ngens))
-        if (gram_matrix is not None):
+            from sage.rings.integer_ring import ZZ
+            if not(ngens in ZZ and not ngens % 2):
+                raise ValueError("ngens needs to be an even positive Integer, "
+                                 f"got {ngens}")
+        if gram_matrix is not None:
             if ngens is None:
                 ngens = gram_matrix.dimensions()[0]
             try:
-                assert (gram_matrix in MatrixSpace(R,ngens,ngens))
+                assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("The gram_matrix should be a skew-symmetric "+
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
-            if (not gram_matrix.is_skew_symmetric()) or \
-                                                (gram_matrix.is_singular()):
-                raise ValueError("The gram_matrix should be a non degenerate " +
-                                 "skew-symmetric {0} x {0} matrix, got {1}"\
-                                 .format(ngens,gram_matrix))
-        elif (gram_matrix is None):
+                raise ValueError("The gram_matrix should be a skew-symmetric "
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+            if (not gram_matrix.is_skew_symmetric() or
+                    gram_matrix.is_singular()):
+                raise ValueError("The gram_matrix should be a non degenerate "
+                                 "skew-symmetric {0} x {0} matrix, got {1}"
+                                 .format(ngens, gram_matrix))
+        elif gram_matrix is None:
             if ngens is None:
                 ngens = 2
             A = identity_matrix(R, ngens // 2)
             from sage.matrix.special import block_matrix
-            gram_matrix = block_matrix([[R.zero(),A],[-A,R.zero()]])
+            gram_matrix = block_matrix([[R.zero(), A], [-A, R.zero()]])
 
         latex_names = None
         if (names is None) and (index_set is None):

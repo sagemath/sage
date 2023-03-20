@@ -294,10 +294,10 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
     maxfact = max(aa + bb - cc, aa + cc - bb, bb + cc - aa, aa + bb + cc + 1)
     _calc_factlist(maxfact)
 
-    argsqrt = Integer(_Factlist[int(aa + bb - cc)] * \
-                          _Factlist[int(aa + cc - bb)] * \
-                          _Factlist[int(bb + cc - aa)]) / \
-                          Integer(_Factlist[int(aa + bb + cc + 1)])
+    argsqrt = Integer(_Factlist[int(aa + bb - cc)] *
+                      _Factlist[int(aa + cc - bb)] *
+                      _Factlist[int(bb + cc - aa)]) /\
+                      Integer(_Factlist[int(aa + bb + cc + 1)])
 
     ressqrt = argsqrt.sqrt(prec)
     if isinstance(ressqrt, ComplexNumber):
@@ -704,8 +704,8 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         (4*pi)
     ressqrt = argsqrt.sqrt()
 
-    prefac = Integer(_Factlist[bigL] * _Factlist[l_2 - l_1 + l_3] * \
-                     _Factlist[l_1 - l_2 + l_3] * _Factlist[l_1 + l_2 - l_3])/ \
+    prefac = Integer(_Factlist[bigL] * _Factlist[l_2 - l_1 + l_3] *
+                     _Factlist[l_1 - l_2 + l_3] * _Factlist[l_1 + l_2 - l_3]) / \
                      _Factlist[2 * bigL + 1] / \
                      (_Factlist[bigL - l_1] * _Factlist[bigL - l_2] * _Factlist[bigL - l_3])
 
