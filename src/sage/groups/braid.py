@@ -428,7 +428,7 @@ class Braid(FiniteTypeArtinGroupElement):
                 p = -p
         return p
 
-    def permutation(self, W = None):
+    def permutation(self, W=None):
         """
         Return the permutation induced by the braid in its strands.
 
