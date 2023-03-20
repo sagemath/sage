@@ -448,7 +448,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = s0*s1/s2/s1
             sage: b.permutation(W=S)
             (1,4,2)
-            sage: c = Permutation(b.permutation(W=S)); c
+            sage: c = b.permutation(W=Permutations(4)); c
             [4, 1, 3, 2]
             sage: c == b.permutation()
             True
@@ -1464,9 +1464,10 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``algorithm`` : string (default: ``libbraiding``). For ``artin`` the general
-          method for Artin group is used. For ``libbraiding``, the algorithm
-          uses the package ``libbraiding``.
+        - ``algorithm`` -- string (default: ``'artin'``); must be one of the following:
+
+          * ``'artin'`` -- the general method for Artin groups is used
+          * ``'libbraiding'`` -- the algorithm from the ``libbraiding`` package
 
         OUTPUT:
 
@@ -1528,7 +1529,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         .. NOTE::
 
-            For long braids this method is slower than leftnormalform from `libbraiding`.
+            For long braids this method is slower than ``algorithm='libbraiding'``.
 
         .. TODO::
 
@@ -1677,7 +1678,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- a braid in the same braid group as ``self``.
+        - ``other`` -- a braid in the same braid group as ``self``
 
         OUTPUT:
 
