@@ -1559,12 +1559,12 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
         sage: dic # optional - sirocco
         {(-1, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1}
-        sage: BM = braid_monodromy_arrangement(flist)
-        sage: (g, dic) == fundamental_group_arrangement(flist, braidmonodromy=BM)
+        sage: BM = braid_monodromy_arrangement(flist) # optional - sirocco
+        sage: (g, dic) == fundamental_group_arrangement(flist, braidmonodromy=BM) # optional - sirocco
         True
-        sage: fundamental_group_arrangement(flist, simplified=False, braidmonodromy=BM)
+        sage: fundamental_group_arrangement(flist, simplified=False, braidmonodromy=BM) # optional - sirocco
         (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {(-4, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1, 4: 1})
-        sage: fundamental_group_arrangement(flist, projective=True, braidmonodromy=BM)
+        sage: fundamental_group_arrangement(flist, projective=True, braidmonodromy=BM) # optional - sirocco
         (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
     """
     f = prod(flist)
