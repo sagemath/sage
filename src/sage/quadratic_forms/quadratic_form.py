@@ -674,17 +674,20 @@ class QuadraticForm(SageObject):
             sage: T = Q.theta_series()                                                  # optional - sage.libs.pari
             sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False, number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            ....:                   number_of_automorphisms=3, determinant=0)
+            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
             []
 
         ::
 
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False, number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=False,        # optional - sage.libs.pari
+            ....:                   number_of_automorphisms=3, determinant=0)
+            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
             []
-            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True, number_of_automorphisms=3, determinant=0)
-            sage: Q.list_external_initializations()
+            sage: Q = QuadraticForm(ZZ, 2, [1,0,5], unsafe_initialization=True,         # optional - sage.libs.pari
+            ....:                   number_of_automorphisms=3, determinant=0)
+            sage: Q.list_external_initializations()                                     # optional - sage.libs.pari
             ['number_of_automorphisms', 'determinant']
         """
         return deepcopy(self._external_initialization_list)
