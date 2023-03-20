@@ -170,7 +170,32 @@ call individually::
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
     3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
 
+
+    Bernoulli Number Function
+    -------------------------
+
+    The Bernoulli numbers Bn are a sequence of rational numbers which occur frequently in analysis.
+    PARI algorithm to computes the Bernoulli numbers Bn, for n >= 0, by using Bn=zeta(n)*(2*n!)/(2^n pi^n).
+
+    However, zeta(n) is *very* close to 1 for large n. So one starts by computing zeta to a precision given
+    by the size of (2*n!)/(2^n pi^n) with 3 added to the precision to take care of small values of n.
+
+    To compute how large (2*n!)/(2^n pi^n) can be, Stirling's formula for n! can be used,
+    because n! ~ sqrt(2n*pi)*n^n*e^(-n). The log of this expression is always within 0.1 of the log of n!.
+
+    Pari computes the denominator precisely using the Clausen-von Staudt formula.
+    Now the log of the numerator is no bigger than t = log(d) + (n + 0.5) * log(n) - n*(1+log2PI) + log(2*sqrt(2*Pi)) + 0.1
+    = log(d ) + (n + 0.5) * log(n) - n*(1+log2PI) + 1.712086.
+
+    If this is how big the numerator of B_k is, we only need to compute it to half a part in e^t.
+    Thus we only need to compute 1/zeta(n) to half a part in e^t. This is done by computing
+    the inverse of the Euler product for sufficiently many primes. Suppose we compute this for primes up to p.
+    Then the error in the the zeta function is less than sum 1/p^n + 1/(p+1)^n +..... Consider this sum p terms at a time.
+    The first p are <= 1/p^n, the second p terms are <= 1/(2p)^n, etc. Thus the error is quite a bit less than zeta(n) * p/p^n ~ 1/ p^(n-1).
+
+    
 """
+
 
 def _get_pari_instance():
     """
@@ -201,5 +226,6 @@ def _get_pari_instance():
     P.default("nbthreads", 1)
 
     return P
+
 
 pari = _get_pari_instance()
