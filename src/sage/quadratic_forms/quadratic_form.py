@@ -370,9 +370,10 @@ class QuadraticForm(SageObject):
             count_congruence_solutions__bad_type_II
 
     # Routines to be called by the user to compute local densities
-    from sage.quadratic_forms.quadratic_form__local_density_interfaces import \
-            local_density, \
-            local_primitive_density
+    lazy_import("sage.quadratic_forms.quadratic_form__local_density_interfaces", [
+            "local_density",
+            "local_primitive_density"
+        ])
 
     # Routines for computing with ternary forms
     from sage.quadratic_forms.quadratic_form__ternary_Tornaria import \
@@ -435,31 +436,34 @@ class QuadraticForm(SageObject):
         ])
 
     # Routines to compute local masses for ZZ.
-    from sage.quadratic_forms.quadratic_form__mass import \
-            shimura_mass__maximal, \
-            GHY_mass__maximal
-    from sage.quadratic_forms.quadratic_form__mass__Siegel_densities import \
-            mass__by_Siegel_densities, \
-            Pall_mass_density_at_odd_prime, \
-            Watson_mass_at_2, \
-            Kitaoka_mass_at_2, \
-            mass_at_two_by_counting_mod_power
-    from sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses import \
-            parity, \
-            is_even, \
-            is_odd, \
-            conway_species_list_at_odd_prime, \
-            conway_species_list_at_2, \
-            conway_octane_of_this_unimodular_Jordan_block_at_2, \
-            conway_diagonal_factor, \
-            conway_cross_product_doubled_power, \
-            conway_type_factor, \
-            conway_p_mass, \
-            conway_standard_p_mass, \
-            conway_standard_mass, \
-            conway_mass
+    lazy_import("sage.quadratic_forms.quadratic_form__mass", [
+            "shimura_mass__maximal",
+            "GHY_mass__maximal"
+        ])
+    lazy_import("sage.quadratic_forms.quadratic_form__mass__Siegel_densities", [
+            "mass__by_Siegel_densities",
+            "Pall_mass_density_at_odd_prime",
+            "Watson_mass_at_2",
+            "Kitaoka_mass_at_2",
+            "mass_at_two_by_counting_mod_power"
+        ])
+    lazy_import("sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses", [
+            "parity",
+            "is_even",
+            "is_odd",
+            "conway_species_list_at_odd_prime",
+            "conway_species_list_at_2",
+            "conway_octane_of_this_unimodular_Jordan_block_at_2",
+            "conway_diagonal_factor",
+            "conway_cross_product_doubled_power",
+            "conway_type_factor",
+            "conway_p_mass",
+            "conway_standard_p_mass",
+            "conway_standard_mass",
+            "conway_mass"
 #            conway_generic_mass, \
 #            conway_p_mass_adjustment
+        ])
 
     # Routines to check local representability of numbers
     lazy_import("sage.quadratic_forms.quadratic_form__local_representation_conditions", [
