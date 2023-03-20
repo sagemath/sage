@@ -122,8 +122,8 @@ cdef class PolyDict:
 
         - ``force_etuples`` -- deprecated
 
-        - ``check`` -- if set to ``False`` then assumes that the exponents are all valid ``ETuple``. In
-          that case the construction is a bit faster.
+        - ``check`` -- if set to ``False`` then assumes that the exponents are
+          all valid ``ETuple``; in that case the construction is a bit faster.
 
         EXAMPLES::
 
@@ -224,6 +224,19 @@ cdef class PolyDict:
         """
         if not self.__repn:
             return
+        # NOTE: in each of the conditional statements below, what the first
+        # loop does is equivalent to
+        #
+        #     if all(self.__repn.values()):
+        #         return
+        #
+        # and
+        #
+        #     if all(not zero_test(coeff) for coeff in self.__repn.values()):
+        #         return
+        #
+        # However, 'all(...)' is badly handled by the Cython compiler and we
+        # rather unfold it for efficiency.
         cdef bint has_zero_coefficient = False
         if zero_test is None:
             for coeff in self.__repn.values():
@@ -2437,7 +2450,7 @@ cdef class ETuple:
             result._data[2 * ind + 1] = exp1 - 1
         else:
             # var(pos) disappears from self
-            result._nonzero = self._nonzero-1
+            result._nonzero = self._nonzero - 1
             memcpy(result._data, self._data, sizeof(int) * 2 * ind)
             if ind + 1 < self._nonzero:
                 memcpy(result._data + 2 * ind, self._data + 2 * (ind + 1), sizeof(int) * 2 * (self._nonzero - ind - 1))
