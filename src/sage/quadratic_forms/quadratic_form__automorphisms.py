@@ -14,7 +14,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.modules.all import FreeModule
 from sage.modules.free_module_element import vector
-from sage.arith.all import GCD
+from sage.arith.misc import GCD
 
 
 @cached_method
