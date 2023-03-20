@@ -80,6 +80,20 @@ def is_MPolynomial(x):
 
 
 class MPolynomial_element(MPolynomial):
+    r"""
+    Generic multivariate polynomial.
+
+    This implementation is based on the :class:`~sage.rings.polynomial.polydict.PolyDict`.
+
+    .. TODO::
+
+        As mentioned in their docstring,
+        :class:`~sage.rings.polynomial.polydict.PolyDict` objects never clear
+        zeros. In all arithmetic operations on :class:`MPolynomial_element`
+        there is an additional call to the method ``remove_zeros`` to clear
+        them. This is not ideal because of the presence of inexact zeros, see
+        :trac:`35174`.
+    """
     def __init__(self, parent, x):
         """
         EXAMPLES::

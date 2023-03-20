@@ -100,6 +100,12 @@ cdef class PolyDict:
     A PolyDict holds a dictionary all of whose keys are :class:`ETuple` and
     whose values are coefficients on which it is implicitely assumed that
     arithmetic operations can be performed.
+
+    No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
+    now there is no reliable way of testing it in the most general setting, see
+    :trac:`35319`. For removing zero coefficients from a :class:`PolyDict` you
+    can use the method :meth:`remove_zeros` which can be parametrized by a zero
+    test.
     """
     def __init__(self, pdict, zero=None, remove_zero=None, force_int_exponents=None, force_etuples=None, bint check=True):
         """
@@ -206,6 +212,9 @@ cdef class PolyDict:
             sage: f.remove_zeros()
             sage: f
             PolyDict with representation {}
+
+        The following example shows how to remove only exact zeros from a ``PolyDict``
+        containing univariate power series::
 
             sage: R.<t> = PowerSeriesRing(QQ)
             sage: f = PolyDict({(1, 1): O(t), (1, 0): R.zero()})
