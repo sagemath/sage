@@ -924,16 +924,16 @@ class TernaryQF(SageObject):
             Ternary quadratic form with integer coefficients:
             [1 3 3]
             [-2 0 -1]
-            sage: neig = Q0.find_p_neighbors(5)
-            sage: len(neig)
+            sage: neig = Q0.find_p_neighbors(5)                                         # optional - sage.libs.pari
+            sage: len(neig)                                                             # optional - sage.libs.pari
             6
             sage: Q1 = TernaryQF([1, 1, 10, 1, 1, 1])
             sage: Q2 = TernaryQF([1, 2, 4, -1, -1, 0])
-            sage: neig.count(Q0)
+            sage: neig.count(Q0)                                                        # optional - sage.libs.pari
             2
-            sage: neig.count(Q1)
+            sage: neig.count(Q1)                                                        # optional - sage.libs.pari
             1
-            sage: neig.count(Q2)
+            sage: neig.count(Q2)                                                        # optional - sage.libs.pari
             3
 
         """
