@@ -27,8 +27,8 @@ from copy import copy
 from sage.modules.free_module_element import vector
 from sage.misc.misc_c import prod
 from sage.categories.fields import Fields
-from sage.arith.all import gcd
-from sage.rings.all import Zmod
+from sage.arith.misc import gcd
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 from .cyclic_code import CyclicCode
 from .grs_code import GeneralizedReedSolomonCode

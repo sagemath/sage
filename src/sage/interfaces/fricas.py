@@ -1217,7 +1217,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(0)._get_sage_type(m)                                   # optional - fricas
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Algebraic Field
         """
-        from sage.rings.all import QQbar, RDF, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.real_double import RDF
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
         from sage.rings.finite_rings.integer_mod_ring import Integers
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1730,7 +1732,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         ex, _ = FriCASElement._parse_and_eval(fricas_InputForm)
         # postprocessing of rootOf
-        from sage.rings.all import QQbar, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         while rootOf:
             for var, poly in rootOf.items():
                 pvars = poly.variables()

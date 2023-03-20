@@ -41,11 +41,11 @@ from .decoder import Decoder
 from copy import copy
 from sage.rings.integer import Integer
 from sage.categories.homset import Hom
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import Zmod
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 
 def find_generator_polynomial(code, check=True):
