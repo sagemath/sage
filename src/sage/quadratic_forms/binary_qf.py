@@ -52,8 +52,9 @@ AUTHORS:
 from functools import total_ordering
 
 from sage.libs.pari.all import pari_gen, pari
-from sage.rings.all import ZZ, is_fundamental_discriminant
-from sage.arith.all import gcd
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import is_fundamental_discriminant
+from sage.arith.misc import gcd
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
@@ -1528,7 +1529,7 @@ class BinaryQF(SageObject):
             sage: [Q.small_prime_value() for Q in BinaryQF_reduced_representatives(-47, primitive_only=True)]
             [47, 2, 2, 3, 3]
         """
-        from sage.sets.all import Set
+        from sage.sets.set import Set
         from sage.arith.srange import xsrange
         B = 10
         while True:

@@ -26,7 +26,7 @@ import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
 import sage.rings.abc
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.cachefunc import weak_cached_function
 import sage.misc.weak_dict
@@ -747,7 +747,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
         elif n > 1:  # Specialized code breaks for n == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
-    elif is_FiniteField(base_ring):
+    elif isinstance(base_ring, FiniteField):
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
     elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
         specialized = polynomial_ring.PolynomialRing_dense_padic_field_capped_relative
