@@ -52,6 +52,12 @@ cdef extern from "flint_wrap.h":
     cdef void nmod_poly_pow(nmod_poly_t res, nmod_poly_t poly, unsigned long e)
     cdef void nmod_poly_pow_trunc(nmod_poly_t res, nmod_poly_t poly, unsigned long e, long trunc)
     cdef void nmod_poly_powmod_ui_binexp(nmod_poly_t res, const nmod_poly_t poly, ulong e, const nmod_poly_t f)
+    cdef void nmod_poly_powmod_mpz_binexp(nmod_poly_t res, const nmod_poly_t poly, mpz_srcptr e, const nmod_poly_t f)
+    cdef void nmod_poly_powmod_mpz_binexp_preinv(nmod_poly_t res, const nmod_poly_t poly, mpz_srcptr e, const nmod_poly_t f, const nmod_poly_t finv)
+    cdef void nmod_poly_powmod_fmpz_binexp(nmod_poly_t res, const nmod_poly_t poly, fmpz_t e, const nmod_poly_t f)
+    cdef void nmod_poly_powmod_fmpz_binexp_preinv(nmod_poly_t res, const nmod_poly_t poly, fmpz_t e, const nmod_poly_t f, const nmod_poly_t finv)
+    cdef void nmod_poly_powmod_x_ui_preinv(nmod_poly_t res, unsigned long e, const nmod_poly_t f, const nmod_poly_t finv)
+    cdef void nmod_poly_powmod_x_fmpz_preinv(nmod_poly_t res, fmpz_t e, const nmod_poly_t f, const nmod_poly_t finv)
 
     # Inflation and deflation
     cdef unsigned long nmod_poly_deflation(nmod_poly_t input)

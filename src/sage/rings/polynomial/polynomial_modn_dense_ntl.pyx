@@ -54,7 +54,7 @@ from sage.rings.infinity import infinity
 from . import polynomial_singular_interface
 from sage.interfaces.singular import singular as singular_default
 
-from sage.structure.element import coerce_binop
+from sage.structure.element import canonical_coercion, coerce_binop, have_same_parent
 
 from sage.libs.ntl.types cimport NTL_SP_BOUND
 from sage.libs.ntl.ZZ_p cimport *
@@ -216,15 +216,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         if n < 0:
             raise IndexError("n must be >= 0")
         self.__poly[n] = int(value)
-
-    def _pow(self, n):
-        n = int(n)
-
-        if self.degree() <= 0:
-            return self.parent()(self[0]**n)
-        if n < 0:
-            return (~self)**(-n)
-        return self.parent()(self.__poly**n, construct=True)
 
     cpdef _add_(self, right):
         return self.parent()(self.__poly + (<Polynomial_dense_mod_n>right).__poly, construct=True)
@@ -851,7 +842,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         return r
 
     def __pow__(Polynomial_dense_modn_ntl_zz self, ee, modulus):
-        """
+        r"""
         TESTS::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
@@ -877,7 +868,6 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
             sage: type(R(0)^0) == type(R(0))
             True
-
         """
         cdef bint recip = 0, do_sig
         cdef long e = ee
@@ -1798,6 +1788,79 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
     """
     A dense polynomial over the integers modulo p, where p is prime.
     """
+
+    def __pow__(self, n, modulus):
+        """
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
+            sage: (x-1)^5
+            x^5 + 96*x^4 + 10*x^3 + 91*x^2 + 5*x + 100
+            sage: pow(x-1, 15, x^3+x+1)
+            55*x^2 + 6*x + 46
+
+        Negative powers will not work::
+
+            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
+            sage: (x-1)^(-5)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Fraction fields not implemented for this type.
+
+        We define ``0^0`` to be unity, :trac:`13895`::
+
+            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
+            sage: R(0)^0
+            1
+
+        The value returned from ``0^0`` should belong to our ring::
+
+            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
+            sage: type(R(0)^0) == type(R(0))
+            True
+
+        The modulus can have smaller degree than ``self``::
+
+            sage: R.<x> = PolynomialRing(GF(101), implementation="NTL")
+            sage: pow(x^4 + 1, 100, x^2 + x + 1)
+            100*x + 100
+
+        Canonical coercion should apply::
+
+            sage: R.<x> = PolynomialRing(GF(101), implementation="FLINT")
+            sage: x_ZZ = ZZ["x"].gen()
+            sage: pow(x+1, 100, 2)
+            0
+            sage: pow(x+1, 100, x_ZZ^2 + x_ZZ + 1)
+            100*x + 100
+            sage: pow(x+1, int(100), x_ZZ^2 + x_ZZ + 1)
+            100*x + 100
+            sage: xx = polygen(GF(97))
+            sage: _ = pow(x + 1, 3, xx^3 + xx + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+
+        """
+        n = Integer(n)
+        parent = (<Element>self)._parent
+
+        if modulus is not None:
+            # Similar to coerce_binop
+            if not have_same_parent(self, modulus):
+                a, m = canonical_coercion(self, modulus)
+                if a is not self:
+                    return pow(a, n, m)
+                modulus = m
+            self = self % modulus
+            return parent(pow(self.ntl_ZZ_pX(), n, modulus.ntl_ZZ_pX()), construct=True)
+        else:
+            if n < 0:
+                return ~(self**(-n))
+            elif self.degree() <= 0:
+                return parent(self[0]**n)
+            else:
+                return parent(self.ntl_ZZ_pX()**n, construct=True)
 
     @coerce_binop
     def gcd(self, right):
