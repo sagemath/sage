@@ -439,8 +439,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A standard permutation if ``W`` is ``None``, an element of ``W`` if it
-        is ``SymmetricGroup(n)``.
+        The image of ``self`` under the natural projection map to ``W``.
 
         EXAMPLES::
 
