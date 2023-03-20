@@ -1677,7 +1677,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- a braid in the same braid group as ``self``.
+        - ``other`` -- a braid in the same braid group as ``self``
 
         OUTPUT:
 
