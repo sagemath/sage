@@ -1464,9 +1464,10 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``algorithm`` : string (default: ``libbraiding``). For ``artin`` the general
-          method for Artin group is used. For ``libbraiding``, the algorithm
-          uses the package ``libbraiding``.
+        - ``algorithm`` -- string (default: ``'artin'``); must be one of the following:
+
+          * ``'artin'`` -- the general method for Artin groups is used
+          * ``'libbraiding'`` -- the algorithm from the ``libbraiding`` package
 
         OUTPUT:
 
