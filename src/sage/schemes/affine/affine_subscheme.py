@@ -42,14 +42,14 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
     EXAMPLES::
 
         sage: A3.<x, y, z> = AffineSpace(QQ, 3)
-        sage: A3.subscheme([x^2-y*z])
+        sage: A3.subscheme([x^2 - y*z])
         Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
           x^2 - y*z
 
     TESTS::
 
         sage: from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-        sage: AlgebraicScheme_subscheme_affine(A3, [x^2-y*z])
+        sage: AlgebraicScheme_subscheme_affine(A3, [x^2 - y*z])
         Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
           x^2 - y*z
     """
@@ -151,7 +151,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         EXAMPLES::
 
             sage: A.<x, y, z> = AffineSpace(3, ZZ)
-            sage: S = A.subscheme([x*y-z])
+            sage: S = A.subscheme([x*y - z])
             sage: S.projective_embedding()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 3 over Integer Ring defined by:
@@ -164,9 +164,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         ::
 
             sage: A.<x, y, z> = AffineSpace(3, ZZ)
-            sage: P = ProjectiveSpace(3,ZZ,'u')
-            sage: S = A.subscheme([x^2-y*z])
-            sage: S.projective_embedding(1,P)
+            sage: P = ProjectiveSpace(3, ZZ, 'u')
+            sage: S = A.subscheme([x^2 - y*z])
+            sage: S.projective_embedding(1, P)
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 3 over Integer
             Ring defined by:
@@ -271,7 +271,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,w> = AffineSpace(QQ,4)
+            sage: A.<x,y,z,w> = AffineSpace(QQ, 4)
             sage: X = A.subscheme([x^2 - y, x*y - z, y^2 - w, x*z - w, y*z - x*w, z^2 - y*w])
             sage: X.projective_closure()
             Closed subscheme of Projective Space of dimension 4 over Rational Field
@@ -310,8 +310,8 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: A2.<x,y> = AffineSpace(2,QQ)
-            sage: cuspidal_curve = A2.subscheme([y^2-x^3])
+            sage: A2.<x,y> = AffineSpace(2, QQ)
+            sage: cuspidal_curve = A2.subscheme([y^2 - x^3])
             sage: cuspidal_curve
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               -x^3 + y^2
@@ -374,13 +374,14 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         ::
 
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^6 - 3*a^5 + 5*a^4 - 5*a^3 + 5*a^2 - 3*a + 1)
-            sage: A.<x,y,z,w> = AffineSpace(K, 4)
-            sage: X = A.subscheme([x*y, y*z + 7, w^3 - x^3])
-            sage: Y = A.subscheme([x - z^3 + z + 1])
-            sage: Q = A([0, -7*b^5 + 21*b^4 - 28*b^3 + 21*b^2 - 21*b + 14, -b^5 + 2*b^4 - 3*b^3 \
-            + 2*b^2 - 2*b, 0])
-            sage: X.intersection_multiplicity(Y, Q)
+            sage: K.<b> = NumberField(a^6 - 3*a^5 + 5*a^4 - 5*a^3 + 5*a^2 - 3*a + 1)                # optional - sage.rings.number_field
+            sage: A.<x,y,z,w> = AffineSpace(K, 4)                                                   # optional - sage.rings.number_field
+            sage: X = A.subscheme([x*y, y*z + 7, w^3 - x^3])                                        # optional - sage.rings.number_field
+            sage: Y = A.subscheme([x - z^3 + z + 1])                                                # optional - sage.rings.number_field
+            sage: Q = A([0,                                                                         # optional - sage.rings.number_field
+            ....:        -7*b^5 + 21*b^4 - 28*b^3 + 21*b^2 - 21*b + 14,
+            ....:        -b^5 + 2*b^4 - 3*b^3 + 2*b^2 - 2*b, 0])
+            sage: X.intersection_multiplicity(Y, Q)                                                 # optional - sage.rings.number_field
             3
 
         ::
@@ -463,22 +464,22 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: A.<x,y,z,w,v> = AffineSpace(GF(23), 5)
-            sage: C = A.curve([x^8 - y, y^7 - z, z^3 - 1, w^5 - v^3])
-            sage: Q = A([22,1,1,0,0])
-            sage: C.multiplicity(Q)
+            sage: A.<x,y,z,w,v> = AffineSpace(GF(23), 5)                                            # optional - sage.rings.finite_rings
+            sage: C = A.curve([x^8 - y, y^7 - z, z^3 - 1, w^5 - v^3])                               # optional - sage.rings.finite_rings
+            sage: Q = A([22,1,1,0,0])                                                               # optional - sage.rings.finite_rings
+            sage: C.multiplicity(Q)                                                                 # optional - sage.rings.finite_rings
             3
 
         ::
 
-            sage: K.<a> = QuadraticField(-1)
-            sage: A.<x,y,z,w,t> = AffineSpace(K, 5)
-            sage: X = A.subscheme([y^7 - x^2*z^5 + z^3*t^8 - x^2*y^4*z - t^8])
-            sage: Q1 = A([1,1,0,1,-1])
-            sage: X.multiplicity(Q1)
+            sage: K.<a> = QuadraticField(-1)                                                        # optional - sage.rings.number_field
+            sage: A.<x,y,z,w,t> = AffineSpace(K, 5)                                                 # optional - sage.rings.number_field
+            sage: X = A.subscheme([y^7 - x^2*z^5 + z^3*t^8 - x^2*y^4*z - t^8])                      # optional - sage.rings.number_field
+            sage: Q1 = A([1,1,0,1,-1])                                                              # optional - sage.rings.number_field
+            sage: X.multiplicity(Q1)                                                                # optional - sage.rings.number_field
             1
-            sage: Q2 = A([0,0,0,-a,0])
-            sage: X.multiplicity(Q2)
+            sage: Q2 = A([0,0,0,-a,0])                                                              # optional - sage.rings.number_field
+            sage: X.multiplicity(Q2)                                                                # optional - sage.rings.number_field
             7
 
         Check that :trac:`27479` is fixed::
@@ -553,7 +554,7 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
         EXAMPLES::
 
             sage: A3.<x,y,z> = AffineSpace(3, QQ)
-            sage: X = A3.subscheme(z-x*y)
+            sage: X = A3.subscheme(z - x*y)
             sage: X.tangent_space(A3.origin())
             Closed subscheme of Affine Space of dimension 3 over Rational Field
             defined by:
