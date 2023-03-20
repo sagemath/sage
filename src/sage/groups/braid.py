@@ -492,6 +492,17 @@ class Braid(FiniteTypeArtinGroupElement):
 
         EXAMPLES::
 
+            sage: B = BraidGroup(3)
+            sage: a = B([2, 2, -1, -1])
+            sage: b = B([2, 1, 2, 1])
+            sage: c = b * a / b
+            sage: d = a.conjugating_braid(c)
+            sage: d * c / d == a
+            True
+            sage: d
+            s1*s0
+            sage: d * a / d == c
+            False
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
             sage: b.plot()
@@ -1478,6 +1489,8 @@ class Braid(FiniteTypeArtinGroupElement):
         EXAMPLES::
 
             sage: B = BraidGroup(6)
+            sage: B.one().left_normal_form()
+            (1,)
             sage: b = B([-2, 2, -4, -4, 4, -5, -1, 4, -1, 1])
             sage: L1 = b.left_normal_form(); L1
             (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
@@ -1485,9 +1498,11 @@ class Braid(FiniteTypeArtinGroupElement):
             s3)
             sage: L1 == b.left_normal_form()
             True
-            sage: c = B([1])
-            sage: c.left_normal_form(algorithm='artin')
+            sage: B([1]).left_normal_form(algorithm='artin')
             (1, s0)
+            sage: B([-3]).left_normal_form(algorithm='artin')
+            (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
+            s0*s1*s0*s2*s1*s3*s2*s1*s0*s4*s3*s2*s1*s0)
             sage: B = BraidGroup(3)
             sage: B([1,2,-1]).left_normal_form()
             (s0^-1*s1^-1*s0^-1, s1*s0, s0*s1)
@@ -1681,17 +1696,26 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A braid `d` such that if `o` equals ``other`` and `s` equals ``self``
-        then `o = d^{-1} \cdot s \cdot d`.
+        A conjugating braid.
 
+        More precisely, if the output is `d`, `o` equals ``other``, and `s` equals ``self``
+        then `o = d^{-1} \cdot s \cdot d`.
         EXAMPLES::
 
             sage: B = BraidGroup(3)
+            sage: B.one().conjugating_braid(B.one())
+            1
+            sage: B.one().conjugating_braid(B.gen(0)) is None
+            True
+            sage: B.gen(0).conjugating_braid(B.gen(1))
+            s1*s0
+            sage: B.gen(0).conjugating_braid(B.gen(1).inverse()) is None
+            True
             sage: a = B([2, 2, -1, -1])
             sage: b = B([2, 1, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
-            sage: print(d1)
+            sage: d1
             s1*s0
             sage: d1 * c / d1 == a
             True
@@ -1703,7 +1727,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
             sage: d1 = a.conjugating_braid(c)
-            sage: print(len(d1.Tietze()))
+            sage: len(d1.Tietze())
             7
             sage: d1 * c / d1 == a
             True
@@ -1713,7 +1737,7 @@ class Braid(FiniteTypeArtinGroupElement):
             s1^2*s0^2*s1^2*s0
             sage: l = sage.groups.braid.conjugatingbraid(a,c)
             sage: d2 = B._element_from_libbraiding(l)
-            sage: print(len(d2.Tietze()))
+            sage: len(d2.Tietze())
             13
             sage: c.conjugating_braid(b) is None
             True
@@ -1759,19 +1783,29 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A pure braid `d` such that if `o` equals ``other`` and `s` equals ``self``
+        A pure conjugating braid.
+
+        More precisely, if the output is `d`, `o` equals ``other``, and `s` equals ``self``
         then `o = d^{-1} \cdot s \cdot d`.
 
         EXAMPLES::
 
             sage: B = BraidGroup(4)
-            sage: S = SymmetricGroup(4)
+            sage: B.one().pure_conjugating_braid(B.one())
+            1
+            sage: B.one().pure_conjugating_braid(B.gen(0)) is None
+            True
+            sage: B.gen(0).pure_conjugating_braid(B.gen(1)) is None
+            True
+            sage: B.gen(0).conjugating_braid(B.gen(2).inverse()) is None
+            True
             sage: a = B([1, 2, 3])
             sage: b = B([3, 2,])
             sage: c = b ^ 12 * a / b ^ 12
             sage: d1 = a.conjugating_braid(c)
             sage: len(d1.Tietze())
             30
+            sage: S = SymmetricGroup(4)
             sage: d1.permutation(W=S)
             (1,3)(2,4)
             sage: d1 * c / d1 == a
