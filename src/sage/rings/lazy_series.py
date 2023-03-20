@@ -630,7 +630,7 @@ class LazyModuleElement(Element):
         initial_coefficients = [coeff_stream[i] for i in range(v, d)]
         return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
-    def shift(self, n, use_fraction_field=False):
+    def shift(self, n):
         r"""
         Return ``self`` with the indices shifted by ``n``.
 
@@ -642,8 +642,6 @@ class LazyModuleElement(Element):
         INPUT:
 
         - ``n`` -- the amount to shift
-        - ``use_fraction_field`` -- (default: ``False``) convert the result
-          into the fraction field
 
         EXAMPLES::
 
@@ -699,20 +697,20 @@ class LazyModuleElement(Element):
             sage: fp.shift(-5) == g
             True
 
-        We compare the shifting with the ``use_fraction_field`` option::
+        We compare the shifting with converting to the fraction field
+        (see also :trac:`35293`)::
 
-            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: M = L.fraction_field()
             sage: f = L([1,2,3,4]); f
             1 + 2*x + 3*x^2 + 4*x^3
             sage: f.shift(-3)
             4
-            sage: f.shift(-3, use_fraction_field=True)
+            sage: M(f).shift(-3)
             x^-3 + 2*x^-2 + 3*x^-1 + 4
 
         An example with a more general function::
 
             sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
-            sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: f = L(fun); f
             x + x^2 + x^4 + O(x^7)
             sage: fs = f.shift(-4)
@@ -720,8 +718,8 @@ class LazyModuleElement(Element):
             1 + x^4 + O(x^7)
             sage: fs.shift(4)
             x^4 + x^8 + O(x^11)
-            sage: f.shift(-4, use_fraction_field=True)
-            x^-3 + x^-2 + 1 + O(x^3)
+            sage: M(f).shift(-4)
+            x^-3 + x^-2 + 1 + O(x^4)
 
         TESTS::
 
@@ -735,9 +733,10 @@ class LazyModuleElement(Element):
             0
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: M = L.fraction_field()
             sage: f = x.shift(-3); f
             0
-            sage: f = x.shift(-3, use_fraction_field=True); f
+            sage: f = M(x).shift(-3); f
             x^-2
             sage: f.parent()
             Lazy Laurent Series Ring in x over Rational Field
@@ -785,12 +784,7 @@ class LazyModuleElement(Element):
         if P._arity != 1:
             raise ValueError("arity must be equal to 1")
 
-        if use_fraction_field:
-            P = P.fraction_field()
-
         if isinstance(self._coeff_stream, Stream_zero):
-            if use_fraction_field:
-                return P.zero()
             return self
 
         if isinstance(self._coeff_stream, Stream_shift):

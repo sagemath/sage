@@ -2998,13 +2998,9 @@ class Stream_truncated(Stream_inexact):
                         self._approximate_order = n
                         self._true_order = True
                         return n
-                    n += 1
-                else:
-                    if self[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
+                elif self[n]:
+                    return n
+                n += 1
         return super().order()
 
     def is_nonzero(self):
