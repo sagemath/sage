@@ -8,3 +8,5 @@ from .random_quadraticform import (random_quadraticform, random_quadraticform_wi
                                    random_ternaryqf, random_ternaryqf_with_conditions)
 
 from .extras import least_quadratic_nonresidue, extend_to_primitive, is_triangular_number
+
+from .constructions import BezoutianQuadraticForm, HyperbolicPlane_quadratic_form

@@ -102,6 +102,16 @@ exclude sage/geometry/ribbon_graph.p*                    # depends on sage.group
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
 graft sage/quadratic_forms
+prune sage/quadratic_forms/genera       # this and below are lazy-imported and can only be tested with pari present
+exclude sage/quadratic_forms/quadratic_form__automorphisms.p*
+exclude sage/quadratic_forms/quadratic_form__genus.p*
+exclude sage/quadratic_forms/quadratic_form__local_density_interfaces.p*
+exclude sage/quadratic_forms/quadratic_form__local_normal_form.p*
+exclude sage/quadratic_forms/quadratic_form__local_representation_conditions.p*
+exclude sage/quadratic_forms/quadratic_form__mass*.p*
+exclude sage/quadratic_forms/quadratic_form__siegel_product.p*
+exclude sage/quadratic_forms/qfsolve.p*
+exclude sage/quadratic_forms/special_values.p*
 
 graft sage/groups/affine_gps
 include sage/groups/matrix_gps/all.p*
