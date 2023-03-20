@@ -1307,8 +1307,10 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         ::
 
             sage: A.<x,y,z,w> = AffineSpace(GF(17), 4)                                  # optional - sage.rings.finite_rings
-            sage: X = A.subscheme([x*y*z^2 - x*y*z*w - z*w^2 + w^3,
-            ....:                  x^3*y*z*w - x*y^3*z - x^2*y*z*w - x^2*w^3 + y^2*w^2 + x*w^3])
+            sage: X = A.subscheme([                                                     # optional - sage.rings.finite_rings
+            ....:         x*y*z^2 - x*y*z*w - z*w^2 + w^3,
+            ....:         x^3*y*z*w - x*y^3*z - x^2*y*z*w - x^2*w^3 + y^2*w^2 + x*w^3
+            ....:     ])
             sage: X.is_irreducible()                                                    # optional - sage.rings.finite_rings
             False
         """
