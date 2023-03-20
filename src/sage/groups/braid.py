@@ -434,9 +434,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``W`` -- (default : ``None``); the ``SymmetricGroup(n)``
-          where ``n`` is the number of strands of ``self`` is
-          an alternative option.
+        - ``W`` -- (optional) the permutation group to project
+          ``self`` to; the default is ``self.parent().coxeter_group()``
 
         OUTPUT:
 
