@@ -619,7 +619,10 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             sage: Frob(t) == t^5
             True
         """
-        return x ** self._q
+        if self.is_identity():
+            return x
+        else:
+            return x.pth_power(self._power)
 
 
     def order(self):
