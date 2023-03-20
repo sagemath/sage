@@ -1500,8 +1500,7 @@ class Braid(FiniteTypeArtinGroupElement):
             return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
         elif algorithm == 'artin':
             return FiniteTypeArtinGroupElement.left_normal_form.f(self)
-        else:
-            raise ValueError("invalid algorithm")
+        raise ValueError("invalid algorithm")
 
     def _left_normal_form_coxeter(self):
         r"""
