@@ -1989,8 +1989,8 @@ class TransducerGenerators():
                     cycle[1:])
             required_initial_values.update(intersection)
             output_sum = sum([edge[2]
-                              for edge in recursion_digraph.\
-                                  outgoing_edge_iterator(cycle[1:])],
+                              for edge in recursion_digraph.
+                              outgoing_edge_iterator(cycle[1:])],
                              [])
             if not is_zero(output_sum):
                 raise ValueError(

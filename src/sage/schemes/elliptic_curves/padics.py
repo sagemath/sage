@@ -208,8 +208,8 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
         sage: L[3]
         O(11^0)
     """
-    p, normalize, implementation, precision = self._normalize_padic_lseries(p,\
-                             normalize, implementation, precision)
+    p, normalize, implementation, precision = self._normalize_padic_lseries(p,
+        normalize, implementation, precision)
 
     if implementation in ['sage', 'eclib', 'num']:
         if self.ap(p) % p != 0:

@@ -455,10 +455,10 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and \
-               self.alphabet() == other.alphabet() and \
-               self.vector_space() == other.vector_space() and \
-               self.letters_to_steps() == other.letters_to_steps())
+        return self is other or (type(self) == type(other) and
+            self.alphabet() == other.alphabet() and
+            self.vector_space() == other.vector_space() and
+            self.letters_to_steps() == other.letters_to_steps())
 
     def __ne__(self, other):
         r"""

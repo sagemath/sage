@@ -320,12 +320,12 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
         FullTensorProductOfRegularCrystals.__init__(self, tensor_prod, cartan_type=cartan_type)
         # This is needed to override the module_generators set in FullTensorProductOfRegularCrystals
         self.module_generators = HighestWeightTensorKRT(self)
-        self.rename("Tensor product of Kirillov-Reshetikhin tableaux of type %s and factor(s) %s"%(\
-          cartan_type, B))
+        self.rename("Tensor product of Kirillov-Reshetikhin tableaux "
+                    f"of type {cartan_type} and factor(s) {B}")
 
     def __iter__(self):
         """
-        Returns the iterator of ``self``.
+        Return the iterator of ``self``.
 
         EXAMPLES::
 

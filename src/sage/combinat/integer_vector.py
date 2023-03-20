@@ -1416,8 +1416,9 @@ class IntegerVectorsConstraints(IntegerVectors):
                     return Integer(binomial(self.n + self.k - 1, self.n))
                 # do by inclusion / exclusion on the number
                 # i of parts greater than m
-                return Integer(sum( (-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1) \
-                    * binomial(self.k,i) for i in range(self.n/(m+1)+1) ))
+                return Integer(sum((-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1)
+                                   * binomial(self.k, i)
+                                   for i in range(self.n / (m + 1) + 1)))
         return ZZ.sum(ZZ.one() for x in self)
 
     def __iter__(self):

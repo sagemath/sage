@@ -2787,8 +2787,8 @@ def _base_iterator(constraints):
             if min_ord:
                 min_k = max(1, min_k, min_ord // len(A))
         if infinity not in (max_k, max_ord):
-            return chain(*(_iterator_order(A, ord, range(min_k, max_k+1)) \
-                        for ord in range(min_ord, max_ord+1)))
+            return chain(*(_iterator_order(A, ord, range(min_k, max_k + 1))
+                           for ord in range(min_ord, max_ord + 1)))
     # else
     return None
 

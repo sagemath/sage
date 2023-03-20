@@ -1276,10 +1276,9 @@ class WordGenerator():
         """
         if not isinstance(directive_word, Word_class):
             raise TypeError("directive_word is not a word, so it cannot be used to build an episturmian word")
-        epistandard = directive_word.parent()(\
-                self._StandardEpisturmianWord_LetterIterator(directive_word),
-                datatype='iter')
-        return epistandard
+        return directive_word.parent()(
+            self._StandardEpisturmianWord_LetterIterator(directive_word),
+            datatype='iter')
 
     def _StandardEpisturmianWord_LetterIterator(self, directive_word):
         r"""

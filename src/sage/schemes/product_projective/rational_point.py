@@ -471,15 +471,16 @@ def sieve(X, bound):
                 # lift all coordinates of given point using chinese remainder theorem
                 L = [modulo_points[j][tupl[j]][k].lift() for j in range(len_primes - 1)]
                 L.append(point_p_max[k].lift())
-                point.append( crt(L, primes_list) )
+                point.append(crt(L, primes_list))
 
             for i in range(num_comp):
                 for j in range(comp_dim_relative[i]):
                     m[i][j] = point[dim_prefix[i] + j]
 
             # generating matrix to compute LLL reduction for each component
-            M = [matrix(ZZ, comp_dim_relative[i] + 1, comp_dim_relative[i], m[i]) \
-                                                                for i in range(num_comp)]
+            M = [matrix(ZZ, comp_dim_relative[i] + 1,
+                        comp_dim_relative[i], m[i])
+                 for i in range(num_comp)]
             A = [M[i].LLL() for i in range(num_comp)]
             point = []
             for i in range(num_comp):
