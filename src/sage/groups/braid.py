@@ -448,7 +448,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = s0*s1/s2/s1
             sage: b.permutation(W=S)
             (1,4,2)
-            sage: c = Permutation(b.permutation(W=S)); c
+            sage: c = b.permutation(W=Permutations(4)); c
             [4, 1, 3, 2]
             sage: c == b.permutation()
             True
