@@ -31,13 +31,13 @@ def is_Hypersurface(self):
 
         sage: from sage.schemes.generic.hypersurface import is_Hypersurface
         sage: R.<x, y, z> = ZZ[]
-        sage: H = ProjectiveHypersurface(x*z+y^2)
+        sage: H = ProjectiveHypersurface(x*z + y^2)
         sage: is_Hypersurface(H)
         True
 
     ::
 
-        sage: H = AffineHypersurface(x*z+y^2)
+        sage: H = AffineHypersurface(x*z + y^2)
         sage: is_Hypersurface(H)
         True
 
@@ -56,13 +56,13 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
     EXAMPLES::
 
         sage: P.<x, y, z> = ProjectiveSpace(ZZ, 2)
-        sage: ProjectiveHypersurface(x-y, P)
+        sage: ProjectiveHypersurface(x - y, P)
         Projective hypersurface defined by x - y in Projective Space of dimension 2 over Integer Ring
 
     ::
 
         sage: R.<x, y, z> = QQ[]
-        sage: ProjectiveHypersurface(x-y)
+        sage: ProjectiveHypersurface(x - y)
         Projective hypersurface defined by x - y in Projective Space of dimension 2 over Rational Field
     """
 
@@ -77,18 +77,18 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
         EXAMPLES::
 
             sage: P.<x, y, z> = ProjectiveSpace(ZZ, 2)
-            sage: ProjectiveHypersurface(x-y, P)
+            sage: ProjectiveHypersurface(x - y, P)
             Projective hypersurface defined by x - y in Projective Space of dimension 2 over Integer Ring
 
         ::
 
             sage: R.<x, y, z> = QQ[]
-            sage: ProjectiveHypersurface(x-y)
+            sage: ProjectiveHypersurface(x - y)
             Projective hypersurface defined by x - y in Projective Space of dimension 2 over Rational Field
 
         TESTS::
 
-            sage: H = ProjectiveHypersurface(x-y)
+            sage: H = ProjectiveHypersurface(x - y)
             sage: H == loads(dumps(H))
             True
         """
@@ -111,7 +111,7 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
         EXAMPLES::
 
             sage: R.<x, y, z> = ZZ[]
-            sage: H = ProjectiveHypersurface(x*z+y^2)
+            sage: H = ProjectiveHypersurface(x*z + y^2)
             sage: H
             Projective hypersurface defined by y^2 + x*z in Projective Space of dimension 2 over Integer Ring
             sage: H._repr_()
@@ -128,7 +128,7 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
         EXAMPLES::
 
             sage: R.<x, y, z> = ZZ[]
-            sage: H = ProjectiveHypersurface(x*z+y^2)
+            sage: H = ProjectiveHypersurface(x*z + y^2)
             sage: H.defining_polynomial()
             y^2 + x*z
         """
@@ -142,13 +142,13 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
     EXAMPLES::
 
         sage: A.<x, y, z> = AffineSpace(ZZ, 3)
-        sage: AffineHypersurface(x*y-z^3, A)
+        sage: AffineHypersurface(x*y - z^3, A)
         Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Integer Ring
 
     ::
 
         sage: A.<x, y, z> = QQ[]
-        sage: AffineHypersurface(x*y-z^3)
+        sage: AffineHypersurface(x*y - z^3)
         Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Rational Field
     """
     def __init__(self, poly, ambient=None):
@@ -162,18 +162,18 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
         EXAMPLES::
 
             sage: A.<x, y, z> = AffineSpace(ZZ, 3)
-            sage: AffineHypersurface(x*y-z^3, A)
+            sage: AffineHypersurface(x*y - z^3, A)
             Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Integer Ring
 
         ::
 
             sage: A.<x, y, z> = QQ[]
-            sage: AffineHypersurface(x*y-z^3)
+            sage: AffineHypersurface(x*y - z^3)
             Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Rational Field
 
         TESTS::
 
-            sage: H = AffineHypersurface(x*y-z^3)
+            sage: H = AffineHypersurface(x*y - z^3)
             sage: H == loads(dumps(H))
             True
         """
@@ -194,7 +194,7 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
         EXAMPLES::
 
             sage: R.<x, y, z> = ZZ[]
-            sage: H = AffineHypersurface(x*z+y^2)
+            sage: H = AffineHypersurface(x*z + y^2)
             sage: H
             Affine hypersurface defined by y^2 + x*z in Affine Space of dimension 3 over Integer Ring
             sage: H._repr_()
@@ -211,7 +211,7 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
         EXAMPLES::
 
             sage: R.<x, y, z> = ZZ[]
-            sage: H = AffineHypersurface(x*z+y^2)
+            sage: H = AffineHypersurface(x*z + y^2)
             sage: H.defining_polynomial()
             y^2 + x*z
         """
