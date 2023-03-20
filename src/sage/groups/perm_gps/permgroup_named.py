@@ -3510,6 +3510,17 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
 
+    def order(self):
+        """
+        Return the order of the group corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: [SmallPermutationGroup(21,k).order() for k in [1,2]]
+            [21, 21]
+        """
+        return self._n
+
     def gap_small_group(self):
         r"""
         Return the GAP small group object corresponding to ``self``.
