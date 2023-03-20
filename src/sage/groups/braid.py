@@ -1528,7 +1528,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         .. NOTE::
 
-            For long braids this method is slower than leftnormalform from `libbraiding`.
+            For long braids this method is slower than ``algorithm='libbraiding'``.
 
         .. TODO::
 
