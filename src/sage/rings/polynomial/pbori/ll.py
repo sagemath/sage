@@ -284,6 +284,8 @@ class RingMap():
         r"""
         Inverted map to initial ring.
 
+        EXAMPLES::
+
             sage: from sage.rings.polynomial.pbori.pbori import *
             sage: from sage.rings.polynomial.pbori.blocks import declare_ring, Block
             sage: to_ring = declare_ring([Block("x", 10)], globals())

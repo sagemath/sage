@@ -36,7 +36,7 @@ AUTHORS:
 
 from sage.categories.fields import Fields
 
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
@@ -239,7 +239,7 @@ def Curve(F, A=None):
             else:
                 A = ProjectiveSpace(P.ngens()-1, P.base_ring(), names=P.variable_names())
                 A._coordinate_ring = P
-        elif is_MPolynomial(F): # define a plane curve
+        elif isinstance(F, MPolynomial): # define a plane curve
             P = F.parent()
             k = F.base_ring()
 

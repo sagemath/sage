@@ -290,7 +290,13 @@ def QuotientRing(R, I, names=None, **kwds):
         from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor as BooleanPolynomialRing
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
-    if not isinstance(I, ideal.Ideal_generic) or I.ring() != R:
+    # workaround to silence warning from #34806
+    from sage.rings.number_field.order import Order
+    if isinstance(R, Order):
+        if not R.is_maximal():
+            raise NotImplementedError('only implemented for maximal orders')
+        I = R.number_field().ideal(I)
+    elif not isinstance(I, ideal.Ideal_generic) or I.ring() != R:
         I = R.ideal(I)
     if I.is_zero():
         return R
@@ -444,7 +450,13 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         if R not in _Rings:
             raise TypeError("The first argument must be a ring, but %s is not"%R)
-        if I not in R.ideal_monoid():
+        # workaround to silence warning from #34806
+        from sage.rings.number_field.order import Order
+        if isinstance(R, Order):
+            M = R.number_field().ideal_monoid()
+        else:
+            M = R.ideal_monoid()
+        if I not in M:
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not"%I)
         self.__R = R
         self.__I = I
