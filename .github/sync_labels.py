@@ -235,9 +235,9 @@ class GhLabelSynchronizer:
 
     def get_reviews(self, complete=False):
         r"""
-        Return the list of reviews of the PR. Per default only those reviews
-        are returned which have been submitted after the youngest commit.
-        Use keyword ``complete`` to get them all.
+        Return the list of reviews of the PR. Per default only those proper reviews
+        are returned which have been submitted after the most recent commit. Use
+        keyword ``complete`` to get them all.
         """
         if not self.is_pull_request():
             return None
@@ -253,9 +253,11 @@ class GhLabelSynchronizer:
             self.get_commits()
 
         date = self._commit_date
+        no_rev = ReviewDecision.unclear.value
         new_revs = [rev for rev in self._reviews if rev['submittedAt'] > date]
-        info('Reviews for %s: %s after %s' % (self._issue, self._reviews, date))
-        return new_revs
+        proper_new_revs = [rev for rev in new_revs if rev['state'] != no_rev]
+        info('Proper reviews after %s for %s: %s' % (date, self._issue, proper_new_revs))
+        return proper_new_revs
 
     def active_partners(self, item):
         r"""
@@ -270,12 +272,34 @@ class GhLabelSynchronizer:
     # -------------------------------------------------------------------------
     # methods to validate the issue state
     # -------------------------------------------------------------------------
+    def review_comment_to_state(self):
+        r"""
+        Return a State label if the most recent review comment
+        starts with its value.
+        """
+        revs = self.get_reviews(complete=True)
+        date = max(rev['submittedAt'] for rev in revs)
+
+        for rev in revs:
+            if rev['submittedAt'] == date:
+                for stat in State:
+                    body = rev['body']
+                    if body.startswith(stat.value):
+                        return stat
+        return None
+
     def needs_work_valid(self):
         r"""
         Return ``True`` if the PR needs work. This is the case if
-        the review decision requests changes or if there is any
-        review reqesting changes.
+        there are reviews more recent than any commit and the review
+        decision requests changes or if there is any review reqesting
+        changes.
         """
+        revs = self.get_reviews()
+        if not revs:
+            # no proper review since most recent commit.
+            return False
+
         ch_req = ReviewDecision.changes_requested
         rev_dec =  self.get_review_decision()
         if rev_dec:
@@ -286,8 +310,6 @@ class GhLabelSynchronizer:
                info('PR %s doesn\'t need work (by decision)' % self._issue)
                return False
 
-        revs = self.get_reviews()
-        revs = [rev for rev in revs if rev['author']['login'] == self._actor]
         if any(rev['state'] == ch_req.value for rev in revs):
             info('PR %s needs work' % self._issue)
             return True
@@ -297,9 +319,15 @@ class GhLabelSynchronizer:
     def positive_review_valid(self):
         r"""
         Return ``True`` if the PR has positive review. This is the
-        case if the review decision is approved or if there is any
-        approved review but no changes requesting one.
+        case if there are reviews more recent than any commit and the
+        review decision is approved or if there is any approved review
+        but no changes requesting one.
         """
+        revs = self.get_reviews()
+        if not revs:
+            # no proper review since most recent commit.
+            return False
+
         appr = ReviewDecision.approved
         rev_dec =  self.get_review_decision()
         if rev_dec:
@@ -310,13 +338,7 @@ class GhLabelSynchronizer:
                 info('PR %s doesn\'t have positve review (by decision)' % self._issue)
                 return False
 
-        if self.needs_work_valid():
-            info('PR %s doesn\'t have positve review (needs work)' % self._issue)
-            return False
-
-        revs = self.get_reviews()
-        revs = [rev for rev in revs if rev['author']['login'] == self._actor]
-        if any(rev['state'] == appr.value for rev in revs):
+        if all(rev['state'] == appr.value for rev in revs):
             info('PR %s has positve review' % self._issue)
             return True
         info('PR %s doesn\'t have positve review' % self._issue)
@@ -407,6 +429,12 @@ class GhLabelSynchronizer:
         """
         self.gh_cmd('edit', arg, option)
 
+    def mark_as_ready(self):
+        r"""
+        Perform a system call to ``gh`` to mark a PR as ready for review.
+        """
+        self.gh_cmd('ready', '', '')
+
     def review(self, arg, text):
         r"""
         Perform a system call to ``gh`` to review a PR.
@@ -426,6 +454,13 @@ class GhLabelSynchronizer:
         """
         self.review('--request-changes', '%s requested changes for this PR' % self._actor)
         info('Changes requested for PR %s by %s' % (self._issue, self._actor))
+
+    def review_comment(self, text):
+        r"""
+        Add a review comment.
+        """
+        self.review('--comment', text)
+        info('Add review comment for PR %s: %s' % (self._issue, text))
 
     def add_comment(self, text):
         r"""
@@ -526,20 +561,34 @@ class GhLabelSynchronizer:
                     return
 
             if item == State.needs_review:
-                if not self.needs_review_valid():
-                    self.reject_label_addition(item)
-                    return
-
-            if item == State.positive_review:
-                if self.approve_allowed():
-                    self.approve()
+                if self.needs_review_valid():
+                    # here we come for example after a sequence:
+                    # needs review -> needs info -> needs review
+                    pass
+                elif self.is_draft():
+                    self.mark_as_ready()
                 else:
                     self.reject_label_addition(item)
                     return
 
             if item == State.needs_work:
-                if self.needs_review_valid():
+                if self.needs_work_valid():
+                    # here we come for example after a sequence:
+                    # needs work -> needs info -> needs work
+                    pass
+                elif not self.is_draft():
                     self.request_changes()
+                else:
+                    self.reject_label_addition(item)
+                    return
+
+            if item == State.positive_review:
+                if self.positive_review_valid():
+                    # here we come for example after a sequence:
+                    # positive review -> needs info -> positive review
+                    pass
+                elif self.approve_allowed():
+                    self.approve()
                 else:
                     self.reject_label_addition(item)
                     return
@@ -570,6 +619,19 @@ class GhLabelSynchronizer:
         elif sel_list is Priority:
             self.reject_label_removal(item)
         return
+
+    def on_review_comment(self):
+        r"""
+        Check if the text of the most recent review begins with a
+        specific label name. In this case, simulate the corresponding
+        label addition. This feature is needed for people who don't
+        have permission to add labels (i.e. aren't a member of the
+        Triage team).
+        """
+        rev_state = self.review_comment_to_state()
+        if rev_state in (State.needs_info, State.needs_review):
+            self.select_label(rev_state)
+            self.run(Action.labeled, label=rev_state.value)
             
     def remove_all_labels_of_sel_list(self, sel_list):
         r"""
@@ -605,6 +667,7 @@ class GhLabelSynchronizer:
             self.select_label(State.needs_review)
 
         if action is Action.submitted:
+            rev_state = RevState(rev_state)
             if rev_state is RevState.approved:
                 if self.positive_review_valid():
                     self.select_label(State.positive_review)
@@ -612,6 +675,9 @@ class GhLabelSynchronizer:
             if rev_state is RevState.changes_requested:
                 if self.needs_work_valid():
                     self.select_label(State.needs_work)
+
+            if rev_state is RevState.commented:
+                self.on_review_comment()
 
     def run_tests(self):
         r"""
@@ -644,12 +710,17 @@ class GhLabelSynchronizer:
                     self.add_label(res.value)
                     self.run(action, label=prio.value)
             elif action == Action.submitted and self.is_pull_request():
-                for stat in RevState:
-                    if stat is RevState.approved:
+                for rev_stat in RevState:
+                    if rev_stat is RevState.approved:
                         self.approve()
-                    elif stat is RevState.changes_requested:
+                        self.run(action, rev_state=rev_stat.value)
+                    elif rev_stat is RevState.changes_requested:
                         self.request_changes()
-                    self.run(action, rev_state=stat.value)
+                        self.run(action, rev_state=rev_stat.value)
+                    elif rev_stat is RevState.commented:
+                        for stat in State:
+                            self.review_comment(stat.value)
+                            self.run(action, rev_state=rev_stat.value)
             elif self.is_pull_request():
                 self.run(action)
 
