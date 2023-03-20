@@ -1485,7 +1485,7 @@ def braid_monodromy_arrangement(flist):
       each of this paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
+    - A dictionary attaching a number ``i`` (strand) to a number ``j`` (a polynomial in the list).
 
     .. NOTE::
 
@@ -1512,14 +1512,73 @@ def braid_monodromy_arrangement(flist):
     return braid_monodromy(f, arrangement=flist, holdstrand=False)
 
 def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braidmonodromy=None):
+    r"""
+    Compute the fundamental group of the complement of a curve
+    defined by a list of polynomials with the extra information about the correspondence of the generators
+    and meridians of the elements of the list.
+
+    INPUT:
+
+    - ``flist`` -- a  tuple of polynomial with two variables, over a number field
+      with an embedding in the complex numbers
+
+    - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
+      presentation will be simplified (see below)
+
+    - ``projective`` -- boolean (default: ``False``); if set to ``True``,
+      the fundamental group of the complement of the projective completion
+      of the curve will be computed, otherwise, the fundamental group of
+      the complement in the affine plane will be computed
+
+    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+      ``simplified`` is set to ``False``, and
+      a presentation of the fundamental group with the homotopy type
+      of the complement of the affine curve will be computed, adding
+      one relation if ``projective`` is set to ``True``.
+
+    - ``braidmonodromy`` -- (default: ``None``); it can be set to the output
+      of ``braid_monodromy_arrangement`` to avoid an extra computation.
+
+    OUTPUT:
+
+    - A list of braids. The braids correspond to paths based in the same point;
+      each of this paths is the conjugated of a loop around one of the points
+      in the discriminant of the projection of ``f``.
+
+    - A dictionary attaching a tuple ``(i,)`` (generator) to a number ``j`` (a polynomial in the list).
+      If ``simplified`` is set to ``True``, a longer key may appear for either the meridian of the line at infinity,
+      if ``projective`` is ``True``, or a simplified generator, if ``projective`` is ``False``
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement, fundamental_group_arrangement # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x + 3 * y - 5]
+        sage: g, dic = fundamental_group_arrangement(flist) # optional - sirocco
+        sage: g # optional - sirocco
+        Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
+        sage: dic # optional - sirocco
+        {(-1, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1}
+        sage: BM = braid_monodromy_arrangement(flist)
+        sage: (g, dic) == fundamental_group_arrangement(flist, braidmonodromy=BM)
+        True
+        sage: fundamental_group_arrangement(flist, simplified=False, braidmonodromy=BM)
+        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {(-4, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1, 4: 1})
+        sage: fundamental_group_arrangement(flist, projective=True, braidmonodromy=BM)
+        (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
+    """
     f = prod(flist)
     if braidmonodromy is None:
         bm, dic = braid_monodromy_arrangement(flist)
     else:
-        bm = braidmonodromy
+        bm, dic = braidmonodromy
     g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braidmonodromy=bm)
-    if not simplified:
+    if not simplified and projective:
         return (g, dic)
+    elif not simplified:
+        a = tuple(-i - 1 for i in reversed(range(g.ngens())))
+        dic[a] = len(flist) + 1
+        return (g,dic)
     hom = g.simplification_isomorphism()
     g1 = hom.codomain()
     dic1 = {}
@@ -1536,6 +1595,9 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
             i = [i + 1 for i in range(g.ngens()) if dic[i + 1] == j][0]
             t = hom(g([i])).Tietze()
             dic1[t] = j
+    else:
+        t = prod(hom(x) for x in g.gens()).inverse().Tietze()
+        dic1[t] = len(flist) + 1
     n = g1.ngens()
     rels = [_.Tietze() for _ in g1.relations()]
     g1 = FreeGroup(n) / rels
