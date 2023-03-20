@@ -367,7 +367,7 @@ cdef inline int csetone(mpz_t out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     mpz_set_ui(out, 1)
-    
+
 cdef inline int csetzero(mpz_t out, PowComputer_ prime_pow) except -1:
     """
     Sets to 0.
@@ -378,7 +378,7 @@ cdef inline int csetzero(mpz_t out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     mpz_set_ui(out, 0)
-    
+
 cdef inline bint cisone(mpz_t out, PowComputer_ prime_pow) except -1:
     """
     Returns whether this element is equal to 1.
