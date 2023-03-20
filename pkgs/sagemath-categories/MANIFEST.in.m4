@@ -138,6 +138,7 @@ include sage/rings/tests.p*
 include sage/rings/big_oh.p*
 
 include sage/combinat/integer_vector.p*
+graft sage/combinat/integer_lists
 
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py
@@ -149,7 +150,7 @@ include sage/sets/integer_range.py
 include sage/sets/non_negative_integers.py
 include sage/sets/positive_integers.py
 include sage/sets/primes.py
-include sage/sets/recursively_enumerated_set.p*
+include sage/sets/recursively_enumerated_set.p*                 # is used in a bunch of category examples
 include sage/sets/set.py
 include sage/sets/set_from_iterator.py
 include sage/sets/totally_ordered_finite_set.py
