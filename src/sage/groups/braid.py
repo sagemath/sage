@@ -1499,7 +1499,8 @@ class Braid(FiniteTypeArtinGroupElement):
             return tuple([B.delta()**l[0][0]] + [B(b) for b in l[1:]] )
         elif algorithm == 'artin':
             return FiniteTypeArtinGroupElement.left_normal_form.f(self)
-
+        else:
+            raise ValueError("invalid algorithm")
 
     def _left_normal_form_coxeter(self):
         r"""
@@ -1722,7 +1723,6 @@ class Braid(FiniteTypeArtinGroupElement):
             return None
         else:
             B = self.parent()
-            n = B.strands()
             l[0][0] %= 2
             return B._element_from_libbraiding(l)
 
@@ -1770,27 +1770,27 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([3, 2,])
             sage: c = b ^ 12 * a / b ^ 12
             sage: d1 = a.conjugating_braid(c)
-            sage: print(len(d1.Tietze()))
+            sage: len(d1.Tietze())
             30
-            sage: print(d1.permutation(W=S))
+            sage: d1.permutation(W=S)
             (1,3)(2,4)
             sage: d1 * c / d1 == a
             True
             sage: d1 * a / d1 == c
             False
             sage: d2 = a.pure_conjugating_braid(c)
-            sage: print(len(d2.Tietze()))
+            sage: len(d2.Tietze())
             24
-            sage: print(d2.permutation(W=S))
+            sage: d2.permutation(W=S)
             ()
             sage: d2 * c / d2 == a
             True
-            sage: print(d2)
+            sage: d2
             (s0*s1*s2^2*s1*s0)^4
-            sage: print(a.conjugating_braid(b))
-            None
-            sage: print(a.pure_conjugating_braid(b))
-            None
+            sage: a.conjugating_braid(b) is None
+            True
+            sage: a.pure_conjugating_braid(b) is None
+            True
             sage: a1 = B([1])
             sage: a2 = B([2])
             sage: a1.conjugating_braid(a2)
@@ -1799,12 +1799,12 @@ class Braid(FiniteTypeArtinGroupElement):
             (1,2)
             sage: a2.permutation(W=S)
             (2,3)
-            sage: print(a1.pure_conjugating_braid(a2))
-            None
+            sage: a1.pure_conjugating_braid(a2) is None
+            True
             sage: (a1^2).conjugating_braid(a2^2)
             s1*s0
-            sage: print((a1^2).pure_conjugating_braid(a2^2))
-            None
+            sage: (a1^2).pure_conjugating_braid(a2^2) is None
+            True
         """
         B = self.parent()
         n = B.strands()
