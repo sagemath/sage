@@ -607,7 +607,7 @@ def fieldI(F0):
             b2 = h1(F1a(F0a.gen(0)))
             b3 = F0.gen(0)
             F1 = NumberField(q, 'b', embedding=b1)
-            if b3 in F1 and b2.imag()>0:
+            if b3 in F1 and b2.imag() > 0:
                 return F1
 
 
