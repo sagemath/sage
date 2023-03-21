@@ -50,7 +50,7 @@ coefficient are computed. ::
     sage: s.coefficient(10)
     10
     sage: s._coeff_stream._cache
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 We can do arithmetic with lazy power series::
 
