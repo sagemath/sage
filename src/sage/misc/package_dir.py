@@ -14,6 +14,7 @@ Recognizing package directories
 
 import os
 import glob
+import sys
 from contextlib import contextmanager
 
 
@@ -211,3 +212,124 @@ def cython_namespace_package_support():
         yield
     finally:
         Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = orig_is_package_dir
+
+
+def walk_packages(path=None, prefix='', onerror=None):
+    r"""
+    Yield :class:`pkgutil.ModuleInfo` for all modules recursively on ``path``.
+
+    This version of the standard library function :func:`pkgutil.walk_packages`
+    addresses https://github.com/python/cpython/issues/73444 by handling
+    the implicit namespace packages in the package layout used by Sage;
+    see :func:`is_package_or_sage_namespace_package_dir`.
+
+    INPUT:
+
+    - ``path`` -- a list of paths to look for modules in or
+      ``None`` (all accessible modules).
+
+    - ``prefix`` -- a string to output on the front of every module name
+      on output.
+
+    - ``onerror`` -- a function which gets called with one argument (the
+      name of the package which was being imported) if any exception
+      occurs while trying to import a package.  If ``None``, ignore
+      :class:`ImportError` but propagate all other exceptions.
+
+    EXAMPLES::
+
+        sage: sorted(sage.misc.package_dir.walk_packages(sage.misc.__path__))  # a namespace package
+        [..., ModuleInfo(module_finder=FileFinder('.../sage/misc'), name='package_dir', ispkg=False), ...]
+    """
+    # Adapted from https://github.com/python/cpython/blob/3.11/Lib/pkgutil.py
+
+    def iter_modules(path=None, prefix=''):
+        """
+        Yield :class:`ModuleInfo` for all submodules on ``path``.
+        """
+        from pkgutil import get_importer, iter_importers, ModuleInfo
+
+        if path is None:
+            importers = iter_importers()
+        elif isinstance(path, str):
+            raise ValueError("path must be None or list of paths to look for modules in")
+        else:
+            importers = map(get_importer, path)
+
+        yielded = {}
+        for i in importers:
+            for name, ispkg in iter_importer_modules(i, prefix):
+                if name not in yielded:
+                    yielded[name] = 1
+                    yield ModuleInfo(i, name, ispkg)
+
+    def iter_importer_modules(importer, prefix=''):
+        r"""
+        Yield :class:`ModuleInfo` for all modules of ``importer``.
+        """
+        from importlib.machinery import FileFinder
+
+        if isinstance(importer, FileFinder):
+            if importer.path is None or not os.path.isdir(importer.path):
+                return
+
+            yielded = {}
+            import inspect
+            try:
+                filenames = os.listdir(importer.path)
+            except OSError:
+                # ignore unreadable directories like import does
+                filenames = []
+            filenames.sort()  # handle packages before same-named modules
+
+            for fn in filenames:
+                modname = inspect.getmodulename(fn)
+                if modname and (modname in ['__init__', 'all']
+                                or modname.startswith('all__')
+                                or modname in yielded):
+                    continue
+
+                path = os.path.join(importer.path, fn)
+                ispkg = False
+
+                if not modname and os.path.isdir(path) and '.' not in fn:
+                    modname = fn
+                    if not (ispkg := is_package_or_sage_namespace_package_dir(path)):
+                        continue
+
+                if modname and '.' not in modname:
+                    yielded[modname] = 1
+                    yield prefix + modname, ispkg
+
+        elif not hasattr(importer, 'iter_modules'):
+            yield from []
+
+        else:
+            yield from importer.iter_modules(prefix)
+
+    def seen(p, m={}):
+        if p in m:
+            return True
+        m[p] = True
+
+    for info in iter_modules(path, prefix):
+        yield info
+
+        if info.ispkg:
+            try:
+                __import__(info.name)
+            except ImportError:
+                if onerror is not None:
+                    onerror(info.name)
+            except Exception:
+                if onerror is not None:
+                    onerror(info.name)
+                else:
+                    raise
+            else:
+                path = getattr(sys.modules[info.name], '__path__', None) or []
+
+                # don't traverse path items we've seen before
+                path = [p for p in path if not seen(p)]
+
+                yield from walk_packages(path, info.name + '.', onerror)
