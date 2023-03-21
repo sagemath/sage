@@ -363,19 +363,24 @@ class Stream_inexact(Stream):
                 pass
 
             c = self.get_coefficient(n)
-            if not self._true_order and n == self._approximate_order and not c:
-                # self._approximate_order is not in self._cache if
-                # self._true_order is False
-                ao = self._approximate_order + 1
-                while ao in self._cache:
-                    if self._cache[ao]:
-                        self._true_order = True
-                        break
-                    ao += 1
-                self._approximate_order = ao
+            if self._true_order or n > self._approximate_order:
+                self._cache[n] = c
                 return c
 
-            self._cache[n] = c
+            if c:
+                self._true_order = True
+                self._cache[n] = c
+                return c
+
+            # self._approximate_order is not in self._cache if
+            # self._true_order is False
+            ao = self._approximate_order + 1
+            while ao in self._cache:
+                if self._cache[ao]:
+                    self._true_order = True
+                    break
+                ao += 1
+            self._approximate_order = ao
             return c
 
         # Dense implementation
@@ -434,6 +439,14 @@ class Stream_inexact(Stream):
             sage: f = Stream_function(lambda n: n*(n+1), False, -1)
             sage: f.order()
             1
+            sage: f._true_order
+            True
+
+            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
         """
         if self._true_order:
             return self._approximate_order
