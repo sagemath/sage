@@ -576,6 +576,16 @@ cdef class FiniteField(Field):
             ....:             for j in range(len(F)):
             ....:                 if i == j: continue
             ....:                 assert gcd(F[i][0], F[j][0]) == 1
+
+        Check that :trac:`35323` is fixed::
+
+            sage: R.<x> = GF(2)[]
+            sage: (x^2 + 1).squarefree_decomposition()
+            (x + 1)^2
+            sage: R.<x> = PolynomialRing(GF(65537), sparse=True)
+            sage: (x^65537 + 2).squarefree_decomposition()
+            (x + 2)^65537
+
         """
         from sage.structure.factorization import Factorization
         if f.degree() == 0:
@@ -588,8 +598,9 @@ cdef class FiniteField(Field):
         e = 1
         if T0.degree() > 0:
             der = T0.derivative()
+            pth_root = self.frobenius_endomorphism(-1)
             while der.is_zero():
-                T0 = T0.parent()([T0[p*i].pth_root() for i in range(T0.degree()//p + 1)])
+                T0 = T0.parent()([pth_root(T0[p*i]) for i in range(T0.degree()//p + 1)])
                 if T0 == 1:
                     raise RuntimeError
                 der = T0.derivative()
@@ -611,11 +622,11 @@ cdef class FiniteField(Field):
                         if T.degree() == 0:
                             break
                         # T is of the form sum_{i=0}^n t_i X^{pi}
-                        T0 = T0.parent()([T[p*i].pth_root() for i in range(T.degree()//p + 1)])
+                        T0 = T0.parent()([pth_root(T[p*i]) for i in range(T.degree()//p + 1)])
                         der = T0.derivative()
                         e = p*e
                         while der.is_zero():
-                            T0 = T0.parent()([T0[p*i].pth_root() for i in range(T0.degree()//p + 1)])
+                            T0 = T0.parent()([pth_root(T0[p*i]) for i in range(T0.degree()//p + 1)])
                             der = T0.derivative()
                             e = p*e
                         T = T0.gcd(der)
