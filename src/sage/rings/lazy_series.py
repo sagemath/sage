@@ -39,7 +39,7 @@ which are needed are computed. ::
     sage: s.coefficient(10)
     10
     sage: s._coeff_stream._cache
-    {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 10: 10}
+    {1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 10: 10}
 
 Using the dense implementation, all coefficients up to the required
 coefficient are computed. ::
@@ -366,7 +366,7 @@ class LazyModuleElement(Element):
             sage: f[:3]
             []
             sage: f._coeff_stream._cache
-            {1: 0, 2: 0}
+            {}
         """
         R = self.parent()._internal_poly_ring.base_ring()
         coeff_stream = self._coeff_stream

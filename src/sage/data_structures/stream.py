@@ -341,7 +341,7 @@ class Stream_inexact(Stream):
             sage: [f[i] for i in range(10)]
             [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
             sage: f._cache
-            {0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+            {1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
 
             sage: f = Stream_function(lambda n: n^2, False, 0)
             sage: f[3]
@@ -360,23 +360,23 @@ class Stream_inexact(Stream):
             try:
                 return self._cache[n]
             except KeyError:
-                c = self.get_coefficient(n)
-                self._cache[n] = c
-                if not self._true_order and n == self._approximate_order:
+                pass
+
+            c = self.get_coefficient(n)
+            if not self._true_order and n == self._approximate_order and not c:
                 # self._approximate_order is not in self._cache if
                 # self._true_order is False
-                    if c:
+                ao = self._approximate_order + 1
+                while ao in self._cache:
+                    if self._cache[ao]:
                         self._true_order = True
-                        self._approximate_order = n
-                    else:
-                        ao = self._approximate_order + 1
-                        while ao in self._cache:
-                            if self._cache[ao]:
-                                self._true_order = True
-                                break
-                            ao += 1
-                        self._approximate_order = ao
+                        break
+                    ao += 1
+                self._approximate_order = ao
                 return c
+
+            self._cache[n] = c
+            return c
 
         # Dense implementation
         while not self._true_order and n >= self._approximate_order:
