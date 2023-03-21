@@ -2467,8 +2467,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         reprs = []
         for i in range(M.ncols()):
             Mri = M[r][i] / F[r]
-            reprs.append(X.hom([lift(F[j] * Mri)
-                                for j in range(n)], Y))
+            reprs.append(X.hom([lift(F[j] * Mri) for j in range(n)], Y))
 
         return reprs
 

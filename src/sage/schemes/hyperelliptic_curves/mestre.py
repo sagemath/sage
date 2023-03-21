@@ -202,7 +202,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     if reduced:
         raise NotImplementedError("Reduction of hyperelliptic curves not "
                                   "yet implemented. "
-                                  "See github #14755 and #14756.")
+                                  "See issues #14755 and #14756.")
 
     return HyperellipticCurve(f)
 
