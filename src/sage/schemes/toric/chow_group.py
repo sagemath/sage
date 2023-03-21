@@ -787,9 +787,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: P2 = toric_varieties.P2()
             sage: from sage.schemes.toric.chow_group import ChowGroup
-            sage: ChowGroup(P2,ZZ)._repr_()
+            sage: ChowGroup(P2, ZZ)._repr_()
             'Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches'
-            sage: ChowGroup(P2,QQ)._repr_()
+            sage: ChowGroup(P2, QQ)._repr_()
             'QQ-Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches'
         """
         if self.base_ring() == QQ:
@@ -855,15 +855,15 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         Four exercises from page 65 of [Ful1993]_. First, an example
         with `A_1(X)=\ZZ\oplus\ZZ/3\ZZ`::
 
-            sage: X = ToricVariety(Fan(cones=[[0,1],[1,2],[2,0]],
-            ....:                      rays=[[2,-1],[-1,2],[-1,-1]]))
+            sage: X = ToricVariety(Fan(cones=[[0,1], [1,2], [2,0]],
+            ....:                      rays=[[2,-1], [-1,2], [-1,-1]]))
             sage: A = X.Chow_group()
             sage: A.degree(1)
             C3 x Z
 
         Second, an example with `A_2(X)=\ZZ^2`::
 
-            sage: points = [[1,0,0],[0,1,0],[0,0,1],[1,-1,1],[-1,0,-1]]
+            sage: points = [[1,0,0], [0,1,0], [0,0,1], [1,-1,1], [-1,0,-1]]
             sage: l = LatticePolytope(points)
             sage: l.show3d()
             sage: X = ToricVariety(FaceFan(l))

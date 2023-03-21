@@ -48,7 +48,7 @@ First, consider the following embedding of `\mathbb{P}^1` into
 
     sage: P2.<x,y,z> = toric_varieties.P2()
     sage: P1.<u,v> = toric_varieties.P1()
-    sage: P1.hom([0,u^2+v^2,u*v], P2)
+    sage: P1.hom([0, u^2 + v^2, u*v], P2)
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
@@ -93,7 +93,7 @@ z\not=0 \}` of `\mathbb{P}^2`.
 
 Consider instead the following morphism of fans::
 
-    sage: fm = FanMorphism( matrix(ZZ,[[1,0]]), P1.fan(), P2.fan() );  fm
+    sage: fm = FanMorphism(matrix(ZZ, [[1,0]]), P1.fan(), P2.fan());  fm
     Fan morphism defined by the matrix
     [1 0]
     Domain fan: Rational polyhedral fan in 1-d lattice N
@@ -217,7 +217,8 @@ already encountered. The interesting fiber is the one over the
 2-dimensional cone, which represents the exceptional set of the
 blow-up in this single coordinate chart. Lets investigate further::
 
-    sage: exceptional_cones = single_chart.fan_morphism().primitive_preimage_cones(A2_Z2.fan(2)[0])
+    sage: fm = single_chart.fan_morphism()
+    sage: exceptional_cones = fm.primitive_preimage_cones(A2_Z2.fan(2)[0])
     sage: exceptional_set = single_chart.fiber_component(exceptional_cones[0])
     sage: exceptional_set
     1-d affine toric variety
@@ -237,7 +238,7 @@ Here is an example with higher dimensional varieties involved::
 
     sage: A3 = toric_varieties.A(3)
     sage: P3 = toric_varieties.P(3)
-    sage: m = matrix([(2,0,0), (1,1,0), (3, 1, 0)])
+    sage: m = matrix([(2,0,0), (1,1,0), (3,1,0)])
     sage: phi = A3.hom(m, P3)
     sage: phi.as_polynomial_map()
     Scheme morphism:
@@ -479,7 +480,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
         sage: P1xP1 = toric_varieties.P1xP1()
         sage: P1xP1.inject_variables()
         Defining s, t, x, y
-        sage: P1 = P1xP1.subscheme(s-t)
+        sage: P1 = P1xP1.subscheme(s - t)
         sage: H = P1xP1.Hom(P1)
         sage: import sage.schemes.toric.morphism as MOR
         sage: MOR.SchemeMorphism_polynomial_toric_variety(H, [s, s, x, y])
@@ -501,7 +502,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1xP1.inject_variables()
             Defining s, t, x, y
-            sage: P1 = P1xP1.subscheme(s-t)
+            sage: P1 = P1xP1.subscheme(s - t)
             sage: H = P1xP1.Hom(P1)
             sage: import sage.schemes.toric.morphism as MOR
             sage: MOR.SchemeMorphism_polynomial_toric_variety(H, [s, s, x, y])
@@ -833,7 +834,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         sage: P1xP1 = toric_varieties.P1xP1()
         sage: P1 = toric_varieties.P1()
         sage: hom_set = P1xP1.Hom(P1)
-        sage: fm = FanMorphism( matrix(ZZ,[[1],[0]]), P1xP1.fan(), P1.fan() )
+        sage: fm = FanMorphism(matrix(ZZ, [[1],[0]]), P1xP1.fan(), P1.fan())
         sage: hom_set(fm)
         Scheme morphism:
           From: 2-d CPR-Fano toric variety covered by 4 affine patches
@@ -858,7 +859,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1 = toric_varieties.P1()
             sage: hom_set = P1xP1.Hom(P1)
-            sage: fan_morphism = FanMorphism( matrix(ZZ,[[1],[0]]), P1xP1.fan(), P1.fan() )
+            sage: fan_morphism = FanMorphism(matrix(ZZ, [[1],[0]]), P1xP1.fan(), P1.fan())
             sage: from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
             sage: SchemeMorphism_fan_toric_variety(hom_set, fan_morphism)
             Scheme morphism:
@@ -1311,7 +1312,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
             sage: A2_Z2 = toric_varieties.A2_Z2()
             sage: A2 = toric_varieties.A2()
-            sage: f = A2.hom( matrix([[1,0],[1,2]]), A2_Z2)
+            sage: f = A2.hom(matrix([[1,0], [1,2]]), A2_Z2)
             sage: f.pullback_divisor(A2_Z2.divisor(0))
             V(x)
 
@@ -1423,7 +1424,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
                     [1 : 1 : z0 : z1]
 
             sage: A1 = toric_varieties.A1()
-            sage: fan = Fan([(0,1,2)], [(1,1,0),(1,0,1),(1,-1,-1)])
+            sage: fan = Fan([(0,1,2)], [(1,1,0), (1,0,1), (1,-1,-1)])
             sage: fan = fan.subdivide(new_rays=[(1,0,0)])
             sage: f = ToricVariety(fan).hom(matrix([[1],[0],[0]]), A1)
             sage: f.fiber_generic()
@@ -1478,10 +1479,11 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope)
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
-            sage: primitive_cones = fibration.fan_morphism().primitive_preimage_cones(P2.fan(1)[0])
+            sage: ffm = fibration.fan_morphism()
+            sage: primitive_cones = ffm.primitive_preimage_cones(P2.fan(1)[0])
             sage: primitive_cone = primitive_cones[0]
             sage: fibration.fiber_component(primitive_cone)
             2-d toric variety covered by 4 affine patches
@@ -1597,11 +1599,12 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
 
             sage: P2 = toric_varieties.P2()
-            sage: proj34 = block_matrix(2,1,[zero_matrix(2,2), identity_matrix(2)])
+            sage: proj34 = block_matrix(2, 1, [zero_matrix(2,2),
+            ....:                              identity_matrix(2)])
             sage: fm = FanMorphism(proj34, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
 
-            sage: fibration.fiber_graph( P2.fan(0)[0] )
+            sage: fibration.fiber_graph(P2.fan(0)[0])
             Graph on 1 vertex
             sage: for c1 in P2.fan(1):
             ....:     fibration.fiber_graph(c1)
@@ -1674,7 +1677,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
         sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
         sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
-        sage: primitive_cones = fibration.fan_morphism().primitive_preimage_cones(P2.fan(1)[0])
+        sage: ffm = fibration.fan_morphism()
+        sage: primitive_cones = ffm.primitive_preimage_cones(P2.fan(1)[0])
         sage: primitive_cone = primitive_cones[0]
         sage: fiber_component = fibration.fiber_component(primitive_cone)
         sage: fiber_component
@@ -1706,7 +1710,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])
@@ -1762,7 +1766,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
 
@@ -1939,7 +1943,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])

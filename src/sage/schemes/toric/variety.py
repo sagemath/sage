@@ -129,7 +129,7 @@ must be homogeneous in each of these pairs::
     ...
     ValueError: x^2 + s^2 is not homogeneous
     on 2-d toric variety covered by 4 affine patches
-    sage: P1xP1.subscheme([x^2*s^2 + x*y*t^2 +y^2*t^2, s^3 + t^3])
+    sage: P1xP1.subscheme([x^2*s^2 + x*y*t^2 + y^2*t^2, s^3 + t^3])
     Closed subscheme of 2-d toric variety
     covered by 4 affine patches defined by:
       x^2*s^2 + x*y*t^2 + y^2*t^2,
@@ -267,9 +267,9 @@ cohomology classes::
     sage: D = P4_11133.divisor(0)
     sage: HH(D)
     [3*z4]
-    sage: P4_11133.integrate( HH(D)^4 )
+    sage: P4_11133.integrate(HH(D)^4)
     9
-    sage: P4_11133.integrate( HH(D) * HH(cone) )
+    sage: P4_11133.integrate(HH(D) * HH(cone))
     1
 
 Although computationally less efficient, we can do the same
@@ -455,7 +455,7 @@ def ToricVariety(fan,
 
         sage: P1xP1.inject_variables()
         Defining x, s, y, t
-        sage: P1xP1.subscheme(x*s-y*t)
+        sage: P1xP1.subscheme(x*s - y*t)
         Closed subscheme of 2-d toric variety
         covered by 4 affine patches defined by:
           x*s - y*t
@@ -872,7 +872,7 @@ class ToricVariety_field(AmbientSpace):
 
             sage: P1xP1.inject_variables()
             Defining s, t, x, y
-            sage: P1 = P1xP1.subscheme(s-t)
+            sage: P1 = P1xP1.subscheme(s - t)
             sage: hom_set = P1xP1.Hom(P1)
             sage: hom_set([s,s,x,y])
             Scheme morphism:
@@ -1311,7 +1311,7 @@ class ToricVariety_field(AmbientSpace):
         no homogeneous rescalings, for example::
 
             sage: A1.<z> = toric_varieties.A1()
-            sage: A1.is_homogeneous(z^3+z^7)
+            sage: A1.is_homogeneous(z^3 + z^7)
             True
 
         Finally, the degree group is really the Chow group
@@ -1321,11 +1321,11 @@ class ToricVariety_field(AmbientSpace):
         from odd-degree homogeneous polynomials::
 
             sage: A2_Z2.<x,y> = toric_varieties.A2_Z2()
-            sage: A2_Z2.is_homogeneous(x+y+x^3+y^5+x^3*y^4)
+            sage: A2_Z2.is_homogeneous(x + y + x^3 + y^5 + x^3*y^4)
             True
-            sage: A2_Z2.is_homogeneous(x^2+x*y+y^4+(x*y)^5+x^4*y^4)
+            sage: A2_Z2.is_homogeneous(x^2 + x*y + y^4 + (x*y)^5 + x^4*y^4)
             True
-            sage: A2_Z2.is_homogeneous(x+y^2)
+            sage: A2_Z2.is_homogeneous(x + y^2)
             False
         """
         if '_homogeneous_degrees_group' not in self.__dict__:
@@ -1874,7 +1874,7 @@ class ToricVariety_field(AmbientSpace):
         with coordinates `(x, y)` for one and `(s, t)` for the other::
 
             sage: P1xP1.<x,y,s,t> = toric_varieties.P1xP1()
-            sage: X = P1xP1.subscheme([x*s + y*t, x^3+y^3])
+            sage: X = P1xP1.subscheme([x*s + y*t, x^3 + y^3])
             sage: X
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 4 affine patches defined by:
@@ -1917,10 +1917,12 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]], [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))
-            sage: SR = X.Stanley_Reisner_ideal(); SR
-            Ideal (A*E, C*D, A*B*C, B*D*E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
+            sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
+            ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
+            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # optional - sage.rings.finite_rings
+            sage: SR = X.Stanley_Reisner_ideal(); SR                                                # optional - sage.rings.finite_rings
+            Ideal (A*E, C*D, A*B*C, B*D*E) of
+             Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         if "_SR" not in self.__dict__:
             R = PolynomialRing(QQ, self.variable_names())
@@ -1939,10 +1941,12 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]], [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))
-            sage: lin = X.linear_equivalence_ideal(); lin
-            Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
+            sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
+            ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
+            sage: X = ToricVariety(fan, coordinate_names='A B C D E', base_field=GF(5))             # optional - sage.rings.finite_rings
+            sage: lin = X.linear_equivalence_ideal(); lin                                           # optional - sage.rings.finite_rings
+            Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of
+             Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         if "_linear_equivalence_ideal" not in self.__dict__:
             R = PolynomialRing(QQ, self.variable_names())
@@ -1980,7 +1984,8 @@ class ToricVariety_field(AmbientSpace):
             sage: X.cohomology_ring()
             Rational cohomology ring of a 2-d CPR-Fano toric variety covered by 6 affine patches
             sage: X.cohomology_ring().defining_ideal()
-            Ideal (-u - y + z + w, x - y - v + w, x*y, x*v, x*z, u*v, u*z, u*w, y*z, y*w, v*w) of Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
+            Ideal (-u - y + z + w, x - y - v + w, x*y, x*v, x*z, u*v, u*z, u*w, y*z, y*w, v*w) of
+             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.cohomology_ring().defining_ideal().ring()
             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.variable_names()
@@ -2542,7 +2547,7 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: A2Z2 = Cone([(0,1),(2,1)])
+            sage: A2Z2 = Cone([(0,1), (2,1)])
             sage: AffineToricVariety(A2Z2)._semigroup_ring()
             (Multivariate Polynomial Ring in z0, z1, z2 over Rational Field,
              Ideal (-z0*z1 + z2^2) of Multivariate Polynomial Ring in z0, z1, z2 over Rational Field,
@@ -2554,7 +2559,7 @@ class ToricVariety_field(AmbientSpace):
              (Multivariate Polynomial Ring in z0, z1 over Rational Field,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Rational Field,
               2-d cone in 2-d lattice M)
-             sage: P2.change_ring(GF(101))._semigroup_ring(cone)
+             sage: P2.change_ring(GF(101))._semigroup_ring(cone)                                    # optional - sage.rings.finite_rings
              (Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               2-d cone in 2-d lattice M)
@@ -2617,13 +2622,13 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: quadrant = Cone([(1,0),(0,1)])
+            sage: quadrant = Cone([(1,0), (0,1)])
             sage: AffineToricVariety(quadrant).Spec()
             Spectrum of Multivariate Polynomial Ring in z0, z1 over Rational Field
 
         A more interesting example::
 
-            sage: A2Z2 = Cone([(0,1),(2,1)])
+            sage: A2Z2 = Cone([(0,1), (2,1)])
             sage: AffineToricVariety(A2Z2).Spec(names='u,v,t')
             Spectrum of Quotient of Multivariate Polynomial Ring
             in u, v, t over Rational Field by the ideal (-u*v + t^2)
@@ -2656,7 +2661,7 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: cone = Cone([(0,1),(2,1)])
+            sage: cone = Cone([(0,1), (2,1)])
             sage: A2Z2 = AffineToricVariety(cone)
             sage: A2Z2.affine_algebraic_patch()
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
@@ -2807,10 +2812,10 @@ class ToricVariety_field(AmbientSpace):
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V2 = V.change_ring(GF(2))
-            sage: V2.point_set().cardinality()
+            sage: V2 = V.change_ring(GF(2))                                                         # optional - sage.rings.finite_rings
+            sage: V2.point_set().cardinality()                                                      # optional - sage.rings.finite_rings
             27
-            sage: V2.count_points()
+            sage: V2.count_points()                                                                 # optional - sage.rings.finite_rings
             27
         """
         return self.point_set().cardinality()
@@ -2838,18 +2843,18 @@ class ToricVariety_field(AmbientSpace):
         Here are the remaining three examples listed in [Baz2011]_, Example 2.1 and 2.3::
 
             sage: s = 3
-            sage: cones = [(0,1),(1,2),(2,3),(3,0)]
-            sage: Hs = ToricVariety(Fan(rays=[(1,0),(0,-1),(-1,s),(0,1)], cones=cones))
+            sage: cones = [(0,1), (1,2), (2,3), (3,0)]
+            sage: Hs = ToricVariety(Fan(rays=[(1,0), (0,-1), (-1,s), (0,1)], cones=cones))
             sage: Hs.Demazure_roots()
             (M(-1, 0), M(1, 0), M(0, 1), M(1, 1), M(2, 1), M(3, 1))
 
-            sage: P11s = ToricVariety(Fan(rays=[(1,0),(0,-1),(-1,s)], cones=[(0,1),(1,2),(2,0)]))
+            sage: P11s = ToricVariety(Fan(rays=[(1,0), (0,-1), (-1,s)], cones=[(0,1), (1,2), (2,0)]))
             sage: P11s.Demazure_roots()
             (M(-1, 0), M(1, 0), M(0, 1), M(1, 1), M(2, 1), M(3, 1))
             sage: P11s.Demazure_roots() == Hs.Demazure_roots()
             True
 
-            sage: Bs = ToricVariety(Fan(rays=[(s,1),(s,-1),(-s,-1),(-s,1)], cones=cones))
+            sage: Bs = ToricVariety(Fan(rays=[(s,1), (s,-1), (-s,-1), (-s,1)], cones=cones))
             sage: Bs.Demazure_roots()
             ()
 
@@ -3491,9 +3496,9 @@ class CohomologyClass(QuotientRingElement):
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: t = P1xP1.cohomology_ring().gen(0)
             sage: y = P1xP1.cohomology_ring().gen(2)
-            sage: 3*t+4*t^2*y+y+t*y+t+1
+            sage: 3*t + 4*t^2*y + y + t*y + t + 1
             [t*y + 4*t + y + 1]
-            sage: (3*t+4*t^2*y+y+t*y+t+1).part_of_degree(1)
+            sage: (3*t + 4*t^2*y + y + t*y + t + 1).part_of_degree(1)
             [4*t + y]
         """
         Q = self.parent()

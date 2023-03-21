@@ -105,7 +105,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
 
     ::
 
-        sage: ProductProjectiveSpaces([2, 2],GF(7), 'y')
+        sage: ProductProjectiveSpaces([2, 2], GF(7), 'y')                               # optional - sage.rings.finite_rings
         Product of projective spaces P^2 x P^2 over Finite Field of size 7
 
     ::
@@ -396,7 +396,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: P1 = ProductProjectiveSpaces([2,1], QQ, 'x')
+            sage: P1 = ProductProjectiveSpaces([2, 1], QQ, 'x')
             sage: P1^3
             Product of projective spaces P^2 x P^1 x P^2 x P^1 x P^2 x P^1 over
             Rational Field
@@ -435,8 +435,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         ::
 
-            sage: S = ProductProjectiveSpaces([1,2,1], ZZ, 't')
-            sage: T = ProductProjectiveSpaces([2,2], ZZ, 'x')
+            sage: S = ProductProjectiveSpaces([1, 2, 1], ZZ, 't')
+            sage: T = ProductProjectiveSpaces([2, 2], ZZ, 'x')
             sage: T.inject_variables()
             Defining x0, x1, x2, x3, x4, x5
             sage: X = T.subscheme([x0*x4 - x1*x3])
@@ -479,7 +479,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: P.<x,y,z,u,v> = ProductProjectiveSpaces(QQ,[2,1])
+            sage: P.<x,y,z,u,v> = ProductProjectiveSpaces(QQ, [2, 1])
             sage: P.components()
             [Projective Space of dimension 2 over Rational Field,
             Projective Space of dimension 1 over Rational Field]
@@ -494,7 +494,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: T.<a,x,y,z,u,v,w> = ProductProjectiveSpaces([3,2],QQ)
+            sage: T.<a,x,y,z,u,v,w> = ProductProjectiveSpaces([3, 2], QQ)
             sage: T.dimension_relative()
             5
         """
@@ -508,10 +508,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], GF(17))
-            sage: T.dimension_absolute()
+            sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], GF(17))             # optional - sage.rings.finite_rings
+            sage: T.dimension_absolute()                                                # optional - sage.rings.finite_rings
             4
-            sage: T.dimension()
+            sage: T.dimension()                                                         # optional - sage.rings.finite_rings
             4
         """
         base = self.base_scheme()
@@ -543,10 +543,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], GF(17))
-            sage: T.dimension_absolute_components()
+            sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], GF(17))             # optional - sage.rings.finite_rings
+            sage: T.dimension_absolute_components()                                     # optional - sage.rings.finite_rings
             [2, 2]
-            sage: T.dimension_components()
+            sage: T.dimension_components()                                              # optional - sage.rings.finite_rings
             [2, 2]
         """
         base = self.base_scheme()
@@ -564,8 +564,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
-            sage: T.num_components()
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')                    # optional - sage.rings.finite_rings
+            sage: T.num_components()                                                    # optional - sage.rings.finite_rings
             3
         """
         return len(self._components)
@@ -581,8 +581,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
-            sage: T.ngens()
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')                    # optional - sage.rings.finite_rings
+            sage: T.ngens()                                                             # optional - sage.rings.finite_rings
             6
         """
         return sum([P.ngens() for P in self._components])
@@ -722,9 +722,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         ::
 
-            sage: R.<t> = PolynomialRing(GF(5))
-            sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], QQ)
-            sage: T._validate([t, t, t, w^2, u^2])
+            sage: R.<t> = PolynomialRing(GF(5))                                         # optional - sage.rings.finite_rings
+            sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], QQ)                   # optional - sage.rings.finite_rings
+            sage: T._validate([t, t, t, w^2, u^2])                                      # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: polynomials (=[t, t, t, w^2, u^2]) must be elements of Multivariate
@@ -755,9 +755,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         ::
 
-            sage: R.<t> = PolynomialRing(GF(7))
-            sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], R)
-            sage: T._check_satisfies_equations([1 + t, 1, 0, 0, 1])
+            sage: R.<t> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
+            sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], R)                    # optional - sage.rings.finite_rings
+            sage: T._check_satisfies_equations([1 + t, 1, 0, 0, 1])                     # optional - sage.rings.finite_rings
             True
 
         ::
@@ -837,25 +837,27 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         EXAMPLES::
 
-            sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1],GF(5))
-            sage: X = P.subscheme([x-y, z-w]);X
-            Closed subscheme of Product of projective spaces P^1 x P^1 over Finite Field of size 5 defined by:
+            sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))                  # optional - sage.rings.finite_rings
+            sage: X = P.subscheme([x - y, z - w]); X                                    # optional - sage.rings.finite_rings
+            Closed subscheme of Product of projective spaces P^1 x P^1
+            over Finite Field of size 5 defined by:
                   x - y,
                   z - w
-            sage: X.defining_polynomials ()
+            sage: X.defining_polynomials()                                              # optional - sage.rings.finite_rings
             [x - y, z - w]
-            sage: I = X.defining_ideal(); I
+            sage: I = X.defining_ideal(); I                                             # optional - sage.rings.finite_rings
             Ideal (x - y, z - w) of Multivariate Polynomial Ring in x, y, z, w over
             Finite Field of size 5
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.rings.finite_rings
             0
-            sage: X.base_ring()
+            sage: X.base_ring()                                                         # optional - sage.rings.finite_rings
             Finite Field of size 5
-            sage: X.base_scheme()
+            sage: X.base_scheme()                                                       # optional - sage.rings.finite_rings
             Spectrum of Finite Field of size 5
-            sage: X.structure_morphism()
+            sage: X.structure_morphism()                                                # optional - sage.rings.finite_rings
             Scheme morphism:
-                  From: Closed subscheme of Product of projective spaces P^1 x P^1 over Finite Field of size 5 defined by:
+                  From: Closed subscheme of Product of projective spaces P^1 x P^1
+                        over Finite Field of size 5 defined by:
                   x - y,
                   z - w
                   To:   Spectrum of Finite Field of size 5
@@ -884,7 +886,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], QQ)
-            sage: T.change_ring(GF(17))
+            sage: T.change_ring(GF(17))                                                 # optional - sage.rings.finite_rings
             Product of projective spaces P^2 x P^2 over Finite Field of size 17
         """
         new_components = [P.change_ring(R) for P in self._components]
@@ -1109,8 +1111,9 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         EXAMPLES::
 
             sage: u = QQ['u'].0
-            sage: P = ProductProjectiveSpaces([1, 2], NumberField(u^2 - 2, 'v'), 'x')
-            sage: P([1, 3, u, 1, 1])
+            sage: K = NumberField(u^2 - 2, 'v')                                         # optional - sage.rings.number_field
+            sage: P = ProductProjectiveSpaces([1, 2], K, 'x')                           # optional - sage.rings.number_field
+            sage: P([1, 3, u, 1, 1])                                                    # optional - sage.rings.number_field
             (1/3 : 1 , v : 1 : 1)
         """
         return ProductProjectiveSpaces_point_field(*args, **kwds)
@@ -1123,8 +1126,8 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
 
         EXAMPLES::
 
-            sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))
-            sage: P._point_homset(Spec(GF(5)), P)
+            sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))                  # optional - sage.rings.finite_rings
+            sage: P._point_homset(Spec(GF(5)), P)                                       # optional - sage.rings.finite_rings
             Set of rational points of Product of projective spaces P^1 x P^1
             over Finite Field of size 5
         """
@@ -1178,8 +1181,8 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         ::
 
             sage: u = QQ['u'].0
-            sage: P = ProductProjectiveSpaces([1, 1], NumberField(u^2 - 2, 'v'))
-            sage: sorted(list(P.points_of_bounded_height(bound=1.5)))
+            sage: P = ProductProjectiveSpaces([1, 1], NumberField(u^2 - 2, 'v'))        # optional - sage.rings.number_field
+            sage: sorted(list(P.points_of_bounded_height(bound=1.5)))                   # optional - sage.rings.number_field
             [(-v : 1 , -v : 1), (-v : 1 , -1 : 1), (-v : 1 , -1/2*v : 1), (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1),
              (-v : 1 , 1 : 0), (-v : 1 , 1 : 1), (-v : 1 , v : 1), (-1 : 1 , -v : 1), (-1 : 1 , -1 : 1),
              (-1 : 1 , -1/2*v : 1), (-1 : 1 , 0 : 1), (-1 : 1 , 1/2*v : 1), (-1 : 1 , 1 : 0), (-1 : 1 , 1 : 1),
@@ -1236,8 +1239,8 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
         EXAMPLES::
 
-            sage: P = ProductProjectiveSpaces([1, 2], GF(11))
-            sage: P([3, 7, 4, 5, 9])
+            sage: P = ProductProjectiveSpaces([1, 2], GF(11))                           # optional - sage.rings.finite_rings
+            sage: P([3, 7, 4, 5, 9])                                                    # optional - sage.rings.finite_rings
             (2 : 1 , 9 : 3 : 1)
         """
         return ProductProjectiveSpaces_point_finite_field(*args, **kwds)
@@ -1248,8 +1251,8 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
         EXAMPLES::
 
-            sage: P = ProductProjectiveSpaces([2, 1], GF(3))
-            sage: [x for x in P]
+            sage: P = ProductProjectiveSpaces([2, 1], GF(3))                            # optional - sage.rings.finite_rings
+            sage: [x for x in P]                                                        # optional - sage.rings.finite_rings
             [(0 : 0 : 1 , 0 : 1),
             (0 : 1 : 1 , 0 : 1),
             (0 : 2 : 1 , 0 : 1),
@@ -1281,8 +1284,8 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
         EXAMPLES::
 
-            sage: P = ProductProjectiveSpaces([1, 1], GF(5))
-            sage: P.rational_points()
+            sage: P = ProductProjectiveSpaces([1, 1], GF(5))                            # optional - sage.rings.finite_rings
+            sage: P.rational_points()                                                   # optional - sage.rings.finite_rings
             [(0 : 1 , 0 : 1), (1 : 1 , 0 : 1), (2 : 1 , 0 : 1), (3 : 1 , 0 : 1), (4 : 1 , 0 : 1), (1 : 0 , 0 : 1),
             (0 : 1 , 1 : 1), (1 : 1 , 1 : 1), (2 : 1 , 1 : 1), (3 : 1 , 1 : 1), (4 : 1 , 1 : 1), (1 : 0 , 1 : 1),
             (0 : 1 , 2 : 1), (1 : 1 , 2 : 1), (2 : 1 , 2 : 1), (3 : 1 , 2 : 1), (4 : 1 , 2 : 1), (1 : 0 , 2 : 1),
@@ -1292,8 +1295,8 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
         ::
 
-            sage: P = ProductProjectiveSpaces([1, 1], GF(2))
-            sage: P.rational_points(GF(2^2,'a'))
+            sage: P = ProductProjectiveSpaces([1, 1], GF(2))                            # optional - sage.rings.finite_rings
+            sage: P.rational_points(GF(2^2, 'a'))                                       # optional - sage.rings.finite_rings
             [(0 : 1 , 0 : 1), (a : 1 , 0 : 1), (a + 1 : 1 , 0 : 1), (1 : 1 , 0 : 1), (1 : 0 , 0 : 1), (0 : 1 , a : 1),
             (a : 1 , a : 1), (a + 1 : 1 , a : 1), (1 : 1 , a : 1), (1 : 0 , a : 1), (0 : 1 , a + 1 : 1), (a : 1 , a + 1 : 1),
             (a + 1 : 1 , a + 1 : 1), (1 : 1 , a + 1 : 1), (1 : 0 , a + 1 : 1), (0 : 1 , 1 : 1), (a : 1 , 1 : 1),
