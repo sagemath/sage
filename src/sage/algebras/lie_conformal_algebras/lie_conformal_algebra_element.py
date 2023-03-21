@@ -60,14 +60,14 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             raise ValueError("n must be a nonnegative Integer")
         if n == 0 or self.is_zero():
             return self
-        #it's faster to sum than to use recursion
+        # it's faster to sum than to use recursion
         if self.is_monomial():
             p = self.parent()
-            a,m = self.index()
-            coef = self._monomial_coefficients[(a,m)]
-            if (a,m+n) in p._indices:
-                return coef*prod(j for j in range(m+1,m+n+1))\
-                        *p.monomial((a,m+n))
+            a, m = self.index()
+            coef = self._monomial_coefficients[(a, m)]
+            if (a, m + n) in p._indices:
+                return coef * prod(j for j in range(m + 1, m + n + 1))\
+                    * p.monomial((a, m + n))
             else:
                 return p.zero()
         return sum(mon.T(n) for mon in self.terms())
@@ -130,10 +130,12 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             except KeyError:
                 return {}
             pole = max(mbr.keys())
-            ret =  {l: coefa*coefb*(-1)**k/factorial(k)*sum(factorial(l)
-                    /factorial(m+k+j-l)/factorial(l-k-j)/factorial(j)*
-                    mbr[j].T(m+k+j-l) for j in mbr if j >= l-m-k and
-                    j <= l-k) for l in range(m+k+pole+1)}
+            ret = {l: coefa * coefb * (-1)**k / factorial(k) *
+                   sum(factorial(l) / factorial(m + k + j - l)
+                       / factorial(l - k - j) / factorial(j)
+                       * mbr[j].T(m + k + j - l)
+                       for j in mbr if l - m - k <= j <= l - k)
+                   for l in range(m + k + pole + 1)}
             return {k: v for k, v in ret.items() if v}
 
         diclist = [i._bracket_(j) for i in self.terms()

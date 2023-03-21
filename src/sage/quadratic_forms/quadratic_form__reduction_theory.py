@@ -425,9 +425,9 @@ def minkowski_reduction_for_4vars__SP(self):
 
     for i in range(4):
         j = 3
-        while (Q[i, j] == 0):
+        while Q[i, j] == 0:
             j += -1
-        if (Q[i, j] < 0):
+        if Q[i, j] < 0:
             Q.multiply_variable(-1, i, in_place=True)
             M_new = matrix(R, n, n)
             for r in range(4):
@@ -439,9 +439,9 @@ def minkowski_reduction_for_4vars__SP(self):
 
     if Q[1, 2] < 0:
         # Test a row 1 sign change
-        if (Q[1, 3] <= 0 and
-            ((Q[1, 3] < 0) or (Q[1, 3] == 0 and Q[1, 2] < 0)
-             or (Q[1, 3] == 0 and Q[1, 2] == 0 and Q[1, 1] < 0))):
+        if (Q[1, 3] <= 0 and (Q[1, 3] < 0
+                              or Q[1, 2] < 0
+                              or (Q[1, 2] == 0 and Q[1, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
             M_new = matrix(R, n, n)
             for r in range(4):
@@ -451,9 +451,9 @@ def minkowski_reduction_for_4vars__SP(self):
                     M_new[r, r] = 1
             M = M * M_new
 
-        elif (Q[2, 3] <= 0 and
-            ((Q[2, 3] < 0) or (Q[2, 3] == 0 and Q[2, 2] < 0)
-                or (Q[2, 3] == 0 and Q[2, 2] == 0 and Q[2, 1] < 0))):
+        elif (Q[2, 3] <= 0 and ((Q[2, 3] < 0)
+                                or Q[2, 2] < 0
+                                or (Q[2, 2] == 0 and Q[2, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
             M_new = matrix(R, n, n)
             for r in range(4):

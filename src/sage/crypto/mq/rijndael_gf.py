@@ -1142,9 +1142,9 @@ class RijndaelGF(SageObject):
         msg = msg.format(keyword, 4, self._Nb, self._F)
         if (not isinstance(PRm, Matrix) or
             not (PRm.base_ring().is_field() and
-                PRm.base_ring().is_finite() and
-                PRm.base_ring().order() == 256 and
-                PRm.dimensions() == (4, self._Nb))) and \
+                 PRm.base_ring().is_finite() and
+                 PRm.base_ring().order() == 256 and
+                 PRm.dimensions() == (4, self._Nb))) and \
            (not isinstance(PRm, Matrix) or
             not isinstance(PRm.base_ring(), MPolynomialRing_base) or
             not (PRm.base_ring().base_ring().is_field() and

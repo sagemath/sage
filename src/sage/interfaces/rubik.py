@@ -46,17 +46,17 @@ import sage.features.rubiks
 # Can't seem to find consistency in letter ordering
 # between us and them... These are copied from the source.
 optimal_solver_tokens = ["UF", "UR", "UB", "UL",
-                        "DF", "DR", "DB", "DL",
-                        "FR", "FL", "BR", "BL",
-                        "FU", "RU", "BU", "LU",
-                        "FD", "RD", "BD", "LD",
-                        "RF", "LF", "RB", "LB",
-                        "UFR", "URB", "UBL", "ULF",
-                        "DRF", "DFL", "DLB", "DBR",
-                        "FRU", "RBU", "BLU", "LFU",
-                        "RFD", "FLD", "LBD", "BRD",
-                        "RUF", "BUR", "LUB", "FUL",
-                        "FDR", "LDF", "BDL", "RDB"]
+                         "DF", "DR", "DB", "DL",
+                         "FR", "FL", "BR", "BL",
+                         "FU", "RU", "BU", "LU",
+                         "FD", "RD", "BD", "LD",
+                         "RF", "LF", "RB", "LB",
+                         "UFR", "URB", "UBL", "ULF",
+                         "DRF", "DFL", "DLB", "DBR",
+                         "FRU", "RBU", "BLU", "LFU",
+                         "RFD", "FLD", "LBD", "BRD",
+                         "RUF", "BUR", "LUB", "FUL",
+                         "FDR", "LDF", "BDL", "RDB"]
 
 # The input format.
 optimal_solver_format = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR"

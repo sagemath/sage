@@ -829,8 +829,9 @@ class SQLQuery(SageObject):
         new_query = ''.join(disp1)
 
         # concatenate where clause
-        new_query = re.sub(' WHERE ',' WHERE ( ', new_query)
-        new_query += re.sub('^.* WHERE ',' ) %s ( '%operator,
+        new_query = re.sub(' WHERE ', ' WHERE ( ',
+                           new_query)
+        new_query += re.sub('^.* WHERE ', f' ) {operator} ( ',
                             other.__query_string__)
         ret.__query_string__ = new_query + ' )'
 
@@ -1641,11 +1642,12 @@ class SQLDatabase(SageObject):
             CREATE TABLE %s (%s);
             """ % (cols_attr, original, table_name, table_name, table_name, cols_attr))
         # Update indices in new table
-        index_statement = ''.join(['CREATE INDEX i_%s_%s ON ' % (table_name,
-            col) + '%s(%s);\n' % (table_name, col) for col in
-            self.__skeleton__[table_name] if
-            self.__skeleton__[table_name][col]['index'] and not
-            self.__skeleton__[table_name][col]['primary_key']])
+        skeleton = self.__skeleton__[table_name]
+        index_statement = ''.join(f'CREATE INDEX i_{table_name}_{col} ON '
+                                  + f'{table_name}({col});\n'
+                                  for col in skeleton
+                                  if skeleton[col]['index']
+                                  and not skeleton[col]['primary_key'])
         if index_statement:
             self.__connection__.executescript(index_statement)
 
