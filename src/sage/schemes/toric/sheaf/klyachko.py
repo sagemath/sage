@@ -93,12 +93,12 @@ def Bundle(toric_variety, multi_filtration, check=True):
     EXAMPLES::
 
         sage: P1 = toric_varieties.P1()
-        sage: v1, v2, v3 = [(1,0,0),(0,1,0),(0,0,1)]
-        sage: F1 = FilteredVectorSpace({1:[v1, v2, v3], 3:[v1]})
-        sage: F2 = FilteredVectorSpace({0:[v1, v2, v3], 2:[v2, v3]})
+        sage: v1, v2, v3 = [(1,0,0), (0,1,0), (0,0,1)]
+        sage: F1 = FilteredVectorSpace({1: [v1, v2, v3], 3: [v1]})
+        sage: F2 = FilteredVectorSpace({0: [v1, v2, v3], 2: [v2, v3]})
         sage: P1 = toric_varieties.P1()
         sage: r1, r2 = P1.fan().rays()
-        sage: F = MultiFilteredVectorSpace({r1:F1, r2:F2});  F
+        sage: F = MultiFilteredVectorSpace({r1: F1, r2: F2});  F
         Filtrations
             N(-1): QQ^3 >= QQ^2 >= QQ^2 >=  0   >= 0
              N(1): QQ^3 >= QQ^3 >= QQ^1 >= QQ^1 >= 0
@@ -110,7 +110,7 @@ def Bundle(toric_variety, multi_filtration, check=True):
         sage: P1.sheaves.Klyachko(F)
         Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
 
-        sage: P1.sheaves.Klyachko({r1:F1, r2:F2})   # alternative
+        sage: P1.sheaves.Klyachko({r1: F1, r2: F2})   # alternative
         Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
 
     The above is just a shorthand for::
@@ -157,8 +157,8 @@ class KlyachkoBundle_class(SageObject):
             sage: P1 = toric_varieties.P1()
             sage: r1, r2 = P1.fan().rays()
             sage: F = MultiFilteredVectorSpace({
-            ....:      r1:FilteredVectorSpace(3,1),
-            ....:      r2:FilteredVectorSpace(3,0)});  F
+            ....:      r1: FilteredVectorSpace(3,1),
+            ....:      r2: FilteredVectorSpace(3,0)});  F
             Filtrations
                 N(-1): QQ^3 >=  0   >= 0
                  N(1): QQ^3 >= QQ^3 >= 0
@@ -545,10 +545,10 @@ class KlyachkoBundle_class(SageObject):
 
             sage: P3 = toric_varieties.P(3)
             sage: rays = [(1,0,0), (0,1,0), (0,0,1)]
-            sage: F1 = FilteredVectorSpace(rays, {0:[0], 1:[2], 2:[1]})
+            sage: F1 = FilteredVectorSpace(rays, {0: [0], 1: [2], 2: [1]})
             sage: F2 = FilteredVectorSpace(3, 0)
             sage: r = P3.fan().rays()
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: tau = Cone([(1,0,0), (0,1,0)])
             sage: sigma = Cone([(1,0,0)])
             sage: M = P3.fan().dual_lattice()
@@ -608,10 +608,10 @@ class KlyachkoBundle_class(SageObject):
 
             sage: P3 = toric_varieties.P(3)
             sage: rays = [(1,0,0), (0,1,0), (0,0,1)]
-            sage: F1 = FilteredVectorSpace(rays, {0:[0], 1:[2], 2:[1]})
-            sage: F2 = FilteredVectorSpace(rays, {0:[1,2], 1:[0]})
+            sage: F1 = FilteredVectorSpace(rays, {0: [0], 1: [2], 2: [1]})
+            sage: F2 = FilteredVectorSpace(rays, {0: [1,2], 1: [0]})
             sage: r = P3.fan().rays()
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: tau = Cone([(1,0,0), (0,1,0)])
             sage: sigma = Cone([(1, 0, 0)])
             sage: M = P3.fan().dual_lattice()
@@ -621,7 +621,7 @@ class KlyachkoBundle_class(SageObject):
 
             sage: F = CyclotomicField(3)
             sage: P3 = toric_varieties.P(3).change_ring(F)
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: V.cohomology_complex(m)
             Chain complex with at most 2 nonzero terms over Cyclotomic
             Field of order 3 and degree 2
@@ -748,7 +748,7 @@ class KlyachkoBundle_class(SageObject):
             sage: V2 = X.sheaves.trivial_bundle(2)
             sage: V2 == V1
             False
-            sage: V2 == V1+V1
+            sage: V2 == V1 + V1
             True
 
             sage: T_X = X.sheaves.tangent_bundle()
@@ -897,9 +897,9 @@ class KlyachkoBundle_class(SageObject):
             sage: P1 = toric_varieties.P1()
             sage: H = P1.divisor(0)
             sage: L = P1.sheaves.line_bundle(H)
-            sage: (L+L).symmetric_power(2)
+            sage: (L + L).symmetric_power(2)
             Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
-            sage: (L+L).symmetric_power(2) == L*L+L*L+L*L
+            sage: (L + L).symmetric_power(2) == L*L + L*L + L*L
             True
         """
         filt = self._filt.symmetric_power(n)

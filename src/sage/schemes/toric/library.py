@@ -1387,7 +1387,7 @@ class ToricVarietyFactory(SageObject):
             sage: X = toric_varieties.WP([1,3,1], names='x y z')
             sage: X.inject_variables()
             Defining x, y, z
-            sage: g = y^2-(x^6-z^6)
+            sage: g = y^2 - (x^6-z^6)
             sage: C = X.subscheme([g]); C
             Closed subscheme of 2-d toric variety covered by 3 affine patches defined by:
               -x^6 + z^6 + y^2

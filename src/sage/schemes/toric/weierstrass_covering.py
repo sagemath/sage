@@ -161,10 +161,10 @@ def WeierstrassMap(polynomial, variables=None):
          1/2*x^6*y^3 - 1/2*x^3*y^6 - 1/2*x^6*z^3 + 1/2*y^6*z^3
              + 1/2*x^3*z^6 - 1/2*y^3*z^6,
          x*y*z)
-         sage: f, g = WeierstrassForm(cubic);  (f,g)
-         (0, -27/4)
-         sage: cubic.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
-         True
+        sage: f, g = WeierstrassForm(cubic);  (f,g)
+        (0, -27/4)
+        sage: cubic.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
+        True
 
     Only the affine span of the Newton polytope of the polynomial
     matters. For example::
@@ -301,7 +301,7 @@ def WeierstrassMap_P2(polynomial, variables=None):
         sage: from sage.schemes.toric.weierstrass import WeierstrassForm_P2
         sage: from sage.schemes.toric.weierstrass_covering import WeierstrassMap_P2
         sage: R.<x,y,z> = QQ[]
-        sage: equation =  x^3+y^3+z^3+x*y*z
+        sage: equation =  x^3 + y^3 + z^3 + x*y*z
         sage: f, g = WeierstrassForm_P2(equation)
         sage: X,Y,Z = WeierstrassMap_P2(equation)
         sage: equation.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
@@ -310,7 +310,7 @@ def WeierstrassMap_P2(polynomial, variables=None):
         sage: from sage.schemes.toric.weierstrass import WeierstrassForm_P2
         sage: from sage.schemes.toric.weierstrass_covering import WeierstrassMap_P2
         sage: R.<x,y> = QQ[]
-        sage: equation =  x^3+y^3+1
+        sage: equation =  x^3 + y^3 + 1
         sage: f, g = WeierstrassForm_P2(equation)
         sage: X,Y,Z = WeierstrassMap_P2(equation)
         sage: equation.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
@@ -344,9 +344,9 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
 
         sage: from sage.schemes.toric.weierstrass_covering import WeierstrassMap_P1xP1
         sage: from sage.schemes.toric.weierstrass import WeierstrassForm_P1xP1
-        sage: R.<x0,x1,y0,y1,a>= QQ[]
-        sage: biquadric = ( x0^2*y0^2 + x1^2*y0^2 + x0^2*y1^2 + x1^2*y1^2 +
-        ....:     a * x0*x1*y0*y1*5 )
+        sage: R.<x0,x1,y0,y1,a> = QQ[]
+        sage: biquadric = (x0^2*y0^2 + x1^2*y0^2 + x0^2*y1^2 + x1^2*y1^2 +
+        ....:     a * x0*x1*y0*y1*5)
         sage: f, g = WeierstrassForm_P1xP1(biquadric, [x0, x1, y0, y1]);  (f,g)
         (-625/48*a^4 + 25/3*a^2 - 16/3, 15625/864*a^6 - 625/36*a^4 - 100/9*a^2 + 128/27)
         sage: X, Y, Z = WeierstrassMap_P1xP1(biquadric, [x0, x1, y0, y1])
@@ -356,8 +356,8 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
         sage: R = PolynomialRing(QQ, 'x,y,s,t', order='lex')
         sage: R.inject_variables()
         Defining x, y, s, t
-        sage: equation = ( s^2*(x^2+2*x*y+3*y^2) + s*t*(4*x^2+5*x*y+6*y^2)
-        ....:              + t^2*(7*x^2+8*x*y+9*y^2) )
+        sage: equation = (s^2*(x^2+2*x*y+3*y^2) + s*t*(4*x^2+5*x*y+6*y^2)
+        ....:             + t^2*(7*x^2+8*x*y+9*y^2))
         sage: X, Y, Z = WeierstrassMap_P1xP1(equation, [x,y,s,t])
         sage: f, g = WeierstrassForm_P1xP1(equation, variables=[x,y,s,t])
         sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))
@@ -429,7 +429,8 @@ def WeierstrassMap_P2_112(polynomial, variables=None):
 
     Another example, this time in homogeneous coordinates::
 
-        sage: fan = Fan(rays=[(1,0),(0,1),(-1,-2),(0,-1)],cones=[[0,1],[1,2],[2,3],[3,0]])
+        sage: fan = Fan(rays=[(1,0),(0,1),(-1,-2),(0,-1)],
+        ....:           cones=[[0,1],[1,2],[2,3],[3,0]])
         sage: P112.<x,y,z,t> = ToricVariety(fan)
         sage: (-P112.K()).sections_monomials()
         (z^4*t^2, x*z^3*t^2, x^2*z^2*t^2, x^3*z*t^2,

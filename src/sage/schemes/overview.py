@@ -117,9 +117,9 @@ Point sets
   ::
 
         sage: R.<x> = ZZ[]
-        sage: S.<t> = R.quo(x^2+5)
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, S)
-        sage: P(S)
+        sage: S.<t> = R.quo(x^2 + 5)                                                    # optional - sage.rings.number_field
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, S)                                         # optional - sage.rings.number_field
+        sage: P(S)                                                                      # optional - sage.rings.number_field
         Set of rational points of Projective Space of dimension 2 over
         Univariate Quotient Polynomial Ring in t over Integer Ring with
         modulus x^2 + 5
@@ -132,7 +132,7 @@ Point sets
 
   ::
 
-        sage: P([2, 1 + t])
+        sage: P([2, 1 + t])                                                             # optional - sage.rings.number_field
         (2 : t + 1 : 1)
 
   In fact, we need a test ``R.ideal([2, 1 + t]) == R.ideal([1])`` in order to make

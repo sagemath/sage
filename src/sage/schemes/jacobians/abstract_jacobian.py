@@ -221,7 +221,7 @@ class Jacobian_generic(Scheme):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^3-10*x+9)
+            sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
             Jacobian of Hyperelliptic Curve over Rational
             Field defined by y^2 = x^3 - 10*x + 9
@@ -246,11 +246,12 @@ class Jacobian_generic(Scheme):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^3-10*x+9)
+            sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
-            Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^3 - 10*x + 9
-            sage: F.<a> = QQ.extension(x^2+1)
-            sage: Jac.base_extend(F)
+            Jacobian of Hyperelliptic Curve over Rational Field
+            defined by y^2 = x^3 - 10*x + 9
+            sage: F.<a> = QQ.extension(x^2 + 1)                                         # optional - sage.rings.number_field
+            sage: Jac.base_extend(F)                                                    # optional - sage.rings.number_field
             Jacobian of Hyperelliptic Curve over Number Field in a with defining
             polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """
