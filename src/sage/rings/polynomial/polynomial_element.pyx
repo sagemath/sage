@@ -2103,8 +2103,60 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = f.any_root()
             sage: r^2 + r
             a^2 + a
+
+        Check that issue 33329 is resolved: implementation used to loop infinitely
+
+            sage: k = GF(2^60)
+            sage: R.<x> = k[]
+            sage: a, b = k.random_element(), k.random_element()
+            sage: f = (x + a) * (x + b)
+            sage: f.any_root() in (a, b)
+            True
+            sage: f = (x + a) * (x + b + 1)
+            sage: f.any_root() in (a, b + 1)
+            True
         """
-        if self.base_ring().is_finite() and self.base_ring().is_field():
+        # For finite fields, perform partial factorization until an irreducible
+        # polynomial of suitable degree is found.
+        # Reference: https://www.shoup.net/papers/frobenius.pdf
+        def qfrobenius(modulus, k, xq):
+            """
+            Compute the q=p^k power Frobenius F in quotient ring K[x]/modulus
+            """
+            # If pol = sum(pol[i] x^i), F(pol) = sum(F(pol[i]) xq^i)
+            # which is a modular evaluation. We use Brent-Kung method:
+            # Writing indices i = at+b the sum becomes:
+            # sum(a=0..deg/t, xq^at * sum(b=0..t, F(pol[at+b]) xq^b))
+            p = modulus.parent().characteristic()
+            xq %= modulus
+            if k == 1 and p < 100:
+                return lambda pol: pow(pol, p, modulus)
+            t = modulus.degree().isqrt() + 1
+            smalls = [1, xq]
+            while len(smalls) < t:
+                smalls.append((smalls[-1] * xq) % modulus)
+            xqt = (smalls[-1] * xq) % modulus
+            if modulus.parent().base_ring().degree() == k:
+                scalarfrob = lambda x: x
+            else:
+                scalarfrob = lambda x: x.frobenius(k)
+
+            def f(pol):
+                if pol == 0:
+                    return pol
+                blocks = [
+                    sum(scalarfrob(pol[a+b])*smalls[b] for b in range(t) if a+b <= pol.degree())
+                    for a in range(0, pol.degree()+1, t)
+                ]
+                # Compute sum(blocks[i] xq^it) by Horner rule
+                res = blocks[-1]
+                for i in range(2, len(blocks)+1):
+                    res = (res * xqt) % modulus
+                    res += blocks[len(blocks)-i]
+                return res
+            return f
+
+        def any_root_finite_field(self, ring, degree, assume_squarefree, xp=None):
             if self.degree() < 0:
                 return ring(0)
             if self.degree() == 0:
@@ -2114,14 +2166,14 @@ cdef class Polynomial(CommutativePolynomial):
                 SFD.sort()
                 for f, e in SFD:
                     try:
-                        return f.any_root(ring, degree, True)
+                        return any_root_finite_field(f, ring, degree, True, xp=xp)
                     except ValueError:
                         pass
             if self.degree() == 1 and (degree is None or degree == 1):
                 if ring is None:
-                    return -self.get_unsafe(0) / self.get_unsafe(1)
+                    return -self[0] / self[1]
                 else:
-                    return ring(-self.get_unsafe(0) / self.get_unsafe(1))
+                    return ring(-self[0] / self[1])
             q = self.base_ring().order()
             if ring is None:
                 allowed_deg_mult = Integer(1)
@@ -2133,16 +2185,29 @@ cdef class Polynomial(CommutativePolynomial):
                 if not (ring.is_field() and ring.is_finite()):
                     raise NotImplementedError
                 allowed_deg_mult = Integer(ring.factored_order()[0][1]) # generally it will be the quotient of this by the degree of the base ring.
+            p = self.base_ring().characteristic()
+            k = q.valuation(p)
+            x = self.parent().gen()
+            if xp is None:
+                xp = pow(x % self, p, self)
+            else:
+                xp %= self
+            pfrob = qfrobenius(self, 1, xp)
+            xq = xp
+            for _ in range(k-1):
+                xq = pfrob(xq)
+            qfrob = qfrobenius(self, k, xq)
+            modulus = self
+            # Degree separation: find the smallest divisor d of allowed_deg_mult
+            # such that roots exists in degree d.
             if degree is None:
-                x = self._parent.gen()
                 if allowed_deg_mult == 1:
-                    xq = pow(x,q,self)
                     self = self.gcd(xq-x)
                     degree = -1
                     if self.degree() == 0:
                         raise ValueError("no roots B %s" % self)
                 else:
-                    xq = x
+                    xqd = x
                     d = Integer(0)
                     while True:
                         # one pass for roots that actually lie within ring.
@@ -2154,10 +2219,10 @@ cdef class Polynomial(CommutativePolynomial):
                             break
                         while d < allowed_deg_mult:
                             d = d+1
-                            xq = pow(xq,q,self)
+                            xqd = qfrob(xqd)
                             if d.divides(allowed_deg_mult):
                                 break
-                        A = self.gcd(xq-x)
+                        A = self.gcd(xqd-x)
                         if A != 1:
                             self = A
                             degree = -d
@@ -2167,7 +2232,7 @@ cdef class Polynomial(CommutativePolynomial):
                     if degree is None:
                         if allowed_deg_mult == 1:
                             raise ValueError("no roots C %s" % self)
-                        xq = x
+                        xqd = x
                         d = Integer(0)
                         while True:
                             # now another for roots that will lie in an extension.
@@ -2179,20 +2244,25 @@ cdef class Polynomial(CommutativePolynomial):
                             while True:
                                 # we waste a little effort here in computing the xq again.
                                 d = d+1
-                                xq = pow(xq,q,self)
+                                xqd = qfrob(xqd)
                                 if allowed_deg_mult.divides(d):
                                     break
-                            A = self.gcd(xq-x)
+                            A = self.gcd(xqd-x)
                             if A != 1:
                                 self = A
                                 degree = -d
                                 break
             if degree == 0:
                 raise ValueError("degree should be nonzero")
-            R = self._parent
+            if self != modulus:
+                # modulus has shrinked, recompute Frobenius
+                pfrob = qfrobenius(self, 1, xp)
+                qfrob = qfrobenius(self, k, xq)
+                modulus = self
+            R = self.parent()
             x = R.gen()
             if degree > 0:
-                xq = x
+                xqd = x
                 d = 0
                 while True:
                     e = self.degree()
@@ -2201,14 +2271,16 @@ cdef class Polynomial(CommutativePolynomial):
                             raise ValueError("no roots D %s" % self)
                         break
                     d = d+1
-                    xq = pow(xq,q,self)
+                    xqd = qfrob(xqd)
                     if d == degree:
                         break
-                    A = self.gcd(xq-x)
+                    A = self.gcd(xqd-x)
                     if A != 1:
                         self = self // A
+                        pfrob = qfrobenius(self, 1, xp)
+                        qfrob = qfrobenius(self, k, xq)
                 if d == degree:
-                    self = self.gcd(xq-x)
+                    self = self.gcd(xqd-x)
                     if self.degree() == 0:
                         raise ValueError("no roots E %s" % self)
             else:
@@ -2217,44 +2289,45 @@ cdef class Polynomial(CommutativePolynomial):
                 if degree == 1:
                     ring = self.base_ring()
                 else:
-                    ring = self.base_ring().extension(degree) # this won't work yet.
+                    ring = self.base_ring().extension(degree, 'a') # this won't work yet.
             # now self has only roots of degree ``degree``.
-            # for now, we only implement the Cantor-Zassenhaus split
-            k = self.degree() // degree
-            if k == 1:
+            if self.degree() == degree:
+                # Polynomial is irreducible
                 try:
                     return self.roots(ring, multiplicities=False)[0] # is there something better to do here?
                 except IndexError:
                     raise ValueError("no roots F %s" % self)
-            if q % 2 == 0:
-                while True:
-                    T = R.random_element(2*degree-1)
-                    if T == 0:
-                        continue
-                    T = T.monic()
-                    C = T
-                    for i in range(degree-1):
-                        C = T + pow(C,q,self)
-                    h = self.gcd(C)
-                    hd = h.degree()
-                    if hd != 0 and hd != self.degree():
-                        if 2*hd <= self.degree():
-                            return h.any_root(ring, -degree, True)
-                        else:
-                            return (self//h).any_root(ring, -degree, True)
-            else:
-                while True:
-                    T = R.random_element(2*degree-1)
-                    if T == 0:
-                        continue
-                    T = T.monic()
-                    h = self.gcd(pow(T, Integer((q**degree-1)/2), self)-1)
-                    hd = h.degree()
-                    if hd != 0 and hd != self.degree():
-                        if 2*hd <= self.degree():
-                            return h.any_root(ring, -degree, True)
-                        else:
-                            return (self//h).any_root(ring, -degree, True)
+            # Apply von zur Gathen-Shoup method (Trace(T)^(p-1)/2)
+            # This is not very different from Cantor-Zassenhaus, which uses
+            # the multiplicative norm T^(q^d-1)/2 == Norm(T)^(p-1)/2
+            # but additions are cheaper.
+            while True:
+                T = R.random_element(self.degree()-1)
+                if T.degree() <= 0:
+                    continue
+                # Trace GF(q^d) -> GF(q)
+                Tq = T
+                for _ in range(degree-1):
+                    Tq = T + qfrob(Tq)
+                # Trace GF(q) -> GF(p)
+                Tp = Tq
+                for _ in range(k-1):
+                    Tp = Tq + pfrob(Tp)
+                if p > 2:
+                    # Compute the Legendre symbol to reduce to {-1,0,1} modulo unknown factors
+                    h = self.gcd(pow(Tp, (p-1)//2, self) - 1)
+                else:
+                    # In characteristic 2, residue modulo factors is already 0 or 1
+                    h = self.gcd(Tp)
+                hd = h.degree()
+                if hd != 0 and hd != self.degree():
+                    if 2*hd <= self.degree():
+                        return any_root_finite_field(h, ring, -degree, True, xp)
+                    else:
+                        return any_root_finite_field(self//h, ring, -degree, True, xp)
+
+        if self.base_ring().is_finite() and self.base_ring().is_field():
+            return any_root_finite_field(self, ring, degree, assume_squarefree)
         else:
             return self.roots(ring=ring, multiplicities=False)[0]
 
