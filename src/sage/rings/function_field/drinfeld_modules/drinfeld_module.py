@@ -1578,7 +1578,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return a dictionary whose keys are all the integers
         `1 \leqslant k \leqslant r-1` and the values are the
-        `j_k`-invariants
+        corresponding `j_k`-invariants
 
         Recall that the `j_k`-invariant of self is defined by:
 
