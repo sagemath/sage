@@ -813,7 +813,10 @@ class FusionRing(WeylCharacterRing):
     def s_ij(self, elt_i, elt_j, base_coercion=True):
         r"""
         Return the element of the S-matrix of this fusion ring corresponding to
-        the given elements.
+        the given elements. This is the unnormalized S-matrix, denoted
+        `\tilde{s}_{ij}` in [BaKi2001]_ . To obtain the normalized S-matrix,
+        divide by ``self.global_q_dimension()`` or use ``self.S_matrix()`` with
+        the option ``unitary=True``.
 
         This is computed using the formula
 
@@ -1180,8 +1183,6 @@ class FusionRing(WeylCharacterRing):
         r"""
         Construct an :class:`FMatrix` factory to solve the pentagon relations
         and organize the resulting F-symbols.
-
-        We only need this attribute to compute braid group representations.
 
         EXAMPLES::
 
