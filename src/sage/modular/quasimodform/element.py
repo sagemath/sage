@@ -16,13 +16,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.modular.arithgroup.congroup_sl2z import is_SL2Z
+from sage.modular.modform.constructor import EisensteinForms
 from sage.modular.modform.eis_series import eisenstein_series_qexp
 from sage.modular.modform.element import GradedModularFormElement
 
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.integer_ring import ZZ
 
 class QuasiModularFormsElement(ModuleElement):
     r"""
@@ -62,6 +66,26 @@ class QuasiModularFormsElement(ModuleElement):
         sage: M = QM.modular_forms_subring()
         sage: QM(M.0 * E2 + M.1 * E2^2)
         2 - 336*q + 4320*q^2 + 398400*q^3 - 3772992*q^4 - 89283168*q^5 + O(q^6)
+
+    One may convert a quasimodular form into a multivariate polynomial in the
+    generators of the ring by calling
+    :meth:`~sage.modular.quasimodform.element.QuasiModularFormsElement.polynomial`::
+
+        sage: QM = QuasiModularForms(1)
+        sage: F = QM.0^2 + QM.1^2 + QM.0*QM.1*QM.2
+        sage: F.polynomial()
+        E2*E4*E6 + E4^2 + E2^2
+
+    If the group is not the full modular group, the default names of the
+    generators are given by ``Ek_i`` and ``Sk_i`` to denote the `i`-th basis
+    element of the weight `k` Eisenstein subspace and cuspidal subspace
+    respectively (for more details, see the documentation of
+    :meth:`~sage.modular.quasimodform.ring.QuasiModularFormsRing.polynomial_ring`) ::
+
+        sage: QM = QuasiModularForms(Gamma1(4))
+        sage: F = (QM.0^4)*(QM.1^3) + QM.3
+        sage: F.polynomial()
+        -512*E2^4*E2_1^3 + E2^4*E3_0^2 + 48*E2^4*E3_1^2 + E3_0
     """
     def __init__(self, parent, polynomial):
         r"""
@@ -134,6 +158,18 @@ class QuasiModularFormsElement(ModuleElement):
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)
         """
         return str(self.q_expansion())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        TESTS::
+
+            sage: QM = QuasiModularForms(1)
+            sage: latex(QM.0)
+            1 - 24 q - 72 q^{2} - 96 q^{3} - 168 q^{4} - 144 q^{5} + O(q^{6})
+        """
+        return self.q_expansion()._latex_()
 
     def _richcmp_(self, other, op):
         r"""
@@ -273,6 +309,9 @@ class QuasiModularFormsElement(ModuleElement):
             False
             sage: (QM.0).is_zero()
             False
+            sage: QM = QuasiModularForms(Gamma0(2))
+            sage: QM(0).is_zero()
+            True
         """
         return not self
 
@@ -290,6 +329,9 @@ class QuasiModularFormsElement(ModuleElement):
             True
             sage: (QM.0).is_one()
             False
+            sage: QM = QuasiModularForms(Gamma0(2))
+            sage: QM(1).is_one()
+            True
         """
         return self._polynomial.is_one()
 
@@ -317,6 +359,13 @@ class QuasiModularFormsElement(ModuleElement):
             True
             sage: QM.zero().is_graded_modular_form()
             True
+            sage: QM = QuasiModularForms(Gamma0(6))
+            sage: (QM.0).is_graded_modular_form()
+            False
+            sage: (QM.0 + QM.1*QM.2 + QM.3).is_graded_modular_form()
+            False
+            sage: (QM.1*QM.2 + QM.3).is_graded_modular_form()
+            True
 
         .. NOTE::
 
@@ -341,21 +390,29 @@ class QuasiModularFormsElement(ModuleElement):
             False
             sage: QM.zero().is_modular_form()
             True
+            sage: QM = QuasiModularForms(Gamma0(4))
+            sage: (QM.0).is_modular_form()
+            False
+            sage: (QM.1).is_modular_form()
+            True
         """
         return self._polynomial.degree() <= 0 and self._polynomial[0].is_modular_form()
 
-    def polynomial(self, names='E2, E4, E6'):
+    def polynomial(self, names=None):
         r"""
-        Return a multivariate polynomial `P(E_2, E_4, E_6)` corresponding to the
-        given form where `E_2`, `E_4` and `E_6` are the generators of the
-        quasimodular form ring given by the following method:
+        Return a multivariate polynomial such that every variable corresponds to
+        a generator of the ring, ordered by the method:
         :meth:`~sage.modular.quasimodform.ring.QuasiModularForms.gens`.
+
+        An alias of this method is ``to_polynomial``.
 
         INPUT:
 
-        - ``names`` (str, default: ``'E2, E4, E6'``) -- a list or tuple of names
-          (strings), or a comma separated string. Correspond to the names of the
-          variables;
+        - ``names`` (str, default: ``None``) -- a list or tuple of names
+          (strings), or a comma separated string. Defines the names for the
+          generators of the multivariate polynomial ring. The default names are
+          of the form ``ABCk`` where ``k`` is a number corresponding to the
+          weight of the form ``ABC``.
 
         OUTPUT: A multivariate polynomial in the variables ``names``
 
@@ -366,11 +423,25 @@ class QuasiModularFormsElement(ModuleElement):
             E4 + E2
             sage: (1/2 + QM.0 + 2*QM.1^2 + QM.0*QM.2).polynomial()
             E2*E6 + 2*E4^2 + E2 + 1/2
+
+        Check that :trac:`34569` is fixed::
+
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: QM.ngens()
+            5
+            sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).polynomial()
+            E3_1*E4_0 + E2_0*E3_0 + E2 + E2_0
+
         """
         P = self.parent().polynomial_ring(names)
-        g0, g1 = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
-        E2, E4, E6 = P.gens()
-        return sum(f.to_polynomial().subs({g0:E4, g1:E6}) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
+        poly_gens = P.gens()
+        E2 = poly_gens[0]
+        poly_gens = poly_gens[1:]
+        modform_poly_gens = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
+        subs_dictionnary = {}
+        for idx, g in enumerate(modform_poly_gens):
+            subs_dictionnary[g] = poly_gens[idx]
+        return sum(f.to_polynomial().subs(subs_dictionnary) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
 
     to_polynomial = polynomial # alias
 
@@ -390,8 +461,11 @@ class QuasiModularFormsElement(ModuleElement):
             [6]
             sage: QM(1/2).weights_list()
             [0]
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).weights_list()
+            [2, 5, 7]
         """
-        return sorted(list(self.to_polynomial().homogeneous_components()))
+        return sorted(self.homogeneous_components().keys())
 
     def is_homogeneous(self):
         r"""
@@ -402,24 +476,39 @@ class QuasiModularFormsElement(ModuleElement):
         EXAMPLES::
 
             sage: QM = QuasiModularForms(1)
-            sage: (QM.0).is_homogeneous()
+            sage: E2, E4, E6 = QM.gens()
+            sage: (E2).is_homogeneous()
             True
-            sage: (QM.0 + QM.1).is_homogeneous()
+            sage: (E2 + E4).is_homogeneous()
             False
-            sage: (QM.0 * QM.1 + QM.2).is_homogeneous()
+            sage: (E2 * E4 + E6).is_homogeneous()
             True
             sage: QM(1).is_homogeneous()
             True
-            sage: (1 + QM.0).is_homogeneous()
+            sage: (1 + E2).is_homogeneous()
             False
+            sage: F = E6^3 + E4^4*E2 + (E4^2*E6)*E2^2 + (E4^3 + E6^2)*E2^3
+            sage: F.is_homogeneous()
+            True
         """
-        return len(self.weights_list()) == 1
+        k = None
+        for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
+            if c:
+                if not c.is_homogeneous():
+                    return False
+                if k is None:
+                    k = c.weight() + 2*i
+                    continue
+                if c.weight() + 2*i != k:
+                    return False
+        return True
 
     def weight(self):
         r"""
         Return the weight of the given quasimodular form.
 
-        Note that the given form must be homogeneous.
+        Note that the given form must be homogeneous. An alias of this method is
+        ``degree``.
 
         EXAMPLES::
 
@@ -430,15 +519,21 @@ class QuasiModularFormsElement(ModuleElement):
             6
             sage: QM(1/2).weight()
             0
+            sage: (QM.0).degree()
+            2
             sage: (QM.0 + QM.1).weight()
             Traceback (most recent call last):
             ...
             ValueError: the given graded quasiform is not an homogeneous element
         """
         if self.is_homogeneous():
-            return self.to_polynomial().degree()
+            return (self._polynomial.leading_coefficient().weight()
+                    + 2*self._polynomial.degree())
         else:
-            raise ValueError("the given graded quasiform is not an homogeneous element")
+            raise ValueError("the given graded quasiform is not an homogeneous \
+                             element")
+
+    degree = weight  # alias
 
     def homogeneous_components(self):
         r"""
@@ -452,15 +547,81 @@ class QuasiModularFormsElement(ModuleElement):
             {2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)}
             sage: (QM.0 + QM.1 + QM.2).homogeneous_components()
             {2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
-            4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            6: 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)}
+             4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+             6: 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)}
             sage: (1 + QM.0).homogeneous_components()
             {0: 1, 2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)}
+            sage: QM5 = QuasiModularForms(Gamma1(3))
+            sage: F = QM.1 + QM.1*QM.2 + QM.1*QM.0 + (QM.1 + QM.2^2)*QM.0^3
+            sage: F.homogeneous_components()
+            {4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+             6: 1 + 216*q - 3672*q^2 - 62496*q^3 - 322488*q^4 - 1121904*q^5 + O(q^6),
+             10: 2 - 96*q - 149040*q^2 - 4986240*q^3 - 67535952*q^4 - 538187328*q^5 + O(q^6),
+             18: 1 - 1080*q + 294840*q^2 - 902880*q^3 - 452402280*q^4 + 105456816*q^5 + O(q^6)}
+            sage: F = QM.zero()
+            sage: F.homogeneous_components()
+            {0: 0}
+            sage: F = QM(42/13)
+            sage: F.homogeneous_components()
+            {0: 42/13}
         """
         QM = self.parent()
-        poly_self = self.to_polynomial()
-        pol_hom_comp = poly_self.homogeneous_components()
-        return {k: QM.from_polynomial(pol) for k, pol in pol_hom_comp.items()}
+        if self.is_zero():
+            return {ZZ(0): self}
+        components = {}
+        E2 = self.parent().weight_2_eisenstein_series()
+        for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
+            if c:
+                forms = c._forms_dictionary
+                for k in forms.keys():
+                    try:
+                        components[ZZ(k + 2*i)] += QM(forms[k]*(E2**i))
+                    except KeyError:
+                        components[ZZ(k + 2*i)] = QM(forms[k]*(E2**i))
+        return components
+
+    def __getitem__(self, weight):
+        r"""
+        Return the homogeneous component of the given quasimodular form ring
+        element.
+
+        An alias of this method is ``homogeneous_component``.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: E2, E4, E6 = QM.gens()
+            sage: F = E2 + E4*E6 + E2^3*E6
+            sage: F[2]
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+            sage: F[10]
+            1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+            sage: F[12]
+            1 - 576*q + 21168*q^2 + 308736*q^3 - 15034608*q^4 - 39208320*q^5 + O(q^6)
+            sage: F[4]
+            0
+            sage: F.homogeneous_component(2)
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+
+        TESTS::
+
+            sage: F[x]
+            Traceback (most recent call last):
+            ...
+            KeyError: 'the weight must be an integer'
+            sage: F[-1]
+            Traceback (most recent call last):
+            ...
+            ValueError: the weight must be nonnegative
+        """
+        if not isinstance(weight, (int, Integer)):
+            raise KeyError("the weight must be an integer")
+        if weight < 0:
+            raise ValueError("the weight must be nonnegative")
+        return self.homogeneous_components().get(weight, self.parent().zero())
+
+    homogeneous_component = __getitem__  # alias
+
 
     def serre_derivative(self):
         r"""
@@ -493,12 +654,23 @@ class QuasiModularFormsElement(ModuleElement):
             6
             sage: F.serre_derivative().weight()
             8
+
+        Check that :trac:`34569` is fixed::
+
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: E2 = QM.weight_2_eisenstein_series()
+            sage: E2.serre_derivative()
+            -1/6 - 16*q - 216*q^2 - 832*q^3 - 2248*q^4 - 4320*q^5 + O(q^6)
+            sage: F = QM.0 + QM.1*QM.2
         """
         # initial variables:
         QM = self.parent()
         R = QM.base_ring()
         E2 = QM.gen(0)
-        E4 = QM.gen(1)
+        if is_SL2Z(QM.group()):
+            E4 = QM.gen(1)
+        else:
+            E4 = QM(EisensteinForms(group=1, weight=4, base_ring=R).gen(0))
 
         # compute the derivative of E2: q*dE2/dq
         E2deriv = R(12).inverse_of_unit() * (E2 ** 2 - E4)

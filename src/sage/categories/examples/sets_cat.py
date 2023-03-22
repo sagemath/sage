@@ -13,7 +13,7 @@ from sage.structure.element import Element
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer, IntegerWrapper
 from sage.rings.integer_ring import IntegerRing
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -160,7 +160,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     datastructure will then be constructed by inheriting from
     :class:`PrimeNumbers_Abstract`.
 
-    This is used by:
+    This is used by::
 
         sage: P = Sets().example("facade")
         sage: P = Sets().example("inherits")
@@ -249,7 +249,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
             sage: x.parent()
             Set of prime numbers
         """
-        assert(i in self)
+        assert i in self
         return self._from_integer_((Integer(i) + 1).next_prime())
 
     def some_elements(self):

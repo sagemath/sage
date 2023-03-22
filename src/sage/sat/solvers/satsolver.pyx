@@ -97,7 +97,7 @@ cdef class SatSolver:
         http://www.satcompetition.org/2009/format-benchmarks2009.html, and
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
-        The differences were summarized in the discussion on the ticket
+        The differences were summarized in the discussion on the issue
         :trac:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
@@ -328,7 +328,7 @@ def SAT(solver=None, *args, **kwds):
         - ``"picosat"`` -- note that the pycosat package must be installed.
 
         - ``"glucose"`` -- note that the glucose package must be installed.
-        
+
         - ``"glucose-syrup"`` -- note that the glucose package must be installed.
 
         - ``"LP"`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
@@ -362,12 +362,17 @@ def SAT(solver=None, *args, **kwds):
     Forcing Glucose::
 
         sage: SAT(solver="glucose")
-        DIMACS Solver: 'glucose -verb=2 {input} {output}'
+        DIMACS Solver: 'glucose -verb=0 -model {input}'
 
     Forcing Glucose Syrup::
 
         sage: SAT(solver="glucose-syrup")
-        DIMACS Solver: 'glucose-syrup -model -verb=2 {input}'
+        DIMACS Solver: 'glucose-syrup -model -verb=0 {input}'
+
+    Forcing Kissat::
+
+        sage: SAT(solver="kissat")
+        DIMACS Solver: 'kissat -q {input}'
     """
     if solver is None:
         import pkgutil
@@ -393,6 +398,8 @@ def SAT(solver=None, *args, **kwds):
     elif solver == 'glucose-syrup':
         from .dimacs import GlucoseSyrup
         return GlucoseSyrup(*args, **kwds)
+    elif solver == 'kissat':
+        from .dimacs import Kissat
+        return Kissat(*args, **kwds)
     else:
         raise ValueError("Solver '{}' is not available".format(solver))
-

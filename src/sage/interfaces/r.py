@@ -512,7 +512,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And on package import:
+        And on package import::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -521,7 +521,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And when fetching help pages:
+        And when fetching help pages::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -1606,9 +1606,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             sage: bool(r(1))  # optional - rpy2
             True
         """
-        return "FALSE" in repr(self==0)
-
-    
+        return "FALSE" in repr(self == 0)
 
     def _comparison(self, other, symbol):
         """
@@ -2003,10 +2001,15 @@ def is_RElement(x):
 
         sage: from sage.interfaces.r import is_RElement  # optional - rpy2
         sage: is_RElement(2)  # optional - rpy2
+        doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_RElement(r(2))  # optional - rpy2
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead")
+
     return isinstance(x, RElement)
 
 # An instance of R

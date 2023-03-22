@@ -179,6 +179,8 @@ Python floats.
 import os
 import re
 
+import sage.interfaces.abc
+
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE
 from pexpect import EOF
@@ -490,7 +492,7 @@ class Axiom(PanAxiom):
         """
         EXAMPLES::
 
-            sage: axiom.__reduce__()
+            sage: Axiom().__reduce__()
             (<function reduce_load_Axiom at 0x...>, ())
             sage: f, args = _
             sage: f(*args)
@@ -555,7 +557,7 @@ class Axiom(PanAxiom):
 
 
 @instancedoc
-class PanAxiomElement(ExpectElement):
+class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
     def __call__(self, x):
         """
         EXAMPLES::
@@ -834,7 +836,8 @@ class PanAxiomElement(ExpectElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.all import RealField, ZZ
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.integer_ring import ZZ
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x,e,b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
@@ -944,17 +947,23 @@ AxiomExpectFunction = PanAxiomExpectFunction
 
 def is_AxiomElement(x):
     """
-    Returns True of x is of type AxiomElement.
+    Return True if ``x`` is of type :class:`AxiomElement`.
 
     EXAMPLES::
 
         sage: from sage.interfaces.axiom import is_AxiomElement
-        sage: is_AxiomElement(axiom(2)) #optional - axiom
-        True
         sage: is_AxiomElement(2)
+        doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
+        sage: is_AxiomElement(axiom(2))  # optional - axiom
+        True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead")
+
     return isinstance(x, AxiomElement)
+
 
 #Instances
 axiom = Axiom(name='axiom')

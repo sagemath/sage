@@ -42,7 +42,8 @@ Points can be found using :meth:`has_rational_point`::
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import diagonal_matrix, matrix, block_matrix
 from sage.schemes.plane_conics.con_field import ProjectiveConic_field
-from sage.arith.all import lcm, gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import is_FractionField
 
@@ -138,7 +139,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: F.<i> = QuadraticField(-1)
             sage: R.<t> = F[]
             sage: C = Conic([1,i*t,-t^2+4])
-            sage: C.has_rational_point(point = True)
+            sage: C.has_rational_point(point=True)
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::

@@ -104,7 +104,9 @@ from sage.categories.sets_cat import Sets
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 
-from sage.rings.all import RR, QQ, ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 
 def is_RelativeNumberField(x):
@@ -217,14 +219,14 @@ class NumberField_relative(NumberField_generic):
             sage: l.<b> = k.extension(5*x^2 + 3); l
             Number Field in b with defining polynomial 5*x^2 + 3 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4), ..., y^4 + 6*y^2 + 1, x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4)], [0, 0]]
+            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x^2 + 3/5); l
             Number Field in b with defining polynomial x^2 + 3/5 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4), ..., y^4 + 6*y^2 + 1, x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4)], [0, 0]]
+            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
             sage: b
             b
 
@@ -2116,7 +2118,7 @@ class NumberField_relative(NumberField_generic):
             r1, r2 = K.signature()
             r = r1 + r2 - 1
 
-            from sage.rings.all import RealField
+            from sage.rings.real_mpfr import RealField
             Reals = RealField(prec)
 
             if x == 0:
@@ -2214,7 +2216,7 @@ class NumberField_relative(NumberField_generic):
         """
         I = self.absolute_different()
         J = self.ideal(self.base_field().absolute_different().gens())
-        return  I/J
+        return I/J
 
     def different(self):
         """

@@ -1,14 +1,12 @@
 r"""
-Optimised Cython code for counting congruence solutions
+Optimized counting of congruence solutions
 """
 
-from sage.arith.all import valuation, kronecker_symbol, is_prime
+from sage.arith.misc import is_prime, kronecker as kronecker_symbol, valuation
+from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-
 from sage.rings.integer_ring import ZZ
-
-from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp
 from sage.sets.set import Set
 
 

@@ -12,7 +12,7 @@ than pure Python classes and thus can only inherit from a single base class,
 whereas others have multiple bases.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/polynomial_ring
    sage/rings/polynomial/polynomial_ring_homomorphism
@@ -43,3 +43,5 @@ whereas others have multiple bases.
 
    sage/rings/polynomial/polynomial_compiled
    sage/rings/polynomial/polynomial_fateman
+
+   sage/rings/polynomial/integer_valued_polynomials

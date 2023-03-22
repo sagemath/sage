@@ -2187,7 +2187,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
                 cur = cur.e_string(s)
         return cur
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return if ``self`` is a non-zero morphism.
 
@@ -2203,8 +2203,6 @@ class CrystalMorphismByGenerators(CrystalMorphism):
             False
         """
         return any(self._on_gens(mg) is not None for mg in self._gens)
-
-    
 
     # TODO: Does this belong in the element_class of the Crystals() category?
     def to_module_generator(self, x):

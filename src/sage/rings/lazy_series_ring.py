@@ -1473,6 +1473,125 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
+    # === special functions ===
+
+
+    def q_pochhammer(self, q=None):
+        r"""
+        Return the infinite ``q``-Pochhammer symbol `(a; q)_{\infty}`,
+        where `a` is the variable of ``self``.
+
+        This is also one version of the quantum dilogarithm or
+        the `q`-Exponential function.
+
+        INPUT:
+
+        - ``q`` -- (default: `q \in \QQ(q)`) the parameter `q`
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: L.<z> = LazyLaurentSeriesRing(q.parent())
+            sage: qpoch = L.q_pochhammer(q)
+            sage: qpoch
+            1
+             + (-1/(-q + 1))*z
+             + (q/(q^3 - q^2 - q + 1))*z^2
+             + (-q^3/(-q^6 + q^5 + q^4 - q^2 - q + 1))*z^3
+             + (q^6/(q^10 - q^9 - q^8 + 2*q^5 - q^2 - q + 1))*z^4
+             + (-q^10/(-q^15 + q^14 + q^13 - q^10 - q^9 - q^8 + q^7 + q^6 + q^5 - q^2 - q + 1))*z^5
+             + (q^15/(q^21 - q^20 - q^19 + q^16 + 2*q^14 - q^12 - q^11 - q^10 - q^9 + 2*q^7 + q^5 - q^2 - q + 1))*z^6
+             + O(z^7)
+
+        We show that `(z; q)_n = \frac{(z; q)_{\infty}}{(q^n z; q)_{\infty}}`::
+
+            sage: qpoch / qpoch(q*z)
+            1 - z + O(z^7)
+            sage: qpoch / qpoch(q^2*z)
+            1 + (-q - 1)*z + q*z^2 + O(z^7)
+            sage: qpoch / qpoch(q^3*z)
+            1 + (-q^2 - q - 1)*z + (q^3 + q^2 + q)*z^2 - q^3*z^3 + O(z^7)
+            sage: qpoch / qpoch(q^4*z)
+            1 + (-q^3 - q^2 - q - 1)*z + (q^5 + q^4 + 2*q^3 + q^2 + q)*z^2
+             + (-q^6 - q^5 - q^4 - q^3)*z^3 + q^6*z^4 + O(z^7)
+
+        We can also construct part of Euler's function::
+
+            sage: M.<a> = LazyLaurentSeriesRing(QQ)
+            sage: phi = sum(qpoch[i](q=a)*a^i for i in range(10))
+            sage: phi[:20] == M.euler()[:20]
+            True
+
+        TESTS::
+
+            sage: R = ZZ['q'].fraction_field()
+            sage: q = R.gen()
+            sage: L.<z> = LazyLaurentSeriesRing(LazyDirichletSeriesRing(R, "s"))
+            sage: z.q_pochhammer(q)
+            1 + ((1/(q-1)))*z + ((q/(q^3-q^2-q+1)))*z^2 + ... + O(z^7)
+
+        REFERENCES:
+
+        - :wikipedia:`Q-Pochhammer_symbol`
+        - :wikipedia:`Quantum_dilogarithm`
+        - :wikipedia:`Q-exponential`
+        """
+        if q is None:
+            q = ZZ['q'].fraction_field().gen()
+        if q not in self.base_ring():
+            raise ValueError("q must be in the base ring")
+        from sage.arith.misc import binomial
+        qP = q.parent()
+        one = qP.one()
+
+        def coeff(n):
+            return (-1)**n * q**binomial(n, 2) / qP.prod(one - q**i for i in range(1, n+1))
+        return self(coefficients=coeff, valuation=0)
+
+    def euler(self):
+        r"""
+        Return the Euler function as an element of ``self``.
+
+        The *Euler function* is defined as
+
+        .. MATH::
+
+            \phi(z) = (z; z)_{\infty}
+            = \sum_{n=0}^{\infty} (-1)^n q^{(3n^2-n)/2}.
+
+        EXAMPLES::
+
+            sage: L.<q> = LazyLaurentSeriesRing(ZZ)
+            sage: phi = q.euler()
+            sage: phi
+            1 - q - q^2 + q^5 + O(q^7)
+
+        We verify that `1 / phi` gives the generating function
+        for all partitions::
+
+            sage: P = 1 / phi; P
+            1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + O(q^7)
+            sage: P[:20] == [Partitions(n).cardinality() for n in range(20)]
+            True
+
+        TESTS::
+
+            sage: L.<q> = LazyLaurentSeriesRing(LazyDirichletSeriesRing(QQ, "s"))
+            sage: q.euler()
+            1 - q - q^2 + q^5 + O(q^7)
+
+        REFERENCES:
+
+        - :wikipedia:`Euler_function`
+        """
+        def coeff(n):
+            k = ZZ(24 * n + 1)
+            m, rem = k.sqrtrem()
+            if rem:
+                return ZZ.zero()
+            return (-1) ** ((m + 1) // 6)
+        return self(coefficients=coeff, valuation=0)
+
 ######################################################################
 
 

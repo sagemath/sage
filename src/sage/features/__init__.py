@@ -371,8 +371,6 @@ class FeatureTestResult():
         """
         return bool(self.is_present)
 
-    
-
     def __repr__(self):
         r"""
         TESTS::
@@ -385,6 +383,7 @@ class FeatureTestResult():
 
 
 _cache_package_systems = None
+
 
 def package_systems():
     """
@@ -499,7 +498,7 @@ class FileFeature(Feature):
             sage: Executable(name="sh", executable="sh").absolute_path()
             doctest:warning...
             DeprecationWarning: method absolute_path has been replaced by absolute_filename
-            See https://trac.sagemath.org/31292 for details.
+            See https://github.com/sagemath/sage/issues/31292 for details.
             '/...bin/sh'
         """
         try:
@@ -742,8 +741,8 @@ class CythonFeature(Feature):
         TESTS::
 
             sage: from sage.features import CythonFeature
-            sage: from sage.features.fes import LibFESLibrary
-            sage: isinstance(LibFESLibrary(), CythonFeature)  # indirect doctest
+            sage: from sage.features.bliss import BlissLibrary
+            sage: isinstance(BlissLibrary(), CythonFeature)  # indirect doctest
             True
         """
         Feature.__init__(self, name, **kwds)
@@ -768,8 +767,8 @@ class CythonFeature(Feature):
             from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
-        from sage.misc.cython import cython_import
         try:
+            from sage.misc.cython import cython_import
             cython_import(pyx.name, verbose=-1)
         except CCompilerError:
             return FeatureTestResult(self, False, reason="Failed to compile test code.")

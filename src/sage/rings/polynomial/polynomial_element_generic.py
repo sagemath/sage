@@ -100,7 +100,7 @@ class Polynomial_generic_sparse(Polynomial):
                 w = {}
                 for n, c in x.dict().items():
                     w[n] = R(c)
-                # The following line has been added in trac ticket #9944.
+                # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):
@@ -440,7 +440,7 @@ class Polynomial_generic_sparse(Polynomial):
 
             sage: f[1:3]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             73.500*x^2 - 42.000*x
             sage: f[1:3:2]
             Traceback (most recent call last):
@@ -823,6 +823,16 @@ class Polynomial_generic_sparse(Polynomial):
             sage: g = x*y^5
             sage: f.quo_rem(g)
             (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
+
+        Polynomials over noncommutative rings are also allowed::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = PolynomialRing(HH, sparse=True)
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
 
         TESTS::
 

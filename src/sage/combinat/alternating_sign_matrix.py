@@ -46,7 +46,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
@@ -1046,6 +1046,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         sage: L.category()
         Category of facade finite enumerated lattice posets
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -1196,7 +1197,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         if isinstance(asm, AlternatingSignMatrix):
             if asm.parent() is self:
                 return asm
-            raise ValueError("Cannot convert between alternating sign matrices of different sizes")
+            raise ValueError("cannot convert between alternating sign matrices of different sizes")
         try:
             m = self._matrix_space(asm)
         except (TypeError, ValueError):
@@ -1657,6 +1658,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         sage: all(A.from_monotone_triangle(m).to_monotone_triangle() == m for m in M)
         True
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.

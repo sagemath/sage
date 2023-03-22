@@ -11,8 +11,7 @@ AUTHORS:
 
 - David Roe -- initial version (2012-3-1)
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -20,8 +19,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.int cimport *
 
@@ -30,13 +29,16 @@ import sage.rings.finite_rings.integer_mod
 from cypari2.types cimport *
 from cypari2.gen cimport Gen as pari_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.padics.common_conversion cimport get_ordp, get_preccap
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
 from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import canonical_coercion
+
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -120,7 +122,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         pAdicGenericElement.__init__(self, parent)
         cdef long val, xprec
         cdef GEN pari_tmp
-        if isinstance(x, (int, long)):
+        if isinstance(x, int):
             x = Integer(x)
         elif isinstance(x, pari_gen):
             pari_tmp = (<pari_gen>x).g
@@ -145,7 +147,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s"%x.parent().order())
-        elif sage.rings.finite_rings.element_base.is_FiniteFieldElement(x):
+        elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
                 raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented")
@@ -156,7 +158,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 x = x + [k.prime_subfield().zero()] * (k.degree() - len(x))
         elif isinstance(x, (Integer, Rational, list, tuple)):
             pass
-        elif sage.rings.polynomial.polynomial_element.is_Polynomial(x) and x.variable_name() == self.parent().variable_name():
+        elif isinstance(x, Polynomial) and x.variable_name() == self.parent().variable_name():
             x = x.list()
         else:
             x = Rational(x)
@@ -776,7 +778,7 @@ cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowCompute
     cdef Integer right, p = prime_pow.prime
     cdef long exp_val
     cdef bint isbase
-    if isinstance(_right, (int, long)):
+    if isinstance(_right, int):
         _right = Integer(_right)
     if isinstance(_right, Integer):
         right = <Integer> _right

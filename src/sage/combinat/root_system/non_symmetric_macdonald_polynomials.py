@@ -1203,7 +1203,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         q = K(q)
         q1 = K(q1)
         q2 = K(q2)
-        return super(NonSymmetricMacdonaldPolynomials, cls).__classcall__(cls, KL, q, q1, q2, normalized)
+        return super().__classcall__(cls, KL, q, q1, q2, normalized)
 
     def __init__(self, KL, q, q1, q2, normalized):
         r"""
@@ -1233,7 +1233,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             Traceback (most recent call last):
             ...
             AssertionError: The weight lattice needs to be extended!
-
         """
         # TODO: check all the choices!
         self._KL = KL
@@ -1243,9 +1242,9 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         self._q1 = q1
         self._q2 = q2
         assert self.L_prime().classical() is self.L().classical()
-        T   = KL.twisted_demazure_lusztig_operators     (   q1, q2, convention="dominant")
+        T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
         T_Y = KL.demazure_lusztig_operators_on_classical(q, q1, q2, convention="dominant")
-        CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized = normalized)
+        CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized=normalized)
 
     def _repr_(self):
         r"""
@@ -1581,12 +1580,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         """
         muaff = self._L.embed_at_level(mu, 0)
         if not all(muaff.scalar(coroot) in ZZ for coroot in self._L.simple_coroots()):
-            raise ValueError("%s does not lift to a level 0 element of the affine weight lattice"%muaff)
-        return super(NonSymmetricMacdonaldPolynomials, self).__getitem__(mu)
-
+            raise ValueError("%s does not lift to a level 0 element of the affine weight lattice" % muaff)
+        return super().__getitem__(mu)
 
     @cached_method
-    def rho_prime(self): # Should be rho_prime_check
+    def rho_prime(self):  # Should be rho_prime_check
         r"""
         Return the level 0 sum of the classical fundamental weights in `L'`.
 

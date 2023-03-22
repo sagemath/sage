@@ -21,7 +21,7 @@ from sage.groups.group import Group
 from sage.categories.groups import Groups
 from sage.groups.matrix_gps.linear import GL
 from sage.categories.rings import Rings
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.all import FreeModule
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method

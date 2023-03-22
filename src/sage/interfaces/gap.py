@@ -202,6 +202,8 @@ from sage.misc.instancedoc import instancedoc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.element import ModuleElement
 
+import sage.interfaces.abc
+
 import re
 import os
 import io
@@ -952,8 +954,6 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         return self != P(0) and repr(self) != 'false'
 
-    
-
     def __len__(self):
         """
         EXAMPLES::
@@ -1512,6 +1512,8 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     """
     # Create new workspace with filename WORKSPACE
     g = Gap(use_workspace_cache=False, max_workspace_size=None)
+    g.eval('ColorPrompt(false)')
+    g.eval('SetUserPreference("UseColorPrompt", false)')
     g.eval('SetUserPreference("HistoryMaxLines", 30)')
     from sage.tests.gap_packages import all_installed_packages
     for pkg in all_installed_packages(gap=g):
@@ -1526,7 +1528,7 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
 
 
 @instancedoc
-class GapElement(GapElement_generic):
+class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
     def __getitem__(self, n):
         """
         EXAMPLES::
@@ -1635,17 +1637,25 @@ class GapFunction(ExpectFunction):
 
 def is_GapElement(x):
     """
-    Returns True if x is a GapElement.
+    Return True if ``x`` is a :class:`GapElement`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.GapElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.gap import is_GapElement
         sage: is_GapElement(gap(2))
+        doctest:...: DeprecationWarning: the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead
+        See https://github.com/sagemath/sage/issues/34823 for details.
         True
         sage: is_GapElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34823, "the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead")
     return isinstance(x, GapElement)
+
 
 def gfq_gap_to_sage(x, F):
     """
@@ -1745,7 +1755,7 @@ def intmod_gap_to_sage(x):
         sage: b.parent()
         Ring of integers modulo 65537
     """
-    from sage.rings.finite_rings.all import FiniteField
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.rings.finite_rings.integer_mod import Mod
     from sage.rings.integer import Integer
     s = str(x)

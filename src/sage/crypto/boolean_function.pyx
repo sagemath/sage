@@ -38,9 +38,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.misc.superseded import deprecated_function_alias
 
@@ -321,19 +320,23 @@ cdef class BooleanFunction(SageObject):
                 bitset_set(self._truth_table, i)
             reed_muller(self._truth_table.bits, ZZ(self._truth_table.limbs).exact_log(2) )
 
-        elif isinstance(x, (int,long,Integer) ):
+        elif isinstance(x, (int, Integer)):
         # initialisation to the zero function
             self._nvariables = ZZ(x)
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
 
-        elif is_Polynomial(x):
+        elif isinstance(x, Polynomial):
             K = x.base_ring()
-            if is_FiniteField(K) and K.characteristic() == 2:
+            if isinstance(K, FiniteField) and K.characteristic() == 2:
                 self._nvariables = K.degree()
                 bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
                 bitset_zero(self._truth_table)
-                if isinstance(K,FiniteField_givaro): #the ordering is not the same in this case
+                try:
+                    from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
+                except ImportError:
+                    FiniteField_givaro = ()
+                if isinstance(K, FiniteField_givaro):  # the ordering is not the same in this case
                     for u in K:
                         bitset_set_to(self._truth_table, ZZ(u._vector_().list(),2) , (x(u)).trace())
                 else:
@@ -651,7 +654,7 @@ cdef class BooleanFunction(SageObject):
             ...
             IndexError: index out of bound
         """
-        if isinstance(x, (int,long,Integer)):
+        if isinstance(x, (int, Integer)):
             if x >= self._truth_table.size:
                 raise IndexError("index out of bound")
             return bitset_in(self._truth_table, <mp_bitcnt_t> x)
@@ -942,7 +945,7 @@ cdef class BooleanFunction(SageObject):
             doctest:warning
             ...
             DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
-            See https://trac.sagemath.org/28001 for details.
+            See https://github.com/sagemath/sage/issues/28001 for details.
             32
         """
         cdef long a
@@ -1008,7 +1011,7 @@ cdef class BooleanFunction(SageObject):
         from sage.misc.misc_c import prod
 
         from sage.matrix.constructor import Matrix
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         M = Matrix(GF(2), sum(binomial(self._nvariables,i) for i in range(d+1)), len(s))
 
         cdef long i
@@ -1464,4 +1467,3 @@ def random_boolean_function(n):
         sig_check()
         T.bits[i] = r.randrange(0,Integer(1)<<(sizeof(unsigned long)*8))
     return B
-

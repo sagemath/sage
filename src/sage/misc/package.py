@@ -26,8 +26,7 @@ command inside Sage::
      'alabaster',
      'arb',
      ...
-     'zlib',
-     'zn_poly']
+     'zlib']
 
 Functions
 ---------
@@ -204,7 +203,7 @@ class PackageInfo(NamedTuple):
             sage: package["name"]
             doctest:warning...
             dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://trac.sagemath.org/31013 for details.
+            See https://github.com/sagemath/sage/issues/31013 for details.
             'test_package'
             sage: package[0]
             'test_package'
@@ -265,7 +264,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
          'arb',
          'babel',
          ...
-         'zn_poly']
+         'zlib']
         sage: sage_conf_info = L['sage_conf']  # optional - sage_spkg
         sage: sage_conf_info.type              # optional - sage_spkg
         'standard'
@@ -399,7 +398,7 @@ def installed_packages(exclude_pip=True):
     installed = {}
     if not exclude_pip:
         installed.update(pip_installed_packages(normalization='spkg'))
-    # Sage packages should override pip packages (Trac #23997)
+    # Sage packages should override pip packages (Issue #23997)
 
     for inst_dir in _spkg_inst_dirs():
         try:
@@ -498,8 +497,8 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)  # optional - sage_spkg
         sage: 'gap' in std  # optional - sage_spkg
         True
-        sage: std['zn_poly']  # optional - sage_spkg, random
-        ('0.9.p12', '0.9.p12')
+        sage: std['zlib']  # optional - sage_spkg, random
+        ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 

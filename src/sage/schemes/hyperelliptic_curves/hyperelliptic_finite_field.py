@@ -48,8 +48,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, RR, QQ, GF
-from sage.arith.all import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
 from . import hyperelliptic_generic
 from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
@@ -1365,7 +1368,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         # We may:
         # - check for actual field of definition of the curve (up to isomorphism)
-        if e == 1 and h == 0  and f.degree() % 2 == 1:
+        if e == 1 and h == 0 and f.degree() % 2 == 1:
             N1 = self._frobenius_coefficient_bound_traces(n)
             N2 = self._frobenius_coefficient_bound_charpoly()
             if n < g and q > (2*g+1)*(2*N1-1):
@@ -1633,7 +1636,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #it can be called by either Hasse_Witt or a_number.
         #This way it does not matter which function is called first
         #in the code.
-        # Trac Ticket #11115: Why shall we waste time by studying
+        # Github Issue #11115: Why shall we waste time by studying
         # the cache manually? We only need to check whether the cached
         # data belong to self.
         M, Coeffs,g, Fq, p, E= self._Cartier_matrix_cached()
@@ -1721,7 +1724,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
         #the last entry in A. If it does not match, clear A and compute Cartier.
         #
-        #Since Trac Ticket #11115, there is a different cache for methods
+        #Since Github Issue #11115, there is a different cache for methods
         #that don't  accept arguments. Anyway, the easiest is to call
         #the cached method and simply see whether the data belong to self.
         M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
@@ -1797,7 +1800,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             [0 0 0 0 0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         """
-        # Since Trac Ticket #11115, there is a special
+        # Since Github Issue #11115, there is a special
         # type of cached for those methods that don't
         # accept arguments. We want to get Hasse-Witt
         # from the cache - but apparently it could be
@@ -1842,7 +1845,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #compute it. If it is cached then we need to make sure that we have the correct one. So check
         #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
         #the last entry in A. If it does not match, clear A and compute Cartier.
-        # Since Trac Ticket #11115, there is a special cache for methods
+        # Since Github Issue #11115, there is a special cache for methods
         # that don't accept arguments. The easiest is: Call the cached
         # method, and test whether the last entry is self.
         M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
@@ -1885,7 +1888,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
         #the last entry in A. If it does not match, clear A and compute Hasse Witt.
         # However, it seems a waste of time to manually analyse the cache
-        # -- See Trac Ticket #11115
+        # -- See Github Issue #11115
         N, E = self._Hasse_Witt_cached()
         if E != self:
             self._Hasse_Witt_cached.clear_cache()

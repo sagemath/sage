@@ -156,7 +156,7 @@ class FGP_Element(ModuleElement):
             sage: 0 + x
             (1, 0)
 
-        We test canonical coercion from V and W.
+        We test canonical coercion from V and W::
 
             sage: Q.0 + V.0
             (1, 8)
@@ -363,7 +363,7 @@ class FGP_Element(ModuleElement):
         - ``base_ring`` -- the desired base ring of the vector.
 
         OUTPUT:
-        
+
         A vector over the base ring.
 
         EXAMPLES::
@@ -448,7 +448,7 @@ class FGP_Element(ModuleElement):
         from sage.rings.infinity import infinity
         from sage.rings.finite_rings.integer_mod import Mod
         from sage.rings.integer import Integer
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         n = Integer(1)
         for i, a in enumerate(I):
             if a == 0:

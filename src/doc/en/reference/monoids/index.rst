@@ -6,7 +6,7 @@ finite number of indeterminates, as well as free partially
 commutative monoids (trace monoids).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/monoids/monoid
    sage/monoids/free_monoid

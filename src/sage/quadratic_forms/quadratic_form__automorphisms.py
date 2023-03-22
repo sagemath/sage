@@ -14,7 +14,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.modules.all import FreeModule
 from sage.modules.free_module_element import vector
-from sage.arith.all import GCD
+from sage.arith.misc import GCD
 
 
 @cached_method
@@ -300,9 +300,9 @@ def automorphism_group(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.automorphism_group()
         Matrix group over Rational Field with 3 generators (
-        [-1  0  0]  [0 0 1]  [ 0  0  1]
-        [ 0 -1  0]  [0 1 0]  [-1  0  0]
-        [ 0  0 -1], [1 0 0], [ 0  1  0]
+        [ 0  0  1]  [1 0 0]  [ 1  0  0]
+        [-1  0  0]  [0 0 1]  [ 0 -1  0]
+        [ 0  1  0], [0 1 0], [ 0  0  1]
         )
 
     ::

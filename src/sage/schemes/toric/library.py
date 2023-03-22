@@ -40,11 +40,12 @@ or immediately during assignment like this::
 
 from sage.structure.sage_object import SageObject
 
-from sage.matrix.all import matrix, identity_matrix
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.special import identity_matrix
 from sage.geometry.all import Fan, LatticePolytope, ToricLattice
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.schemes.toric.variety import (DEFAULT_PREFIX,
                                         ToricVariety,
                                         normalize_names)
@@ -1391,7 +1392,7 @@ class ToricVarietyFactory(SageObject):
             Closed subscheme of 2-d toric variety covered by 3 affine patches defined by:
               -x^6 + z^6 + y^2
         """
-        if len(q)==1:
+        if len(q) == 1:
             # tuples and lists of weights are acceptable input
             if isinstance(q[0], (list, tuple)):
                 q = q[0]
@@ -1403,7 +1404,7 @@ class ToricVarietyFactory(SageObject):
         for i in range(m):
             try:
                 q[i] = ZZ(q[i])
-            except(TypeError):
+            except TypeError:
                 raise TypeError("the weights (=%s) must be integers" % q)
             if q[i] <= 0:
                 raise ValueError("the weights (=%s) must be positive integers" % q)

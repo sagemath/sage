@@ -420,7 +420,7 @@ class LazyModuleElement(Element):
             sage: f = L([1,2,3])
             sage: f.coefficients(5)
             doctest:...: DeprecationWarning: the method coefficients now only returns the non-zero coefficients. Use __getitem__ instead.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             [1, 2, 3]
 
             sage: f = sin(x)
@@ -2405,6 +2405,64 @@ class LazyModuleElement(Element):
               valuation=0)
         return f(self)
 
+    # === named special functions ===
+
+    def q_pochhammer(self, q=None):
+        r"""
+        Return the infinite ``q``-Pochhammer symbol `(a; q)_{\infty}`,
+        where `a` is ``self``.
+
+        This is also one version of the quantum dilogarithm or
+        the `q`-Exponential function.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.q_pochhammer`
+
+        INPUT:
+
+        - ``q`` -- (default: `q \in \QQ(q)`) the parameter `q`
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: L.<z> = LazyLaurentSeriesRing(q.parent())
+            sage: qp = L.q_pochhammer(q)
+            sage: (z + z^2).q_pochhammer(q) - qp(z + z^2)
+            O(z^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        f = P.q_pochhammer(q)
+        return f(self)
+
+    def euler(self):
+        r"""
+        Return the Euler function evaluated at ``self``.
+
+        The *Euler function* is defined as
+
+        .. MATH::
+
+            \phi(z) = (z; z)_{\infty}
+            = \sum_{n=0}^{\infty} (-1)^n q^{(3n^2-n)/2}.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.euler`
+
+        EXAMPLES::
+
+            sage: L.<q> = LazyLaurentSeriesRing(ZZ)
+            sage: phi = L.euler()
+            sage: (q + q^2).euler() - phi(q + q^2)
+            O(q^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        phi = P.euler()
+        return phi(self)
+
     # === powers ===
 
     def __pow__(self, n):
@@ -2985,6 +3043,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         R = P._internal_poly_ring
         if (isinstance(left, Stream_exact)
             and isinstance(right, Stream_exact)
+            and hasattr(R.base_ring(), "fraction_field")
             and hasattr(R, "_gcd_univariate_polynomial")):
             z = R.gen()
             num = left._polynomial_part(R) * (1-z) + left._constant * z**left._degree
@@ -3005,12 +3064,12 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 # dividing by z^k
                 d = den[exponents[0]]
                 v = num.valuation()
-                initial_coefficients = [num[i] / d for i in range(v, num.degree() + 1)]
+                initial_coefficients = [num[i] / d
+                                        for i in range(v, num.degree() + 1)]
                 order = v - den.valuation()
                 return P.element_class(P, Stream_exact(initial_coefficients,
                                                        order=order,
                                                        constant=0))
-
             if (len(exponents) == 2
                 and exponents[0] + 1 == exponents[1]
                 and den[exponents[0]] == -den[exponents[1]]):
@@ -3911,7 +3970,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         TESTS:
 
-        Check the derivative of the logarithm:
+        Check the derivative of the logarithm::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
             sage: -log(1-z).derivative()
@@ -4214,7 +4273,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: lazy_exp = x.exponential(); lazy_exp
             doctest:...: DeprecationWarning: the method exponential is deprecated. Use exp instead.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
         """
         from sage.misc.superseded import deprecation
@@ -4233,7 +4292,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: a = L([1,2,3], constant=3)
             sage: a.compute_coefficients(5)
             doctest:...: DeprecationWarning: the method compute_coefficients obsolete and has no effect.
-            See https://trac.sagemath.org/32367 for details.
+            See https://github.com/sagemath/sage/issues/32367 for details.
             sage: a
             1 + 2*z + 3*z^2 + 3*z^3 + 3*z^4 + O(z^5)
         """

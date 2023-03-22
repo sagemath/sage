@@ -65,7 +65,8 @@ from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
-from sage.arith.all import lcm, next_prime, is_prime, next_prime_power, legendre_symbol
+from sage.arith.functions import lcm
+from sage.arith.misc import is_prime, next_prime, next_prime_power, legendre_symbol
 from sage.functions.log import log
 from sage.misc.functional import sqrt
 
@@ -105,7 +106,6 @@ class BinaryRecurrenceSequence(SageObject):
     """
 
     def __init__(self, b, c, u0=0, u1=1):
-
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 
@@ -830,7 +830,6 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-
     """
     Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
     ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
@@ -1033,7 +1032,6 @@ def _is_p_power_mod(a, p, N):
 
 
 def _estimated_time(M2, M1, length, p):
-
     """
     Find the estimated time to extend congruences mod M1 to consistent congruences mod M2.
 

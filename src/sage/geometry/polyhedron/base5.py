@@ -23,7 +23,7 @@ Except for affine hull and affine hull projection.
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -190,9 +190,9 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: (P*point).polar(in_affine_span=True) == P.polar()*point
             True
 
-        TESTS::
+        TESTS:
 
-            Check that :trac:`25081` is fixed::
+        Check that :trac:`25081` is fixed::
 
             sage: C = polytopes.hypercube(4,backend='cdd')
             sage: C.polar().backend()

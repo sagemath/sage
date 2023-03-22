@@ -19,7 +19,6 @@ import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from sage.rings.ring import CommutativeRing
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
@@ -134,7 +133,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
     if ambient_space is not None:
         if ambient_space not in Modules:
             # There is no category of free modules, unfortunately
-            # (see https://trac.sagemath.org/ticket/30164)...
+            # (see https://github.com/sagemath/sage/issues/30164)...
             raise ValueError('ambient_space must be a free module')
         if base_ring is None:
             base_ring = ambient_space.base_ring()
@@ -698,7 +697,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             return self._element_constructor_polyhedron(polyhedron, mutable=mutable, **kwds)
         if nargs == 1 and args[0] == 0:
             return self.zero()
-        raise ValueError('Cannot convert to polyhedron object.')
+        raise ValueError('cannot convert to polyhedron object')
 
     def _element_constructor_polyhedron(self, polyhedron, **kwds):
         """
@@ -1012,7 +1011,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                                            extended_self._internal_coerce_map_from(self).__copy__())
             return action
 
-        if op is operator.mul and isinstance(other, CommutativeRing):
+        if op is operator.mul and other in Rings().Commutative():
             ring = self._coerce_base_ring(other)
             if ring is self.base_ring():
                 return ActedUponAction(other, self, not self_is_left)

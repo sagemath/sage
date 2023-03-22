@@ -95,7 +95,7 @@ from sage.modules.free_module import is_FreeModule
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
 from sage.rings.ring import Ring
 from sage.structure.factorization import Factorization
@@ -474,7 +474,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             return sum([c*self(y) for c, y in x], self(0))
 
         elif isinstance(x, list):
-            if len(x) == 3 and is_MPolynomial(x[0]):
+            if len(x) == 3 and isinstance(x[0], MPolynomial):
                 return self.modular_symbol_sum(x)
             else:
                 return self.modular_symbol(x)
@@ -2651,9 +2651,9 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             sage: M # indirect doctest
             Modular Symbols space of dimension 32 for Gamma_0(37) of weight 6 with sign 0 over Rational Field
         """
-        return ("Modular Symbols space of dimension %s for Gamma_0(%s) of weight %s with sign %s " + \
-                "over %s")%(self.dimension(), self.level(),self.weight(), self.sign(),
-                            self.base_ring())
+        return ("Modular Symbols space of dimension %s for Gamma_0(%s) of weight %s with sign %s " +
+                "over %s") % (self.dimension(), self.level(),self.weight(), self.sign(),
+                              self.base_ring())
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""
@@ -3607,10 +3607,10 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
             sage: M # indirect doctest
             Modular Symbols space of dimension 2 and level 5, weight 3, character [zeta4], sign 0, over Cyclotomic Field of order 4 and degree 2
         """
-        return ("Modular Symbols space of dimension %s and level %s, weight %s, character %s, sign %s, " + \
-                "over %s")%(self.dimension(), self.level(), self.weight(),
-                    self.character()._repr_short_(), self.sign(), self.base_ring())
-
+        return ("Modular Symbols space of dimension %s and level %s, weight %s, character %s, sign %s, " +
+                "over %s") % (self.dimension(), self.level(), self.weight(),
+                              self.character()._repr_short_(), self.sign(),
+                              self.base_ring())
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""

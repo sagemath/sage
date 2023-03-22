@@ -358,8 +358,7 @@ def _simplify_(numerator, terms):
     OUTPUT:
 
     A pair of a Laurent polynomial and a tuple of Laurent polynomials
-    representing numerator and denominator as described in the
-    INPUT-section.
+    representing numerator and denominator as described in the INPUT-section.
 
     EXAMPLES::
 
@@ -557,7 +556,8 @@ def Omega_ge(a, exponents):
     logger = logging.getLogger(__name__)
     logger.info('Omega_ge: a=%s, exponents=%s', a, exponents)
 
-    from sage.arith.all import lcm, srange
+    from sage.arith.functions import lcm
+    from sage.arith.srange import srange
     from sage.rings.integer_ring import ZZ
     from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.number_field.number_field import CyclotomicField

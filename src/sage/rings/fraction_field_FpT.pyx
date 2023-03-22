@@ -1,4 +1,4 @@
-# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
 # distutils: library_dirs = NTL_LIBDIR
@@ -100,7 +100,7 @@ cdef class FpTElement(FieldElement):
         sage: R.<t> = GF(5)[]
         sage: K = R.fraction_field()
         sage: A.<x> = K[]
-        sage: x.divides(x)  # Testing ticket #27064
+        sage: x.divides(x)  # Testing issue #27064
         True
     """
 

@@ -25,11 +25,11 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 # Homogeneous Symmetric Functions  #
 #                                  #
 ####################################
-from . import multiplicative, classical
+from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
-from sage.rings.infinity import infinity
+from sage.combinat.sf import multiplicative, classical
 from sage.misc.misc_c import prod
-from sage.arith.all import factorial, binomial
+from sage.rings.infinity import infinity
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -314,7 +314,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 f = lambda partition: prod(q_binomial(n+part-1, part, q=q) for part in partition)
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
-
 
         def exponential_specialization(self, t=None, q=1):
             r"""

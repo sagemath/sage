@@ -53,7 +53,7 @@ Functions
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from .design_catalog import transversal_design  # type:ignore
-from sage.arith.all import binomial, is_prime_power
+from sage.arith.misc import binomial, is_prime_power
 from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
 
@@ -1197,7 +1197,7 @@ def _get_r_s_t_u(v):
     s = r//150
     x = r%150
 
-    if   x == 0:
+    if x == 0:
         t,u = 30*s-5,  25
     elif x == 1:
         t,u = 30*s-5,  26

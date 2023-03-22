@@ -35,9 +35,14 @@ Pickling test::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
-                            factor, gcd, kronecker_symbol, valuation)
-from sage.rings.all import RR, Integer
+from sage.arith.misc import (hilbert_conductor_inverse,
+                             hilbert_conductor,
+                             factor,
+                             gcd,
+                             kronecker as kronecker_symbol,
+                             valuation)
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -1337,8 +1342,8 @@ class QuaternionOrder(Parent):
             sage: type(R)
             <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
 
-            Over QQ and number fields it is checked whether the given
-            basis actually gives an order (as a module over the maximal order):
+        Over QQ and number fields it is checked whether the given
+        basis actually gives an order (as a module over the maximal order)::
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)
             sage: A.quaternion_order([1,i,j,i-j])
@@ -2197,7 +2202,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R = QuaternionAlgebra(-11,-1).maximal_order()
             sage: R.unit_ideal().quaternion_order() is R
             doctest:...:  DeprecationWarning: quaternion_order() is deprecated, please use left_order() or right_order()
-            See https://trac.sagemath.org/31583 for details.
+            See https://github.com/sagemath/sage/issues/31583 for details.
             True
         """
         from sage.misc.superseded import deprecation
@@ -2229,7 +2234,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R = QuaternionAlgebra(-11,-1).maximal_order()
             sage: R.unit_ideal().ring() is R
             doctest:...:  DeprecationWarning: ring() will return the quaternion algebra in the future, please use left_order() or right_order()
-            See https://trac.sagemath.org/31583 for details.
+            See https://github.com/sagemath/sage/issues/31583 for details.
             True
         """
         from sage.misc.superseded import deprecation

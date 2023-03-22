@@ -81,16 +81,16 @@ AUTHORS:
 
 from sage.arith.misc import gcd, binomial
 
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import is_RationalField
 
 from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom
 from sage.categories.map import Map
@@ -111,7 +111,8 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import prepare
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
-                                                       SchemeHomset_points_projective_field)
+                                                       SchemeHomset_points_projective_field,
+                                                       SchemeHomset_polynomial_projective_space)
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
@@ -122,6 +123,8 @@ from sage.schemes.projective.projective_morphism import (SchemeMorphism_polynomi
 
 # for better efficiency
 _Fields = Fields()
+_Rings = Rings()
+_CommRings = _Rings.Commutative()
 
 
 def is_ProjectiveSpace(x):
@@ -253,16 +256,15 @@ def ProjectiveSpace(n, R=None, names=None):
     if R is None:
         R = ZZ  # default is the integers
     if R in _Fields:
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
         if is_RationalField(R):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
-    elif isinstance(R, CommutativeRing):
+    elif R in _CommRings:
         return ProjectiveSpace_ring(n, R, names)
-    else:
-        raise TypeError("R (=%s) must be a commutative ring" % R)
+    raise TypeError("R (=%s) must be a commutative ring" % R)
 
 
 class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
@@ -458,7 +460,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._validate([x*y - z^2, x])
             [x*y - z^2, x]
 
-       ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate((x*y - z, x))
@@ -466,7 +468,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             ...
             TypeError: x*y - z is not a homogeneous polynomial
 
-      ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate(x*y - z)
@@ -739,6 +741,20 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     (x : y : z)
         """
         return SchemeMorphism_polynomial_projective_space(*args, **kwds)
+
+    def _homset(self, *args, **kwds):
+        """                                          ii
+        Construct the Hom-set
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
+            sage: Hom(P, P)
+            Set of morphisms
+              From: Projective Space of dimension 2 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+        """
+        return SchemeHomset_polynomial_projective_space(*args, **kwds)
 
     def _point_homset(self, *args, **kwds):
         """
@@ -1377,7 +1393,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c>=ProjectiveSpace(RR, 2)
             sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target)
+            sage: P1.point_transformation_matrix(points_source, points_target) # abs tol 1e-13
             [-0.0619047619047597  -0.609523809523810  -0.119047619047621]
             [  0.853968253968253  0.0380952380952380  0.0412698412698421]
             [ -0.214285714285712  -0.933333333333333   0.280952380952379]
@@ -1803,6 +1819,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 break
         return linearly_independent
 
+
 class ProjectiveSpace_field(ProjectiveSpace_ring):
     def _point_homset(self, *args, **kwds):
         """
@@ -2132,6 +2149,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         m = matrix(3, list(self.gens()) + list(p) + list(q))
         return Curve([f for f in m.minors(3) if f])
 
+
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):
     def _point(self, *args, **kwds):
         """
@@ -2235,7 +2253,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         """
         if F is None:
             return [P for P in self]
-        elif not is_FiniteField(F):
+        elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return [P for P in self.base_extend(F)]
 

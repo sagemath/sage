@@ -1,7 +1,7 @@
 """
 Functorial composition species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,13 +13,15 @@ Functorial composition species
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 
+
 class FunctorialCompositionStructure(GenericSpeciesStructure):
     pass
+
 
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
     def __init__(self, F, G, min=None, max=None, weight=None):
@@ -87,7 +89,6 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         """
         raise NotImplementedError
 
-
     def _gs(self, series_ring, base_ring):
         """
         EXAMPLES::
@@ -120,7 +121,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
              4/3*p[1, 1, 1] + 2*p[2, 1] + 2/3*p[3],
              8/3*p[1, 1, 1, 1] + 4*p[2, 1, 1] + 2*p[2, 2] + 4/3*p[3, 1] + p[4]]
         """
-        return  self._F.cycle_index_series(base_ring).functorial_composition(self._G.cycle_index_series(base_ring))
+        return self._F.cycle_index_series(base_ring).functorial_composition(self._G.cycle_index_series(base_ring))
 
     def weight_ring(self):
         """
@@ -142,5 +143,6 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
         return cm.explain(f_weights, g_weights, verbosity=0)
 
-#Backward compatibility
+
+# Backward compatibility
 FunctorialCompositionSpecies_class = FunctorialCompositionSpecies

@@ -53,7 +53,9 @@ from sage.matrix.constructor import matrix, diagonal_matrix
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp, richcmp_not_equal
-from sage.categories.all import WeylGroups, FiniteWeylGroups, AffineWeylGroups
+from sage.categories.weyl_groups import WeylGroups
+from sage.categories.finite_weyl_groups import FiniteWeylGroups
+from sage.categories.affine_weyl_groups import AffineWeylGroups
 from sage.categories.permutation_groups import PermutationGroups
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
@@ -217,7 +219,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
     @staticmethod
     def __classcall__(cls, domain, prefix=None):
-        return super(WeylGroup_gens, cls).__classcall__(cls, domain, prefix)
+        return super().__classcall__(cls, domain, prefix)
 
     def __init__(self, domain, prefix):
         """
@@ -680,6 +682,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
     """
     Class for a Weyl Group elements
     """
+
     def __init__(self, parent, g, check=False):
         """
         EXAMPLES::
@@ -1016,7 +1019,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             sage: W1 is W2
             True
         """
-        return super(WeylGroup_permutation, cls).__classcall__(cls, CartanType(cartan_type), prefix)
+        return super().__classcall__(cls, CartanType(cartan_type), prefix)
 
     def __init__(self, cartan_type, prefix):
         """

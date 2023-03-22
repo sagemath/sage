@@ -11,37 +11,37 @@ constructing Boolean polynomial rings, which are not technically polynomial
 rings but rather quotients of them (see module
 :mod:`sage.rings.polynomial.pbori` for more details).
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
 import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
 import sage.rings.abc
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.cachefunc import weak_cached_function
+import sage.misc.weak_dict
 
 from sage.categories.fields import Fields
-_Fields = Fields()
 from sage.categories.commutative_rings import CommutativeRings
-_CommutativeRings = CommutativeRings()
+from sage.categories.domains import Domains
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
+
+_CommutativeRings = CommutativeRings()
+_Fields = Fields()
+_Domains = Domains()
 _CompleteDiscreteValuationRings = CompleteDiscreteValuationRings()
 _CompleteDiscreteValuationFields = CompleteDiscreteValuationFields()
 
-import sage.misc.weak_dict
 _cache = sage.misc.weak_dict.WeakValueDictionary()
 
 
@@ -418,22 +418,22 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     The generic implementation is different in some cases::
 
-        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); type(R)
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); type(S)
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
-        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); type(R)
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
-        sage: S = PolynomialRing(ZZ, 'x,y'); type(S)
+        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
     Sparse univariate polynomials only support a generic
     implementation::
 
-        sage: R = PolynomialRing(ZZ, 'j', sparse=True); type(R)
+        sage: R = PolynomialRing(ZZ, 'j', sparse=True); TestSuite(R).run(); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
-        sage: R = PolynomialRing(GF(49), 'j', sparse=True); type(R)
+        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
 
     If the requested implementation is not known or not supported for
@@ -487,11 +487,14 @@ def PolynomialRing(base_ring, *args, **kwds):
     :trac:`7712` and :trac:`13760` are fixed::
 
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
+        sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
         sage: C = (y-x)^3
         sage: C(y/2)
         1.?*y^3
         sage: R.<x,y> = PolynomialRing(RIF,2)
+        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: RIF(-2,1)*x
         0.?e1*x
 
@@ -549,6 +552,49 @@ def PolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 'x' to an integer
+
+    We run the testsuite for various polynomial rings, skipping tests that currently fail::
+
+        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R
+        Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL
+        Univariate Polynomial Ring in x over Integer Ring (using NTL)
+        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); TestSuite(ZxFLINT).run(); ZxFLINT
+        Univariate Polynomial Ring in x over Integer Ring
+        sage: Zx = PolynomialRing(ZZ, 'x', implementation='generic'); TestSuite(Zx).run(skip=['_test_construction', '_test_pickling']); Zx
+        Univariate Polynomial Ring in x over Integer Ring
+        sage: R = PolynomialRing(QQ, 'a,b,c'); TestSuite(R).run(skip='_test_elements'); R
+        Multivariate Polynomial Ring in a, b, c over Rational Field
+        sage: R = PolynomialRing(QQ, 'x,y,z', order='degrevlex'); TestSuite(R).run(skip='_test_elements'); R
+        Multivariate Polynomial Ring in x, y, z over Rational Field
+        sage: S = PolynomialRing(QQ, 'x,y,z', order='invlex'); TestSuite(S).run(skip=['_test_construction', '_test_elements']); S
+        Multivariate Polynomial Ring in x, y, z over Rational Field
+        sage: Q0 = PolynomialRing(QQ,[]); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
+        Multivariate Polynomial Ring in no variables over Rational Field
+        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); TestSuite(P).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); P
+        Multivariate Polynomial Ring in x over Rational Field
+        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1
+        Multivariate Polynomial Ring in x over Rational Field
+        sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
+        Multivariate Polynomial Ring in no variables over Rational Field
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
+        <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)
+        <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+        sage: R = PolynomialRing(ZZ, 'j', sparse=True); TestSuite(R).run(); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
+        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)
+        <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+        sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
+        sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
+        sage: Q.<x> = PolynomialRing(P)
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
+        sage: R.<x,y> = PolynomialRing(RIF,2)
+        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
     if not ring.is_Ring(base_ring):
         raise TypeError("base_ring {!r} must be a ring".format(base_ring))
@@ -659,6 +705,7 @@ def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
     args = [arg for arg in (arg1, arg2) if arg is not None]
     return PolynomialRing(base_ring, *args, sparse=sparse)
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.polynomial.polynomial_ring_constructor', 'PolynomialRing', unpickle_PolynomialRing)
 
@@ -700,7 +747,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
         elif n > 1:  # Specialized code breaks for n == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
-    elif is_FiniteField(base_ring):
+    elif isinstance(base_ring, FiniteField):
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
     elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
         specialized = polynomial_ring.PolynomialRing_dense_padic_field_capped_relative
@@ -720,15 +767,15 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
     # Generic implementations
     if constructor is None:
-        if not isinstance(base_ring, ring.CommutativeRing):
+        if base_ring not in _CommutativeRings:
             constructor = polynomial_ring.PolynomialRing_general
         elif base_ring in _CompleteDiscreteValuationRings:
             constructor = polynomial_ring.PolynomialRing_cdvr
         elif base_ring in _CompleteDiscreteValuationFields:
             constructor = polynomial_ring.PolynomialRing_cdvf
-        elif base_ring.is_field(proof=False):
+        elif base_ring in _Fields:
             constructor = polynomial_ring.PolynomialRing_field
-        elif base_ring.is_integral_domain(proof=False):
+        elif base_ring in _Domains:
             constructor = polynomial_ring.PolynomialRing_integral_domain
         else:
             constructor = polynomial_ring.PolynomialRing_commutative
@@ -737,8 +784,8 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
         # Only use names which are not supported by the specialized class.
         if specialized is not None:
-            implementation_names = [n for n in implementation_names if
-                    specialized._implementation_names_impl(n, base_ring, sparse) is NotImplemented]
+            implementation_names = [n for n in implementation_names
+                                    if specialized._implementation_names_impl(n, base_ring, sparse) is NotImplemented]
 
     if implementation is not None:
         kwds["implementation"] = implementation
@@ -928,7 +975,6 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
         sage: x2 > x3
         True
     """
-
     if isinstance(n, str):
         names = n
         n = -1

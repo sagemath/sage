@@ -43,13 +43,13 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.sets.all import Set
+from sage.sets.set import Set
 from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
 from sage.misc.misc_c import prod
-from sage.matrix.all import identity_matrix
+from sage.matrix.special import identity_matrix
 from sage.matrix.constructor import matrix
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
 from sage.rings.integer import Integer
@@ -130,6 +130,7 @@ class ClusterSeed(SageObject):
         sage: S = ClusterSeed(['D', 4],user_labels = [-1, 0, 1, 2]);S
         A seed for a cluster algebra of rank 4 of type ['D', 4]
     """
+
     def __init__(self, data, frozen=None, is_principal=False, user_labels=None, user_labels_prefix='x'):
         r"""
 
@@ -1062,7 +1063,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['A',4])
             sage: S.interact()
-            VBox(children=...
+            ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='seed')
 
@@ -3110,7 +3111,7 @@ class ClusterSeed(SageObject):
             sage: T2 == T
             True
         """
-        from sage.matrix.all import identity_matrix
+        from sage.matrix.special import identity_matrix
         if self._m != 0:
             raise ValueError("the b-matrix is not square")
         M = self._M.stack(identity_matrix(self._n))
@@ -3442,7 +3443,6 @@ class ClusterSeed(SageObject):
             yield (self,[])
         else:
             yield self
-
 
         # instantiate the variables
         clusters = {}
@@ -4600,7 +4600,7 @@ def _bino(n, k):
         0
     """
     if n >= 0:
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         return binomial(n, k)
     else:
         return 0
@@ -4627,6 +4627,7 @@ def coeff_recurs(p, q, a1, a2, b, c):
         else:
             return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
                        for k in range(1, q+1))
+
 
 def PathSubset(n, m):
     r"""
@@ -4686,6 +4687,7 @@ def SetToPath(T):
     if 2*n-2 in T:
         ans.append(2*n-2)
     return ans
+
 
 def is_LeeLiZel_allowable(T,n,m,b,c):
     """

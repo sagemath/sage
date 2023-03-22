@@ -1,8 +1,8 @@
 #ifndef SAGE_FLINT_WRAP_H
 #define SAGE_FLINT_WRAP_H
-/* Using flint headers together in the same module as headers from some other
- * libraries (zn_poly, pari, possibly others) as it defines the macros ulong
- * and slong all over the place.
+/* Using flint headers together in the same module as headers from
+ * some other libraries (pari, possibly others) as it defines the
+ * macros ulong and slong all over the place.
  *
  * What's worse is they are defined to types from GMP (mp_limb_t and
  * mp_limb_signed_t respectively) which themselves can have system-dependent
@@ -16,7 +16,7 @@
 
 #include <gmp.h>
 
-/* Save previous definition of ulong if any, as zn_poly and pari also use it */
+/* Save previous definition of ulong if any, as pari also uses it */
 /* Should work on GCC, clang, MSVC */
 #pragma push_macro("ulong")
 #undef ulong

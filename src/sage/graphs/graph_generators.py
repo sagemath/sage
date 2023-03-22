@@ -1014,8 +1014,10 @@ class GraphGenerators():
 
         The possible options, obtained as output of ``genbg --help``::
 
-                n1       : the number of vertices in the first class
-                n2       : the number of vertices in the second class
+                n1       : the number of vertices in the first class.
+                           We must have n1=1..24.
+                n2       : the number of vertices in the second class.
+                           We must have n2=0..32 and n1+n2=1..32.
             mine:maxe    : <int>:<int> a range for the number of edges
                             <int>:0 means '<int> or more' except in the case 0:0
               res/mod    : only generate subset res out of subsets 0..mod-1
@@ -1129,6 +1131,27 @@ class GraphGenerators():
             ['>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
             sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
             ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c\n', Bipartite graph on 3 vertices]
+
+        We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:trac:`34179`)::
+
+            sage: next(graphs.nauty_genbg("25 1", debug=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong format of parameter options
+            sage: next(graphs.nauty_genbg("25 1", debug=True))
+            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("24 9", debug=True))
+            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("1 31", debug=False))
+            Bipartite graph on 32 vertices
+            sage: next(graphs.nauty_genbg("1 32", debug=True))
+            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("0 32", debug=True))
+            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("2 0", debug=False))
+            Bipartite graph on 2 vertices
+            sage: next(graphs.nauty_genbg("2 -1", debug=True))
+            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
         """
         import shlex
         from sage.features.nauty import NautyExecutable

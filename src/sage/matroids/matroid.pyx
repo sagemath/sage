@@ -7985,8 +7985,8 @@ cdef class Matroid(SageObject):
         for c in LM.chains(exclude=LM.maximal_elements()):
             if c: # the facets of IM are already present
                 # get the cardinality of intersection of facet with IM
-                r = self.rank() - len(c) 
-                
+                r = self.rank() - len(c)
+
                 # get candidate independent_sets
                 for I in self.independent_r_sets(r):
                     if I.issubset(c[0]):
@@ -8012,7 +8012,7 @@ cdef class Matroid(SageObject):
 
         OUTPUT:
 
-        An instance of 
+        An instance of
         :class:`MatroidUnion <sage.matroids.union_matroid.MatroidUnion>`.
 
         EXAMPLES::

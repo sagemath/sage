@@ -71,7 +71,7 @@ jupyter_sphinx_thebelab_config = {
 plot_html_show_source_link = False
 plot_pre_code = r"""
 # Set locale to prevent having commas in decimal numbers
-# in tachyon input (see https://trac.sagemath.org/ticket/28971)
+# in tachyon input (see https://github.com/sagemath/sage/issues/28971)
 import locale
 locale.setlocale(locale.LC_NUMERIC, 'C')
 def sphinx_plot(graphics, **kwds):
@@ -186,6 +186,24 @@ show_authors = True
 highlighting.lexers['ipycon'] = IPythonConsoleLexer(in1_regex=r'sage: ', in2_regex=r'[.][.][.][.]: ')
 highlighting.lexers['ipython'] = IPyLexer()
 highlight_language = 'ipycon'
+
+# Create table of contents entries for domain objects (e.g. functions, classes,
+# attributes, etc.). Default is True.
+toc_object_entries = True
+
+# A string that determines how domain objects (e.g. functions, classes,
+# attributes, etc.) are displayed in their table of contents entry.
+#
+# Use "domain" to allow the domain to determine the appropriate number of parents
+# to show. For example, the Python domain would show Class.method() and
+# function(), leaving out the module. level of parents. This is the default
+# setting.
+#
+# Use "hide" to only show the name of the element without any parents (i.e. method()).
+#
+# Use "all" to show the fully-qualified name for the object (i.e. module.Class.method()),
+# displaying all parents.
+toc_object_entries_show_parents = 'hide'
 
 # Extension configuration
 # -----------------------
@@ -693,7 +711,7 @@ def call_intersphinx(app, env, node, contnode):
     if res:
         # Replace absolute links to $SAGE_DOC by relative links: this
         # allows to copy the whole documentation tree somewhere else
-        # without breaking links, see Trac #20118.
+        # without breaking links, see Issue #20118.
         if res['refuri'].startswith(SAGE_DOC):
             here = os.path.dirname(os.path.join(builder.outdir,
                                                 node['refdoc']))

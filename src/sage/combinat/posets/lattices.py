@@ -1903,8 +1903,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         any join of elements `x_1, x_2, \ldots, x_{n+1}` is join of a
         proper subset of `x_i`.
 
-        This can be also characterized by sublattices: a lattice
-        of breadth at least `n` contains a sublattice isomorphic to the
+        This can be also characterized by subposets: a lattice
+        of breadth at least `n` contains a subposet isomorphic to the
         Boolean lattice of `2^n` elements.
 
         INPUT:
@@ -3010,7 +3010,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # Todo: This and ordinal_sum() of posets could keep
         # distinguished linear extension, if it is defined
         # for both posets/lattices. That can be done after
-        # trac ticket #21607.
+        # github issue #21607.
 
         if labels not in ['integers', 'pairs']:
             raise ValueError("labels must be either 'pairs' or 'integers'")
@@ -4300,7 +4300,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
 
         if (type == 'interval' and len(self.join_irreducibles()) !=
-            len(self.meet_irreducibles())):
+                len(self.meet_irreducibles())):
             return False
 
         if type == 'upper' or type == 'interval':

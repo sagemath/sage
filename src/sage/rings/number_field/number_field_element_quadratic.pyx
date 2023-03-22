@@ -1554,7 +1554,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes ticket :trac:`9357`::
+        This fixes issue :trac:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -3074,4 +3074,3 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
     mpz_clear(denom)
 
     return ret
-

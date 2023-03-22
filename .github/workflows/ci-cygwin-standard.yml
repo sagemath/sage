@@ -1,8 +1,6 @@
 name: CI cygwin-standard
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -65,7 +63,7 @@ jobs:
     with:
       stage: ii-e
       previous_stages: i-*
-      targets: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs zn_poly sympow
+      targets: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs sympow
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
 ############################################## stage-iii ##########################################

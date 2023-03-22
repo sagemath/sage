@@ -34,7 +34,7 @@ from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.symbolic.constants import e
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 from copy import copy
 
 def bCheck(c, v, p, b):

@@ -177,7 +177,7 @@ _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
 from . import cyclotomic
 
-from sage.interfaces.singular import SingularElement
+import sage.interfaces.abc
 
 
 def is_PolynomialRing(x):
@@ -435,13 +435,13 @@ class PolynomialRing_general(ring.Algebra):
             elif P == self.base_ring():
                 return C(self, [x], check=True, is_gen=False,
                          construct=construct)
-        if isinstance(x, SingularElement) and self._has_singular:
+        if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
             except Exception:
                 raise TypeError("Unable to coerce singular object")
-        elif isinstance(x , str):
+        elif isinstance(x, str):
             try:
                 from sage.misc.parser import Parser, LookupNameMaker
                 R = self.base_ring()
@@ -619,6 +619,9 @@ class PolynomialRing_general(ring.Algebra):
             return IdentityMorphism(self)
 
     def construction(self):
+        """
+        Return the construction functor.
+        """
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.__is_sparse), self.base_ring()
 
     def completion(self, p, prec=20, extras=None):
@@ -784,7 +787,7 @@ class PolynomialRing_general(ring.Algebra):
                 # Ideally, we should avoid cyclic coercions (a coercion
                 # from A to B and also from B to A), but this is
                 # currently hard to do:
-                # see https://trac.sagemath.org/ticket/24319
+                # see https://github.com/sagemath/sage/issues/24319
                 if not self_sparse and P_sparse:
                     # Always allow coercion sparse -> dense
                     pass
@@ -794,7 +797,7 @@ class PolynomialRing_general(ring.Algebra):
                     if self.element_class is not Polynomial_integer_dense_flint:
                         return None
                 # Other rings: always allow coercion
-                # To be fixed in Trac #24319
+                # To be fixed in Issue #24319
             f = base_ring.coerce_map_from(P.base_ring())
             if f is None:
                 return None
@@ -1859,7 +1862,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: all(p.is_weil_polynomial() for p in L)
             True
 
-        Setting multiple leading coefficients:
+        Setting multiple leading coefficients::
 
             sage: R.<T> = QQ[]
             sage: l = R.weil_polynomials(4,2,lead=((1,0),(2,4),(1,2)))
@@ -1951,6 +1954,38 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         s = PolynomialRing_commutative._repr_(self)
         return s + self._implementation_repr
 
+    def construction(self):
+        """
+        Return the construction functor.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_integral_domain as PRing
+            sage: R = PRing(ZZ, 'x'); R
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: functor, arg = R.construction(); functor, arg
+            (Poly[x], Integer Ring)
+            sage: functor.implementation is None
+            True
+
+            sage: R = PRing(ZZ, 'x', implementation='NTL'); R
+            Univariate Polynomial Ring in x over Integer Ring (using NTL)
+            sage: functor, arg = R.construction(); functor, arg
+            (Poly[x], Integer Ring)
+            sage: functor.implementation
+            'NTL'
+        """
+        implementation = None
+        # NOTE: This is obviously not a complete solution. The parents
+        # don't keep track in a clean way what the implementation is.
+        # Issue #31852 is the task of finding a general solution for
+        # construction functors of parents with multiple
+        # implementations, such as MatrixSpace, Polyhedron, and
+        # PolynomialRing.
+        if 'NTL' in self._implementation_repr:
+            implementation = 'NTL'
+        return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.is_sparse(),
+                                                    implementation=implementation), self.base_ring()
 
 class PolynomialRing_field(PolynomialRing_integral_domain,
                            ring.PrincipalIdealDomain):

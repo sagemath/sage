@@ -327,7 +327,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         from sage.plot.line import line
         from sage.plot.text import text
         from sage.functions.trig import sin, cos
-        from sage.all import pi
+        from sage.symbolic.constants import pi
         G = Graphics()
         G.set_aspect_ratio(1.0)
 
@@ -440,6 +440,7 @@ class FriezePatterns(PathTableaux):
         [ , 1, 2, 1]
         [ ,  , 1, 1, 1]
     """
+
     def __init__(self, field):
         r"""
         Initialize ``self``.

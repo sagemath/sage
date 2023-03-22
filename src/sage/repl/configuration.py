@@ -81,7 +81,10 @@ class SageIpythonConfiguration():
             sage: sage_ipython_config.simple_prompt()
             True
         """
-        return 'LightBG' if self._allow_ansi() else 'NoColor'
+        if not self._allow_ansi():
+            return 'NoColor'
+        from sage.repl.interpreter import SageTerminalInteractiveShell
+        return SageTerminalInteractiveShell.colors.default()
 
     def simple_prompt(self):
         """
@@ -129,7 +132,7 @@ class SageIpythonConfiguration():
         # Use the same config for both InteractiveShell, and its subclass
         # TerminalInteractiveShell (note: in fact some configs like term_title
         # only apply to the latter, but we can still use the same config for
-        # both for simplicity's sake; see Trac #28289)
+        # both for simplicity's sake; see Issue #28289)
         InteractiveShell=Config(
             prompts_class=SagePrompts,
             ast_node_interactivity='all',
@@ -151,8 +154,8 @@ class SageIpythonConfiguration():
             TerminalInteractiveShell=InteractiveShell,
             InteractiveShellApp=Config(extensions=[SAGE_EXTENSION]),
             # TODO: jedi is disabled by default because it causes too many troubles
-            # disabling ticket: https://trac.sagemath.org/ticket/31648
-            # reenabling ticket: https://trac.sagemath.org/ticket/31649
+            # disabling issue: https://github.com/sagemath/sage/issues/31648
+            # reenabling issue: https://github.com/sagemath/sage/issues/31649
             IPCompleter=Config(use_jedi=False),
         )
         if self._doctest_mode():

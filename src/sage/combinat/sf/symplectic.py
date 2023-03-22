@@ -165,6 +165,7 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         sage: sp.one().counit()
         1
     """
+
     def __init__(self, Sym):
         """
         Initialize ``self``.

@@ -711,6 +711,20 @@ class InterfaceFunctionElement(SageObject):
 
 
 def is_InterfaceElement(x):
+    """
+    Return True if ``x`` is of type :class:`InterfaceElement`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.interface import is_InterfaceElement
+        sage: is_InterfaceElement(2)
+        doctest:...: DeprecationWarning: the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_InterfaceElement is deprecated; use isinstance(x, sage.interfaces.abc.InterfaceElement) instead")
+
     return isinstance(x, InterfaceElement)
 
 
@@ -866,7 +880,7 @@ class InterfaceElement(Element):
         `"'abc'"` instead. That is dependant on the Elements `is_string` function to
         be implemented correctly. This has gone wrong in the past and remained uncaught
         by the doctests because the original identifier was reused. This test makes sure
-        that does not happen again:
+        that does not happen again::
 
             sage: a = r("'abc'")                                                  # optional - rpy2
             sage: b = dumps(a)                                                    # optional - rpy2
@@ -1339,8 +1353,6 @@ class InterfaceElement(Element):
         cmd = '%s %s %s' % (self._name, P._equality_symbol(),
                             P._false_symbol())
         return P.eval(cmd) != P._true_symbol()
-
-    
 
     def __float__(self):
         """

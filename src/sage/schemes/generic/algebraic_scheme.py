@@ -132,7 +132,7 @@ from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
@@ -340,6 +340,22 @@ class AlgebraicScheme(scheme.Scheme):
             True
         """
         return self.__A
+
+    def identity_morphism(self):
+        """
+        Return the identity morphism.
+
+        OUTPUT: the identity morphism of the scheme ``self``
+
+        EXAMPLES::
+
+            sage: X = Spec(QQ)
+            sage: X.identity_morphism()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
+        """
+        from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+        return SchemeMorphism_polynomial_id(self)
 
     def embedding_morphism(self):
         r"""
@@ -870,7 +886,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         if bound == 0:
             if is_RationalField(F):
                 raise TypeError("A positive bound (= %s) must be specified."%bound)
-            if not is_FiniteField(F):
+            if not isinstance(F, FiniteField):
                 raise TypeError("Argument F (= %s) must be a finite field."%F)
         pts = []
         for P in self.ambient_space().rational_points(F):
@@ -1316,7 +1332,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             [   z   -y   -x    w]
             [   0    z -2*y    x]
 
-        This example addresses ticket :trac:`20512`::
+        This example addresses issue :trac:`20512`::
 
             sage: X = P3.subscheme([])
             sage: X.Jacobian_matrix().base_ring() == P3.coordinate_ring()
@@ -1358,7 +1374,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Ideal (-x^2 + w*y, -x*y + w*z, -y^2 + x*z) of Multivariate Polynomial Ring
             in w, x, y, z over Rational Field
 
-        This example addresses ticket :trac:`20512`::
+        This example addresses issue :trac:`20512`::
 
             sage: X = P3.subscheme([])
             sage: X.Jacobian() == P3.coordinate_ring().unit_ideal()

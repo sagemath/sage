@@ -12,17 +12,17 @@ Local Masses and Siegel Densities
 
 import copy
 
+from sage.arith.misc import kronecker, legendre_symbol, prime_divisors
+from sage.functions.all import sgn
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.functional import squarefree_part
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.rational_field import QQ
-from sage.arith.all import legendre_symbol, kronecker, prime_divisors
-from sage.functions.all import sgn
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
-from sage.misc.functional import squarefree_part
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.symbolic.constants import pi
-from sage.matrix.matrix_space import MatrixSpace
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
@@ -247,7 +247,7 @@ def Watson_mass_at_2(self):
                 eps_dict[j] = -1
 
     # Step 4: Compute the quantities nu, q, P, E for the local mass at 2
-    nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) + \
+    nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) +
               sum([n_dict[r]  for r in range(j+1, s_max+2)]))  for j in range(s_min+1, s_max+2)])
     q = sum([sgn(nu_dict[j-1] * (n_dict[j] + sgn(nu_dict[j])))  for j in range(s_min+1, s_max+2)])
     P = prod([prod([1 - QQ(4)**(-k)  for k in range(1, m_dict[j]+1)]) for j in range(s_min+1, s_max+2)])

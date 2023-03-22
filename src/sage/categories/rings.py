@@ -1,22 +1,22 @@
 r"""
 Rings
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from functools import reduce
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
-from functools import reduce
 
 
 class Rings(CategoryWithAxiom):
@@ -49,19 +49,18 @@ class Rings(CategoryWithAxiom):
 
     .. TODO::
 
-        (see: http://trac.sagemath.org/sage_trac/wiki/CategoriesRoadMap)
+        (see :trac:`sage_trac/wiki/CategoriesRoadMap`)
 
         - Make Rings() into a subcategory or alias of Algebras(ZZ);
 
         - A parent P in the category ``Rings()`` should automatically be
           in the category ``Algebras(P)``.
     """
-
     _base_category_class_and_axiom = (Rngs, "Unital")
 
     class MorphismMethods:
         @cached_method
-        def is_injective(self):
+        def is_injective(self) -> bool:
             """
             Return whether or not this morphism is injective.
 
@@ -186,7 +185,7 @@ class Rings(CategoryWithAxiom):
 
             raise NotImplementedError
 
-        def _is_nonzero(self):
+        def _is_nonzero(self) -> bool:
             r"""
             Return whether this is not the zero morphism.
 
@@ -255,7 +254,6 @@ class Rings(CategoryWithAxiom):
             parent = domain.Hom(codomain)   # category = category=self.category_for() ???
             return RingHomomorphism_from_fraction_field(parent, self)
 
-
     class SubcategoryMethods:
 
         def NoZeroDivisors(self):
@@ -273,11 +271,6 @@ class Rings(CategoryWithAxiom):
                 sage: Rings().NoZeroDivisors()
                 Category of domains
 
-            .. NOTE::
-
-                This could be generalized to
-                :class:`MagmasAndAdditiveMagmas.Distributive.AdditiveUnital`.
-
             TESTS::
 
                 sage: TestSuite(Rings().NoZeroDivisors()).run()
@@ -292,11 +285,6 @@ class Rings(CategoryWithAxiom):
 
             A ring satisfies the *division axiom* if all non-zero
             elements have multiplicative inverses.
-
-            .. NOTE::
-
-                This could be generalized to
-                :class:`MagmasAndAdditiveMagmas.Distributive.AdditiveUnital`.
 
             EXAMPLES::
 
@@ -313,15 +301,14 @@ class Rings(CategoryWithAxiom):
             """
             return self._with_axiom('Division')
 
-
     NoZeroDivisors = LazyImport('sage.categories.domains', 'Domains', at_startup=True)
-    Division       = LazyImport('sage.categories.division_rings', 'DivisionRings', at_startup=True)
-    Commutative    = LazyImport('sage.categories.commutative_rings', 'CommutativeRings', at_startup=True)
+    Division = LazyImport('sage.categories.division_rings', 'DivisionRings', at_startup=True)
+    Commutative = LazyImport('sage.categories.commutative_rings', 'CommutativeRings', at_startup=True)
 
     class ParentMethods:
-        def is_ring(self):
+        def is_ring(self) -> bool:
             """
-            Return True, since this in an object of the category of rings.
+            Return ``True``, since this in an object of the category of rings.
 
             EXAMPLES::
 
@@ -330,7 +317,7 @@ class Rings(CategoryWithAxiom):
             """
             return True
 
-        def is_zero(self):
+        def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
 
@@ -355,11 +342,11 @@ class Rings(CategoryWithAxiom):
 
         def bracket(self, x, y):
             """
-            Returns the Lie bracket `[x, y] = x y - y x` of `x` and `y`.
+            Return the Lie bracket `[x, y] = x y - y x` of `x` and `y`.
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of ``self``
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 
@@ -377,11 +364,11 @@ class Rings(CategoryWithAxiom):
                 sage: F.bracket( F.bracket(a,b), c) + F.bracket(F.bracket(b,c),a) + F.bracket(F.bracket(c,a),b)
                 0
             """
-            return x*y - y*x
+            return x * y - y * x
 
         def _Hom_(self, Y, category):
             r"""
-            Returns the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``.
 
             INPUT:
 
@@ -415,9 +402,9 @@ class Rings(CategoryWithAxiom):
                 sage: TestSuite(Hom(QQ, QQ, category = Rings())).run() # indirect doctest
             """
             if category is not None and not category.is_subcategory(Rings()):
-                raise TypeError("%s is not a subcategory of Rings()"%category)
+                raise TypeError(f"{category} is not a subcategory of Rings()")
             if Y not in Rings():
-                raise TypeError("%s is not a ring" % Y)
+                raise TypeError(f"{Y} is not a ring")
             from sage.rings.homset import RingHomset
             return RingHomset(self, Y, category=category)
 
@@ -428,16 +415,15 @@ class Rings(CategoryWithAxiom):
             """
             Multiplication of rings with, e.g., lists.
 
-            NOTE:
+            .. NOTE::
 
-            This method is used to create ideals. It is
-            the same as the multiplication method for
-            :class:`~sage.rings.ring.Ring`. However, not
-            all parents that belong to the category of
-            rings also inherits from the base class of
-            rings. Therefore, we implemented a ``__mul__``
-            method for parents, that calls a ``_mul_``
-            method implemented here. See :trac:`7797`.
+                This method is used to create ideals. It is the same
+                as the multiplication method for
+                :class:`~sage.rings.ring.Ring`. However, not all
+                parents that belong to the category of rings also
+                inherits from the base class of rings. Therefore, we
+                implemented a ``__mul__`` method for parents, that
+                calls a ``_mul_`` method implemented here. See :trac:`7797`.
 
             INPUT:
 
@@ -480,12 +466,11 @@ class Rings(CategoryWithAxiom):
             AUTHOR:
 
             - Simon King (2011-03-22)
-
             """
             try:
                 if self.is_commutative():
                     return self.ideal(x)
-            except (AttributeError,NotImplementedError):
+            except (AttributeError, NotImplementedError):
                 pass
             try:
                 side = x.side()
@@ -495,19 +480,19 @@ class Rings(CategoryWithAxiom):
             try:
                 x = x.gens()
             except (AttributeError, NotImplementedError):
-                pass # ... not an ideal
+                pass  # ... not an ideal
             if switch_sides:
-                if side in ['right','twosided']:
-                    return self.ideal(x,side=side)
-                elif side=='left':
-                    return self.ideal(x,side='twosided')
+                if side in ['right', 'twosided']:
+                    return self.ideal(x, side=side)
+                elif side == 'left':
+                    return self.ideal(x, side='twosided')
             else:
-                if side in ['left','twosided']:
-                    return self.ideal(x,side=side)
-                elif side=='right':
-                    return self.ideal(x,side='twosided')
+                if side in ['left', 'twosided']:
+                    return self.ideal(x, side=side)
+                elif side == 'right':
+                    return self.ideal(x, side='twosided')
             # duck typing failed
-            raise TypeError("Don't know how to transform %s into an ideal of %s"%(x,self))
+            raise TypeError("do not know how to transform %s into an ideal of %s" % (x, self))
 
         def __pow__(self, n):
             """
@@ -537,12 +522,12 @@ class Rings(CategoryWithAxiom):
             """
             The monoid of the ideals of this ring.
 
-            NOTE:
+            .. NOTE::
 
-            The code is copied from the base class of rings.
-            This is since there are rings that do not inherit
-            from that class, such as matrix algebras.  See
-            :trac:`7797`.
+                The code is copied from the base class of rings.
+                This is since there are rings that do not inherit
+                from that class, such as matrix algebras.  See
+                :trac:`7797`.
 
             EXAMPLES::
 
@@ -559,7 +544,6 @@ class Rings(CategoryWithAxiom):
 
                 sage: MS.ideal_monoid() is MS.ideal_monoid()
                 True
-
             """
             try:
                 from sage.rings.ideal_monoid import IdealMonoid
@@ -602,7 +586,8 @@ class Rings(CategoryWithAxiom):
             try:
                 characteristic = self.characteristic()
             except AttributeError:
-                return # raised when self.one() does not have a additive_order()
+                # raised when self.one() does not have a additive_order()
+                return
             except NotImplementedError:
                 return
 
@@ -614,13 +599,13 @@ class Rings(CategoryWithAxiom):
             """
             Create an ideal of this ring.
 
-            NOTE:
+            .. NOTE::
 
-            The code is copied from the base class
-            :class:`~sage.rings.ring.Ring`. This is
-            because there are rings that do not inherit
-            from that class, such as matrix algebras.
-            See :trac:`7797`.
+                The code is copied from the base class
+                :class:`~sage.rings.ring.Ring`. This is
+                because there are rings that do not inherit
+                from that class, such as matrix algebras.
+                See :trac:`7797`.
 
             INPUT:
 
@@ -656,7 +641,6 @@ class Rings(CategoryWithAxiom):
                   [0 0]
                 )
                  of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']
@@ -690,12 +674,12 @@ class Rings(CategoryWithAxiom):
                     else:
                         try:
                             if self.has_coerce_map_from(first):
-                                gens = first.gens() # we have a ring as argument
+                                gens = first.gens()  # we have a ring as argument
                             elif isinstance(first, Element):
                                 gens = [first]
                             else:
-                                raise ArithmeticError("There is no coercion from %s to %s"%(first,self))
-                        except TypeError: # first may be a ring element
+                                raise ArithmeticError("there is no coercion from %s to %s" % (first, self))
+                        except TypeError:  # first may be a ring element
                             pass
                         break
             if coerce:
@@ -706,7 +690,7 @@ class Rings(CategoryWithAxiom):
                 g = gens[0]
                 if len(gens) == 1:
                     try:
-                        g = g.gcd(g) # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                        g = g.gcd(g)  # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
                     except (AttributeError, NotImplementedError):
                         pass
                 else:
@@ -722,15 +706,15 @@ class Rings(CategoryWithAxiom):
                 gens = gens[0]
             return C(self, gens, **kwds)
 
-        def _ideal_class_(self,n=0):
+        def _ideal_class_(self, n=0):
             """
             Return the class that is used to implement ideals of this ring.
 
-            NOTE:
+            .. NOTE::
 
-            We copy the code from :class:`~sage.rings.ring.Ring`. This is
-            necessary because not all rings inherit from that class, such
-            as matrix algebras.
+                We copy the code from :class:`~sage.rings.ring.Ring`. This is
+                necessary because not all rings inherit from that class, such
+                as matrix algebras.
 
             INPUT:
 
@@ -742,10 +726,10 @@ class Rings(CategoryWithAxiom):
             The class that is used to implement ideals of this ring with
             ``n`` generators.
 
-            NOTE:
+            .. NOTE::
 
-            Often principal ideals (``n==1``) are implemented via a different
-            class.
+                Often principal ideals (``n==1``) are implemented via
+                a different class.
 
             EXAMPLES::
 
@@ -753,7 +737,7 @@ class Rings(CategoryWithAxiom):
                 sage: MS._ideal_class_()
                 <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
 
-            We don't know of a commutative ring in Sage that does not inherit
+            We do not know of a commutative ring in Sage that does not inherit
             from the base class of rings. So, we need to cheat in the next
             example::
 
@@ -765,19 +749,17 @@ class Rings(CategoryWithAxiom):
                 <class 'sage.rings.ideal.Ideal_principal'>
                 sage: super(Ring,QQ)._ideal_class_(2)
                 <class 'sage.rings.ideal.Ideal_generic'>
-
             """
             from sage.rings.noncommutative_ideals import Ideal_nc
             try:
                 if not self.is_commutative():
                     return Ideal_nc
-            except (NotImplementedError,AttributeError):
+            except (NotImplementedError, AttributeError):
                 return Ideal_nc
             from sage.rings.ideal import Ideal_generic, Ideal_principal
             if n == 1:
                 return Ideal_principal
-            else:
-                return Ideal_generic
+            return Ideal_generic
 
         ##
         # Quotient rings
@@ -848,9 +830,9 @@ class Rings(CategoryWithAxiom):
             """
             Quotient of a ring by a two-sided ideal.
 
-            NOTE:
+            .. NOTE::
 
-            This is a synonym for :meth:`quotient`.
+                This is a synonym for :meth:`quotient`.
 
             EXAMPLES::
 
@@ -894,15 +876,15 @@ class Rings(CategoryWithAxiom):
                 sage: a == b
                 False
             """
-            return self.quotient(I,names=names,**kwds)
+            return self.quotient(I, names=names, **kwds)
 
         def quotient_ring(self, I, names=None, **kwds):
             """
             Quotient of a ring by a two-sided ideal.
 
-            NOTE:
+            .. NOTE::
 
-            This is a synonym for :meth:`quotient`.
+                This is a synonym for :meth:`quotient`.
 
             INPUT:
 
@@ -980,14 +962,14 @@ class Rings(CategoryWithAxiom):
                 sage: MS/I
                 Traceback (most recent call last):
                 ...
-                TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.
+                TypeError: use self.quotient(I) to construct the quotient ring
 
                 sage: QQ['x'] / ZZ
                 Traceback (most recent call last):
                 ...
-                TypeError: Use self.quo(I) or self.quotient(I) to construct the quotient ring.
+                TypeError: use self.quotient(I) to construct the quotient ring
             """
-            raise TypeError("Use self.quo(I) or self.quotient(I) to construct the quotient ring.")
+            raise TypeError("use self.quotient(I) to construct the quotient ring")
 
         def __getitem__(self, arg):
             """
@@ -1153,13 +1135,12 @@ class Rings(CategoryWithAxiom):
             """
             def normalize_arg(arg):
                 if isinstance(arg, (tuple, list)):
-                    # Allowing arbitrary iterables would create confusion, but we
-                    # may want to support a few more.
+                    # Allowing arbitrary iterables would create confusion,
+                    # but we may want to support a few more.
                     return tuple(arg)
-                elif isinstance(arg, str):
+                if isinstance(arg, str):
                     return tuple(arg.split(','))
-                else:
-                    return (arg,)
+                return (arg,)
 
             # 1. If arg is a list, try to return a power series ring.
 
@@ -1221,7 +1202,7 @@ class Rings(CategoryWithAxiom):
                         # right ordered ring structure.
                         from sage.rings.real_lazy import CLF, RLF
                         if (iv.imag().is_zero() or iv.imag().contains_zero()
-                                                   and elt.imag().is_zero()):
+                                and elt.imag().is_zero()):
                             emb = RLF(elt)
                         else:
                             emb = CLF(elt)
@@ -1289,11 +1270,11 @@ class Rings(CategoryWithAxiom):
                 if basis is not None:
                     if isinstance(basis, (list, tuple)):
                         if len(basis) != 1:
-                            raise ValueError("Basis must have length 1")
+                            raise ValueError("basis must have length 1")
                         basis = basis[0]
                     basis = self(basis)
                     if not basis.is_unit():
-                        raise ValueError("Basis element must be a unit")
+                        raise ValueError("basis element must be a unit")
                 from sage.modules.free_module_morphism import BaseIsomorphism1D_from_FM, BaseIsomorphism1D_to_FM
                 Hfrom = V.Hom(self)
                 Hto = self.Hom(V)
@@ -1306,7 +1287,7 @@ class Rings(CategoryWithAxiom):
                 raise NotImplementedError
 
     class ElementMethods:
-        def is_unit(self):
+        def is_unit(self) -> bool:
             r"""
             Return whether this element is a unit in the ring.
 
@@ -1314,7 +1295,7 @@ class Rings(CategoryWithAxiom):
 
                 This is a generic implementation for (non-commutative) rings
                 which only works for the one element, its additive inverse, and
-                the zero element.  Most rings should provide a more specialized
+                the zero element. Most rings should provide a more specialized
                 implementation.
 
             EXAMPLES::
@@ -1329,7 +1310,7 @@ class Rings(CategoryWithAxiom):
             """
             if self.is_one() or (-self).is_one():
                 return True
-            if self.is_zero(): # now 0 != 1
+            if self.is_zero():  # now 0 != 1
                 return False
             raise NotImplementedError
 
@@ -1369,7 +1350,6 @@ class Rings(CategoryWithAxiom):
                 Rational Field
                 sage: (1/a).parent()
                 Rational Field
-
             """
             try:
                 if not self.is_unit():
@@ -1399,8 +1379,6 @@ class Rings(CategoryWithAxiom):
                 sage: _.parent()
                 Integer Ring
 
-            ::
-
                 sage: 4._divide_if_possible(3)
                 Traceback (most recent call last):
                 ...
@@ -1408,8 +1386,9 @@ class Rings(CategoryWithAxiom):
             """
             q, r = self.quo_rem(y)
             if r != 0:
-                raise ValueError("%s is not divisible by %s"%(self, y))
+                raise ValueError("%s is not divisible by %s" % (self, y))
             return q
+
 
 def _gen_names(elts):
     r"""
@@ -1419,9 +1398,9 @@ def _gen_names(elts):
     EXAMPLES::
 
         sage: from sage.categories.rings import _gen_names
-        sage: list(_gen_names([sqrt(5)]))                               # optional - sage.symbolic
+        sage: list(_gen_names([sqrt(5)]))             # optional - sage.symbolic
         ['sqrt5']
-        sage: list(_gen_names([sqrt(-17), 2^(1/3)]))                    # optional - sage.symbolic
+        sage: list(_gen_names([sqrt(-17), 2^(1/3)]))  # optional - sage.symbolic
         ['a', 'b']
         sage: list(_gen_names((1..27)))[-1]
         'aa'
@@ -1430,7 +1409,7 @@ def _gen_names(elts):
     from sage.structure.category_object import certify_names
     from sage.combinat.words.words import Words
     it = iter(Words("abcdefghijklmnopqrstuvwxyz", infinite=False))
-    next(it) # skip empty word
+    next(it)  # skip empty word
     for x in elts:
         name = str(x)
         m = re.match(r'^sqrt\((\d+)\)$', name)

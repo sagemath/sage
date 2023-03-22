@@ -1310,7 +1310,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         TESTS:
 
-        Ticket :trac:`25550` is fixed::
+        Issue :trac:`25550` is fixed::
 
             sage: g = DiGraph({0: [1]}, immutable=True)
             sage: g.neighbors(1)

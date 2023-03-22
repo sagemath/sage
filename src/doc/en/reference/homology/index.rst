@@ -5,7 +5,7 @@ Sage includes some tools for algebraic topology, and in particular
 computing homology groups.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/homology/chain_complex
    sage/homology/chains

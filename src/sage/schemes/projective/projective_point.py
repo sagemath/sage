@@ -36,11 +36,12 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 
 from copy import copy
@@ -165,7 +166,6 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-
             if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)
             else:
@@ -751,6 +751,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 raise TypeError("must be defined over an algebraic field")
             else:
                 K = P.codomain().base_ring()
+        if isinstance(K, NumberFieldOrder):
+            K = K.number_field()
         # first get rid of the denominators
         denom = lcm([xi.denominator() for xi in P])
         x = [xi * denom for xi in P]
@@ -1227,7 +1229,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         if not is_ProjectiveSpace(self.codomain()):
             raise NotImplementedError("not implemented for subschemes")
 
-        # Trac #23808: Keep the embedding info associated with the number field K
+        # Issue #23808: Keep the embedding info associated with the number field K
         # used below, instead of in the separate embedding map phi which is
         # forgotten.
         K_pre,P,phi = number_field_elements_from_algebraics(list(self))

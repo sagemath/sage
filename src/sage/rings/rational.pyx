@@ -363,7 +363,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         f = factor_trial_division(a, factor_limit)
     c = integer.smallInteger(1)
     # The sign is not handled by the loop below. We don't want to
-    # simplify (-1)^(2/3) to 1 (see Trac #15605), so we always move
+    # simplify (-1)^(2/3) to 1 (see Issue #15605), so we always move
     # the sign over to d. Note that the case (-1)^2 is already
     # handled by integer_rational_power() above.
     if a >= 0:
@@ -576,12 +576,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         if isinstance(x, Rational):
             set_from_Rational(self, x)
 
-        elif isinstance(x, long):
-            mpz_set_pylong(mpq_numref(self.value), x)
-
         elif isinstance(x, int):
-            i = x
-            mpq_set_si(self.value, i, 1)
+            mpz_set_pylong(mpq_numref(self.value), x)
 
         elif isinstance(x, integer.Integer):
             set_from_Integer(self, x)
@@ -595,7 +591,7 @@ cdef class Rational(sage.structure.element.FieldElement):
                 set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
-                # See https://trac.sagemath.org/ticket/21124
+                # See https://github.com/sagemath/sage/issues/21124
                 xstr = x.str(base, truncate=(base == 10))
                 if '.' in xstr:
                     exp = (len(xstr) - (xstr.index('.') +1))
@@ -629,19 +625,15 @@ cdef class Rational(sage.structure.element.FieldElement):
             num = x[0]
             denom = x[1]
 
-            if isinstance(num, long):
+            if isinstance(num, int):
                 mpz_set_pylong(mpq_numref(self.value), num)
-            elif isinstance(num, int):  # Python 2 only
-                mpz_set_si(mpq_numref(self.value), num)
             else:
                 if not isinstance(num, integer.Integer):
                     num = integer.Integer(num, base)
                 mpz_set(mpq_numref(self.value), (<integer.Integer>num).value)
 
-            if isinstance(denom, long):
+            if isinstance(denom, int):
                 mpz_set_pylong(mpq_denref(self.value), denom)
-            elif isinstance(denom, int):  # Python 2 only
-                mpz_set_si(mpq_denref(self.value), denom)
             else:
                 if not isinstance(denom, integer.Integer):
                     denom = integer.Integer(denom, base)
@@ -1143,7 +1135,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         seq.append(self)
         nums = [x.numerator() for x in seq]
         denoms = [x.denominator() for x in seq]
-        from sage.arith.all import gcd, lcm
+        from sage.arith.misc import GCD as gcd
+        from sage.arith.functions import lcm
         return gcd(nums) / lcm(denoms)
 
     def valuation(self, p):
@@ -1767,7 +1760,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         if p == 2:
             return ((m % 8) == 1)
 
-        from sage.arith.all import kronecker_symbol
+        from sage.arith.misc import kronecker as kronecker_symbol
         return (kronecker_symbol(m, p) == 1)
 
     def val_unit(self, p):
@@ -3586,7 +3579,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return True
 
-    #Function alias for checking if the number is a integer.Added to solve ticket 15500
+    #Function alias for checking if the number is a integer.  Added to solve issue 15500
     is_integer = is_integral
 
 
@@ -3695,7 +3688,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             32/3
         """
         if isinstance(x, Rational):
-            if isinstance(y, (int, long, integer.Integer)):
+            if isinstance(y, (int, integer.Integer)):
                 return (<Rational>x)._lshift(y)
             if isinstance(y, Rational):
                 if mpz_cmp_si(mpq_denref((<Rational>y).value), 1) != 0:
@@ -3743,7 +3736,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             1/8
         """
         if isinstance(x, Rational):
-            if isinstance(y, (int, long, integer.Integer)):
+            if isinstance(y, (int, integer.Integer)):
                 return (<Rational>x)._rshift(y)
             if isinstance(y, Rational):
                 if mpz_cmp_si(mpq_denref((<Rational>y).value), 1) != 0:

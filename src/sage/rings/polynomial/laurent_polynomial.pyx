@@ -733,7 +733,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: f[-10:2]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             -5*t^-10 + 1/3 + t
             sage: f[0:]
             1/3 + t + t^2 - 10/3*t^3
@@ -3308,12 +3308,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         to variables supplied in args.
 
         Multiple variables and iteration counts may be supplied; see
-        documentation for the global derivative() function for more
+        documentation for the global :func:`derivative` function for more
         details.
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+            :meth:`_derivative`
 
         EXAMPLES::
 
@@ -3336,7 +3336,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         respect to the given variable.
 
         If var is among the generators of this ring, the derivative
-        is with respect to the generator. Otherwise, _derivative(var) is called
+        is with respect to the generator. Otherwise, ``_derivative(var)`` is called
         recursively for each coefficient of this polynomial.
 
         .. SEEALSO:: :meth:`derivative`
@@ -3486,7 +3486,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         if self._poly.degree() == 0:
             # Factorization is broken for polynomials, see
-            # https://trac.sagemath.org/ticket/20214
+            # https://github.com/sagemath/sage/issues/20214
             return pf
 
         u = self.parent(pf.unit())
@@ -3763,4 +3763,3 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
-

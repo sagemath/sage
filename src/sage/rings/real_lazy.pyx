@@ -1748,4 +1748,3 @@ cdef class LazyWrapperMorphism(Morphism):
         else:
             e._value = x
         return e
-

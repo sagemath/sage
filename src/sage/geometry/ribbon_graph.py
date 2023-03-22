@@ -1,9 +1,9 @@
 r"""
 Ribbon Graphs
 
-This file implements objects called *ribbon graphs*. These are graphs 
-together with a cyclic ordering of the darts adjacent to each 
-vertex. This data allows us to unambiguously "thicken" the ribbon 
+This file implements objects called *ribbon graphs*. These are graphs
+together with a cyclic ordering of the darts adjacent to each
+vertex. This data allows us to unambiguously "thicken" the ribbon
 graph to an orientable surface with boundary. Also, every orientable
 surface with non-empty boundary is the thickening of a ribbon graph.
 
@@ -103,10 +103,10 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     **Brief introduction**
 
-    Let `\Sigma` be an orientable surface with non-empty boundary and let 
-    `\Gamma` be the topological realization of a graph that is embedded in 
+    Let `\Sigma` be an orientable surface with non-empty boundary and let
+    `\Gamma` be the topological realization of a graph that is embedded in
     `\Sigma` in such a way that the graph is a strong deformation retract of
-    the surface. 
+    the surface.
 
     Let `v(\Gamma)` be the set of vertices of `\Gamma`, suppose that these
     are white vertices. Now we mark black vertices in an interior point
@@ -121,7 +121,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
     `\Gamma` and suppose that we enumerate the set `D(\Gamma)` and that it
     has `n` elements.
 
-    With the orientation of the surface and the embedding of the graph in 
+    With the orientation of the surface and the embedding of the graph in
     the surface we can produce two permutations:
 
     - A permutation that we denote by `\sigma`. This permutation is a
@@ -139,13 +139,13 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     .. RUBRIC:: Abstract definition
 
-    Consider a graph `\Gamma` (not a priori embedded in any surface). 
-    Now we can again consider one vertex in the interior of each edge 
+    Consider a graph `\Gamma` (not a priori embedded in any surface).
+    Now we can again consider one vertex in the interior of each edge
     splitting each edge in two darts. We label the darts with numbers.
 
-    We say that a ribbon structure on `\Gamma` is a set of two 
+    We say that a ribbon structure on `\Gamma` is a set of two
     permutations `(\sigma, \rho)`. Where `\sigma` is formed by as many
-    disjoint cycles as vertices had `\Gamma`. And each cycle is a 
+    disjoint cycles as vertices had `\Gamma`. And each cycle is a
     cyclic ordering of the darts adjacent to a vertex. The permutation
     `\rho` just tell us which two darts belong to the same edge.
 
@@ -210,7 +210,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         sage: R2.sigma()
         (1,3,5,8)(2,4,6)
 
-    This example is constructed by taking the bipartite graph of 
+    This example is constructed by taking the bipartite graph of
     type `(3,3)`::
 
         sage: s3 = PermutationGroupElement('(1,2,3)(4,5,6)(7,8,9)(10,11,12)(13,14,15)(16,17,18)')
@@ -384,7 +384,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             sage: R1.number_boundaries()
             1
 
-        This example is constructed by taking the bipartite graph of 
+        This example is constructed by taking the bipartite graph of
         type `(3,3)`::
 
             sage: s2 = PermutationGroupElement('(1,2,3)(4,5,6)(7,8,9)(10,11,12)(13,14,15)(16,17,18)')
@@ -409,7 +409,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the position in `\rho` of the 
+        - ``k`` -- non-negative integer; the position in `\rho` of the
           transposition that is going to be contracted
 
         OUTPUT:
@@ -441,7 +441,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             ValueError: the edge is a loop and cannot be contracted
 
         In this example, we consider a graph that has one edge ``(19,20)``
-        such that one of its ends is a vertex of valency 1. This is 
+        such that one of its ends is a vertex of valency 1. This is
         the vertex ``(20)`` that is not specified when defining `\sigma`.
         We contract precisely this edge and get a ribbon graph with no
         vertices of valency 1::
@@ -460,16 +460,16 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         #the following two lines convert the list of tuples to list of lists
         aux_sigma = [list(x) for x in self._sigma.cycle_tuples(singletons=True)]
         aux_rho = [list(x) for x in self._rho.cycle_tuples()]
-        #The following ''if'' rules out the cases when we would be 
-        #contracting a loop (which is not admissible since we would 
+        #The following ''if'' rules out the cases when we would be
+        #contracting a loop (which is not admissible since we would
         #lose the topological type of the graph).
-        if (_find(aux_sigma, aux_rho[k][0])[0] == 
+        if (_find(aux_sigma, aux_rho[k][0])[0] ==
                 _find(aux_sigma, aux_rho[k][1])[0]):
             raise ValueError("the edge is a loop and cannot be contracted")
         #We store in auxiliary variables the positions of the vertices
         #that are the ends of the edge to be contracted and we delete
         #from them the darts corresponding to the edge that is going
-        #to be contracted. We also delete the contracted edge 
+        #to be contracted. We also delete the contracted edge
         #from aux_rho
         pos1 = _find(aux_sigma, aux_rho[k][0])
         pos2 = _find(aux_sigma, aux_rho[k][1])
@@ -514,7 +514,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        A ribbon graph resulting from extruding a new edge that 
+        A ribbon graph resulting from extruding a new edge that
         pulls from ``vertex`` a new vertex that is, now, adjacent
         to all the darts from ``dart1``to ``dart2`` (not including
         ``dart2``) in the cyclic ordering given by the cycle corresponding
@@ -553,7 +553,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             (1,2)(3,4)(5,6)(7,8)
 
         In the following example we first extrude one edge from a vertex
-        of valency 3 generating a new vertex of valency 2. Then we 
+        of valency 3 generating a new vertex of valency 2. Then we
         extrude a new edge from this vertex of valency 2::
 
             sage: s1 = PermutationGroupElement('(1,3,5)(2,4,6)')
@@ -582,7 +582,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         for val in val_one:
             repr_sigma += [[val]]
 
-        # We find which is the highest value a dart has, in order to 
+        # We find which is the highest value a dart has, in order to
         # add new darts that do not conflict with previous ones.
         k = max(darts_rho)
 
@@ -627,7 +627,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         """
         #We now use the same procedure as in _repr_ to get the vertices
         #of valency 1 and distinguish them from the extra singletons of
-        #the permutation sigma. 
+        #the permutation sigma.
         repr_sigma = [list(x) for x in self._sigma.cycle_tuples()]
         repr_rho = [list(x) for x in self._rho.cycle_tuples()]
         darts_rho = flatten(repr_rho)
@@ -637,10 +637,10 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         #the total number of vertices of sigma is its number of cycles
         #of length >1 plus the number of singletons that are actually
         #vertices of valency 1
-        
+
         vertices = len(self._sigma.cycle_tuples()) + len(val_one)
         edges = len(self._rho.cycle_tuples())
-        #formula for the genus using that the thickening is homotopically 
+        #formula for the genus using that the thickening is homotopically
         #equivalent to the graph
         g = (-vertices + edges - self.number_boundaries() + 2) // 2
 
@@ -674,7 +674,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        A list of lists. The number of inner lists is the number of 
+        A list of lists. The number of inner lists is the number of
         boundary components of the surface. Each list in the list
         consists of an ordered tuple of numbers, each number comes
         from the number assigned to the corresponding dart before
@@ -720,13 +720,13 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         bound = []
 
         #since lists of tuples are not modifiable, we change the data to a
-        #list of lists 
+        #list of lists
         aux_perm = (self._rho * self._sigma).cycle_tuples(singletons=True)
 
-        #the cycles of the permutation rho*sigma are in 1:1 correspondence with 
+        #the cycles of the permutation rho*sigma are in 1:1 correspondence with
         #the boundary components of the thickening (see function number_boundaries())
         #but they are not the labeled boundary components.
-        #With the next for, we convert the cycles of rho*sigma to actually 
+        #With the next for, we convert the cycles of rho*sigma to actually
         #the labelling of the edges. Each edge, therefore, should appear twice
 
         for i,p in enumerate(aux_perm):
@@ -799,16 +799,16 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             aux_sigma = [list(x) for x in aux_ribbon._sigma.cycle_tuples(singletons=True)]
             aux_rho = [list(x) for x in aux_ribbon._rho.cycle_tuples()]
             for j in range(len(aux_rho)):
-                if (_find(aux_sigma, aux_rho[j][0])[0] != 
+                if (_find(aux_sigma, aux_rho[j][0])[0] !=
                         _find(aux_sigma, aux_rho[j][1])[0]):
                     aux_ribbon = aux_ribbon.contract_edge(j)
-                    aux_rho = [list(x) for 
+                    aux_rho = [list(x) for
                     x in aux_ribbon._rho.cycle_tuples()]
                     break
         #finally we change the data to a list of tuples and return the
-        #information as a ribbon graph. 
+        #information as a ribbon graph.
         return aux_ribbon
-    
+
     #the next function computes a basis of homology, it uses
     #the previous function.
 
@@ -878,7 +878,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     def homology_basis(self):
         r"""
-        Return an oriented basis of the first homology group of the 
+        Return an oriented basis of the first homology group of the
         graph.
 
         OUTPUT:
@@ -960,15 +960,15 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         basis = [[list(x)] for x in self.reduced()._rho.cycle_tuples()]
 
-        #Now we define center as the set of edges that were contracted 
-        #in reduced() this set is contractible and can be define as the 
+        #Now we define center as the set of edges that were contracted
+        #in reduced() this set is contractible and can be define as the
         #complement of reduced_rho in rho
 
-        center = [list(x) for x in self._rho.cycle_tuples() 
+        center = [list(x) for x in self._rho.cycle_tuples()
                   if (x not in self.reduced()._rho.cycle_tuples())]
 
         #We define an auxiliary list 'vertices' that will contain the
-        #vertices (cycles of sigma) corresponding to each half edge. 
+        #vertices (cycles of sigma) corresponding to each half edge.
 
         vertices = []
 
@@ -1013,7 +1013,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                     basis[i][j][0], basis[i][j][1] = \
                         basis[i][j][1], basis[i][j][0]
 
-        #the variable basis is a LIST of Lists of lists. Each List 
+        #the variable basis is a LIST of Lists of lists. Each List
         #corresponds to an element of the basis and each list in a List
         #is just a 2-tuple which corresponds to an ''ordered'' edge of rho.
 
@@ -1056,7 +1056,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         darts_rho = flatten(aux_rho)
         darts_sigma = flatten(aux_sigma)
         val_one = [x for x in darts_rho if x not in darts_sigma]
- 
+
         #We add them to aux_sigma
         for i in range(len(val_one)):
             aux_sigma += [[val_one[i]]]
@@ -1098,8 +1098,8 @@ def make_ribbon(g, r):
 
     OUTPUT:
 
-    - a ribbon graph that has 2 vertices (two non-trivial cycles 
-      in its sigma permutation) of valency `2g + r` and it has 
+    - a ribbon graph that has 2 vertices (two non-trivial cycles
+      in its sigma permutation) of valency `2g + r` and it has
       `2g + r` edges (and hence `4g + 2r` darts)
 
     EXAMPLES::
@@ -1147,7 +1147,7 @@ def make_ribbon(g, r):
         repr_sigma[1].append(i+(2*g+2)+1)
         repr_rho += [[i+2,i+(2*g+2)+1]]
 
-    #finally we add an edge for each additional boundary component. 
+    #finally we add an edge for each additional boundary component.
     max_dart = 4*g+2
     for j in range(r-1):
         repr_sigma[0].insert(0, max_dart+2*(j+1)-1)
