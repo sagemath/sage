@@ -5565,7 +5565,7 @@ REFERENCES:
              Journal of Cryptology. 12. 193-196. 1999.
              :doi:`10.1007/s001459900052`.
 
-.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and Chaim Goodman-Strauss, 
+.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss, 
              *An aperiodic monotile*,
              :arxiv:`2303.10798`
 
