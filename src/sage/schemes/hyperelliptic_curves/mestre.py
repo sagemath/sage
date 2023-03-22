@@ -67,13 +67,13 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See trac #14755 and #14756.
+        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See issues #14755 and #14756.
         sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856],reduced = False)
         Hyperelliptic Curve over Rational Field defined by y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
         sage: HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See trac #14755 and #14756.
+        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See issues #14755 and #14756.
 
     An example over a finite field::
 
