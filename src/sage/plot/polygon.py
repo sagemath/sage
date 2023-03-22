@@ -387,19 +387,19 @@ def polygon2d(points, **options):
         sphinx_plot(P)
 
     An aperiodic monotile::
-    
+
         sage: s = sqrt(3)
-        sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0], [9/2, -1/2*s], [3, -s], 
+        sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0], [9/2, -1/2*s], [3, -s],
                          [3/2, -1/2*s], [1, -s], [-1, -s], [-3/2, -1/2*s]], axes=False)
         Graphics object consisting of 1 graphics primitive
-        
+
     .. PLOT::
-    
+
         s = sqrt(3)
-        P = polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0], [9/2, -1/2*s], [3, -s], 
+        P = polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0], [9/2, -1/2*s], [3, -s],
                        [3/2, -1/2*s], [1, -s], [-1, -s], [-3/2, -1/2*s]], axes=False)
         sphinx_plot(P)
-    
+
     A purple hexagon::
 
         sage: L = [[cos(pi*i/3),sin(pi*i/3)] for i in range(6)]
