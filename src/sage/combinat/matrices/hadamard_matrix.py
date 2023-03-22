@@ -131,8 +131,7 @@ def hadamard_matrix_paleyI(n, normalize=True):
     INPUT:
 
     - ``n`` -- the matrix size
-
-    - ``normalize`` (boolean) -- whether to normalize the result.
+    - ``normalize``-- boolean (default: ``True``); whether to normalize the result
 
     EXAMPLES:
 
@@ -200,7 +199,7 @@ def symmetric_conference_matrix_paley(n):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the symmetric conference matrix to consruct.
+    - ``n`` -- integer; the order of the symmetric conference matrix to construct
 
     EXAMPLES::
 
@@ -298,26 +297,25 @@ def hadamard_matrix_paleyII(n):
 
 def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
     r"""
-    Construct Hadamard matrix using Miyamoto construction.
+    Construct Hadamard matrix using the Miyamoto construction.
 
     If `q = n/4` is a prime power, and there exists an Hadamard matrix of order
     `q-1`, then a Hadamard matrix of order `n` can be constructed (see [Miy1991]_).
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrix to be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is a Hadamard
-      before returning.
-
-    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is a Hadamard before returning
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the matrix exists
 
     OUTPUT:
 
-    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    If ``existence=False``, returns the Hadamard matrix of order `n`. It raises
     an error if no data is available to construct the matrix of the given order,
     or if `n` does not satisfies the constraints.
-    If ``existence`` is true, returns a boolean representing whether the matrix
+    If ``existence=True``, returns a boolean representing whether the matrix
     can be constructed or not.
 
     EXAMPLES:
@@ -414,15 +412,12 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
 
     INPUT:
 
-    - ``a`` -- (1,-1) list specifying the 1st row of `A`.
-
-    - ``b`` -- (1,-1) list specifying the 1st row of `B`.
-
-    - ``d`` -- (1,-1) list specifying the 1st row of `C`.
-
-    - ``c`` -- (1,-1) list specifying the 1st row of `D`.
-
-    - ``check`` (boolean) -- Whether to check that the output is an Hadamard matrix before returning it.
+    - ``a`` -- (1,-1) list; the 1st row of `A`
+    - ``b`` -- (1,-1) list; the 1st row of `B`
+    - ``d`` -- (1,-1) list; the 1st row of `C`
+    - ``c`` -- (1,-1) list; the 1st row of `D`
+    - ``check`` -- boolean (default: ``True``); whether to check that the output
+      is an Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -481,9 +476,9 @@ def williamson_type_quadruples_smallcases(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- the order of the matrices to be returned
-
-    - ``existence`` -- if true, only check that we have the quadruple (default false).
+    - ``n`` -- integer; the order of the matrices to be returned
+    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+      we have the quadruple
 
     OUTPUT:
 
@@ -587,11 +582,10 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- the order of the matrix.
-
-    - ``existence`` -- if true, only check that we can do the construction (default false).
-
-    - ``check`` -- if true (default), check the result.
+    - ``n`` -- integer; the order of the matrix
+    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+      we can do the construction
+    - ``check`` -- boolean (default: ``True``); if ``True`` check the result
 
     TESTS::
 
@@ -686,13 +680,10 @@ def construction_four_symbol_delta_code_I(X, Y, Z, W):
 
     INPUT:
 
-    - ``X`` -- a list, representing the first sequence (length `n+1`).
-
-    - ``Y`` -- a list, representing the second sequence (length `n+1`).
-
-    - ``Z`` -- a list, representing the third sequence (length `n`).
-
-    - ``W`` -- a list, representing the fourth sequence (length `n`).
+    - ``X`` -- list; the first sequence (length `n+1`)
+    - ``Y`` -- list; the second sequence (length `n+1`)
+    - ``Z`` -- list; the third sequence (length `n`)
+    - ``W`` -- list; the fourth sequence (length `n`)
 
     OUTPUT:
         A tuple containing the 4-symbol `\delta` code of length `2n+1`.
@@ -759,13 +750,10 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
 
     INPUT:
 
-    - ``X`` -- a list, representing the first sequence (length `n+1`).
-
-    - ``Y`` -- a list, representing the second sequence (length `n+1`).
-
-    - ``Z`` -- a list, representing the third sequence (length `n`).
-
-    - ``W`` -- a list, representing the fourth sequence (length `n`).
+    - ``X`` -- list; the first sequence (length `n+1`)
+    - ``Y`` -- list; the second sequence (length `n+1`)
+    - ``Z`` -- list; the third sequence (length `n`)
+    - ``W`` -- list; the fourth sequence (length `n`)
 
     OUTPUT:
         A tuple containing the four 4-symbol `\delta` code of length `4n+3`.
@@ -817,7 +805,7 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
 
 def four_symbol_delta_code_smallcases(n, existence=False):
     r"""
-    Return the 4-symobl `\delta` code of length `n` if available.
+    Return the 4-symobl `\delta` code of length ``n`` if available.
 
     The 4-symbol `\delta` codes are constructed using :func:`construction_four_symbol_delta_code_I`
     or :func:`construction_four_symbol_delta_code_II`.
@@ -825,9 +813,9 @@ def four_symbol_delta_code_smallcases(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the length of the desired 4-symbol `\delta` code.
-
-    - ``existence`` -- boolean, if true only check if the sequences are available.
+    - ``n`` -- integer; the length of the desired 4-symbol `\delta` code
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the sequences are available
 
     EXAMPLES::
 
@@ -896,13 +884,10 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
 
     INPUT:
 
-    - ``A`` -- The first matrix used in the construction.
-
-    - ``B`` -- The second matrix used in the construction.
-
-    - ``C`` -- The third matrix used in the construction.
-
-    - ``D`` -- The fourth matrix used in the construction.
+    - ``A`` -- The first matrix used in the construction
+    - ``B`` -- The second matrix used in the construction
+    - ``C`` -- The third matrix used in the construction
+    - ``D`` -- The fourth matrix used in the construction
 
     TESTS::
 
@@ -933,7 +918,8 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
 
 
 def hadamard_matrix_from_sds(n, existence=False, check=True):
-    r"""Construction of Hadamard matrices from supplementary difference sets.
+    r"""
+    Construction of Hadamard matrices from supplementary difference sets.
 
     Given four SDS with parameters `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` with
     `n_1 + n_2 + n_3 + n_4 = n+\lambda` we can construct four (-1,+1) sequences `a_i = (a_{i,0},...,a_{i,n-1})`
@@ -946,19 +932,18 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrix to be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is a Hadamard
-      before returning.
-
-    - ``existence`` -- boolean (default False): if True, only check if the matrix exists.
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is a Hadamard before returning
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if the
+      matrix exists
 
     OUTPUT:
 
-    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises
+    If ``existence=False``, returns the Hadamard matrix of order `n`. It raises
     an error if no data is available to construct the matrix of the given order,
     or if `n` is not a multiple of `4`.
-    If ``existence`` is true, returns a boolean representing whether the matrix
+    If ``existence=True``, returns a boolean representing whether the matrix
     can be constructed or not.
 
     EXAMPLES:
@@ -1031,24 +1016,16 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
 
     INPUT:
 
-    - ``x1`` -- a list or vector, representing the first row of the circulant matrix `X_1`.
-
-    - ``x2`` -- a list or vector, representing the first row of the circulant matrix `X_2`.
-
-    - ``x3`` -- a list or vector, representing the first row of the circulant matrix `X_3`.
-
-    - ``x4`` -- a list or vector, representing the first row of the circulant matrix `X_4`.
-
-    - ``A`` -- the matrix described above.
-
-    - ``B`` -- the matrix described above.
-
-    - ``C`` -- the matrix described above.
-
-    - ``D`` -- the matrix described above.
-
-    - ``check`` -- a boolean, if true (default) check that the resulting matrix is Hadamard
-      before returing it.
+    - ``x1`` -- list or vector; the first row of the circulant matrix `X_1`
+    - ``x2`` -- list or vector; the first row of the circulant matrix `X_2`
+    - ``x3`` -- list or vector; the first row of the circulant matrix `X_3`
+    - ``x4`` -- list or vector; the first row of the circulant matrix `X_4`
+    - ``A`` -- the matrix described above
+    - ``B`` -- the matrix described above
+    - ``C`` -- the matrix described above
+    - ``D`` -- the matrix described above
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
+      matrix is Hadamard before returing it.
 
     EXAMPLES::
 
@@ -1121,17 +1098,17 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrix to be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is an Hadamard matrix before returning.
-
-    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is an Hadamard matrix before returning
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the matrix exists.
 
     OUTPUT:
 
-    If ``existence`` is false, returns the Hadamard matrix of order `n`. It raises an error if no data
+    If ``existence=False``, returns the Hadamard matrix of order `n`. It raises an error if no data
     is available to construct the matrix of the given order.
-    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+    If ``existence=True``, returns a boolean representing whether the matrix can be constructed or not.
 
     .. SEEALSO::
 
@@ -1213,14 +1190,15 @@ def _get_baumert_hall_units(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the size of the Baumert-Hall units.
-
-    - ``existence`` -- boolean (default False): if true only check whether the units can be contructed.
+    - ``n`` -- integer; the size of the Baumert-Hall units
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check whether
+      the units can be contructed
 
     OUTPUT:
 
-        If ``existence`` is true, return a boolean representing whether the Baumert-Hall units can
-        be constructed. Otherwise, return a tuple containing the four Baumert-Hall units.
+        If ``existence=True``, return a boolean representing whether the Baumert-Hall
+        units can be constructed. Otherwise, return a tuple containing the four
+        Baumert-Hall units.
 
     EXAMPLES::
 
@@ -1286,23 +1264,16 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
 
     INPUT:
 
-    - ``a`` -- 1,-1 list specifying the 1st row of `A`.
-
-    - ``b`` -- 1,-1 list specifying the 1st row of `B`.
-
-    - ``d`` -- 1,-1 list specifying the 1st row of `C`.
-
-    - ``c`` -- 1,-1 list specifying the 1st row of `D`.
-
-    - ``e1`` -- Matrix representing the first Baumert-Hall unit.
-
-    - ``e2`` -- Matrix representing the second Baumert-Hall unit.
-
-    - ``e3`` -- Matrix representing the third Baumert-Hall unit.
-
-    - ``e4`` -- Matrix representing the fourth Baumert-Hall unit.
-
-    - ``check`` -- Whether to check that the output is an Hadamard matrix before returning it.
+    - ``a`` -- 1,-1 list; the 1st row of `A`
+    - ``b`` -- 1,-1 list; the 1st row of `B`
+    - ``d`` -- 1,-1 list; the 1st row of `C`
+    - ``c`` -- 1,-1 list; the 1st row of `D`
+    - ``e1`` -- Matrix; the first Baumert-Hall unit
+    - ``e2`` -- Matrix; the second Baumert-Hall unit
+    - ``e3`` -- Matrix; the third Baumert-Hall unit
+    - ``e4`` -- Matrix; the fourth Baumert-Hall unit
+    - ``check`` -- boolean (default: ``True``); whether to check that the output
+      is an Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -1365,11 +1336,11 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is an Hadamard matrix before returning.
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``): if ``True``, only check if
+      the matrix exists
+    - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
+      is an Hadamard matrix before returning
 
     EXAMPLES::
 
@@ -1410,7 +1381,8 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 
 
 def hadamard_matrix_spence_construction(n, existence=False, check=True):
-    r"""Create an Hadamard matrix of order `n` using Spence construction.
+    r"""
+    Create an Hadamard matrix of order `n` using the Spence construction.
 
     This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
@@ -1418,16 +1390,17 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False): if True, only check if matrix exists.
-
-    - ``check`` -- bolean: if True (default), check that the matrix is an Hadamard matrix before returning.
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the matrix exists
+    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+      is an Hadamard matrix before returning
 
     OUTPUT:
 
-    If ``existence`` is true, returns a boolean representing whether the Hadamard matrix can
-    be constructed. Otherwise, returns the Hadamard matrix, or raises an error if it cannot be constructed.
+    If ``existence=True``, returns a boolean representing whether the Hadamard
+    matrix can be constructed. Otherwise, returns the Hadamard matrix, or raises
+    an error if it cannot be constructed.
 
     EXAMPLES::
 
@@ -1501,20 +1474,17 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
 def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
     r"""
-    Test if `M` is a Hadamard matrix.
+    Test if ``M`` is a Hadamard matrix.
 
     INPUT:
 
     - ``M`` -- a matrix
-
-    - ``normalized`` (boolean) -- whether to test if ``M`` is a normalized
-      Hadamard matrix, i.e. has its first row/column filled with +1.
-
-    - ``skew`` (boolean) -- whether to test if ``M`` is a skew
-      Hadamard matrix, i.e. `M=S+I` for `-S=S^\top`, and `I` the identity matrix.
-
-    - ``verbose`` (boolean) -- whether to be verbose when the matrix is not
-      Hadamard.
+    - ``normalized`` -- boolean (default: ``False``); whether to test if ``M``
+      is a normalized  Hadamard matrix, i.e. has its first row/column filled with +1
+    - ``skew`` -- boolean (default: ``False``); whether to test if ``M`` is a skew
+      Hadamard matrix, i.e. `M=S+I` for `-S=S^\top`, and `I` the identity matrix
+    - ``verbose`` -- boolean (default: ``False``); whether to be verbose when
+      the matrix is not Hadamard
 
     EXAMPLES::
 
@@ -1615,19 +1585,17 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
 
 def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
     r"""
-    Test if `M` is a skew Hadamard matrix.
+    Test if ``M`` is a skew Hadamard matrix.
 
     this is a wrapper around the function :func:`is_hadamard_matrix`
 
     INPUT:
 
     - ``M`` -- a matrix
-
-    - ``normalized`` (boolean) -- whether to test if ``M`` is a skew-normalized
-      Hadamard matrix, i.e. has its first row filled with +1.
-
-    - ``verbose`` (boolean) -- whether to be verbose when the matrix is not
-      skew Hadamard.
+    - ``normalized`` -- boolean (default: ``False``); whether to test if ``M``
+      is a skew-normalized Hadamard matrix, i.e. has its first row filled with +1
+    - ``verbose`` -- boolean (default: ``False``); whether to be verbose when the
+      matrix is not skew Hadamard
 
     EXAMPLES::
 
@@ -1657,23 +1625,19 @@ def hadamard_matrix(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` (integer) -- dimension of the matrix
-
-    - ``existence`` (boolean) -- whether to build the matrix or merely query if
-      a construction is available in Sage. When set to ``True``, the function
-      returns:
+    - ``n`` -- integer; dimension of the matrix
+    - ``existence`` -- boolean (default: ``False``); whether to build the matrix
+      or merely query if a construction is available in Sage. When set to ``True``,
+      the function returns:
 
         - ``True`` -- meaning that Sage knows how to build the matrix
-
         - ``Unknown`` -- meaning that Sage does not know how to build the
           matrix, although the matrix may exist (see :mod:`sage.misc.unknown`).
-
         - ``False`` -- meaning that the matrix does not exist.
 
-    - ``check`` (boolean) -- whether to check that output is correct before
+    - ``check`` -- boolean (default: ``True``); whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+      guys), you may want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -1887,9 +1851,8 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n, e, existence=Fal
 
     INPUT:
 
-    - ``n`` (integer) -- side of the matrix
-
-    - ``e`` -- one of `-1` or `+1`, equal to the value of `\epsilon`
+    - ``n`` -- integer; side of the matrix
+    - ``e`` -- `-1` or `+1`; the value of `\epsilon`
 
     EXAMPLES::
 
@@ -2065,7 +2028,7 @@ def RSHCD_324(e):
 
     INPUT:
 
-    - ``e`` -- one of `-1` or `+1`, equal to the value of `\epsilon`
+    - ``e`` -- `-1` or `+1`; the value of `\epsilon`
 
     TESTS::
 
@@ -2111,10 +2074,9 @@ def _helper_payley_matrix(n, zero_position=True):
 
     INPUT:
 
-    - ``n`` -- an odd prime power.
-
-    - ``zero_position`` -- if it is true (default), place 0 of ``F_n`` in the middle,
-      otherwise place it first.
+    - ``n`` -- an odd prime power
+    - ``zero_position`` -- boolean (default: ``True``); if it is true, place 0
+      of ``F_n`` in the middle, otherwise place it first
 
     .. SEEALSO::
 
@@ -2253,13 +2215,12 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
 
     INPUT:
 
-    - ``a`` -- 1,-1 list specifying the 1st row of `A`
-
-    - ``b`` -- 1,-1 list specifying the 1st row of `B`
-
-    - ``d`` -- 1,-1 list specifying the 1st row of `C`
-
-    - ``c`` -- 1,-1 list specifying the 1st row of `D`
+    - ``a`` -- 1,-1 list; the 1st row of `A`
+    - ``b`` -- 1,-1 list; the 1st row of `B`
+    - ``d`` -- 1,-1 list; the 1st row of `C`
+    - ``c`` -- 1,-1 list; the 1st row of `D`
+    - ``check`` --  boolean (default: ``True``); if ``True``, check that the
+      resulting matrix is skew Hadamard before returning it
 
     EXAMPLES::
 
@@ -2300,15 +2261,14 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
 
     INPUT:
 
-    - ``n`` -- A positive integer.
-
-    - ``check`` --  boolean. If true (default), check that the resulting matrix is Hadamard
-      before returning it.
+    - ``n`` -- positive integer
+    - ``check`` --  boolean (default: ``True``); if ``True``, check that the
+      resulting matrix is Hadamard before returning it
 
     OUTPUT:
 
-    If `n` satisfies the requirements described above, the function returns a `n\times n` Hadamard matrix.
-    Otherwise, an exception is raised.
+    If ``n`` satisfies the requirements described above, the function returns a
+    `n\times n` Hadamard matrix. Otherwise, an exception is raised.
 
     EXAMPLES::
 
@@ -2378,7 +2338,8 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
 
 def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
     r"""
-    Construct a skew Hadamard matrix of order `n = 4(1 + q + q^2)` using Spence construction.
+    Construct a skew Hadamard matrix of order `n = 4(1 + q + q^2)` using the
+    Spence construction.
 
     If `n = 4(1 + q + q^2)` where `q` is a prime power such that either
     `1 + q + q^2` is a prime congruent to `3, 5, 7 \mod 8` or `3 + 2q + 2q^2` is
@@ -2394,19 +2355,17 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- A positive integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False). If True, only return whether the
-      Hadamard matrix can be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the result is a skew
-      Hadamard matrix before returning it.
+    - ``n`` -- positive integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Hadamard matrix can be constructed
+    - ``check`` -- boolean (default: ``True``); check that the result
+      is a skew Hadamard matrix before returning it
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It
+    If ``existence=False``, returns the skew Hadamard matrix of order `n`. It
     raises an error if `n` does not satisfy the required conditions.
-    If ``existence`` is true, returns a boolean representing whether the matrix
+    If ``existence=True``, returns a boolean representing whether the matrix
     can be constructed or not.
 
     EXAMPLES::
@@ -2520,11 +2479,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- the order of the matrix
-
-    - ``existence`` -- if true (default), only check that we can do the construction
-
-    - ``check`` -- if true (default), check the result.
+    - ``n`` -- integer; the order of the matrix
+    - ``existence`` -- boolean (default: ``True``); if ``True``, only check that
+      we can do the construction
+    - ``check`` -- boolean (default: ``False``): if ``True``, check the result
 
     TESTS::
 
@@ -2591,7 +2549,8 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
 
 
 def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
-    r"""Construct skew Hadamard matrices of order `mn(n - 1)` if suitable orthogonal designs exist.
+    r"""
+    Construct skew Hadamard matrices of order `mn(n - 1)` if suitable orthogonal designs exist.
 
     In [Seb1978]_ is proved that if amicable Hadamard matrices of order `n` and an orthogonal
     design of type `(1, m, mn - m - 1)` in order `mn` exist, then a skew Hadamard matrix
@@ -2604,20 +2563,18 @@ def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- A positive integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False). If True, only return whether the
-      skew Hadamard matrix can be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the result is a skew
-      Hadamard matrix before returning it.
+    - ``n`` -- positive integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the skew Hadamard matrix can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the result
+      is a skew Hadamard matrix before returning it
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It
+    If ``existence=False``, returns the skew Hadamard matrix of order `n`. It
     raises an error if a construction for order `n` is not yet implemented, or if
     `n` does not satisfy the constraint.
-    If ``existence`` is true, returns a boolean representing whether the matrix
+    If ``existence=True``, returns a boolean representing whether the matrix
     can be constructed or not.
 
     EXAMPLES::
@@ -2702,19 +2659,17 @@ def skew_hadamard_matrix_from_complementary_difference_sets(n, existence=False, 
 
     INPUT:
 
-    - ``n`` -- A positive integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False). If True, only return whether the
-      skew Hadamard matrix can be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the result is a skew
-      Hadamard matrix before returning it.
+    - ``n`` -- positive integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the skew Hadamard matrix can be constructed
+    - ``check`` -- boolean (default: ``True``);  if ``True``, check that the
+      result is a skew Hadamard matrix before returning it
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It
+    If ``existence=False``, returns the skew Hadamard matrix of order `n`. It
     raises an error if `n` does not satisfy the required conditions.
-    If ``existence`` is true, returns a boolean representing whether the matrix
+    If ``existence=True``, returns a boolean representing whether the matrix
     can be constructed or not.
 
     EXAMPLES::
@@ -2793,18 +2748,18 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- A positive integer, the order of the matrix to be constructed.
-
-    - ``existence`` -- boolean (default False). If True, only return whether the Hadamard matrix can be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the result is a skew Hadamard matrix
-      before returning it.
+    - ``n`` -- positive integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); If ``True``, only return
+      whether the Hadamard matrix can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the result
+      is a skew Hadamard matrix before returning it
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if `n` does
-    not satisfy the required conditions.
-    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+    If ``existence=False``, returns the skew Hadamard matrix of order `n`. It
+    raises an error if `n` does not satisfy the required conditions.
+    If ``existence=True``, returns a boolean representing whether the matrix can
+    be constructed or not.
 
     EXAMPLES::
 
@@ -2899,15 +2854,12 @@ def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
 
     INPUT:
 
-    - ``a`` -- (1,-1) list specifying the 1st row of `A`.
-
-    - ``b`` -- (1,-1) list specifying the 1st row of `B`.
-
-    - ``d`` -- (1,-1) list specifying the 1st row of `C`.
-
-    - ``c`` -- (1,-1) list specifying the 1st row of `D`.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is a skew Hadamard matrix before returning it.
+    - ``a`` -- (1,-1) list; the 1st row of `A`
+    - ``b`` -- (1,-1) list; the 1st row of `B`
+    - ``d`` -- (1,-1) list; the 1st row of `C`
+    - ``c`` -- (1,-1) list; the 1st row of `D`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is a skew Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -2987,17 +2939,19 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
 
     INPUT:
 
-    - ``n`` -- the order of the skew Hadamard matrix to be constructed.
-
-    - ``existence`` -- boolean (default False). If True, only return whether the Hadamard matrix can be constructed.
-
-    - ``check`` -- boolean: if True (default), check that the matrix is an Hadamard matrix before returning it.
+    - ``n`` -- integer; the order of the skew Hadamard matrix to be constructed
+    - ``existence`` -- boolean (default:  ``False``); If ``True``, only return
+      whether the Hadamard matrix can be constructed
+    - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
+      is an Hadamard matrix before returning it
 
     OUTPUT:
 
-    If ``existence`` is false, returns the skew Hadamard matrix of order `n`. It raises an error if no data
-    is available to construct the matrix of the given order.
-    If ``existence`` is true, returns a boolean representing whether the matrix can be constructed or not.
+    If ``existence=False``, returns the skew Hadamard matrix of order `n`. It
+    raises an error if no data is available to construct the matrix of the given
+    order.
+    If ``existence=True``, returns a boolean representing whether the matrix can
+    be constructed or not.
 
     EXAMPLES::
 
@@ -3077,7 +3031,7 @@ _skew_had_cache = {}
 
 def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     r"""
-    Tries to construct a skew Hadamard matrix
+    Tries to construct a skew Hadamard matrix.
 
     A Hadamard matrix `H` is called skew if `H=S-I`, for `I` the identity matrix
     and `-S=S^\top`. Currently all orders `\le 1000` for which a construction is
@@ -3085,26 +3039,21 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
 
     INPUT:
 
-    - ``n`` (integer) -- dimension of the matrix
-
-    - ``existence`` (boolean) -- whether to build the matrix or merely query if
-      a construction is available in Sage. When set to ``True``, the function
-      returns:
+    - ``n`` -- integer; dimension of the matrix
+    - ``existence`` -- boolean (default: ``False``); whether to build the matrix
+      or merely query if a construction is available in Sage. When set to ``True``,
+      the function returns:
 
         - ``True`` -- meaning that Sage knows how to build the matrix
-
         - ``Unknown`` -- meaning that Sage does not know how to build the
           matrix, but that the design may exist (see :mod:`sage.misc.unknown`).
-
         - ``False`` -- meaning that the matrix does not exist.
 
-    - ``skew_normalize`` (boolean) -- whether to make the 1st row all-one, and
-      adjust the 1st column accordingly. Set to ``True`` by default.
-
-    - ``check`` (boolean) -- whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``skew_normalize`` -- boolean (default: ``True``); whether to make the 1st
+      row all-one, and adjust the 1st column accordingly
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we are
+      cautious guys), you may want to disable it whenever you want speed
 
     EXAMPLES::
 
@@ -3258,12 +3207,10 @@ def symmetric_conference_matrix(n, check=True):
 
     INPUT:
 
-    - ``n`` (integer) -- dimension of the matrix
-
-    - ``check`` (boolean) -- whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``n`` -- integer;  dimension of the matrix
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we are
+      cautious guys), you may want to disable it whenever you want speed
 
     EXAMPLES::
 
@@ -3311,9 +3258,9 @@ def szekeres_difference_set_pair(m, check=True):
 
     INPUT:
 
-    - ``m`` (integer) -- dimension of the matrix
-
-    - ``check`` (default: ``True``) -- whether to check `A` and `B` for correctness
+    - ``m`` -- integer; dimension of the matrix
+    - ``check`` -- boolean (default: ``True``); whether to check `A` and `B` for
+      correctness
 
     EXAMPLES::
 
@@ -3445,7 +3392,8 @@ def rshcd_from_prime_power_and_conference_matrix(n):
 
 
 def are_amicable_hadamard_matrices(M, N, verbose=False):
-    r"""Chek if `M` and `N` are amicable Hadamard matrices.
+    r"""
+    Check if ``M`` and ``N`` are amicable Hadamard matrices.
 
     Two matrices `M` and `N` of order `n` are called amicable if they
     satisfy the following conditions (see [Seb2017]_):
@@ -3456,12 +3404,10 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
 
     INPUT:
 
-    - ``M`` -- a square matrix.
-
-    - ``N`` -- a square matrix.
-
-    - ``verbose`` -- boolean (default False). Whether to be verbose when the
-      matrices are not amicable Hadamard matrices.
+    - ``M`` -- a square matrix
+    - ``N`` -- a square matrix
+    - ``verbose`` -- boolean (default ``False``); whether to be verbose when the
+      matrices are not amicable Hadamard matrices
 
     EXAMPLES::
 
@@ -3508,17 +3454,17 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
 
 
 def amicable_hadamard_matrices_wallis(n, check=True):
-    r"""Construct amicable Hadamard matrices of order `n = q + 1` where `q` is a prime power.
+    r"""
+    Construct amicable Hadamard matrices of order `n = q + 1` where `q` is a prime power.
 
     If `q` is a prime power `\equiv 3 \mod 4`, then amicable Hadamard matrices
     of order `q+1` can be constructed as described in [Wal1970b]_.
 
     INPUT:
 
-    - ``n`` -- integer, the order of the matrices to be constructed.
-
-    - ``check`` -- boolean, if true (default) check that the resulting matrices
-      are amicable Hadamard before returing them.
+    - ``n`` -- integer; the order of the matrices to be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      resulting matrices are amicable Hadamard before returing them
 
     OUTPUT:
 
@@ -3598,17 +3544,16 @@ def amicable_hadamard_matrices_wallis(n, check=True):
 
 
 def amicable_hadamard_matrices(n, existence=False, check=True):
-    r"""Construct amicable Hadamard matrices of order `n` using the available methods.
+    r"""
+    Construct amicable Hadamard matrices of order ``n`` using the available methods.
 
     INPUT:
 
-    - ``n`` -- integer, the order of the amicable Hadamard matrices.
-
-    - ``existence`` -- boolean (default False). If true, only check whether
-      amicable Hadamard matrices of order `n` can be constructed.
-
-    - ``check`` -- boolean, if true (default), check that the matrices are amicable
-      Hadamard matrices before returning them.
+    - ``n`` -- positive integer; the order of the amicable Hadamard matrices
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether amicable Hadamard matrices of order `n` can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      matrices are amicable Hadamard matrices before returning them
 
     OUTPUT:
 
