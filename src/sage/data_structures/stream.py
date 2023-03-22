@@ -2875,9 +2875,10 @@ class Stream_truncated(Stream_inexact):
         assert isinstance(series, Stream_inexact)
         super().__init__(series._is_sparse, False)
         self._series = series
+        # We share self._series._cache but not self._series._approximate order
+        # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache
         self._shift = shift
-        self._minimal_valuation = minimal_valuation
         self._approximate_order = minimal_valuation
 
     def __getitem__(self, n):
@@ -3017,7 +3018,7 @@ class Stream_truncated(Stream_inexact):
             True
         """
         if self._is_sparse:
-            return any(c for n, c in self._series._cache.items() if n + self._shift >= self._minimal_valuation)
+            return any(c for n, c in self._series._cache.items() if n + self._shift >= self._approximate_order)
         offset = self._series._approximate_order + self._shift
         start = self._approximate_order - offset
         return any(self._series._cache[start:])
