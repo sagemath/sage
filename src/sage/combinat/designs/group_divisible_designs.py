@@ -31,7 +31,7 @@ Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.arith.all import is_prime_power
+from sage.arith.misc import is_prime_power
 from sage.misc.unknown    import Unknown
 from .incidence_structures import IncidenceStructure
 
