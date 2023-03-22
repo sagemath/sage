@@ -961,7 +961,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: X.defining_polynomials ()
             (x*z^2, y^2*z, x*y^2)
             sage: I = X.defining_ideal(); I
-            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
+            over Rational Field
             sage: I.groebner_basis()
             [x*y^2, y^2*z,  x*z^2]
             sage: X.dimension()
@@ -972,12 +973,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             Spectrum of Rational Field
             sage: X.structure_morphism()
             Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x*z^2,
-              y^2*z,
-              x*y^2
+              From: Closed subscheme of Projective Space of dimension 2
+                    over Rational Field defined by: x*z^2, y^2*z, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
+
+        TESTS::
 
             sage: TestSuite(X).run(skip=["_test_an_element", "_test_elements",\
             "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
@@ -1183,16 +1184,16 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(5, 'first')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(3, 'second')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (8*x^3 - 4*x*y^2 : y^3)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (8*x^3 - 4*x*y^2 : y^3)
 
         ::
 
@@ -2250,7 +2251,8 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             sage: P.rational_points()                                                   # optional - sage.rings.finite_rings
             [(0 : 1), (1 : 1), (2 : 1), (1 : 0)]
             sage: P.rational_points(GF(3^2, 'b'))                                       # optional - sage.rings.finite_rings
-            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1), (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
+            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1),
+             (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
         """
         if F is None:
             return [P for P in self]
@@ -2315,20 +2317,20 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
         Returns the projective points `(x_0:\cdots:x_n)` over
         `\QQ` with `|x_i| \leq` bound.
 
-       ALGORITHM:
+        ALGORITHM:
 
-       The very simple algorithm works as follows: every point
-       `(x_0:\cdots:x_n)` in projective space has a unique
-       largest index `i` for which `x_i` is not
-       zero. The algorithm then iterates downward on this
-       index. We normalize by choosing `x_i` positive. Then,
-       the points `x_0,\ldots,x_{i-1}` are the points of
-       affine `i`-space that are relatively prime to
-       `x_i`. We access these by using the Tuples method.
+        The very simple algorithm works as follows: every point
+        `(x_0:\cdots:x_n)` in projective space has a unique
+        largest index `i` for which `x_i` is not
+        zero. The algorithm then iterates downward on this
+        index. We normalize by choosing `x_i` positive. Then,
+        the points `x_0,\ldots,x_{i-1}` are the points of
+        affine `i`-space that are relatively prime to
+        `x_i`. We access these by using the Tuples method.
 
         INPUT:
 
-        -  ``bound`` - integer.
+         -  ``bound`` - integer.
 
         EXAMPLES::
 

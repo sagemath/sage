@@ -13,14 +13,12 @@ EXAMPLES::
     sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
     sage: A2.hom([x, x + y], A2)
     Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-      Defn: Defined on coordinates by sending (x, y) to
-            (x, x + y)
+      Defn: Defined on coordinates by sending (x, y) to (x, x + y)
     sage: A2.hom([1, x, x + y], P2)
     Scheme morphism:
       From: Affine Space of dimension 2 over Rational Field
       To:   Projective Space of dimension 2 over Rational Field
-      Defn: Defined on coordinates by sending (x, y) to
-            (1 : x : x + y)
+      Defn: Defined on coordinates by sending (x, y) to (1 : x : x + y)
 
 AUTHORS:
 
@@ -95,8 +93,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         Scheme morphism:
           From: Affine Space of dimension 2 over Rational Field
           To:   Projective Space of dimension 2 over Rational Field
-          Defn: Defined on coordinates by sending (x, y) to
-                (x : y : 1)
+          Defn: Defined on coordinates by sending (x, y) to (x : y : 1)
     """
     def __init__(self, parent, polys, check=True):
         r"""
@@ -134,8 +131,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(A, A)
             sage: H([3/2*x^2, y^2])
             Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (3/2*x^2, y^2)
+              Defn: Defined on coordinates by sending (x, y) to (3/2*x^2, y^2)
 
         ::
 
@@ -144,10 +140,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(X, X)
             sage: H([9/4*x^2, 3/2*y])
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 2
-            over Rational Field defined by:
-              -y^2 + x
-              Defn: Defined on coordinates by sending (x, y) to
-                    (9/4*x^2, 3/2*y)
+            over Rational Field defined by: -y^2 + x
+              Defn: Defined on coordinates by sending (x, y) to (9/4*x^2, 3/2*y)
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = Hom(P, P)
@@ -165,10 +159,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: u,v,w = X.coordinate_ring().gens()
             sage: H([u, v, u + v])
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 3
-            over Rational Field defined by:
-              x - y
-              Defn: Defined on coordinates by sending (x, y, z) to
-                    (y, y, 2*y)
+            over Rational Field defined by: x - y
+              Defn: Defined on coordinates by sending (x, y, z) to (y, y, 2*y)
 
         You must use the ambient space variables to create rational functions::
 
@@ -468,8 +460,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f.homogenize((2, 0))
             Scheme endomorphism of Projective Space of dimension 2
             over Complex Field with 53 bits of precision
-            Defn: Defined on coordinates by sending (x0 : x1 : x2) to
-            (x0*x1*x2^2 : x0^2*x2^2 + (-2.00000000000000)*x2^4 : x0*x1^3 - x0^2*x1*x2)
+              Defn: Defined on coordinates by sending (x0 : x1 : x2) to
+                    (x0*x1*x2^2 : x0^2*x2^2 + (-2.00000000000000)*x2^4 : x0*x1^3 - x0^2*x1*x2)
 
         ::
 
@@ -479,10 +471,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([9*y^2, 3*y])
             sage: f.homogenize(2)
             Scheme endomorphism of Closed subscheme of Projective Space
-            of dimension 2 over Integer Ring defined by:
-                x1^2 - x0*x2
-                Defn: Defined on coordinates by sending (x0 : x1 : x2) to
-                      (9*x1^2 : 3*x1*x2 : x2^2)
+            of dimension 2 over Integer Ring defined by: x1^2 - x0*x2
+              Defn: Defined on coordinates by sending (x0 : x1 : x2) to
+                    (9*x1^2 : 3*x1*x2 : x2^2)
 
         ::
 
@@ -493,8 +484,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f.homogenize((2, 0))
             Scheme endomorphism of Projective Space of dimension 2
             over Univariate Polynomial Ring in t over Integer Ring
-            Defn: Defined on coordinates by sending (x0 : x1 : x2) to
-            (x1*x2^2 : x0^2*x2 + (-2)*x2^3 : x1^3 - x0*x1*x2)
+              Defn: Defined on coordinates by sending (x0 : x1 : x2) to
+                    (x1*x2^2 : x0^2*x2 + (-2)*x2^3 : x1^3 - x0*x1*x2)
 
         ::
 
@@ -502,10 +493,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = End(A)
             sage: f = H([x^2 - 1])
             sage: f.homogenize((1, 0))
-            Scheme endomorphism of Projective Space of dimension 1
-            over Rational Field
-            Defn: Defined on coordinates by sending (x0 : x1) to
-            (x1^2 : x0^2 - x1^2)
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x1^2 : x0^2 - x1^2)
 
         ::
 
@@ -514,8 +504,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = End(A)                                                            # optional - sage.rings.number_field
             sage: f = H([QQbar(sqrt(2))*x*y, a*x^2])                                    # optional - sage.rings.number_field sage.symbolic
             sage: f.homogenize(2)                                                       # optional - sage.rings.number_field sage.symbolic
-            Scheme endomorphism of Projective Space of dimension 2 over Univariate
-            Polynomial Ring in a over Algebraic Field
+            Scheme endomorphism of Projective Space of dimension 2
+            over Univariate Polynomial Ring in a over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to
                     (1.414213562373095?*x0*x1 : a*x0^2 : x2^2)
 
@@ -544,9 +534,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = End(A)                                                            # optional - sage.rings.number_field
             sage: f = H([2*z / (z^2 + 2*z + 3)])                                        # optional - sage.rings.number_field
             sage: f.homogenize(1)                                                       # optional - sage.rings.number_field
-            Scheme endomorphism of Projective Space of dimension 1 over Algebraic
-            Field
-                Defn: Defined on coordinates by sending (x0 : x1) to
+            Scheme endomorphism of Projective Space of dimension 1
+            over Algebraic Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
                     (x0*x1 : 1/2*x0^2 + x0*x1 + 3/2*x1^2)
 
         ::
@@ -556,9 +546,10 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(A, A)                                                         # optional - sage.rings.number_field
             sage: F = H([d*x^2 + c])                                                    # optional - sage.rings.number_field
             sage: F.homogenize(1)                                                       # optional - sage.rings.number_field
-            Scheme endomorphism of Projective Space of dimension 1 over Multivariate Polynomial Ring in c, d over Algebraic Field
-            Defn: Defined on coordinates by sending (x0 : x1) to
-            (d*x0^2 + c*x1^2 : x1^2)
+            Scheme endomorphism of Projective Space of dimension 1
+            over Multivariate Polynomial Ring in c, d over Algebraic Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (d*x0^2 + c*x1^2 : x1^2)
 
         TESTS::
 
@@ -652,7 +643,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
             sage: A.<x,y> = AffineSpace(ZZ, 2)
             sage: H = End(A)
-            sage: f = H([x^2-y^2, y^2])
+            sage: f = H([x^2 - y^2, y^2])
             sage: type(f.as_dynamical_system())
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine'>
 
@@ -1111,23 +1102,21 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: H3 = Hom(A2, A)                                                       # optional - sage.rings.finite_rings
             sage: f = H([x^2 + 2*(t^3 + t^2 + t + 3)])                                  # optional - sage.rings.finite_rings
             sage: f.reduce_base_field()                                                 # optional - sage.rings.finite_rings
-            Scheme endomorphism of Affine Space of dimension 1 over Finite Field in t2 of size 5^2
-              Defn: Defined on coordinates by sending (x) to
-                    (x^2 + (2*t2))
+            Scheme endomorphism of Affine Space of dimension 1
+            over Finite Field in t2 of size 5^2
+              Defn: Defined on coordinates by sending (x) to (x^2 + (2*t2))
             sage: f2 = H2([x^2 + 4, 2*x])                                               # optional - sage.rings.finite_rings
             sage: f2.reduce_base_field()                                                # optional - sage.rings.finite_rings
             Scheme morphism:
               From: Affine Space of dimension 1 over Finite Field of size 5
               To:   Affine Space of dimension 2 over Finite Field of size 5
-              Defn: Defined on coordinates by sending (x) to
-                    (x^2 - 1, 2*x)
+              Defn: Defined on coordinates by sending (x) to (x^2 - 1, 2*x)
             sage: f3 = H3([a^2 + t*b])                                                  # optional - sage.rings.finite_rings
             sage: f3.reduce_base_field()                                                # optional - sage.rings.finite_rings
             Scheme morphism:
               From: Affine Space of dimension 2 over Finite Field in t of size 5^4
               To:   Affine Space of dimension 1 over Finite Field in t of size 5^4
-              Defn: Defined on coordinates by sending (a, b) to
-                    (a^2 + t*b)
+              Defn: Defined on coordinates by sending (a, b) to (a^2 + t*b)
 
         ::
 
@@ -1138,8 +1127,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: g = f.reduce_base_field(); g                                          # optional - sage.rings.number_field
             Scheme endomorphism of Affine Space of dimension 1 over
              Cyclotomic Field of order 4 and degree 2
-              Defn: Defined on coordinates by sending (x) to
-                (x^2 + v)
+              Defn: Defined on coordinates by sending (x) to (x^2 + v)
             sage: g.base_ring() is K                                                    # optional - sage.rings.number_field
             True
 
@@ -1180,12 +1168,11 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f = H([x^2 + a*x + 3, 5*x])                                           # optional - sage.rings.number_field
             sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field
             Scheme morphism:
-                  From: Affine Space of dimension 1 over Number Field in a with
-                  defining polynomial x^3 - x + 1 with a = -1.324717957244746?
-                  To:   Affine Space of dimension 2 over Number Field in a with
-                  defining polynomial x^3 - x + 1 with a = -1.324717957244746?
-                  Defn: Defined on coordinates by sending (x) to
-                        (x^2 + a*x + 3, 5*x)
+              From: Affine Space of dimension 1 over Number Field in a with
+                    defining polynomial x^3 - x + 1 with a = -1.324717957244746?
+              To:   Affine Space of dimension 2 over Number Field in a with
+                    defining polynomial x^3 - x + 1 with a = -1.324717957244746?
+              Defn: Defined on coordinates by sending (x) to (x^2 + a*x + 3, 5*x)
 
         ::
 
@@ -1195,8 +1182,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f = H([3*x^2 + x + 1])                                                # optional - sage.rings.number_field
             sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field
             Scheme endomorphism of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (3*x^2 + x + 1)
+              Defn: Defined on coordinates by sending (x) to (3*x^2 + x + 1)
 
         ::
 
@@ -1387,8 +1373,8 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             sage: f = X.hom([x, x/y], A2)
             sage: f.representatives()
             [Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               0
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: 0
                To:   Affine Space of dimension 2 over Rational Field
                Defn: Defined on coordinates by sending (x, y) to
                      (x, x/y)]
@@ -1401,29 +1387,27 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             sage: f = X.hom([x/y], A1)
             sage: f.representatives()
             [Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x, y) to
                      (x/y), Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     ((y + 1)/x)]
+               Defn: Defined on coordinates by sending (x, y) to ((y + 1)/x)]
             sage: g = _[1]
             sage: g.representatives()
             [Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     (x/y), Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+               Defn: Defined on coordinates by sending (x, y) to (x/y),
+             Scheme morphism:
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     ((y + 1)/x)]
+               Defn: Defined on coordinates by sending (x, y) to ((y + 1)/x)]
 
         ::
 
@@ -1433,16 +1417,16 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             sage: f = X.hom([x, y], P1)
             sage: f.representatives()
             [Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Projective Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x, y) to
-                     (x : y), Scheme morphism:
-               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-               x^2 - y^2 - y
+                     (x : y),
+             Scheme morphism:
+               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                     defined by: x^2 - y^2 - y
                To:   Projective Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     (y + 1 : x)]
+               Defn: Defined on coordinates by sending (x, y) to (y + 1 : x)]
         """
         X = self.domain()
         Y = self.codomain()

@@ -232,10 +232,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               Y^3*Z + Z^3 + Y
             sage: U.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              Y^3*Z + Z^3 + Y
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              X^3*Y + Y^3*Z + X*Z^3
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: Y^3*Z + Z^3 + Y
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: X^3*Y + Y^3*Z + X*Z^3
               Defn: Defined on coordinates by sending (Y, Z) to
                     (1 : Y : Z)
             sage: U.projective_embedding() is U.embedding_morphism()
@@ -366,10 +366,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               x + 3*z
             sage: patch.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x + 3*z
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x + 2*y + 3*z
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x + 3*z
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: x + 2*y + 3*z
               Defn: Defined on coordinates by sending (x, z) to
                     (x : -3/2 : z + 1)
             sage: patch.embedding_center()
@@ -476,23 +476,17 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2, (x-2*w)^2, x^2])
             sage: f.orbit(P.subscheme([x]), 5)
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x,
+              defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               w,
+              defined by: w,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               z - w,
+              defined by: z - w,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               y - z,
+              defined by: y - z,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x - y,
+              defined by: x - y,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x - w]
+              defined by: x - w]
 
         ::
 
@@ -677,8 +671,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             Closed subscheme of Projective Space of dimension 2 over 3-adic Field
             with capped relative precision 20 defined by:
               z,
-              x + (1 + 3^2 + 3^4 + 3^6 + 3^8 + 3^10 + 3^12 + 3^14 + 3^16 + 3^18 +
-            O(3^20))*y
+              x + (1 + 3^2 + 3^4 + 3^6 + 3^8 + 3^10 + 3^12 + 3^14 + 3^16 + 3^18 + O(3^20))*y
 
         ::
 
@@ -1205,15 +1198,14 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: v = L.veronese_embedding(2)
             sage: v
             Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 2 over
-            Rational Field defined by:
-              -x + y
-              To:   Closed subscheme of Projective Space of dimension 5 over
-            Rational Field defined by:
-              -x4^2 + x3*x5,
-              x2 - x4,
-              x1 - x3,
-              x0 - x3
+              From: Closed subscheme of Projective Space of dimension 2
+                    over Rational Field defined by: -x + y
+              To:   Closed subscheme of Projective Space of dimension 5
+                    over Rational Field defined by:
+                      -x4^2 + x3*x5,
+                      x2 - x4,
+                      x1 - x3,
+                      x0 - x3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
             sage: v.codomain().degree()
@@ -1228,14 +1220,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: Q.<u,v,s,t> = ProjectiveSpace(QQ, 3)
             sage: P.subscheme([]).veronese_embedding(3, Q)
             Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 1 over
-            Rational Field defined by:
-              (no polynomials)
-              To:   Closed subscheme of Projective Space of dimension 3 over
-            Rational Field defined by:
-              -s^2 + v*t,
-              -v*s + u*t,
-              -v^2 + u*s
+              From: Closed subscheme of Projective Space of dimension 1
+                    over Rational Field defined by: (no polynomials)
+              To:   Closed subscheme of Projective Space of dimension 3
+                    over Rational Field defined by:
+                      -s^2 + v*t,
+                      -v*s + u*t,
+                      -v^2 + u*s
               Defn: Defined on coordinates by sending (x : y) to
                     (x^3 : x^2*y : x*y^2 : y^3)
         """
@@ -1273,14 +1264,12 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
             Scheme morphism:
               From: Projective Space of dimension 1 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : x*y : y^2)
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
             sage: P1._morphism(H12, [x^2, x*y, y^2])
             Scheme morphism:
               From: Projective Space of dimension 1 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : x*y : y^2)
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
         """
         return SchemeMorphism_polynomial_projective_subscheme_field(*args, **kwds)
 
