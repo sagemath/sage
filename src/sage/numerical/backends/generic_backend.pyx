@@ -1741,6 +1741,10 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
         sage: p.base_ring()                                                           # optional - sage.rings.number_field
         Rational Field
+        sage: p = get_solver(solver='Matrix', base_ring=GF(3)); p                 # optional - sage.rings.number_field
+        <...sage.numerical.backends.matrix_backend.MatrixBackend...>
+        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        Finite Field of size 3
 
     Passing a callable as the 'solver'::
 
