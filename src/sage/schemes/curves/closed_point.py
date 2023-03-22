@@ -9,30 +9,30 @@ ideals of the coordinate ring of the ambient space.
 
 EXAMPLES::
 
-    sage: F.<a> = GF(2)
-    sage: P.<x,y> = AffineSpace(F, 2);
-    sage: C = Curve(y^2 + y - x^3)
-    sage: C.closed_points()
+    sage: F.<a> = GF(2)                                                                 # optional - sage.rings.finite_rings
+    sage: P.<x,y> = AffineSpace(F, 2)                                                   # optional - sage.rings.finite_rings
+    sage: C = Curve(y^2 + y - x^3)                                                      # optional - sage.rings.finite_rings
+    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
     [Point (x, y), Point (x, y + 1)]
-    sage: C.closed_points(2)
+    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
     [Point (y^2 + y + 1, x + 1),
      Point (y^2 + y + 1, x + y),
      Point (y^2 + y + 1, x + y + 1)]
-    sage: C.closed_points(3)
+    sage: C.closed_points(3)                                                            # optional - sage.rings.finite_rings
     [Point (x^2 + x + y, x*y + 1, y^2 + x + 1),
      Point (x^2 + x + y + 1, x*y + x + 1, y^2 + x)]
 
 Closed points of projective curves are represented by homogeneous maximal
 ideals::
 
-    sage: F.<a> = GF(2)
-    sage: P.<x,y,z> = ProjectiveSpace(F, 2)
-    sage: C = Curve(x^3*y + y^3*z + x*z^3)
-    sage: C.closed_points()
+    sage: F.<a> = GF(2)                                                                 # optional - sage.rings.finite_rings
+    sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                             # optional - sage.rings.finite_rings
+    sage: C = Curve(x^3*y + y^3*z + x*z^3)                                              # optional - sage.rings.finite_rings
+    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
     [Point (x, z), Point (x, y), Point (y, z)]
-    sage: C.closed_points(2)
+    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
     [Point (y^2 + y*z + z^2, x + y + z)]
-    sage: C.closed_points(3)
+    sage: C.closed_points(3)                                                            # optional - sage.rings.finite_rings
     [Point (y^3 + y^2*z + z^3, x + y),
      Point (y^3 + y*z^2 + z^3, x + z),
      Point (x^2 + x*z + y*z + z^2, x*y + x*z + z^2, y^2 + x*z),
@@ -44,19 +44,19 @@ ideals::
 Rational points are easily converted to closed points and vice versa if the
 closed point is of degree one::
 
-    sage: F.<a> = GF(2)
-    sage: P.<x,y,z> = ProjectiveSpace(F, 2)
-    sage: C = Curve(x^3*y + y^3*z + x*z^3)
-    sage: p1, p2, p3 = C.closed_points()
-    sage: p1.rational_point()
+    sage: F.<a> = GF(2)                                                                 # optional - sage.rings.finite_rings
+    sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                             # optional - sage.rings.finite_rings
+    sage: C = Curve(x^3*y + y^3*z + x*z^3)                                              # optional - sage.rings.finite_rings
+    sage: p1, p2, p3 = C.closed_points()                                                # optional - sage.rings.finite_rings
+    sage: p1.rational_point()                                                           # optional - sage.rings.finite_rings
     (0 : 1 : 0)
-    sage: p2.rational_point()
+    sage: p2.rational_point()                                                           # optional - sage.rings.finite_rings
     (0 : 0 : 1)
-    sage: p3.rational_point()
+    sage: p3.rational_point()                                                           # optional - sage.rings.finite_rings
     (1 : 0 : 0)
-    sage: _.closed_point()
+    sage: _.closed_point()                                                              # optional - sage.rings.finite_rings
     Point (y, z)
-    sage: _ == p3
+    sage: _ == p3                                                                       # optional - sage.rings.finite_rings
     True
 
 AUTHORS:
@@ -99,10 +99,10 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
     EXAMPLES::
 
-        sage: F.<a> = GF(4)
-        sage: P.<x,y> = AffineSpace(F, 2);
-        sage: C = Curve(y^2 + y - x^3)
-        sage: C.closed_points()
+        sage: F.<a> = GF(4)                                                             # optional - sage.rings.finite_rings
+        sage: P.<x,y> = AffineSpace(F, 2)                                               # optional - sage.rings.finite_rings
+        sage: C = Curve(y^2 + y - x^3)                                                  # optional - sage.rings.finite_rings
+        sage: C.closed_points()                                                         # optional - sage.rings.finite_rings
         [Point (x, y),
          Point (x, y + 1),
          Point (x + a, y + a),
@@ -118,12 +118,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         TESTS::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: p = C([0,0]); p
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: p = C([0,0]); p                                                       # optional - sage.rings.finite_rings
             (0, 0)
-            sage: loads(dumps(p)) == p
+            sage: loads(dumps(p)) == p                                                  # optional - sage.rings.finite_rings
             True
         """
         super().__init__(curve.ambient_space(), prime_ideal)
@@ -137,12 +137,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: p = pts[0]
-            sage: {p: 1}
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: p = pts[0]                                                            # optional - sage.rings.finite_rings
+            sage: {p: 1}                                                                # optional - sage.rings.finite_rings
             {Point (x, y): 1}
         """
         return hash((self.parent(),self.prime_ideal()))
@@ -159,11 +159,11 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: pts[0] == pts[1]
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: pts[0] == pts[1]                                                      # optional - sage.rings.finite_rings
             False
         """
         return richcmp((self._curve, self.prime_ideal()), (other._curve, other.prime_ideal()), op)
@@ -174,11 +174,11 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: pts[0]
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: pts[0]                                                                # optional - sage.rings.finite_rings
             Point (x, y)
         """
         return "Point ({})".format(', '.join(repr(g) for g in self.prime_ideal().gens()))
@@ -189,12 +189,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: p = pts[0]
-            sage: p.curve()
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: p = pts[0]                                                            # optional - sage.rings.finite_rings
+            sage: p.curve()                                                             # optional - sage.rings.finite_rings
             Affine Plane Curve over Finite Field in a of size 2^2 defined by x^3 + y^2 + y
         """
         return self._curve
@@ -205,12 +205,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: p = pts[0]
-            sage: p.degree()
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: p = pts[0]                                                            # optional - sage.rings.finite_rings
+            sage: p.degree()                                                            # optional - sage.rings.finite_rings
             1
         """
         return self._degree
@@ -221,12 +221,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: p = pts[0]
-            sage: p.places()
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: p = pts[0]                                                            # optional - sage.rings.finite_rings
+            sage: p.places()                                                            # optional - sage.rings.finite_rings
             [Place (x, y)]
         """
         return self._curve.places_on(self)
@@ -239,12 +239,12 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
-            sage: C = Curve(y^2 + y - x^3)
-            sage: pts = C.closed_points()
-            sage: p = pts[0]
-            sage: p.place()
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
+            sage: p = pts[0]                                                            # optional - sage.rings.finite_rings
+            sage: p.place()                                                             # optional - sage.rings.finite_rings
             Place (x, y)
         """
         return self._curve.places_on(self)[0]
@@ -260,9 +260,9 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(3^2),2)
-            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x-2)
-            sage: C.closed_points()
+            sage: A.<x,y> = AffineSpace(GF(3^2), 2)                                     # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)                          # optional - sage.rings.finite_rings
+            sage: C.closed_points()                                                     # optional - sage.rings.finite_rings
             [Point (x, y + (z2 + 1)),
              Point (x, y + (-z2 - 1)),
              Point (x + (z2 + 1), y + (z2 - 1)),
@@ -273,7 +273,7 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
              Point (x + (-z2 - 1), y + (-z2)),
              Point (x + 1, y + 1),
              Point (x + 1, y - 1)]
-            sage: [p.rational_point() for p in _]
+            sage: [p.rational_point() for p in _]                                       # optional - sage.rings.finite_rings
             [(0, 2*z2 + 2),
              (0, z2 + 1),
              (2*z2 + 2, 2*z2 + 1),
@@ -284,7 +284,7 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
              (z2 + 1, z2),
              (2, 2),
              (2, 1)]
-            sage: set(_) == set(C.rational_points())
+            sage: set(_) == set(C.rational_points())                                    # optional - sage.rings.finite_rings
             True
         """
         if self.degree() != 1:
@@ -305,21 +305,21 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)
-            sage: A.<x,y> = AffineSpace(F, 2)
-            sage: C = Curve(y^2 + y - x^3, A)
-            sage: p1, p2 = C.closed_points()
-            sage: p1
+            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 + y - x^3, A)                                           # optional - sage.rings.finite_rings
+            sage: p1, p2 = C.closed_points()                                            # optional - sage.rings.finite_rings
+            sage: p1                                                                    # optional - sage.rings.finite_rings
             Point (x, y)
-            sage: p2
+            sage: p2                                                                    # optional - sage.rings.finite_rings
             Point (x, y + 1)
-            sage: p1.projective()
+            sage: p1.projective()                                                       # optional - sage.rings.finite_rings
             Point (x1, x2)
-            sage: p2.projective(0)
+            sage: p2.projective(0)                                                      # optional - sage.rings.finite_rings
             Point (x1, x0 + x2)
-            sage: p2.projective(1)
+            sage: p2.projective(1)                                                      # optional - sage.rings.finite_rings
             Point (x0, x1 + x2)
-            sage: p2.projective(2)
+            sage: p2.projective(2)                                                      # optional - sage.rings.finite_rings
             Point (x0, x1 + x2)
         """
         C = self.curve()
@@ -349,18 +349,18 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
-            sage: C = Curve(x^3*y + y^3*z + x*z^3)
-            sage: C.closed_points()
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.finite_rings
+            sage: C = Curve(x^3*y + y^3*z + x*z^3)                                      # optional - sage.rings.finite_rings
+            sage: C.closed_points()                                                     # optional - sage.rings.finite_rings
             [Point (x, z),
              Point (x, y),
              Point (y, z),
              Point (x + a*z, y + (a + 1)*z),
              Point (x + (a + 1)*z, y + a*z)]
-            sage: [p.rational_point() for p in _]
+            sage: [p.rational_point() for p in _]                                       # optional - sage.rings.finite_rings
             [(0 : 1 : 0), (0 : 0 : 1), (1 : 0 : 0), (a : a + 1 : 1), (a + 1 : a : 1)]
-            sage: set(_) == set(C.rational_points())
+            sage: set(_) == set(C.rational_points())                                    # optional - sage.rings.finite_rings
             True
         """
         if self.degree() != 1:
@@ -385,19 +385,19 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(2)
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
-            sage: C = Curve(x^3*y + y^3*z + x*z^3)
-            sage: p1, p2, p3 = C.closed_points()
-            sage: p1.affine()
+            sage: F.<a> = GF(2)                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.finite_rings
+            sage: C = Curve(x^3*y + y^3*z + x*z^3)                                      # optional - sage.rings.finite_rings
+            sage: p1, p2, p3 = C.closed_points()                                        # optional - sage.rings.finite_rings
+            sage: p1.affine()                                                           # optional - sage.rings.finite_rings
             Point (x, z)
-            sage: p2.affine()
+            sage: p2.affine()                                                           # optional - sage.rings.finite_rings
             Point (x, y)
-            sage: p3.affine()
+            sage: p3.affine()                                                           # optional - sage.rings.finite_rings
             Point (y, z)
-            sage: p3.affine(0)
+            sage: p3.affine(0)                                                          # optional - sage.rings.finite_rings
             Point (y, z)
-            sage: p3.affine(1)
+            sage: p3.affine(1)                                                          # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: not in the affine patch
