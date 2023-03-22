@@ -154,12 +154,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: S = A.subscheme([x*y - z])
             sage: S.projective_embedding()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 3 over Integer Ring defined by:
-              x*y - z
-              To:   Closed subscheme of Projective Space of dimension 3 over Integer Ring defined by:
-              x0*x1 - x2*x3
-              Defn: Defined on coordinates by sending (x, y, z) to
-                    (x : y : z : 1)
+              From: Closed subscheme of Affine Space of dimension 3 over Integer Ring
+                    defined by: x*y - z
+              To:   Closed subscheme of Projective Space of dimension 3 over Integer Ring
+                    defined by: x0*x1 - x2*x3
+              Defn: Defined on coordinates by sending (x, y, z) to (x : y : z : 1)
 
         ::
 
@@ -168,14 +167,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: S = A.subscheme([x^2 - y*z])
             sage: S.projective_embedding(1, P)
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 3 over Integer
-            Ring defined by:
-              x^2 - y*z
-              To:   Closed subscheme of Projective Space of dimension 3 over Integer
-            Ring defined by:
-              u0^2 - u2*u3
-              Defn: Defined on coordinates by sending (x, y, z) to
-                    (x : 1 : y : z)
+              From: Closed subscheme of Affine Space of dimension 3 over Integer Ring
+                    defined by: x^2 - y*z
+              To:   Closed subscheme of Projective Space of dimension 3 over Integer Ring
+                    defined by: u0^2 - u2*u3
+              Defn: Defined on coordinates by sending (x, y, z) to (x : 1 : y : z)
 
         ::
 
@@ -183,17 +179,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X = A.subscheme([y - x^2, z - x^3])
             sage: X.projective_embedding()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 3 over Rational
-            Field defined by:
-              -x^2 + y,
-              -x^3 + z
-              To:   Closed subscheme of Projective Space of dimension 3 over
-            Rational Field defined by:
-              x0^2 - x1*x3,
-              x0*x1 - x2*x3,
-              x1^2 - x0*x2
-              Defn: Defined on coordinates by sending (x, y, z) to
-                    (x : y : z : 1)
+              From: Closed subscheme of Affine Space of dimension 3 over Rational Field
+                    defined by: -x^2 + y, -x^3 + z
+              To:   Closed subscheme of Projective Space of dimension 3 over Rational Field
+                    defined by: x0^2 - x1*x3, x0*x1 - x2*x3, x1^2 - x0*x2
+              Defn: Defined on coordinates by sending (x, y, z) to (x : y : z : 1)
 
         When taking a closed subscheme of an affine space with a
         projective embedding, the subscheme inherits the embedding::
@@ -202,12 +192,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X = A.subscheme(u - v)
             sage: X.projective_embedding()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              u - v
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x0 - x2
-              Defn: Defined on coordinates by sending (u, v) to
-                    (u : 1 : v)
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: u - v
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: x0 - x2
+              Defn: Defined on coordinates by sending (u, v) to (u : 1 : v)
             sage: phi = X.projective_embedding()
             sage: psi = A.projective_embedding()
             sage: phi(X(2, 2)) == psi(A(X(2, 2)))
@@ -524,20 +513,18 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             sage: H = X.Hom(A2)
             sage: H([x, x/y])
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x - y
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x - y
               To:   Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (x, x/y)
+              Defn: Defined on coordinates by sending (x, y) to (x, x/y)
             sage: P2 = ProjectiveSpace(QQ, 2)
             sage: H = X.Hom(P2)
             sage: H([x*y, x, y])
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x - y
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x - y
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (x*y : x : y)
+              Defn: Defined on coordinates by sending (x, y) to (x*y : x : y)
         """
         return SchemeMorphism_polynomial_affine_subscheme_field(*args, **kwds)
 

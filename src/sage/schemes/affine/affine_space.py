@@ -825,10 +825,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Spectrum of Rational Field
             sage: X.structure_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x,
-              y^2,
-              x*y^2
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x, y^2, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
             sage: X.dimension()
@@ -936,7 +934,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: F.<t> = FunctionField(QQ)
             sage: A.<x> = AffineSpace(F,1)
             sage: A.chebyshev_polynomial(4, monic=True)
-            Dynamical System of Affine Space of dimension 1 over Rational function field in t over Rational Field
+            Dynamical System of Affine Space of dimension 1
+            over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (x) to
                     (x^4 + (-4)*x^2 + 2)
         """
@@ -1052,8 +1051,8 @@ class AffineSpace_field(AffineSpace_generic):
             (-1, -1), (1/2, -1), (-1/2, -1), (2, -1), (-2, -1), (0, 1/2), (1, 1/2),
             (-1, 1/2), (1/2, 1/2), (-1/2, 1/2), (2, 1/2), (-2, 1/2), (0, -1/2), (1, -1/2),
             (-1, -1/2), (1/2, -1/2), (-1/2, -1/2), (2, -1/2), (-2, -1/2), (0, 2), (1, 2),
-            (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2), (1/2, -2),
-            (-1/2, -2), (2, -2), (-2, -2)]
+            (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2),
+            (1/2, -2), (-1/2, -2), (2, -2), (-2, -2)]
 
         ::
 
@@ -1121,8 +1120,8 @@ class AffineSpace_field(AffineSpace_generic):
             sage: L.<v> = K.extension(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: AL.<x,y> = AffineSpace(L, 2)                                          # optional - sage.rings.number_field
             sage: AL.weil_restriction()                                                 # optional - sage.rings.number_field
-            Affine Space of dimension 4 over Number Field in w with defining
-            polynomial x^5 - 2
+            Affine Space of dimension 4 over Number Field in w
+            with defining polynomial x^5 - 2
         """
         try:
             X = self.__weil_restriction

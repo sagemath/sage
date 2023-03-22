@@ -856,12 +856,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Spectrum of Finite Field of size 5
             sage: X.structure_morphism()                                                # optional - sage.rings.finite_rings
             Scheme morphism:
-                  From: Closed subscheme of Product of projective spaces P^1 x P^1
-                        over Finite Field of size 5 defined by:
-                  x - y,
-                  z - w
-                  To:   Spectrum of Finite Field of size 5
-                  Defn: Structure map
+              From: Closed subscheme of Product of projective spaces P^1 x P^1
+                    over Finite Field of size 5 defined by: x - y, z - w
+              To:   Spectrum of Finite Field of size 5
+              Defn: Structure map
         """
         return AlgebraicScheme_subscheme_product_projective(self, X)
 
@@ -917,10 +915,10 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Affine Space of dimension 6 over Integer Ring
             sage: phi
             Scheme morphism:
-                  From: Affine Space of dimension 6 over Integer Ring
-                  To:   Product of projective spaces P^2 x P^2 x P^2 over Integer Ring
-                  Defn: Defined on coordinates by sending (x0, x1, x2, x3, x4, x5) to
-                        (1 : x0 : x1 , x2 : 1 : x3 , x4 : x5 : 1)
+              From: Affine Space of dimension 6 over Integer Ring
+              To:   Product of projective spaces P^2 x P^2 x P^2 over Integer Ring
+              Defn: Defined on coordinates by sending (x0, x1, x2, x3, x4, x5) to
+                    (1 : x0 : x1 , x2 : 1 : x3 , x4 : x5 : 1)
         """
         if not isinstance(I, (list, tuple)):
             raise TypeError('the argument I=%s must be a list or tuple of positive integers'%I)
@@ -982,16 +980,17 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: phi = X.segre_embedding(); phi
             Scheme morphism:
               From: Product of projective spaces P^2 x P^2 over Integer Ring
-              To:   Closed subscheme of Projective Space of dimension 8 over Integer Ring defined by:
-              -u5*u7 + u4*u8,
-              -u5*u6 + u3*u8,
-              -u4*u6 + u3*u7,
-              -u2*u7 + u1*u8,
-              -u2*u4 + u1*u5,
-              -u2*u6 + u0*u8,
-              -u1*u6 + u0*u7,
-              -u2*u3 + u0*u5,
-              -u1*u3 + u0*u4
+              To:   Closed subscheme of Projective Space of dimension 8 over Integer Ring
+                    defined by:
+                      -u5*u7 + u4*u8,
+                      -u5*u6 + u3*u8,
+                      -u4*u6 + u3*u7,
+                      -u2*u7 + u1*u8,
+                      -u2*u4 + u1*u5,
+                      -u2*u6 + u0*u8,
+                      -u1*u6 + u0*u7,
+                      -u2*u3 + u0*u5,
+                      -u1*u3 + u0*u4
               Defn: Defined by sending (y0 : y1 : y2 , y3 : y4 : y5) to
                     (y0*y3 : y0*y4 : y0*y5 : y1*y3 : y1*y4 : y1*y5 : y2*y3 : y2*y4 : y2*y5).
 
@@ -1000,11 +999,13 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')
             sage: T.segre_embedding()
             Scheme morphism:
-              From: Product of projective spaces P^1 x P^2 over Complex Field with 53 bits of precision
-              To:   Closed subscheme of Projective Space of dimension 5 over Complex Field with 53 bits of precision defined by:
-              -u2*u4 + u1*u5,
-              -u2*u3 + u0*u5,
-              -u1*u3 + u0*u4
+              From: Product of projective spaces P^1 x P^2
+                    over Complex Field with 53 bits of precision
+              To:   Closed subscheme of Projective Space of dimension 5
+                    over Complex Field with 53 bits of precision defined by:
+                      -u2*u4 + u1*u5,
+                      -u2*u3 + u0*u5,
+                      -u1*u3 + u0*u4
               Defn: Defined by sending (z0 : z1 , z2 : z3 : z4) to
                     (z0*z2 : z0*z3 : z0*z4 : z1*z2 : z1*z3 : z1*z4).
 
@@ -1014,35 +1015,35 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: T.segre_embedding()
             Scheme morphism:
               From: Product of projective spaces P^1 x P^2 x P^1 over Rational Field
-              To:   Closed subscheme of Projective Space of dimension 11 over
-            Rational Field defined by:
-              -u9*u10 + u8*u11,
-              -u7*u10 + u6*u11,
-              -u7*u8 + u6*u9,
-              -u5*u10 + u4*u11,
-              -u5*u8 + u4*u9,
-              -u5*u6 + u4*u7,
-              -u5*u9 + u3*u11,
-              -u5*u8 + u3*u10,
-              -u5*u8 + u2*u11,
-              -u4*u8 + u2*u10,
-              -u3*u8 + u2*u9,
-              -u3*u6 + u2*u7,
-              -u3*u4 + u2*u5,
-              -u5*u7 + u1*u11,
-              -u5*u6 + u1*u10,
-              -u3*u7 + u1*u9,
-              -u3*u6 + u1*u8,
-              -u5*u6 + u0*u11,
-              -u4*u6 + u0*u10,
-              -u3*u6 + u0*u9,
-              -u2*u6 + u0*u8,
-              -u1*u6 + u0*u7,
-              -u1*u4 + u0*u5,
-              -u1*u2 + u0*u3
+              To:   Closed subscheme of Projective Space of dimension 11
+                    over Rational Field defined by:
+                      -u9*u10 + u8*u11,
+                      -u7*u10 + u6*u11,
+                      -u7*u8 + u6*u9,
+                      -u5*u10 + u4*u11,
+                      -u5*u8 + u4*u9,
+                      -u5*u6 + u4*u7,
+                      -u5*u9 + u3*u11,
+                      -u5*u8 + u3*u10,
+                      -u5*u8 + u2*u11,
+                      -u4*u8 + u2*u10,
+                      -u3*u8 + u2*u9,
+                      -u3*u6 + u2*u7,
+                      -u3*u4 + u2*u5,
+                      -u5*u7 + u1*u11,
+                      -u5*u6 + u1*u10,
+                      -u3*u7 + u1*u9,
+                      -u3*u6 + u1*u8,
+                      -u5*u6 + u0*u11,
+                      -u4*u6 + u0*u10,
+                      -u3*u6 + u0*u9,
+                      -u2*u6 + u0*u8,
+                      -u1*u6 + u0*u7,
+                      -u1*u4 + u0*u5,
+                      -u1*u2 + u0*u3
               Defn: Defined by sending (z0 : z1 , z2 : z3 : z4 , z5 : z6) to
                     (z0*z2*z5 : z0*z2*z6 : z0*z3*z5 : z0*z3*z6 : z0*z4*z5 : z0*z4*z6
-            : z1*z2*z5 : z1*z2*z6 : z1*z3*z5 : z1*z3*z6 : z1*z4*z5 : z1*z4*z6).
+                     : z1*z2*z5 : z1*z2*z6 : z1*z3*z5 : z1*z3*z6 : z1*z4*z5 : z1*z4*z6).
         """
         N = self._dims
         M = prod([n+1 for n in N]) - 1
