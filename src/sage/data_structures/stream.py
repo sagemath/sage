@@ -2880,33 +2880,6 @@ class Stream_truncated(Stream_inexact):
         self._minimal_valuation = minimal_valuation
         self._approximate_order = minimal_valuation
 
-    @lazy_attribute
-    def _offset(self):
-        """
-        Return the offset of a stream with a dense cache.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
-            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
-            sage: f = Stream_function(fun, False, 0)
-            sage: [f[i] for i in range(8)]
-            [0, 1, 1, 0, 1, 0, 0, 0]
-            sage: f._cache
-            [0, 1, 1, 0, 1, 0, 0, 0]
-            sage: s = Stream_truncated(f, -5, 0)
-            sage: s._offset
-            -5
-            sage: [s[i] for i in range(10)]
-            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-            sage: s._cache
-            [0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-        """
-        # self[n] = self._cache[n-self._offset]
-        if self._is_sparse:
-            raise ValueError("_offset is only for dense streams")
-        return self._series._offset + self._shift
-
     def __getitem__(self, n):
         """
         Return the ``n``-th coefficient of ``self``.
@@ -2997,7 +2970,7 @@ class Stream_truncated(Stream_inexact):
             n = self._approximate_order
             cache = self._series._cache
             while True:
-                if n-self._shift in cache:
+                if n - self._shift in cache:
                     if cache[n-self._shift]:
                         self._approximate_order = n
                         self._true_order = True
@@ -3005,6 +2978,7 @@ class Stream_truncated(Stream_inexact):
                 elif self[n]:
                     return n
                 n += 1
+        # dense case
         return super().order()
 
     def is_nonzero(self):
@@ -3020,7 +2994,7 @@ class Stream_truncated(Stream_inexact):
             sage: [f[i] for i in range(0, 4)]
             [0, 1, 1, 0]
             sage: f._cache
-            [0, 1, 1, 0]
+            [1, 1, 0]
             sage: s = Stream_truncated(f, -5, 0)
             sage: s.is_nonzero()
             False
@@ -3033,7 +3007,7 @@ class Stream_truncated(Stream_inexact):
             sage: [f[i] for i in range(0, 4)]
             [0, 1, 1, 0]
             sage: f._cache
-            {0: 0, 1: 1, 2: 1, 3: 0}
+            {1: 1, 2: 1, 3: 0}
             sage: s = Stream_truncated(f, -5, 0)
             sage: s.is_nonzero()
             False
@@ -3044,7 +3018,8 @@ class Stream_truncated(Stream_inexact):
         """
         if self._is_sparse:
             return any(c for n, c in self._series._cache.items() if n + self._shift >= self._minimal_valuation)
-        start = self._approximate_order - self._offset
+        offset = self._series._approximate_order + self._shift
+        start = self._approximate_order - offset
         return any(self._series._cache[start:])
 
 
