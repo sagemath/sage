@@ -1071,8 +1071,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = P.curve([y^7*z^2 - 16*x^9 + x*y*z^7 + 2*z^9])
-            sage: C.quadratic_transform()
+            sage: C = P.curve([y^7*z^2 - 16*x^9 + x*y*z^7 + 2*z^9])                     # optional - sage.rings.finite_rings
+            sage: C.quadratic_transform()                                               # optional - sage.rings.finite_rings
             Scheme morphism:
               From: Projective Plane Curve over Finite Field of size 17
                     defined by x^9 + y^7*z^2 + x*y*z^7 + 2*z^9
@@ -1715,7 +1715,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(x^2*z - y^3)
-            sage: C.fundamental_group()             # optional - sirocco
+            sage: C.fundamental_group()                         # optional - sirocco
             Finitely presented group < x0 | x0^3 >
 
         In the case of number fields, they need to have an embedding
@@ -1729,7 +1729,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: F.inject_variables()                                                  # optional - sage.rings.number_field
             Defining a
             sage: C = P.curve(x^2 + a * y^2)                                            # optional - sage.rings.number_field
-            sage: C.fundamental_group()             # optional - sirocco                # optional - sage.rings.number_field
+            sage: C.fundamental_group()                         # optional - sirocco    # optional - sage.rings.number_field
             Finitely presented group < x0 |  >
 
         .. WARNING::
@@ -1739,11 +1739,10 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         TESTS::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
-            ....:     + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
-            ....:     + (x-18*z)*(z^2+11*x*z-x^2)^2
-            sage: C = P.curve(f)
-            sage: C.fundamental_group() # optional - sirocco
+            sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
+            ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
+            ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
+            sage: C.fundamental_group()                         # optional - sirocco
             Finitely presented group < x1, x3 | (x3^-1*x1^-1*x3*x1^-1)^2*x3^-1,
                                                 x3*(x1^-1*x3^-1)^2*x1^-1*(x3*x1)^2 >
 

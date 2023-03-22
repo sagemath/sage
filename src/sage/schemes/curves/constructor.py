@@ -13,7 +13,7 @@ EXAMPLES::
 ::
 
     sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                         # optional - sage.rings.finite_rings
-    sage: Curve(y^2*z^7 - x^9 - x*z^8)
+    sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # optional - sage.rings.finite_rings
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
 
