@@ -644,10 +644,12 @@ cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):
     cdef nmod_poly_factor_t factors_c
     nmod_poly_factor_init(factors_c)
 
+    sig_on()
     if squarefree:
         nmod_poly_factor_squarefree(factors_c, &poly.x)
     else:
         nmod_poly_factor(factors_c, &poly.x)
+    sig_off()
 
     factor_list = []
     cdef Polynomial_zmod_flint t

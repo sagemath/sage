@@ -689,6 +689,16 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
+
+        Test that factorization can be interrupted::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: f = R.random_element(9973) * R.random_element(10007)
+            sage: alarm(0.5); f.factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+
         """
         R = self.base_ring()
 
