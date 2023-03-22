@@ -763,6 +763,15 @@ class LazyModuleElement(Element):
             sage: g
             x^3 + O(x^7)
             sage: g._coeff_stream._approximate_order
+            3
+            sage: g._coeff_stream._true_order
+            True
+            sage: g.valuation()
+            3
+
+            sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
+            sage: g = f.shift(-5)
+            sage: g._coeff_stream._approximate_order
             0
             sage: g._coeff_stream._true_order
             False

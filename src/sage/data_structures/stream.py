@@ -2871,15 +2871,57 @@ class Stream_truncated(Stream_inexact):
             sage: TestSuite(s).run(skip="_test_pickling")
             sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
             sage: TestSuite(s).run(skip="_test_pickling")
+
+        Verify that we have used the cache to see if we can get the
+        true order at initialization::
+
+            sage: f = Stream_function(fun, True, 0)
+            sage: [f[i] for i in range(0, 10)]
+            [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: f._cache
+            {1: 1, 2: 1, 3: 0, 4: 1, 5: 0, 6: 0, 7: 0, 8: 1, 9: 0}
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s._true_order
+            True
+            sage: s._approximate_order
+            3
+            sage: f = Stream_function(fun, False, 0)
+            sage: [f[i] for i in range(0, 10)]
+            [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: f._cache
+            [1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s._true_order
+            True
+            sage: s._approximate_order
+            3
         """
-        assert isinstance(series, Stream_inexact)
         super().__init__(series._is_sparse, False)
+        assert isinstance(series, Stream_inexact)
         self._series = series
         # We share self._series._cache but not self._series._approximate order
         # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache
         self._shift = shift
-        self._approximate_order = minimal_valuation
+        ao = minimal_valuation
+        # Try to find the true order based on the values already computed
+        true_order = False
+        if self._is_sparse:
+            ao -= shift
+            while ao in self._cache:
+                if self._cache[ao]:
+                    self._true_order = True
+                    break
+                ao += 1
+            ao += shift
+        else:
+            start = ao - (series._approximate_order + shift)
+            for val in self._cache[start:]:
+                if val:
+                    self._true_order = True
+                    break
+                ao += 1
+        self._approximate_order = ao
 
     def __getitem__(self, n):
         """
@@ -2892,10 +2934,39 @@ class Stream_truncated(Stream_inexact):
             sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
             sage: [s[i] for i in range(10)]
             [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            sage: s._approximate_order
+            3
+            sage: s._true_order
+            True
+            sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
+            sage: s[10]
+            0
+            sage: s._approximate_order
+            3
+            sage: s._true_order
+            True
         """
         if n < self._approximate_order:
             return ZZ.zero()
-        return self._series[n-self._shift]
+        ret = self._series[n-self._shift]
+        if not self._true_order:
+            if self._is_sparse:
+                ao = self._approximate_order - self._shift
+                while ao in self._cache:
+                    if self._cache[ao]:
+                        self._true_order = True
+                        break
+                    ao += 1
+                self._approximate_order = ao + self._shift
+            else:  # dense case
+                offset = self._series._approximate_order + self._shift
+                start = self._approximate_order - offset
+                for val in self._cache[start:]:
+                    if val:
+                        self._true_order = True
+                        break
+                    self._approximate_order += 1
+        return ret
 
     def __hash__(self):
         """
@@ -3021,7 +3092,7 @@ class Stream_truncated(Stream_inexact):
             return any(c for n, c in self._series._cache.items() if n + self._shift >= self._approximate_order)
         offset = self._series._approximate_order + self._shift
         start = self._approximate_order - offset
-        return any(self._series._cache[start:])
+        return any(self._cache[start:])
 
 
 class Stream_derivative(Stream_inexact):
