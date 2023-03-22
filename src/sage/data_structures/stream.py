@@ -2905,7 +2905,6 @@ class Stream_truncated(Stream_inexact):
         self._shift = shift
         ao = minimal_valuation
         # Try to find the true order based on the values already computed
-        true_order = False
         if self._is_sparse:
             ao -= shift
             while ao in self._cache:
@@ -3089,7 +3088,8 @@ class Stream_truncated(Stream_inexact):
             True
         """
         if self._is_sparse:
-            return any(c for n, c in self._series._cache.items() if n + self._shift >= self._approximate_order)
+            return any(c for n, c in self._series._cache.items()
+                       if n + self._shift >= self._approximate_order)
         offset = self._series._approximate_order + self._shift
         start = self._approximate_order - offset
         return any(self._cache[start:])
