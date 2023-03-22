@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.number_field
 r"""
 Projective plane conics over a number field
 
@@ -36,7 +37,8 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         sage: K.<a> = NumberField(x^3 - 2, 'a')
         sage: P.<X, Y, Z> = K[]
         sage: Conic(X^2 + Y^2 - a*Z^2)
-        Projective Conic Curve over Number Field in a with defining polynomial x^3 - 2 defined by X^2 + Y^2 + (-a)*Z^2
+        Projective Conic Curve over Number Field in a with defining polynomial x^3 - 2
+        defined by X^2 + Y^2 + (-a)*Z^2
 
     TESTS::
 
@@ -113,18 +115,19 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C = Conic(QQ, [1, 113922743, -310146482690273725409])
             sage: C.has_rational_point(point = True)
             (True, (-76842858034579/5424 : -5316144401/5424 : 1))
-            sage: C.has_rational_point(algorithm = 'local', read_cache = False)
+            sage: C.has_rational_point(algorithm='local', read_cache=False)
             True
 
         Examples over number fields::
 
             sage: K.<i> = QuadraticField(-1)
             sage: C = Conic(K, [1, 3, -5])
-            sage: C.has_rational_point(point = True, obstruction = True)
+            sage: C.has_rational_point(point=True, obstruction=True)
             (False, Fractional ideal (-i - 2))
-            sage: C.has_rational_point(algorithm = "rnfisnorm")
+            sage: C.has_rational_point(algorithm="rnfisnorm")
             False
-            sage: C.has_rational_point(algorithm = "rnfisnorm", obstruction = True, read_cache=False)
+            sage: C.has_rational_point(algorithm="rnfisnorm", obstruction=True,
+            ....:                      read_cache=False)
             Traceback (most recent call last):
             ...
             ValueError: Algorithm rnfisnorm cannot be combined with obstruction = True in has_rational_point
@@ -132,7 +135,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: P.<x> = QQ[]
             sage: L.<b> = NumberField(x^3-5)
             sage: C = Conic(L, [1, 2, -3])
-            sage: C.has_rational_point(point = True, algorithm = 'rnfisnorm')
+            sage: C.has_rational_point(point=True, algorithm='rnfisnorm')
             (True, (5/3 : -1/3 : 1))
 
             sage: K.<a> = NumberField(x^4+2)
@@ -140,7 +143,8 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             False
             sage: Conic(K, [4,5,6]).has_rational_point()
             True
-            sage: Conic(K, [4,5,6]).has_rational_point(algorithm='magma', read_cache=False) # optional - magma
+            sage: Conic(K, [4,5,6]).has_rational_point(algorithm='magma',   # optional - magma
+            ....:                                      read_cache=False)
             True
 
             sage: P.<a> = QuadraticField(2)
@@ -152,13 +156,15 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C.has_rational_point(obstruction=True)
             (False,
              Ring morphism:
-               From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               From: Number Field in a with defining polynomial x^2 - 2
+                     with a = 1.414213562373095?
                To:   Algebraic Real Field
                Defn: a |--> -1.414213562373095?)
             sage: C.has_rational_point(point=True, obstruction=True)
             (False,
              Ring morphism:
-               From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               From: Number Field in a with defining polynomial x^2 - 2
+                     with a = 1.414213562373095?
                To:   Algebraic Real Field
                Defn: a |--> -1.414213562373095?)
 
@@ -182,12 +188,12 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: d = []
             sage: c = []
             sage: c = [Conic(a) for a in m if a != [0,0,0]]
-            sage: d = [C.has_rational_point(algorithm = 'rnfisnorm', point = True) for C in c] # long time: 3.3 seconds
+            sage: d = [C.has_rational_point(algorithm='rnfisnorm', point=True) for C in c] # long time: 3.3 seconds
             sage: all(c[k].defining_polynomial()(Sequence(d[k][1])) == 0 for k in range(len(d)) if d[k][0])
             True
             sage: [C.has_rational_point(algorithm='local', read_cache=False) for C in c] == [o[0] for o in d] # long time: 5 seconds
             True
-            sage: [C.has_rational_point(algorithm = 'magma', read_cache=False) for C in c] == [o[0] for o in d] # long time: 3 seconds, optional - magma
+            sage: [C.has_rational_point(algorithm='magma', read_cache=False) for C in c] == [o[0] for o in d] # long time: 3 seconds, optional - magma
             True
 
         Create a bunch of conics that are known to have rational points
@@ -200,8 +206,8 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: M.<c> = NumberField(x^5+3*x+1)
             sage: m = [[F(b) for b in a] for a in l for F in [K, L, M]]
             sage: c = [Conic(a) for a in m if a != [0,0,0] and a != [1,1,1] and a != [-1,-1,-1]]
-            sage: assert all(C.has_rational_point(algorithm = 'rnfisnorm') for C in c)
-            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c)
+            sage: assert all(C.has_rational_point(algorithm='rnfisnorm') for C in c)
+            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point=True)[1])) == 0 for C in c)
             sage: assert all(C.has_rational_point(algorithm='local', read_cache=False) for C in c) # long time: 1 second
         """
         if read_cache:
@@ -403,10 +409,12 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: L.<a> = QuadraticField(5)
             sage: Conic(L, [1, 2, 3]).local_obstructions()
             [Ring morphism:
-               From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
+               From: Number Field in a with defining polynomial x^2 - 5
+                     with a = 2.236067977499790?
                To:   Algebraic Real Field
                Defn: a |--> -2.236067977499790?, Ring morphism:
-               From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
+               From: Number Field in a with defining polynomial x^2 - 5
+                     with a = 2.236067977499790?
                To:   Algebraic Real Field
                Defn: a |--> 2.236067977499790?]
         """

@@ -51,7 +51,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         sage: K = FractionField(PolynomialRing(QQ, 't'))
         sage: P.<X, Y, Z> = K[]
         sage: Conic(X^2 + Y^2 - Z^2)
-        Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Rational Field defined by X^2 + Y^2 - Z^2
+        Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t
+        over Rational Field defined by X^2 + Y^2 - Z^2
 
     TESTS::
 
@@ -104,9 +105,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
             sage: c.has_rational_point()
             False
-            sage: d = c.base_extend(QuadraticField(-1, 'i')); d
-            Projective Conic Curve over Number Field in i with defining polynomial x^2 + 1 with i = 1*I defined by x^2 + y^2 + z^2
-            sage: d.rational_point(algorithm = 'rnfisnorm')
+            sage: d = c.base_extend(QuadraticField(-1, 'i')); d                         # optional - sage.rings.number_field
+            Projective Conic Curve over Number Field in i
+            with defining polynomial x^2 + 1 with i = 1*I defined by x^2 + y^2 + z^2
+            sage: d.rational_point(algorithm='rnfisnorm')                               # optional - sage.rings.number_field
             (i : 1 : 0)
         """
         if S in _Fields:
@@ -158,11 +160,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(QQ, [1,2,3,4,5,6]).coefficients()
             [1, 2, 3, 4, 5, 6]
 
-            sage: P.<x,y,z> = GF(13)[]
-            sage: a = Conic(x^2+5*x*y+y^2+z^2).coefficients(); a
+            sage: P.<x,y,z> = GF(13)[]                                                  # optional - sage.rings.finite_rings
+            sage: a = Conic(x^2 + 5*x*y + y^2 + z^2).coefficients(); a                  # optional - sage.rings.finite_rings
             [1, 5, 0, 1, 0, 1]
-            sage: Conic(a)
-            Projective Conic Curve over Finite Field of size 13 defined by x^2 + 5*x*y + y^2 + z^2
+            sage: Conic(a)                                                              # optional - sage.rings.finite_rings
+            Projective Conic Curve over Finite Field of size 13
+            defined by x^2 + 5*x*y + y^2 + z^2
         """
         return self._coefficients
 
@@ -191,12 +194,14 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         An example in characteristic `2`::
 
-            sage: P.<t> = GF(2)[]
-            sage: c = Conic([t, 1, t^2, 1, 1, 0]); c
-            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + x*y + y^2 + (t^2)*x*z + y*z
-            sage: c.is_smooth()
+            sage: P.<t> = GF(2)[]                                                       # optional - sage.rings.finite_rings
+            sage: c = Conic([t, 1, t^2, 1, 1, 0]); c                                    # optional - sage.rings.finite_rings
+            Projective Conic Curve over Fraction Field of Univariate Polynomial
+            Ring in t over Finite Field of size 2 (using GF2X)
+            defined by t*x^2 + x*y + y^2 + (t^2)*x*z + y*z
+            sage: c.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
-            sage: c.derivative_matrix()
+            sage: c.derivative_matrix()                                                 # optional - sage.rings.finite_rings
             [  0   1 t^2]
             [  1   0   1]
             [t^2   1   0]
@@ -303,16 +308,21 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: Conic(GF(5), [1,0,1,1,0,1]).diagonalization()
-            (Projective Conic Curve over Finite Field of size 5 defined by x^2 + y^2 + 2*z^2,
+            sage: Conic(GF(5), [1,0,1,1,0,1]).diagonalization()                         # optional - sage.rings.finite_rings
+            (Projective Conic Curve over Finite Field of size 5
+              defined by x^2 + y^2 + 2*z^2,
              Scheme morphism:
-              From: Projective Conic Curve over Finite Field of size 5 defined by x^2 + y^2 + 2*z^2
-              To:   Projective Conic Curve over Finite Field of size 5 defined by x^2 + y^2 + x*z + z^2
+              From: Projective Conic Curve over Finite Field of size 5
+                    defined by x^2 + y^2 + 2*z^2
+              To:   Projective Conic Curve over Finite Field of size 5
+                    defined by x^2 + y^2 + x*z + z^2
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x + 2*z : y : z),
              Scheme morphism:
-              From: Projective Conic Curve over Finite Field of size 5 defined by x^2 + y^2 + x*z + z^2
-              To:   Projective Conic Curve over Finite Field of size 5 defined by x^2 + y^2 + 2*z^2
+              From: Projective Conic Curve over Finite Field of size 5
+                    defined by x^2 + y^2 + x*z + z^2
+              To:   Projective Conic Curve over Finite Field of size 5 d
+                    efined by x^2 + y^2 + 2*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x - 2*z : y : z))
 
@@ -321,7 +331,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: Conic(GF(2), [1,1,1,1,1,0]).diagonalization()
+            sage: Conic(GF(2), [1,1,1,1,1,0]).diagonalization()                         # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: The conic self (= Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y + y^2 + x*z + y*z) has no symmetric matrix because the base field has characteristic 2
@@ -330,19 +340,29 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: K = FractionField(PolynomialRing(GF(7), 't'))
-            sage: (t,) = K.gens()
-            sage: C = Conic(K, [t/2,0, 1, 2, 0, 3])
-            sage: C.diagonalization()
-            (Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2,
+            sage: K = FractionField(PolynomialRing(GF(7), 't'))                         # optional - sage.rings.finite_rings
+            sage: (t,) = K.gens()                                                       # optional - sage.rings.finite_rings
+            sage: C = Conic(K, [t/2,0, 1, 2, 0, 3])                                     # optional - sage.rings.finite_rings
+            sage: C.diagonalization()                                                   # optional - sage.rings.finite_rings
+            (Projective Conic Curve over Fraction Field of Univariate
+              Polynomial Ring in t over Finite Field of size 7
+              defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2,
              Scheme morphism:
-               From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2
-               To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-3*t)*x^2 + 2*y^2 + x*z + 3*z^2
+               From: Projective Conic Curve over Fraction Field of Univariate
+                     Polynomial Ring in t over Finite Field of size 7
+                     defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2
+               To:   Projective Conic Curve over Fraction Field of Univariate
+                     Polynomial Ring in t over Finite Field of size 7
+                     defined by (-3*t)*x^2 + 2*y^2 + x*z + 3*z^2
                Defn: Defined on coordinates by sending (x : y : z) to
                      (x - 1/t*z : y : z),
              Scheme morphism:
-               From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-3*t)*x^2 + 2*y^2 + x*z + 3*z^2
-               To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2
+               From: Projective Conic Curve over Fraction Field of Univariate
+                     Polynomial Ring in t over Finite Field of size 7
+                     defined by (-3*t)*x^2 + 2*y^2 + x*z + 3*z^2
+               To:   Projective Conic Curve over Fraction Field of Univariate
+                     Polynomial Ring in t over Finite Field of size 7
+                     defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2
                Defn: Defined on coordinates by sending (x : y : z) to
                      (x + 1/t*z : y : z))
 
@@ -424,13 +444,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         And they can also be solved with Magma::
 
-            sage: C.has_rational_point(algorithm='magma') # optional - magma
+            sage: C.has_rational_point(algorithm='magma')               # optional - magma
             True
-            sage: C.has_rational_point(algorithm='magma', point=True) # optional - magma
+            sage: C.has_rational_point(algorithm='magma', point=True)   # optional - magma
             (True, (-t : 1 : 1))
 
             sage: D = Conic([t,1,t^2])
-            sage: D.has_rational_point(algorithm='magma') # optional - magma
+            sage: D.has_rational_point(algorithm='magma')               # optional - magma
             False
 
         TESTS:
@@ -445,12 +465,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               From: Number Field in i with defining polynomial x^2 + 1 with i = 1*I
               To:   Complex Lazy Field
               Defn: i -> 1*I
-            sage: Conic(K, [1,1,1]).rational_point(algorithm='magma') # optional - magma
+            sage: Conic(K, [1,1,1]).rational_point(algorithm='magma')   # optional - magma
             (-i : 1 : 0)
 
             sage: x = QQ['x'].gen()
             sage: L.<i> = NumberField(x^2+1, embedding=None)
-            sage: Conic(L, [1,1,1]).rational_point(algorithm='magma') # optional - magma
+            sage: Conic(L, [1,1,1]).rational_point(algorithm='magma')   # optional - magma
             (-i : 1 : 0)
             sage: L == K
             False
@@ -629,8 +649,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             Scheme morphism:
               From: Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2
               To:   Projective Conic Curve over Rational Field defined by -x^2 + 2*x*y + z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + y : y : z)
+              Defn: Defined on coordinates by sending (x : y : z) to (x + y : y : z)
             sage: h([-1, 1, 0])
             (0 : 1 : 0)
 
@@ -640,8 +659,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             Scheme morphism:
               From: Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2
               To:   Projective Conic Curve over Rational Field defined by 4*x^2 + y^2 - z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (1/2*z : y : x)
+              Defn: Defined on coordinates by sending (x : y : z) to (1/2*z : y : x)
 
         ``ValueError`` is raised if the wrong codomain ``Y`` is specified:
 
@@ -663,10 +681,11 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: D = Conic([2,4,6,8,10,12])
             sage: C.hom(identity_matrix(3), D)
             Scheme morphism:
-              From: Projective Conic Curve over Rational Field defined by x^2 + 2*x*y + 4*y^2 + 3*x*z + 5*y*z + 6*z^2
-              To:   Projective Conic Curve over Rational Field defined by 2*x^2 + 4*x*y + 8*y^2 + 6*x*z + 10*y*z + 12*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x : y : z)
+              From: Projective Conic Curve over Rational Field
+                    defined by x^2 + 2*x*y + 4*y^2 + 3*x*z + 5*y*z + 6*z^2
+              To:   Projective Conic Curve over Rational Field
+                    defined by 2*x^2 + 4*x*y + 8*y^2 + 6*x*z + 10*y*z + 12*z^2
+              Defn: Defined on coordinates by sending (x : y : z) to (x : y : z)
 
         An example not over the rational numbers:
 
@@ -746,30 +765,31 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         EXAMPLES::
 
             sage: C = Conic(QQ, [1,2,3])
-            sage: C._magma_init_(magma)                     # optional - magma
+            sage: C._magma_init_(magma)                             # optional - magma
             'Conic([_sage_ref...|1/1,2/1,3/1,0/1,0/1,0/1])'
-            sage: C = Conic(GF(41), [-1,2,5])               # optional - magma
-            sage: C._magma_init_(magma)                     # optional - magma
+            sage: C = Conic(GF(41), [-1,2,5])                       # optional - magma  # optional - sage.rings.finite_rings
+            sage: C._magma_init_(magma)                             # optional - magma  # optional - sage.rings.finite_rings
             'Conic([_sage_ref...|GF(41)!40,GF(41)!2,GF(41)!5,GF(41)!0,GF(41)!0,GF(41)!0])'
-            sage: F.<a> = GF(25)
-            sage: C = Conic([3,0,1,4,a,2])
-            sage: C
-            Projective Conic Curve over Finite Field in a of size 5^2 defined by -2*x^2 - y^2 + x*z + a*y*z + 2*z^2
-            sage: magma(C)                                  # optional - magma
+            sage: F.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
+            sage: C = Conic([3,0,1,4,a,2])                                              # optional - sage.rings.finite_rings
+            sage: C                                                                     # optional - sage.rings.finite_rings
+            Projective Conic Curve over Finite Field in a of size 5^2
+            defined by -2*x^2 - y^2 + x*z + a*y*z + 2*z^2
+            sage: magma(C)                                          # optional - magma  # optional - sage.rings.finite_rings
             Conic over GF(5^2) defined by
             3*X^2 + 4*Y^2 + X*Z + a*Y*Z + 2*Z^2
-            sage: magma(Conic([1/2,2/3,-4/5,6/7,8/9,-10/11])) # optional - magma
+            sage: magma(Conic([1/2,2/3,-4/5,6/7,8/9,-10/11]))       # optional - magma
             Conic over Rational Field defined by
             1/2*X^2 + 2/3*X*Y + 6/7*Y^2 - 4/5*X*Z + 8/9*Y*Z - 10/11*Z^2
             sage: R.<x> = Frac(QQ['x'])
-            sage: magma(Conic([x,1+x,1-x]))                 # optional - magma
+            sage: magma(Conic([x, 1 + x, 1 - x]))                   # optional - magma
             Conic over Univariate rational function field over Rational Field defined by
             x*X^2 + (x + 1)*Y^2 + (-x + 1)*Z^2
             sage: P.<x> = QQ[]
-            sage: K.<b> = NumberField(x^3+x+1)
-            sage: magma(Conic([b,1,2]))                     # optional - magma
-            Conic over Number Field with defining polynomial x^3 + x + 1 over the Rational Field defined by
-            b*X^2 + Y^2 + 2*Z^2
+            sage: K.<b> = NumberField(x^3 + x + 1)                                      # optional - sage.rings.number_field
+            sage: magma(Conic([b,1,2]))                             # optional - magma  # optional - sage.rings.number_field
+            Conic over Number Field with defining polynomial x^3 + x + 1
+            over the Rational Field defined by b*X^2 + Y^2 + 2*Z^2
         """
         kmn = magma(self.base_ring())._ref()
         coeffs = self.coefficients()
@@ -793,9 +813,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             [1/2   1   0]
             [  0   0   1]
 
-            sage: R.<x, y, z> = GF(2)[]
-            sage: C = Conic(x^2 + x*y + y^2 + x*z + z^2)
-            sage: C.matrix()
+            sage: R.<x, y, z> = GF(2)[]                                                 # optional - sage.rings.finite_rings
+            sage: C = Conic(x^2 + x*y + y^2 + x*z + z^2)                                # optional - sage.rings.finite_rings
+            sage: C.matrix()                                                            # optional - sage.rings.finite_rings
             [1 1 1]
             [0 1 0]
             [0 0 1]
@@ -823,57 +843,59 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         An example over a finite field ::
 
-            sage: c = Conic(GF(2), [1,1,1,1,1,0])
-            sage: f, g = c.parametrization(); f, g
+            sage: c = Conic(GF(2), [1,1,1,1,1,0])                                       # optional - sage.rings.finite_rings
+            sage: f, g = c.parametrization(); f, g                                      # optional - sage.rings.finite_rings
             (Scheme morphism:
               From: Projective Space of dimension 1 over Finite Field of size 2
-              To:   Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y
-            + y^2 + x*z + y*z
+              To:   Projective Conic Curve over Finite Field of size 2
+                    defined by x^2 + x*y + y^2 + x*z + y*z
               Defn: Defined on coordinates by sending (x : y) to ...,
              Scheme morphism:
-              From: Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y
-            + y^2 + x*z + y*z
+              From: Projective Conic Curve over Finite Field of size 2
+                    defined by x^2 + x*y + y^2 + x*z + y*z
               To:   Projective Space of dimension 1 over Finite Field of size 2
               Defn: Defined on coordinates by sending (x : y : z) to ...)
-            sage: set(f(p) for p in f.domain())
+            sage: set(f(p) for p in f.domain())                                         # optional - sage.rings.finite_rings
             {(0 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1)}
 
         Verfication of the example ::
 
-            sage: h = g*f; h
-            Scheme endomorphism of Projective Space of dimension 1 over Finite Field of size 2
+            sage: h = g*f; h                                                            # optional - sage.rings.finite_rings
+            Scheme endomorphism of Projective Space of dimension 1
+            over Finite Field of size 2
               Defn: Defined on coordinates by sending (x : y) to ...
-            sage: h[0]/h[1]
+            sage: h[0]/h[1]                                                             # optional - sage.rings.finite_rings
             x/y
-            sage: h.is_one()  # known bug  (see :trac:`31892`)
+            sage: h.is_one()  # known bug  (see :trac:`31892`)                          # optional - sage.rings.finite_rings
             True
-            sage: (x,y,z) = c.gens()
-            sage: x.parent()
-            Quotient of Multivariate Polynomial Ring in x, y, z over Finite Field of size 2 by the ideal (x^2 + x*y + y^2 + x*z + y*z)
-            sage: k = f*g
-            sage: k[0]*z-k[2]*x
+            sage: (x,y,z) = c.gens()                                                    # optional - sage.rings.finite_rings
+            sage: x.parent()                                                            # optional - sage.rings.finite_rings
+            Quotient of Multivariate Polynomial Ring in x, y, z
+            over Finite Field of size 2 by the ideal (x^2 + x*y + y^2 + x*z + y*z)
+            sage: k = f*g                                                               # optional - sage.rings.finite_rings
+            sage: k[0]*z-k[2]*x                                                         # optional - sage.rings.finite_rings
             0
-            sage: k[1]*z-k[2]*y
+            sage: k[1]*z-k[2]*y                                                         # optional - sage.rings.finite_rings
             0
 
         The morphisms are mathematically defined in all points,
         but don't work completely in SageMath (see :trac:`31892`) ::
 
-            sage: f, g = c.parametrization([0,0,1])
-            sage: g([0,1,1])
+            sage: f, g = c.parametrization([0,0,1])                                     # optional - sage.rings.finite_rings
+            sage: g([0,1,1])                                                            # optional - sage.rings.finite_rings
             (1 : 0)
-            sage: f([1,0])
+            sage: f([1,0])                                                              # optional - sage.rings.finite_rings
             (0 : 1 : 1)
-            sage: f([1,1])
+            sage: f([1,1])                                                              # optional - sage.rings.finite_rings
             (0 : 0 : 1)
-            sage: g([0,0,1])
+            sage: g([0,0,1])                                                            # optional - sage.rings.finite_rings
             (1 : 1)
 
         An example with ``morphism = False`` ::
 
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism = False); (p, i)
+            sage: (p, i) = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
@@ -979,12 +1001,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: c = Conic(GF(2), [1,1,1,1,1,0])
-            sage: [c.random_rational_point() for i in range(10)] # output is random
-            [(1 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1)]
+            sage: c = Conic(GF(2), [1,1,1,1,1,0])                                       # optional - sage.rings.finite_rings
+            sage: [c.random_rational_point() for i in range(10)]              # random  # optional - sage.rings.finite_rings
+            [(1 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1),
+             (0 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1)]
 
             sage: d = Conic(QQ, [1, 1, -1])
-            sage: d.random_rational_point(den_bound = 1, num_bound = 5) # output is random
+            sage: d.random_rational_point(den_bound=1, num_bound=5)           # random
             (-24/25 : 7/25 : 1)
 
             sage: Conic(QQ, [1, 1, 1]).random_rational_point()
@@ -1038,83 +1061,91 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         Examples over number fields ::
 
             sage: P.<x> = QQ[]
-            sage: L.<b> = NumberField(x^3-5)
-            sage: C = Conic(L, [3, 2, -b])
-            sage: p = C.rational_point(algorithm = 'rnfisnorm')
-            sage: p                                         # output is random
+            sage: L.<b> = NumberField(x^3 - 5)                                          # optional - sage.rings.number_field
+            sage: C = Conic(L, [3, 2, -b])                                              # optional - sage.rings.number_field
+            sage: p = C.rational_point(algorithm = 'rnfisnorm')                         # optional - sage.rings.number_field
+            sage: p                                         # output is random          # optional - sage.rings.number_field
             (1/3*b^2 - 4/3*b + 4/3 : b^2 - 2 : 1)
-            sage: C.defining_polynomial()(list(p))
+            sage: C.defining_polynomial()(list(p))                                      # optional - sage.rings.number_field
             0
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: D = Conic(K, [3, 2, 5])
-            sage: D.rational_point(algorithm = 'rnfisnorm') # output is random
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: D = Conic(K, [3, 2, 5])                                               # optional - sage.rings.number_field
+            sage: D.rational_point(algorithm = 'rnfisnorm') # output is random          # optional - sage.rings.number_field
             (-3 : 4*i : 1)
 
-            sage: L.<s> = QuadraticField(2)
-            sage: Conic(QQ, [1, 1, -3]).has_rational_point()
+            sage: L.<s> = QuadraticField(2)                                             # optional - sage.rings.number_field
+            sage: Conic(QQ, [1, 1, -3]).has_rational_point()                            # optional - sage.rings.number_field
             False
-            sage: E = Conic(L, [1, 1, -3])
-            sage: E.rational_point()                        # output is random
+            sage: E = Conic(L, [1, 1, -3])                                              # optional - sage.rings.number_field
+            sage: E.rational_point()                        # output is random          # optional - sage.rings.number_field
             (-1 : -s : 1)
 
         Currently Magma is better at solving conics over number fields than
         Sage, so it helps to use the algorithm 'magma' if Magma is installed::
 
-            sage: q = C.rational_point(algorithm = 'magma', read_cache=False) # optional - magma
-            sage: q                       # output is random, optional - magma
+            sage: q = C.rational_point(algorithm='magma',           # optional - magma  # optional - sage.rings.number_field
+            ....:                      read_cache=False)
+            sage: q                       # output is random,       # optional - magma  # optional - sage.rings.number_field
             (1/5*b^2 : 1/5*b^2 : 1)
-            sage: C.defining_polynomial()(list(q))          # optional - magma
+            sage: C.defining_polynomial()(list(q))                  # optional - magma  # optional - sage.rings.number_field
             0
-            sage: len(str(p)) > 1.5*len(str(q))             # optional - magma
+            sage: len(str(p)) > 1.5*len(str(q))                     # optional - magma  # optional - sage.rings.number_field
             True
 
-            sage: D.rational_point(algorithm = 'magma', read_cache=False) # random, optional - magma
+            sage: D.rational_point(algorithm='magma',       # random, optional - magma  # optional - sage.rings.number_field
             (1 : 2*i : 1)
 
-            sage: E.rational_point(algorithm='magma', read_cache=False) # random, optional - magma
+            sage: E.rational_point(algorithm='magma',       # random, optional - magma  # optional - sage.rings.number_field
+            ....:                  read_cache=False)
             (-s : 1 : 1)
 
-            sage: F = Conic([L.gen(), 30, -20])
-            sage: q = F.rational_point(algorithm='magma')   # optional - magma
-            sage: q                       # output is random, optional - magma
+            sage: F = Conic([L.gen(), 30, -20])                                         # optional - sage.rings.number_field
+            sage: q = F.rational_point(algorithm='magma')           # optional - magma  # optional - sage.rings.number_field
+            sage: q                                         # random, optional - magma  # optional - sage.rings.number_field
             (-10/7*s + 40/7 : 5/7*s - 6/7 : 1)
-            sage: p = F.rational_point(read_cache=False)
-            sage: p                       # output is random
+            sage: p = F.rational_point(read_cache=False)                                # optional - sage.rings.number_field
+            sage: p                                         # random                    # optional - sage.rings.number_field
             (788210*s - 1114700 : -171135*s + 242022 : 1)
-            sage: len(str(p)) > len(str(q))                 # optional - magma
+            sage: len(str(p)) > len(str(q))                         # optional - magma  # optional - sage.rings.number_field
             True
 
-            sage: G = Conic([L.gen(), 30, -21])
-            sage: G.has_rational_point(algorithm='magma')   # optional - magma
+            sage: G = Conic([L.gen(), 30, -21])                                         # optional - sage.rings.number_field
+            sage: G.has_rational_point(algorithm='magma')           # optional - magma  # optional - sage.rings.number_field
             False
-            sage: G.has_rational_point(read_cache=False)
+            sage: G.has_rational_point(read_cache=False)                                # optional - sage.rings.number_field
             False
-            sage: G.has_rational_point(algorithm='local', read_cache=False)
+            sage: G.has_rational_point(algorithm='local', read_cache=False)             # optional - sage.rings.number_field
             False
-            sage: G.rational_point(algorithm='magma')       # optional - magma
+            sage: G.rational_point(algorithm='magma')               # optional - magma  # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
-            sage: G.rational_point(algorithm='magma', read_cache=False) # optional - magma
+            sage: G.rational_point(algorithm='magma',               # optional - magma  # optional - sage.rings.number_field
+            ....:                  read_cache=False)
             Traceback (most recent call last):
             ...
             ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
 
         Examples over finite fields ::
 
-            sage: F.<a> = FiniteField(7^20)
-            sage: C = Conic([1, a, -5]); C
-            Projective Conic Curve over Finite Field in a of size 7^20 defined by x^2 + a*y^2 + 2*z^2
-            sage: C.rational_point()  # output is random
-            (4*a^19 + 5*a^18 + 4*a^17 + a^16 + 6*a^15 + 3*a^13 + 6*a^11 + a^9 + 3*a^8 + 2*a^7 + 4*a^6 + 3*a^5 + 3*a^4 + a^3 + a + 6 : 5*a^18 + a^17 + a^16 + 6*a^15 + 4*a^14 + a^13 + 5*a^12 + 5*a^10 + 2*a^9 + 6*a^8 + 6*a^7 + 6*a^6 + 2*a^4 + 3 : 1)
+            sage: F.<a> = FiniteField(7^20)                                             # optional - sage.rings.finite_rings
+            sage: C = Conic([1, a, -5]); C                                              # optional - sage.rings.finite_rings
+            Projective Conic Curve over Finite Field in a of size 7^20
+            defined by x^2 + a*y^2 + 2*z^2
+            sage: C.rational_point()  # output is random                                # optional - sage.rings.finite_rings
+            (4*a^19 + 5*a^18 + 4*a^17 + a^16 + 6*a^15 + 3*a^13 + 6*a^11 + a^9
+               + 3*a^8 + 2*a^7 + 4*a^6 + 3*a^5 + 3*a^4 + a^3 + a + 6
+             : 5*a^18 + a^17 + a^16 + 6*a^15 + 4*a^14 + a^13 + 5*a^12 + 5*a^10
+               + 2*a^9 + 6*a^8 + 6*a^7 + 6*a^6 + 2*a^4 + 3
+             : 1)
 
         Examples over `\RR` and `\CC` ::
 
-            sage: Conic(CC, [1, 2, 3]).rational_point()
+            sage: Conic(CC, [1, 2, 3]).rational_point()                                 # optional - sage.rings.finite_rings
             (0 : 1.22474487139159*I : 1)
 
-            sage: Conic(RR, [1, 1, 1]).rational_point()
+            sage: Conic(RR, [1, 1, 1]).rational_point()                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Conic Projective Conic Curve over Real Field with 53 bits of precision defined by x^2 + y^2 + z^2 has no rational points over Real Field with 53 bits of precision!
@@ -1134,7 +1165,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()
+            sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()                          # optional - sage.rings.finite_rings
             (1 : 1 : 1)
 
         ``ValueError`` is raised if the conic has no rational singular point

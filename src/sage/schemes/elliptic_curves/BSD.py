@@ -21,7 +21,8 @@ class BSD_data:
         sage: D.curve=EllipticCurve('11a')
         sage: D.update()
         sage: D.Sha
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve
+        defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
     def __init__(self):
         self.curve = None
@@ -52,7 +53,8 @@ class BSD_data:
             sage: D.curve = EllipticCurve('11a')
             sage: D.update()
             sage: D.Sha
-            Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Tate-Shafarevich group for the Elliptic Curve
+            defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
         """
         self.two_tor_rk = self.curve.two_torsion_rank()
         self.Sha = self.curve.sha()

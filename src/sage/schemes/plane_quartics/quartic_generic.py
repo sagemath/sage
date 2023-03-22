@@ -8,7 +8,8 @@ EXAMPLES::
     sage: PP.<X,Y,Z> = ProjectiveSpace(2, QQ)
     sage: f = X^4 + Y^4 + Z^4 - 3*X*Y*Z*(X+Y+Z)
     sage: C = QuarticCurve(f); C
-    Quartic Curve over Rational Field defined by X^4 + Y^4 - 3*X^2*Y*Z - 3*X*Y^2*Z - 3*X*Y*Z^2 + Z^4
+    Quartic Curve over Rational Field
+    defined by X^4 + Y^4 - 3*X^2*Y*Z - 3*X*Y^2*Z - 3*X*Y*Z^2 + Z^4
 """
 
 #*****************************************************************************
@@ -27,8 +28,8 @@ def is_QuarticCurve(C):
     EXAMPLES::
 
         sage: from sage.schemes.plane_quartics.quartic_generic import is_QuarticCurve
-        sage: x,y,z=PolynomialRing(QQ,['x','y','z']).gens()
-        sage: Q = QuarticCurve(x**4+y**4+z**4)
+        sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
+        sage: Q = QuarticCurve(x**4 + y**4 + z**4)
         sage: is_QuarticCurve(Q)
         True
 
@@ -44,8 +45,8 @@ class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
-            sage: x,y,z=PolynomialRing(QQ,['x','y','z']).gens()
-            sage: Q = QuarticCurve(x**4+y**4+z**4)
+            sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
+            sage: Q = QuarticCurve(x**4 + y**4 + z**4)
             sage: Q._repr_type()
             'Quartic'
         """
@@ -57,8 +58,8 @@ class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
-            sage: x,y,z=PolynomialRing(QQ,['x','y','z']).gens()
-            sage: Q = QuarticCurve(x**4+y**4+z**4)
+            sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
+            sage: Q = QuarticCurve(x**4 + y**4 + z**4)
             sage: Q.genus()
             3
         """
