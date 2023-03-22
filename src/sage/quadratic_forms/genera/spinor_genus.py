@@ -27,7 +27,8 @@ AUTHORS:
 
 from sage.groups.abelian_gps.abelian_group_gap import (AbelianGroupGap,
                                                        AbelianGroupElement_gap)
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 class SpinorOperator(AbelianGroupElement_gap):

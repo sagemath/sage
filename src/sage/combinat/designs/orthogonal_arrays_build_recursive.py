@@ -365,7 +365,7 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
         sage: _ = OA_and_oval
 
     """
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from sage.combinat.designs.block_design import projective_plane
     from .orthogonal_arrays import OA_relabel
 
@@ -683,7 +683,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
       Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas.
       Designs, Codes and Cryptography 5, no. 3 (1995): 189-197.
     """
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
     if complement:
@@ -797,7 +797,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
       Canad. Math. Bull vol7 num.4 (1964)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from .block_design import DesarguesianProjectivePlaneDesign
     from itertools import chain
 
@@ -1387,7 +1387,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     from sage.combinat.designs.orthogonal_arrays import OA_from_PBD
     from .difference_family import difference_family
     from .orthogonal_arrays import incomplete_orthogonal_array
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
 
     if explain_construction:
         return ("Brouwer's separable design construction with t={},q={},x={} from:\n"+
