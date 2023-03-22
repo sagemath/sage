@@ -126,12 +126,14 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: Conic(QQ, [1,2,3])
         Projective Conic Curve over Rational Field defined by x^2 + 2*y^2 + 3*z^2
         sage: Conic(GF(7), [1,2,3,4,5,6], 'X')
-        Projective Conic Curve over Finite Field of size 7 defined by X0^2 + 2*X0*X1 - 3*X1^2 + 3*X0*X2 - 2*X1*X2 - X2^2
+        Projective Conic Curve over Finite Field of size 7
+        defined by X0^2 + 2*X0*X1 - 3*X1^2 + 3*X0*X2 - 2*X1*X2 - X2^2
 
     The conic through a set of points ::
 
         sage: C = Conic(QQ, [[10,2],[3,4],[-7,6],[7,8],[9,10]]); C
-        Projective Conic Curve over Rational Field defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
+        Projective Conic Curve over Rational Field
+        defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
         sage: C.rational_point()
         (10 : 2 : 1)
         sage: C.point([3,4])

@@ -27,24 +27,24 @@ def QuarticCurve(F, PP=None, check=False):
 
     EXAMPLES::
 
-        sage: x,y,z=PolynomialRing(QQ,['x','y','z']).gens()
-        sage: QuarticCurve(x**4+y**4+z**4)
+        sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
+        sage: QuarticCurve(x**4 + y**4 + z**4)
         Quartic Curve over Rational Field defined by x^4 + y^4 + z^4
 
     TESTS::
 
-        sage: QuarticCurve(x**3+y**3)
+        sage: QuarticCurve(x**3 + y**3)
         Traceback (most recent call last):
         ...
         ValueError: Argument F (=x^3 + y^3) must be a homogeneous polynomial of degree 4
 
-        sage: QuarticCurve(x**4+y**4+z**3)
+        sage: QuarticCurve(x**4 + y**4 + z**3)
         Traceback (most recent call last):
         ...
         ValueError: Argument F (=x^4 + y^4 + z^3) must be a homogeneous polynomial of degree 4
 
         sage: x,y=PolynomialRing(QQ,['x','y']).gens()
-        sage: QuarticCurve(x**4+y**4)
+        sage: QuarticCurve(x**4 + y**4)
         Traceback (most recent call last):
         ...
         ValueError: Argument F (=x^4 + y^4) must be a polynomial in 3 variables
