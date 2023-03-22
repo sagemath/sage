@@ -537,8 +537,9 @@ cdef class FiniteField(Field):
 
     def _squarefree_decomposition_univariate_polynomial(self, f):
         """
-        Return the square-free decomposition of this polynomial.  This is a
-        partial factorization into square-free, coprime polynomials.
+        Return the square-free decomposition of this polynomial.
+
+        This is a partial factorization into square-free, coprime polynomials.
 
         This is a helper method for
         :meth:`sage.rings.polynomial.squarefree_decomposition`.
@@ -547,8 +548,8 @@ cdef class FiniteField(Field):
 
         - ``f`` -- a univariate non-zero polynomial over this field
 
-        ALGORITHM; [Coh1993]_, algorithm 3.4.2 which is basically the algorithm in
-        [Yun1976]_ with special treatment for powers divisible by `p`.
+        ALGORITHM: [Coh1993]_, Algorithm 3.4.2 which is basically the algorithm
+        in [Yun1976]_ with special treatment for powers divisible by `p`.
 
         EXAMPLES::
 
@@ -591,49 +592,55 @@ cdef class FiniteField(Field):
         if f.degree() == 0:
             return Factorization([], unit=f[0])
 
-        factors = []
-        p = self.characteristic()
+        cdef Py_ssize_t i, k
+        cdef list factors = []
+        cdef Integer p = Integer(self.characteristic())
         unit = f.leading_coefficient()
         T0 = f.monic()
-        e = 1
-        if T0.degree() > 0:
+        cdef Integer e = Integer(1)
+        cdef Integer T0_deg = T0.degree()
+        if T0_deg > 0:
+            P = T0.parent()
             der = T0.derivative()
             pth_root = self.frobenius_endomorphism(-1)
             while der.is_zero():
-                T0 = T0.parent()([pth_root(T0[p*i]) for i in range(T0.degree()//p + 1)])
+                T0 = P([pth_root(T0[p*i]) for i in range(T0_deg//p + 1)])
+                T0_deg //= p
                 if T0 == 1:
                     raise RuntimeError
                 der = T0.derivative()
-                e = e*p
+                e *= p
             T = T0.gcd(der)
             V = T0 // T
             k = 0
-            while T0.degree() > 0:
+            while T0_deg > 0:
                 k += 1
                 if p.divides(k):
                     T = T // V
                     k += 1
                 W = V.gcd(T)
                 if W.degree() < V.degree():
-                    factors.append((V // W, e*k))
+                    factors.append((V // W, e * k))
                     V = W
                     T = T // V
                     if V.degree() == 0:
                         if T.degree() == 0:
                             break
                         # T is of the form sum_{i=0}^n t_i X^{pi}
-                        T0 = T0.parent()([pth_root(T[p*i]) for i in range(T.degree()//p + 1)])
+                        T0 = P([pth_root(T[p*i]) for i in range(T.degree()//p + 1)])
+                        T0_deg //= p
                         der = T0.derivative()
-                        e = p*e
+                        e *= p
                         while der.is_zero():
-                            T0 = T0.parent()([pth_root(T0[p*i]) for i in range(T0.degree()//p + 1)])
+                            T0 = P([pth_root(T0[p*i]) for i in range(T0_deg//p + 1)])
+                            T0_deg //= p
                             der = T0.derivative()
-                            e = p*e
+                            e *= p
                         T = T0.gcd(der)
                         V = T0 // T
                         k = 0
                 else:
-                    T = T//V
+                    T = T // V
 
         return Factorization(factors, unit=unit, sort=False)
 
