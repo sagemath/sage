@@ -1523,9 +1523,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if not (is_ProjectiveSpace(dom) and is_ProjectiveSpace(self.codomain())):
             raise NotImplementedError("not implemented for subschemes")
-        N = dom.dimension_relative()+1
+        N = dom.dimension_relative() + 1
         R = dom.coordinate_ring()
-        J = jacobian(self.defining_polynomials(),dom.gens())
+        J = jacobian(self.defining_polynomials(), dom.gens())
         return R.ideal(J.minors(N))
 
 
@@ -2466,8 +2466,8 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         M = kernel.sage_matrix(R)  # m * n matrix over R
         reprs = []
         for i in range(M.ncols()):
-            Mri = M[r][i] / F[r]
-            reprs.append(X.hom([lift(F[j] * Mri) for j in range(n)], Y))
+            lifts = [lift(F[j] * M[r][i] / F[r]) for j in range(n)]
+            reprs.append(X.hom(lifts, Y))
 
         return reprs
 
