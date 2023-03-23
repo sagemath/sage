@@ -390,7 +390,7 @@ def polygon2d(points, **options):
 
         sage: s = sqrt(3)
         sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0],
-        ....:            [9/2, -1/2*s], [3, -s], [3/2, -1/2*s], [1, -s], [-1, -s], 
+        ....:            [9/2, -1/2*s], [3, -s], [3/2, -1/2*s], [1, -s], [-1, -s],
         ....:            [-3/2, -1/2*s]], axes=False)
         Graphics object consisting of 1 graphics primitive
 
