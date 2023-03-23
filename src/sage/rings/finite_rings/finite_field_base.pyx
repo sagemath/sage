@@ -1241,7 +1241,7 @@ cdef class FiniteField(Field):
             return True
         if isinstance(R, sage.rings.abc.IntegerModRing) and self.characteristic().divides(R.characteristic()):
             return R.hom((self.one(),), check=False)
-        if isinstance(R, FiniteField):
+        if is_FiniteField(R):
             if R is self:
                 return True
             from .residue_field import ResidueField_generic
@@ -1441,7 +1441,8 @@ cdef class FiniteField(Field):
             True
         """
         from .finite_field_constructor import GF
-        from sage.rings.polynomial.polynomial_element import Polynomial
+        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_element import is_Polynomial
         from sage.rings.integer import Integer
         from sage.misc.superseded import deprecation
 
@@ -1451,14 +1452,48 @@ cdef class FiniteField(Field):
             names = (name,)
         if latex_name is None and latex_names is not None:
             latex_name = latex_names
-        if self.degree() == 1:
-            if isinstance(modulus, (int, Integer)):
-                E = GF((self.characteristic(), modulus), name=name, **kwds)
-            elif isinstance(modulus, (list, tuple)):
-                E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
-            elif isinstance(modulus, Polynomial):
-                if modulus.change_ring(self).is_irreducible():
-                    E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
+        # Try to not factor integers but instead use GF((p, e)) as appropriate
+        # We need to use the function is_conway to ensure coercion maps exist correctly
+        # if self.is_conway() and E.is_conway():
+        #     alpha = E.gen()**((E.order()-1)//(self.order()-1))
+        # else:
+        #     alpha = self.modulus().any_root(E)
+
+        if implementation not in [None, "GF", "PQR"]:
+            raise ValueError("Unrecognized implementation %s" % implementation)
+
+        if isinstance(modulus, (list, tuple)):
+            modulus = PolynomialRing(self, 'x')(modulus)
+
+        if isinstance(modulus, (int, Integer)):
+            relative_degree = Integer(modulus)
+            modulus = None
+            is_field = True
+            if implementation == "PQR":
+                # We could find a defining polynomial and use it to create a PQR....
+                raise NotImplementedError("PQR implementation incompatible with just specifying extension degree")
+            if absolute is None:
+                if self.base() is not self:
+                    deprecation(28485, "extension() will produce an absolute extension since you did not specify the `absolute` keyword argument. In the future this will default to a relative extension. If you want to keep the current behaviour, use or extension(…, absolute=True), otherwise use extension(…, absolute=False)")
+                # Once the above deprecation warning has been removed, add the following one.
+                # (I know this is silly, but we can't think of a better way to do this)
+                # from sage.misc.superseded import deprecation
+                # if absolute:
+                #     deprecation(28485, "the absolute keyword is deprecated. Use .extension(…).absolute_field() instead.")
+                # else:
+                #     deprecation(28485, "the absolute keyword is deprecated. There is no need to specify it explicitly to create a relative extension.")
+                absolute = True
+            implementation = "GF"
+        elif is_Polynomial(modulus):
+            relative_degree = modulus.degree()
+            modulus = modulus.change_ring(self)
+            is_field = modulus.is_irreducible()
+            if implementation is None:
+                if self.absolute_degree() == 1 and is_field:
+                    implementation = "GF"
+                    absolute = True
+                elif absolute is not None and is_field:
+                    implementation = "GF"
                 else:
                     implementation = "PQR"
                     if is_field:
@@ -2435,14 +2470,10 @@ def is_FiniteField(R):
     Return whether the implementation of ``R`` has the interface provided by
     the standard finite field implementation.
 
-    This function is deprecated.
-
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
         sage: is_FiniteField(GF(9,'a'))
-        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
         True
         sage: is_FiniteField(GF(next_prime(10^10)))
         True
@@ -2452,6 +2483,4 @@ def is_FiniteField(R):
         sage: is_FiniteField(Integers(7))
         False
     """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
     return isinstance(R, FiniteField)
