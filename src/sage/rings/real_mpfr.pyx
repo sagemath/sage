@@ -2247,7 +2247,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             100000000000000000
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Sage Integer')
+            raise ValueError('cannot convert infinity or NaN to Sage Integer')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -3236,7 +3236,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             <... 'int'>
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert infinity or NaN to Python int')
+            raise ValueError('cannot convert infinity or NaN to Python int')
 
         cdef Integer z = Integer()
         mpfr_get_z(z.value, self.value, MPFR_RNDZ)
@@ -3352,7 +3352,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # as subject-to-change.
 
         if mpfr_nan_p(self.value) or mpfr_inf_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to Pari float')
+            raise ValueError('cannot convert NaN or infinity to Pari float')
 
         # wordsize for PARI
         cdef unsigned long wordsize = sizeof(long)*8
@@ -3678,14 +3678,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('-infinity').simplest_rational()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if mpfr_zero_p(self.value):
             return Rational(0)
@@ -3784,23 +3784,23 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('nan').nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR('nan').nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_denominator=1000)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
             sage: RR(oo).nearby_rational(max_error=0.01)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert NaN or infinity to rational number
+            ValueError: cannot convert NaN or infinity to rational number
         """
 
         if not mpfr_number_p(self.value):
-            raise ValueError('Cannot convert NaN or infinity to rational number')
+            raise ValueError('cannot convert NaN or infinity to rational number')
 
         if ((max_error is None and max_denominator is None) or
             (max_error is not None and max_denominator is not None)):
@@ -6105,7 +6105,7 @@ def create_RealField(*args, **kwds):
         See https://github.com/sagemath/sage/issues/24511 for details.
         Real Field with 53 bits of precision
     """
-    #deprecation has already been imported in this file
+    # deprecation has already been imported in this file
     deprecation(24511, "Please import create_RealField from sage.rings.real_field")
     from sage.rings.real_field import create_RealField as cr
     return cr(*args, **kwds)

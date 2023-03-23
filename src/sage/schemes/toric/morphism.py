@@ -370,7 +370,7 @@ from sage.structure.richcmp import richcmp_not_equal, richcmp
 
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector

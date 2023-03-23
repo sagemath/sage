@@ -388,7 +388,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             RR = RealField()
         else:
             RR = RealField(precision)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(RR, r)
         mat = M()
         for j in range(r):
@@ -1499,10 +1499,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
         # Note: for number fields other than QQ we could initialize
         # N=K.ideal(1) or N=OK.ideal(1), which are the same, but for
         # K == QQ it has to be ZZ.ideal(1).
-        OK = self.base_ring().ring_of_integers()
+        K = self.base_field()
+        N = ZZ.ideal(1) if K is QQ else K.fractional_ideal(1)
         self._conductor = prod([d.prime()**d.conductor_valuation()
                                 for d in self.local_data()],
-                               OK.ideal(1))
+                               N)
         return self._conductor
 
     def minimal_discriminant_ideal(self):
@@ -3897,7 +3898,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             raise ValueError("points not linearly independent in saturation()")
         sat_reg = reg
 
-        from sage.rings.all import prime_range
+        from sage.rings.fast_arith import prime_range
         if full_saturation:
             if lower_ht_bound is None:
                 # TODO (robertwb): verify this for rank > 1

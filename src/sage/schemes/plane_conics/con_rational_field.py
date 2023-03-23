@@ -24,7 +24,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import (PolynomialRing, ZZ, QQ)
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 import sage.rings.abc
 
@@ -38,7 +40,8 @@ from .con_number_field import ProjectiveConic_number_field
 
 from sage.structure.element import InfinityElement
 
-from sage.arith.all import lcm, hilbert_symbol
+from sage.arith.functions import lcm
+from sage.arith.misc import hilbert_symbol
 
 
 class ProjectiveConic_rational_field(ProjectiveConic_number_field):
