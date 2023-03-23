@@ -23,7 +23,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
                                                coxeter_matrix_fast,
@@ -1994,7 +1994,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))

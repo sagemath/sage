@@ -24,7 +24,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
@@ -213,7 +213,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         if isinstance(pi, DecoratedPermutation):
             if pi.parent() is self:
                 return pi
-            raise ValueError("Cannot convert between decorated permutations of different sizes")
+            raise ValueError("cannot convert between decorated permutations of different sizes")
 
         pi = tuple(pi)
         if check and pi not in self:

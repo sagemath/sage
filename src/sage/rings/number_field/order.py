@@ -65,7 +65,7 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 #                          2020 John H. Palmieri <jhpalmieri64@gmail.com>
 #                          2020 Thierry Monteil <sage@lma.metelu.net>
 #                          2021 Antonio Rojas <arojas@archlinux.org>
-#                          2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                          2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -491,6 +491,14 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         if not self.is_maximal():
             raise NotImplementedError("ideals of non-maximal orders not yet supported.")
+        from sage.misc.superseded import deprecation
+        deprecation(34806, 'In the future, constructing an ideal of the ring of '
+                           'integers of a number field will use an implementation '
+                           'compatible with ideals of other (non-maximal) orders, '
+                           'rather than returning an integral fractional ideal of '
+                           'its containing number field. Use .fractional_ideal(), '
+                           'together with an .is_integral() check if desired, to '
+                           'avoid your code breaking with future changes to Sage.')
         I = self.number_field().ideal(*args, **kwds)
         if not I.is_integral():
             raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")
