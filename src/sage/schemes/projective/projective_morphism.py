@@ -1388,7 +1388,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
-            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y])
             sage: f.local_height(1331)
             7.19368581839511
 
@@ -1396,7 +1396,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
-            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y])
             sage: f.local_height(1331, prec=2)
             8.0
 
@@ -1404,7 +1404,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = Hom(P, P)
-            sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2]);
+            sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2])
             sage: f.local_height(2)
             2.77258872223978
             sage: f.normalize_coordinates()
@@ -1446,7 +1446,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
-            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y])
             sage: f.local_height_arch(0)
             5.34710753071747
 
@@ -1454,7 +1454,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
-            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y])
             sage: f.local_height_arch(0, prec=5)
             5.2
 
@@ -1493,8 +1493,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = End(P)                                                                        # optional - sage.rings.number_field
             sage: f = H([x^2 - w*y^2, w*y^2])                                                       # optional - sage.rings.number_field
             sage: f.wronskian_ideal()                                                               # optional - sage.rings.number_field
-            Ideal ((4*w)*x*y) of Multivariate Polynomial Ring in x, y over Number
-            Field in w with defining polynomial x^2 + 11
+            Ideal ((4*w)*x*y) of Multivariate Polynomial Ring in x, y
+            over Number Field in w with defining polynomial x^2 + 11
 
         ::
 
@@ -1503,8 +1503,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P2)
             sage: f = H([x^2 - 2*y^2, y^2, x*y])
             sage: f.wronskian_ideal()
-            Ideal (4*x*y, 2*x^2 + 4*y^2, -2*y^2) of Multivariate Polynomial Ring in
-            x, y over Rational Field
+            Ideal (4*x*y, 2*x^2 + 4*y^2, -2*y^2) of Multivariate Polynomial Ring
+            in x, y over Rational Field
         """
         dom = self.domain()
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
@@ -1551,8 +1551,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
-            sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z\
-            - 90*z^2, 67*x^2 - 180*x*y - 157*x*z + 90*y*z, -90*z^2])
+            sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z - 90*z^2,
+            ....:        67*x^2 - 180*x*y - 157*x*z + 90*y*z,
+            ....:        -90*z^2])
             sage: f.rational_preimages(P(-9, -4, 1))
             [(0 : 4 : 1)]
 
@@ -1568,8 +1569,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: H = End(P)
-            sage: f = H([x^2 - 2*y*w - 3*w^2, -2*x^2 + y^2 - 2*x*z\
-            + 4*y*w + 3*w^2, x^2 - y^2 + 2*x*z + z^2 - 2*y*w - w^2, w^2])
+            sage: f = H([x^2 - 2*y*w - 3*w^2, -2*x^2 + y^2 - 2*x*z + 4*y*w + 3*w^2,
+            ....:        x^2 - y^2 + 2*x*z + z^2 - 2*y*w - w^2,
+            ....:        w^2])
             sage: f.rational_preimages(P(0, -1, 0, 1))
             []
 
@@ -1612,10 +1614,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2-z^2, y^2, z^2-x^2])
             sage: f.rational_preimages(X([0, 1, 0]))
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-            x^2 - z^2,
-            -x^2 + z^2,
-            0,
-            -x^2 + z^2
+              x^2 - z^2,
+              -x^2 + z^2,
+              0,
+              -x^2 + z^2
 
         ::
 
@@ -1800,9 +1802,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
             sage: f.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-                x*z - y*z,
-                x^2 - y^2,
-                z^2
+              x*z - y*z,
+              x^2 - y^2,
+              z^2
 
         ::
 
@@ -1812,9 +1814,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Rational Field
             defined by:
-                x^2,
-                y^2,
-                z^2
+              x^2,
+              y^2,
+              z^2
 
         ::
 
@@ -1861,8 +1863,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()
-            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://github.com/sagemath/sage/issues/29145 for details.
+            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
+            Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1918,8 +1920,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
             sage: f.indeterminacy_points()
-            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://github.com/sagemath/sage/issues/29145 for details.
+            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
+            Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::
@@ -1969,21 +1971,19 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)                                                                        # optional - sage.rings.padics
             sage: f = H([x^2 - 7*y^2, y^2 - z^2, x^2 - 7*z^2])                                      # optional - sage.rings.padics
             sage: f.indeterminacy_points(base=True)                                                 # optional - sage.rings.padics
-            [(2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
-            2*3^16 + 3^18 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
-            (2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
-            2*3^16 + 3^18 + O(3^20) : 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 +
-            2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 +
-            2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20) : 1 +
-            O(3^20)),
-             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13 +
-            2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 1 + O(3^20) : 1 +
-            O(3^20)),
-             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13 +
-            2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 2 + 2*3 + 2*3^2 +
-            2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11
-            + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19
-            + O(3^20) : 1 + O(3^20))]
+            [(2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8
+                + 3^9 + 2*3^11 + 3^15 + 2*3^16 + 3^18 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
+             (2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15
+                + 2*3^16 + 3^18 + O(3^20) : 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5
+                + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13
+                + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + O(3^20) : 1 + O(3^20)),
+             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13
+                + 2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
+             (1 + 3 + 3^2 + 2*3^4 + 2*3^7 + 3^8 + 3^9 + 2*3^10 + 2*3^12 + 2*3^13
+                + 2*3^14 + 3^15 + 2*3^17 + 3^18 + 2*3^19 + O(3^20) : 2 + 2*3 + 2*3^2
+                + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11
+                + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19
+                + O(3^20) : 1 + O(3^20))]
         """
         if F is None:
             fcn = self

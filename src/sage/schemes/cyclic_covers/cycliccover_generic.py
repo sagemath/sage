@@ -76,7 +76,8 @@ class CyclicCover_generic(AffinePlaneCurve):
             sage: C.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+            ValueError: As the characteristic divides the order of the cover,
+            this model is not smooth.
 
 
             sage: GF7x.<x> = GF(7)[]                                                    # optional - sage.rings.finite_rings
@@ -119,11 +120,13 @@ class CyclicCover_generic(AffinePlaneCurve):
             sage: C.change_ring(GF(5))
             Traceback (most recent call last):
             ...
-            ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+            ValueError: As the characteristic divides the order of the cover,
+            this model is not smooth.
             sage: C.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: Not a smooth Cyclic Cover of P^1: singularity in the provided affine patch.
+            ValueError: Not a smooth Cyclic Cover of P^1: singularity in the
+            provided affine patch.
             sage: C.change_ring(GF(17))                                                 # optional - sage.rings.finite_rings
             Cyclic Cover of P^1 over Finite Field of size 17 defined by y^5 = x^5 + x + 1
         """

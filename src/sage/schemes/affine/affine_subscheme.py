@@ -369,7 +369,8 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: Y = A.subscheme([x - z^3 + z + 1])                                                # optional - sage.rings.number_field
             sage: Q = A([0,                                                                         # optional - sage.rings.number_field
             ....:        -7*b^5 + 21*b^4 - 28*b^3 + 21*b^2 - 21*b + 14,
-            ....:        -b^5 + 2*b^4 - 3*b^3 + 2*b^2 - 2*b, 0])
+            ....:        -b^5 + 2*b^4 - 3*b^3 + 2*b^2 - 2*b,
+            ....:        0])
             sage: X.intersection_multiplicity(Y, Q)                                                 # optional - sage.rings.number_field
             3
 

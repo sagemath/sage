@@ -108,8 +108,7 @@ def is_SchemeMorphism(f):
         sage: A.<x,y> = AffineSpace(QQ, 2); H = A.Hom(A)
         sage: f = H([y, x^2 + y]); f
         Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-          Defn: Defined on coordinates by sending (x, y) to
-                (y, x^2 + y)
+          Defn: Defined on coordinates by sending (x, y) to (y, x^2 + y)
         sage: from sage.schemes.generic.morphism import is_SchemeMorphism
         sage: is_SchemeMorphism(f)
         True
@@ -992,8 +991,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: H = A2.Hom(A2)
             sage: H([x - y, x*y])
             Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (x - y, x*y)
+              Defn: Defined on coordinates by sending (x, y) to (x - y, x*y)
         """
         if check:
             if not isinstance(polys, (list, tuple)):
@@ -1242,8 +1240,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: H = A.Hom(A)
             sage: f = H([y, x^2 + y])
             sage: print(f._repr_defn())
-            Defined on coordinates by sending (x, y) to
-            (y, x^2 + y)
+            Defined on coordinates by sending (x, y) to (y, x^2 + y)
         """
         i = self.domain().ambient_space()._repr_generic_point()
         o = self._codomain.ambient_space()._repr_generic_point(self.defining_polynomials())
@@ -1690,7 +1687,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
               From: Projective Space of dimension 1 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^4 - 29/8*x^2*y^2 + 1097/256*y^4 : x^4 - 29/8*x^2*y^2 + 841/256*y^4 : 2*x^4 - 29/4*x^2*y^2 + 969/128*y^4)
+                    (x^4 - 29/8*x^2*y^2 + 1097/256*y^4
+                     : x^4 - 29/8*x^2*y^2 + 841/256*y^4
+                     : 2*x^4 - 29/4*x^2*y^2 + 969/128*y^4)
 
         ::
 

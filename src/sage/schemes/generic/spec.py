@@ -63,7 +63,8 @@ def Spec(R, S=None):
         sage: Spec(FreeAlgebra(QQ, 2, 'x'))
         Traceback (most recent call last):
         ...
-        TypeError: x (=Free Algebra on 2 generators (x0, x1) over Rational Field) is not in Category of commutative rings
+        TypeError: x (=Free Algebra on 2 generators (x0, x1) over Rational Field)
+        is not in Category of commutative rings
 
     TESTS::
 

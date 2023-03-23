@@ -244,7 +244,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             sage: A.<x,y> = AffineSpace(CC, 2)
             sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
             sage: E(A.base_ring()).points()
-            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(-1.00000000000000, 0.000000000000000),
             (0.000000000000000, 0.000000000000000)]
 
@@ -253,7 +255,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             sage: A.<x1,x2> = AffineSpace(CDF, 2)
             sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])
             sage: E(A.base_ring()).points()
-            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points)
+            Warning: computations in the numerical fields are inexact;points
+            may be computed partially or incorrectly.
             [(0.0, 0.0)]
         """
         from sage.schemes.affine.affine_space import is_AffineSpace

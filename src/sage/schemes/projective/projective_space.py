@@ -1232,7 +1232,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: F.<t> = FunctionField(QQ)
             sage: P.<y,z> = ProjectiveSpace(F, 1)
             sage: P.chebyshev_polynomial(4, monic=True)
-            Dynamical System of Projective Space of dimension 1 over Rational function field in t over Rational Field
+            Dynamical System of Projective Space of dimension 1
+            over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
                     (y^4 + (-4)*y^2*z^2 + 2*z^4 : z^4)
         """
@@ -2055,8 +2056,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
               x0^2 - 2*x0*x2 + x2^2
             sage: I = Y.defining_ideal()                                                # optional - sage.rings.finite_rings
             sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # optional - sage.rings.finite_rings
-            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring in x0, x1,
-            x2, x3 over Finite Field of size 7
+            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
+            in x0, x1, x2, x3 over Finite Field of size 7
         """
         if not Ch.is_homogeneous():
             raise ValueError("Chow form must be a homogeneous polynomial")
@@ -2343,16 +2344,15 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
             sage: PP = ProjectiveSpace(2, QQ)
             sage: PP.rational_points(2)
             [(-2 : -2 : 1), (-1 : -2 : 1), (0 : -2 : 1), (1 : -2 : 1), (2 : -2 : 1),
-            (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
-            (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 :
-            1 : 1), (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 :
-            1), (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 :
-            1), (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
-            (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 :
-            1/2 : 1), (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 :
-            1), (-1/2 : 1 : 1), (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 :
-            0), (1 : 1 : 0), (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 :
-            0)]
+             (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
+             (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 : 1 : 1),
+             (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 : 1),
+             (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 : 1),
+             (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
+             (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 : 1/2 : 1),
+             (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 : 1), (-1/2 : 1 : 1),
+             (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 : 0), (1 : 1 : 0),
+             (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 : 0)]
 
         AUTHORS:
 

@@ -853,16 +853,18 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U.rational_points()                                                   # optional - sage.rings.finite_rings
             [(2, 4), (3, 2), (4, 2), (5, 4), (6, 1)]
             sage: U.rational_points(F=GF(7^2, 'b'))                                     # optional - sage.rings.finite_rings
-            [(2, 4), (3, 2), (4, 2), (5, 4), (6, 1), (b, b + 4), (b + 1, 3*b + 5), (b + 2, 5*b + 1),
-            (b + 3, 6), (b + 4, 2*b + 6), (b + 5, 4*b + 1), (b + 6, 6*b + 5), (2*b, 4*b + 2),
-            (2*b + 1, b + 3), (2*b + 2, 5*b + 6), (2*b + 3, 2*b + 4), (2*b + 4, 6*b + 4),
-            (2*b + 5, 3*b + 6), (2*b + 6, 3), (3*b, 2*b + 1), (3*b + 1, b + 2), (3*b + 2, 5),
-            (3*b + 3, 6*b + 3), (3*b + 4, 5*b + 3), (3*b + 5, 4*b + 5), (3*b + 6, 3*b + 2),
-            (4*b, 2*b + 1), (4*b + 1, 3*b + 2), (4*b + 2, 4*b + 5), (4*b + 3, 5*b + 3),
-            (4*b + 4, 6*b + 3), (4*b + 5, 5), (4*b + 6, b + 2), (5*b, 4*b + 2), (5*b + 1, 3),
-            (5*b + 2, 3*b + 6), (5*b + 3, 6*b + 4), (5*b + 4, 2*b + 4), (5*b + 5, 5*b + 6),
-            (5*b + 6, b + 3), (6*b, b + 4), (6*b + 1, 6*b + 5), (6*b + 2, 4*b + 1), (6*b + 3, 2*b + 6),
-            (6*b + 4, 6), (6*b + 5, 5*b + 1), (6*b + 6, 3*b + 5)]
+            [(2, 4), (3, 2), (4, 2), (5, 4), (6, 1), (b, b + 4), (b + 1, 3*b + 5),
+             (b + 2, 5*b + 1), (b + 3, 6), (b + 4, 2*b + 6), (b + 5, 4*b + 1),
+             (b + 6, 6*b + 5), (2*b, 4*b + 2), (2*b + 1, b + 3), (2*b + 2, 5*b + 6),
+             (2*b + 3, 2*b + 4), (2*b + 4, 6*b + 4), (2*b + 5, 3*b + 6), (2*b + 6, 3),
+             (3*b, 2*b + 1), (3*b + 1, b + 2), (3*b + 2, 5), (3*b + 3, 6*b + 3),
+             (3*b + 4, 5*b + 3), (3*b + 5, 4*b + 5), (3*b + 6, 3*b + 2),
+             (4*b, 2*b + 1), (4*b + 1, 3*b + 2), (4*b + 2, 4*b + 5),
+             (4*b + 3, 5*b + 3), (4*b + 4, 6*b + 3), (4*b + 5, 5), (4*b + 6, b + 2),
+             (5*b, 4*b + 2), (5*b + 1, 3), (5*b + 2, 3*b + 6), (5*b + 3, 6*b + 4),
+             (5*b + 4, 2*b + 4), (5*b + 5, 5*b + 6), (5*b + 6, b + 3), (6*b, b + 4),
+             (6*b + 1, 6*b + 5), (6*b + 2, 4*b + 1), (6*b + 3, 2*b + 6), (6*b + 4, 6),
+             (6*b + 5, 5*b + 1), (6*b + 6, 3*b + 5)]
         """
         F = kwds.get('F', None)
         bound = kwds.get('bound', 0)
@@ -1005,7 +1007,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: S.base_extend(ZZ)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: no natural map from the base ring (=Finite Field of size 11) to R (=Integer Ring)!
+            ValueError: no natural map from the base ring (=Finite Field of size 11)
+            to R (=Integer Ring)!
         """
         A = self.ambient_space().base_extend(R)
         return A.subscheme(self.__polys)
@@ -1158,7 +1161,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: S = P.subscheme([x^2 - y*z, x^3 + z^3])
             sage: S.defining_ideal()
-            Ideal (x^2 - y*z, x^3 + z^3) of Multivariate Polynomial Ring in x, y, z over Integer Ring
+            Ideal (x^2 - y*z, x^3 + z^3) of Multivariate Polynomial Ring in x, y, z
+            over Integer Ring
         """
         try:
             return self.__I
@@ -1437,16 +1441,16 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: L = A.subscheme([y - 1])
             sage: S = L.union(P); S
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-            y^4 - y^3,
-            x*y^3 - x*y^2,
-            x^2*y^2 - x^2*y,
-            x^3*y - x^3
+              y^4 - y^3,
+              x*y^3 - x*y^2,
+              x^2*y^2 - x^2*y,
+              x^3*y - x^3
             sage: S.dimension()
             1
             sage: S.reduce()
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-            y^2 - y,
-            x*y - x
+              y^2 - y,
+              x*y - x
 
         We can also use the notation "+" for the union::
 
@@ -1766,8 +1770,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: E = EllipticCurve('37a')
             sage: E.rational_points(bound=8)
-            [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
-            (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1), (2 : -3 : 1), (2 : 2 : 1)]
+            [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
+             (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
+             (2 : -3 : 1), (2 : 2 : 1)]
 
         For a small finite field, the complete set of points can be
         enumerated. ::
@@ -2045,7 +2050,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: X = P.subscheme([x^2 + c*y^2])
             sage: X.specialization(dict({c:2}))
             Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-                  x^2 + 2*y^2
+              x^2 + 2*y^2
 
         ::
 
@@ -2057,7 +2062,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: phi = SpecializationMorphism(P.coordinate_ring(),dict({c:2,a:1}))
             sage: X.specialization(phi=phi)
             Closed subscheme of Affine Space of dimension 3 over Univariate Polynomial Ring in b over Rational Field defined by:
-                  x^2 + 2*y^2 + (-b)*z^2
+              x^2 + 2*y^2 + (-b)*z^2
         """
         if D is None:
             if phi is None:
