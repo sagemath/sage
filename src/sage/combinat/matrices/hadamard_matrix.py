@@ -1632,7 +1632,7 @@ def _get_all_hadamard_matrices(skew=False):
     OUTPUT:
 
     The output is a list which at index `n` contain the (skew) Hadamard matrix
-    of order `4(n+1)`, or ``None` if a construction for such matrix is not yet
+    of order `4(n+1)`, or ``None`` if a construction for such matrix is not yet
     known.
     """
     unknown_hadamard = [668, 716, 892]
