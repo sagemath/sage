@@ -95,9 +95,8 @@ def block_stabilizer(G, B):
 
     INPUT:
 
-    - ``G`` -- a group (additive or multiplicative).
-
-    - ``B`` -- a subset of ``G``.
+    - ``G`` -- a group (additive or multiplicative)
+    - ``B`` -- a subset of ``G``
 
     EXAMPLES::
 
@@ -137,12 +136,10 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     INPUT:
 
     - ``G`` -- group of cardinality ``v``
-
     - ``D`` -- a set of ``k``-subsets of ``G``
-
     - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
-
-    - ``verbose`` - whether to print additional information
+    - ``verbose`` -- boolean (default: ``False``); whether to print additional
+      information
 
     .. SEEALSO::
 
@@ -708,9 +705,8 @@ def one_radical_difference_family(K, k):
 
     INPUT:
 
-    - ``K`` -- a finite field of cardinality `q`.
-
-    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`.
+    - ``K`` -- a finite field of cardinality `q`
+    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`
 
     OUTPUT:
 
@@ -833,18 +829,14 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
     INPUT:
 
     - ``K`` - a finite field
-
-    - ``k`` -- positive integer, the size of the blocks
-
-    - ``l`` -- the `\lambda` parameter (default to `1`)
-
+    - ``k`` -- positive integer; the size of the blocks
+    - ``l`` -- integer (default: ``1``); the `\lambda` parameter
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
-      knows that the design does not exist.
-
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+      knows that the design does not exist
+    - ``check`` -- boolean (default: ``True``); if ``True`` then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     EXAMPLES::
 
@@ -947,9 +939,9 @@ def twin_prime_powers_difference_set(p, check=True):
 
     INPUT:
 
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+    - ``check`` -- boolean (default: ``True``); if ``True``, then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     EXAMPLES::
 
@@ -996,13 +988,12 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
 
     INPUT:
 
-    - ``v``, ``k``, ``lmbda`` - (integers) parameters of the difference family
-
-    - ``return_parameters`` -- (boolean, default ``False``) if ``True`` return a
+    - ``v``, ``k``, ``lmbda`` - integers; parameters of the difference family
+    - ``return_parameters`` -- boolean (default ``False``); if ``True``, return a
       pair ``(True, (q, s))`` so that ``(q,s)`` can be used in the function
       :func:`mcfarland_1973_construction` to actually build a
       ``(v,k,lmbda)``-difference family. Or ``(False, None)`` if the
-      construction is not possible.
+      construction is not possible
 
     EXAMPLES::
 
@@ -1075,7 +1066,7 @@ def mcfarland_1973_construction(q, s):
 
     INPUT:
 
-    - ``q``, ``s`` - (integers) parameters for the difference set (see the above
+    - ``q``, ``s`` - integers; parameters for the difference set (see the above
       formulas for the expression of ``v``, ``k``, ``l`` in terms of ``q`` and
       ``s``)
 
@@ -1235,7 +1226,7 @@ def turyn_1965_3x3xK(k=4):
 
     - ``k`` -- either ``2`` (to get a difference set in `C_3 \times C_3 \times
       C_2 \times C_2`) or ``4`` (to get a difference set in `C_3 \times C_3
-      \times C_3 \times C_4`).
+      \times C_3 \times C_4`)
 
     EXAMPLES::
 
@@ -1267,16 +1258,16 @@ def turyn_1965_3x3xK(k=4):
 
 
 def _is_periodic_sequence(seq, period):
-    r"""Check if the sequence is periodic with correct period.
+    r"""
+    Check if the sequence is periodic with correct period.
 
     The sequence should have length at least twice the period, so that
     periodicity can be checked.
 
     INPUT:
 
-    - ``seq`` -- the sequence to be tested (must have length at least twice the period).
-
-    - ``period`` -- integer, the period that the sequence should have.
+    - ``seq`` -- the sequence to be tested (must have length at least twice the period)
+    - ``period`` -- integer; the period that the sequence should have
 
     EXAMPLES::
 
@@ -1304,7 +1295,8 @@ def _is_periodic_sequence(seq, period):
     return True
 
 def _create_m_sequence(q, n, check=True):
-    r"""Create an m-sequence over GF(q) with period `q^n - 1`.
+    r"""
+    Create an m-sequence over GF(q) with period `q^n - 1`.
 
     Given a prime power `q`, the m-sequence is created as described by [Zie1959]_
     from a primitive function over the finite field `GF(q)`.
@@ -1316,12 +1308,11 @@ def _create_m_sequence(q, n, check=True):
 
     INPUT:
 
-    - ``q`` -- a prime power.
-
-    - ``n`` -- a nonnegative number.
-
-    - ``check`` -- boolean (default True): if true, check that the result is a seqauence with correct period.
-      Setting it to false may speed up considerably the computation.
+    - ``q`` -- a prime power
+    - ``n`` -- a nonnegative number
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a sequence with correct period; detting it to ``False`` may
+      speed up considerably the computation
 
     EXAMPLES::
 
@@ -1367,16 +1358,16 @@ def _create_m_sequence(q, n, check=True):
     return seq[:period]
 
 def _get_submodule_of_order(G, order):
-    r"""Construct a submodule of the given order from group `G`.
+    r"""
+    Construct a submodule of the given order from group ``G``.
 
     This method tries to construct submodules from various elements of `G` until
     a submodule of the correct order is found.
 
     INPUT:
 
-    - ``G`` -- an additive abelian group.
-
-    - ``order`` -- integer, the order of the desired syubmodule.
+    - ``G`` -- an additive abelian group
+    - ``order`` -- integer; the order of the desired submodule
 
     TESTS:
 
@@ -1395,7 +1386,8 @@ def _get_submodule_of_order(G, order):
     return None
 
 def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False):
-    r"""Construct `R((q^N-1)/(q-1), q-1, q^{N-1}, q^{N-2})` where `q` is a prime power and `N\ge 2`.
+    r"""
+    Construct `R((q^N-1)/(q-1), q-1, q^{N-1}, q^{N-2})` where ``q`` is a prime power and `N\ge 2`.
 
     The relative difference set is constructed over the set of additive integers modulo `q^N-1`,
     as described in Theorem 5.1 of [EB1966]_. Given an m-sequence `(a_i)` of period `q^N-1`, the
@@ -1403,20 +1395,17 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
 
     INPUT:
 
-    - ``q`` -- a prime power.
-
-    - ``N`` -- a nonnegative number.
-
-    - ``check`` -- boolean (default True). If true, check that the result is a relative difference
-      set before returning it.
-
-    - ``return_group`` -- boolean (default False). If true, the function will also return
-      the group from which the set is created.
+    - ``q`` -- a prime power
+    - ``N`` -- a nonnegative number
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a relative difference set before returning it
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the set is created
 
     OUTPUT:
 
-    If `return_group` is false, the function return only the relative difference set.
-    Otherwise, it returns a tuple containing the group the set.
+    If ``return_group=False``, the function return only the relative difference
+    set. Otherwise, it returns a tuple containing the group and the set.
 
     EXAMPLES::
 
@@ -1467,29 +1456,26 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
     return set1
 
 def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=False):
-    r"""Construct `R((q^N-1)/(q-1), n, q^{N-1}, q^{N-2}d)` where `nd = q-1`.
+    r"""
+    Construct `R((q^N-1)/(q-1), n, q^{N-1}, q^{N-2}d)` where `nd = q-1`.
 
     Given a prime power `q`, a number `N \ge 2` and integers `d` such that `d | q-1` we create the
     relative difference set using the construction from Corollary 5.1.1 of [EB1966]_.
 
     INPUT:
 
-    - ``q`` -- a prime power.
-
-    - ``N`` -- an integer greater than 1.
-
-    - ``d`` -- an integer which divides `q-1`.
-
-    - ``check`` -- boolean (default True). If true, check that the result is a relative difference
-      set before returning it.
-
-    - ``return_group`` -- boolean (default False). If true, the function will also return
-      the group from which the set is created.
+    - ``q`` -- a prime power
+    - ``N`` -- an integer greater than 1
+    - ``d`` -- an integer which divides `q-1`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a relative difference set before returning it
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the set is created
 
     OUTPUT:
 
-    If `return_group` is false, the function return only the relative difference set.
-    Otherwise, it returns a tuple containing the group and the set.
+    If ``return_group=False``, the function return only the relative difference
+    set. Otherwise, it returns a tuple containing the group and the set.
 
     EXAMPLES::
 
@@ -1546,7 +1532,8 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     return second_diff_set
 
 def is_relative_difference_set(R, G, H, params, verbose=False):
-    r"""Check if `R` is a difference set of `G` relative to `H`, with the given parameters.
+    r"""
+    Check if ``R`` is a difference set of ``G`` relative to ``H``, with the given parameters.
 
     This function checks that `G`, `H` and `R` have the orders specified in the parameters, and
     that `R` satisfies the definition of relative difference set (from [EB1966]_): the collection of
@@ -1555,16 +1542,12 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     INPUT:
 
-    - ``R`` -- list, the relative diffeence set of length `k`.
-
-    - ``G`` -- an additive abelian group of order `mn`.
-
-    - ``H`` -- a submodule of ``G`` of order `n`.
-
-    - ``params`` -- a tuple in the form `(m, n, k, d)`.
-
-    - ``verbose`` -- boolean (default False). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``R`` -- list; the relative diffeence set of length `k`
+    - ``G`` -- an additive abelian group of order `mn`
+    - ``H`` -- list; a submodule of ``G`` of order `n`
+    - ``params`` -- a tuple in the form `(m, n, k, d)`
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -1626,7 +1609,9 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
 
 def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=False):
-    r"""Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary difference sets over group `G` of order `v`.
+    r"""
+    Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary
+    difference sets over group ``G`` of order ``v``.
 
     From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of a group `G` of order `v`
     such that `|S_i| = k_i`. If, for each `g \in G`, `g \neq 0`, the total number of solutions of `a_i - a'_i = g`, with
@@ -1637,16 +1622,12 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
 
     INPUT:
 
-    - ``Ks`` -- a list of sets to be checked.
-
-    - ``v`` -- integer, the parameter `v` of the supplementary difference sets.
-
-    - ``lmbda`` -- integer, the parameter `\lambda` of the supplementary difference sets.
-
-    - ``G`` -- a group of order `v`.
-
-    - ``verbose`` -- boolean (default False). If true the function will be verbose
-      when the sets do not satisfy the contraints.
+    - ``Ks`` -- a list of sets to be checked
+    - ``v`` -- integer; the parameter `v` of the supplementary difference sets
+    - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
+    - ``G`` -- a group of order `v`
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, the function will
+      be verbose when the sets do not satisfy the contraints
 
     EXAMPLES::
 
@@ -1662,7 +1643,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
         sage: is_supplementary_difference_set([S1, S2, S3, S4], v=20, lmbda=16)
         False
 
-    If ``verbose`` is true, the function will be verbose::
+    If ``verbose=True``, the function will be verbose::
 
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=14, G=G, verbose=True)
         Number of pairs with difference (1) is 16, but lambda is 14
@@ -1719,7 +1700,8 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
 
 
 def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=True):
-    r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
+    r"""
+    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
 
     The sets are created from relative difference sets as detailed in Theorem 3.3 of [Spe1975]_. this construction
     requires that `q` is an odd prime power and that there exists `s \ge 0` such that `(q-(2^{s+1}+1))/2^{s+1}` is
@@ -1732,20 +1714,18 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     INPUT:
 
-    - ``q`` -- an odd prime power.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
-      can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
-      before returning them.
+    - ``q`` -- an odd prime power
+    - ``existence`` -- boolean (default: ``False``); If ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); If ``True``, check that the sets
+      are supplementary difference sets before returning them
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers), or raises an
-    error if ``q`` does not satify the constraints.
-    If ``existence`` is true, the function returns a boolean representing whether supplementary difference
-    sets can be constructed.
+    If ``existence=False``, the function returns the 4 sets (containing integers),
+    or raises an error if ``q`` does not satify the constraints.
+    If ``existence=True``, the function returns a boolean representing whether
+    supplementary difference sets can be constructed.
 
     EXAMPLES::
 
@@ -1757,7 +1737,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
           [(0), (1), (2), (3), (5), (6), (7), (12)],
           [(0), (2), (3), (5), (6), (7), (9), (12)]])
 
-    If existence is ``True``, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
         False
@@ -1888,7 +1868,8 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
 
 def supplementary_difference_set(q, existence=False, check=True):
-    r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
+    r"""
+    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
 
     This is a deprecated version of :func:`supplementary_difference_set_from_rel_diff_set`,
     please use that instead.
@@ -1903,7 +1884,8 @@ def supplementary_difference_set(q, existence=False, check=True):
 
 
 def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
-    r"""Construct an equivalent relative difference set fixed by the size of the set.
+    r"""
+    Construct an equivalent relative difference set fixed by the size of the set.
 
     Given a relative difference set `R(q+1, q-1, q, 1)`, it is possible to find a translation
     of this set fixed by `q` (see Section 3 of [Spe1975]_). We say that a set is fixed by `t` if
@@ -1914,17 +1896,17 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
 
     INPUT:
 
-    - ``G`` -- a group, of which ``rel_diff_set`` is a subset.
-
-    - ``rel_diff_set`` -- the relative difference set.
-
-    - ``as_elements`` -- boolean (default False). If true, the list returned will contain elements of the
-      abelian group (this may slow down the computation considerably).
+    - ``G`` -- a group, of which ``rel_diff_set`` is a subset
+    - ``rel_diff_set`` -- the relative difference set
+    - ``as_elements`` -- boolean (default: ``False``); if ``True``, the list
+      returned will contain elements of the abelian group (this may slow down
+      the computation considerably)
 
     OUTPUT:
 
-    By default, this function returns the set as a list of integers. However, if ``as_elements``
-    is set to true it will return the set as a list containing elements of the abelian group.
+    By default, this function returns the set as a list of integers. However, if
+    ``as_elements=True`` it will return the set as a list containing elements of
+    the abelian group.
     If no such set can be found, the function will raise an error.
 
     EXAMPLES::
@@ -1934,7 +1916,7 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
         sage: get_fixed_relative_difference_set(G, s1) #random
         [2, 10, 19, 23, 0]
 
-    If ``as_elements`` is true, the reuslt will contain elements of the group::
+    If ``as_elements=True``, the result will contain elements of the group::
 
         sage: get_fixed_relative_difference_set(G, s1, as_elements=True) #random
         [(2), (10), (19), (23), (0)]
@@ -1980,15 +1962,16 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
 
 
 def is_fixed_relative_difference_set(R, q):
-    r"""Check if the relative difference set `R` is fixed by `q`.
+    r"""
+    Check if the relative difference set ``R`` is fixed by ``q``.
 
     A relative difference set  `R` is fixed by `q` if  `\{qd | d \in R\}= R` (see Section 3 of [Spe1975]_).
 
     INPUT:
 
-    - ``R`` -- the relative difference sets, as a list containing elements of the abelian group.
-
-    - ``q`` -- an integer.
+    - ``R`` -- a list containing elements of an abelian group; the relative
+      difference set
+    - ``q`` -- an integer
 
     EXAMPLES::
 
@@ -2017,27 +2000,25 @@ def is_fixed_relative_difference_set(R, q):
 
 def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, check=True):
     r"""
-    Construct skew supplementary difference sets over a polynomial ring of order `n`.
+    Construct skew supplementary difference sets over a polynomial ring of order ``n``.
 
     The skew supplementary difference sets for `n=81, 169` are taken from [Djo1994a]_.
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference sets.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the
-      supplementary difference sets can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary
-      difference sets with `S_1` skew before returning them. Setting this parameter to
-      False may speed up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference sets
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns a Polynomial Ring of order `n`
-    and a list containing 4 sets, or raises an error if data for the given ``n`` is
-    not available.
-    If ``existence`` is true, the function returns a boolean representing whether
+    If ``existence=False``, the function returns a Polynomial Ring of order ``n``
+    and a list containing 4 sets, or raises an error if data for the given ``n``
+    is not available.
+    If ``existence=True``, the function returns a boolean representing whether
     skew supplementary difference sets can be constructed.
 
     EXAMPLES::
@@ -2045,7 +2026,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_over_polynomial_ring
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)
 
-    If existence is ``True``, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set_over_polynomial_ring(81, existence=True)
         True
@@ -2124,20 +2105,20 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
-      can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
-      with `S_1` skew before returning them. Setting this parameter to False may speed up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the group G of integers modulo `n`
-    and a list containing 4 sets, or raises an error if data for the given ``n`` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether skew
-    supplementary difference sets can be constructed.
+    If ``existence=False``, the function returns the group G of integers modulo
+    ``n`` and a list containing 4 sets, or raises an error if data for the given
+    ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
 
     EXAMPLES::
 
@@ -2196,7 +2177,9 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
 
 
 def skew_supplementary_difference_set(n, existence=False, check=True, return_group=False):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_. The set `S_1 \subset G` is
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G \setminus \{0\}`.
@@ -2219,36 +2202,34 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the supplementary difference sets
-      can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
-      with `S_1` skew before returning them. Setting this parameter to False may speed up the computation considerably.
-
-    - ``return_group`` -- boolean (default False). If true, the function will also return
-      the group from which the sets are created.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the sets are created
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns a list containing 4 sets,
-    or raises an error if data for the given ``n`` is not available. If ``return_group``
-    is true, the function will additionally return the group from which the sets
-    are created.
-    If ``existence`` is true, the function returns a boolean representing whether skew supplementary difference
-    sets can be constructed.
+    If ``existence=False``, the function returns a list containing 4 sets,
+    or raises an error if data for the given ``n`` is not available. If
+    ``return_group=True`` the function will additionally return the group from
+    which the sets are created.
+    If ``existence=True``, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set
         sage: [S1, S2, S3, S4] = skew_supplementary_difference_set(39)
 
-    If ``return_group`` is ``True``, the function will also return the group::
+    If ``return_group=True``, the function will also return the group::
 
         sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(103, return_group=True)
 
-    If ``existence`` is ``True``, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set(103, existence=True)
         True
@@ -2491,7 +2472,9 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
 
 
 def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     This construction is described in [Djo1994a]_.
 
@@ -2508,23 +2491,20 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``H`` -- list of integers, the set `H` used to construct the cosets.
-
-    - ``indices`` -- list containing four list of integers, which are the sets
-      `J_1, J_2, J_3, J_4` described above.
-
-    - ``cosets_gen`` -- list containing integers or list of integers, is the set `A`
-      described above.
-
-    - ``check`` -- boolean (default True). If true, check that the sets
-      are supplementary difference sets. Setting this parameter to False may speed
-      up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``H`` -- list of integers; the set `H` used to construct the cosets
+    - ``indices`` -- list containing four lists of integers; the sets
+      `J_1, J_2, J_3, J_4` described above
+    - ``cosets_gen`` -- list containing integers or list of integers; the set `A`
+      described above
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets; setting this parameter to ``False`` may
+      speed up the computation considerably
 
     OUTPUT:
 
-    The function returns the ring of integers modulo `n` and a list containing the 4 sets.
+    The function returns the ring of integers modulo ``n`` and a list containing
+    the 4 sets.
 
     TESTS::
 
@@ -2593,7 +2573,9 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
 
 def supplementary_difference_set_hadamard(n, existence=False, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_.
     The data is taken from:
@@ -2606,21 +2588,19 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the
-      supplementary difference sets can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      supplementary difference sets before returning them. Setting this parameter
-      to False may speed up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets before returning them; Setting this
+      parameter to ``False`` may speed up the computation considerably
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the ring of integers modulo
-    `n` and a list containing the 4 sets, or raises an error if data for the given
-    ``n`` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether
+    If ``existence=False``, the function returns the ring of integers modulo
+    ``n`` and a list containing the 4 sets, or raises an error if data for the
+    given ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
     skew supplementary difference sets can be constructed.
 
     EXAMPLES::
@@ -2628,7 +2608,7 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(191)
 
-    If existence is ``True``, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: supplementary_difference_set_hadamard(191, existence=True)
         True
@@ -2703,16 +2683,16 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
 
 
 def _is_skew_set(G, S):
-    r"""Check if `S` is a skew set over the group `G`.
+    r"""
+    Check if ``S`` is a skew set over the group ``G``.
 
     From [Djo1994a]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew
     type if `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus \{0\}`.
 
     INPUT:
 
-    - ``G`` -- a group.
-
-    - ``S`` -- the set to be checked, containing elements of `G`.
+    - ``G`` -- a group
+    - ``S`` -- list containing elements of ``G``; the set to be checked
 
     EXAMPLES::
 
@@ -2737,7 +2717,8 @@ def _is_skew_set(G, S):
 
 
 def are_complementary_difference_sets(G, A, B, verbose=False):
-    r"""Check if `A, B` are complementary difference sets over the group `G`.
+    r"""
+    Check if ``A`` and ``B`` are complementary difference sets over the group ``G``.
 
     According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
     difference sets over a group `G` of size `2m+1` if:
@@ -2747,14 +2728,11 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
 
     INPUT:
 
-    - ``G`` -- a group of odd order.
-
-    - ``A`` -- a set of elements of ``G``.
-
-    - ``B`` -- a set of elements of ``G``.
-
-    - ``verbose`` -- boolean (default False). If true the function will be verbose
-      when the sets do not satisfy the contraints.
+    - ``G`` -- a group of odd order
+    - ``A`` -- a set of elements of ``G``
+    - ``B`` -- a set of elements of ``G``
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
+      be verbose when the sets do not satisfy the contraints
 
     EXAMPLES::
 
@@ -2762,7 +2740,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
         sage: are_complementary_difference_sets(Zmod(7), [1, 2, 4], [1, 2, 4])
         True
 
-    If ``verbose`` is set to True, the function will be verbose::
+    If ``verbose=True``, the function will be verbose::
 
         sage: are_complementary_difference_sets(Zmod(7), [1, 2, 5], [1, 2, 4], verbose=True)
         The sets are not supplementary difference sets with lambda = 2
@@ -2819,15 +2797,14 @@ def complementary_difference_setsI(n, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the group `G`.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      complementary difference sets before returning them.
+    - ``n`` -- integer; the order of the group `G`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them
 
     OUTPUT:
 
-    The function returns the Galois field of order `n` and the two sets, or raises
-    an error if `n` does not satisfy the requirements of this construction.
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
 
     EXAMPLES::
 
@@ -2891,16 +2868,15 @@ def complementary_difference_setsII(n, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the group `G`.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      complementary difference sets before returning them. Setting this to False
-      might speed up the computation for large values of `n`.
+    - ``n`` -- integer; the order of the group `G`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
 
     OUTPUT:
 
-    The function returns the Galois field of order `n` and the two sets, or raises
-    an error if `n` does not satisfy the requirements of this construction.
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
 
     EXAMPLES::
 
@@ -2971,16 +2947,15 @@ def complementary_difference_setsIII(n, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the group over which the sets are constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      complementary difference sets before returning them. Setting this to False
-      might speed up the computation for large values of `n`.
+    - ``n`` -- integer; the order of the group over which the sets are constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
 
     OUTPUT:
 
-    The function returns the Galois field of order `n` and the two sets, or raises
-    an error if `n` does not satisfy the requirements of this construction.
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
 
     EXAMPLES::
 
@@ -3048,21 +3023,19 @@ def complementary_difference_sets(n, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the order of the group over which the sets are constructed.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the
-      supplementary difference sets can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      complementary difference sets before returning them. Setting this to False
-      might speed up the computation for large values of `n`.
+    - ``n`` -- integer; the order of the group over which the sets are constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns group `G` and two complementary
-    difference sets, or raises an error if data for the given `n` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether
-    complementary difference sets can be constructed for the given `n`.
+    If ``existence=False``, the function returns group ``G`` and two complementary
+    difference sets, or raises an error if data for the given ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    complementary difference sets can be constructed for the given ``n``.
 
     EXAMPLES::
 
@@ -3070,7 +3043,7 @@ def complementary_difference_sets(n, existence=False, check=True):
         sage: complementary_difference_sets(15)
         (Ring of integers modulo 15, [1, 2, 4, 6, 7, 10, 12], [0, 1, 2, 6, 9, 13, 14])
 
-    If ``existence`` is true, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: complementary_difference_sets(15, existence=True)
         True
@@ -3153,24 +3126,21 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     INPUT:
 
     - ``v,k,l`` -- parameters of the difference family. If ``l`` is not provided
-      it is assumed to be ``1``.
-
+      it is assumed to be ``1``
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
-      knows that the design does not exist.
-
+      knows that the design does not exist
     - ``explain_construction`` -- instead of returning a difference family,
-      returns a string that explains the construction used.
-
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+      returns a string that explains the construction used
+    - ``check`` -- boolean (default: ``True``); if ``True``, then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     OUTPUT:
 
     A pair ``(G,D)`` made of a group `G` and a difference family `D` on that
-    group. Or, if ``existence`` is ``True`` a troolean or if
-    ``explain_construction`` is ``True`` a string.
+    group. Or, if ``existence=True``` a troolean or if
+    ``explain_construction=True`` a string.
 
     EXAMPLES::
 
